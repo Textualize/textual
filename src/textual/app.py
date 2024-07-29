@@ -2304,16 +2304,16 @@ class App(Generic[ReturnType], DOMNode):
         if widget is None:
             if self.mouse_over is not None:
                 try:
-                    self.mouse_over.post_message(events.Leave())
+                    self.mouse_over.post_message(events.Leave(self.mouse_over))
                 finally:
                     self.mouse_over = None
         else:
             if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
-                        self.mouse_over.post_message(events.Leave())
+                        self.mouse_over.post_message(events.Leave(self.mouse_over))
                     if widget is not None:
-                        widget.post_message(events.Enter())
+                        widget.post_message(events.Enter(widget))
                 finally:
                     self.mouse_over = widget
 

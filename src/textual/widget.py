@@ -542,6 +542,16 @@ class Widget(DOMNode):
         """Is this widget anchored?"""
         return self._parent is not None and self._parent is self
 
+    @property
+    def is_mouse_over(self) -> bool:
+        """Is the mouse currently over this widget?"""
+        if not self.screen.is_active:
+            return False
+        for widget, _ in self.screen.get_widgets_at(*self.app.mouse_position):
+            if widget is self:
+                return True
+        return False
+
     def anchor(self, *, animate: bool = False) -> None:
         """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
         but also keeps it in view if the widget's size changes, or the size of its container changes.
@@ -3261,9 +3271,9 @@ class Widget(DOMNode):
         """Update the styles of the widget and its children when disabled is toggled."""
         from .app import ScreenStackError
 
-        if disabled and self.mouse_over:
+        if disabled and self.mouse_over and self.app.mouse_over is not None:
             # Ensure widget gets a Leave if it is disabled while hovered
-            self._message_queue.put_nowait(events.Leave())
+            self._message_queue.put_nowait(events.Leave(self.app.mouse_over))
         try:
             screen = self.screen
             if (
