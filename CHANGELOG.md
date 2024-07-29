@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.74.0] - 2024-07-25
 
 ### Fixed
 
 - Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
 - Fixed exception when removing Selects https://github.com/Textualize/textual/pull/4786
 - Fixed issue with non-clickable Footer keys https://github.com/Textualize/textual/pull/4798
+- Fixed issue with recompose not working from Mount handler https://github.com/Textualize/textual/pull/4802
 
 ### Changed
 
@@ -2232,6 +2233,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.74.0]: https://github.com/Textualize/textual/compare/v0.73.0...v0.74.0
 [0.73.0]: https://github.com/Textualize/textual/compare/v0.72.0...v0.73.0
 [0.72.0]: https://github.com/Textualize/textual/compare/v0.71.0...v0.72.0
 [0.71.0]: https://github.com/Textualize/textual/compare/v0.70.0...v0.71.0

@@ -233,7 +233,7 @@ class Size(NamedTuple):
         """Get a new Size with just the height changed.
 
         Args:
-            width: New height.
+            height: New height.
 
         Returns:
             New Size instance.
