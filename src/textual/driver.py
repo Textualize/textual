@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
 
 from textual.errors import UrlOpenError
 
@@ -19,7 +19,7 @@ class Driver(ABC):
 
     def __init__(
         self,
-        app: App,
+        app: App[Any],
         *,
         debug: bool = False,
         mouse: bool = True,
