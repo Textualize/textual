@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `Widget.is_mouse_over`
+- Added node attribute to `events.Enter` and `events.Leave`
+
+### Changed
+
+- `events.Enter` and `events.Leave` events now bubble.
+
 ## [0.74.0] - 2024-07-25
 
 ### Fixed
