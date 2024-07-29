@@ -552,7 +552,7 @@ class Timer(Event, bubble=False, verbose=True):
 class Enter(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved over a widget.
 
-    Note that this widget bubbles, so a widget may receive this event when the mouse
+    Note that this event bubbles, so a widget may receive this event when the mouse
     moves over a child widget. Check the `node` attribute for the widget directly under
     tne mouse.
 
