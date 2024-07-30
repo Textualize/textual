@@ -44,7 +44,7 @@ class ModalApp(App):
     def action_request_quit(self) -> None:
         """Action to display the quit dialog."""
 
-        def check_quit(quit: bool) -> None:
+        def check_quit(quit: bool | None) -> None:
             """Called when QuitScreen is dismissed."""
             if quit:
                 self.exit()
