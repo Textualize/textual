@@ -204,7 +204,7 @@ def test_get_pseudo_class_state_parent_disabled():
 
 def test_get_pseudo_class_state_hover():
     widget = Widget()
-    widget.mouse_over = True
+    widget.mouse_hover = True
     pseudo_classes = widget.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=True, focus=False, hover=True)
 
@@ -444,7 +444,6 @@ async def test_sort_children() -> None:
     """Test the sort_children method."""
 
     class SortApp(App):
-
         def compose(self) -> ComposeResult:
             with Container(id="container"):
                 yield Label("three", id="l3")
@@ -481,7 +480,6 @@ async def test_sort_children_no_key() -> None:
     """Test sorting with no key."""
 
     class SortApp(App):
-
         def compose(self) -> ComposeResult:
             with Container(id="container"):
                 yield Label("three", id="l3")

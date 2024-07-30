@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `App.open_url` to open URLs in the web browser. When running via the WebDriver, the URL will be opened in the browser that is controlling the app https://github.com/Textualize/textual/pull/4819
+- Added `Widget.is_mouse_over` https://github.com/Textualize/textual/pull/4818
+- Added `node` attribute to `events.Enter` and `events.Leave` https://github.com/Textualize/textual/pull/4818
+
+### Changed
+
+- `events.Enter` and `events.Leave` events now bubble. https://github.com/Textualize/textual/pull/4818
+- Renamed `Widget.mouse_over` to `Widget.mouse_hover` https://github.com/Textualize/textual/pull/4818
 
 ## [0.74.0] - 2024-07-25
 

@@ -27,6 +27,7 @@ from .message import Message
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .timer import Timer as TimerClass
     from .timer import TimerCallback
     from .widget import Widget
@@ -548,21 +549,43 @@ class Timer(Event, bubble=False, verbose=True):
         yield "count", self.count
 
 
-class Enter(Event, bubble=False, verbose=True):
+class Enter(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved over a widget.
 
-    - [ ] Bubbles
+    Note that this event bubbles, so a widget may receive this event when the mouse
+    moves over a child widget. Check the `node` attribute for the widget directly under
+    the mouse.
+
+    - [X] Bubbles
     - [X] Verbose
     """
 
+    __slots__ = ["node"]
 
-class Leave(Event, bubble=False, verbose=True):
+    def __init__(self, node: DOMNode) -> None:
+        self.node = node
+        """The node directly under the mouse."""
+        super().__init__()
+
+
+class Leave(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved away from a widget, or if a widget is
     programmatically disabled while hovered.
 
-    - [ ] Bubbles
+    Note that this widget bubbles, so a widget may receive Leave events for any child widgets.
+    Check the `node` parameter for the original widget that was previously under the mouse.
+
+
+    - [X] Bubbles
     - [X] Verbose
     """
+
+    __slots__ = ["node"]
+
+    def __init__(self, node: DOMNode) -> None:
+        self.node = node
+        """The node that was previously directly under the mouse."""
+        super().__init__()
 
 
 class Focus(Event, bubble=False):
