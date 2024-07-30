@@ -5420,7 +5420,34 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.on" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.on
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;on
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.on(message_type)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;message_type
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.on(selector)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;selector
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.on(**kwargs)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;**kwargs
     </span>
   </a>
   
@@ -6397,7 +6424,34 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.on" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.on
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;on
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.on(message_type)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;message_type
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.on(selector)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;selector
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.on(**kwargs)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;**kwargs
     </span>
   </a>
   
@@ -6427,12 +6481,14 @@ window.onload = async (event) => {
 <div class="doc doc-object doc-function">
 
 
+
 <a id="textual.on"></a>
-  <div class="doc doc-contents first">
-  
+    <div class="doc doc-contents first">
+
       <p>Decorator to declare that the method is a message handler.</p>
 <p>The decorator accepts an optional CSS selector that will be matched against a widget exposed by
 a <code>control</code> property on the message.</p>
+
 
 <details class="example" open>
   <summary>Example</summary>
@@ -6444,6 +6500,7 @@ a <code>control</code> property on the message.</p>
 </details>      <p>Keyword arguments can be used to match additional selectors for attributes
 listed in <a class="autorefs autorefs-internal" href="../message/#textual.message.Message.ALLOW_SELECTOR_MATCH"><code>ALLOW_SELECTOR_MATCH</code></a>.</p>
 
+
 <details class="example" open>
   <summary>Example</summary>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Handle the activation of the tab &quot;#home&quot; within the `TabbedContent` &quot;#tabs&quot;.</span>
@@ -6453,52 +6510,71 @@ listed in <a class="autorefs autorefs-internal" href="../message/#textual.messag
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="o">...</span>
 </code></pre></div>
 </details>
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>message_type</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a>]</code>
-          </td>
-          <td><p>The message type (i.e. the class).</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>selector</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>An optional <a href="/guide/CSS#selectors">selector</a>. If supplied, the handler will only be called if <code>selector</code>
-matches the widget from the <code>control</code> attribute of the message.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>**kwargs</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>Additional selectors for other attributes of the message.</p></td>
-          <td>
-                <code>{}</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
-  </div>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.on(message_type)" class="doc doc-heading doc-heading-parameter">                  <code>message_type</code>
+<a href="#textual.on(message_type)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The message type (i.e. the class).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.on(selector)" class="doc doc-heading doc-heading-parameter">                  <code>selector</code>
+<a href="#textual.on(selector)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>An optional <a href="/guide/CSS#selectors">selector</a>. If supplied, the handler will only be called if <code>selector</code>
+matches the widget from the <code>control</code> attribute of the message.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.on(**kwargs)" class="doc doc-heading doc-heading-parameter">                  <code>**kwargs</code>
+<a href="#textual.on(**kwargs)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Additional selectors for other attributes of the message.</p>
+              </div>
+            </td>
+            <td>
+                  <code>{}</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
 
 </div>
 

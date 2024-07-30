@@ -6370,55 +6370,74 @@ window.onload = async (event) => {
 <div class="doc doc-object doc-class">
 
 
-<a id="textual.events.Key"></a>
-  <div class="doc doc-contents first">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.InputEvent" href="../../api/events/#textual.events.InputEvent">InputEvent</a></code></p>
 
-  
+<a id="textual.events.Key"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.events.InputEvent" href="../../api/events/#textual.events.InputEvent">InputEvent</a></code></p>
+
+
+
       <p>Sent when the user hits a key on the keyboard.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
 </ul>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>key</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The key that was pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-        <tr>
-          <td><code>character</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>A printable character or <code>None</code> if it is not printable.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h1 id="textual.events.Key(key)" class="doc doc-heading doc-heading-parameter">                  <code>key</code>
+<a href="#textual.events.Key(key)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The key that was pressed.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h1 id="textual.events.Key(character)" class="doc doc-heading doc-heading-parameter">                  <code>character</code>
+<a href="#textual.events.Key(character)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A printable character or <code>None</code> if it is not printable.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
-  
+
+
+
+
+
 
   <div class="doc doc-children">
 
@@ -6433,21 +6452,21 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Key.aliases" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">aliases</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">aliases</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.events.Key.aliases" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">aliases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_key_aliases</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">aliases</span> <span class="o">=</span> <span class="n"><span title="textual.keys._get_key_aliases">_get_key_aliases</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="textual.events.Key.key" href="#textual.events.Key.key">key</a></span><span class="p">)</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>The aliases for the key, including the key itself.</p>
-  </div>
+    </div>
 
 </div>
 
@@ -6456,25 +6475,25 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Key.character" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">character</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">character</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.events.Key.character" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">character</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">key</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">else</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">character</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">character</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">character</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Key.key" href="#textual.events.Key.key">key</a></span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">if</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#len">len</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="textual.events.Key.key" href="#textual.events.Key.key">key</a></span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">else</span> <span class="kc">None</span> <span class="k">if</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Key.character" href="#textual.events.Key.character">character</a></span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Key.character" href="#textual.events.Key.character">character</a></span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>A printable character or <code>None</code> if it is not printable.</p>
-  </div>
+    </div>
 
 </div>
 
@@ -6483,39 +6502,44 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Key.is_printable" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">is_printable</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">is_printable</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.events.Key.is_printable" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_printable</span><span class="p">:</span> <span class="nb">bool</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_printable</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Check if the key is printable (produces a unicode character).</p>
 
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p><code>True</code> if the key is printable.</p></td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
-  </div>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the key is printable.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+    </div>
 
 </div>
 
@@ -6524,21 +6548,21 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Key.key" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">key</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">key</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.events.Key.key" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">key</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Key.key" href="#textual.events.Key.key">key</a></span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>The key that was pressed.</p>
-  </div>
+    </div>
 
 </div>
 
@@ -6547,21 +6571,21 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Key.name" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">name</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">name</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.events.Key.name" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">name</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Name of a key suitable for use as a Python identifier.</p>
-  </div>
+    </div>
 
 </div>
 
@@ -6570,21 +6594,21 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Key.name_aliases" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">name_aliases</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">name_aliases</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.events.Key.name_aliases" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">name_aliases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">name_aliases</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>The corresponding name for every alias in <code>aliases</code> list.</p>
-  </div>
+    </div>
 
 </div>
 
@@ -6594,7 +6618,7 @@ window.onload = async (event) => {
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 

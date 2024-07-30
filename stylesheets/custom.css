@@ -13,6 +13,10 @@ h3 .doc-heading code {
     monospace;
 }
 
+.doc-heading.doc-heading-parameter {
+  font-size: .65rem;
+}
+
 body[data-md-color-primary="black"] .excalidraw  svg  {
   will-change: filter;
   filter: invert(100%) hue-rotate(180deg);
