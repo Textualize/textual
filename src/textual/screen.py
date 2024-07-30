@@ -1231,7 +1231,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
 
-        Any callback provided in [push_screen][textual.app.push_screen] will be invoked with the supplied result.
+        Any callback provided in [push_screen][textual.app.App.push_screen] will be invoked with the supplied result.
 
         Only the active screen may be dismissed. This method will produce a warning in the logs if
         called on an inactive screen (but otherwise have no effect).
