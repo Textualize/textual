@@ -5,7 +5,6 @@ Tests for the tabs underline animation, which is considered a basic animation.
 
 from textual.app import App, ComposeResult
 from textual.widgets import Label, TabbedContent, Tabs
-from textual.widgets._tabs import Underline
 
 
 class TabbedContentApp(App[None]):
@@ -20,19 +19,15 @@ async def test_tabs_underline_animates_on_full() -> None:
     app = TabbedContentApp()
     app.animation_level = "full"
 
+    animations: list[str] = []
+
     async with app.run_test() as pilot:
-        underline = app.query_one(Underline)
         animator = app.animator
-        # Freeze time at 0 before triggering the animation.
-        animator._get_time = lambda *_: 0
+        animator._record_animation = animations.append
         app.query_one(Tabs).action_previous_tab()
         await pilot.pause()
-        # Freeze time after the animation start and before animation end.
-        animator._get_time = lambda *_: 0.01
-        # Move to the next frame.
-        animator()
-        assert animator.is_being_animated(underline, "highlight_start")
-        assert animator.is_being_animated(underline, "highlight_end")
+        assert "highlight_start" in animations
+        assert "highlight_end" in animations
 
 
 async def test_tabs_underline_animates_on_basic() -> None:
@@ -40,19 +35,15 @@ async def test_tabs_underline_animates_on_basic() -> None:
     app = TabbedContentApp()
     app.animation_level = "basic"
 
+    animations: list[str] = []
+
     async with app.run_test() as pilot:
-        underline = app.query_one(Underline)
         animator = app.animator
-        # Freeze time at 0 before triggering the animation.
-        animator._get_time = lambda *_: 0
+        animator._record_animation = animations.append
         app.query_one(Tabs).action_previous_tab()
         await pilot.pause()
-        # Freeze time after the animation start and before animation end.
-        animator._get_time = lambda *_: 0.01
-        # Move to the next frame.
-        animator()
-        assert animator.is_being_animated(underline, "highlight_start")
-        assert animator.is_being_animated(underline, "highlight_end")
+        assert "highlight_start" in animations
+        assert "highlight_end" in animations
 
 
 async def test_tabs_underline_does_not_animate_on_none() -> None:
@@ -60,16 +51,12 @@ async def test_tabs_underline_does_not_animate_on_none() -> None:
     app = TabbedContentApp()
     app.animation_level = "none"
 
+    animations: list[str] = []
+
     async with app.run_test() as pilot:
-        underline = app.query_one(Underline)
         animator = app.animator
-        # Freeze time at 0 before triggering the animation.
-        animator._get_time = lambda *_: 0
+        animator._record_animation = animations.append
         app.query_one(Tabs).action_previous_tab()
         await pilot.pause()
-        # Freeze time after the animation start and before animation end.
-        animator._get_time = lambda *_: 0.01
-        # Move to the next frame.
-        animator()
-        assert not animator.is_being_animated(underline, "highlight_start")
-        assert not animator.is_being_animated(underline, "highlight_end")
+        assert "highlight_start" not in animations
+        assert "highlight_end" not in animations

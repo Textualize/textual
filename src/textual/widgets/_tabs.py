@@ -598,16 +598,13 @@ class Tabs(Widget, can_focus=True):
         """
         underline = self.query_one(Underline)
         try:
-            active_tab = self.query_one("#tabs-list > Tab.-active")
+            _active_tab = self.query_one("#tabs-list > Tab.-active")
         except NoMatches:
             underline.show_highlight = False
             underline.highlight_start = 0
             underline.highlight_end = 0
         else:
             underline.show_highlight = True
-            tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
-            start, end = tab_region.column_span
-            # This is a basic animation, so we only disable it if we want no animations.
 
             def move_underline(animate: bool) -> None:
                 """Move the tab underline."""
@@ -637,12 +634,13 @@ class Tabs(Widget, can_focus=True):
                         underline.highlight_start = start
                         underline.highlight_end = end
 
-            self.set_timer(
-                0.02,
-                lambda: self.call_after_refresh(
-                    move_underline, animate and self.app.animation_level != "none"
-                ),
-            )
+            if animate and self.app.animation_level != "none":
+                self.set_timer(
+                    0.02,
+                    lambda: self.call_after_refresh(move_underline, True),
+                )
+            else:
+                self.call_after_refresh(move_underline, False)
 
     async def _on_tab_clicked(self, event: Tab.Clicked) -> None:
         """Activate a tab that was clicked."""
