@@ -3,6 +3,7 @@ import re
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.restriction import Restrictor
 from textual.widgets import Input
 from textual.widgets._input import _RESTRICT_TYPES
 
@@ -143,3 +144,24 @@ async def test_restrict_type():
         text_input.focus()
         await pilot.press("!", "x", "9")
         assert text_input.value == "!x9"
+
+
+class UppercaseRestrictor(Restrictor):
+    def allowed(self, value: str) -> bool:
+        return value.isupper()
+
+
+async def test_restrictors():
+    class InputApp(App):
+        def compose(self) -> ComposeResult:
+            yield Input(type="text", id="text", restrictors=[UppercaseRestrictor()])
+
+    async with InputApp().run_test() as pilot:
+        text_input = pilot.app.query_one("#text", Input)
+
+        text_input.focus()
+        await pilot.press("A")
+        assert text_input.value == "A"
+
+        await pilot.press("a")
+        assert text_input.value == "A"
