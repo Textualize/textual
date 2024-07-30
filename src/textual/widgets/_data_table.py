@@ -80,40 +80,26 @@ class DuplicateKey(Exception):
 class StringKey:
     """An object used as a key in a mapping.
 
-    It can optionally wrap a string,
-    and lookups into a map using the object behave the same as lookups using
-    the string itself."""
+    The object is either a string or, if none supplied, the string of the
+    id() of the StringKey object.
 
-    value: str | None
+    A StringKey can be compared with a plain str, meaning one can use
+    plain strings for lookups."""
 
     def __init__(self, value: str | None = None):
-        self.value = value
-
-    def __hash__(self):
         # If a string is supplied, we use the hash of the string. If no string was
         # supplied, we use the default hash to ensure uniqueness amongst instances.
-        return hash(self.value) if self.value is not None else id(self)
+        self.value = value if value is not None else str(id(self))
 
-    def __eq__(self, other: object) -> bool:
+    def __hash__(self):
+        return hash(self.value)
+
+    def __eq__(self, other: str | StringKey) -> bool:
         # Strings will match Keys containing the same string value.
-        # Otherwise, you'll need to supply the exact same key object.
-        if isinstance(other, str):
-            return self.value == other
-        elif isinstance(other, StringKey):
-            if self.value is not None and other.value is not None:
-                return self.value == other.value
-            else:
-                return hash(self) == hash(other)
-        else:
-            return NotImplemented
+        return self.value == (other if isinstance(other, str) else other.value)
 
-    def __lt__(self, other):
-        if isinstance(other, str):
-            return self.value < other
-        elif isinstance(other, StringKey):
-            return self.value < other.value
-        else:
-            return NotImplemented
+    def __lt__(self, other: str | StringKey):
+        return self.value < (other if isinstance(other, str) else other.value)
 
     def __rich_repr__(self):
         yield "value", self.value
