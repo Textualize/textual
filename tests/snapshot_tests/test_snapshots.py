@@ -1395,3 +1395,8 @@ def test_enter_or_leave(snap_compare) -> None:
         await pilot.hover("#foo")
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "enter_or_leave.py", run_before=run_before)
+
+
+def test_remove_tab_no_animation(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4814"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "remove_tab.py", press=["space"])
