@@ -607,7 +607,11 @@ class Tabs(Widget, can_focus=True):
             underline.show_highlight = True
 
             def move_underline(animate: bool) -> None:
-                """Move the tab underline."""
+                """Move the tab underline.
+
+                Args:
+                    animate: animate the underline to its new position.
+                """
                 try:
                     active_tab = self.query_one("#tabs-list > Tab.-active")
                 except NoMatches:
