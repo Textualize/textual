@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -520,27 +519,20 @@ class Tabs(Widget, can_focus=True):
             except NoMatches:
                 return AwaitComplete()
 
-        removing_active_tab = remove_tab.has_class("-active")
-        next_tab = self._next_active
-        remove_await = remove_tab.remove()
-
-        highlight_updated = asyncio.Event()
+        if remove_tab.has_class("-active"):
+            next_tab = self._next_active
+        else:
+            next_tab = None
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
-            await remove_await
-            if next_tab is None or (removing_active_tab and next_tab.id is None):
-                self.active = ""
-            elif removing_active_tab:
+            await remove_tab.remove()
+            if next_tab is not None:
                 self.active = next_tab.id or ""
-                next_tab.add_class("-active")
+            if not self.query("#tabs-list > Tab"):
+                self.active = ""
 
-            highlight_updated.set()
-
-        async def wait_for_highlight_update() -> None:
-            await highlight_updated.wait()
-
-        return AwaitComplete(do_remove(), wait_for_highlight_update())
+        return AwaitComplete(do_remove())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
@@ -584,7 +576,10 @@ class Tabs(Widget, can_focus=True):
             except NoMatches:
                 return
             active_tab.add_class("-active")
-            self._highlight_active(animate=previously_active != "")
+
+            self.call_after_refresh(
+                self._highlight_active, animate=previously_active != ""
+            )
             self._scroll_active_tab()
             self.post_message(self.TabActivated(self, active_tab))
         else:
@@ -604,7 +599,7 @@ class Tabs(Widget, can_focus=True):
         """
         underline = self.query_one(Underline)
         try:
-            active_tab = self.query_one(f"#tabs-list > Tab.-active")
+            active_tab = self.query_one("#tabs-list > Tab.-active")
         except NoMatches:
             underline.show_highlight = False
             underline.highlight_start = 0
@@ -619,7 +614,7 @@ class Tabs(Widget, can_focus=True):
                 def animate_underline() -> None:
                     """Animate the underline."""
                     try:
-                        active_tab = self.query_one(f"#tabs-list > Tab.-active")
+                        active_tab = self.query_one("#tabs-list > Tab.-active")
                     except NoMatches:
                         pass
                     else:
@@ -642,6 +637,7 @@ class Tabs(Widget, can_focus=True):
 
                 self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:
+                print(start, end)
                 underline.highlight_start = start
                 underline.highlight_end = end
 
