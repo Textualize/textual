@@ -195,11 +195,16 @@ class WebDriver(Driver):
             packet_type: Packet type (currently always "M")
             payload: Meta payload (JSON encoded as bytes).
         """
-        payload_map: dict[str, Any] = json.loads(payload)
+        payload_map: dict[str, object] = json.loads(payload)
         _type = payload_map.get("type", {})
-        self.on_meta(_type, payload_map)
+        if isinstance(_type, str):
+            self.on_meta(_type, payload_map)
+        else:
+            log.error(
+                f"Protocol error: type field value is not a string. Value is {_type!r}"
+            )
 
-    def on_meta(self, packet_type: str, payload: dict[str, Any]) -> None:
+    def on_meta(self, packet_type: str, payload: dict[str, object]) -> None:
         """Process a dictionary containing information received from the controlling process.
 
         Args:
@@ -219,10 +224,11 @@ class WebDriver(Driver):
         elif packet_type == "exit":
             raise _ExitInput()
 
-    def open_url(self, url: str) -> None:
+    def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.
 
         Args:
             url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
         """
-        self.write_meta({"type": "open_url", "url": url})
+        self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})

@@ -148,8 +148,15 @@ class Driver(ABC):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
 
-    def open_url(self, url: str) -> None:
-        """Open a URL in the default web browser."""
+    def open_url(self, url: str, new_tab: bool = True) -> None:
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
+                This is only relevant when running via the WebDriver,
+                and is ignored when called while running through the terminal.
+        """
         import webbrowser
 
         result = webbrowser.open(url)
