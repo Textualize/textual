@@ -8,7 +8,8 @@ Report bugs via GitHub on the Textual [issues](https://github.com/Textualize/tex
 
 ## Help with using Textual
 
-You can seek help with using Textual [in the discussion area on GitHub](https://github.com/Textualize/textual/discussions).
+You can seek help with using Textual [on Discord's #help-wanted channel](https://discord.gg/jQeB3vB8) 
+or [in the discussion area on GitHub](https://github.com/Textualize/textual/discussions).
 
 ## Discord Server
 
