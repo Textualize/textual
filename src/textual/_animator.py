@@ -338,7 +338,11 @@ class Animator:
             animate_callback()
 
     def _record_animation(self, attribute: str) -> None:
-        """Used in mocks to make a record of animations."""
+        """Called when an attribute is to be animated.
+
+        Args:
+            attribute: Attribute being animated.
+        """
 
     def _animate(
         self,
