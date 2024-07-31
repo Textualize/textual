@@ -5,8 +5,6 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, Iterator
 
-from textual.errors import UrlOpenError
-
 from . import events
 from .events import MouseUp
 
@@ -159,9 +157,7 @@ class Driver(ABC):
         """
         import webbrowser
 
-        result = webbrowser.open(url)
-        if not result:
-            raise UrlOpenError(f"Failed to open URL: {url!r}")
+        webbrowser.open(url)
 
     def suspend_application_mode(self) -> None:
         """Suspend application mode.
