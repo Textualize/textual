@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
+from pathlib import PurePath
 from typing import TYPE_CHECKING, Any, Iterator
 
 from . import events
@@ -146,19 +147,6 @@ class Driver(ABC):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
 
-    def open_url(self, url: str, new_tab: bool = True) -> None:
-        """Open a URL in the default web browser.
-
-        Args:
-            url: The URL to open.
-            new_tab: Whether to open the URL in a new tab.
-                This is only relevant when running via the WebDriver,
-                and is ignored when called while running through the terminal.
-        """
-        import webbrowser
-
-        webbrowser.open(url)
-
     def suspend_application_mode(self) -> None:
         """Suspend application mode.
 
@@ -196,3 +184,20 @@ class Driver(ABC):
 
     def close(self) -> None:
         """Perform any final cleanup."""
+
+    def open_url(self, url: str, new_tab: bool = True) -> None:
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
+                This is only relevant when running via the WebDriver,
+                and is ignored when called while running through the terminal.
+        """
+        import webbrowser
+
+        webbrowser.open(url)
+
+    def save_file(self, path_or_file: str | PurePath | TextIO | BinaryIO) -> None:
+        """Save a file."""
+        pass

@@ -26,14 +26,13 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
     AsyncGenerator,
     Awaitable,
-    BinaryIO,
     Callable,
     ClassVar,
     Generator,
@@ -41,7 +40,6 @@ from typing import (
     Iterable,
     Iterator,
     Sequence,
-    TextIO,
     Type,
     TypeVar,
     overload,
@@ -55,6 +53,8 @@ from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
+
+from textual.css.types import SaveFileType
 
 from . import (
     Logger,
@@ -3693,7 +3693,33 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
 
-    def save_file(self, path_or_file: str | PurePath | TextIO | BinaryIO) -> None:
-        """Save a file."""
+    def save_file(
+        self,
+        path_or_file: SaveFileType,
+        *,
+        save_path: str | PurePath | None = None,
+    ) -> None:
+        """Save the file `path_or_file` to `save_path`.
+
+        If running via web through Textual Web or Textual Serve,
+        this will initiate a download in the web browser.
+
+        Args:
+            path_or_file: The path or file to save.
+            save_path: The location to save the file to. If None,
+                the default "downloads" directory will be used. This
+                argument is ignored when running via the web.
+        """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, str):
+            path_or_file = Path(path_or_file)
+            file_like = path_or_file.open("rb")
+        else:
+            file_like = path_or_file
+
+        # Find the appropriate save location.
+        if save_path is None:
+            save_path = Path("~/Downloads").expanduser()
+
         if self._driver is not None:
-            self._driver.save_file(path_or_file)
+            self._driver.save_file(file_like, save_path)
