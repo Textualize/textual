@@ -3718,9 +3718,12 @@ class App(Generic[ReturnType], DOMNode):
         else:
             file_like = path_or_file
 
-        # Find the appropriate save location.
+        # Find the appropriate save location if not specified.
         if save_path is None:
             save_path = user_downloads_path()
 
+        # Save the file. The driver will determine the appropriate action
+        # to take here. It could mean simply writing to the save_path, or
+        # sending the file to the web browser for download.
         if self._driver is not None:
             self._driver.save_file(file_like, save_path)
