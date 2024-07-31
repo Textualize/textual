@@ -462,10 +462,7 @@ class TabbedContent(Widget):
             # other means; so allow that to be a no-op.
             pass
 
-        async def _remove_content() -> None:
-            await gather(*removal_awaitables)
-
-        return AwaitComplete(_remove_content())
+        return AwaitComplete(*removal_awaitables)
 
     def clear_panes(self) -> AwaitComplete:
         """Remove all the panes in the tabbed content.

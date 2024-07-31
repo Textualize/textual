@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -520,27 +519,20 @@ class Tabs(Widget, can_focus=True):
             except NoMatches:
                 return AwaitComplete()
 
-        removing_active_tab = remove_tab.has_class("-active")
-        next_tab = self._next_active
-        remove_await = remove_tab.remove()
-
-        highlight_updated = asyncio.Event()
+        if remove_tab.has_class("-active"):
+            next_tab = self._next_active
+        else:
+            next_tab = None
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
-            await remove_await
-            if next_tab is None or (removing_active_tab and next_tab.id is None):
-                self.active = ""
-            elif removing_active_tab:
+            await remove_tab.remove()
+            if next_tab is not None:
                 self.active = next_tab.id or ""
-                next_tab.add_class("-active")
+            if not self.query("#tabs-list > Tab"):
+                self.active = ""
 
-            highlight_updated.set()
-
-        async def wait_for_highlight_update() -> None:
-            await highlight_updated.wait()
-
-        return AwaitComplete(do_remove(), wait_for_highlight_update())
+        return AwaitComplete(do_remove())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
@@ -584,7 +576,9 @@ class Tabs(Widget, can_focus=True):
             except NoMatches:
                 return
             active_tab.add_class("-active")
+
             self._highlight_active(animate=previously_active != "")
+
             self._scroll_active_tab()
             self.post_message(self.TabActivated(self, active_tab))
         else:
@@ -604,29 +598,30 @@ class Tabs(Widget, can_focus=True):
         """
         underline = self.query_one(Underline)
         try:
-            active_tab = self.query_one(f"#tabs-list > Tab.-active")
+            _active_tab = self.query_one("#tabs-list > Tab.-active")
         except NoMatches:
             underline.show_highlight = False
             underline.highlight_start = 0
             underline.highlight_end = 0
         else:
             underline.show_highlight = True
-            tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
-            start, end = tab_region.column_span
-            # This is a basic animation, so we only disable it if we want no animations.
-            if animate and self.app.animation_level != "none":
 
-                def animate_underline() -> None:
-                    """Animate the underline."""
-                    try:
-                        active_tab = self.query_one(f"#tabs-list > Tab.-active")
-                    except NoMatches:
-                        pass
-                    else:
-                        tab_region = active_tab.virtual_region.shrink(
-                            active_tab.styles.gutter
-                        )
-                        start, end = tab_region.column_span
+            def move_underline(animate: bool) -> None:
+                """Move the tab underline.
+
+                Args:
+                    animate: animate the underline to its new position.
+                """
+                try:
+                    active_tab = self.query_one("#tabs-list > Tab.-active")
+                except NoMatches:
+                    pass
+                else:
+                    tab_region = active_tab.virtual_region.shrink(
+                        active_tab.styles.gutter
+                    )
+                    start, end = tab_region.column_span
+                    if animate:
                         underline.animate(
                             "highlight_start",
                             start,
@@ -639,11 +634,17 @@ class Tabs(Widget, can_focus=True):
                             duration=0.3,
                             level="basic",
                         )
+                    else:
+                        underline.highlight_start = start
+                        underline.highlight_end = end
 
-                self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
+            if animate and self.app.animation_level != "none":
+                self.set_timer(
+                    0.02,
+                    lambda: self.call_after_refresh(move_underline, True),
+                )
             else:
-                underline.highlight_start = start
-                underline.highlight_end = end
+                self.call_after_refresh(move_underline, False)
 
     async def _on_tab_clicked(self, event: Tab.Clicked) -> None:
         """Activate a tab that was clicked."""

@@ -316,6 +316,7 @@ class Animator:
             on_complete: Callback to run after the animation completes.
             level: Minimum level required for the animation to take place (inclusive).
         """
+        self._record_animation(attribute)
         animate_callback = partial(
             self._animate,
             obj,
@@ -335,6 +336,13 @@ class Animator:
             )
         else:
             animate_callback()
+
+    def _record_animation(self, attribute: str) -> None:
+        """Called when an attribute is to be animated.
+
+        Args:
+            attribute: Attribute being animated.
+        """
 
     def _animate(
         self,
@@ -438,6 +446,7 @@ class Animator:
                 ),
                 level=level,
             )
+
         assert animation is not None, "animation expected to be non-None"
 
         current_animation = self._animations.get(animation_key)
