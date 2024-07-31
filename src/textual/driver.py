@@ -4,7 +4,6 @@ import asyncio
 import shutil
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from io import TextIOBase, TextIOWrapper
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, TextIO
 
@@ -215,10 +214,11 @@ class Driver(ABC):
         Args:
             path_or_file: The path or file-like object to save.
             save_path: The location to save the file to.
-            encoding: The textencoding to use when saving the file. If `None`,
-                the encoding will be determined by supplied file-like object
-                (if possible), or default to the encoding of the current locale.
+            encoding: The text encoding to use when saving the file.
+                This will be passed to Python's `open()` built-in function.
         """
+        with open(save_path, "w", encoding=encoding) as destination_file:
+            shutil.copyfileobj(text, destination_file)
 
     def save_binary(
         self,
@@ -236,14 +236,3 @@ class Driver(ABC):
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
         """
-        with open(save_path, "wb") as destination_file:
-            file_like.seek(0)
-            if isinstance(file_like, BinaryIO):
-                # Copy the file object to the destination file.
-                shutil.copyfileobj(file_like, destination_file)
-            elif isinstance(file_like, TextIOBase):
-                text_encoding = getattr(file_like, "encoding", "utf-8")
-                reader = TextIOWrapper(file_like.buffer, encoding=text_encoding)
-                shutil.copyfileobj(reader.detach(), destination_file)
-            else:
-                raise ValueError(f"Unsupported file type: {type(file_like)}")
