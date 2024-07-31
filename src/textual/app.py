@@ -26,12 +26,14 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
+from pathlib import PurePath
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
     AsyncGenerator,
     Awaitable,
+    BinaryIO,
     Callable,
     ClassVar,
     Generator,
@@ -39,6 +41,7 @@ from typing import (
     Iterable,
     Iterator,
     Sequence,
+    TextIO,
     Type,
     TypeVar,
     overload,
@@ -3689,3 +3692,8 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
+
+    def save_file(self, path_or_file: str | PurePath | TextIO | BinaryIO) -> None:
+        """Save a file."""
+        if self._driver is not None:
+            self._driver.save_file(path_or_file)
