@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
 
 from . import events
 from .events import MouseUp
@@ -17,7 +17,7 @@ class Driver(ABC):
 
     def __init__(
         self,
-        app: App,
+        app: App[Any],
         *,
         debug: bool = False,
         mouse: bool = True,
@@ -145,6 +145,19 @@ class Driver(ABC):
     @abstractmethod
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
+
+    def open_url(self, url: str, new_tab: bool = True) -> None:
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
+                This is only relevant when running via the WebDriver,
+                and is ignored when called while running through the terminal.
+        """
+        import webbrowser
+
+        webbrowser.open(url)
 
     def suspend_application_mode(self) -> None:
         """Suspend application mode.
