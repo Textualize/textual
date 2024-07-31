@@ -48,6 +48,7 @@ from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
+from platformdirs import user_downloads_path
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
@@ -3719,7 +3720,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Find the appropriate save location.
         if save_path is None:
-            save_path = Path("~/Downloads").expanduser()
+            save_path = user_downloads_path()
 
         if self._driver is not None:
             self._driver.save_file(file_like, save_path)
