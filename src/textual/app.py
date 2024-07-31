@@ -26,13 +26,14 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
-from pathlib import Path, PurePath
+from pathlib import Path
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
     AsyncGenerator,
     Awaitable,
+    BinaryIO,
     Callable,
     ClassVar,
     Generator,
@@ -40,6 +41,7 @@ from typing import (
     Iterable,
     Iterator,
     Sequence,
+    TextIO,
     Type,
     TypeVar,
     overload,
@@ -54,8 +56,6 @@ from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
-
-from textual.css.types import SaveFileType
 
 from . import (
     Logger,
@@ -3694,11 +3694,56 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
 
-    def save_file(
+    def save_text(
         self,
-        path_or_file: SaveFileType,
+        path_or_file: str | Path | TextIO,
         *,
-        save_path: str | PurePath | None = None,
+        save_path: str | Path | None = None,
+        encoding: str | None = None,
+    ) -> None:
+        """Save the text file `path_or_file` to `save_path`.
+
+        Args:
+            path_or_file: The path or file-like object to save.
+            save_path: The location to save the file to. If None,
+                the default "downloads" directory will be used. This
+                argument is ignored when running via the web.
+            encoding: The encoding to use when saving the file. If `None`,
+                the encoding will be determined by supplied file-like object
+                (if possible). If this is not possible, the encoding of the
+                current locale will be used.
+        """
+        if self._driver is None:
+            return
+
+        # Find the appropriate save location if not specified.
+        if save_path is None:
+            save_path = user_downloads_path()
+        elif isinstance(save_path, str):
+            save_path = Path(save_path)
+
+        # Get the TextIO file-like object.
+        if isinstance(path_or_file, (str, Path)):
+            requires_close = True
+            text_file = Path(path_or_file).open("r", encoding=encoding)
+        else:
+            requires_close = False
+            text_file = path_or_file
+
+        # Let the driver decide how to handle saving the file.
+        self._driver.save_text(text_file, save_path=save_path, encoding=encoding)
+
+        # Close the file if we were the ones who opened it.
+        # If the user opened the file, they won't expect us to close it,
+        # so leave it to them.
+        if requires_close:
+            text_file.close()
+
+    def save_binary(
+        self,
+        path_or_file: str | Path | BinaryIO,
+        *,
+        save_path: str | Path | None = None,
     ) -> None:
         """Save the file `path_or_file` to `save_path`.
 
@@ -3706,24 +3751,34 @@ class App(Generic[ReturnType], DOMNode):
         this will initiate a download in the web browser.
 
         Args:
-            path_or_file: The path or file to save.
+            path_or_file: The path or file-like object to save.
             save_path: The location to save the file to. If None,
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
         """
-        # Ensure `path_or_file` is a file-like object - convert if needed.
-        if isinstance(path_or_file, str):
-            path_or_file = Path(path_or_file)
-            file_like = path_or_file.open("rb")
-        else:
-            file_like = path_or_file
+        if self._driver is None:
+            return
 
         # Find the appropriate save location if not specified.
         if save_path is None:
             save_path = user_downloads_path()
+        elif isinstance(save_path, str):
+            save_path = Path(save_path)
+
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            requires_close = True
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+        else:
+            requires_close = False
+            binary = path_or_file
 
         # Save the file. The driver will determine the appropriate action
         # to take here. It could mean simply writing to the save_path, or
         # sending the file to the web browser for download.
-        if self._driver is not None:
-            self._driver.save_file(file_like, save_path)
+        self._driver.save_binary(binary, save_path=save_path)
+
+        # Close the file if we were the ones who opened it.
+        if requires_close:
+            binary.close()

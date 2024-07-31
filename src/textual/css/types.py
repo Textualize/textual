@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from pathlib import PurePath
-from typing import BinaryIO, TextIO, Tuple, Union
+from typing import Tuple
 
 from typing_extensions import Literal
 
 from ..color import Color
 
-SaveFileType = Union[str, PurePath, TextIO, BinaryIO]
 Edge = Literal["top", "right", "bottom", "left"]
 DockEdge = Literal["top", "right", "bottom", "left", ""]
 EdgeType = Literal[

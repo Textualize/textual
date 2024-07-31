@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import shutil
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from pathlib import PurePath
-from typing import TYPE_CHECKING, Any, Iterator
+from io import TextIOBase, TextIOWrapper
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, TextIO
 
 from . import events
 from .events import MouseUp
@@ -198,6 +200,50 @@ class Driver(ABC):
 
         webbrowser.open(url)
 
-    def save_file(self, path_or_file: str | PurePath | TextIO | BinaryIO) -> None:
-        """Save a file."""
-        pass
+    def save_text(
+        self,
+        text: TextIO,
+        *,
+        save_path: Path,
+        encoding: str | None = None,
+    ) -> None:
+        """Save the text file `path_or_file` to `save_path`.
+
+        If running via web through Textual Web or Textual Serve,
+        this will initiate a download in the web browser.
+
+        Args:
+            path_or_file: The path or file-like object to save.
+            save_path: The location to save the file to.
+            encoding: The textencoding to use when saving the file. If `None`,
+                the encoding will be determined by supplied file-like object
+                (if possible), or default to the encoding of the current locale.
+        """
+
+    def save_binary(
+        self,
+        binary: BinaryIO,
+        save_path: Path,
+    ) -> None:
+        """Save the file `path_or_file` to `save_path`.
+
+        If running via web through Textual Web or Textual Serve,
+        this will initiate a download in the web browser.
+
+        Args:
+            file_like: The file to save.
+            save_path: The location to save the file to. If None,
+                the default "downloads" directory will be used. This
+                argument is ignored when running via the web.
+        """
+        with open(save_path, "wb") as destination_file:
+            file_like.seek(0)
+            if isinstance(file_like, BinaryIO):
+                # Copy the file object to the destination file.
+                shutil.copyfileobj(file_like, destination_file)
+            elif isinstance(file_like, TextIOBase):
+                text_encoding = getattr(file_like, "encoding", "utf-8")
+                reader = TextIOWrapper(file_like.buffer, encoding=text_encoding)
+                shutil.copyfileobj(reader.detach(), destination_file)
+            else:
+                raise ValueError(f"Unsupported file type: {type(file_like)}")
