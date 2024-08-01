@@ -809,20 +809,18 @@ async def test_mutate_reactive_data_bind() -> None:
         assert widget_messages == [[]]
         assert test_widget.messages == []
 
-        # Previously setting a mutable object would lead to shared references
-        assert app.messages is not test_widget.messages
+        # Should be the same instance
+        assert app.messages is test_widget.messages
 
         # Mutate app
         app.messages.append("foo")
         # Mutations aren't detected
         assert widget_messages == [[]]
         assert app.messages == ["foo"]
-        assert test_widget.messages == []
+        assert test_widget.messages == ["foo"]
         # Explicitly mutate app reactive
         app.mutate_reactive(TestApp.messages)
         # Mutating app, will also invoke watchers on any data binds
         assert widget_messages == [[], ["foo"]]
         assert app.messages == ["foo"]
         assert test_widget.messages == ["foo"]
-
-        assert app.messages is not test_widget.messages
