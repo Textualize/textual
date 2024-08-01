@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `events.Enter` and `events.Leave` events now bubble. https://github.com/Textualize/textual/pull/4818
 - Renamed `Widget.mouse_over` to `Widget.mouse_hover` https://github.com/Textualize/textual/pull/4818
 
+### Fixed
+
+- Fixed issue with `mutate_reactive` and data binding https://github.com/Textualize/textual/pull/4828
+
 ## [0.74.0] - 2024-07-25
 
 ### Fixed
