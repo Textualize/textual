@@ -253,6 +253,10 @@ class DOMNode(MessagePump):
         this method after your reactive is updated. This will ensure that all the reactive _superpowers_
         work.
 
+        !!! note
+
+            This method will cause watchers to be called, even if the value hasn't changed.
+
         Args:
             reactive: A reactive property (use the class scope syntax, i.e. `MyClass.my_reactive`).
         """
