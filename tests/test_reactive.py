@@ -783,3 +783,33 @@ async def test_mutate_reactive() -> None:
         widget.mutate_reactive(TestWidget.names)
         # Watcher should be invoked
         assert watched_names == [[], ["Paul"], ["Jessica"]]
+
+
+async def test_mutate_reactive_data_bind() -> None:
+    """https://github.com/Textualize/textual/issues/4825"""
+
+    # Record mutations to TestWidget.messages
+    widget_messages: list[list[str]] = []
+
+    class TestWidget(Widget):
+        messages: reactive[list[str]] = reactive(list, init=False)
+
+        def watch_messages(self, names: list[str]) -> None:
+            widget_messages.append(names.copy())
+
+    class TestApp(App):
+        messages: reactive[list[str]] = reactive(list, init=False)
+
+        def compose(self) -> ComposeResult:
+            yield TestWidget().data_bind(TestApp.messages)
+
+    app = TestApp()
+    async with app.run_test() as pilot:
+        assert widget_messages == [[]]
+        app.messages.append("foo")
+        # Mutations aren't detected
+        assert widget_messages == [[]]
+        # Explicitly mutate app reactive
+        app.mutate_reactive(TestApp.messages)
+        # Mutating app, will also invoke watchers on any data binds
+        assert widget_messages == [[], ["foo"]]
