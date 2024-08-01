@@ -41,7 +41,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive, ReactiveError, _watch
+from .reactive import Reactive, ReactiveError, _Mutated, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 from .worker_manager import WorkerManager
@@ -253,6 +253,10 @@ class DOMNode(MessagePump):
         this method after your reactive is updated. This will ensure that all the reactive _superpowers_
         work.
 
+        !!! note
+
+            This method will cause watchers to be called, even if the value hasn't changed.
+
         Args:
             reactive: A reactive property (use the class scope syntax, i.e. `MyClass.my_reactive`).
         """
@@ -278,6 +282,7 @@ class DOMNode(MessagePump):
                 yield WorldClock("Europe/Paris").data_bind(WorldClockApp.time)
                 yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
             ```
+
 
         Raises:
             ReactiveError: If the data wasn't bound.
@@ -334,7 +339,8 @@ class DOMNode(MessagePump):
                     """Set bound data."""
                     _rich_traceback_omit = True
                     Reactive._initialize_object(self)
-                    setattr(self, variable_name, value)
+                    # Wrap the value in `_Mutated` so the setter knows to invoke watchers etc.
+                    setattr(self, variable_name, _Mutated(value))
 
                 return setter
 
