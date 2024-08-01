@@ -10288,6 +10288,10 @@ to detect if a value is <em>mutated</em> (such as updating a list, dict, or attr
 If you do wish to use a collection or other mutable object in a reactive, then you can call
 this method after your reactive is updated. This will ensure that all the reactive <em>superpowers</em>
 work.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method will cause watchers to be called, even if the value hasn't changed.</p>
+</div>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
