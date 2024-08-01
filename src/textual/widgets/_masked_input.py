@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from enum import IntFlag
+from enum import Flag, auto
 from typing import TYPE_CHECKING, Iterable, Pattern
 
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -25,19 +25,22 @@ InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
 
 
-class _CharFlags(IntFlag):
+class _CharFlags(Flag):
     """Misc flags for a single template character definition"""
 
-    REQUIRED = 0x1
+    NONE = 0
+    """Empty flags value"""
+
+    REQUIRED = auto()
     """Is this character required for validation?"""
 
-    SEPARATOR = 0x2
+    SEPARATOR = auto()
     """Is this character a separator?"""
 
-    UPPERCASE = 0x4
+    UPPERCASE = auto()
     """Char is forced to be uppercase"""
 
-    LOWERCASE = 0x8
+    LOWERCASE = auto()
     """Char is forced to be lowercase"""
 
 
@@ -83,8 +86,8 @@ class _InputRenderable:
             template.mask[value_length:],
             style,
         )
-        for index, (c, char_def) in enumerate(zip(value, template.template)):
-            if c == " ":
+        for index, (char, char_definition) in enumerate(zip(value, template.template)):
+            if char == " ":
                 result.stylize(style, index, index + 1)
 
         if self.cursor_visible and input.has_focus:
@@ -113,63 +116,78 @@ class _Template(Validator):
     """Template mask enforcer."""
 
     @dataclass
-    class CharDef:
+    class CharDefinition:
         """Holds data for a single char of the template mask."""
 
         pattern: Pattern[str]
         """Compiled regular expression to check for matches."""
 
-        flags: _CharFlags = _CharFlags(0)
+        flags: _CharFlags = _CharFlags.NONE
         """Flags defining special behaviors"""
 
         char: str = ""
         """Mask character (separator or blank or placeholder)"""
 
     def __init__(self, input: Input, template_str: str) -> None:
+        """Initialise the mask enforcer, which is also a subclass of `Validator`.
+
+        Args:
+            input: The `MaskedInput` that owns this object.
+            template_str: Template string controlling masked input behavior.
+        """
         self.input = input
-        self.template: list[_Template.CharDef] = []
+        self.template: list[_Template.CharDefinition] = []
         self.blank: str = " "
         escaped = False
-        flags = _CharFlags(0)
+        flags = _CharFlags.NONE
         template_chars: list[str] = list(template_str)
 
         while template_chars:
-            c = template_chars.pop(0)
+            char = template_chars.pop(0)
             if escaped:
-                char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR, c)
+                char_definition = self.CharDefinition(
+                    re.compile(re.escape(char)), _CharFlags.SEPARATOR, char
+                )
                 escaped = False
             else:
-                if c == "\\":
+                if char == "\\":
                     escaped = True
                     continue
-                elif c == ";":
+                elif char == ";":
                     break
 
                 new_flags = {
                     ">": _CharFlags.UPPERCASE,
                     "<": _CharFlags.LOWERCASE,
-                    "!": 0,
-                }.get(c, None)
+                    "!": _CharFlags.NONE,
+                }.get(char, None)
                 if new_flags is not None:
                     flags = new_flags
                     continue
 
-                pattern, required_flag = _TEMPLATE_CHARACTERS.get(c, (None, None))
+                pattern, required_flag = _TEMPLATE_CHARACTERS.get(char, (None, None))
                 if pattern:
-                    char_flags = _CharFlags.REQUIRED if required_flag else _CharFlags(0)
-                    char = self.CharDef(re.compile(pattern), char_flags)
+                    char_flags = (
+                        _CharFlags.REQUIRED if required_flag else _CharFlags.NONE
+                    )
+                    char_definition = self.CharDefinition(
+                        re.compile(pattern), char_flags
+                    )
                 else:
-                    char = self.CharDef(
-                        re.compile(re.escape(c)), _CharFlags.SEPARATOR, c
+                    char_definition = self.CharDefinition(
+                        re.compile(re.escape(char)), _CharFlags.SEPARATOR, char
                     )
 
-            char.flags |= flags
-            self.template.append(char)
+            char_definition.flags |= flags
+            self.template.append(char_definition)
 
         if template_chars:
             self.blank = template_chars[0]
 
-        if all(char.flags & _CharFlags.SEPARATOR for char in self.template):
+        if all(
+            (_CharFlags.SEPARATOR in char_definition.flags)
+            for char_definition in self.template
+        ):
             raise ValueError(
                 "Template must contain at least one non-separator character"
             )
@@ -177,24 +195,52 @@ class _Template(Validator):
         self.update_mask(input.placeholder)
 
     def validate(self, value: str) -> ValidationResult:
+        """Checks if `value` matches this template, always returning a ValidationResult.
+
+        Args:
+            value: The string value to be validated.
+
+        Returns:
+            A ValidationResult with the validation outcome.
+
+        """
         if self.check(value.ljust(len(self.template), chr(0)), False):
             return self.success()
         else:
             return self.failure("Value does not match template!", value)
 
     def check(self, value: str, allow_space: bool) -> bool:
-        for c, char_def in zip(value, self.template):
+        """Checks if `value matches this template, but returns result as a bool.
+
+        Args:
+            value: The string value to be validated.
+            allow_space: Consider space character in `value` as valid.
+
+        Returns:
+            True if `value` is valid for this template, False otherwise.
+        """
+        for char, char_definition in zip(value, self.template):
             if (
-                (char_def.flags & _CharFlags.REQUIRED)
-                and (not char_def.pattern.match(c))
-                and ((c != " ") or not allow_space)
+                (_CharFlags.REQUIRED in char_definition.flags)
+                and (not char_definition.pattern.match(char))
+                and ((char != " ") or not allow_space)
             ):
                 return False
         return True
 
     def insert_separators(self, value: str, cursor_position: int) -> tuple[str, int]:
+        """Automatically inserts separators in `value` at `cursor_position` if expected, eventually advancing
+        the current cursor position.
+
+        Args:
+            value: Current control value entered by user.
+            cursor_position: Where to start inserting separators (if any).
+
+        Returns:
+            A tuple in the form `(value, cursor_position)` with new value and possibly advanced cursor position.
+        """
         while cursor_position < len(self.template) and (
-            self.template[cursor_position].flags & _CharFlags.SEPARATOR
+            _CharFlags.SEPARATOR in self.template[cursor_position].flags
         ):
             value = (
                 value[:cursor_position]
@@ -205,25 +251,35 @@ class _Template(Validator):
         return value, cursor_position
 
     def insert_text_at_cursor(self, text: str) -> str | None:
+        """Inserts `text` at current cursor position. If not present in `text`, any expected separator is automatically
+        inserted at the correct position.
+
+        Args:
+            text: The text to be inserted.
+
+        Returns:
+            A tuple in the form `(value, cursor_position)` with the new control value and current cursor position if
+                `text` matches the template, None otherwise.
+        """
         value = self.input.value
         cursor_position = self.input.cursor_position
         separators = set(
             [
-                char_def.char
-                for char_def in self.template
-                if char_def.flags & _CharFlags.SEPARATOR
+                char_definition.char
+                for char_definition in self.template
+                if _CharFlags.SEPARATOR in char_definition.flags
             ]
         )
-        for c in text:
-            if c in separators:
-                if c == self.next_separator(cursor_position):
+        for char in text:
+            if char in separators:
+                if char == self.next_separator(cursor_position):
                     prev_position = self.prev_separator_position(cursor_position)
                     if (cursor_position > 0) and (prev_position != cursor_position - 1):
                         next_position = self.next_separator_position(cursor_position)
                         while cursor_position < next_position + 1:
                             if (
-                                self.template[cursor_position].flags
-                                & _CharFlags.SEPARATOR
+                                _CharFlags.SEPARATOR
+                                in self.template[cursor_position].flags
                             ):
                                 char = self.template[cursor_position].char
                             else:
@@ -237,49 +293,65 @@ class _Template(Validator):
                 continue
             if cursor_position >= len(self.template):
                 break
-            char_def = self.template[cursor_position]
-            assert (char_def.flags & _CharFlags.SEPARATOR) == 0
-            if not char_def.pattern.match(c):
+            char_definition = self.template[cursor_position]
+            assert _CharFlags.SEPARATOR not in char_definition.flags
+            if not char_definition.pattern.match(char):
                 return None
-            if char_def.flags & _CharFlags.LOWERCASE:
-                c = c.lower()
-            elif char_def.flags & _CharFlags.UPPERCASE:
-                c = c.upper()
-            value = value[:cursor_position] + c + value[cursor_position + 1 :]
+            if _CharFlags.LOWERCASE in char_definition.flags:
+                char = char.lower()
+            elif _CharFlags.UPPERCASE in char_definition.flags:
+                char = char.upper()
+            value = value[:cursor_position] + char + value[cursor_position + 1 :]
             cursor_position += 1
             value, cursor_position = self.insert_separators(value, cursor_position)
         return value, cursor_position
 
     def move_cursor(self, delta: int) -> None:
+        """Moves the cursor position by `delta` characters, skipping separators if
+        running over them.
+
+        Args:
+            delta: The number of characters to move; positive moves right, negative
+                moves left.
+        """
         cursor_position = self.input.cursor_position
         if delta < 0 and all(
-            [c.flags & _CharFlags.SEPARATOR for c in self.template[:cursor_position]]
+            [
+                (_CharFlags.SEPARATOR in char_definition.flags)
+                for char_definition in self.template[:cursor_position]
+            ]
         ):
             return
         cursor_position += delta
         while (
             (cursor_position >= 0)
             and (cursor_position < len(self.template))
-            and (self.template[cursor_position].flags & _CharFlags.SEPARATOR)
+            and (_CharFlags.SEPARATOR in self.template[cursor_position].flags)
         ):
             cursor_position += delta
         self.input.cursor_position = cursor_position
 
     def delete_at_position(self, position: int | None = None) -> None:
+        """Deletes character at `position`.
+
+        Args:
+            position: Position within the control value where to delete a character;
+                if None the current cursor position is used.
+        """
         value = self.input.value
         if position is None:
             position = self.input.cursor_position
         cursor_position = position
         if cursor_position < len(self.template):
-            assert (self.template[cursor_position].flags & _CharFlags.SEPARATOR) == 0
+            assert _CharFlags.SEPARATOR not in self.template[cursor_position].flags
             if cursor_position == len(value) - 1:
                 value = value[:cursor_position]
             else:
                 value = value[:cursor_position] + " " + value[cursor_position + 1 :]
         pos = len(value)
         while pos > 0:
-            char_def = self.template[pos - 1]
-            if ((char_def.flags & _CharFlags.SEPARATOR) == 0) and (
+            char_definition = self.template[pos - 1]
+            if (_CharFlags.SEPARATOR not in char_definition.flags) and (
                 value[pos - 1] != " "
             ):
                 break
@@ -292,32 +364,74 @@ class _Template(Validator):
         self.input.value = value
 
     def at_separator(self, position: int | None = None) -> bool:
+        """Checks if character at `position` is a separator.
+
+        Args:
+            position: Position within the control value where to check;
+                if None the current cursor position is used.
+
+        Returns:
+            True if character is a separator, False otherwise.
+        """
         if position is None:
             position = self.input.cursor_position
         if (position >= 0) and (position < len(self.template)):
-            return bool(self.template[position].flags & _CharFlags.SEPARATOR)
+            return _CharFlags.SEPARATOR in self.template[position].flags
         else:
             return False
 
     def prev_separator_position(self, position: int | None = None) -> int | None:
+        """Obtains the position of the previous separator character starting from
+        `position` within the template string.
+
+        Args:
+            position: Starting position from which to search previous separator.
+                If None, current cursor position is used.
+
+        Returns:
+            The position of the previous separator, or None if no previous
+                separator is found.
+        """
         if position is None:
             position = self.input.cursor_position
         for index in range(position - 1, 0, -1):
-            if self.template[index].flags & _CharFlags.SEPARATOR:
+            if _CharFlags.SEPARATOR in self.template[index].flags:
                 return index
         else:
             return None
 
     def next_separator_position(self, position: int | None = None) -> int | None:
+        """Obtains the position of the next separator character starting from
+        `position` within the template string.
+
+        Args:
+            position: Starting position from which to search next separator.
+                If None, current cursor position is used.
+
+        Returns:
+            The position of the next separator, or None if no next
+                separator is found.
+        """
         if position is None:
             position = self.input.cursor_position
         for index in range(position + 1, len(self.template)):
-            if self.template[index].flags & _CharFlags.SEPARATOR:
+            if _CharFlags.SEPARATOR in self.template[index].flags:
                 return index
         else:
             return None
 
     def next_separator(self, position: int | None = None) -> str | None:
+        """Obtains the next separator character starting from `position`
+        within the template string.
+
+        Args:
+            position: Starting position from which to search next separator.
+                If None, current cursor position is used.
+
+        Returns:
+            The next separator character, or None if no next
+                separator is found.
+        """
         position = self.next_separator_position(position)
         if position is None:
             return None
@@ -325,31 +439,53 @@ class _Template(Validator):
             return self.template[position].char
 
     def display(self, value: str) -> str:
+        """Returns `value` ready for display, with spaces replaced by
+        placeholder characters.
+
+        Args:
+            value: String value to display.
+
+        Returns:
+            New string value with spaces replaced by placeholders.
+        """
         result = []
-        for c, char_def in zip(value, self.template):
-            if c == " ":
-                c = char_def.char
-            result.append(c)
+        for char, char_definition in zip(value, self.template):
+            if char == " ":
+                char = char_definition.char
+            result.append(char)
         return "".join(result)
 
     def update_mask(self, placeholder: str) -> None:
-        for index, char_def in enumerate(self.template):
-            if (char_def.flags & _CharFlags.SEPARATOR) == 0:
+        """Updates template placeholder characters from `placeholder`. If
+        given string is smaller than template string, template blank character
+        is used to fill remaining template placeholder characters.
+
+        Args:
+            placeholder: New placeholder string.
+        """
+        for index, char_definition in enumerate(self.template):
+            if _CharFlags.SEPARATOR not in char_definition.flags:
                 if index < len(placeholder):
-                    char_def.char = placeholder[index]
+                    char_definition.char = placeholder[index]
                 else:
-                    char_def.char = self.blank
+                    char_definition.char = self.blank
 
     @property
     def mask(self) -> str:
-        return "".join([c.char for c in self.template])
+        """Property returning the template placeholder mask."""
+        return "".join([char_definition.char for char_definition in self.template])
 
     @property
     def empty_mask(self) -> str:
+        """Property returning the template placeholder mask with all non-separators replaced by space."""
         return "".join(
             [
-                " " if (c.flags & _CharFlags.SEPARATOR) == 0 else c.char
-                for c in self.template
+                (
+                    " "
+                    if (_CharFlags.SEPARATOR not in char_definition.flags)
+                    else char_definition.char
+                )
+                for char_definition in self.template
             ]
         )
 
@@ -413,6 +549,7 @@ class MaskedInput(Input, can_focus=True):
             self.tooltip = tooltip
 
     def validate_value(self, value: str) -> str:
+        """Validates value against template."""
         if self._template is None:
             return value
         if not self._template.check(value, True):
@@ -469,6 +606,7 @@ class MaskedInput(Input, can_focus=True):
         return Text(value, no_wrap=True, overflow="ignore")
 
     async def _on_click(self, event: events.Click) -> None:
+        """Ensure clicking on value does not leave cursor on a separator."""
         await super()._on_click(event)
         if self._template.at_separator():
             self._template.move_cursor(1)
@@ -491,11 +629,11 @@ class MaskedInput(Input, can_focus=True):
         self.value, self.cursor_position = self._template.insert_separators("", 0)
 
     def action_cursor_left(self) -> None:
-        """Move the cursor one position to the left."""
+        """Move the cursor one position to the left; separators are skipped."""
         self._template.move_cursor(-1)
 
     def action_cursor_right(self) -> None:
-        """Accept an auto-completion or move the cursor one position to the right."""
+        """Move the cursor one position to the right; separators are skipped."""
         self._template.move_cursor(1)
 
     def action_home(self) -> None:
@@ -503,7 +641,8 @@ class MaskedInput(Input, can_focus=True):
         self._template.move_cursor(-len(self.template))
 
     def action_cursor_left_word(self) -> None:
-        """Move the cursor left to the start of a word."""
+        """Move the cursor left next to the previous separator. If no previous
+        separator is found, moves the cursor to the start of the input."""
         if self._template.at_separator(self.cursor_position - 1):
             position = self._template.prev_separator_position(self.cursor_position - 1)
         else:
@@ -513,7 +652,8 @@ class MaskedInput(Input, can_focus=True):
         self.cursor_position = position or 0
 
     def action_cursor_right_word(self) -> None:
-        """Move the cursor right to the start of a word."""
+        """Move the cursor right next to the next separator. If no next
+        separator is found, moves the cursor to the end of the input."""
         position = self._template.next_separator_position()
         if position is None:
             self.cursor_position = len(self._template.mask)
@@ -525,7 +665,8 @@ class MaskedInput(Input, can_focus=True):
         self._template.delete_at_position()
 
     def action_delete_right_word(self) -> None:
-        """Delete the current character and all rightward to the start of the next word."""
+        """Delete the current character and all rightward to next separator or
+        the end of the input."""
         position = self._template.next_separator_position()
         if position is not None:
             position += 1
@@ -545,7 +686,8 @@ class MaskedInput(Input, can_focus=True):
         self._template.delete_at_position()
 
     def action_delete_left_word(self) -> None:
-        """Delete leftward of the cursor position to the start of a word."""
+        """Delete leftward of the cursor position to the previous separator or
+        the start of the input."""
         if self.cursor_position <= 0:
             return
         if self._template.at_separator(self.cursor_position - 1):
