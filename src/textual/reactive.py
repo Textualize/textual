@@ -42,6 +42,13 @@ ReactiveType = TypeVar("ReactiveType")
 ReactableType = TypeVar("ReactableType", bound="DOMNode")
 
 
+class _Mutated:
+    """A wrapper to indicate a value was mutated."""
+
+    def __init__(self, value: Any) -> None:
+        self.value = value
+
+
 class ReactiveError(Exception):
     """Base class for reactive errors."""
 
@@ -272,6 +279,10 @@ class Reactive(Generic[ReactiveType]):
             raise ReactiveError(
                 f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before setting reactives."
             )
+
+        if isinstance(value, _Mutated):
+            value = value.value
+            always = True
 
         self._initialize_reactive(obj, self.name)
 

@@ -41,7 +41,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive, ReactiveError, _watch
+from .reactive import Reactive, ReactiveError, _Mutated, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 from .worker_manager import WorkerManager
@@ -334,7 +334,7 @@ class DOMNode(MessagePump):
                     """Set bound data."""
                     _rich_traceback_omit = True
                     Reactive._initialize_object(self)
-                    setattr(self, variable_name, value)
+                    setattr(self, variable_name, _Mutated(value))
 
                 return setter
 
