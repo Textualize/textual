@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import re
 import threading
-from copy import copy
 from functools import lru_cache, partial
 from inspect import getfile
 from typing import (
@@ -280,6 +279,7 @@ class DOMNode(MessagePump):
                 yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
             ```
 
+
         Raises:
             ReactiveError: If the data wasn't bound.
 
@@ -335,10 +335,8 @@ class DOMNode(MessagePump):
                     """Set bound data."""
                     _rich_traceback_omit = True
                     Reactive._initialize_object(self)
-                    # Copy the bound value
-                    # Sharing the same instance with mutable objects can lead to confusing behavior
-                    # Wrap the value in `_Mutated` so the setter knows to invoke watchers etc
-                    setattr(self, variable_name, _Mutated(copy(value)))
+                    # Wrap the value in `_Mutated` so the setter knows to invoke watchers etc.
+                    setattr(self, variable_name, _Mutated(value))
 
                 return setter
 
