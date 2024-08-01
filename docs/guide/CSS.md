@@ -195,24 +195,24 @@ Let's look at the selectors supported by Textual CSS.
 
 ### Type selector
 
-The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
+The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `BoxedText` selector:
 
 ```python
 from textual.widgets import Static
 
-class Button(Static):
+class BoxedText(Static):
     pass
 ```
 
 The following rule applies a border to this widget:
 
 ```css
-Button {
+BoxedText {
   border: solid blue;
 }
 ```
 
-The type selector will also match a widget's base classes. Consequently, a `Static` selector will also style the button because the `Button` Python class extends `Static`.
+The type selector will also match a widget's base classes. Consequently, a `Static` selector will also style the boxed text because the `BoxedText` Python class extends `Static`.
 
 ```css
 Static {
@@ -225,7 +225,7 @@ Static {
 
     The fact that the type selector matches base classes is a departure from browser CSS which doesn't have the same concept.
 
-You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "rounded white".
+You may have noticed that the `border` rule exists in both Static and BoxedText. When this happens, Textual will use the most recently defined sub-class within a list of bases. So BoxedText wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both these rules were in a stylesheet, the boxed text would be "solid blue" and not "rounded white".
 
 ### ID selector
 
