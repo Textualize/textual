@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 import threading
+from copy import copy
 from functools import lru_cache, partial
 from inspect import getfile
 from typing import (
@@ -334,7 +335,10 @@ class DOMNode(MessagePump):
                     """Set bound data."""
                     _rich_traceback_omit = True
                     Reactive._initialize_object(self)
-                    setattr(self, variable_name, _Mutated(value))
+                    # Copy the bound value
+                    # Sharing the same instance with mutable objects can lead to confusing behavior
+                    # Wrap the value in `_Mutated` so the setter knows to invoke watchers etc
+                    setattr(self, variable_name, _Mutated(copy(value)))
 
                 return setter
 
