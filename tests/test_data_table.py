@@ -21,7 +21,7 @@ from textual.widgets.data_table import (
     Row,
     RowDoesNotExist,
     RowKey,
-    StringKey
+    StringKey,
 )
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
@@ -1158,15 +1158,21 @@ def test_key_string_lookup():
     assert dictionary["hello"] == "world"
     assert dictionary[RowKey("hello")] == "world"
 
+
 async def test_stringkey_comparison():
-    # StringKey is now exported.
     id1 = StringKey()
     id2 = StringKey()
     name1 = StringKey("name1")
     name2 = StringKey("name2")
     assert name1 < name2 and name2 > name1
     assert id1 != id2
-    junk = id1 < name1 and name2 < id2  # just see comparisons work
+    _ = id1 < name1 and name2 < id2  # just see comparisons work
+
+
+async def test_stringkey_hash():
+    key = StringKey("hello")
+    assert hash(key) == hash("hello")
+    assert hash(key) == hash(StringKey("hello"))
 
 
 async def test_scrolling_cursor_into_view():

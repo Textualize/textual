@@ -94,9 +94,11 @@ class StringKey:
     def __hash__(self):
         return hash(self.value)
 
-    def __eq__(self, other: str | StringKey) -> bool:
+    def __eq__(self, other: object) -> bool:
         # Strings will match Keys containing the same string value.
-        return self.value == (other if isinstance(other, str) else other.value)
+        if isinstance(other, (str, StringKey)):
+            return self.value == other
+        return NotImplemented
 
     def __lt__(self, other: str | StringKey):
         return self.value < (other if isinstance(other, str) else other.value)
