@@ -304,10 +304,12 @@ class ScrollBar(Widget):
             self.grabbed = None
 
     def _on_enter(self, event: events.Enter) -> None:
-        self.mouse_over = True
+        if event.node is self:
+            self.mouse_over = True
 
     def _on_leave(self, event: events.Leave) -> None:
-        self.mouse_over = False
+        if event.node is self:
+            self.mouse_over = False
 
     def action_scroll_down(self) -> None:
         """Scroll vertical scrollbars down, horizontal scrollbars right."""
