@@ -974,7 +974,14 @@ class Compositor:
                 yield (
                     region,
                     clip,
-                    widget.render_lines(_Region(0, 0, region.width, region.height)),
+                    widget.render_lines(
+                        _Region(
+                            0,
+                            0,
+                            region.width,
+                            region.height,
+                        )
+                    ),
                 )
             else:
                 new_x, new_y, new_width, new_height = intersection(region, clip)
