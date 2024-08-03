@@ -549,6 +549,8 @@ class Compositor:
 
         Args:
             root: Top level widget.
+            size: Size of visible area (screen).
+            visible_only: Only update visible widgets (used in scrolling).
 
         Returns:
             Compositor map and set of widgets.
@@ -759,7 +761,14 @@ class Compositor:
 
     @property
     def layers_visible(self) -> list[list[tuple[Widget, Region, Region]]]:
-        """Visible widgets and regions in layers order."""
+        """Visible widgets and regions in layers order.
+
+        Returns:
+            Lists visible widgets per layer. Widgets are give as a tuple of
+            (WIDGET, CROPPED_REGION, REGION). CROPPED_REGION is clipped by
+            the container.
+
+        """
 
         if self._layers_visible is None:
             layers_visible: list[list[tuple[Widget, Region, Region]]]
@@ -778,7 +787,14 @@ class Compositor:
         return self._layers_visible
 
     def get_offset(self, widget: Widget) -> Offset:
-        """Get the offset of a widget."""
+        """Get the offset of a widget.
+
+        Args:
+            widget: Widget to query.
+
+        Returns:
+            Offset of widget.
+        """
         try:
             if self._visible_map is not None:
                 try:
