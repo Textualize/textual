@@ -713,7 +713,7 @@ class Region(NamedTuple):
             offset: Offset to add to region.
 
         Returns:
-            A new region shifted by (x, y)
+            A new region shifted by (x, y).
         """
 
         self_x, self_y, width, height = self
