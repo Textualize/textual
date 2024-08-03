@@ -634,7 +634,7 @@ class Region(NamedTuple):
             size: Maximum width and height.
 
         Returns:
-            No region, not bigger than size.
+            New region.
         """
         x, y, width, height = self
         max_width, max_height = size
