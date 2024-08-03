@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable, cast
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -300,8 +300,8 @@ class Input(Widget, can_focus=True):
         else:
             self.validators = list(validators)
 
-        self.validate_on = (
-            set(validate_on) & _POSSIBLE_VALIDATE_ON_VALUES
+        self.validate_on: set[str] = (
+            (_POSSIBLE_VALIDATE_ON_VALUES & cast("set[str]", validate_on))
             if validate_on is not None
             else _POSSIBLE_VALIDATE_ON_VALUES
         )
@@ -514,11 +514,13 @@ class Input(Widget, can_focus=True):
         )
 
     def _on_blur(self, _: Blur) -> None:
+        assert self._blink_timer is not None
         self._blink_timer.pause()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
+        assert self._blink_timer is not None
         self.cursor_position = len(self.value)
         if self.cursor_blink:
             self._blink_timer.resume()
@@ -526,6 +528,7 @@ class Input(Widget, can_focus=True):
         self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
+        assert self._blink_timer is not None
         self._cursor_visible = True
         if self.cursor_blink:
             self._blink_timer.reset()
