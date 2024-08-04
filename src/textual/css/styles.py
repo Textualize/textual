@@ -683,8 +683,8 @@ class Styles(StylesBase):
     important: set[str] = field(default_factory=set)
 
     def __post_init__(self) -> None:
-        self.get_rule: Callable[[str, object], object] = self._rules.get
-        self.has_rule: Callable[[str], bool] = self._rules.__contains__
+        self.get_rule: Callable[[str, object], object] = self._rules.get  # type: ignore[assignment]
+        self.has_rule: Callable[[str], bool] = self._rules.__contains__  # type: ignore[assignment]
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
@@ -1104,8 +1104,8 @@ class RenderStyles(StylesBase):
         self._rich_style: tuple[int, Style] | None = None
         self._gutter: tuple[int, Spacing] | None = None
         self._render_rules = ChainMap(inline_styles._rules, base._rules)
-        self.get_rule = self._render_rules.get
-        self.has_rule = self._render_rules.__contains__
+        self.get_rule = self._render_rules.get  # type: ignore[assignment]
+        self.has_rule = self._render_rules.__contains__  # type: ignore[assignment]
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, RenderStyles):
