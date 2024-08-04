@@ -466,6 +466,7 @@ class StylesBase:
         Returns:
             ``True`` if the rules is present, otherwise ``False``.
         """
+        raise NotImplementedError()
 
     def clear_rule(self, rule: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
@@ -476,6 +477,7 @@ class StylesBase:
         Returns:
             ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
         """
+        raise NotImplementedError()
 
     def get_rules(self) -> RulesMap:
         """Get the rules in a mapping.
@@ -483,6 +485,7 @@ class StylesBase:
         Returns:
             A TypedDict of the rules.
         """
+        raise NotImplementedError()
 
     def set_rule(self, rule: str, value: object | None) -> bool:
         """Set a rule.
@@ -494,6 +497,7 @@ class StylesBase:
         Returns:
             ``True`` if the rule changed, otherwise ``False``.
         """
+        raise NotImplementedError()
 
     def get_rule(self, rule: str, default: object = None) -> object:
         """Get an individual rule.
@@ -505,6 +509,7 @@ class StylesBase:
         Returns:
             Rule value or default.
         """
+        raise NotImplementedError()
 
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
@@ -676,9 +681,9 @@ class Styles(StylesBase):
 
     important: set[str] = field(default_factory=set)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.get_rule: Callable[[str, object], object] = self._rules.get
-        self.has_rule = self._rules.__contains__
+        self.has_rule: Callable[[str], bool] = self._rules.__contains__
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
@@ -687,9 +692,6 @@ class Styles(StylesBase):
             _rules=self.get_rules(),
             important=self.important,
         )
-
-    # def has_rule(self, rule: str) -> bool:
-    #     return rule in self._rules
 
     def clear_rule(self, rule: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
@@ -729,9 +731,6 @@ class Styles(StylesBase):
         if changed:
             self._updates += 1
         return changed
-
-    # def get_rule(self, rule: str, default: object = None) -> object:
-    #     return self._rules.get(rule, default)
 
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
