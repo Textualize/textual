@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import ChainMap
 from dataclasses import dataclass, field
 from functools import lru_cache, partial
 from operator import attrgetter
@@ -1102,6 +1103,9 @@ class RenderStyles(StylesBase):
         self._updates: int = 0
         self._rich_style: tuple[int, Style] | None = None
         self._gutter: tuple[int, Spacing] | None = None
+        self._render_rules = ChainMap(inline_styles._rules, base._rules)
+        self.get_rule = self._render_rules.get
+        self.has_rule = self._render_rules.__contains__
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, RenderStyles):
@@ -1222,18 +1226,9 @@ class RenderStyles(StylesBase):
         self._inline_styles.reset()
         self._updates += 1
 
-    def has_rule(self, rule: str) -> bool:
-        """Check if a rule has been set."""
-        return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
-
     def set_rule(self, rule: str, value: object | None) -> bool:
         self._updates += 1
         return self._inline_styles.set_rule(rule, value)
-
-    def get_rule(self, rule: str, default: object = None) -> object:
-        if self._inline_styles.has_rule(rule):
-            return self._inline_styles.get_rule(rule, default)
-        return self._base_styles.get_rule(rule, default)
 
     def clear_rule(self, rule_name: str) -> bool:
         """Clear a rule (from inline)."""
