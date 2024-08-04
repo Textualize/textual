@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
@@ -124,7 +123,7 @@ class WidgetPlacement(NamedTuple):
         return bounding_region
 
 
-class Layout(ABC):
+class Layout:
     """Responsible for arranging Widgets in a view and rendering them."""
 
     name: ClassVar[str] = ""
@@ -132,7 +131,6 @@ class Layout(ABC):
     def __repr__(self) -> str:
         return f"<{self.name}>"
 
-    @abstractmethod
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
@@ -145,6 +143,7 @@ class Layout(ABC):
         Returns:
             An iterable of widget location
         """
+        raise NotImplementedError()
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
         """Get the optimal content width by arranging children.
