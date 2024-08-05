@@ -742,7 +742,6 @@ class Input(Widget, can_focus=True):
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
-        print(self.cursor_position)
         if self.cursor_position <= 0:
             return
         if self.password:
@@ -760,7 +759,6 @@ class Input(Widget, can_focus=True):
             else:
                 self.cursor_position = hit.start()
             new_value = f"{self.value[: self.cursor_position]}{after}"
-            print(new_value)
             self.value = new_value
 
     def action_delete_left_all(self) -> None:
