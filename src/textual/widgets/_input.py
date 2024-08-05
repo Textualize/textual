@@ -391,8 +391,7 @@ class Input(Widget, can_focus=True):
             if blink:
                 self._blink_timer.resume()
             else:
-                self._cursor_visible = True
-                self._blink_timer.pause()
+                self._pause_blink_cycle()
 
     @property
     def cursor_screen_offset(self) -> Offset:
@@ -514,21 +513,17 @@ class Input(Widget, can_focus=True):
         )
 
     def _on_blur(self, _: Blur) -> None:
-        self._blink_timer.pause()
+        self._pause_blink_cycle()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
-        self.cursor_position = len(self.value)
-        if self.cursor_blink:
-            self._blink_timer.resume()
+        self._restart_blink_cycle()
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
-        if self.cursor_blink:
-            self._cursor_visible = True
-            self._blink_timer.reset()
+        self._restart_blink_cycle()
 
         if event.is_printable:
             event.stop()
@@ -560,18 +555,27 @@ class Input(Widget, can_focus=True):
             self.cursor_position = len(self.value)
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
-        self._cursor_visible = True
-        if self.cursor_blink and self._blink_timer:
-            self._blink_timer.pause()
+        self._pause_blink_cycle()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        if self.cursor_blink and self._blink_timer:
-            self._blink_timer.reset()
+        self._restart_blink_cycle()
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
         if event.value == self.value:
             self._suggestion = event.suggestion
+
+    def _restart_blink_cycle(self) -> None:
+        """Restart the cursor blink cycle."""
+        self._cursor_visible = True
+        if self.cursor_blink and self._blink_timer:
+            self._blink_timer.reset()
+
+    def _pause_blink_cycle(self) -> None:
+        """Hide the blinking cursor and pause the blink cycle."""
+        self._cursor_visible = False
+        if self.cursor_blink and self._blink_timer:
+            self._blink_timer.pause()
 
     def insert_text_at_cursor(self, text: str) -> None:
         """Insert new text at the cursor, move the cursor to the end of the new text.
