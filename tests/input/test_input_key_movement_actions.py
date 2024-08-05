@@ -43,6 +43,7 @@ async def test_input_right_from_home() -> None:
     """Going right should always land at the next position, if there is one."""
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
+            input.cursor_position = 0
             input.action_cursor_right()
             assert input.cursor_position == (1 if input.value else 0)
 
@@ -60,6 +61,7 @@ async def test_input_left_from_home() -> None:
     """Going left from home should stay put."""
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
+            input.cursor_position = 0
             input.action_cursor_left()
             assert input.cursor_position == 0
 
@@ -77,6 +79,7 @@ async def test_input_left_word_from_home() -> None:
     """Going left one word from the start should do nothing."""
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
+            input.cursor_position = 0
             input.action_cursor_left_word()
             assert input.cursor_position == 0
 
@@ -118,6 +121,7 @@ async def test_input_right_word_from_home() -> None:
             "multi-and-hyphenated": 5,
         }
         for input in pilot.app.query(Input):
+            input.cursor_position = 0
             input.action_cursor_right_word()
             assert input.cursor_position == expected_at[input.id]
 
@@ -151,6 +155,7 @@ async def test_input_right_word_to_the_end() -> None:
             "multi-and-hyphenated": 7,
         }
         for input in pilot.app.query(Input):
+            input.cursor_position = 0
             hops = 0
             while input.cursor_position < len(input.value):
                 input.action_cursor_right_word()

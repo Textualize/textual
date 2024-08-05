@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
+
+### Fixed
+
+- Input cursor blink effect will now restart correctly when any action is performed on the input https://github.com/Textualize/textual/pull/4773
 
 ## [0.75.1] - 2024-08-02
 
