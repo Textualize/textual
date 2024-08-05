@@ -1236,7 +1236,9 @@ class Widget(DOMNode):
             content_width = Fraction(
                 self.get_content_width(content_container - margin.totals, viewport)
             )
-            if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+            if styles.overflow_x == "auto" and (
+                styles.scrollbar_gutter == "stable" or self.show_vertical_scrollbar
+            ):
                 content_width += styles.scrollbar_size_vertical
             if (
                 content_width < content_container.width
@@ -1286,8 +1288,11 @@ class Widget(DOMNode):
             content_height = Fraction(
                 self.get_content_height(content_container, viewport, int(content_width))
             )
-            if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+            if styles.overflow_y == "auto" and (
+                styles.scrollbar_gutter == "stable" or self.show_horizontal_scrollbar
+            ):
                 content_height += styles.scrollbar_size_horizontal
+
             if (
                 content_height < content_container.height
                 and self._has_relative_children_height

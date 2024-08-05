@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
 - Removed `Size.cip_size`, which was a clone of `crop_size`
+- Widgets with auto dimensions will now grow if there is a scrollbar
 
 ### Fixed
 
