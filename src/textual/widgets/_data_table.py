@@ -46,9 +46,6 @@ CursorType = Literal["cell", "row", "column", "none"]
 CellType = TypeVar("CellType")
 """Type used for cells in the DataTable."""
 
-_DEFAULT_CELL_X_PADDING = 1
-"""Default padding to use on each side of a column in the data table."""
-
 _EMPTY_TEXT = Text(no_wrap=True, end="")
 
 
@@ -381,7 +378,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     show_cursor = Reactive(True)
     cursor_type: Reactive[CursorType] = Reactive[CursorType]("cell")
     """The type of the cursor of the `DataTable`."""
-    cell_padding = Reactive(_DEFAULT_CELL_X_PADDING)
+    cell_padding = Reactive(1)
     """Horizontal padding between cells, applied on each side of each cell."""
 
     cursor_coordinate: Reactive[Coordinate] = Reactive(
@@ -658,7 +655,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
         cursor_type: CursorType = "cell",
-        cell_padding: int = _DEFAULT_CELL_X_PADDING,
+        cell_padding: int = 1,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,

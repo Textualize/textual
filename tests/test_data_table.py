@@ -11,7 +11,6 @@ from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
 from textual.widgets import DataTable
-from textual.widgets._data_table import _DEFAULT_CELL_X_PADDING
 from textual.widgets.data_table import (
     CellDoesNotExist,
     CellKey,
@@ -24,6 +23,9 @@ from textual.widgets.data_table import (
 )
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
+
+
+_DEFAULT_CELL_X_PADDING = 1
 
 
 class DataTableApp(App):

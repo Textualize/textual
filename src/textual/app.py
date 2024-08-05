@@ -72,11 +72,11 @@ from ._compose import compose
 from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
+from ._dispatch_key import dispatch_key
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
-from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
@@ -115,12 +115,12 @@ from .timer import Timer
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
+from .worker_manager import WorkerManager
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
-    from ._system_commands import SystemCommands
     from ._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
@@ -128,6 +128,7 @@ if TYPE_CHECKING:
     from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
+    from .system_commands import SystemCommands
     from .widget import MountError  # type: ignore  # noqa: F401
 
 WINDOWS = sys.platform == "win32"
@@ -177,7 +178,7 @@ def get_system_commands() -> type[SystemCommands]:
     Returns:
         System commands class.
     """
-    from ._system_commands import SystemCommands
+    from .system_commands import SystemCommands
 
     return SystemCommands
 
@@ -800,7 +801,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_inline
 
     @property
-    def screen_stack(self) -> Sequence[Screen[Any]]:
+    def screen_stack(self) -> list[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:
@@ -2303,16 +2304,16 @@ class App(Generic[ReturnType], DOMNode):
         if widget is None:
             if self.mouse_over is not None:
                 try:
-                    self.mouse_over.post_message(events.Leave())
+                    self.mouse_over.post_message(events.Leave(self.mouse_over))
                 finally:
                     self.mouse_over = None
         else:
             if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
-                        self.mouse_over.post_message(events.Leave())
+                        self.mouse_over.post_message(events.Leave(self.mouse_over))
                     if widget is not None:
-                        widget.post_message(events.Enter())
+                        widget.post_message(events.Enter(widget))
                 finally:
                     self.mouse_over = widget
 
@@ -3028,7 +3029,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             key: Key to simulate. May also be the name of a key, e.g. "space".
         """
-        self.call_later(self._check_bindings, key)
+        self.post_message(events.Key(key, None))
 
     async def _check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
@@ -3282,11 +3283,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_key(self, event: events.Key) -> None:
         if not (await self._check_bindings(event.key)):
-            await self.dispatch_key(event)
-
-    async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log.system("shutdown request")
-        await self._close_messages()
+            await dispatch_key(self, event)
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
@@ -3602,7 +3599,7 @@ class App(Generic[ReturnType], DOMNode):
     def action_command_palette(self) -> None:
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
-            self.push_screen(CommandPalette(), callback=self.call_next)
+            self.push_screen(CommandPalette())
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""
@@ -3682,3 +3679,13 @@ class App(Generic[ReturnType], DOMNode):
             # NOTE: There is no call to publish the resume signal here, this
             # will be handled by the driver posting a SignalResume event
             # (see the event handler on App._resume_signal) above.
+
+    def open_url(self, url: str, *, new_tab: bool = True) -> None:
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
+        """
+        if self._driver is not None:
+            self._driver.open_url(url, new_tab)

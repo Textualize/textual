@@ -493,7 +493,11 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     def _watch_expanded(self, expanded: bool) -> None:
         """Display or hide overlay."""
-        overlay = self.query_one(SelectOverlay)
+        try:
+            overlay = self.query_one(SelectOverlay)
+        except NoMatches:
+            # The widget has likely been removed
+            return
         self.set_class(expanded, "-expanded")
         if expanded:
             overlay.focus()

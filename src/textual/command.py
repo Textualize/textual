@@ -1,4 +1,5 @@
-"""The Textual command palette.
+"""
+This module contains classes for working with Textual's command palette.
 
 See the guide on the [Command Palette](../guide/command_palette.md) for full details.
 
@@ -38,7 +39,7 @@ from .message import Message
 from .reactive import var
 from .screen import Screen, SystemModalScreen
 from .timer import Timer
-from .types import CallbackType, IgnoreReturnCallbackType
+from .types import IgnoreReturnCallbackType
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
 from .widgets.option_list import Option
@@ -418,7 +419,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(SystemModalScreen[CallbackType]):
+class CommandPalette(SystemModalScreen):
     """The Textual command palette."""
 
     AUTO_FOCUS = "CommandInput"
@@ -1078,7 +1079,8 @@ class CommandPalette(SystemModalScreen[CallbackType]):
                 # decide what to do with it (hopefully it'll run it).
                 self._cancel_gather_commands()
                 self.app.post_message(CommandPalette.Closed(option_selected=True))
-                self.dismiss(self._selected_command.command)
+                self.dismiss()
+                self.call_later(self._selected_command.command)
 
     @on(OptionList.OptionHighlighted)
     def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:

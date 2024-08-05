@@ -336,13 +336,13 @@ class LinuxDriver(Driver):
             except termios.error:
                 pass
 
+        # Disable the Kitty keyboard protocol. This must be done before leaving
+        # the alt screen. https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.write("\x1b[<u")
         # Alt screen false, show cursor
         self.write("\x1b[?1049l")
         self.write("\x1b[?25h")
         self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
-        self.write(
-            "\x1b[<u"
-        )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.flush()
 
     def close(self) -> None:

@@ -34,6 +34,7 @@ from ._cells import cell_len
 from ._context import visible_screen_stack
 from ._loop import loop_last
 from .geometry import NULL_OFFSET, NULL_SPACING, Offset, Region, Size, Spacing
+from .map_geometry import MapGeometry
 from .strip import Strip, StripRenderable
 
 if TYPE_CHECKING:
@@ -50,35 +51,6 @@ class ReflowResult(NamedTuple):
     hidden: set[Widget]  # Widgets that are hidden
     shown: set[Widget]  # Widgets that are shown
     resized: set[Widget]  # Widgets that have been resized
-
-
-class MapGeometry(NamedTuple):
-    """Defines the absolute location of a Widget."""
-
-    region: Region
-    """The (screen) [region][textual.geometry.Region] occupied by the widget."""
-    order: tuple[tuple[int, int, int], ...]
-    """Tuple of tuples defining the painting order of the widget.
-
-    Each successive triple represents painting order information with regards to
-    ancestors in the DOM hierarchy and the last triple provides painting order
-    information for this specific widget.
-    """
-    clip: Region
-    """A [region][textual.geometry.Region] to clip the widget by (if a Widget is within a container)."""
-    virtual_size: Size
-    """The virtual [size][textual.geometry.Size] (scrollable area) of a widget if it is a container."""
-    container_size: Size
-    """The container [size][textual.geometry.Size] (area not occupied by scrollbars)."""
-    virtual_region: Region
-    """The [region][textual.geometry.Region] relative to the container (but not necessarily visible)."""
-    dock_gutter: Spacing
-    """Space from the container reserved by docked widgets."""
-
-    @property
-    def visible_region(self) -> Region:
-        """The Widget region after clipping."""
-        return self.clip.intersection(self.region)
 
 
 # Maps a widget on to its geometry (information that describes its position in the composition)
@@ -577,6 +549,8 @@ class Compositor:
 
         Args:
             root: Top level widget.
+            size: Size of visible area (screen).
+            visible_only: Only update visible widgets (used in scrolling).
 
         Returns:
             Compositor map and set of widgets.
@@ -587,6 +561,8 @@ class Compositor:
         map: CompositorMap = {}
         widgets: set[Widget] = set()
         add_new_widget = widgets.add
+        invisible_widgets: set[Widget] = set()
+        add_new_invisible_widget = invisible_widgets.add
         layer_order: int = 0
 
         no_clip = size.region
@@ -617,12 +593,14 @@ class Compositor:
             if not widget._is_mounted:
                 return
             styles = widget.styles
-            visibility = styles.get_rule("visibility")
-            if visibility is not None:
+
+            if (visibility := styles.get_rule("visibility")) is not None:
                 visible = visibility == "visible"
 
             if visible:
                 add_new_widget(widget)
+            else:
+                add_new_invisible_widget(widget)
             styles_offset = styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)
@@ -768,6 +746,7 @@ class Compositor:
             True,
             NULL_SPACING,
         )
+        widgets -= invisible_widgets
         return map, widgets
 
     @property
@@ -782,7 +761,14 @@ class Compositor:
 
     @property
     def layers_visible(self) -> list[list[tuple[Widget, Region, Region]]]:
-        """Visible widgets and regions in layers order."""
+        """Visible widgets and regions in layers order.
+
+        Returns:
+            Lists visible widgets per layer. Widgets are give as a tuple of
+            (WIDGET, CROPPED_REGION, REGION). CROPPED_REGION is clipped by
+            the container.
+
+        """
 
         if self._layers_visible is None:
             layers_visible: list[list[tuple[Widget, Region, Region]]]
@@ -801,7 +787,14 @@ class Compositor:
         return self._layers_visible
 
     def get_offset(self, widget: Widget) -> Offset:
-        """Get the offset of a widget."""
+        """Get the offset of a widget.
+
+        Args:
+            widget: Widget to query.
+
+        Returns:
+            Offset of widget.
+        """
         try:
             if self._visible_map is not None:
                 try:
@@ -981,7 +974,14 @@ class Compositor:
                 yield (
                     region,
                     clip,
-                    widget.render_lines(_Region(0, 0, region.width, region.height)),
+                    widget.render_lines(
+                        _Region(
+                            0,
+                            0,
+                            region.width,
+                            region.height,
+                        )
+                    ),
                 )
             else:
                 new_x, new_y, new_width, new_height = intersection(region, clip)

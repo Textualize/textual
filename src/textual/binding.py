@@ -1,6 +1,6 @@
 """
 
-A binding maps a key press on to an action.
+This module contains the `Binding` class and related objects.
 
 See [bindings](/guide/input#bindings) in the guide for details.
 """
@@ -53,7 +53,7 @@ class Binding:
 
 
 class ActiveBinding(NamedTuple):
-    """Information about an active binding (returned from [active_bindings][textual.screen.active_bindings])."""
+    """Information about an active binding (returned from [active_bindings][textual.screen.Screen.active_bindings])."""
 
     node: DOMNode
     """The node where the binding is defined."""

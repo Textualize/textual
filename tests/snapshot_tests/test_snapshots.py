@@ -1369,11 +1369,34 @@ def test_programmatic_disable_button(snap_compare):
         SNAPSHOT_APPS_DIR / "programmatic_disable_button.py", run_before=run_before
     )
 
+
 def test_toggle_style_order(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/3421"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "toggle_style_order.py")
+
 
 def test_component_text_opacity(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/3413"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "component_text_opacity.py")
 
+
+def test_progress_gradient(snap_compare):
+    """Test gradient parameter on ProgressBar"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "progress_gradient.py")
+
+
+def test_recompose_in_mount(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4799"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "recompose_on_mount.py")
+
+
+def test_enter_or_leave(snap_compare) -> None:
+    async def run_before(pilot: Pilot):
+        await pilot.hover("#foo")
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "enter_or_leave.py", run_before=run_before)
+
+
+def test_remove_tab_no_animation(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4814"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "remove_tab.py", press=["space"])

@@ -1,5 +1,5 @@
 """
-Constants that we might want to expose via the public API.
+This module contains constants, which may be set in environment variables.
 """
 
 from __future__ import annotations
@@ -111,7 +111,7 @@ MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
 """Maximum frames per second for updates."""
 
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
-"""Force color system override"""
+"""Force color system override."""
 
 TEXTUAL_ANIMATIONS: AnimationLevel = _get_textual_animations()
 """Determines whether animations run or not."""

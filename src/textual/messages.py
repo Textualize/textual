@@ -29,7 +29,9 @@ class ExitApp(Message, verbose=True):
 
 @rich.repr.auto
 class Update(Message, verbose=True):
-    def __init__(self, widget: Widget):
+    """Sent by Textual to request the update of a widget."""
+
+    def __init__(self, widget: Widget) -> None:
         super().__init__()
         self.widget = widget
 

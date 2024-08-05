@@ -99,7 +99,7 @@ class GenericProperty(Generic[PropertyGetType, PropertySetType]):
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> PropertyGetType:
-        return cast(PropertyGetType, obj.get_rule(self.name, self.default))
+        return obj.get_rule(self.name, self.default)  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, value: PropertySetType | None) -> None:
         _rich_traceback_omit = True
@@ -156,7 +156,7 @@ class ScalarProperty:
         Returns:
             The Scalar object or ``None`` if it's not set.
         """
-        return cast("Scalar | None", obj.get_rule(self.name))
+        return obj.get_rule(self.name)  # type: ignore[return-value]
 
     def __set__(
         self, obj: StylesBase, value: float | int | Scalar | str | None
@@ -236,7 +236,7 @@ class ScalarListProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[Scalar, ...] | None:
-        return cast("tuple[Scalar, ...]", obj.get_rule(self.name))
+        return obj.get_rule(self.name)  # type: ignore[return-value]
 
     def __set__(
         self, obj: StylesBase, value: str | Iterable[str | float] | None
@@ -292,10 +292,7 @@ class BoxProperty:
             A ``tuple[EdgeType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
-        return cast(
-            "tuple[EdgeType, Color]",
-            obj.get_rule(self.name) or ("", self._default_color),
-        )
+        return obj.get_rule(self.name) or ("", self._default_color)  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, border: tuple[EdgeType, str | Color] | None):
         """Set the box property.
@@ -506,10 +503,7 @@ class KeylineProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[CanvasLineType, Color]:
-        return cast(
-            "tuple[CanvasLineType, Color]",
-            obj.get_rule("keyline", ("none", Color.parse("transparent"))),
-        )
+        return obj.get_rule("keyline", ("none", TRANSPARENT))  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, keyline: tuple[str, Color] | None):
         if keyline is None:
@@ -538,7 +532,7 @@ class SpacingProperty:
         Returns:
             The Spacing. If unset, returns the null spacing ``(0, 0, 0, 0)``.
         """
-        return cast(Spacing, obj.get_rule(self.name, NULL_SPACING))
+        return obj.get_rule(self.name, NULL_SPACING)  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, spacing: SpacingDimensions | None):
         """Set the Spacing.
@@ -591,7 +585,7 @@ class DockProperty:
         Returns:
             The dock name as a string, or "" if the rule is not set.
         """
-        return cast(DockEdge, obj.get_rule("dock", ""))
+        return obj.get_rule("dock", "")  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, dock_name: str | None):
         """Set the Dock property.
@@ -621,7 +615,7 @@ class LayoutProperty:
         Returns:
             The ``Layout`` object.
         """
-        return cast("Layout | None", obj.get_rule(self.name))
+        return obj.get_rule(self.name)  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, layout: str | Layout | None):
         """
@@ -675,7 +669,7 @@ class OffsetProperty:
             The ``ScalarOffset`` indicating the adjustment that
                 will be made to widget position prior to it being rendered.
         """
-        return cast("ScalarOffset", obj.get_rule(self.name, NULL_SCALAR))
+        return obj.get_rule(self.name, NULL_SCALAR)  # type: ignore[return-value]
 
     def __set__(
         self, obj: StylesBase, offset: tuple[int | str, int | str] | ScalarOffset | None
@@ -832,7 +826,7 @@ class NameProperty:
         Returns:
             The name.
         """
-        return cast(str, obj.get_rule(self.name, ""))
+        return obj.get_rule(self.name, "")  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, name: str | None):
         """Set the name property.
@@ -862,7 +856,7 @@ class NameListProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[str, ...]:
-        return cast("tuple[str, ...]", obj.get_rule(self.name, ()))
+        return obj.get_rule(self.name, ())  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, names: str | tuple[str] | None = None):
         _rich_traceback_omit = True
@@ -900,7 +894,7 @@ class ColorProperty:
         Returns:
             The Color.
         """
-        return cast(Color, obj.get_rule(self.name, self._default_color))
+        return obj.get_rule(self.name, self._default_color)  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, color: Color | str | None) -> None:
         """Set the Color.
@@ -987,7 +981,7 @@ class StyleFlagsProperty:
         Returns:
             The ``Style`` object.
         """
-        return cast(Style, obj.get_rule(self.name, Style.null()))
+        return obj.get_rule(self.name, Style.null())  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, style_flags: Style | str | None) -> None:
         """Set the style using a style flag string.
@@ -1050,7 +1044,7 @@ class TransitionsProperty:
                 e.g. ``{"offset": Transition(...), ...}``. If no transitions have been set, an empty ``dict``
                 is returned.
         """
-        return cast("dict[str, Transition]", obj.get_rule("transitions", {}))
+        return obj.get_rule("transitions", {})  # type: ignore[return-value]
 
     def __set__(
         self, obj: StylesBase, transitions: dict[str, Transition] | None
@@ -1090,7 +1084,7 @@ class FractionalProperty:
         Returns:
             The value of the property (in the range (0, 1)).
         """
-        return cast(float, obj.get_rule(self.name, self.default))
+        return obj.get_rule(self.name, self.default)  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, value: float | str | None) -> None:
         """Set the property value, clamping it between 0 and 1.
@@ -1146,7 +1140,7 @@ class HatchProperty:
     """Property to expose hatch style."""
 
     def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
-        return cast("tuple[str, Color]", obj.get_rule("hatch", (" ", TRANSPARENT)))
+        return obj.get_rule("hatch", (" ", TRANSPARENT))  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, value: tuple[str, Color | str] | None) -> None:
         _rich_traceback_omit = True

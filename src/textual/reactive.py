@@ -1,6 +1,6 @@
 """
 
-The `Reactive` class implements [reactivity](/guide/reactivity/).
+This module contains the `Reactive` class which implements [reactivity](/guide/reactivity/).
 """
 
 from __future__ import annotations
@@ -40,6 +40,13 @@ if TYPE_CHECKING:
 
 ReactiveType = TypeVar("ReactiveType")
 ReactableType = TypeVar("ReactableType", bound="DOMNode")
+
+
+class _Mutated:
+    """A wrapper to indicate a value was mutated."""
+
+    def __init__(self, value: Any) -> None:
+        self.value = value
 
 
 class ReactiveError(Exception):
@@ -132,15 +139,18 @@ class Reactive(Generic[ReactiveType]):
         self._recompose = recompose
         self._bindings = bindings
         self._owner: Type[MessageTarget] | None = None
+        self.name: str
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._default
-        yield "layout", self._layout
-        yield "repaint", self._repaint
-        yield "init", self._init
-        yield "always_update", self._always_update
-        yield "compute", self._run_compute
-        yield "recompose", self._recompose
+        yield None, self._default
+        yield "layout", self._layout, False
+        yield "repaint", self._repaint, True
+        yield "init", self._init, False
+        yield "always_update", self._always_update, False
+        yield "compute", self._run_compute, True
+        yield "recompose", self._recompose, False
+        yield "bindings", self._bindings, False
+        yield "name", getattr(self, "name", None), None
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -269,6 +279,10 @@ class Reactive(Generic[ReactiveType]):
             raise ReactiveError(
                 f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before setting reactives."
             )
+
+        if isinstance(value, _Mutated):
+            value = value.value
+            always = True
 
         self._initialize_reactive(obj, self.name)
 

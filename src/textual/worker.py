@@ -1,5 +1,8 @@
 """
-A class to manage concurrent [work](/guide/workers).
+This module contains the `Worker` class and related objects.
+
+See the guide for how to use [workers](/guide/workers).
+
 """
 
 from __future__ import annotations

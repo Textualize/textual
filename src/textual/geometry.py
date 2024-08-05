@@ -33,8 +33,13 @@ T = TypeVar("T", int, float)
 
 
 def clamp(value: T, minimum: T, maximum: T) -> T:
-    """Adjust a value so it is not less than a minimum and not greater
-    than a maximum value.
+    """Restrict a value to a given range.
+
+    If `value` is less than the minimum, return the minimum.
+    If `value` is greater than the maximum, return the maximum.
+    Otherwise, return `value`.
+
+    The `minimum` and `maximum` arguments values may be given in reverse order.
 
     Args:
         value: A value.
@@ -45,12 +50,18 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
         New value that is not less than the minimum or greater than the maximum.
     """
     if minimum > maximum:
-        maximum, minimum = minimum, maximum
-    if value < minimum:
-        return minimum
-    elif value > maximum:
-        return maximum
+        # It is common for the min and max to be in non-intuitive order.
+        # Rather than force the caller to get it right, it is simpler to handle it here.
+        if value < maximum:
+            return maximum
+        if value > minimum:
+            return minimum
+        return value
     else:
+        if value < minimum:
+            return minimum
+        if value > maximum:
+            return maximum
         return value
 
 
@@ -222,7 +233,7 @@ class Size(NamedTuple):
         """Get a new Size with just the height changed.
 
         Args:
-            width: New height.
+            height: New height.
 
         Returns:
             New Size instance.
@@ -623,7 +634,7 @@ class Region(NamedTuple):
             size: Maximum width and height.
 
         Returns:
-            No region, not bigger than size.
+            New region.
         """
         x, y, width, height = self
         max_width, max_height = size
@@ -702,7 +713,7 @@ class Region(NamedTuple):
             offset: Offset to add to region.
 
         Returns:
-            A new region shifted by (x, y)
+            A new region shifted by (x, y).
         """
 
         self_x, self_y, width, height = self

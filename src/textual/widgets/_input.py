@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable, cast
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -23,7 +23,7 @@ from ..css._error_tools import friendly_list
 from ..events import Blur, Focus, Mount
 from ..geometry import Offset, Size
 from ..message import Message
-from ..reactive import reactive, var
+from ..reactive import Reactive, reactive, var
 from ..suggester import Suggester, SuggestionReady
 from ..timer import Timer
 from ..validation import ValidationResult, Validator
@@ -174,7 +174,7 @@ class Input(Widget, can_focus=True):
     cursor_blink = reactive(True, init=False)
     value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
-    cursor_position = reactive(0)
+    cursor_position: Reactive[int] = reactive(0)
     view_position = reactive(0)
     placeholder = reactive("")
     complete = reactive("")
@@ -300,8 +300,8 @@ class Input(Widget, can_focus=True):
         else:
             self.validators = list(validators)
 
-        self.validate_on = (
-            set(validate_on) & _POSSIBLE_VALIDATE_ON_VALUES
+        self.validate_on: set[str] = (
+            (_POSSIBLE_VALIDATE_ON_VALUES & cast("set[str]", validate_on))
             if validate_on is not None
             else _POSSIBLE_VALIDATE_ON_VALUES
         )
@@ -505,19 +505,19 @@ class Input(Widget, can_focus=True):
         """Toggle visibility of cursor."""
         self._cursor_visible = not self._cursor_visible
 
-    def _on_mount(self, _: Mount) -> None:
+    def _on_mount(self, event: Mount) -> None:
         self._blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor,
             pause=not (self.cursor_blink and self.has_focus),
         )
 
-    def _on_blur(self, _: Blur) -> None:
+    def _on_blur(self, event: Blur) -> None:
         self._pause_blink_cycle()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
-    def _on_focus(self, _: Focus) -> None:
+    def _on_focus(self, event: Focus) -> None:
         self._restart_blink_cycle()
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""

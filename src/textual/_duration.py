@@ -18,11 +18,11 @@ class DurationParseError(DurationError):
 def _duration_as_seconds(duration: str) -> float:
     """
     Args:
-        duration: A string of the form ``"2s"`` or ``"300ms"``, representing 2 seconds and
-            300 milliseconds respectively. If no unit is supplied, e.g. ``"2"``, then the duration is
+        duration: A string of the form `"2s"` or `"300ms"`, representing 2 seconds and
+            300 milliseconds respectively. If no unit is supplied, e.g. `"2"`, then the duration is
             assumed to be in seconds.
     Raises:
-        DurationParseError: If the argument ``duration`` is not a valid duration string.
+        DurationParseError: If the argument `duration` is not a valid duration string.
     Returns:
         The duration in seconds.
     """
@@ -39,8 +39,6 @@ def _duration_as_seconds(duration: str) -> float:
         try:
             duration_secs = float(duration)
         except ValueError:
-            raise DurationParseError(
-                f"{duration!r} is not a valid duration."
-            ) from ValueError
+            raise DurationParseError(f"{duration!r} is not a valid duration.") from None
 
     return duration_secs

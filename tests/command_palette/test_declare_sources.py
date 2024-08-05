@@ -1,7 +1,7 @@
-from textual._system_commands import SystemCommands
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
+from textual.system_commands import SystemCommands
 
 
 async def test_sources_with_no_known_screen() -> None:
