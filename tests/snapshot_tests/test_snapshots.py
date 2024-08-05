@@ -1400,3 +1400,8 @@ def test_enter_or_leave(snap_compare) -> None:
 def test_remove_tab_no_animation(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4814"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "remove_tab.py", press=["space"])
+
+
+def test_auto_height_scrollbar(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4778"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_auto_height.py")
