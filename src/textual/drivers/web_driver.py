@@ -20,7 +20,7 @@ from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
 from threading import Event, Thread
-from typing import Any, BinaryIO
+from typing import Any, BinaryIO, TextIO
 
 from .. import events, log, messages
 from .._xterm_parser import XTermParser
@@ -234,6 +234,27 @@ class WebDriver(Driver):
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
 
+    def save_text(
+        self,
+        text: TextIO,
+        *,
+        save_path: Path,
+        encoding: str | None = None,
+    ) -> None:
+        """Save the text file to the specified path.
+
+        Args:
+            text: The text file to save.
+            save_path: The location to save the file to.
+            encoding: The encoding of the text file.
+            open_method: *web only*
+        """
+
+        # Inform the parent process that we're saving a text file.
+        self.write_meta(
+            {"type": "save_file", "path": str(save_path), "encoding": encoding}
+        )
+
     def save_binary(
         self,
         binary: BinaryIO,
@@ -246,7 +267,7 @@ class WebDriver(Driver):
 
         Args:
             file_like: The file to save.
-            save_path: The location to save the file to. If None,
-                the default "downloads" directory will be used. This
-                argument is ignored when running via the web.
+            save_path: The location to save the file to. Only the file name is used,
+                since we're running in a web environment and cannot enforce a download location
+                on the user. The filename will be used to set the `Content-Disposition` header.
         """
