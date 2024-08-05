@@ -634,7 +634,7 @@ class Region(NamedTuple):
             size: Maximum width and height.
 
         Returns:
-            No region, not bigger than size.
+            New region.
         """
         x, y, width, height = self
         max_width, max_height = size
@@ -713,7 +713,7 @@ class Region(NamedTuple):
             offset: Offset to add to region.
 
         Returns:
-            A new region shifted by (x, y)
+            A new region shifted by (x, y).
         """
 
         self_x, self_y, width, height = self

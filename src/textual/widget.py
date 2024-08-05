@@ -3848,11 +3848,13 @@ class Widget(DOMNode):
             self.show_horizontal_scrollbar = True
 
     def _on_leave(self, event: events.Leave) -> None:
-        self.mouse_hover = False
-        self.hover_style = Style()
+        if event.node is self:
+            self.mouse_hover = False
+            self.hover_style = Style()
 
     def _on_enter(self, event: events.Enter) -> None:
-        self.mouse_hover = True
+        if event.node is self:
+            self.mouse_hover = True
 
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True

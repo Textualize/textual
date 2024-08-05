@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache, partial
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, Any, Callable, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.style import Style
@@ -204,7 +203,7 @@ class DockGroup(NamedTuple):
     z: int
 
 
-class StylesBase(ABC):
+class StylesBase:
     """A common base class for Styles and RenderStyles"""
 
     ANIMATABLE = {
@@ -458,7 +457,6 @@ class StylesBase(ABC):
         height = self.height
         return height is not None and height.unit == Unit.AUTO
 
-    @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.
 
@@ -468,8 +466,8 @@ class StylesBase(ABC):
         Returns:
             ``True`` if the rules is present, otherwise ``False``.
         """
+        raise NotImplementedError()
 
-    @abstractmethod
     def clear_rule(self, rule: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
 
@@ -479,16 +477,16 @@ class StylesBase(ABC):
         Returns:
             ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
         """
+        raise NotImplementedError()
 
-    @abstractmethod
     def get_rules(self) -> RulesMap:
         """Get the rules in a mapping.
 
         Returns:
             A TypedDict of the rules.
         """
+        raise NotImplementedError()
 
-    @abstractmethod
     def set_rule(self, rule: str, value: object | None) -> bool:
         """Set a rule.
 
@@ -499,8 +497,8 @@ class StylesBase(ABC):
         Returns:
             ``True`` if the rule changed, otherwise ``False``.
         """
+        raise NotImplementedError()
 
-    @abstractmethod
     def get_rule(self, rule: str, default: object = None) -> object:
         """Get an individual rule.
 
@@ -511,8 +509,8 @@ class StylesBase(ABC):
         Returns:
             Rule value or default.
         """
+        raise NotImplementedError()
 
-    @abstractmethod
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
     ) -> None:
@@ -524,11 +522,9 @@ class StylesBase(ABC):
             parent: Also refresh the parent.
         """
 
-    @abstractmethod
     def reset(self) -> None:
         """Reset the rules to initial state."""
 
-    @abstractmethod
     def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
 
@@ -536,7 +532,6 @@ class StylesBase(ABC):
             other: A Styles object.
         """
 
-    @abstractmethod
     def merge_rules(self, rules: RulesMap) -> None:
         """Merge rules in to Styles.
 
@@ -686,6 +681,10 @@ class Styles(StylesBase):
 
     important: set[str] = field(default_factory=set)
 
+    def __post_init__(self) -> None:
+        self.get_rule: Callable[[str, object], object] = self._rules.get  # type: ignore[assignment]
+        self.has_rule: Callable[[str], bool] = self._rules.__contains__  # type: ignore[assignment]
+
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
         return Styles(
@@ -693,10 +692,6 @@ class Styles(StylesBase):
             _rules=self.get_rules(),
             important=self.important,
         )
-
-    def has_rule(self, rule: str) -> bool:
-        assert rule in RULE_NAMES_SET, f"no such rule {rule!r}"
-        return rule in self._rules
 
     def clear_rule(self, rule: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
@@ -736,9 +731,6 @@ class Styles(StylesBase):
         if changed:
             self._updates += 1
         return changed
-
-    def get_rule(self, rule: str, default: object = None) -> object:
-        return self._rules.get(rule, default)
 
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
