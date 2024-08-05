@@ -50,6 +50,7 @@ UNIT_SYMBOL = {
 SYMBOL_UNIT = {v: k for k, v in UNIT_SYMBOL.items()}
 
 _MATCH_SCALAR = re.compile(r"^(-?\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
+_FRACTION_ONE = Fraction(1)
 
 
 def _resolve_cells(
@@ -284,7 +285,7 @@ class Scalar(NamedTuple):
             unit = percent_unit
         try:
             dimension = RESOLVE_MAP[unit](
-                value, size, viewport, fraction_unit or Fraction(1)
+                value, size, viewport, fraction_unit or _FRACTION_ONE
             )
         except KeyError:
             raise ScalarResolveError(f"expected dimensions; found {str(self)!r}")
