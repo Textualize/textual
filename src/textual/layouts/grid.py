@@ -253,7 +253,7 @@ class GridLayout(Layout):
             )
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))
-                .clip_size(cell_size)
+                .crop_size(cell_size)
                 .shrink(margin)
             )
             add_placement(
