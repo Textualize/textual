@@ -24,7 +24,6 @@ from contextlib import (
     redirect_stderr,
     redirect_stdout,
 )
-from datetime import datetime
 from functools import partial
 from pathlib import Path
 from time import perf_counter
@@ -78,6 +77,7 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._dispatch_key import dispatch_key
 from ._event_broker import NoHandler, extract_handler_actions
+from ._files import generate_datetime_filename
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
@@ -1271,14 +1271,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         path = path or "./"
         if not filename:
-            if time_format is None:
-                dt = datetime.now().isoformat()
-            else:
-                dt = datetime.now().strftime(time_format)
-            svg_filename_stem = f"{self.title.lower()} {dt}"
-            for reserved in ' <>:"/\\|?*.':
-                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
-            svg_filename = svg_filename_stem + ".svg"
+            svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -3698,16 +3691,17 @@ class App(Generic[ReturnType], DOMNode):
         self,
         path_or_file: str | Path | TextIO,
         *,
-        save_path: str | Path | None = None,
+        save_location: str | Path | None = None,
         encoding: str | None = None,
     ) -> None:
         """Save the text file `path_or_file` to `save_path`.
 
         Args:
             path_or_file: The path or file-like object to save.
-            save_path: The location to save the file to. If None,
-                the default "downloads" directory will be used. This
-                argument is ignored when running via the web.
+            save_location: The directory to save the file to. If path_or_file
+                is a file-like object, the filename will be generated from
+                the `name` attribute if available. If path_or_file is a path
+                the filename will be generated from the path.
             encoding: The encoding to use when saving the file. If `None`,
                 the encoding will be determined by supplied file-like object
                 (if possible). If this is not possible, the encoding of the
@@ -3716,22 +3710,33 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
 
-        # Find the appropriate save location if not specified.
-        if save_path is None:
-            save_path = user_downloads_path()
-        elif isinstance(save_path, str):
-            save_path = Path(save_path)
-
         # Get the TextIO file-like object.
         if isinstance(path_or_file, (str, Path)):
             requires_close = True
-            text_file = Path(path_or_file).open("r", encoding=encoding)
+            path = Path(path_or_file)
+            text_file = path.open("r", encoding=encoding)
+            file_name = path.name
         else:
             requires_close = False
             text_file = path_or_file
+            # Get the encoding and file_name from the file-like object if required.
+            encoding = encoding or getattr(text_file, "encoding", None)
+            file_name = getattr(text_file, "name", None)
+            # Some file-like objects don't have a name attribute, so generate a filename.
+            if not file_name:
+                file_name = generate_datetime_filename(self.title, "")
+
+        # Find the full path to write the file to.
+        save_directory = (
+            user_downloads_path() if save_location is None else Path(save_location)
+        )
 
         # Let the driver decide how to handle saving the file.
-        self._driver.save_text(text_file, save_path=save_path, encoding=encoding)
+        self._driver.save_text(
+            text_file,
+            save_path=save_directory / file_name,
+            encoding=encoding,
+        )
 
         # Close the file if we were the ones who opened it.
         # If the user opened the file, they won't expect us to close it,
@@ -3759,25 +3764,27 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
 
-        # Find the appropriate save location if not specified.
-        if save_path is None:
-            save_path = user_downloads_path()
-        elif isinstance(save_path, str):
-            save_path = Path(save_path)
-
         # Ensure `path_or_file` is a file-like object - convert if needed.
         if isinstance(path_or_file, (str, Path)):
             requires_close = True
             binary_path = Path(path_or_file)
             binary = binary_path.open("rb")
+            file_name = binary_path.name
         else:
             requires_close = False
             binary = path_or_file
+            file_name = getattr(binary, "name", None)
+            # Generate a filename if the file-like object doesn't have one.
+            if not file_name:
+                file_name = generate_datetime_filename(self.title, "")
+
+        # Find the appropriate save location if not specified.
+        save_directory = user_downloads_path() if save_path is None else Path(save_path)
 
         # Save the file. The driver will determine the appropriate action
         # to take here. It could mean simply writing to the save_path, or
         # sending the file to the web browser for download.
-        self._driver.save_binary(binary, save_path=save_path)
+        self._driver.save_binary(binary, save_path=save_directory / file_name)
 
         # Close the file if we opened it inside this method.
         if requires_close:

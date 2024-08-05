@@ -18,8 +18,9 @@ import signal
 import sys
 from codecs import getincrementaldecoder
 from functools import partial
+from pathlib import Path
 from threading import Event, Thread
-from typing import Any
+from typing import Any, BinaryIO
 
 from .. import events, log, messages
 from .._xterm_parser import XTermParser
@@ -232,3 +233,20 @@ class WebDriver(Driver):
             new_tab: Whether to open the URL in a new tab.
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
+
+    def save_binary(
+        self,
+        binary: BinaryIO,
+        save_path: Path,
+    ) -> None:
+        """Save the file `path_or_file` to `save_path`.
+
+        If running via web through Textual Web or Textual Serve,
+        this will initiate a download in the web browser.
+
+        Args:
+            file_like: The file to save.
+            save_path: The location to save the file to. If None,
+                the default "downloads" directory will be used. This
+                argument is ignored when running via the web.
+        """

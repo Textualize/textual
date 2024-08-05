@@ -213,7 +213,7 @@ class Driver(ABC):
 
         Args:
             path_or_file: The path or file-like object to save.
-            save_path: The location to save the file to.
+            save_path: The full path to save the file to.
             encoding: The text encoding to use when saving the file.
                 This will be passed to Python's `open()` built-in function.
         """
@@ -233,8 +233,8 @@ class Driver(ABC):
         Args:
             file_like: The file to save.
             save_path: The location to save the file to. If None,
-                the default "downloads" directory will be used. This
-                argument is ignored when running via the web.
+                the default "downloads" directory will be used. When
+                running via web, only the file name
         """
         with open(save_path, "wb") as destination_file:
             shutil.copyfileobj(binary, destination_file)
