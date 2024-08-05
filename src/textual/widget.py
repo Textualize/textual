@@ -1292,7 +1292,6 @@ class Widget(DOMNode):
                 styles.scrollbar_gutter == "stable" or self.show_horizontal_scrollbar
             ):
                 content_height += styles.scrollbar_size_horizontal
-
             if (
                 content_height < content_container.height
                 and self._has_relative_children_height
