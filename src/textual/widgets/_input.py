@@ -335,8 +335,11 @@ class Input(Widget, can_focus=True):
             elif self.type == "number":
                 self.validators.append(Number())
 
+        self._initial_value = True
+        """Indicates if the value has been set for the first time yet."""
         if value is not None:
             self.value = value
+
         if tooltip is not None:
             self.tooltip = tooltip
 
@@ -392,6 +395,7 @@ class Input(Widget, can_focus=True):
                 self._blink_timer.resume()
             else:
                 self._pause_blink_cycle()
+                self._cursor_visible = True
 
     @property
     def cursor_screen_offset(self) -> Offset:
@@ -410,6 +414,11 @@ class Input(Widget, can_focus=True):
             self.validate(value) if "changed" in self.validate_on else None
         )
         self.post_message(self.Changed(self, value, validation_result))
+
+        # If this is the first time the value has been updated, set the cursor position to the end
+        if self._initial_value:
+            self.cursor_position = len(self.value)
+            self._initial_value = False
 
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
@@ -733,6 +742,7 @@ class Input(Widget, can_focus=True):
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
+        print(self.cursor_position)
         if self.cursor_position <= 0:
             return
         if self.password:
@@ -749,7 +759,9 @@ class Input(Widget, can_focus=True):
                 self.cursor_position = 0
             else:
                 self.cursor_position = hit.start()
-            self.value = f"{self.value[: self.cursor_position]}{after}"
+            new_value = f"{self.value[: self.cursor_position]}{after}"
+            print(new_value)
+            self.value = new_value
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
