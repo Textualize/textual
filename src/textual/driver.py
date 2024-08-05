@@ -236,3 +236,5 @@ class Driver(ABC):
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
         """
+        with open(save_path, "wb") as destination_file:
+            shutil.copyfileobj(binary, destination_file)

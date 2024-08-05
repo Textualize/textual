@@ -3779,6 +3779,6 @@ class App(Generic[ReturnType], DOMNode):
         # sending the file to the web browser for download.
         self._driver.save_binary(binary, save_path=save_path)
 
-        # Close the file if we were the ones who opened it.
+        # Close the file if we opened it inside this method.
         if requires_close:
             binary.close()
