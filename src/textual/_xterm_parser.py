@@ -178,12 +178,16 @@ class XTermParser(Parser[events.Event]):
                 if not bracketed_paste:
                     peek_buffer = yield self.peek_buffer()
                     if peek_buffer:
+                        # Some characters already feed in to the parse
                         if peek_buffer[0] == ESC:
+                            # Next character is an escape, which means the previous escape
+                            # was a escape key (not introducing a sequence)
                             on_token(events.Key("escape", "\x1b"))
                             yield read1()
                     else:
                         if not more_data():
-                            self.debug_log("NO MORE DATA")
+                            # There is no input after ESCDELAY
+                            # The escape was (probably) a key
                             on_token(events.Key("escape", "\x1b"))
                             continue
 
