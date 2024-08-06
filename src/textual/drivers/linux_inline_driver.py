@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import events
+from .. import constants, events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -127,7 +127,7 @@ class LinuxInlineDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.1):
+            for _key, events in selector.select(constants.ESCAPE_DELAY):
                 if events & EVENT_READ:
                     return True
             return False

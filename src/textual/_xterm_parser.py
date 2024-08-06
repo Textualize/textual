@@ -136,6 +136,12 @@ class XTermParser(Parser[events.Event]):
                 on_token(event)
 
         def reissue_sequence_as_keys(reissue_sequence: str) -> None:
+            """Called when an escape sequence hasn't been understood.
+
+            Args:
+                reissue_sequence: Key sequence to report to the app.
+            """
+            self.debug_log("REISSUE", repr(reissue_sequence))
             if self._reissued_sequence_debug_book is not None:
                 self._reissued_sequence_debug_book(reissue_sequence)
                 return
@@ -170,28 +176,15 @@ class XTermParser(Parser[events.Event]):
                 # Could be the escape key was pressed OR the start of an escape sequence
                 sequence: str = character
                 if not bracketed_paste:
-                    # TODO: There's nothing left in the buffer at the moment,
-                    #  but since we're on an escape, how can we be sure that the
-                    #  data that next gets fed to the parser isn't an escape sequence?
-
-                    #  This problem arises when an ESC falls at the end of a chunk.
-                    #  We'll be at an escape, but peek_buffer will return an empty
-                    #  string because there's nothing in the buffer yet.
-
-                    #  This code makes an assumption that an escape sequence will never be
-                    #  "chopped up", so buffers would never contain partial escape sequences.
                     peek_buffer = yield self.peek_buffer()
-                    if not peek_buffer:
-                        # An escape arrived without any following characters
-                        on_token(events.Key("escape", "\x1b"))
-                        continue
-                    if peek_buffer and peek_buffer[0] == ESC:
-                        # There is an escape in the buffer, so ESC ESC has arrived
-                        yield read1()
-                        on_token(events.Key("escape", "\x1b"))
-                        # If there is no further data, it is not part of a sequence,
-                        # So we don't need to go in to the loop
-                        if len(peek_buffer) == 1 and not more_data():
+                    if peek_buffer:
+                        if peek_buffer[0] == ESC:
+                            on_token(events.Key("escape", "\x1b"))
+                            yield read1()
+                    else:
+                        if not more_data():
+                            self.debug_log("NO MORE DATA")
+                            on_token(events.Key("escape", "\x1b"))
                             continue
 
                 # Look ahead through the suspected escape sequence for a match
@@ -200,18 +193,20 @@ class XTermParser(Parser[events.Event]):
                     # to find a match, and should issue everything we've seen within
                     # the suspected sequence as Key events instead.
                     sequence_character = yield read1()
+
+                    if sequence_character == ESC and len(sequence) == 1:
+                        on_token(events.Key("escape", "\x1b"))
+                        continue
+
                     new_sequence = sequence + sequence_character
 
-                    threshold_exceeded = len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
-                    found_escape = sequence_character and sequence_character == ESC
-
-                    if threshold_exceeded:
+                    if len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD:
                         # We exceeded the sequence length threshold, so reissue all the
                         # characters in that sequence as key-presses.
                         reissue_sequence_as_keys(new_sequence)
                         break
 
-                    if found_escape:
+                    if sequence_character == ESC:
                         # We've hit an escape, so we need to reissue all the keys
                         # up to but not including it, since this escape could be
                         # part of an upcoming control sequence.
@@ -220,7 +215,6 @@ class XTermParser(Parser[events.Event]):
                         break
 
                     sequence = new_sequence
-
                     self.debug_log(f"sequence={sequence!r}")
 
                     if sequence == FOCUSIN:

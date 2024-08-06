@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import events
+from .. import constants, events
 from .._loop import loop_last
 from .._parser import ParseError
 from .._xterm_parser import XTermParser
@@ -376,7 +376,7 @@ class LinuxDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, selector_events in selector.select(0.1):
+            for _key, selector_events in selector.select(constants.ESCAPE_DELAY):
                 if selector_events & EVENT_READ:
                     return True
             return False

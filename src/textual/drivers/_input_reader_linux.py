@@ -4,6 +4,8 @@ import sys
 from threading import Event
 from typing import Iterator
 
+from .. import constants
+
 
 class InputReader:
     """Read input from stdin."""
@@ -23,7 +25,7 @@ class InputReader:
     def more_data(self) -> bool:
         """Check if there is data pending."""
         EVENT_READ = selectors.EVENT_READ
-        for _key, events in self._selector.select(0.01):
+        for _key, events in self._selector.select(constants.ESCAPE_DELAY):
             if events & EVENT_READ:
                 return True
         return False
