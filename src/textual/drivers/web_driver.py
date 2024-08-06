@@ -16,11 +16,14 @@ import json
 import os
 import signal
 import sys
+import uuid
 from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
-from threading import Event, Thread
-from typing import Any, BinaryIO, Literal, TextIO
+from threading import Event, Lock, Thread
+from typing import Any, BinaryIO, Literal, TextIO, cast
+
+import msgpack
 
 from .. import events, log, messages
 from .._xterm_parser import XTermParser
@@ -64,6 +67,11 @@ class WebDriver(Driver):
         self._key_thread: Thread = Thread(target=self.run_input_thread)
         self._input_reader = InputReader()
 
+        self._deliveries_lock = Lock()
+        self._deliveries: dict[str, BinaryIO] = {}
+        """Maps delivery keys to file-like objects, used
+        for delivering files to the browser."""
+
     def write(self, data: str) -> None:
         """Write string data to the output device, which may be piped to
         the controlling process (i.e. textual-web).
@@ -84,6 +92,15 @@ class WebDriver(Driver):
         """
         meta_bytes = json.dumps(data).encode("utf-8", errors="ignore")
         self._write(b"M%s%s" % (len(meta_bytes).to_bytes(4, "big"), meta_bytes))
+
+    def write_packed(self, data: tuple[str | bytes, ...]) -> None:
+        """Pack a msgpack compatible data-structure and write to stdout.
+
+        Args:
+            data: The dictionary to pack and write.
+        """
+        packed_bytes = msgpack.packb(data)
+        self._write(b"P%s" % packed_bytes)
 
     def flush(self) -> None:
         pass
@@ -214,8 +231,8 @@ class WebDriver(Driver):
         """
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
-            size = Size(*self._size)
-            self._app.post_message(events.Resize(size, size))
+            requested_size = Size(*self._size)
+            self._app.post_message(events.Resize(requested_size, requested_size))
         elif packet_type == "focus":
             self._app.post_message(events.AppFocus())
         elif packet_type == "blur":
@@ -224,6 +241,34 @@ class WebDriver(Driver):
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":
             raise _ExitInput()
+        elif packet_type == "deliver_chunk_request":
+            # A request from the server to deliver another chunk of a file
+            try:
+                delivery_key = cast(str, payload["key"])
+                requested_size = cast(int, payload["size"])
+            except KeyError:
+                log.error("Protocol error: deliver_chunk_request missing key or size")
+                return
+
+            try:
+                with self._deliveries_lock:
+                    binary_io = self._deliveries[delivery_key]
+            except KeyError:
+                log.error(f"Protocol error: deliver_chunk_request invalid key {key!r}")
+            else:
+                # Read the requested number of bytes from the file
+                # No need to lock here since each delivery is handled in
+                # its own thread, so no risk of two threads reading from the
+                # same object at once.
+                chunk = binary_io.read(requested_size)
+                if chunk:
+                    self.write_packed(("deliver_chunk", delivery_key, chunk))
+                else:
+                    # Delivery complete - inform the server and clean up
+                    self.write_packed(("deliver_file_end", delivery_key))
+                    binary_io.close()
+                    with self._deliveries_lock:
+                        del self._deliveries[delivery_key]
 
     def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.
@@ -293,16 +338,16 @@ class WebDriver(Driver):
     ) -> None:
         """Deliver a binary file to the end-user of the application."""
         binary.seek(0)
+
+        # Generate a unique key for this delivery
+        key = str(uuid.uuid4().hex)
+
+        # Inform the server that we're starting a new file delivery
         self.write_meta(
             {
                 "type": "deliver_file_start",
+                "key": key,
                 "path": str(path.resolve()),
                 "open_method": open_method,
-            }
-        )
-
-        self.write_meta(
-            {
-                "type": "deliver_file_end",
             }
         )
