@@ -5,7 +5,7 @@ import shutil
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, TextIO
+from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal, TextIO
 
 from . import events
 from .events import MouseUp
@@ -199,11 +199,12 @@ class Driver(ABC):
 
         webbrowser.open(url)
 
-    def save_text(
+    def deliver_text(
         self,
         text: TextIO,
         *,
         save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
     ) -> None:
         """Save the text file `path_or_file` to `save_path`.
@@ -214,16 +215,21 @@ class Driver(ABC):
         Args:
             path_or_file: The path or file-like object to save.
             save_path: The full path to save the file to.
+            open_method: *web only* Whether to open the file in the browser or to
+                prompt the user to download it. When running via a standard (non-web)
+                terminal, this is ignored.
             encoding: The text encoding to use when saving the file.
                 This will be passed to Python's `open()` built-in function.
         """
         with open(save_path, "w", encoding=encoding) as destination_file:
             shutil.copyfileobj(text, destination_file)
 
-    def save_binary(
+    def deliver_binary(
         self,
         binary: BinaryIO,
+        *,
         save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
     ) -> None:
         """Save the file `path_or_file` to `save_path`.
 
@@ -234,7 +240,10 @@ class Driver(ABC):
             file_like: The file to save.
             save_path: The location to save the file to. If None,
                 the default "downloads" directory will be used. When
-                running via web, only the file name
+                running via web, only the file name will be used.
+            open_method: *web only* Whether to open the file in the browser or
+                to prompt the user to download it. When running via a standard
+                (non-web) terminal, this is ignored.
         """
         with open(save_path, "wb") as destination_file:
             shutil.copyfileobj(binary, destination_file)

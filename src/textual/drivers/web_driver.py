@@ -20,7 +20,7 @@ from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
 from threading import Event, Thread
-from typing import Any, BinaryIO, TextIO
+from typing import Any, BinaryIO, Literal, TextIO
 
 from .. import events, log, messages
 from .._xterm_parser import XTermParser
@@ -234,40 +234,75 @@ class WebDriver(Driver):
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
 
-    def save_text(
+    def deliver_text(
         self,
         text: TextIO,
         *,
         save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
     ) -> None:
-        """Save the text file to the specified path.
+        """Deliver a text file to the end-user of the application.
+
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via web through Textual Web or Textual Serve,
+        this will initiate a download in the web browser.
 
         Args:
             text: The text file to save.
             save_path: The location to save the file to.
+            open_method: *web only* Choose whether the file should
+               be opened in the browser or whether the user should
+               be prompted to download the file.
             encoding: The encoding of the text file.
-            open_method: *web only*
         """
+        self._deliver_file(text.buffer, save_path, open_method)
 
-        # Inform the parent process that we're saving a text file.
-        self.write_meta(
-            {"type": "save_file", "path": str(save_path), "encoding": encoding}
-        )
-
-    def save_binary(
+    def deliver_binary(
         self,
         binary: BinaryIO,
+        *,
         save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
     ) -> None:
-        """Save the file `path_or_file` to `save_path`.
+        """Deliver a binary file to the end-user of the application.
 
-        If running via web through Textual Web or Textual Serve,
-        this will initiate a download in the web browser.
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download.
+
+        This is a blocking operation.
 
         Args:
             file_like: The file to save.
             save_path: The location to save the file to. Only the file name is used,
                 since we're running in a web environment and cannot enforce a download location
                 on the user. The filename will be used to set the `Content-Disposition` header.
+            open_method: Whether to open the file in the browser or to prompt the user to download it.
         """
+        self._deliver_file(binary, save_path, open_method)
+
+    def _deliver_file(
+        self,
+        binary: BinaryIO,
+        path: Path,
+        open_method: Literal["browser", "download"] = "download",
+    ) -> None:
+        """Deliver a binary file to the end-user of the application."""
+        binary.seek(0)
+        self.write_meta(
+            {
+                "type": "deliver_file_start",
+                "path": str(path.resolve()),
+                "open_method": open_method,
+            }
+        )
+
+        self.write_meta(
+            {
+                "type": "deliver_file_end",
+            }
+        )

@@ -66,6 +66,7 @@ from . import (
     log,
     messages,
     on,
+    work,
 )
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -3687,14 +3688,22 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
 
-    def save_text(
+    @work(thread=True)
+    def deliver_text(
         self,
         path_or_file: str | Path | TextIO,
         *,
         save_location: str | Path | None = None,
         encoding: str | None = None,
     ) -> None:
-        """Save the text file `path_or_file` to `save_path`.
+        """Deliver a text file to the end-user of the application.
+
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download.
+
+        This is a blocking operation.
 
         Args:
             path_or_file: The path or file-like object to save.
@@ -3732,7 +3741,7 @@ class App(Generic[ReturnType], DOMNode):
         )
 
         # Let the driver decide how to handle saving the file.
-        self._driver.save_text(
+        self._driver.deliver_text(
             text_file,
             save_path=save_directory / file_name,
             encoding=encoding,
@@ -3744,16 +3753,21 @@ class App(Generic[ReturnType], DOMNode):
         if requires_close:
             text_file.close()
 
-    def save_binary(
+    @work(thread=True)
+    def deliver_binary(
         self,
         path_or_file: str | Path | BinaryIO,
         *,
         save_path: str | Path | None = None,
     ) -> None:
-        """Save the file `path_or_file` to `save_path`.
+        """Deliver a binary file to the end-user of the application.
 
-        If running via web through Textual Web or Textual Serve,
-        this will initiate a download in the web browser.
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download.
+
+        This is a blocking operation.
 
         Args:
             path_or_file: The path or file-like object to save.
@@ -3784,7 +3798,7 @@ class App(Generic[ReturnType], DOMNode):
         # Save the file. The driver will determine the appropriate action
         # to take here. It could mean simply writing to the save_path, or
         # sending the file to the web browser for download.
-        self._driver.save_binary(binary, save_path=save_directory / file_name)
+        self._driver.deliver_binary(binary, save_path=save_directory / file_name)
 
         # Close the file if we opened it inside this method.
         if requires_close:
