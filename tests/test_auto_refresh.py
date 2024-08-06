@@ -14,11 +14,11 @@ class RefreshApp(App[float]):
         self.start = time()
         self.auto_refresh = 0.1
 
-    def _automatic_refresh(self):
+    def automatic_refresh(self):
         self.count += 1
         if self.count == 3:
             self.exit(time() - self.start)
-        super()._automatic_refresh()
+        super().automatic_refresh()
 
 
 def test_auto_refresh():
