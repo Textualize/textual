@@ -414,7 +414,7 @@ class DOMNode(MessagePump):
             self._auto_refresh_timer = None
         if interval is not None:
             self._auto_refresh_timer = self.set_interval(
-                interval, self._automatic_refresh, name=f"auto refresh {self!r}"
+                interval, self.automatic_refresh, name=f"auto refresh {self!r}"
             )
         self._auto_refresh = interval
 
@@ -476,9 +476,16 @@ class DOMNode(MessagePump):
         """Is the node a modal?"""
         return False
 
-    def _automatic_refresh(self) -> None:
-        """Perform an automatic refresh (set with auto_refresh property)."""
-        self.refresh()
+    def automatic_refresh(self) -> None:
+        """Perform an automatic refresh.
+
+        This method is called when you set the `auto_refresh` attribute.
+        You could implement this method if you want to perform additional work
+        during an automatic refresh.
+
+        """
+        if self.display and self.visible:
+            self.refresh()
 
     def __init_subclass__(
         cls,
