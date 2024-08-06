@@ -294,15 +294,14 @@ class WebDriver(Driver):
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
 
-    def deliver_text(
+    def deliver_file(
         self,
-        text: TextIO,
+        file_like: TextIO | BinaryIO,
         *,
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
-        encoding: str | None = None,
     ) -> None:
-        """Deliver a text file to the end-user of the application.
+        """Deliver a file to the end-user of the application.
 
         If running in a terminal, this will save the file to the user's
         downloads directory.
@@ -311,47 +310,23 @@ class WebDriver(Driver):
         this will initiate a download in the web browser.
 
         Args:
-            text: The text file to save.
+            file_like: The file to deliver.
             save_path: The location to save the file to.
             open_method: *web only* Choose whether the file should
                be opened in the browser or whether the user should
                be prompted to download the file.
-            encoding: The encoding of the text file.
         """
-        self._deliver_file(text.buffer, save_path, open_method)
-
-    def deliver_binary(
-        self,
-        binary: BinaryIO,
-        *,
-        save_path: Path,
-        open_method: Literal["browser", "download"] = "download",
-    ) -> None:
-        """Deliver a binary file to the end-user of the application.
-
-        If running in a terminal, this will save the file to the user's
-        downloads directory.
-
-        If running via a web browser, this will initiate a download.
-
-        This is a blocking operation.
-
-        Args:
-            file_like: The file to save.
-            save_path: The location to save the file to. Only the file name is used,
-                since we're running in a web environment and cannot enforce a download location
-                on the user. The filename will be used to set the `Content-Disposition` header.
-            open_method: Whether to open the file in the browser or to prompt the user to download it.
-        """
-        self._deliver_file(binary, save_path, open_method)
+        binary_io = file_like.buffer if isinstance(file_like, TextIO) else file_like
+        self._deliver_file(binary_io, path=save_path, open_method=open_method)
 
     def _deliver_file(
         self,
         binary: BinaryIO,
+        *,
         path: Path,
-        open_method: Literal["browser", "download"] = "download",
+        open_method: Literal["browser", "download"],
     ) -> None:
-        """Deliver a binary file to the end-user of the application."""
+        """Deliver a file to the end-user of the application."""
         binary.seek(0)
 
         # Generate a unique key for this delivery
