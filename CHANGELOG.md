@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Textual will use the `ESCDELAY` env var when detecting escape keys
+- Textual will use the `ESCDELAY` env var when detecting escape keys https://github.com/Textualize/textual/pull/4848
 
 ## [0.75.1] - 2024-08-02
 
