@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
 - Removed `Size.cip_size`, which was a clone of `crop_size`
 - Widgets with auto dimensions will now grow if there is a scrollbar https://github.com/Textualize/textual/pull/4844
+- Don't do automatic refresh when widget is not visible https://github.com/Textualize/textual/pull/4847
+- Renamed `DOMNode._automatic_refresh` to `DOMNode.automatic_refresh` to allow for customization https://github.com/Textualize/textual/pull/4847
 
 ### Fixed
 
