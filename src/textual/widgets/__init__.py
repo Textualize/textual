@@ -27,6 +27,7 @@ if typing.TYPE_CHECKING:
     from ._loading_indicator import LoadingIndicator
     from ._log import Log
     from ._markdown import Markdown, MarkdownViewer
+    from ._month_calendar import MonthCalendar
     from ._option_list import OptionList
     from ._placeholder import Placeholder
     from ._pretty import Pretty
@@ -66,6 +67,7 @@ __all__ = [
     "Log",
     "Markdown",
     "MarkdownViewer",
+    "MonthCalendar",
     "OptionList",
     "Placeholder",
     "Pretty",
