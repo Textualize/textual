@@ -7735,28 +7735,33 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <p>Selectors can target a kind of widget or a very specific widget. For instance, you could have a selector that modifies all buttons, or you could target an individual button used in one dialog. This gives you a lot of flexibility in customizing your user interface.</p>
 <p>Let's look at the selectors supported by Textual CSS.</p>
 <h3 id="type-selector">Type selector<a class="headerlink" href="#type-selector" title="Permanent link">&para;</a></h3>
-<p>The <em>type</em> selector matches the name of the (Python) class. For example, the following widget can be matched with a <code>Button</code> selector:</p>
+<p>The <em>type</em> selector matches the name of the (Python) class.
+Consider the following widget class:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">class</span> <span class="nc">Button</span><span class="p">(</span><span class="n">Static</span><span class="p">):</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">class</span> <span class="nc">Alert</span><span class="p">(</span><span class="n">Static</span><span class="p">):</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="k">pass</span>
 </code></pre></div>
-<p>The following rule applies a border to this widget:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
+<p>Alert widgets may be styled with the following CSS (to give them a red border):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Alert</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="kc">red</span><span class="p">;</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="p">}</span>
 </code></pre></div>
-<p>The type selector will also match a widget's base classes. Consequently, a <code>Static</code> selector will also style the button because the <code>Button</code> Python class extends <code>Static</code>.</p>
+<p>The type selector will also match a widget's base classes.
+Consequently, a <code>Static</code> selector will also style the button because the <code>Alert</code> (Python) class extends <code>Static</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">Static</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">rounded</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">rounded</span><span class="w"> </span><span class="kc">green</span><span class="p">;</span>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">}</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The fact that the type selector matches base classes is a departure from browser CSS which doesn't have the same concept.</p>
 </div>
-<p>You may have noticed that the <code>border</code> rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "rounded white".</p>
+<p>You may have noticed that the <code>border</code> rule exists in both <code>Static</code> and <code>Alert</code>.
+When this happens, Textual will use the most recently defined sub-class.
+So <code>Alert</code> wins over <code>Static</code>, and <code>Static</code> wins over <code>Widget</code> (the base class of all widgets).
+Hence if both rules were in a stylesheet, <code>Alert</code> widgets would have a "solid red" border and not a "rounded green" border.</p>
 <h3 id="id-selector">ID selector<a class="headerlink" href="#id-selector" title="Permanent link">&para;</a></h3>
 <p>Every Widget can have a single <code>id</code> attribute, which is set via the constructor. The ID should be unique to its container.</p>
 <p>Here's an example of a widget with an ID:</p>
@@ -8484,7 +8489,7 @@ If we were to add other selectors for additional screens or widgets, it would be
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 30, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">August 6, 2024</span>
   </span>
 
     
