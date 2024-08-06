@@ -250,25 +250,40 @@ class WebDriver(Driver):
                 log.error("Protocol error: deliver_chunk_request missing key or size")
                 return
 
+            deliveries = self._deliveries
+            deliveries_lock = self._deliveries_lock
+
+            binary_io: BinaryIO | None = None
             try:
-                with self._deliveries_lock:
-                    binary_io = self._deliveries[delivery_key]
+                with deliveries_lock:
+                    binary_io = deliveries[delivery_key]
             except KeyError:
-                log.error(f"Protocol error: deliver_chunk_request invalid key {key!r}")
+                log.error(
+                    f"Protocol error: deliver_chunk_request invalid key {delivery_key!r}"
+                )
             else:
                 # Read the requested number of bytes from the file
                 # No need to lock here since each delivery is handled in
                 # its own thread, so no risk of two threads reading from the
                 # same object at once.
-                chunk = binary_io.read(requested_size)
-                if chunk:
-                    self.write_packed(("deliver_chunk", delivery_key, chunk))
-                else:
-                    # Delivery complete - inform the server and clean up
-                    self.write_packed(("deliver_file_end", delivery_key))
+                try:
+                    chunk = binary_io.read(requested_size)
+                    if chunk:
+                        self.write_packed(("deliver_chunk", delivery_key, chunk))
+                    else:
+                        # Delivery complete - inform the server and clean up
+                        self.write_packed(("deliver_file_end", delivery_key))
+                        binary_io.close()
+                        with deliveries_lock:
+                            del deliveries[delivery_key]
+                except Exception:
+                    log.error(
+                        f"Error delivering file chunk for key {delivery_key!r}. "
+                        "Cancelling delivery."
+                    )
                     binary_io.close()
-                    with self._deliveries_lock:
-                        del self._deliveries[delivery_key]
+                    with deliveries_lock:
+                        del deliveries[delivery_key]
 
     def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.
