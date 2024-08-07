@@ -104,32 +104,3 @@ class Parser(Generic[T]):
         self, on_token: Callable[[T], None]
     ) -> Generator[Read1 | Peek1, str, None]:
         yield from ()
-
-
-if __name__ == "__main__":
-    data = "Where there is a Will there is a way!"
-
-    class TestParser(Parser[str]):
-        def parse(
-            self, on_token: Callable[[str], None]
-        ) -> Generator[Read1 | Peek1, str, None]:
-            while True:
-                try:
-                    data = yield self.read1(0.1)
-                except ParseTimeout:
-                    print("TIMEOUT")
-                    continue
-                if not data:
-                    break
-                on_token(data)
-
-    test_parser = TestParser()
-    from time import sleep
-
-    for n in range(0, len(data), 5):
-        test_parser.tick()
-        for token in test_parser.feed(data[n : n + 5]):
-            print(token)
-        sleep(0.1)
-    for token in test_parser.feed(""):
-        print(token)
