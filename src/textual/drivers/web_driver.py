@@ -100,7 +100,7 @@ class WebDriver(Driver):
             data: The dictionary to pack and write.
         """
         packed_bytes = msgpack.packb(data)
-        self._write(b"P%s" % packed_bytes)
+        self._write(b"P%s%s" % (len(packed_bytes).to_bytes(4, "big"), packed_bytes))
 
     def flush(self) -> None:
         pass
