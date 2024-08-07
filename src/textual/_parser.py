@@ -7,7 +7,7 @@ from ._time import get_time
 
 
 class ParseError(Exception):
-    pass
+    """Base class for parse related errors."""
 
 
 class ParseEOF(ParseError):
@@ -19,20 +19,26 @@ class ParseTimeout(ParseError):
 
 
 class Read1(NamedTuple):
+    """Reads a single character."""
+
     timeout: float | None = None
+    """Optional timeout in seconds."""
 
 
 class Peek1(NamedTuple):
+    """Reads a single character, but does not advance the parser position."""
+
     timeout: float | None = None
+    """Optional timeout in seconds."""
 
 
 T = TypeVar("T")
-
-
 TokenCallback = Callable[[T], None]
 
 
 class Parser(Generic[T]):
+    """Base class for a simple parser."""
+
     read1 = Read1
     peek1 = Peek1
 
@@ -45,12 +51,8 @@ class Parser(Generic[T]):
 
     @property
     def is_eof(self) -> bool:
+        """Is the parser at the end of the fine (i.e. exhausted)?"""
         return self._eof
-
-    def reset(self) -> None:
-        self._gen = self.parse(self._tokens.append)
-        self._awaiting = next(self._gen)
-        self._timeout_time = None
 
     def tick(self) -> Iterable[T]:
         """Call at regular intervals to check for timeouts."""
@@ -61,6 +63,17 @@ class Parser(Generic[T]):
                 yield self._tokens.popleft()
 
     def feed(self, data: str) -> Iterable[T]:
+        """Feed data to be parsed.
+
+        Args:
+            data: Data to parser.
+
+        Raises:
+            ParseError: If the data could not be parsed.
+
+        Yields:
+            T: A generic data type.
+        """
         if self._eof:
             raise ParseError("end of file reached") from None
 
@@ -78,7 +91,6 @@ class Parser(Generic[T]):
             return
 
         pos = 0
-
         data_size = len(data)
 
         while tokens:
@@ -103,4 +115,12 @@ class Parser(Generic[T]):
     def parse(
         self, on_token: Callable[[T], None]
     ) -> Generator[Read1 | Peek1, str, None]:
+        """Implement to parse a stream of text.
+
+        Args:
+            on_token: Callable to report a successful parsed data type.
+
+        Yields:
+            ParseAwaitable: One of `self.read1` or `self.peek1`
+        """
         yield from ()
