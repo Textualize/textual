@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid.  https://github.com/Textualize/textual/pull/4784
+
 ### Changed
 
+- Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int.  https://github.com/Textualize/textual/pull/4784
 - Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
 - Removed `Size.cip_size`, which was a clone of `crop_size`
 - Widgets with auto dimensions will now grow if there is a scrollbar https://github.com/Textualize/textual/pull/4844
@@ -17,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
 - Input cursor blink effect will now restart correctly when any action is performed on the input https://github.com/Textualize/textual/pull/4773
 
 ## [0.75.1] - 2024-08-02
