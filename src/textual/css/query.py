@@ -279,21 +279,9 @@ class DOMQuery(Generic[QueryType]):
         the_one: ExpectType | QueryType = (
             self.first(expect_type) if expect_type is not None else self.first()
         )
-        try:
-            # Now see if we can access a subsequent item in the nodes. There
-            # should *not* be anything there, so we *should* get an
-            # IndexError. We *could* have just checked the length of the
-            # query, but the idea here is to do the check as cheaply as
-            # possible. "There can be only one!" -- Kurgan et al.
-            _ = self.nodes[1]
-            raise TooManyMatches(
-                "Call to only_one resulted in more than one matched node"
-            )
-        except IndexError:
-            # The IndexError was got, that's a good thing in this case. So
-            # we return what we found.
-            pass
-        return the_one
+        if len(self.nodes) == 1:
+            return the_one
+        raise TooManyMatches("Call to only_one resulted in more than one matched node")
 
     if TYPE_CHECKING:
 
