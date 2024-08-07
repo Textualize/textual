@@ -11,6 +11,7 @@ from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from ._keyboard_protocol import FUNCTIONAL_KEYS
 from ._parser import Parser, ParseTimeout, Peek1, Read1, TokenCallback
 from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
+from .message import Message
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
@@ -42,7 +43,7 @@ _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQR
 WINDOWS = sys.platform == "win32"
 
 
-class XTermParser(Parser[events.Event]):
+class XTermParser(Parser[Message]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
     def __init__(self, debug: bool = False, windows: bool = WINDOWS) -> None:
@@ -58,11 +59,11 @@ class XTermParser(Parser[events.Event]):
             self._debug_log_file.write(" ".join(args) + "\n")
             self._debug_log_file.flush()
 
-    def feed(self, data: str) -> Iterable[events.Event]:
+    def feed(self, data: str) -> Iterable[Message]:
         self.debug_log(f"FEED {data!r}")
         return super().feed(data)
 
-    def parse_mouse_code(self, code: str) -> events.Event | None:
+    def parse_mouse_code(self, code: str) -> Message | None:
         sgr_match = self._re_sgr_mouse.match(code)
         if sgr_match:
             _buttons, _x, _y, state = sgr_match.groups()
@@ -111,7 +112,7 @@ class XTermParser(Parser[events.Event]):
         paste_buffer: list[str] = []
         bracketed_paste = False
 
-        def on_token(token: events.Event) -> None:
+        def on_token(token: Message) -> None:
             """Hook to log events."""
             self.debug_log(str(token))
             _on_token(token)
@@ -242,9 +243,9 @@ class XTermParser(Parser[events.Event]):
                     mouse_match = _re_mouse_event.match(sequence)
                     if mouse_match is not None:
                         mouse_code = mouse_match.group(0)
-                        event = self.parse_mouse_code(mouse_code)
-                        if event:
-                            on_token(event)
+                        mouse_event = self.parse_mouse_code(mouse_code)
+                        if mouse_event is not None:
+                            on_token(mouse_event)
                         break
 
                     # Or a mode report?
