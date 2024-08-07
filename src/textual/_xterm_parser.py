@@ -45,7 +45,8 @@ WINDOWS = sys.platform == "win32"
 class XTermParser(Parser[events.Event]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, debug: bool = False) -> None:
+    def __init__(self, debug: bool = False, windows: bool = WINDOWS) -> None:
+        self.windows = windows
         self.last_x = 0
         self.last_y = 0
         self._debug_log_file = open("keys.log", "at") if debug else None
@@ -156,7 +157,10 @@ class XTermParser(Parser[events.Event]):
                 on_token(events.Paste(pasted_text.replace("\x00", "")))
                 paste_buffer.clear()
 
-            character = yield read1()
+            try:
+                character = yield read1()
+            except EOFError:
+                return
 
             if bracketed_paste:
                 paste_buffer.append(character)
@@ -184,7 +188,7 @@ class XTermParser(Parser[events.Event]):
                 # the suspected sequence as Key events instead.
                 try:
                     new_character = yield read1(
-                        None if WINDOWS else constants.ESCAPE_DELAY
+                        None if self.windows else constants.ESCAPE_DELAY
                     )
                 except ParseTimeout:
                     send_escape()
@@ -195,9 +199,8 @@ class XTermParser(Parser[events.Event]):
 
                 if new_character == ESC:
                     send_escape()
-                    if WINDOWS and len(sequence) == 1:
+                    if self.windows and len(sequence) == 1:
                         # In Windows two escapes are sent when pressing the escape key
-                        send_escape()
                         break
                     sequence = character
                     continue

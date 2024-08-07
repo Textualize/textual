@@ -174,11 +174,21 @@ def test_single_escape(parser):
     assert [event.key for event in events] == ["escape"]
 
 
-@windows_only
 def test_double_escape(parser):
     """Windows Terminal writes double ESC when the user presses the Escape key once."""
+    parser.windows = False
     events = list(parser.feed("\x1b\x1b"))
     events.extend(parser.feed(""))
+    print(events)
+    assert [event.key for event in events] == ["escape", "escape"]
+
+
+def test_windows_double_escape(parser):
+    """Windows Terminal writes double ESC when the user presses the Escape key once."""
+    parser.windows = True
+    events = list(parser.feed("\x1b\x1b"))
+    events.extend(parser.feed(""))
+    print(events)
     assert [event.key for event in events] == ["escape"]
 
 
