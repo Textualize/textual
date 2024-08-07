@@ -1,5 +1,4 @@
 import itertools
-import sys
 
 import pytest
 
@@ -14,8 +13,6 @@ from textual.events import (
     Paste,
 )
 from textual.messages import TerminalSupportsSynchronizedOutput
-
-windows_only = pytest.mark.skipif(sys.platform != "win32", reason="Windows only")
 
 
 def chunks(data, size):
