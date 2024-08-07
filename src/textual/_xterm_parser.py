@@ -183,9 +183,6 @@ class XTermParser(Parser[events.Event]):
                 reissue_sequence_as_keys(sequence[1:])
 
             while True:
-                # If we run into another ESC at this point, then we've failed
-                # to find a match, and should issue everything we've seen within
-                # the suspected sequence as Key events instead.
                 try:
                     new_character = yield read1(
                         None if self.windows else constants.ESCAPE_DELAY
