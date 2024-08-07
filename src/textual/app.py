@@ -66,7 +66,6 @@ from . import (
     log,
     messages,
     on,
-    work,
 )
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -3688,12 +3687,12 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
 
-    @work(thread=True)
     def deliver_text(
         self,
         path_or_file: str | Path | TextIO,
         *,
-        save_location: str | Path | None = None,
+        save_directory: str | Path | None = None,
+        open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
     ) -> None:
         """Deliver a text file to the end-user of the application.
@@ -3716,76 +3715,58 @@ class App(Generic[ReturnType], DOMNode):
                 (if possible). If this is not possible, the encoding of the
                 current locale will be used.
         """
-        if self._driver is None:
-            return
-
-        # Get the TextIO file-like object.
-        if isinstance(path_or_file, (str, Path)):
-            requires_close = True
-            path = Path(path_or_file)
-            text_file = path.open("r", encoding=encoding)
-            file_name = path.name
-        else:
-            requires_close = False
-            text_file = path_or_file
-            # Get the encoding and file_name from the file-like object if required.
-            encoding = encoding or getattr(text_file, "encoding", None)
-            file_name = getattr(text_file, "name", None)
-            # Some file-like objects don't have a name attribute, so generate a filename.
-            if not file_name:
-                file_name = generate_datetime_filename(self.title, "")
-
-        # Find the full path to write the file to.
-        save_directory = (
-            user_downloads_path() if save_location is None else Path(save_location)
-        )
-
-        # Let the driver decide how to handle saving the file.
-        self._driver.deliver_text(
-            text_file,
-            save_path=save_directory / file_name,
+        self._deliver_binary(
+            path_or_file.buffer if isinstance(path_or_file, TextIO) else path_or_file,
+            save_directory=save_directory,
+            open_method=open_method,
             encoding=encoding,
         )
 
-        # Close the file if we were the ones who opened it.
-        # If the user opened the file, they won't expect us to close it,
-        # so leave it to them.
-        if requires_close:
-            text_file.close()
-
-    @work(thread=True)
     def deliver_binary(
         self,
         path_or_file: str | Path | BinaryIO,
         *,
-        save_path: str | Path | None = None,
+        save_directory: str | Path | None = None,
+        open_method: Literal["browser", "download"] = "download",
     ) -> None:
         """Deliver a binary file to the end-user of the application.
+
+        If a BinaryIO object is supplied, it will be closed by this method
+        and *must not be used* after it is supplied to this method.
 
         If running in a terminal, this will save the file to the user's
         downloads directory.
 
         If running via a web browser, this will initiate a download.
 
-        This is a blocking operation.
+        This operation runs in a thread when running on web, so this method
+        returning does not indicate that the file has been delivered.
 
         Args:
             path_or_file: The path or file-like object to save.
-            save_path: The location to save the file to. If None,
+            save_directory: The directory to save the file to. If None,
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
         """
+        self._deliver_binary(path_or_file, save_directory, open_method)
+
+    def _deliver_binary(
+        self,
+        path_or_file: str | Path | BinaryIO,
+        save_directory: str | Path | None,
+        open_method: Literal["browser", "download"],
+        encoding: str | None = None,
+    ) -> None:
+        """Deliver a binary file to the end-user of the application."""
         if self._driver is None:
             return
 
         # Ensure `path_or_file` is a file-like object - convert if needed.
         if isinstance(path_or_file, (str, Path)):
-            requires_close = True
             binary_path = Path(path_or_file)
             binary = binary_path.open("rb")
             file_name = binary_path.name
         else:
-            requires_close = False
             binary = path_or_file
             file_name = getattr(binary, "name", None)
             # Generate a filename if the file-like object doesn't have one.
@@ -3793,13 +3774,16 @@ class App(Generic[ReturnType], DOMNode):
                 file_name = generate_datetime_filename(self.title, "")
 
         # Find the appropriate save location if not specified.
-        save_directory = user_downloads_path() if save_path is None else Path(save_path)
+        save_directory = (
+            user_downloads_path() if save_directory is None else Path(save_directory)
+        )
 
         # Save the file. The driver will determine the appropriate action
         # to take here. It could mean simply writing to the save_path, or
         # sending the file to the web browser for download.
-        self._driver.deliver_binary(binary, save_path=save_directory / file_name)
-
-        # Close the file if we opened it inside this method.
-        if requires_close:
-            binary.close()
+        self._driver.deliver_binary(
+            binary,
+            save_path=save_directory / file_name,
+            encoding=encoding,
+            open_method=open_method,
+        )

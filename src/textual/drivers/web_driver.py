@@ -243,6 +243,7 @@ class WebDriver(Driver):
             raise _ExitInput()
         elif packet_type == "deliver_chunk_request":
             # A request from the server to deliver another chunk of a file
+            log.info(f"Deliver chunk request: {payload}")
             try:
                 delivery_key = cast(str, payload["key"])
                 requested_size = cast(int, payload["size"])
@@ -263,15 +264,17 @@ class WebDriver(Driver):
                 )
             else:
                 # Read the requested number of bytes from the file
-                # No need to lock here since each delivery is handled in
-                # its own thread, so no risk of two threads reading from the
-                # same object at once.
                 try:
+                    log.info(f"Reading {requested_size} bytes from {delivery_key}")
                     chunk = binary_io.read(requested_size)
                     if chunk:
+                        log.info(
+                            f"Delivering chunk {delivery_key} of size {len(chunk)}"
+                        )
                         self.write_packed(("deliver_chunk", delivery_key, chunk))
                     else:
                         # Delivery complete - inform the server and clean up
+                        log.info(f"Delivery complete for {delivery_key}")
                         self.write_packed(("deliver_file_end", delivery_key))
                         binary_io.close()
                         with deliveries_lock:
@@ -281,6 +284,9 @@ class WebDriver(Driver):
                         f"Error delivering file chunk for key {delivery_key!r}. "
                         "Cancelling delivery."
                     )
+                    import traceback
+
+                    log.error(str(traceback.format_exc()))
                     binary_io.close()
                     with deliveries_lock:
                         del deliveries[delivery_key]
@@ -294,11 +300,12 @@ class WebDriver(Driver):
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
 
-    def deliver_file(
+    def deliver_text(
         self,
-        file_like: TextIO | BinaryIO,
+        text: TextIO,
         *,
         save_path: Path,
+        encoding: str | None = None,
         open_method: Literal["browser", "download"] = "download",
     ) -> None:
         """Deliver a file to the end-user of the application.
@@ -312,19 +319,34 @@ class WebDriver(Driver):
         Args:
             file_like: The file to deliver.
             save_path: The location to save the file to.
+            encoding: The encoding of the text file or None to use the default encoding.
             open_method: *web only* Choose whether the file should
                be opened in the browser or whether the user should
                be prompted to download the file.
         """
-        binary_io = file_like.buffer if isinstance(file_like, TextIO) else file_like
-        self._deliver_file(binary_io, path=save_path, open_method=open_method)
+        self._deliver_file(
+            text.buffer, save_path=save_path, open_method=open_method, encoding=encoding
+        )
+
+    def deliver_binary(
+        self,
+        binary: BinaryIO,
+        *,
+        save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
+        encoding: str | None = None,
+    ) -> None:
+        self._deliver_file(
+            binary, save_path=save_path, open_method=open_method, encoding=encoding
+        )
 
     def _deliver_file(
         self,
         binary: BinaryIO,
         *,
-        path: Path,
+        save_path: Path,
         open_method: Literal["browser", "download"],
+        encoding: str | None = None,
     ) -> None:
         """Deliver a file to the end-user of the application."""
         binary.seek(0)
@@ -332,12 +354,17 @@ class WebDriver(Driver):
         # Generate a unique key for this delivery
         key = str(uuid.uuid4().hex)
 
+        with self._deliveries_lock:
+            self._deliveries[key] = binary
+
         # Inform the server that we're starting a new file delivery
+        log.info(f"Delivering file {save_path} to {open_method}")
         self.write_meta(
             {
                 "type": "deliver_file_start",
                 "key": key,
-                "path": str(path.resolve()),
+                "path": str(save_path.resolve()),
                 "open_method": open_method,
+                "encoding": encoding,
             }
         )
