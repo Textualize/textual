@@ -114,6 +114,12 @@ def test_Failure_description_describe_and_description_inside_validate():
         ("99", 100, 200, False),  # valid number but not in range
         ("201", 100, 200, False),  # valid number but not in range
         ("1.23e4", 0, 50000, True),  # valid scientific notation within range
+        ("inf", None, None, False),  # infinity never valid
+        ("nan", None, None, False),  # nan never valid
+        ("-inf", None, None, False),  # nan never valid
+        ("-4", 0, 5, False),  # valid negative number, out of range with zero
+        ("2", -3, 0, False),  # valid number out of range with zero
+        ("-2", -3, 0, True),  # negative in range
     ],
 )
 def test_Number_validate(value, minimum, maximum, expected_result):
@@ -154,7 +160,11 @@ def test_Regex_validate(regex, value, expected_result):
         ("123", 100, 200, True),  # valid integer within range
         ("99", 100, 200, False),  # valid integer but not in range
         ("201", 100, 200, False),  # valid integer but not in range
-        ("1.23e4", None, None, True),  # valid integer in scientific notation
+        ("1.23e4", None, None, False),  # valid scientific notation, even resolving to an integer, is not valid
+        ("123.", None, None, False),  # periods not valid in integers
+        ("123_456", None, None, True),  # underscores are valid python
+        ("_123_456", None, None, False),  # leading underscores are not valid python
+        ("-123", -123, -123, True),  # valid negative number in minimal range
     ],
 )
 def test_Integer_validate(value, minimum, maximum, expected_result):

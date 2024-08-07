@@ -294,7 +294,7 @@ class Number(Validator):
         except ValueError:
             return ValidationResult.failure([Number.NotANumber(self, value)])
 
-        if float_value in {math.nan, math.inf, -math.inf}:
+        if math.isnan(float_value) or math.isinf(float_value):
             return ValidationResult.failure([Number.NotANumber(self, value)])
 
         if not self._validate_range(float_value):
@@ -354,10 +354,10 @@ class Integer(Number):
             return number_validation_result
 
         # We know it's a number, but is that number an integer?
-        is_integer = float(value).is_integer()
-        if not is_integer:
+        try:
+            int_value = int(value)
+        except ValueError:
             return ValidationResult.failure([Integer.NotAnInteger(self, value)])
-
         return self.success()
 
     def describe_failure(self, failure: Failure) -> str | None:
