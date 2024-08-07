@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with Enter events causing unresponsive UI
+- Fixed issue with Enter events causing unresponsive UI https://github.com/Textualize/textual/pull/4833
 
 ## [0.75.0] - 2024-08-01
 
