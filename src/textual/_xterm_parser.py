@@ -297,7 +297,7 @@ class XTermParser(Parser[Message]):
             key_tokens.sort()
             key_tokens.append(key)
             yield events.Key(
-                f'{"+".join(key_tokens)}', sequence if len(sequence) == 1 else None
+                "+".join(key_tokens), sequence if len(sequence) == 1 else None
             )
             return
 
