@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import io
 from collections import deque
 from typing import Callable, Deque, Generator, Generic, Iterable, NamedTuple, TypeVar
 
@@ -38,7 +37,6 @@ class Parser(Generic[T]):
     peek1 = Peek1
 
     def __init__(self) -> None:
-        self._buffer = io.StringIO()
         self._eof = False
         self._tokens: Deque[T] = deque()
         self._gen = self.parse(self._tokens.append)
@@ -66,21 +64,21 @@ class Parser(Generic[T]):
         if self._eof:
             raise ParseError("end of file reached") from None
 
+        tokens = self._tokens
+        popleft = tokens.popleft
+
         if not data:
             self._eof = True
             try:
-                self._gen.send(self._buffer.getvalue())
+                self._gen.throw(EOFError())
             except StopIteration:
-                raise ParseError("end of file reached") from None
-            while self._tokens:
-                yield self._tokens.popleft()
-
-            self._buffer.truncate(0)
+                pass
+            while tokens:
+                yield popleft()
             return
 
         pos = 0
-        tokens = self._tokens
-        popleft = tokens.popleft
+
         data_size = len(data)
 
         while tokens:
@@ -90,11 +88,11 @@ class Parser(Generic[T]):
             _awaiting = self._awaiting
             if isinstance(_awaiting, Read1):
                 self._timeout_time = None
-                self._awaiting = self._gen.send(data[pos : pos + 1])
+                self._awaiting = self._gen.send(data[pos])
                 pos += 1
             elif isinstance(_awaiting, Peek1):
                 self._timeout_time = None
-                self._awaiting = self._gen.send(data[pos : pos + 1])
+                self._awaiting = self._gen.send(data[pos])
 
             if self._awaiting.timeout is not None:
                 self._timeout_time = get_time() + self._awaiting.timeout

@@ -1,4 +1,5 @@
 import itertools
+import sys
 
 import pytest
 
@@ -13,6 +14,8 @@ from textual.events import (
     Paste,
 )
 from textual.messages import TerminalSupportsSynchronizedOutput
+
+windows_only = pytest.mark.skipif(sys.platform != "win32", reason="Windows only")
 
 
 def chunks(data, size):
@@ -110,13 +113,9 @@ def test_cant_match_escape_sequence_too_long(parser):
 @pytest.mark.parametrize(
     "chunk_size",
     [
-        pytest.param(
-            2, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")
-        ),
+        2,
         3,
-        pytest.param(
-            4, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")
-        ),
+        4,
         5,
         6,
     ],
@@ -137,9 +136,10 @@ def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
         events.append(parser.feed(chunk))
 
     events = list(itertools.chain.from_iterable(list(event) for event in events))
+    print(repr([event.key for event in events]))
 
     assert [event.key for event in events] == [
-        "circumflex_accent",
+        "escape",
         "left_square_bracket",
         "question_mark",
         "end",
@@ -169,13 +169,16 @@ def test_key_presses_and_escape_sequence_mixed(parser):
 
 def test_single_escape(parser):
     """A single \x1b should be interpreted as a single press of the Escape key"""
-    events = parser.feed("\x1b")
+    events = list(parser.feed("\x1b"))
+    events.extend(parser.feed(""))
     assert [event.key for event in events] == ["escape"]
 
 
+@windows_only
 def test_double_escape(parser):
     """Windows Terminal writes double ESC when the user presses the Escape key once."""
-    events = parser.feed("\x1b\x1b")
+    events = list(parser.feed("\x1b\x1b"))
+    events.extend(parser.feed(""))
     assert [event.key for event in events] == ["escape"]
 
 

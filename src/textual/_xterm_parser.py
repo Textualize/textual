@@ -140,6 +140,9 @@ class XTermParser(Parser[events.Event]):
                         event = events.Key("circumflex_accent", "^")
                     on_token(event)
 
+        def send_escape() -> None:
+            on_token(events.Key("escape", "\x1b"))
+
         while not self.is_eof:
             if not bracketed_paste and paste_buffer:
                 # We're at the end of the bracketed paste.
@@ -163,19 +166,22 @@ class XTermParser(Parser[events.Event]):
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):
                         on_key_token(event)
+                if not character:
+                    return
                 continue
 
             # # Could be the escape key was pressed OR the start of an escape sequence
-            sequence: str = character
+            sequence: str = ESC
 
             try:
-                first_character = yield peek1(constants.ESCAPE_DELAY)
+                if (yield peek1(constants.ESCAPE_DELAY)) == ESC:
+                    send_escape()
             except ParseTimeout:
-                on_token(events.Key("escape", "\x1b"))
+                send_escape()
                 continue
-
-            if first_character == ESC:
-                on_token(events.Key("escape", "\x1b"))
+            except EOFError:
+                send_escape()
+                return
 
             while True:
                 # If we run into another ESC at this point, then we've failed
@@ -184,17 +190,24 @@ class XTermParser(Parser[events.Event]):
                 try:
                     new_character = yield read1(constants.ESCAPE_DELAY)
                 except ParseTimeout:
-                    on_token(events.Key("escape", "\x1b"))
+                    send_escape()
                     reissue_sequence_as_keys(sequence[1:])
                     break
+                except EOFError:
+                    send_escape()
+                    reissue_sequence_as_keys(sequence[1:])
+                    return
 
-                if new_character == ESC and len(sequence) == 1:
-                    on_token(events.Key("escape", "\x1b"))
+                if new_character == ESC:
+                    send_escape()
+                    reissue_sequence_as_keys(sequence[1:])
+                    sequence = character
+                    continue
                 else:
                     sequence += new_character
-                if len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD:
-                    reissue_sequence_as_keys(sequence)
-                    break
+                    if len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD:
+                        reissue_sequence_as_keys(sequence)
+                        break
 
                 self.debug_log(f"sequence={sequence!r}")
                 if sequence in SPECIAL_SEQUENCES:
