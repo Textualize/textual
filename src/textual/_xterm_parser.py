@@ -143,9 +143,6 @@ class XTermParser(Parser[events.Event]):
                         event = events.Key("circumflex_accent", "^")
                     on_token(event)
 
-        def send_escape() -> None:
-            on_token(events.Key("escape", "\x1b"))
-
         while not self.is_eof:
             if not bracketed_paste and paste_buffer:
                 # We're at the end of the bracketed paste.
@@ -176,6 +173,11 @@ class XTermParser(Parser[events.Event]):
             # # Could be the escape key was pressed OR the start of an escape sequence
             sequence: str = ESC
 
+            def send_escape() -> None:
+                """Send escape key and reissue sequence."""
+                on_token(events.Key("escape", "\x1b"))
+                reissue_sequence_as_keys(sequence[1:])
+
             while True:
                 # If we run into another ESC at this point, then we've failed
                 # to find a match, and should issue everything we've seen within
@@ -186,16 +188,17 @@ class XTermParser(Parser[events.Event]):
                     )
                 except ParseTimeout:
                     send_escape()
-                    reissue_sequence_as_keys(sequence[1:])
                     break
                 except EOFError:
                     send_escape()
-                    reissue_sequence_as_keys(sequence[1:])
                     return
 
                 if new_character == ESC:
                     send_escape()
-                    reissue_sequence_as_keys(sequence[1:])
+                    if WINDOWS:
+                        # In Windows two escapes are sent when pressing the escape key
+                        send_escape()
+                        break
                     sequence = character
                     continue
                 else:
