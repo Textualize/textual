@@ -106,7 +106,6 @@ class XTermParser(Parser[events.Event]):
     def parse(self, _on_token: TokenCallback) -> Generator[Read1 | Peek1, str, None]:
         ESC = "\x1b"
         read1 = self.read1
-        peek1 = self.peek1
         sequence_to_key_events = self._sequence_to_key_events
         paste_buffer: list[str] = []
         bracketed_paste = False

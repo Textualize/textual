@@ -245,7 +245,11 @@ class LinuxDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
+
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.write(
+            "\x1b[1;u"
+        )  # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
