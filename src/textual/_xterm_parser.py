@@ -185,9 +185,8 @@ class XTermParser(Parser[Message]):
 
             while True:
                 try:
-                    new_character = yield read1(
-                        None if self.windows else constants.ESCAPE_DELAY
-                    )
+                    timeout = None if self.windows else constants.ESCAPE_DELAY
+                    new_character = yield read1(timeout)
                 except ParseTimeout:
                     send_escape()
                     break
