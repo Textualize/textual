@@ -410,7 +410,6 @@ class LinuxDriver(Driver):
         try:
             while not self.exit_event.is_set():
                 process_selector_events(selector.select(0.1))
-
             process_selector_events(selector.select(0.1), final=True)
 
         finally:

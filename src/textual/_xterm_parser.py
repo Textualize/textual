@@ -195,7 +195,7 @@ class XTermParser(Parser[events.Event]):
 
                 if new_character == ESC:
                     send_escape()
-                    if WINDOWS:
+                    if WINDOWS and len(sequence) == 1:
                         # In Windows two escapes are sent when pressing the escape key
                         send_escape()
                         break
