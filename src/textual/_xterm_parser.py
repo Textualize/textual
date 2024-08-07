@@ -105,7 +105,9 @@ class XTermParser(Parser[Message]):
             return event
         return None
 
-    def parse(self, _on_token: TokenCallback) -> Generator[Read1 | Peek1, str, None]:
+    def parse(
+        self, token_callback: TokenCallback
+    ) -> Generator[Read1 | Peek1, str, None]:
         ESC = "\x1b"
         read1 = self.read1
         sequence_to_key_events = self._sequence_to_key_events
@@ -115,7 +117,7 @@ class XTermParser(Parser[Message]):
         def on_token(token: Message) -> None:
             """Hook to log events."""
             self.debug_log(str(token))
-            _on_token(token)
+            token_callback(token)
 
         def on_key_token(event: events.Key) -> None:
             """Token callback wrapper for handling keys.

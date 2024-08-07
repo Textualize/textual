@@ -113,7 +113,7 @@ class Parser(Generic[T]):
                 yield popleft()
 
     def parse(
-        self, on_token: Callable[[T], None]
+        self, token_callback: TokenCallback
     ) -> Generator[Read1 | Peek1, str, None]:
         """Implement to parse a stream of text.
 
