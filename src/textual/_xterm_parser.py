@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import sys
 from typing import Any, Generator, Iterable
 
 from typing_extensions import Final
@@ -36,6 +37,9 @@ SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSO
 """Set of special sequences."""
 
 _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
+
+
+WINDOWS = sys.platform == "win32"
 
 
 class XTermParser(Parser[events.Event]):
@@ -173,22 +177,14 @@ class XTermParser(Parser[events.Event]):
             # # Could be the escape key was pressed OR the start of an escape sequence
             sequence: str = ESC
 
-            try:
-                if (yield peek1(constants.ESCAPE_DELAY)) == ESC:
-                    send_escape()
-            except ParseTimeout:
-                send_escape()
-                continue
-            except EOFError:
-                send_escape()
-                return
-
             while True:
                 # If we run into another ESC at this point, then we've failed
                 # to find a match, and should issue everything we've seen within
                 # the suspected sequence as Key events instead.
                 try:
-                    new_character = yield read1(constants.ESCAPE_DELAY)
+                    new_character = yield read1(
+                        None if WINDOWS else constants.ESCAPE_DELAY
+                    )
                 except ParseTimeout:
                     send_escape()
                     reissue_sequence_as_keys(sequence[1:])
