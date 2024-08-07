@@ -195,24 +195,24 @@ Let's look at the selectors supported by Textual CSS.
 
 ### Type selector
 
-The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `BoxedText` selector:
+The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
 
 ```python
 from textual.widgets import Static
 
-class BoxedText(Static):
+class Button(Static):
     pass
 ```
 
 The following rule applies a border to this widget:
 
 ```css
-BoxedText {
+Button {
   border: solid blue;
 }
 ```
 
-The type selector will also match a widget's base classes. Consequently, a `Static` selector will also style the boxed text because the `BoxedText` Python class extends `Static`.
+The type selector will also match a widget's base classes. Consequently, a `Static` selector will also style the button because the `Button` Python class extends `Static`.
 
 ```css
 Static {
@@ -225,7 +225,7 @@ Static {
 
     The fact that the type selector matches base classes is a departure from browser CSS which doesn't have the same concept.
 
-You may have noticed that the `border` rule exists in both Static and BoxedText. When this happens, Textual will use the most recently defined sub-class within a list of bases. So BoxedText wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both these rules were in a stylesheet, the boxed text would be "solid blue" and not "rounded white".
+You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "rounded white".
 
 ### ID selector
 
@@ -476,12 +476,14 @@ If you use `initial` within default css, it will treat the rule as completely un
 !!! tip "Added in version 0.47.0"
 
 CSS rule sets may be *nested*, i.e. they can contain other rule sets.
-When a rule set occurs within an existing rule set, it inherits the selector from the enclosing rule set.
+When a rule set nests inside an outer rule set, its selector becomes the
+outer rule set's selector concatenated with its own selector.
 
 Let's put this into practical terms.
-The following example will display two boxes containing the text "Yes" and "No" respectively.
-These could eventually form the basis for buttons, but for this demonstration we are only interested in the CSS.
-
+The following example will display a horizontal section with two boxes 
+containing the text "Builder" and "Test Runner", starting as green and 
+red respectively.
+    
 === "nesting01.tcss (no nesting)"
 
     ```css
@@ -499,14 +501,20 @@ These could eventually form the basis for buttons, but for this demonstration we
     ```{.textual path="docs/examples/guide/css/nesting01.py"}
     ```
 
-The CSS is quite straightforward; there is one rule for the container, one for all buttons, and one rule for each of the buttons.
-However it is easy to imagine this stylesheet growing more rules as we add features.
+Looking at the Python code, "Builder" is inside an outer container (`#status`), and
+is a widget with css classes `box` and `done`.   This widget matches the 
+selector rule `#status .box` and matches the more specific rule `#status .box.done`.  The
+more specific rule sets its border to `heavy $success`. A more complete program might 
+change the widget's css class from `done` to `stopped` while running, which would 
+dynamically change its appearance.
 
-Nesting allows us to group rule sets which have common selectors.
-In the example above, the rules all start with `#questions`.
-When we see a common prefix on the selectors, this is a good indication that we can use nesting.
+All four selector rules start with `#status` and three start with `#status .box`.
+We would repeat these in rules for each new status added, 
+e.g., "running", "paused", "waiting", etc.   Also, we invite disorganization because rule sets can be in any order.  
+Nesting allows us to group rule sets which 
+have common selectors.  
 
-The following produces identical results to the previous example, but adds nesting of the rules.
+The following css produces identical results, but uses nesting to avoid repetition.
 
 === "nesting02.tcss (with nesting)"
 
@@ -529,21 +537,23 @@ The following produces identical results to the previous example, but adds nesti
 
     Indenting the rule sets is not strictly required, but it does make it easier to understand how the rule sets are related to each other.
 
-In the first example we had a rule set that began with the selector `#questions .button`, which would match any widget with a class called "button" that is inside a container with id `questions`.
+In the first example we had a four rule sets beginning with `#status`.  In the second example, 
+the outermost rule selector is `#status` and that word is not repeated.  There is another level of nesting `.box` and a final  level for
+`&.done` and `&.stopped`.  The rule selectors, after concatenating for nested rules, are identical.
 
-In the second example, the button rule selector is simply `.button`, but it is *within* the rule set with selector `#questions`.
-The nesting means that the button rule set will inherit the selector from the outer rule set, so it is equivalent to `#questions .button`.
+### Nesting selector, `&`
 
-### Nesting selector
+You may have noticed that the rules for `&.done` and `&.stopped` use syntax we haven't seen before.
+The ampersand (`&`), or *nesting selector*, tells Textual that the selector should be combined without
+adding a space between the outer rule set and what follows the ampersand.  For example, `&.done` resolves to the full
+rule of `#status` + ` ` + `.box` + `.done` or `#status .box.done`, meaning "styling
+widgets descended from `#status` having both `.box` and `.done` classes".   
 
-The two remaining rules are nested within the button rule, which means they will inherit their selectors from the button rule set *and* the outer `#questions` rule set.
 
-You may have noticed that the rules for the button styles contain a syntax we haven't seen before.
-The rule for the Yes button is `&.affirmative`.
-The ampersand (`&`) is known as the *nesting selector* and it tells Textual that the selector should be combined with the selector from the outer rule set.
+!!! tip
 
-So `&.affirmative` in the example above, produces the equivalent of `#questions .button.affirmative` which selects a widget with both the `button` and `affirmative` classes.
-Without `&` it would be equivalent to `#questions .button .affirmative` (note the additional space) which would only match a widget with class `affirmative` inside a container with class `button`.
+    Using the nesting opertor followed by a space has no effect on selector and visually emphasizes the nested section.  For example, we could have used `& .box {` instead of `.box {`
+
 
 
 For reference, lets see those two CSS files side-by-side:
@@ -561,9 +571,9 @@ For reference, lets see those two CSS files side-by-side:
     ```
 
 
-Note how nesting bundles related rules together.
-If we were to add other selectors for additional screens or widgets, it would be easier to find the rules which will be applied.
+Imagine how this file would look after adding selectors for many more kinds of status.  Also,
+imagine reading this as a section of a large system's .tcss file: you would immediately know this section
+only applied to the `#status` subtree.
 
-### Why use nesting?
-
-There is no requirement to use nested CSS, but it can help to group related rule sets together (which makes it easier to edit). Nested CSS can also help you avoid some repetition in your selectors, i.e. in the nested CSS we only need to type `#questions` once, rather than four times in the non-nested CSS.
+There is no requirement to use nested CSS, but it can help 
+to organize your rule sets, visually see structure, and avoid repetition.

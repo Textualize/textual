@@ -9,9 +9,10 @@ class NestingDemo(App):
     CSS_PATH = "nesting01.tcss"
 
     def compose(self) -> ComposeResult:
-        with Horizontal(id="questions"):
-            yield Static("Yes", classes="button affirmative")
-            yield Static("No", classes="button negative")
+        with Horizontal(id="status"):
+            yield Static("Builder", classes="box done")
+            yield Static("Test Runner", classes="box stopped")
+
 
 
 if __name__ == "__main__":
