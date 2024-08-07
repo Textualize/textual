@@ -226,7 +226,7 @@ class EventMonitor(threading.Thread):
 
     def run(self) -> None:
         exit_requested = self.exit_event.is_set
-        parser = XTermParser(lambda: False)
+        parser = XTermParser()
 
         try:
             read_count = wintypes.DWORD(0)

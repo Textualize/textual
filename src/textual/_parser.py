@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import io
 from collections import deque
-from typing import Callable, Deque, Generator, Generic, Iterable, TypeVar, Union
+from typing import Callable, Deque, Generator, Generic, Iterable, NamedTuple, TypeVar
+
+from ._time import get_time
 
 
 class ParseError(Exception):
@@ -13,34 +15,16 @@ class ParseEOF(ParseError):
     """End of Stream."""
 
 
-class Awaitable:
-    __slots__: list[str] = []
+class ParseTimeout(ParseError):
+    """Read has timed out."""
 
 
-class _Read(Awaitable):
-    __slots__ = ["remaining"]
-
-    def __init__(self, count: int) -> None:
-        self.remaining = count
-
-    def __repr__(self) -> str:
-        return f"_ReadBytes({self.remaining})"
+class Read1(NamedTuple):
+    timeout: float | None = None
 
 
-class _Read1(Awaitable):
-    __slots__: list[str] = []
-
-
-class _ReadUntil(Awaitable):
-    __slots__ = ["sep", "max_bytes"]
-
-    def __init__(self, sep: str, max_bytes: int | None = None) -> None:
-        self.sep = sep
-        self.max_bytes = max_bytes
-
-
-class _PeekBuffer(Awaitable):
-    __slots__: list[str] = []
+class Peek1(NamedTuple):
+    timeout: float | None = None
 
 
 T = TypeVar("T")
@@ -50,17 +34,16 @@ TokenCallback = Callable[[T], None]
 
 
 class Parser(Generic[T]):
-    read = _Read
-    read1 = _Read1
-    read_until = _ReadUntil
-    peek_buffer = _PeekBuffer
+    read1 = Read1
+    peek1 = Peek1
 
     def __init__(self) -> None:
         self._buffer = io.StringIO()
         self._eof = False
         self._tokens: Deque[T] = deque()
         self._gen = self.parse(self._tokens.append)
-        self._awaiting: Union[Awaitable, T] = next(self._gen)
+        self._awaiting: Read1 | Peek1 = next(self._gen)
+        self._timeout_time: float | None = None
 
     @property
     def is_eof(self) -> bool:
@@ -69,10 +52,20 @@ class Parser(Generic[T]):
     def reset(self) -> None:
         self._gen = self.parse(self._tokens.append)
         self._awaiting = next(self._gen)
+        self._timeout_time = None
+
+    def tick(self) -> Iterable[T]:
+        """Call at regular intervals to check for timeouts."""
+        if self._timeout_time is not None and get_time() >= self._timeout_time:
+            self._timeout_time = None
+            self._awaiting = self._gen.throw(ParseTimeout())
+            while self._tokens:
+                yield self._tokens.popleft()
 
     def feed(self, data: str) -> Iterable[T]:
         if self._eof:
             raise ParseError("end of file reached") from None
+
         if not data:
             self._eof = True
             try:
@@ -85,7 +78,6 @@ class Parser(Generic[T]):
             self._buffer.truncate(0)
             return
 
-        _buffer = self._buffer
         pos = 0
         tokens = self._tokens
         popleft = tokens.popleft
@@ -94,59 +86,25 @@ class Parser(Generic[T]):
         while tokens:
             yield popleft()
 
-        while pos < data_size or isinstance(self._awaiting, _PeekBuffer):
+        while pos < data_size:
             _awaiting = self._awaiting
-            if isinstance(_awaiting, _Read1):
+            if isinstance(_awaiting, Read1):
+                self._timeout_time = None
                 self._awaiting = self._gen.send(data[pos : pos + 1])
                 pos += 1
+            elif isinstance(_awaiting, Peek1):
+                self._timeout_time = None
+                self._awaiting = self._gen.send(data[pos : pos + 1])
 
-            elif isinstance(_awaiting, _PeekBuffer):
-                self._awaiting = self._gen.send(data[pos:])
-
-            elif isinstance(_awaiting, _Read):
-                remaining = _awaiting.remaining
-                chunk = data[pos : pos + remaining]
-                chunk_size = len(chunk)
-                pos += chunk_size
-                _buffer.write(chunk)
-                remaining -= chunk_size
-                if remaining:
-                    _awaiting.remaining = remaining
-                else:
-                    _awaiting = self._gen.send(_buffer.getvalue())
-                    _buffer.seek(0)
-                    _buffer.truncate()
-
-            elif isinstance(_awaiting, _ReadUntil):
-                chunk = data[pos:]
-                _buffer.write(chunk)
-                sep = _awaiting.sep
-                sep_index = _buffer.getvalue().find(sep)
-
-                if sep_index == -1:
-                    pos += len(chunk)
-                    if (
-                        _awaiting.max_bytes is not None
-                        and _buffer.tell() > _awaiting.max_bytes
-                    ):
-                        self._gen.throw(ParseError(f"expected {sep}"))
-                else:
-                    sep_index += len(sep)
-                    if (
-                        _awaiting.max_bytes is not None
-                        and sep_index > _awaiting.max_bytes
-                    ):
-                        self._gen.throw(ParseError(f"expected {sep}"))
-                    data = _buffer.getvalue()[sep_index:]
-                    pos = 0
-                    self._awaiting = self._gen.send(_buffer.getvalue()[:sep_index])
-                    _buffer.seek(0)
-                    _buffer.truncate()
+            if self._awaiting.timeout is not None:
+                self._timeout_time = get_time() + self._awaiting.timeout
 
             while tokens:
                 yield popleft()
 
-    def parse(self, on_token: Callable[[T], None]) -> Generator[Awaitable, str, None]:
+    def parse(
+        self, on_token: Callable[[T], None]
+    ) -> Generator[Read1 | Peek1, str, None]:
         yield from ()
 
 
@@ -156,17 +114,24 @@ if __name__ == "__main__":
     class TestParser(Parser[str]):
         def parse(
             self, on_token: Callable[[str], None]
-        ) -> Generator[Awaitable, str, None]:
+        ) -> Generator[Read1 | Peek1, str, None]:
             while True:
-                data = yield self.read1()
+                try:
+                    data = yield self.read1(0.1)
+                except ParseTimeout:
+                    print("TIMEOUT")
+                    continue
                 if not data:
                     break
                 on_token(data)
 
     test_parser = TestParser()
+    from time import sleep
 
     for n in range(0, len(data), 5):
+        test_parser.tick()
         for token in test_parser.feed(data[n : n + 5]):
             print(token)
+        sleep(0.1)
     for token in test_parser.feed(""):
         print(token)

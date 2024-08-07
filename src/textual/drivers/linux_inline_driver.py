@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import constants, events
+from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -124,16 +124,9 @@ class LinuxInlineDriver(Driver):
         fileno = self.fileno
         EVENT_READ = selectors.EVENT_READ
 
-        def more_data() -> bool:
-            """Check if there is more data to parse."""
-
-            for _key, events in selector.select(constants.ESCAPE_DELAY):
-                if events & EVENT_READ:
-                    return True
-            return False
-
-        parser = XTermParser(more_data, self._debug)
+        parser = XTermParser(self._debug)
         feed = parser.feed
+        tick = parser.tick
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
@@ -142,6 +135,8 @@ class LinuxInlineDriver(Driver):
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
+                for event in tick():
+                    self.process_event(event)
                 for _selector_key, mask in selector_events:
                     if mask & EVENT_READ:
                         unicode_data = decode(

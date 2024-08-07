@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Callable, Generator, Iterable
+from typing import Any, Generator, Iterable
 
 from typing_extensions import Final
 
-from . import events, messages
+from . import constants, events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from ._keyboard_protocol import FUNCTIONAL_KEYS
-from ._parser import Awaitable, Parser, TokenCallback
+from ._parser import Parser, ParseTimeout, Peek1, Read1, TokenCallback
 from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 
 # When trying to determine whether the current sequence is a supported/valid
@@ -32,21 +32,20 @@ FOCUSIN: Final[str] = "\x1b[I"
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
 
+SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSOUT}
+"""Set of special sequences."""
+
 _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
 
 class XTermParser(Parser[events.Event]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, more_data: Callable[[], bool], debug: bool = False) -> None:
-        self.more_data = more_data
+    def __init__(self, debug: bool = False) -> None:
         self.last_x = 0
         self.last_y = 0
-
         self._debug_log_file = open("keys.log", "at") if debug else None
-
         super().__init__()
-
         self.debug_log("---")
 
     def debug_log(self, *args: Any) -> None:  # pragma: no cover
@@ -100,21 +99,13 @@ class XTermParser(Parser[events.Event]):
             return event
         return None
 
-    _reissued_sequence_debug_book: Callable[[str], None] | None = None
-    """INTERNAL USE ONLY!
-
-    If this property is set to a callable, it will be called *instead* of
-    the reissued sequence being emitted as key events.
-    """
-
-    def parse(self, _on_token: TokenCallback) -> Generator[Awaitable, str, None]:
+    def parse(self, _on_token: TokenCallback) -> Generator[Read1 | Peek1, str, None]:
         ESC = "\x1b"
         read1 = self.read1
+        peek1 = self.peek1
         sequence_to_key_events = self._sequence_to_key_events
-        more_data = self.more_data
         paste_buffer: list[str] = []
         bracketed_paste = False
-        use_prior_escape = False
 
         def on_token(token: events.Event) -> None:
             """Hook to log events."""
@@ -142,9 +133,6 @@ class XTermParser(Parser[events.Event]):
                 reissue_sequence: Key sequence to report to the app.
             """
             self.debug_log("REISSUE", repr(reissue_sequence))
-            if self._reissued_sequence_debug_book is not None:
-                self._reissued_sequence_debug_book(reissue_sequence)
-                return
             for character in reissue_sequence:
                 key_events = sequence_to_key_events(character)
                 for event in key_events:
@@ -165,126 +153,98 @@ class XTermParser(Parser[events.Event]):
                 on_token(events.Paste(pasted_text.replace("\x00", "")))
                 paste_buffer.clear()
 
-            character = ESC if use_prior_escape else (yield read1())
-            use_prior_escape = False
+            character = yield read1()
 
             if bracketed_paste:
                 paste_buffer.append(character)
 
             self.debug_log(f"character={character!r}")
-            if character == ESC:
-                # Could be the escape key was pressed OR the start of an escape sequence
-                sequence: str = character
-                if not bracketed_paste:
-                    peek_buffer = yield self.peek_buffer()
-                    if peek_buffer:
-                        # Some characters already feed in to the parse
-                        if peek_buffer[0] == ESC:
-                            # Next character is an escape, which means the previous escape
-                            # was a escape key (not introducing a sequence)
-                            on_token(events.Key("escape", "\x1b"))
-                            yield read1()
-                    else:
-                        if not more_data():
-                            # There is no input after ESCDELAY
-                            # The escape was (probably) a key
-                            on_token(events.Key("escape", "\x1b"))
-                            continue
-
-                # Look ahead through the suspected escape sequence for a match
-                while True:
-                    # If we run into another ESC at this point, then we've failed
-                    # to find a match, and should issue everything we've seen within
-                    # the suspected sequence as Key events instead.
-                    sequence_character = yield read1()
-
-                    if sequence_character == ESC and len(sequence) == 1:
-                        on_token(events.Key("escape", "\x1b"))
-                        continue
-
-                    new_sequence = sequence + sequence_character
-
-                    if len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD:
-                        # We exceeded the sequence length threshold, so reissue all the
-                        # characters in that sequence as key-presses.
-                        reissue_sequence_as_keys(new_sequence)
-                        break
-
-                    if sequence_character == ESC:
-                        # We've hit an escape, so we need to reissue all the keys
-                        # up to but not including it, since this escape could be
-                        # part of an upcoming control sequence.
-                        use_prior_escape = True
-                        reissue_sequence_as_keys(sequence)
-                        break
-
-                    sequence = new_sequence
-                    self.debug_log(f"sequence={sequence!r}")
-
-                    if sequence == FOCUSIN:
-                        on_token(events.AppFocus())
-                        break
-
-                    if sequence == FOCUSOUT:
-                        on_token(events.AppBlur())
-                        break
-
-                    if sequence == BRACKETED_PASTE_START:
-                        bracketed_paste = True
-                        break
-
-                    if sequence == BRACKETED_PASTE_END:
-                        bracketed_paste = False
-                        break
-
-                    if not bracketed_paste:
-                        # Check cursor position report
-                        if (
-                            cursor_position_match := _re_cursor_position.match(sequence)
-                        ) is not None:
-                            row, column = cursor_position_match.groups()
-                            # Cursor position report conflicts with f3 key
-                            # If it is a keypress, "row" will be 1, so ignore
-                            if int(row) != 1:
-                                on_token(
-                                    events.CursorPosition(
-                                        x=int(column) - 1, y=int(row) - 1
-                                    )
-                                )
-                                break
-
-                        # Was it a pressed key event that we received?
-                        key_events = list(sequence_to_key_events(sequence))
-                        for key_event in key_events:
-                            on_key_token(key_event)
-                        if key_events:
-                            break
-                        # Or a mouse event?
-                        if (mouse_match := _re_mouse_event.match(sequence)) is not None:
-                            mouse_code = mouse_match.group(0)
-                            event = self.parse_mouse_code(mouse_code)
-                            if event:
-                                on_token(event)
-                            break
-
-                        # Or a mode report?
-                        # (i.e. the terminal saying it supports a mode we requested)
-                        if (
-                            mode_report_match := _re_terminal_mode_response.match(
-                                sequence
-                            )
-                        ) is not None:
-                            if (
-                                mode_report_match["mode_id"] == "2026"
-                                and int(mode_report_match["setting_parameter"]) > 0
-                            ):
-                                on_token(messages.TerminalSupportsSynchronizedOutput())
-                            break
-
-            else:
+            if character != ESC:
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):
                         on_key_token(event)
+                continue
+
+            # # Could be the escape key was pressed OR the start of an escape sequence
+            sequence: str = character
+
+            try:
+                first_character = yield peek1(constants.ESCAPE_DELAY)
+            except ParseTimeout:
+                on_token(events.Key("escape", "\x1b"))
+                continue
+
+            if first_character == ESC:
+                on_token(events.Key("escape", "\x1b"))
+
+            while True:
+                # If we run into another ESC at this point, then we've failed
+                # to find a match, and should issue everything we've seen within
+                # the suspected sequence as Key events instead.
+                try:
+                    new_character = yield read1(constants.ESCAPE_DELAY)
+                except ParseTimeout:
+                    on_token(events.Key("escape", "\x1b"))
+                    reissue_sequence_as_keys(sequence[1:])
+                    break
+
+                if new_character == ESC and len(sequence) == 1:
+                    on_token(events.Key("escape", "\x1b"))
+                else:
+                    sequence += new_character
+                if len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD:
+                    reissue_sequence_as_keys(sequence)
+                    break
+
+                self.debug_log(f"sequence={sequence!r}")
+                if sequence in SPECIAL_SEQUENCES:
+                    if sequence == FOCUSIN:
+                        on_token(events.AppFocus())
+                    elif sequence == FOCUSOUT:
+                        on_token(events.AppBlur())
+                    elif sequence == BRACKETED_PASTE_START:
+                        bracketed_paste = True
+                    elif sequence == BRACKETED_PASTE_END:
+                        bracketed_paste = False
+                    break
+
+                if not bracketed_paste:
+                    # Check cursor position report
+                    cursor_position_match = _re_cursor_position.match(sequence)
+                    if cursor_position_match is not None:
+                        row, column = cursor_position_match.groups()
+                        # Cursor position report conflicts with f3 key
+                        # If it is a keypress, "row" will be 1, so ignore
+                        if int(row) != 1:
+                            x = int(column) - 1
+                            y = int(row) - 1
+                            on_token(events.CursorPosition(x, y))
+                            break
+
+                    # Was it a pressed key event that we received?
+                    key_events = list(sequence_to_key_events(sequence))
+                    for key_event in key_events:
+                        on_key_token(key_event)
+                    if key_events:
+                        break
+                    # Or a mouse event?
+                    mouse_match = _re_mouse_event.match(sequence)
+                    if mouse_match is not None:
+                        mouse_code = mouse_match.group(0)
+                        event = self.parse_mouse_code(mouse_code)
+                        if event:
+                            on_token(event)
+                        break
+
+                    # Or a mode report?
+                    # (i.e. the terminal saying it supports a mode we requested)
+                    mode_report_match = _re_terminal_mode_response.match(sequence)
+                    if mode_report_match is not None:
+                        mode_id = mode_report_match["mode_id"]
+                        setting_parameter = mode_report_match["setting_parameter"]
+                        if mode_id == "2026" and int(setting_parameter) > 0:
+                            on_token(messages.TerminalSupportsSynchronizedOutput())
+                        break
 
         if self._debug_log_file is not None:
             self._debug_log_file.close()

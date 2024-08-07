@@ -33,7 +33,7 @@ def chunks(data, size):
 
 @pytest.fixture
 def parser():
-    return XTermParser(more_data=lambda: False)
+    return XTermParser()
 
 
 @pytest.mark.parametrize("chunk_size", [2, 3, 4, 5, 6])
@@ -132,7 +132,7 @@ def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
     sequence = unknown_sequence + known_sequence
 
     events = []
-    parser.more_data = lambda: True
+
     for chunk in chunks(sequence, chunk_size):
         events.append(parser.feed(chunk))
 
