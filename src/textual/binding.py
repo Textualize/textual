@@ -126,9 +126,6 @@ class BindingsMap:
                 for binding in bindings
             ]
         )
-        # for key, bindings in self.keys.items():
-        #     for binding in bindings:
-        #         yield key, binding
 
     @classmethod
     def from_keys(cls, keys: dict[str, list[Binding]]) -> BindingsMap:
@@ -198,16 +195,18 @@ class BindingsMap:
         """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
-            self.keys[key] = Binding(
-                key,
-                action,
-                description,
-                show=bool(description and show),
-                key_display=key_display,
-                priority=priority,
+            self.keys.setdefault(key, []).append(
+                Binding(
+                    key,
+                    action,
+                    description,
+                    show=bool(description and show),
+                    key_display=key_display,
+                    priority=priority,
+                )
             )
 
-    def get_key(self, key: str) -> Binding:
+    def get_key(self, key: str) -> list[Binding]:
         """Get a binding if it exists.
 
         Args:
