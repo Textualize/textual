@@ -267,15 +267,10 @@ class WebDriver(Driver):
                 try:
                     log.info(f"Reading {requested_size} bytes from {delivery_key}")
                     chunk = binary_io.read(requested_size)
-                    if chunk:
-                        log.info(
-                            f"Delivering chunk {delivery_key} of size {len(chunk)}"
-                        )
-                        self.write_packed(("deliver_chunk", delivery_key, chunk))
-                    else:
-                        # Delivery complete - inform the server and clean up
+                    log.info(f"Delivering chunk {delivery_key} of size {len(chunk)}")
+                    self.write_packed(("deliver_chunk", delivery_key, chunk))
+                    if not chunk:
                         log.info(f"Delivery complete for {delivery_key}")
-                        self.write_packed(("deliver_file_end", delivery_key))
                         binary_io.close()
                         with deliveries_lock:
                             del deliveries[delivery_key]
