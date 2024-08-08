@@ -9,10 +9,10 @@ from ctypes import Structure, Union, byref, wintypes
 from ctypes.wintypes import BOOL, CHAR, DWORD, HANDLE, SHORT, UINT, WCHAR, WORD
 from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
+from .. import constants
 from .._xterm_parser import XTermParser
 from ..events import Event, Resize
 from ..geometry import Size
-from .. import constants
 
 if TYPE_CHECKING:
     from ..app import App
@@ -244,8 +244,8 @@ class EventMonitor(threading.Thread):
             append_key = keys.append
 
             while not exit_requested():
-               
-                for event in parser.tick():                  
+
+                for event in parser.tick():
                     self.process_event(event)
 
                 # Wait for new events

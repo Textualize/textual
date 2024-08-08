@@ -39,11 +39,10 @@ SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSO
 _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
 
-
 class XTermParser(Parser[Message]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, debug: bool = False) -> None:       
+    def __init__(self, debug: bool = False) -> None:
         self.last_x = 0
         self.last_y = 0
         self._debug_log_file = open("keys.log", "at") if debug else None
@@ -182,7 +181,7 @@ class XTermParser(Parser[Message]):
                 reissue_sequence_as_keys(sequence[1:])
 
             while True:
-                try:                   
+                try:
                     new_character = yield read1(constants.ESCAPE_DELAY)
                 except ParseTimeout:
                     send_escape()
