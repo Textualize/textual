@@ -8,7 +8,7 @@ See [bindings](/guide/input#bindings) in the guide for details.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable, NamedTuple
+from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 import rich.repr
 
@@ -64,7 +64,7 @@ class ActiveBinding(NamedTuple):
 
 
 @rich.repr.auto
-class _Bindings:
+class BindingsMap:
     """Manage a set of bindings."""
 
     def __init__(
@@ -118,13 +118,31 @@ class _Bindings:
         for binding in make_bindings(bindings or {}):
             self.keys.setdefault(binding.key, []).append(binding)
 
-    def copy(self) -> _Bindings:
+    def __iter__(self) -> Iterator[tuple[str, Binding]]:
+        return iter(
+            [
+                (key, bindings)
+                for key, bindings in self.keys.items()
+                for binding in bindings
+            ]
+        )
+        # for key, bindings in self.keys.items():
+        #     for binding in bindings:
+        #         yield key, binding
+
+    @classmethod
+    def from_keys(cls, keys: dict[str, list[Binding]]) -> BindingsMap:
+        bindings = cls()
+        bindings.keys = keys
+        return bindings
+
+    def copy(self) -> BindingsMap:
         """Return a copy of this instance.
 
         Return:
             New bindings object.
         """
-        copy = _Bindings()
+        copy = BindingsMap()
         copy.keys = self.keys.copy()
         return copy
 
@@ -132,7 +150,7 @@ class _Bindings:
         yield self.keys
 
     @classmethod
-    def merge(cls, bindings: Iterable[_Bindings]) -> _Bindings:
+    def merge(cls, bindings: Iterable[BindingsMap]) -> BindingsMap:
         """Merge a bindings. Subsequent bound keys override initial keys.
 
         Args:
@@ -146,9 +164,7 @@ class _Bindings:
             for key, key_bindings in _bindings.keys.items():
                 keys.setdefault(key, []).extend(key_bindings)
 
-        new_bindings = _Bindings()
-        new_bindings.keys = keys
-        return new_bindings
+        return BindingsMap.from_keys(keys)
 
     @property
     def shown_keys(self) -> list[Binding]:

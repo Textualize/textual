@@ -80,7 +80,7 @@ from ._wait import wait_for_idle
 from .actions import ActionParseResult, SkipAction
 from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
-from .binding import Binding, BindingType, _Bindings
+from .binding import Binding, BindingsMap, BindingType
 from .command import CommandPalette, Provider
 from .css.errors import StylesheetError
 from .css.query import NoMatches
@@ -3000,14 +3000,14 @@ class App(Generic[ReturnType], DOMNode):
             self._driver.write("\07")
 
     @property
-    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """Get a chain of nodes and bindings to consider.
 
         If no widget is focused, returns the bindings from both the screen and the app level bindings.
         Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
         """
         focused = self.focused
-        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
         if focused is None:
             namespace_bindings = [

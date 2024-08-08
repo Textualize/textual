@@ -32,7 +32,7 @@ from rich.tree import Tree
 from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
-from .binding import Binding, BindingType, _Bindings
+from .binding import Binding, BindingsMap, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -158,7 +158,7 @@ class DOMNode(MessagePump):
     _css_type_name: str = ""
 
     # Generated list of bindings
-    _merged_bindings: ClassVar[_Bindings | None] = None
+    _merged_bindings: ClassVar[BindingsMap | None] = None
 
     _reactives: ClassVar[dict[str, Reactive]]
 
@@ -197,7 +197,7 @@ class DOMNode(MessagePump):
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
         self._bindings = (
-            _Bindings()
+            BindingsMap()
             if self._merged_bindings is None
             else self._merged_bindings.copy()
         )
@@ -590,27 +590,30 @@ class DOMNode(MessagePump):
         return classes
 
     @classmethod
-    def _merge_bindings(cls) -> _Bindings:
+    def _merge_bindings(cls) -> BindingsMap:
         """Merge bindings from base classes.
 
         Returns:
             Merged bindings.
         """
-        bindings: list[_Bindings] = []
+        bindings: list[BindingsMap] = []
 
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:
                     bindings.clear()
                 bindings.append(
-                    _Bindings(
+                    BindingsMap(
                         base.__dict__.get("BINDINGS", []),
                     )
                 )
-        keys: dict[str, Binding] = {}
+        keys: dict[str, list[Binding]] = {}
         for bindings_ in bindings:
-            keys.update(bindings_.keys)
-        return _Bindings(keys.values())
+            for key, key_bindings in bindings_.keys.items():
+                keys.setdefault(key, []).extend(key_bindings)
+
+        new_bindings = BindingsMap().from_keys(keys)
+        return new_bindings
 
     def _post_register(self, app: App) -> None:
         """Called when the widget is registered

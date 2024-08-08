@@ -36,7 +36,7 @@ from ._context import active_message_pump, visible_screen_stack
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .await_complete import AwaitComplete
-from .binding import ActiveBinding, Binding, _Bindings
+from .binding import ActiveBinding, Binding, BindingsMap
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
@@ -289,12 +289,12 @@ class Screen(Generic[ScreenResultType], Widget):
         self.check_idle()
 
     @property
-    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """Binding chain from this screen."""
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
-        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
         if focused is None:
             namespace_bindings = [
@@ -309,7 +309,7 @@ class Screen(Generic[ScreenResultType], Widget):
         return namespace_bindings
 
     @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """The binding chain, ignoring everything before the last modal."""
         binding_chain = self._binding_chain
         for index, (node, _bindings) in enumerate(binding_chain, 1):
@@ -332,7 +332,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         bindings_map: dict[str, ActiveBinding] = {}
         for namespace, bindings in self._modal_binding_chain:
-            for key, binding in bindings.keys.items():
+            for key, binding in bindings:
                 action_state = self.app._check_action_state(binding.action, namespace)
                 if action_state is False:
                     continue
