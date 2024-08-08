@@ -1,23 +1,23 @@
 /* Style the container */
-#questions {
+#status {
     border: heavy $primary;
     align: center middle;
 
-    /* Style all buttons */
-    .button {
+    /* Style all boxes */
+    .box {
         width: 1fr;
         padding: 1 2;
         margin: 1 2;
         text-align: center;
         border: heavy $panel;    
 
-        /* Style the Yes button */
-        &.affirmative {
+        /* Style the 'done' box */
+        &.done {
             border: heavy $success;        
         }
 
-        /* Style the No button */
-        &.negative {
+        /* Style the 'stopped' box */
+        &.stopped {
             border: heavy $error;
         }
     }

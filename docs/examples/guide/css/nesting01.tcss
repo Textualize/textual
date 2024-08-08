@@ -1,11 +1,11 @@
 /* Style the container */
-#questions {
+#status {
     border: heavy $primary;
     align: center middle;
 }
 
-/* Style all buttons */
-#questions .button {
+/* Style all boxes */
+#status .box {
     width: 1fr;
     padding: 1 2;
     margin: 1 2;
@@ -13,12 +13,12 @@
     border: heavy $panel;
 }
 
-/* Style the Yes button */
-#questions .button.affirmative {
+/* Style the 'done' box */
+#status .box.done {
     border: heavy $success;
 }
 
-/* Style the No button */
-#questions .button.negative {
+/* Style the 'stopped' box */
+#status .box.stopped {
     border: heavy $error;
 }
