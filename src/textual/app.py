@@ -3048,10 +3048,11 @@ class App(Generic[ReturnType], DOMNode):
             if priority
             else self.screen._modal_binding_chain
         ):
-            binding = bindings.keys.get(key)
-            if binding is not None and binding.priority == priority:
-                if await self.run_action(binding.action, namespace):
-                    return True
+            key_bindings = bindings.keys.get(key, ())
+            for binding in key_bindings:
+                if binding.priority == priority:
+                    if await self.run_action(binding.action, namespace):
+                        return True
         return False
 
     async def on_event(self, event: events.Event) -> None:

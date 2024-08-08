@@ -121,7 +121,7 @@ class BindingsMap:
     def __iter__(self) -> Iterator[tuple[str, Binding]]:
         return iter(
             [
-                (key, bindings)
+                (key, binding)
                 for key, bindings in self.keys.items()
                 for binding in bindings
             ]
