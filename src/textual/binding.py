@@ -206,8 +206,8 @@ class BindingsMap:
                 )
             )
 
-    def get_key(self, key: str) -> list[Binding]:
-        """Get a binding if it exists.
+    def get_bindings_for_key(self, key: str) -> list[Binding]:
+        """Get a list of bindings for a given key.
 
         Args:
             key: Key to look up.
@@ -216,7 +216,7 @@ class BindingsMap:
             NoBinding: If the binding does not exist.
 
         Returns:
-            A binding object for the key,
+            A list of bindings associated with the key.
         """
         try:
             return self.keys[key]

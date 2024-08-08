@@ -27,16 +27,19 @@ def more_bindings():
 
 
 def test_bindings_get_key(bindings):
-    assert bindings.get_key("b") == [
+    assert bindings.get_bindings_for_key("b") == [
         Binding("b", action="action1", description="description1")
     ]
-    assert bindings.get_key("c") == [BINDING2]
+    assert bindings.get_bindings_for_key("c") == [BINDING2]
     with pytest.raises(NoBinding):
-        bindings.get_key("control+meta+alt+shift+super+hyper+t")
+        bindings.get_bindings_for_key("control+meta+alt+shift+super+hyper+t")
 
 
 def test_bindings_get_key_spaced_list(more_bindings):
-    assert more_bindings.get_key("d")[0].action == more_bindings.get_key("e")[0].action
+    assert (
+        more_bindings.get_bindings_for_key("d")[0].action
+        == more_bindings.get_bindings_for_key("e")[0].action
+    )
 
 
 def test_bindings_merge_simple(bindings):
@@ -69,7 +72,7 @@ def test_bad_binding_tuple():
 def test_binding_from_tuples():
     assert BindingsMap(
         ((BINDING2.key, BINDING2.action, BINDING2.description),)
-    ).get_key("c") == [BINDING2]
+    ).get_bindings_for_key("c") == [BINDING2]
 
 
 def test_shown():
