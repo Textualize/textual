@@ -118,7 +118,7 @@ class Parser(Generic[T]):
         """Implement to parse a stream of text.
 
         Args:
-            on_token: Callable to report a successful parsed data type.
+            token_callback: Callable to report a successful parsed data type.
 
         Yields:
             ParseAwaitable: One of `self.read1` or `self.peek1`
