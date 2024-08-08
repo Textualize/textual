@@ -51,7 +51,7 @@ class Parser(Generic[T]):
 
     @property
     def is_eof(self) -> bool:
-        """Is the parser at the end of the fine (i.e. exhausted)?"""
+        """Is the parser at the end of the file (i.e. exhausted)?"""
         return self._eof
 
     def tick(self) -> Iterable[T]:
