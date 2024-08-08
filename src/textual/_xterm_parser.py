@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import sys
 from typing import Any, Generator, Iterable
 
 from typing_extensions import Final
@@ -40,14 +39,11 @@ SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSO
 _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
 
-WINDOWS = sys.platform == "win32"
-
 
 class XTermParser(Parser[Message]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, debug: bool = False, windows: bool = WINDOWS) -> None:
-        self.windows = windows
+    def __init__(self, debug: bool = False) -> None:       
         self.last_x = 0
         self.last_y = 0
         self._debug_log_file = open("keys.log", "at") if debug else None
@@ -186,9 +182,8 @@ class XTermParser(Parser[Message]):
                 reissue_sequence_as_keys(sequence[1:])
 
             while True:
-                try:
-                    timeout = None if self.windows else constants.ESCAPE_DELAY
-                    new_character = yield read1(timeout)
+                try:                   
+                    new_character = yield read1(constants.ESCAPE_DELAY)
                 except ParseTimeout:
                     send_escape()
                     break
@@ -198,9 +193,6 @@ class XTermParser(Parser[Message]):
 
                 if new_character == ESC:
                     send_escape()
-                    if self.windows and len(sequence) == 1:
-                        # In Windows two escapes are sent when pressing the escape key
-                        break
                     sequence = character
                     continue
                 else:

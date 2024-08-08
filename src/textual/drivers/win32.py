@@ -12,6 +12,7 @@ from typing import IO, TYPE_CHECKING, Callable, List, Optional
 from .._xterm_parser import XTermParser
 from ..events import Event, Resize
 from ..geometry import Size
+from .. import constants
 
 if TYPE_CHECKING:
     from ..app import App
@@ -226,7 +227,7 @@ class EventMonitor(threading.Thread):
 
     def run(self) -> None:
         exit_requested = self.exit_event.is_set
-        parser = XTermParser()
+        parser = XTermParser(debug=constants.DEBUG)
 
         try:
             read_count = wintypes.DWORD(0)
@@ -243,8 +244,12 @@ class EventMonitor(threading.Thread):
             append_key = keys.append
 
             while not exit_requested():
+               
+                for event in parser.tick():                  
+                    self.process_event(event)
+
                 # Wait for new events
-                if wait_for_handles([hIn], 200) is None:
+                if wait_for_handles([hIn], 100) is None:
                     # No new events
                     continue
 
