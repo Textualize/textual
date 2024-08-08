@@ -83,6 +83,8 @@ class _Bindings:
         """
 
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
+            bindings = list(bindings)
+            # print(bindings)
             for binding in bindings:
                 # If it's a tuple of length 3, convert into a Binding first
                 if isinstance(binding, tuple):
@@ -112,11 +114,9 @@ class _Bindings:
                         priority=binding.priority,
                     )
 
-        self.keys: dict[str, Binding] = (
-            {binding.key: binding for binding in make_bindings(bindings)}
-            if bindings
-            else {}
-        )
+        self.keys: dict[str, list[Binding]] = {}
+        for binding in make_bindings(bindings or {}):
+            self.keys.setdefault(binding.key, []).append(binding)
 
     def copy(self) -> _Bindings:
         """Return a copy of this instance.
@@ -141,15 +141,24 @@ class _Bindings:
         Returns:
             New bindings.
         """
-        keys: dict[str, Binding] = {}
+        keys: dict[str, list[Binding]] = {}
         for _bindings in bindings:
-            keys.update(_bindings.keys)
-        return _Bindings(keys.values())
+            for key, key_bindings in _bindings.keys.items():
+                keys.setdefault(key, []).extend(key_bindings)
+
+        new_bindings = _Bindings()
+        new_bindings.keys = keys
+        return new_bindings
 
     @property
     def shown_keys(self) -> list[Binding]:
         """A list of bindings for shown keys."""
-        keys = [binding for binding in self.keys.values() if binding.show]
+        keys = [
+            binding
+            for bindings in self.keys.values()
+            for binding in bindings
+            if binding.show
+        ]
         return keys
 
     def bind(
