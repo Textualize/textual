@@ -28,7 +28,7 @@ class TooltipApp(App[None]):
 TOOLTIP_TIMEOUT: Final[float] = 0.4 + 0.1
 """How long to wait for a tooltip to appear.
 
-The 0.4 is the defined value defined with TOOLTIP_DELAY, and the 0.1 is a bit of
+The 0.4 is the value defined with TOOLTIP_DELAY, and the 0.1 is a bit of
 wiggle room.
 """
 

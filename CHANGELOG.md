@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
 ### Added
 
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
+- Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
 
 ## [0.76.0]
 
