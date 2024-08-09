@@ -340,19 +340,18 @@ class Screen(Generic[ScreenResultType], Widget):
                     # Note that None has a different meaning, which is why there is an `is False`
                     # rather than a truthy check.
                     continue
+                enabled = bool(action_state)
                 if existing_key_and_binding := bindings_map.get(key):
                     # This key has already been bound
-                    _, existing_binding, _ = existing_key_and_binding
                     # Replace priority bindings
-                    if binding.priority and not existing_binding.priority:
-                        bindings_map[key] = ActiveBinding(
-                            namespace, binding, bool(action_state)
-                        )
+                    if (
+                        binding.priority
+                        and not existing_key_and_binding.binding.priority
+                    ):
+                        bindings_map[key] = ActiveBinding(namespace, binding, enabled)
                 else:
                     # New binding
-                    bindings_map[key] = ActiveBinding(
-                        namespace, binding, bool(action_state)
-                    )
+                    bindings_map[key] = ActiveBinding(namespace, binding, enabled)
 
         return bindings_map
 

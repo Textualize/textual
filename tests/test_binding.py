@@ -45,7 +45,7 @@ def test_bindings_get_key_spaced_list(more_bindings):
 def test_bindings_merge_simple(bindings):
     left = BindingsMap([BINDING1])
     right = BindingsMap([BINDING2])
-    assert BindingsMap.merge([left, right]).key_to_bindings == bindings.keys
+    assert BindingsMap.merge([left, right]).key_to_bindings == bindings.key_to_bindings
 
 
 def test_bindings_merge_overlap():
