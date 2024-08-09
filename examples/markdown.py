@@ -4,6 +4,7 @@ from pathlib import Path
 from sys import argv
 
 from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.reactive import var
 from textual.widgets import Footer, MarkdownViewer
 
@@ -12,7 +13,12 @@ class MarkdownApp(App):
     """A simple Markdown viewer application."""
 
     BINDINGS = [
-        ("t", "toggle_table_of_contents", "TOC"),
+        Binding(
+            "t",
+            "toggle_table_of_contents",
+            "TOC",
+            tooltip="Toggle the Table of Contents panel",
+        ),
         ("b", "back", "Back"),
         ("f", "forward", "Forward"),
     ]
