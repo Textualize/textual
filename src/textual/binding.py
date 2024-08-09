@@ -84,7 +84,6 @@ class BindingsMap:
 
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             bindings = list(bindings)
-            # print(bindings)
             for binding in bindings:
                 # If it's a tuple of length 3, convert into a Binding first
                 if isinstance(binding, tuple):
