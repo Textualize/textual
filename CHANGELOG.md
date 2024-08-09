@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `tooltip` to Binding
+- Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 
 ## [0.76.0]
 
