@@ -52,7 +52,7 @@ class HeaderClockSpace(Widget):
     DEFAULT_CSS = """
     HeaderClockSpace {
         dock: right;
-        width: 10;
+        width: auto;
         padding: 0 1;
     }
     """
@@ -89,7 +89,7 @@ class HeaderClock(HeaderClockSpace):
         Returns:
             The rendered clock.
         """
-        return Text(datetime.now().time().strftime(self.time_format))
+        return Text(datetime.now().strftime(self.time_format))
 
 
 class HeaderTitle(Widget):
@@ -146,7 +146,7 @@ class Header(Widget):
     """A character for the icon at the top left."""
 
     time_format: Reactive[str] = Reactive("%X")
-    """Time format of the clock."""
+    """Datetime format of the clock."""
 
     def __init__(
         self,
@@ -166,7 +166,7 @@ class Header(Widget):
             id: The ID of the header widget in the DOM.
             classes: The CSS classes of the header widget.
             icon: Single character to use as an icon, or `None` for default.
-            time_format: Time format (used by strftime) for clock, or `None` for default.
+            time_format: Time/date format (used by strftime) for clock, or `None` for default.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._show_clock = show_clock
