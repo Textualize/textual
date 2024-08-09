@@ -8,7 +8,7 @@ See [bindings](/guide/input#bindings) in the guide for details.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable, NamedTuple
+from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 import rich.repr
 
@@ -64,7 +64,7 @@ class ActiveBinding(NamedTuple):
 
 
 @rich.repr.auto
-class _Bindings:
+class BindingsMap:
     """Manage a set of bindings."""
 
     def __init__(
@@ -83,6 +83,7 @@ class _Bindings:
         """
 
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
+            bindings = list(bindings)
             for binding in bindings:
                 # If it's a tuple of length 3, convert into a Binding first
                 if isinstance(binding, tuple):
@@ -90,7 +91,8 @@ class _Bindings:
                         raise BindingError(
                             f"BINDINGS must contain a tuple of two or three strings, not {binding!r}"
                         )
-                    binding = Binding(*binding)
+                    # `binding` is a tuple of 2 or 3 values at this point
+                    binding = Binding(*binding)  # type: ignore[reportArgumentType]
 
                 # At this point we have a Binding instance, but the key may
                 # be a list of keys, so now we unroll that single Binding
@@ -112,44 +114,72 @@ class _Bindings:
                         priority=binding.priority,
                     )
 
-        self.keys: dict[str, Binding] = (
-            {binding.key: binding for binding in make_bindings(bindings)}
-            if bindings
-            else {}
+        self.key_to_bindings: dict[str, list[Binding]] = {}
+        for binding in make_bindings(bindings or {}):
+            self.key_to_bindings.setdefault(binding.key, []).append(binding)
+
+    def __iter__(self) -> Iterator[tuple[str, Binding]]:
+        """Iterating produces a sequence of (KEY, BINDING) tuples."""
+        return iter(
+            [
+                (key, binding)
+                for key, bindings in self.key_to_bindings.items()
+                for binding in bindings
+            ]
         )
 
-    def copy(self) -> _Bindings:
+    @classmethod
+    def from_keys(cls, keys: dict[str, list[Binding]]) -> BindingsMap:
+        """Construct a BindingsMap from a dict of keys and bindings.
+
+        Args:
+            keys: A dict that maps a key on to a list of `Binding` objects.
+
+        Returns:
+            New `BindingsMap`
+        """
+        bindings = cls()
+        bindings.key_to_bindings = keys
+        return bindings
+
+    def copy(self) -> BindingsMap:
         """Return a copy of this instance.
 
         Return:
             New bindings object.
         """
-        copy = _Bindings()
-        copy.keys = self.keys.copy()
+        copy = BindingsMap()
+        copy.key_to_bindings = self.key_to_bindings.copy()
         return copy
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.keys
+        yield self.key_to_bindings
 
     @classmethod
-    def merge(cls, bindings: Iterable[_Bindings]) -> _Bindings:
-        """Merge a bindings. Subsequent bound keys override initial keys.
+    def merge(cls, bindings: Iterable[BindingsMap]) -> BindingsMap:
+        """Merge a bindings.
 
         Args:
             bindings: A number of bindings.
 
         Returns:
-            New bindings.
+            New `BindingsMap`.
         """
-        keys: dict[str, Binding] = {}
+        keys: dict[str, list[Binding]] = {}
         for _bindings in bindings:
-            keys.update(_bindings.keys)
-        return _Bindings(keys.values())
+            for key, key_bindings in _bindings.key_to_bindings.items():
+                keys.setdefault(key, []).extend(key_bindings)
+        return BindingsMap.from_keys(keys)
 
     @property
     def shown_keys(self) -> list[Binding]:
         """A list of bindings for shown keys."""
-        keys = [binding for binding in self.keys.values() if binding.show]
+        keys = [
+            binding
+            for bindings in self.key_to_bindings.values()
+            for binding in bindings
+            if binding.show
+        ]
         return keys
 
     def bind(
@@ -173,17 +203,19 @@ class _Bindings:
         """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
-            self.keys[key] = Binding(
-                key,
-                action,
-                description,
-                show=bool(description and show),
-                key_display=key_display,
-                priority=priority,
+            self.key_to_bindings.setdefault(key, []).append(
+                Binding(
+                    key,
+                    action,
+                    description,
+                    show=bool(description and show),
+                    key_display=key_display,
+                    priority=priority,
+                )
             )
 
-    def get_key(self, key: str) -> Binding:
-        """Get a binding if it exists.
+    def get_bindings_for_key(self, key: str) -> list[Binding]:
+        """Get a list of bindings for a given key.
 
         Args:
             key: Key to look up.
@@ -192,9 +224,9 @@ class _Bindings:
             NoBinding: If the binding does not exist.
 
         Returns:
-            A binding object for the key,
+            A list of bindings associated with the key.
         """
         try:
-            return self.keys[key]
+            return self.key_to_bindings[key]
         except KeyError:
             raise NoBinding(f"No binding for {key}") from None
