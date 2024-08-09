@@ -13,12 +13,7 @@ class MarkdownApp(App):
     """A simple Markdown viewer application."""
 
     BINDINGS = [
-        Binding(
-            "t",
-            "toggle_table_of_contents",
-            "TOC",
-            tooltip="Toggle the Table of Contents panel",
-        ),
+        Binding("t", "toggle_table_of_contents", "TOC"),
         ("b", "back", "Back"),
         ("f", "forward", "Forward"),
     ]
