@@ -609,7 +609,7 @@ class DOMNode(MessagePump):
                 )
         keys: dict[str, list[Binding]] = {}
         for bindings_ in bindings:
-            for key, key_bindings in bindings_.keys.items():
+            for key, key_bindings in bindings_.key_to_bindings.items():
                 keys[key] = key_bindings
 
         new_bindings = BindingsMap().from_keys(keys)

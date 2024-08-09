@@ -327,22 +327,29 @@ class Screen(Generic[ScreenResultType], Widget):
         This property may be used to inspect current bindings.
 
         Returns:
-            A map of keys to a tuple containing (namespace, binding, enabled boolean).
+            A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
 
         bindings_map: dict[str, ActiveBinding] = {}
         for namespace, bindings in self._modal_binding_chain:
             for key, binding in bindings:
+                # This will call the nodes `check_action` method.
                 action_state = self.app._check_action_state(binding.action, namespace)
                 if action_state is False:
+                    # An action_state of False indicates the action is disabled and not shown
+                    # Note that None has a different meaning, which is why there is an `is False`
+                    # rather than a truthy check.
                     continue
                 if existing_key_and_binding := bindings_map.get(key):
+                    # This key has already been bound
                     _, existing_binding, _ = existing_key_and_binding
+                    # Replace priority bindings
                     if binding.priority and not existing_binding.priority:
                         bindings_map[key] = ActiveBinding(
                             namespace, binding, bool(action_state)
                         )
                 else:
+                    # New binding
                     bindings_map[key] = ActiveBinding(
                         namespace, binding, bool(action_state)
                     )

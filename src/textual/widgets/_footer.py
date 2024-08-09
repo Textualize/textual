@@ -164,9 +164,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             for (_, binding, enabled) in self.screen.active_bindings.values()
             if binding.show
         ]
-        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
-            list
-        )
+        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]]
+        action_to_bindings = defaultdict(list)
         for binding, enabled in bindings:
             action_to_bindings[binding.action].append((binding, enabled))
 

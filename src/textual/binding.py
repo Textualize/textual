@@ -92,7 +92,8 @@ class BindingsMap:
                         raise BindingError(
                             f"BINDINGS must contain a tuple of two or three strings, not {binding!r}"
                         )
-                    binding = Binding(*binding)
+                    # `binding` is a tuple of 2 or 3 values at this point
+                    binding = Binding(*binding)  # type: ignore[reportArgumentType]
 
                 # At this point we have a Binding instance, but the key may
                 # be a list of keys, so now we unroll that single Binding
@@ -114,23 +115,32 @@ class BindingsMap:
                         priority=binding.priority,
                     )
 
-        self.keys: dict[str, list[Binding]] = {}
+        self.key_to_bindings: dict[str, list[Binding]] = {}
         for binding in make_bindings(bindings or {}):
-            self.keys.setdefault(binding.key, []).append(binding)
+            self.key_to_bindings.setdefault(binding.key, []).append(binding)
 
     def __iter__(self) -> Iterator[tuple[str, Binding]]:
+        """Iterating produces a sequence of (KEY, BINDING) tuples."""
         return iter(
             [
                 (key, binding)
-                for key, bindings in self.keys.items()
+                for key, bindings in self.key_to_bindings.items()
                 for binding in bindings
             ]
         )
 
     @classmethod
     def from_keys(cls, keys: dict[str, list[Binding]]) -> BindingsMap:
+        """Construct a BindingsMap from a dict of keys and bindings.
+
+        Args:
+            keys: A dict that maps a key on to a list of `Binding` objects.
+
+        Returns:
+            New `BindingsMap`
+        """
         bindings = cls()
-        bindings.keys = keys
+        bindings.key_to_bindings = keys
         return bindings
 
     def copy(self) -> BindingsMap:
@@ -140,27 +150,26 @@ class BindingsMap:
             New bindings object.
         """
         copy = BindingsMap()
-        copy.keys = self.keys.copy()
+        copy.key_to_bindings = self.key_to_bindings.copy()
         return copy
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.keys
+        yield self.key_to_bindings
 
     @classmethod
     def merge(cls, bindings: Iterable[BindingsMap]) -> BindingsMap:
-        """Merge a bindings. Subsequent bound keys override initial keys.
+        """Merge a bindings.
 
         Args:
             bindings: A number of bindings.
 
         Returns:
-            New bindings.
+            New `BindingsMap`.
         """
         keys: dict[str, list[Binding]] = {}
         for _bindings in bindings:
-            for key, key_bindings in _bindings.keys.items():
+            for key, key_bindings in _bindings.key_to_bindings.items():
                 keys.setdefault(key, []).extend(key_bindings)
-
         return BindingsMap.from_keys(keys)
 
     @property
@@ -168,7 +177,7 @@ class BindingsMap:
         """A list of bindings for shown keys."""
         keys = [
             binding
-            for bindings in self.keys.values()
+            for bindings in self.key_to_bindings.values()
             for binding in bindings
             if binding.show
         ]
@@ -195,7 +204,7 @@ class BindingsMap:
         """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
-            self.keys.setdefault(key, []).append(
+            self.key_to_bindings.setdefault(key, []).append(
                 Binding(
                     key,
                     action,
@@ -219,6 +228,6 @@ class BindingsMap:
             A list of bindings associated with the key.
         """
         try:
-            return self.keys[key]
+            return self.key_to_bindings[key]
         except KeyError:
             raise NoBinding(f"No binding for {key}") from None
