@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Change to how keys with modifiers are reported https://github.com/Textualize/textual/pull/4861 
+- Change to how keys with modifiers are reported. When shift + another modifier is pressed, then the key name will contain "shift", and the key will be *lower case*. i.e. `ctrl+shift+E` and not `ctrl+E` https://github.com/Textualize/textual/pull/4861 
 
 ## [0.76.0]
 
