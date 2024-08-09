@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
+
 ## [0.76.0]
 
 ### Changed

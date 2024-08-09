@@ -108,15 +108,15 @@ class ClassicFooter(Widget):
         description_style = self.get_component_rich_style("footer--description")
 
         bindings = [
-            (binding, enabled)
-            for (_, binding, enabled) in self.screen.active_bindings.values()
+            (binding, enabled, tooltip)
+            for (_, binding, enabled, tooltip) in self.screen.active_bindings.values()
             if binding.show
         ]
 
         action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
             list
         )
-        for binding, enabled in bindings:
+        for binding, enabled, _ in bindings:
             action_to_bindings[binding.action].append((binding, enabled))
 
         app_focus = self.app.app_focus
