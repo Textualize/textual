@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 
+### Changed
+
+- Change to how keys with modifiers are reported https://github.com/Textualize/textual/pull/4861 
+
 ## [0.76.0]
 
 ### Changed
