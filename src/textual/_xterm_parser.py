@@ -279,6 +279,7 @@ class XTermParser(Parser[Message]):
                     "shift",
                     "alt",
                     "ctrl",
+                    "super",
                     "hyper",
                     "meta",
                     "caps_lock",
