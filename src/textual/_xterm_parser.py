@@ -275,19 +275,17 @@ class XTermParser(Parser[Message]):
             key_tokens: list[str] = []
             if modifiers:
                 modifier_bits = int(modifiers) - 1
-                MODIFIERS = (
-                    "shift",
-                    "alt",
-                    "ctrl",
-                    "super",
-                    "hyper",
-                    "meta",
-                    "caps_lock",
-                    "num_lock",
-                )
-                for bit, modifier in zip(range(8), MODIFIERS):
-                    if modifier_bits & (1 << bit):
+                # Not convinced of the utility in reporting caps_lock and num_lock
+                MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
+                # Ignore caps_lock and num_lock modifiers
+                for bit, modifier in zip(range(len(MODIFIERS)), MODIFIERS):
+                    if modifier and modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
+                if key_tokens:
+                    if key.isupper() and len(key) == 1:
+                        key_tokens.append("shift")
+                        key = key.lower()
+
             key_tokens.sort()
             key_tokens.append(key)
             yield events.Key(
