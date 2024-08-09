@@ -290,7 +290,7 @@ class XTermParser(Parser[Message]):
                     if modifier and modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
                 if key_tokens:
-                    if key.isupper():
+                    if key.isupper() and len(key) == 1:
                         key_tokens.append("shift")
                         key = key.lower()
 
