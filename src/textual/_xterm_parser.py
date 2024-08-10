@@ -281,10 +281,6 @@ class XTermParser(Parser[Message]):
                 for bit, modifier in zip(range(len(MODIFIERS)), MODIFIERS):
                     if modifier and modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
-                if key_tokens:
-                    if len(key) == 1 and key.isupper():
-                        key_tokens.append("shift")
-                        key = key.lower()
 
             key_tokens.sort()
             key_tokens.append(key)
