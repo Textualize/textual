@@ -33,8 +33,13 @@ T = TypeVar("T", int, float)
 
 
 def clamp(value: T, minimum: T, maximum: T) -> T:
-    """Adjust a value so it is not less than a minimum and not greater
-    than a maximum value.
+    """Restrict a value to a given range.
+
+    If `value` is less than the minimum, return the minimum.
+    If `value` is greater than the maximum, return the maximum.
+    Otherwise, return `value`.
+
+    The `minimum` and `maximum` arguments values may be given in reverse order.
 
     Args:
         value: A value.
@@ -45,12 +50,18 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
         New value that is not less than the minimum or greater than the maximum.
     """
     if minimum > maximum:
-        maximum, minimum = minimum, maximum
-    if value < minimum:
-        return minimum
-    elif value > maximum:
-        return maximum
+        # It is common for the min and max to be in non-intuitive order.
+        # Rather than force the caller to get it right, it is simpler to handle it here.
+        if value < maximum:
+            return maximum
+        if value > minimum:
+            return minimum
+        return value
     else:
+        if value < minimum:
+            return minimum
+        if value > maximum:
+            return maximum
         return value
 
 
@@ -222,7 +233,7 @@ class Size(NamedTuple):
         """Get a new Size with just the height changed.
 
         Args:
-            width: New height.
+            height: New height.
 
         Returns:
             New Size instance.
@@ -616,19 +627,6 @@ class Region(NamedTuple):
             height + expand_height * 2,
         )
 
-    def clip_size(self, size: tuple[int, int]) -> Region:
-        """Clip the size to fit within minimum values.
-
-        Args:
-            size: Maximum width and height.
-
-        Returns:
-            No region, not bigger than size.
-        """
-        x, y, width, height = self
-        max_width, max_height = size
-        return Region(x, y, min(width, max_width), min(height, max_height))
-
     @lru_cache(maxsize=1024)
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
@@ -702,7 +700,7 @@ class Region(NamedTuple):
             offset: Offset to add to region.
 
         Returns:
-            A new region shifted by (x, y)
+            A new region shifted by (x, y).
         """
 
         self_x, self_y, width, height = self

@@ -62,6 +62,14 @@ def test_clamp():
     assert clamp(10, 0, 10) == 10
     assert clamp(5, 10, 0) == 5
 
+    # range in reverse order
+    assert clamp(5, 10, 0) == 5
+    assert clamp(-1, 10, 0) == 0
+    assert clamp(11, 10, 0) == 10
+    assert clamp(0, 10, 0) == 0
+    assert clamp(10, 10, 0) == 10
+    assert clamp(5, 0, 10) == 5
+
 
 def test_offset_bool():
     assert Offset(1, 0)
@@ -200,10 +208,6 @@ def test_region_at_offset():
 def test_crop_size():
     assert Region(10, 20, 100, 200).crop_size((50, 40)) == Region(10, 20, 50, 40)
     assert Region(10, 20, 100, 200).crop_size((500, 40)) == Region(10, 20, 100, 40)
-
-
-def test_clip_size():
-    assert Region(10, 10, 100, 80).clip_size((50, 100)) == Region(10, 10, 50, 80)
 
 
 def test_region_overlaps():

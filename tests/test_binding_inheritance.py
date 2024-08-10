@@ -39,11 +39,11 @@ class NoBindings(App[None]):
 async def test_just_app_no_bindings() -> None:
     """An app with no bindings should have no bindings, other than the app's hard-coded ones."""
     async with NoBindings().run_test() as pilot:
-        assert list(pilot.app._bindings.keys.keys()) == [
+        assert list(pilot.app._bindings.key_to_bindings.keys()) == [
             "ctrl+c",
             "ctrl+backslash",
         ]
-        assert pilot.app._bindings.get_key("ctrl+c").priority is True
+        assert pilot.app._bindings.get_bindings_for_key("ctrl+c")[0].priority is True
 
 
 ##############################################################################
@@ -64,11 +64,11 @@ class AlphaBinding(App[None]):
 async def test_just_app_alpha_binding() -> None:
     """An app with a single binding should have just the one binding."""
     async with AlphaBinding().run_test() as pilot:
-        assert sorted(pilot.app._bindings.keys.keys()) == sorted(
+        assert sorted(pilot.app._bindings.key_to_bindings.keys()) == sorted(
             ["ctrl+c", "ctrl+backslash", "a"]
         )
-        assert pilot.app._bindings.get_key("ctrl+c").priority is True
-        assert pilot.app._bindings.get_key("a").priority is True
+        assert pilot.app._bindings.get_bindings_for_key("ctrl+c")[0].priority is True
+        assert pilot.app._bindings.get_bindings_for_key("a")[0].priority is True
 
 
 ##############################################################################
@@ -88,11 +88,11 @@ class LowAlphaBinding(App[None]):
 async def test_just_app_low_priority_alpha_binding() -> None:
     """An app with a single low-priority binding should have just the one binding."""
     async with LowAlphaBinding().run_test() as pilot:
-        assert sorted(pilot.app._bindings.keys.keys()) == sorted(
+        assert sorted(pilot.app._bindings.key_to_bindings.keys()) == sorted(
             ["ctrl+c", "ctrl+backslash", "a"]
         )
-        assert pilot.app._bindings.get_key("ctrl+c").priority is True
-        assert pilot.app._bindings.get_key("a").priority is False
+        assert pilot.app._bindings.get_bindings_for_key("ctrl+c")[0].priority is True
+        assert pilot.app._bindings.get_bindings_for_key("a")[0].priority is False
 
 
 ##############################################################################
@@ -121,7 +121,7 @@ class AppWithScreenThatHasABinding(App[None]):
 async def test_app_screen_with_bindings() -> None:
     """Test a screen with a single key binding defined."""
     async with AppWithScreenThatHasABinding().run_test() as pilot:
-        assert pilot.app.screen._bindings.get_key("a").priority is True
+        assert pilot.app.screen._bindings.get_bindings_for_key("a")[0].priority is True
 
 
 ##############################################################################
@@ -150,7 +150,7 @@ class AppWithScreenThatHasALowBinding(App[None]):
 async def test_app_screen_with_low_bindings() -> None:
     """Test a screen with a single low-priority key binding defined."""
     async with AppWithScreenThatHasALowBinding().run_test() as pilot:
-        assert pilot.app.screen._bindings.get_key("a").priority is False
+        assert pilot.app.screen._bindings.get_bindings_for_key("a")[0].priority is False
 
 
 ##############################################################################

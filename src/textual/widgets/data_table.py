@@ -10,6 +10,7 @@ from ._data_table import (
     Row,
     RowDoesNotExist,
     RowKey,
+    StringKey,
 )
 
 __all__ = [
@@ -24,4 +25,5 @@ __all__ = [
     "Row",
     "RowDoesNotExist",
     "RowKey",
+    "StringKey",
 ]

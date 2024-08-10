@@ -19,6 +19,7 @@ import sys
 from codecs import getincrementaldecoder
 from functools import partial
 from threading import Event, Thread
+from typing import Any
 
 from .. import events, log, messages
 from .._xterm_parser import XTermParser
@@ -40,7 +41,7 @@ class WebDriver(Driver):
 
     def __init__(
         self,
-        app: App,
+        app: App[Any],
         *,
         debug: bool = False,
         mouse: bool = True,
@@ -63,7 +64,8 @@ class WebDriver(Driver):
         self._input_reader = InputReader()
 
     def write(self, data: str) -> None:
-        """Write data to the output device.
+        """Write string data to the output device, which may be piped to
+        the controlling process (i.e. textual-web).
 
         Args:
             data: Raw data.
@@ -73,7 +75,8 @@ class WebDriver(Driver):
         self._write(b"D%s%s" % (len(data_bytes).to_bytes(4, "big"), data_bytes))
 
     def write_meta(self, data: dict[str, object]) -> None:
-        """Write meta to the controlling process (i.e. textual-web)
+        """Write a dictionary containing some metadata to stdout, which
+        may be piped to the controlling process (i.e. textual-web).
 
         Args:
             data: Meta dict.
@@ -160,7 +163,7 @@ class WebDriver(Driver):
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
         input_reader = self._input_reader
-        parser = XTermParser(input_reader.more_data, debug=self._debug)
+        parser = XTermParser(debug=self._debug)
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
@@ -192,13 +195,17 @@ class WebDriver(Driver):
             packet_type: Packet type (currently always "M")
             payload: Meta payload (JSON encoded as bytes).
         """
-        payload_map = json.loads(payload)
+        payload_map: dict[str, object] = json.loads(payload)
         _type = payload_map.get("type", {})
-        if isinstance(payload_map, dict):
+        if isinstance(_type, str):
             self.on_meta(_type, payload_map)
+        else:
+            log.error(
+                f"Protocol error: type field value is not a string. Value is {_type!r}"
+            )
 
-    def on_meta(self, packet_type: str, payload: dict) -> None:
-        """Process meta information.
+    def on_meta(self, packet_type: str, payload: dict[str, object]) -> None:
+        """Process a dictionary containing information received from the controlling process.
 
         Args:
             packet_type: The type of the packet.
@@ -216,3 +223,12 @@ class WebDriver(Driver):
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":
             raise _ExitInput()
+
+    def open_url(self, url: str, new_tab: bool = True) -> None:
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
+        """
+        self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})

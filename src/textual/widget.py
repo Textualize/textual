@@ -1,5 +1,6 @@
 """
-The base class for widgets.
+This module contains the `Widget` class, the base class for all widgets.
+
 """
 
 from __future__ import annotations
@@ -49,6 +50,8 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
+from ._debug import get_caller_file_and_line
+from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -112,6 +115,7 @@ _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Le
 _MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
+@rich.repr.auto
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
@@ -124,6 +128,12 @@ class AwaitMount:
     def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
         self._parent = parent
         self._widgets = widgets
+        self._caller = get_caller_file_and_line()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "parent", self._parent
+        yield "widgets", self._widgets
+        yield "caller", self._caller, None
 
     async def __call__(self) -> None:
         """Allows awaiting via a call operation."""
@@ -418,7 +428,7 @@ class Widget(DOMNode):
     has_focus: Reactive[bool] = Reactive(False, repaint=False)
     """Does this widget have focus? Read only."""
 
-    mouse_over: Reactive[bool] = Reactive(False, repaint=False)
+    mouse_hover: Reactive[bool] = Reactive(False, repaint=False)
     """Is the mouse over this widget? Read only."""
 
     scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
@@ -531,6 +541,22 @@ class Widget(DOMNode):
     def is_anchored(self) -> bool:
         """Is this widget anchored?"""
         return self._parent is not None and self._parent is self
+
+    @property
+    def is_mouse_over(self) -> bool:
+        """Is the mouse currently over this widget?
+
+        Note this will be `True` if the mouse pointer is within the widget's region, even if
+        the mouse pointer is not directly over the widget (there could be another widget between
+        the mouse pointer and self).
+
+        """
+        if not self.screen.is_active:
+            return False
+        for widget, _ in self.screen.get_widgets_at(*self.app.mouse_position):
+            if widget is self:
+                return True
+        return False
 
     def anchor(self, *, animate: bool = False) -> None:
         """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
@@ -796,7 +822,7 @@ class Widget(DOMNode):
         """Get a *Rich* style for a component.
 
         Args:
-            name: Name of component.
+            names: Names of components.
             partial: Return a partial style (not combined with parent).
 
         Returns:
@@ -1210,7 +1236,9 @@ class Widget(DOMNode):
             content_width = Fraction(
                 self.get_content_width(content_container - margin.totals, viewport)
             )
-            if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+            if (
+                styles.overflow_x == "auto" and styles.scrollbar_gutter == "stable"
+            ) or self.show_vertical_scrollbar:
                 content_width += styles.scrollbar_size_vertical
             if (
                 content_width < content_container.width
@@ -1260,7 +1288,9 @@ class Widget(DOMNode):
             content_height = Fraction(
                 self.get_content_height(content_container, viewport, int(content_width))
             )
-            if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+            if (
+                styles.overflow_y == "auto" and styles.scrollbar_gutter == "stable"
+            ) or self.show_horizontal_scrollbar:
                 content_height += styles.scrollbar_size_horizontal
             if (
                 content_height < content_container.height
@@ -3146,7 +3176,7 @@ class Widget(DOMNode):
         Returns:
             Names of the pseudo classes.
         """
-        if self.mouse_over:
+        if self.mouse_hover:
             yield "hover"
         if self.has_focus:
             yield "focus"
@@ -3194,7 +3224,7 @@ class Widget(DOMNode):
 
         pseudo_classes = PseudoClasses(
             enabled=not disabled,
-            hover=self.mouse_over,
+            hover=self.mouse_hover,
             focus=self.has_focus,
         )
         return pseudo_classes
@@ -3238,7 +3268,7 @@ class Widget(DOMNode):
 
         return renderable
 
-    def watch_mouse_over(self, value: bool) -> None:
+    def watch_mouse_hover(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         if self._has_hover_style:
             self._update_styles()
@@ -3251,9 +3281,9 @@ class Widget(DOMNode):
         """Update the styles of the widget and its children when disabled is toggled."""
         from .app import ScreenStackError
 
-        if disabled and self.mouse_over:
+        if disabled and self.mouse_hover and self.app.mouse_over is not None:
             # Ensure widget gets a Leave if it is disabled while hovered
-            self._message_queue.put_nowait(events.Leave())
+            self._message_queue.put_nowait(events.Leave(self.app.mouse_over))
         try:
             screen = self.screen
             if (
@@ -3463,17 +3493,17 @@ class Widget(DOMNode):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if not self._is_mounted:
-            self._repaint_required = True
-            self.check_idle()
-            return self
-
         if recompose:
             self._recompose_required = True
             self.call_next(self._check_recompose)
             return self
 
-        elif repaint:
+        if not self._is_mounted:
+            self._repaint_required = True
+            self.check_idle()
+            return self
+
+        if repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()
             self._rich_style_cache.clear()
@@ -3774,7 +3804,7 @@ class Widget(DOMNode):
         await self.handle_key(event)
 
     async def handle_key(self, event: events.Key) -> bool:
-        return await self.dispatch_key(event)
+        return await dispatch_key(self, event)
 
     async def _on_compose(self, event: events.Compose) -> None:
         _rich_traceback_omit = True
@@ -3822,11 +3852,13 @@ class Widget(DOMNode):
             self.show_horizontal_scrollbar = True
 
     def _on_leave(self, event: events.Leave) -> None:
-        self.mouse_over = False
-        self.hover_style = Style()
+        if event.node is self:
+            self.mouse_hover = False
+            self.hover_style = Style()
 
     def _on_enter(self, event: events.Enter) -> None:
-        self.mouse_over = True
+        if event.node is self:
+            self.mouse_hover = True
 
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True

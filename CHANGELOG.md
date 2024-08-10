@@ -9,7 +9,69 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
+
+## [0.76.0]
+
+### Changed
+
+- Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
+- Removed `Size.cip_size`, which was a clone of `crop_size`
+- Widgets with auto dimensions will now grow if there is a scrollbar https://github.com/Textualize/textual/pull/4844
+- Don't do automatic refresh when widget is not visible https://github.com/Textualize/textual/pull/4847
+- Renamed `DOMNode._automatic_refresh` to `DOMNode.automatic_refresh` to allow for customization https://github.com/Textualize/textual/pull/4847
+
+### Fixed
+
+- Input cursor blink effect will now restart correctly when any action is performed on the input https://github.com/Textualize/textual/pull/4773
+- Fixed bindings on same key not updating description https://github.com/Textualize/textual/pull/4850
+
+### Added
+
+- Textual will use the `ESCDELAY` env var when detecting escape keys https://github.com/Textualize/textual/pull/4848
+
+## [0.75.1] - 2024-08-02
+
+### Fixed
+
+- Fixed issue with Enter events causing unresponsive UI https://github.com/Textualize/textual/pull/4833
+
+## [0.75.0] - 2024-08-01
+
+### Added
+
+- Added `App.open_url` to open URLs in the web browser. When running via the WebDriver, the URL will be opened in the browser that is controlling the app https://github.com/Textualize/textual/pull/4819
+- Added `Widget.is_mouse_over` https://github.com/Textualize/textual/pull/4818
+- Added `node` attribute to `events.Enter` and `events.Leave` https://github.com/Textualize/textual/pull/4818
+
+### Changed
+
+- `events.Enter` and `events.Leave` events now bubble. https://github.com/Textualize/textual/pull/4818
+- Renamed `Widget.mouse_over` to `Widget.mouse_hover` https://github.com/Textualize/textual/pull/4818
+
+### Fixed
+
+- Fixed issue with `mutate_reactive` and data binding https://github.com/Textualize/textual/pull/4828
+
+## [0.74.0] - 2024-07-25
+
+### Fixed
+
+- Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
+- Fixed exception when removing Selects https://github.com/Textualize/textual/pull/4786
+- Fixed issue with non-clickable Footer keys https://github.com/Textualize/textual/pull/4798
+- Fixed issue with recompose not working from Mount handler https://github.com/Textualize/textual/pull/4802
+
+### Changed
+
+- Calling `Screen.dismiss` with no arguments will invoke the screen callback with `None` (previously the callback wasn't invoke at all). https://github.com/Textualize/textual/pull/4795
+
+## [0.73.0] - 2024-07-18
+
+### Added
+
+- Added `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Added `TextArea.matching_bracket_location` property https://github.com/Textualize/textual/pull/4764
 - Added `DOMNode.mutate_reactive` https://github.com/Textualize/textual/pull/4731
 - Added "quality" parameter to `textual.color.Gradient` https://github.com/Textualize/textual/pull/4739
 - Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
@@ -17,6 +79,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 - Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
 - Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
+- `StringKey` is now exported from `data_table` https://github.com/Textualize/textual/pull/4760
+- `TreeNode.add` and `TreeNode.add_leaf` now accepts `before` and `after` arguments to position a new node https://github.com/Textualize/textual/pull/4772
+- Added a `gradient` parameter to the `ProgressBar` widget https://github.com/Textualize/textual/pull/4774
 
 ### Fixed
 
@@ -27,6 +92,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 - Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
 - Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
+- Fixed message handlers not working when message types are assigned as the value of class vars https://github.com/Textualize/textual/pull/3940
+- Fixed `CommandPalette` not focusing the input when opened when `App.AUTO_FOCUS` doesn't match the input https://github.com/Textualize/textual/pull/4763
+- `SelectionList.SelectionToggled` will now be sent for each option when a bulk toggle is performed (e.g. `toggle_all`). Previously no messages were sent at all. https://github.com/Textualize/textual/pull/4759
+- Fixed focus styles not being updated on blur https://github.com/Textualize/textual/pull/4771
 
 ### Changed
 
@@ -34,6 +103,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `TreeNodeSelected` messages are now posted before `TreeNodeExpanded` messages
 when an expandable node is selected https://github.com/Textualize/textual/pull/4753
 - `Markdown.LinkClicked.href` is now automatically unquoted https://github.com/Textualize/textual/pull/4749
+- The mouse cursor hover effect of `Tree` and `DirectoryTree` will no longer linger after the mouse leaves the widget https://github.com/Textualize/textual/pull/4766
 
 
 ## [0.72.0] - 2024-07-09
@@ -2211,6 +2281,11 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.76.0]: https://github.com/Textualize/textual/compare/v0.75.1...v0.76.0
+[0.75.1]: https://github.com/Textualize/textual/compare/v0.75.0...v0.75.1
+[0.75.0]: https://github.com/Textualize/textual/compare/v0.74.0...v0.75.0
+[0.74.0]: https://github.com/Textualize/textual/compare/v0.73.0...v0.74.0
+[0.73.0]: https://github.com/Textualize/textual/compare/v0.72.0...v0.73.0
 [0.72.0]: https://github.com/Textualize/textual/compare/v0.71.0...v0.72.0
 [0.71.0]: https://github.com/Textualize/textual/compare/v0.70.0...v0.71.0
 [0.70.0]: https://github.com/Textualize/textual/compare/v0.69.0...v0.70.0

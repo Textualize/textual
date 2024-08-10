@@ -24,6 +24,11 @@ async def test_message_inheritance_namespace():
         class Fired(BaseWidget.Fired):
             pass
 
+    class DummyWidget(Widget):
+        # ensure that referencing a message type in other class scopes
+        # doesn't break the namespace
+        _event = Left.Fired
+
     handlers_called = []
 
     class MessageInheritanceApp(App[None]):

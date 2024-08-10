@@ -1,6 +1,6 @@
 """
 
-The `Suggester` class is used by the [Input](/widgets/input) widget.
+Contains the `Suggester` class, used by the [Input](/widgets/input) widget.
 
 """
 

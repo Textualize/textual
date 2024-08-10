@@ -101,6 +101,16 @@ async def test_toggle_all() -> None:
         await pilot.pause()
         assert pilot.app.messages == [
             ("SelectionHighlighted", 0),
+            ("SelectionToggled", 0),
+            ("SelectionToggled", 1),
+            ("SelectionToggled", 2),
+            ("SelectionToggled", 3),
+            ("SelectionToggled", 4),
+            ("SelectionToggled", 5),
+            ("SelectionToggled", 6),
+            ("SelectionToggled", 7),
+            ("SelectionToggled", 8),
+            ("SelectionToggled", 9),
             ("SelectedChanged", None),
         ]
 

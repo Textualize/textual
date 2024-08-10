@@ -97,19 +97,19 @@ def test_inherited_bindings():
         BINDINGS = [("e", "e", "e")]
 
     a = A()
-    assert list(a._bindings.keys.keys()) == ["a"]
+    assert list(a._bindings.key_to_bindings.keys()) == ["a"]
 
     b = B()
-    assert list(b._bindings.keys.keys()) == ["a", "b"]
+    assert list(b._bindings.key_to_bindings.keys()) == ["a", "b"]
 
     c = C()
-    assert list(c._bindings.keys.keys()) == ["c"]
+    assert list(c._bindings.key_to_bindings.keys()) == ["c"]
 
     d = D()
-    assert not list(d._bindings.keys.keys())
+    assert not list(d._bindings.key_to_bindings.keys())
 
     e = E()
-    assert list(e._bindings.keys.keys()) == ["e"]
+    assert list(e._bindings.key_to_bindings.keys()) == ["e"]
 
 
 def test__get_default_css():

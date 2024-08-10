@@ -1,4 +1,10 @@
-"""Framework for validating string values"""
+"""
+
+This module provides a number of classes for validating input.
+
+See [Validating Input](/widgets/input/#validating-input) for details.
+
+"""
 
 from __future__ import annotations
 

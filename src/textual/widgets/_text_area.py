@@ -645,6 +645,7 @@ TextArea {
         match_location = None
         bracket_stack: list[str] = []
         if bracket in _OPENING_BRACKETS:
+            # Search forwards for a closing bracket
             for candidate, candidate_location in self._yield_character_locations(
                 search_from
             ):
@@ -660,6 +661,7 @@ TextArea {
                             match_location = candidate_location
                             break
         elif bracket in _CLOSING_BRACKETS:
+            # Search backwards for an opening bracket
             for (
                 candidate,
                 candidate_location,
@@ -1252,6 +1254,11 @@ TextArea {
         """The text between the start and end points of the current selection."""
         start, end = self.selection
         return self.get_text_range(start, end)
+
+    @property
+    def matching_bracket_location(self) -> Location | None:
+        """The location of the matching bracket, if there is one."""
+        return self._matching_bracket_location
 
     def get_text_range(self, start: Location, end: Location) -> str:
         """Get the text between a start and end location.

@@ -74,8 +74,16 @@ class Message:
             cls.no_dispatch = no_dispatch
         if namespace is not None:
             cls.namespace = namespace
-        name = camel_to_snake(cls.__name__)
-        cls.handler_name = f"on_{namespace}_{name}" if namespace else f"on_{name}"
+            name = f"{namespace}_{camel_to_snake(cls.__name__)}"
+        else:
+            # a class defined inside of a function will have a qualified name like func.<locals>.Class,
+            # so make sure we only use the actual class name(s)
+            qualname = cls.__qualname__.rsplit("<locals>.", 1)[-1]
+            # only keep the last two parts of the qualified name of deeply nested classes
+            # for backwards compatibility, e.g. A.B.C.D becomes C.D
+            namespace = qualname.rsplit(".", 2)[-2:]
+            name = "_".join(camel_to_snake(part) for part in namespace)
+        cls.handler_name = f"on_{name}"
 
     @property
     def control(self) -> DOMNode | None:

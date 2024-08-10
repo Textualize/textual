@@ -6,7 +6,7 @@ from textual.containers import Container
 from textual.screen import Screen
 
 
-async def test_unmount():
+async def test_unmount() -> None:
     """Test unmount events are received in reverse DOM order."""
     unmount_ids: list[str] = []
 

@@ -84,6 +84,7 @@ class FooterKey(Widget):
         description: str,
         action: str,
         disabled: bool = False,
+        tooltip: str = "",
     ) -> None:
         self.key = key
         self.key_display = key_display
@@ -91,6 +92,8 @@ class FooterKey(Widget):
         self.action = action
         self._disabled = disabled
         super().__init__(classes="-disabled" if disabled else "")
+        if tooltip:
+            self.tooltip = tooltip
 
     def render(self) -> Text:
         key_style = self.get_component_rich_style("footer-key--key")
@@ -160,25 +163,25 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         if not self._bindings_ready:
             return
         bindings = [
-            (binding, enabled)
-            for (_, binding, enabled) in self.screen.active_bindings.values()
+            (binding, enabled, tooltip)
+            for (_, binding, enabled, tooltip) in self.screen.active_bindings.values()
             if binding.show
         ]
-        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
-            list
-        )
-        for binding, enabled in bindings:
-            action_to_bindings[binding.action].append((binding, enabled))
+        action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
+        action_to_bindings = defaultdict(list)
+        for binding, enabled, tooltip in bindings:
+            action_to_bindings[binding.action].append((binding, enabled, tooltip))
 
         self.styles.grid_size_columns = len(action_to_bindings)
         for multi_bindings in action_to_bindings.values():
-            binding, enabled = multi_bindings[0]
+            binding, enabled, tooltip = multi_bindings[0]
             yield FooterKey(
                 binding.key,
                 binding.key_display or self.app.get_key_display(binding.key),
                 binding.description,
                 binding.action,
                 disabled=not enabled,
+                tooltip=tooltip,
             ).data_bind(
                 Footer.upper_case_keys,
                 Footer.ctrl_to_caret,

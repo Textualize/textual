@@ -1,1 +1,5 @@
-::: textual._worker_manager
+---
+title: "textual.worker_manager"
+---
+
+::: textual.worker_manager

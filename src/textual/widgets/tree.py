@@ -1,6 +1,7 @@
 """Make non-widget Tree support classes available."""
 
 from ._tree import (
+    AddNodeError,
     EventTreeDataType,
     NodeID,
     RemoveRootError,
@@ -10,6 +11,7 @@ from ._tree import (
 )
 
 __all__ = [
+    "AddNodeError",
     "EventTreeDataType",
     "NodeID",
     "RemoveRootError",

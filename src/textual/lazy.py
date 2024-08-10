@@ -21,7 +21,6 @@ class Lazy(Widget):
     in queries for a brief interval until they are mounted. Your code should take this in to account.
 
     Example:
-
         ```python
         def compose(self) -> ComposeResult:
             yield Footer()
