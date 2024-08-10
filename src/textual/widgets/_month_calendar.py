@@ -183,17 +183,17 @@ class MonthCalendar(Widget):
         event.stop()
         pass
 
-    def previous_year(self) -> None:
-        self.date -= relativedelta(years=1)
-
-    def next_year(self) -> None:
-        self.date += relativedelta(years=1)
-
     def previous_month(self) -> None:
         self.date -= relativedelta(months=1)
 
     def next_month(self) -> None:
         self.date += relativedelta(months=1)
+
+    def previous_year(self) -> None:
+        self.date -= relativedelta(years=1)
+
+    def next_year(self) -> None:
+        self.date += relativedelta(years=1)
 
     def _on_mount(self, _: Mount) -> None:
         self._update_calendar_table(update_week_header=True)
@@ -350,26 +350,26 @@ class MonthCalendar(Widget):
         table = self.query_one(MonthCalendarTable)
         table.action_select_cursor()
 
+    def action_previous_day(self) -> None:
+        self.date -= relativedelta(days=1)
+
+    def action_next_day(self) -> None:
+        self.date += relativedelta(days=1)
+
     def action_previous_week(self) -> None:
         self.date -= relativedelta(weeks=1)
 
     def action_next_week(self) -> None:
         self.date += relativedelta(weeks=1)
 
-    def action_next_day(self) -> None:
-        self.date += relativedelta(days=1)
-
-    def action_previous_day(self) -> None:
-        self.date -= relativedelta(days=1)
+    def action_previous_month(self) -> None:
+        self.previous_month()
 
     def action_next_month(self) -> None:
         self.next_month()
 
-    def action_previous_month(self) -> None:
-        self.previous_month()
+    def action_previous_year(self) -> None:
+        self.previous_year()
 
     def action_next_year(self) -> None:
         self.next_year()
-
-    def action_previous_year(self) -> None:
-        self.previous_year()
