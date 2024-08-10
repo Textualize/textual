@@ -108,10 +108,10 @@ class MonthCalendar(Widget):
     def __init__(
         self,
         date: datetime.date = datetime.date.today(),
+        *,
         first_weekday: int = 0,
         show_cursor: bool = True,
         show_other_months: bool = True,
-        *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
