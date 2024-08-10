@@ -278,8 +278,8 @@ class XTermParser(Parser[Message]):
                 # Not convinced of the utility in reporting caps_lock and num_lock
                 MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
                 # Ignore caps_lock and num_lock modifiers
-                for bit, modifier in zip(range(len(MODIFIERS)), MODIFIERS):
-                    if modifier and modifier_bits & (1 << bit):
+                for bit, modifier in enumerate(MODIFIERS):
+                    if modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
 
             key_tokens.sort()
