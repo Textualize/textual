@@ -9,7 +9,7 @@ class Tooltip(Static, inherit_css=False):
         layer: _tooltips;
         margin: 1 2;
         padding: 1 2;
-        background: $panel;
+        background: $background;
         width: auto;
         height: auto;
         constrain: inflect;

@@ -368,7 +368,13 @@ class App(Generic[ReturnType], DOMNode):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
+        Binding(
+            "ctrl+p",
+            "command_palette",
+            "Show the command palette",
+            show=False,
+            priority=True,
+        ),
     ]
 
     CLOSE_TIMEOUT: float | None = 5.0
