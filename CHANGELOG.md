@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 
+### Fixed
+
+- Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
+
 ## [0.76.0]
 
 ### Changed
