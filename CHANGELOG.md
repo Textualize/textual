@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
+- Added a link to the command palette to the Footer (set `show_command_palette=False` to disable) https://github.com/Textualize/textual/pull/4867
 
 ## [0.76.0]
 
