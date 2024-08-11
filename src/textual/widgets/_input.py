@@ -583,7 +583,7 @@ class Input(Widget, can_focus=True):
     def _pause_blink_cycle(self) -> None:
         """Hide the blinking cursor and pause the blink cycle."""
         self._cursor_visible = False
-        if self.cursor_blink and self._blink_timer:
+        if self._blink_timer:
             self._blink_timer.pause()
 
     def insert_text_at_cursor(self, text: str) -> None:
