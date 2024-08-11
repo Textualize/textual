@@ -234,7 +234,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 Footer.compact,
             )
         self.log(bindings)
-        if self.show_command_palette:
+        if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             for key, binding in self.app._bindings:
                 if binding.action in (
                     "app.command_palette",

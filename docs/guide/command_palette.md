@@ -6,7 +6,7 @@ In this chapter we will explain what a command palette is, how to use it, and ho
 
 ## Launching the command palette
 
-Press ++ctrl++ + `\` (ctrl and backslash) to invoke the command palette screen, which contains of a single input widget.
+Press ++ctrl+p++ to invoke the command palette screen, which contains of a single input widget.
 Textual will suggest commands as you type in that input.
 Press ++up++ or ++down++ to select a command from the list, and ++enter++ to invoke it.
 
@@ -17,17 +17,17 @@ This scheme allows the user to quickly get to a particular command with a minimu
 
 === "Command Palette"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p"}
     ```
 
 === "Command Palette after 't'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p,t"}
     ```
 
 === "Command Palette after 'td'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t,d"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p,t,d"}
     ```
 
 
@@ -138,4 +138,16 @@ Here's an app class with no command palette:
 ```python
 class NoPaletteApp(App):
     ENABLE_COMMAND_PALETTE = False
+```
+
+## Changing command palette key
+
+You can change the key that opens the command palette by setting the class variable `COMMAND_PALETTE_BINDING` on your app.
+
+Prior to version 0.77.0, Textual used the binding `ctrl+backslash` to launch the command palette.
+Here's how you would restore the older key binding:
+
+```python
+class NewPaletteBindingApp(App):
+    COMMAND_PALETTE_BINDING = "ctrl+backslash"
 ```
