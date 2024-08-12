@@ -275,6 +275,10 @@ class WebDriver(Driver):
                         with deliveries_lock:
                             del deliveries[delivery_key]
                 except Exception:
+                    binary_io.close()
+                    with deliveries_lock:
+                        del deliveries[delivery_key]
+
                     log.error(
                         f"Error delivering file chunk for key {delivery_key!r}. "
                         "Cancelling delivery."
@@ -282,9 +286,6 @@ class WebDriver(Driver):
                     import traceback
 
                     log.error(str(traceback.format_exc()))
-                    binary_io.close()
-                    with deliveries_lock:
-                        del deliveries[delivery_key]
 
     def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.

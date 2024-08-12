@@ -3703,12 +3703,14 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Deliver a text file to the end-user of the application.
 
+        If a TextIO object is supplied, it will be closed by this method
+        and *must not be used* after this method is called.
+
         If running in a terminal, this will save the file to the user's
         downloads directory.
 
-        If running via a web browser, this will initiate a download.
-
-        This is a blocking operation.
+        If running via a web browser, this will initiate a download via
+        a single-use URL.
 
         Args:
             path_or_file: The path or file-like object to save.
@@ -3748,7 +3750,8 @@ class App(Generic[ReturnType], DOMNode):
         If running in a terminal, this will save the file to the user's
         downloads directory.
 
-        If running via a web browser, this will initiate a download.
+        If running via a web browser, this will initiate a download via
+        a single-use URL.
 
         This operation runs in a thread when running on web, so this method
         returning does not indicate that the file has been delivered.
