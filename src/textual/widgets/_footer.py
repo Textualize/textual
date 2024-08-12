@@ -152,8 +152,9 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         }
         FooterKey.-command-palette  {
             dock: right;
-            padding-left: 1; 
-            padding-right: 1;                
+                        
+            padding-right: 1;
+            border-left: vkey $foreground 20%;                
         }
     }
     """
