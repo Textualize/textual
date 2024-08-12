@@ -737,8 +737,6 @@ class CommandPalette(SystemModalScreen):
                 # discovered is a situation we don't need to highlight.
                 self._list_visible = False
 
-        self._hit_count = 0
-
         self._no_matches_timer = self.set_timer(
             self._NO_MATCHES_COUNTDOWN,
             _show_no_matches,
@@ -1019,6 +1017,7 @@ class CommandPalette(SystemModalScreen):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
+            self._hit_count = 0
             self._start_no_matches_countdown(search_value)
 
     def _cancel_gather_commands(self) -> None:
