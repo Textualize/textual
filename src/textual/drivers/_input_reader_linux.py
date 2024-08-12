@@ -20,14 +20,6 @@ class InputReader:
         self._selector.register(self._fileno, selectors.EVENT_READ)
         self._exit_event = Event()
 
-    def more_data(self) -> bool:
-        """Check if there is data pending."""
-        EVENT_READ = selectors.EVENT_READ
-        for _key, events in self._selector.select(0.01):
-            if events & EVENT_READ:
-                return True
-        return False
-
     def close(self) -> None:
         """Close the reader (will exit the iterator)."""
         self._exit_event.set()

@@ -2,15 +2,15 @@ run := poetry run
 
 .PHONY: test
 test:
-	$(run) pytest --cov-report term-missing --cov=textual tests/ -n 16 --dist=loadgroup $(ARGS)
-
-.PHONY: unit-test
-unit-test:
-	$(run) pytest --cov-report term-missing --cov=textual tests/ -m "not integration_test" -n 16 --dist=loadgroup $(ARGS)
+	$(run) pytest tests/ -n 16 --dist=loadgroup $(ARGS)
 
 .PHONY: test-snapshot-update
 test-snapshot-update:
-	$(run) pytest --cov-report term-missing --cov=textual tests/ --snapshot-update -n 16 --dist=loadgroup $(ARGS)
+	$(run) pytest tests/ --snapshot-update -n 16 --dist=loadgroup $(ARGS)
+
+.PHONY: test-coverage
+test-coverage:
+	$(run) pytest tests/ --cov-report term-missing --cov=textual -n 16 --dist=loadgroup $(ARGS)
 
 .PHONY: coverage
 coverage:

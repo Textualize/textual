@@ -69,7 +69,7 @@ In the second example, we create a grid with 2 columns and however many rows are
 ## CSS
 
 ```css
-/* Grid with 3 rows and 5 columns */
+/* Grid with 3 columns and 5 rows */
 grid-size: 3 5;
 
 /* Grid with 4 columns and as many rows as needed */

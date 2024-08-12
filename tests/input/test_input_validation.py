@@ -100,10 +100,11 @@ async def test_on_blur_triggers_validation():
     "validate_on",
     [
         set(),
+        [],
         {"blur"},
-        {"submitted"},
-        {"blur", "submitted"},
-        {"fried", "garbage"},
+        ["submitted"],
+        ["blur", "submitted"],
+        ["fried", "garbage"],
     ],
 )
 async def test_validation_on_changed_should_not_happen(validate_on):

@@ -5,11 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## unrelease
+## Unreleased
 
 ### Added
 
+- Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 - Added `MaskedInput` widget
+
+### Fixed
+
+- Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
+
+## [0.76.0]
+
+### Changed
+
+- Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
+- Removed `Size.cip_size`, which was a clone of `crop_size`
+- Widgets with auto dimensions will now grow if there is a scrollbar https://github.com/Textualize/textual/pull/4844
+- Don't do automatic refresh when widget is not visible https://github.com/Textualize/textual/pull/4847
+- Renamed `DOMNode._automatic_refresh` to `DOMNode.automatic_refresh` to allow for customization https://github.com/Textualize/textual/pull/4847
+
+### Fixed
+
+- Input cursor blink effect will now restart correctly when any action is performed on the input https://github.com/Textualize/textual/pull/4773
+- Fixed bindings on same key not updating description https://github.com/Textualize/textual/pull/4850
+
+### Added
+
+- Textual will use the `ESCDELAY` env var when detecting escape keys https://github.com/Textualize/textual/pull/4848
+
+## [0.75.1] - 2024-08-02
+
+### Fixed
+
+- Fixed issue with Enter events causing unresponsive UI https://github.com/Textualize/textual/pull/4833
 
 
 ## [0.75.0] - 2024-08-01
@@ -2257,6 +2287,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.76.0]: https://github.com/Textualize/textual/compare/v0.75.1...v0.76.0
+[0.75.1]: https://github.com/Textualize/textual/compare/v0.75.0...v0.75.1
 [0.75.0]: https://github.com/Textualize/textual/compare/v0.74.0...v0.75.0
 [0.74.0]: https://github.com/Textualize/textual/compare/v0.73.0...v0.74.0
 [0.73.0]: https://github.com/Textualize/textual/compare/v0.72.0...v0.73.0

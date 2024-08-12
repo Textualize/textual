@@ -163,7 +163,7 @@ class WebDriver(Driver):
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
         input_reader = self._input_reader
-        parser = XTermParser(input_reader.more_data, debug=self._debug)
+        parser = XTermParser(debug=self._debug)
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus

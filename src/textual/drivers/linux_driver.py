@@ -246,6 +246,8 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
+        self.write("\x1b[1;u")
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
@@ -357,7 +359,7 @@ class LinuxDriver(Driver):
         """
         try:
             self.run_input_thread()
-        except BaseException as error:
+        except BaseException:
             import rich.traceback
 
             self._app.call_later(
@@ -373,16 +375,9 @@ class LinuxDriver(Driver):
         fileno = self.fileno
         EVENT_READ = selectors.EVENT_READ
 
-        def more_data() -> bool:
-            """Check if there is more data to parse."""
-
-            for _key, selector_events in selector.select(0.1):
-                if selector_events & EVENT_READ:
-                    return True
-            return False
-
-        parser = XTermParser(more_data, self._debug)
+        parser = XTermParser(self._debug)
         feed = parser.feed
+        tick = parser.tick
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
@@ -407,11 +402,12 @@ class LinuxDriver(Driver):
                         break
                     for event in feed(unicode_data):
                         self.process_event(event)
+            for event in tick():
+                self.process_event(event)
 
         try:
             while not self.exit_event.is_set():
                 process_selector_events(selector.select(0.1))
-
             process_selector_events(selector.select(0.1), final=True)
 
         finally:

@@ -627,19 +627,6 @@ class Region(NamedTuple):
             height + expand_height * 2,
         )
 
-    def clip_size(self, size: tuple[int, int]) -> Region:
-        """Clip the size to fit within minimum values.
-
-        Args:
-            size: Maximum width and height.
-
-        Returns:
-            No region, not bigger than size.
-        """
-        x, y, width, height = self
-        max_width, max_height = size
-        return Region(x, y, min(width, max_width), min(height, max_height))
-
     @lru_cache(maxsize=1024)
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
@@ -713,7 +700,7 @@ class Region(NamedTuple):
             offset: Offset to add to region.
 
         Returns:
-            A new region shifted by (x, y)
+            A new region shifted by (x, y).
         """
 
         self_x, self_y, width, height = self
