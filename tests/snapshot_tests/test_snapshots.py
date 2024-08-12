@@ -4,6 +4,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.pilot import Pilot
+from textual.app import App
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
 from textual.widgets import RichLog, TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
@@ -1195,7 +1196,7 @@ def test_example_color_command(snap_compare):
     """Test the color_command example."""
     assert snap_compare(
         EXAMPLES_DIR / "color_command.py",
-        press=["ctrl+p", "r", "e", "d", "down", "enter"],
+        press=[App.COMMAND_PALETTE_BINDING, "r", "e", "d", "down", "enter"],
     )
 
 
@@ -1410,3 +1411,32 @@ def test_auto_height_scrollbar(snap_compare):
 def test_bind_override(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4755"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "bind_override.py")
+
+
+def test_command_palette_dismiss_escape(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4856"""
+
+    async def run_before(pilot: Pilot):
+        await pilot.press(App.COMMAND_PALETTE_BINDING)
+        await pilot.pause()
+        await pilot.press("escape")
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "command_palette_dismiss.py", run_before=run_before
+    )
+
+
+def test_command_palette_dismiss_escape_no_results(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4856"""
+
+    async def run_before(pilot: Pilot):
+        await pilot.press(App.COMMAND_PALETTE_BINDING)
+        await pilot.pause()
+        await pilot.press(*"foo")
+        await pilot.pause()
+        await pilot.pause()
+        await pilot.press("escape")
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "command_palette_dismiss.py", run_before=run_before
+    )
