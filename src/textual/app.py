@@ -3765,10 +3765,13 @@ class App(Generic[ReturnType], DOMNode):
             save_directory: The directory to save the file to. If None,
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
-            save_filename: The filename to save the file to. If `path_or_file`
-                is a file-like object, the filename will be generated from
-                the `name` attribute if available. If `path_or_file` is a path
-                the filename will be generated from the path.
+            save_filename: The filename to save the file to. If None, the following logic
+                applies to generate the filename:
+                - If `path_or_file` is a file-like object, the filename will be taken from
+                  the `name` attribute if available.
+                - If `path_or_file` is a path, the filename will be taken from the path.
+                - If a filename is not available, a filename will be generated using the
+                  App's title and the current date and time.
             open_method: The method to use to open the file. "browser" will open the file in the
                 web browser, "download" will initiate a download. Note that this can sometimes
                 be impacted by the browser's settings.
