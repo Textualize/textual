@@ -4,17 +4,23 @@ from pathlib import Path
 from sys import argv
 
 from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.reactive import var
-from textual.widgets import Footer, MarkdownViewer
+from textual.widgets import Footer, KeyPanel, MarkdownViewer
 
 
 class MarkdownApp(App):
     """A simple Markdown viewer application."""
 
     BINDINGS = [
-        ("t", "toggle_table_of_contents", "TOC"),
-        ("b", "back", "Back"),
-        ("f", "forward", "Forward"),
+        Binding(
+            "t",
+            "toggle_table_of_contents",
+            "TOC",
+            tooltip="Toggle the Table of Contents Panel",
+        ),
+        Binding("b", "back", "Back", tooltip="Navigate back"),
+        Binding("f", "forward", "Forward", tooltip="Navigate forward"),
     ]
 
     path = var(Path(__file__).parent / "demo.md")
@@ -27,6 +33,7 @@ class MarkdownApp(App):
     def compose(self) -> ComposeResult:
         yield Footer()
         yield MarkdownViewer()
+        yield KeyPanel()
 
     async def on_mount(self) -> None:
         """Go to the first path when the app starts."""

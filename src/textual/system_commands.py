@@ -37,11 +37,6 @@ class SystemCommands(Provider):
                 self.app.action_quit,
                 "Quit the application as soon as possible",
             ),
-            (
-                "Ring the bell",
-                self.app.action_bell,
-                "Ring the terminal's 'bell'",
-            ),
         )
 
     async def discover(self) -> Hits:

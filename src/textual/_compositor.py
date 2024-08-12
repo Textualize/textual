@@ -647,7 +647,9 @@ class Compositor:
 
                     layers_to_index = {
                         layer_name: index
-                        for index, layer_name in enumerate(widget.layers)
+                        for index, layer_name in enumerate(
+                            ("textual-low", *widget.layers, "textual-high")
+                        )
                     }
 
                     get_layer_index = layers_to_index.get
