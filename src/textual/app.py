@@ -3697,6 +3697,7 @@ class App(Generic[ReturnType], DOMNode):
         path_or_file: str | Path | TextIO,
         *,
         save_directory: str | Path | None = None,
+        save_filename: str | None = None,
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
         mime_type: str | None = None,
@@ -3714,9 +3715,10 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             path_or_file: The path or file-like object to save.
-            save_location: The directory to save the file to. If path_or_file
+            save_directory: The directory to save the file to.
+            save_filename: The filename to save the file to.  If `path_or_file`
                 is a file-like object, the filename will be generated from
-                the `name` attribute if available. If path_or_file is a path
+                the `name` attribute if available. If `path_or_file` is a path
                 the filename will be generated from the path.
             encoding: The encoding to use when saving the file. If `None`,
                 the encoding will be determined by supplied file-like object
@@ -3729,6 +3731,7 @@ class App(Generic[ReturnType], DOMNode):
         self._deliver_binary(
             path_or_file,
             save_directory=save_directory,
+            save_filename=save_filename,
             open_method=open_method,
             encoding=encoding,
             mime_type=mime_type,
@@ -3739,6 +3742,7 @@ class App(Generic[ReturnType], DOMNode):
         path_or_file: str | Path | BinaryIO,
         *,
         save_directory: str | Path | None = None,
+        save_filename: str | None = None,
         open_method: Literal["browser", "download"] = "download",
         mime_type: str | None = None,
     ) -> None:
@@ -3761,6 +3765,10 @@ class App(Generic[ReturnType], DOMNode):
             save_directory: The directory to save the file to. If None,
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
+            save_filename: The filename to save the file to. If `path_or_file`
+                is a file-like object, the filename will be generated from
+                the `name` attribute if available. If `path_or_file` is a path
+                the filename will be generated from the path.
             open_method: The method to use to open the file. "browser" will open the file in the
                 web browser, "download" will initiate a download. Note that this can sometimes
                 be impacted by the browser's settings.
@@ -3768,12 +3776,15 @@ class App(Generic[ReturnType], DOMNode):
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "application/octet-stream".
         """
-        self._deliver_binary(path_or_file, save_directory, open_method, mime_type)
+        self._deliver_binary(
+            path_or_file, save_directory, save_filename, open_method, mime_type
+        )
 
     def _deliver_binary(
         self,
         path_or_file: str | Path | BinaryIO | TextIO,
         save_directory: str | Path | None,
+        save_filename: str | None,
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
         mime_type: str | None = None,
@@ -3786,14 +3797,14 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(path_or_file, (str, Path)):
             binary_path = Path(path_or_file)
             binary = binary_path.open("rb")
-            file_name = binary_path.name
+            file_name = save_filename or binary_path.name
             if not mime_type:
                 mime_type, _ = mimetypes.guess_type(file_name)
                 if mime_type is None:
                     mime_type = "application/octet-stream"
         elif isinstance(path_or_file, TextIO):
             binary = path_or_file.buffer
-            file_name = getattr(binary, "name", None)
+            file_name = save_filename or getattr(binary, "name", None)
             # If we have a filename and no MIME type, try to guess the MIME type.
             if file_name and not mime_type:
                 mime_type, _ = mimetypes.guess_type(file_name)
@@ -3801,7 +3812,7 @@ class App(Generic[ReturnType], DOMNode):
                     mime_type = "text/plain"
         else:  # isinstance(path_or_file, BinaryIO):
             binary = path_or_file
-            file_name = getattr(binary, "name", None)
+            file_name = save_filename or getattr(binary, "name", None)
             # If we have a filename and no MIME type, try to guess the MIME type.
             if file_name and not mime_type:
                 mime_type, _ = mimetypes.guess_type(file_name)

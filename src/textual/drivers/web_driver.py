@@ -20,7 +20,7 @@ import uuid
 from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
-from threading import Event, Lock, Thread
+from threading import Event, Thread
 from typing import Any, BinaryIO, Literal, cast
 
 import msgpack
@@ -67,7 +67,6 @@ class WebDriver(Driver):
         self._key_thread: Thread = Thread(target=self.run_input_thread)
         self._input_reader = InputReader()
 
-        self._deliveries_lock = Lock()
         self._deliveries: dict[str, BinaryIO] = {}
         """Maps delivery keys to file-like objects, used
         for delivering files to the browser."""
@@ -252,12 +251,10 @@ class WebDriver(Driver):
                 return
 
             deliveries = self._deliveries
-            deliveries_lock = self._deliveries_lock
 
             binary_io: BinaryIO | None = None
             try:
-                with deliveries_lock:
-                    binary_io = deliveries[delivery_key]
+                binary_io = deliveries[delivery_key]
             except KeyError:
                 log.error(
                     f"Protocol error: deliver_chunk_request invalid key {delivery_key!r}"
@@ -272,12 +269,10 @@ class WebDriver(Driver):
                     if not chunk:
                         log.info(f"Delivery complete for {delivery_key}")
                         binary_io.close()
-                        with deliveries_lock:
-                            del deliveries[delivery_key]
+                        del deliveries[delivery_key]
                 except Exception:
                     binary_io.close()
-                    with deliveries_lock:
-                        del deliveries[delivery_key]
+                    del deliveries[delivery_key]
 
                     log.error(
                         f"Error delivering file chunk for key {delivery_key!r}. "
@@ -328,8 +323,7 @@ class WebDriver(Driver):
         # Generate a unique key for this delivery
         key = str(uuid.uuid4().hex)
 
-        with self._deliveries_lock:
-            self._deliveries[key] = binary
+        self._deliveries[key] = binary
 
         # Inform the server that we're starting a new file delivery
         meta: dict[str, object] = {
