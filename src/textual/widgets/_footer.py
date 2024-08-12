@@ -153,10 +153,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         FooterKey.-command-palette  {
             dock: right;
             padding-left: 1; 
-            padding-right: 1;   
-            &>.footer-key--key {
-                # color: $success;
-            }    
+            padding-right: 1;                
         }
     }
     """
