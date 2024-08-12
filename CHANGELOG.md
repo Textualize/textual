@@ -7,10 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
 ### Added
 
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 - Added a link to the command palette to the Footer (set `show_command_palette=False` to disable) https://github.com/Textualize/textual/pull/4867
+- Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
+
+### Changed
+
+- Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
+
+### Fixed
+
+- Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
+- Fix `Input.cursor_blink` having no effect on the blink cycle after mounting https://github.com/Textualize/textual/pull/4869
 
 ## [0.76.0]
 

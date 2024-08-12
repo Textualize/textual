@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable, cast
+from typing import TYPE_CHECKING, ClassVar, Iterable
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -301,7 +301,7 @@ class Input(Widget, can_focus=True):
             self.validators = list(validators)
 
         self.validate_on: set[str] = (
-            (_POSSIBLE_VALIDATE_ON_VALUES & cast("set[str]", validate_on))
+            (_POSSIBLE_VALIDATE_ON_VALUES & set(validate_on))
             if validate_on is not None
             else _POSSIBLE_VALIDATE_ON_VALUES
         )
@@ -583,7 +583,7 @@ class Input(Widget, can_focus=True):
     def _pause_blink_cycle(self) -> None:
         """Hide the blinking cursor and pause the blink cycle."""
         self._cursor_visible = False
-        if self.cursor_blink and self._blink_timer:
+        if self._blink_timer:
             self._blink_timer.pause()
 
     def insert_text_at_cursor(self, text: str) -> None:

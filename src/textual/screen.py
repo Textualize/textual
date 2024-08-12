@@ -1173,7 +1173,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self._tooltip_timer.stop()
 
                         self._tooltip_timer = self.set_timer(
-                            0.3,
+                            self.app.TOOLTIP_DELAY,
                             partial(self._handle_tooltip_timer, widget),
                             name="tooltip-timer",
                         )

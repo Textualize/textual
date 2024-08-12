@@ -152,9 +152,10 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         }
         FooterKey.-command-palette  {
             dock: right;
-            padding-left: 1;    
+            padding-left: 1; 
+            padding-right: 1;   
             &>.footer-key--key {
-                color: $success;
+                # color: $success;
             }    
         }
     }
@@ -243,10 +244,10 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     yield FooterKey(
                         key,
                         binding.key_display or binding.key,
-                        "",
+                        binding.description,
                         binding.action,
                         classes="-command-palette",
-                        tooltip=binding.description,
+                        tooltip=binding.tooltip or binding.description,
                     )
                     break
 

@@ -374,15 +374,19 @@ class App(Generic[ReturnType], DOMNode):
         Binding(
             COMMAND_PALETTE_BINDING,
             "command_palette",
-            "Show the command palette",
+            "palette",
             show=False,
             priority=True,
+            tooltip="Open command palette",
         ),
     ]
     """The default key bindings."""
 
     CLOSE_TIMEOUT: float | None = 5.0
     """Timeout waiting for widget's to close, or `None` for no timeout."""
+
+    TOOLTIP_DELAY: float = 0.5
+    """The time in seconds after which a tooltip gets displayed."""
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -880,7 +884,7 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            Active binding information
+            A dict that maps keys on to binding information.
         """
         return self.screen.active_bindings
 

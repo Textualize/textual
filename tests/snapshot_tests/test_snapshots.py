@@ -796,7 +796,7 @@ def test_tooltips_in_compound_widgets(snap_compare):
     async def run_before(pilot) -> None:
         await pilot.pause()
         await pilot.hover("ProgressBar")
-        await pilot.pause(0.3)
+        await pilot.pause(0.4)
         await pilot.pause()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)

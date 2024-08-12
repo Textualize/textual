@@ -290,8 +290,12 @@ class Key(InputEvent):
 
 def _key_to_identifier(key: str) -> str:
     """Convert the key string to a name suitable for use as a Python identifier."""
-    if len(key) == 1 and key.isupper():
-        key = f"upper_{key.lower()}"
+    key_no_modifiers = key.split("+")[-1]
+    if len(key_no_modifiers) == 1 and key_no_modifiers.isupper():
+        if "+" in key:
+            key = f"{key.rpartition('+')[0]}+upper_{key_no_modifiers}"
+        else:
+            key = f"upper_{key_no_modifiers}"
     return key.replace("+", "_").lower()
 
 
