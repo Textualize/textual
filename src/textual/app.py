@@ -873,7 +873,7 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            Active binding information
+            A dict that maps keys on to binding information.
         """
         return self.screen.active_bindings
 

@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 - Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
 
+### Changed
+
+- Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
+
 ### Fixed
 
 - Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
