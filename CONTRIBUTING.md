@@ -96,7 +96,13 @@ This interface should show all failing snapshot tests and a side-by-side diff be
 
 Make sure your snapshot app looks like it is supposed to and that you didn't break any other snapshot tests.
 If everything looks fine, you can run `make test-snapshot-update` to update the snapshot history with your new snapshot.
-This will write to the file `tests/snapshot_tests/__snapshots__/test_snapshots.ambr`, which you should NOT modify by hand.
+This will write a new SVG file to the `tests/snapshot_tests/__snapshots__/` directory.
+You should NOT modify these files by hand.
+If a pre-existing snapshot tests fails, you should carefully inspect the diff and decide if the new snapshot is correct or if the pre-existing one is.
+If the new snapshot is correct, you should update the snapshot history with your new snapshot using `make test-snapshot-update`.
+If the pre-existing snapshot is correct, your change has likely introduced a bug, and you should try to fix it.
+After fixing it, and checking the output of `make test-snapshot` now looks correct, you should run `make test-snapshot-update` to update the snapshot history with your new snapshot.
+
 
 ([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
