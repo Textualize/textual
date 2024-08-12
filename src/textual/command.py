@@ -575,6 +575,8 @@ class CommandPalette(SystemModalScreen):
         """Keeps track of if there are 'No matches found' message waiting to be displayed."""
         self._providers: list[Provider] = []
         """List of Provider instances involved in searches."""
+        self._hit_count: int = 0
+        """Number of hits displayed."""
 
     @staticmethod
     def is_open(app: App) -> bool:
@@ -883,6 +885,7 @@ class CommandPalette(SystemModalScreen):
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
         self._list_visible = bool(command_list.option_count)
+        self._hit_count = command_list.option_count
 
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
@@ -1014,6 +1017,7 @@ class CommandPalette(SystemModalScreen):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
+            self._hit_count = 0
             self._start_no_matches_countdown(search_value)
 
     def _cancel_gather_commands(self) -> None:
@@ -1049,6 +1053,7 @@ class CommandPalette(SystemModalScreen):
         input.action_end()
         self._list_visible = False
         self.query_one(CommandList).clear_options()
+        self._hit_count = 0
         if self.run_on_select:
             self._select_or_command()
 
@@ -1090,8 +1095,11 @@ class CommandPalette(SystemModalScreen):
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
-        if self._list_visible:
+        input = self.query_one(CommandInput)
+        # Hide the options if there are result and there is input
+        if self._list_visible and (self._hit_count and input.value):
             self._list_visible = False
+        # Otherwise dismiss modal
         else:
             self._cancel_gather_commands()
             self.app.post_message(CommandPalette.Closed(option_selected=False))
