@@ -374,6 +374,9 @@ class App(Generic[ReturnType], DOMNode):
     CLOSE_TIMEOUT: float | None = 5.0
     """Timeout waiting for widget's to close, or `None` for no timeout."""
 
+    TOOLTIP_DELAY: float = 0.5
+    """The time in seconds after which a tooltip gets displayed."""
+
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
 

@@ -3,6 +3,7 @@ from textual.widgets import ProgressBar
 
 
 class TooltipApp(App[None]):
+    TOOLTIP_DELAY = 0.4
     def compose(self) -> ComposeResult:
         progress_bar = ProgressBar(100, show_eta=False)
         progress_bar.advance(10)
