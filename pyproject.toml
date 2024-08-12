@@ -49,7 +49,6 @@ tree-sitter = { version = "^0.20.1", optional = true }
 tree-sitter-languages = { version = "1.10.2", optional = true }
 platformdirs = "^4.2.2"
 msgpack = "^1.0.8"
-msgpack-types = "^0.3.0"
 
 [tool.poetry.extras]
 syntax = ["tree-sitter", "tree_sitter_languages"]
@@ -77,6 +76,7 @@ types-tree-sitter = "^0.20.1.4"
 types-tree-sitter-languages = "^1.7.0.1"
 isort = "^5.13.2"
 pytest-textual-snapshot = "^1.0.0"
+msgpack-types = "^0.3.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
