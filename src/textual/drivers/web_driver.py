@@ -21,7 +21,7 @@ from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
 from threading import Event, Lock, Thread
-from typing import Any, BinaryIO, Literal, TextIO, cast
+from typing import Any, BinaryIO, Literal, cast
 
 import msgpack
 
@@ -295,34 +295,6 @@ class WebDriver(Driver):
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
 
-    def deliver_text(
-        self,
-        text: TextIO,
-        *,
-        save_path: Path,
-        encoding: str | None = None,
-        open_method: Literal["browser", "download"] = "download",
-    ) -> None:
-        """Deliver a file to the end-user of the application.
-
-        If running in a terminal, this will save the file to the user's
-        downloads directory.
-
-        If running via web through Textual Web or Textual Serve,
-        this will initiate a download in the web browser.
-
-        Args:
-            file_like: The file to deliver.
-            save_path: The location to save the file to.
-            encoding: The encoding of the text file or None to use the default encoding.
-            open_method: *web only* Choose whether the file should
-               be opened in the browser or whether the user should
-               be prompted to download the file.
-        """
-        self._deliver_file(
-            text.buffer, save_path=save_path, open_method=open_method, encoding=encoding
-        )
-
     def deliver_binary(
         self,
         binary: BinaryIO,
@@ -330,9 +302,14 @@ class WebDriver(Driver):
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
+        mime_type: str | None = None,
     ) -> None:
         self._deliver_file(
-            binary, save_path=save_path, open_method=open_method, encoding=encoding
+            binary,
+            save_path=save_path,
+            open_method=open_method,
+            encoding=encoding,
+            mime_type=mime_type,
         )
 
     def _deliver_file(
@@ -342,6 +319,7 @@ class WebDriver(Driver):
         save_path: Path,
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
+        mime_type: str | None = None,
     ) -> None:
         """Deliver a file to the end-user of the application."""
         binary.seek(0)
@@ -361,5 +339,6 @@ class WebDriver(Driver):
                 "path": str(save_path.resolve()),
                 "open_method": open_method,
                 "encoding": encoding,
+                "mime_type": mime_type,
             }
         )

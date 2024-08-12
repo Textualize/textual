@@ -11,6 +11,7 @@ import asyncio
 import importlib
 import inspect
 import io
+import mimetypes
 import os
 import signal
 import sys
@@ -3694,6 +3695,7 @@ class App(Generic[ReturnType], DOMNode):
         save_directory: str | Path | None = None,
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
+        mime_type: str | None = None,
     ) -> None:
         """Deliver a text file to the end-user of the application.
 
@@ -3714,12 +3716,16 @@ class App(Generic[ReturnType], DOMNode):
                 the encoding will be determined by supplied file-like object
                 (if possible). If this is not possible, the encoding of the
                 current locale will be used.
+            mime_type: The MIME type of the file or None to guess based on file extension.
+                If no MIME type is supplied and we cannot guess the MIME type, from the
+                file extension, the MIME type will be set to "text/plain".
         """
         self._deliver_binary(
-            path_or_file.buffer if isinstance(path_or_file, TextIO) else path_or_file,
+            path_or_file,
             save_directory=save_directory,
             open_method=open_method,
             encoding=encoding,
+            mime_type=mime_type,
         )
 
     def deliver_binary(
@@ -3728,6 +3734,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         save_directory: str | Path | None = None,
         open_method: Literal["browser", "download"] = "download",
+        mime_type: str | None = None,
     ) -> None:
         """Deliver a binary file to the end-user of the application.
 
@@ -3747,15 +3754,22 @@ class App(Generic[ReturnType], DOMNode):
             save_directory: The directory to save the file to. If None,
                 the default "downloads" directory will be used. This
                 argument is ignored when running via the web.
+            open_method: The method to use to open the file. "browser" will open the file in the
+                web browser, "download" will initiate a download. Note that this can sometimes
+                be impacted by the browser's settings.
+            mime_type: The MIME type of the file or None to guess based on file extension.
+                If no MIME type is supplied and we cannot guess the MIME type, from the
+                file extension, the MIME type will be set to "application/octet-stream".
         """
-        self._deliver_binary(path_or_file, save_directory, open_method)
+        self._deliver_binary(path_or_file, save_directory, open_method, mime_type)
 
     def _deliver_binary(
         self,
-        path_or_file: str | Path | BinaryIO,
+        path_or_file: str | Path | BinaryIO | TextIO,
         save_directory: str | Path | None,
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
+        mime_type: str | None = None,
     ) -> None:
         """Deliver a binary file to the end-user of the application."""
         if self._driver is None:
@@ -3766,12 +3780,30 @@ class App(Generic[ReturnType], DOMNode):
             binary_path = Path(path_or_file)
             binary = binary_path.open("rb")
             file_name = binary_path.name
-        else:
+            if not mime_type:
+                mime_type, _ = mimetypes.guess_type(file_name)
+                if mime_type is None:
+                    mime_type = "application/octet-stream"
+        elif isinstance(path_or_file, TextIO):
+            binary = path_or_file.buffer
+            file_name = getattr(binary, "name", None)
+            # If we have a filename and no MIME type, try to guess the MIME type.
+            if file_name and not mime_type:
+                mime_type, _ = mimetypes.guess_type(file_name)
+                if mime_type is None:
+                    mime_type = "text/plain"
+        else:  # isinstance(path_or_file, BinaryIO):
             binary = path_or_file
             file_name = getattr(binary, "name", None)
-            # Generate a filename if the file-like object doesn't have one.
-            if not file_name:
-                file_name = generate_datetime_filename(self.title, "")
+            # If we have a filename and no MIME type, try to guess the MIME type.
+            if file_name and not mime_type:
+                mime_type, _ = mimetypes.guess_type(file_name)
+                if mime_type is None:
+                    mime_type = "application/octet-stream"
+
+        # Generate a filename if the file-like object doesn't have one.
+        if not file_name:
+            file_name = generate_datetime_filename(self.title, "")
 
         # Find the appropriate save location if not specified.
         save_directory = (
@@ -3786,4 +3818,5 @@ class App(Generic[ReturnType], DOMNode):
             save_path=save_directory / file_name,
             encoding=encoding,
             open_method=open_method,
+            mime_type=mime_type,
         )

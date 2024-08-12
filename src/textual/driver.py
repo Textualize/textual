@@ -206,6 +206,7 @@ class Driver(ABC):
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
+        mime_type: str | None = None,
     ) -> None:
         """Save the file `path_or_file` to `save_path`.
 
@@ -220,10 +221,13 @@ class Driver(ABC):
             open_method: *web only* Whether to open the file in the browser or
                 to prompt the user to download it. When running via a standard
                 (non-web) terminal, this is ignored.
-            encoding: The text encoding to use when saving the file.
+            encoding: *web only* The text encoding to use when saving the file.
                 This will be passed to Python's `open()` built-in function.
+                When running via web, this will be used to set the charset
+                in the `Content-Type` header.
+            mime_type: *web only* The MIME type of the file. This will be used to
+                set the `Content-Type` header in the HTTP response.
         """
-        mode = "wb" if encoding is None else "w"
-        with open(save_path, mode, encoding=encoding) as destination_file:
+        with open(save_path, "wb") as destination_file:
             shutil.copyfileobj(binary, destination_file)
         binary.close()
