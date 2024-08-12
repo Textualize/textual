@@ -210,10 +210,6 @@ def test_crop_size():
     assert Region(10, 20, 100, 200).crop_size((500, 40)) == Region(10, 20, 100, 40)
 
 
-def test_clip_size():
-    assert Region(10, 10, 100, 80).clip_size((50, 100)) == Region(10, 10, 50, 80)
-
-
 def test_region_overlaps():
     assert Region(10, 10, 30, 20).overlaps(Region(0, 0, 20, 20))
     assert not Region(10, 10, 5, 5).overlaps(Region(15, 15, 20, 20))

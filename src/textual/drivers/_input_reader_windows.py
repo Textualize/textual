@@ -17,10 +17,6 @@ class InputReader:
         self.timeout = timeout
         self._exit_event = Event()
 
-    def more_data(self) -> bool:
-        """Check if there is data pending."""
-        return True
-
     def close(self) -> None:
         """Close the reader (will exit the iterator)."""
         self._exit_event.set()

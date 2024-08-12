@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.75.1"
+version = "0.76.0"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -83,7 +83,6 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
-    "integration_test: marks tests as slow integration tests (deselect with '-m \"not integration_test\"')",
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
 

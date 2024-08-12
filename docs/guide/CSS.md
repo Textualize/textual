@@ -195,29 +195,31 @@ Let's look at the selectors supported by Textual CSS.
 
 ### Type selector
 
-The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
+The _type_ selector matches the name of the (Python) class.
+Consider the following widget class:
 
 ```python
 from textual.widgets import Static
 
-class Button(Static):
+class Alert(Static):
     pass
 ```
 
-The following rule applies a border to this widget:
+Alert widgets may be styled with the following CSS (to give them a red border):
 
 ```css
-Button {
-  border: solid blue;
+Alert {
+  border: solid red;
 }
 ```
 
-The type selector will also match a widget's base classes. Consequently, a `Static` selector will also style the button because the `Button` Python class extends `Static`.
+The type selector will also match a widget's base classes.
+Consequently, a `Static` selector will also style the button because the `Alert` (Python) class extends `Static`.
 
 ```css
 Static {
   background: blue;
-  border: rounded white;
+  border: rounded green;
 }
 ```
 
@@ -225,7 +227,10 @@ Static {
 
     The fact that the type selector matches base classes is a departure from browser CSS which doesn't have the same concept.
 
-You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "rounded white".
+You may have noticed that the `border` rule exists in both `Static` and `Alert`.
+When this happens, Textual will use the most recently defined sub-class.
+So `Alert` wins over `Static`, and `Static` wins over `Widget` (the base class of all widgets).
+Hence if both rules were in a stylesheet, `Alert` widgets would have a "solid red" border and not a "rounded green" border.
 
 ### ID selector
 

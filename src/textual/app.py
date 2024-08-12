@@ -85,7 +85,7 @@ from ._wait import wait_for_idle
 from .actions import ActionParseResult, SkipAction
 from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
-from .binding import Binding, BindingType, _Bindings
+from .binding import Binding, BindingsMap, BindingType
 from .command import CommandPalette, Provider
 from .css.errors import StylesheetError
 from .css.query import NoMatches
@@ -378,6 +378,9 @@ class App(Generic[ReturnType], DOMNode):
 
     CLOSE_TIMEOUT: float | None = 5.0
     """Timeout waiting for widget's to close, or `None` for no timeout."""
+
+    TOOLTIP_DELAY: float = 0.5
+    """The time in seconds after which a tooltip gets displayed."""
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -875,7 +878,7 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            Active binding information
+            A dict that maps keys on to binding information.
         """
         return self.screen.active_bindings
 
@@ -2998,14 +3001,14 @@ class App(Generic[ReturnType], DOMNode):
             self._driver.write("\07")
 
     @property
-    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """Get a chain of nodes and bindings to consider.
 
         If no widget is focused, returns the bindings from both the screen and the app level bindings.
         Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
         """
         focused = self.focused
-        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
         if focused is None:
             namespace_bindings = [
@@ -3046,10 +3049,11 @@ class App(Generic[ReturnType], DOMNode):
             if priority
             else self.screen._modal_binding_chain
         ):
-            binding = bindings.keys.get(key)
-            if binding is not None and binding.priority == priority:
-                if await self.run_action(binding.action, namespace):
-                    return True
+            key_bindings = bindings.key_to_bindings.get(key, ())
+            for binding in key_bindings:
+                if binding.priority == priority:
+                    if await self.run_action(binding.action, namespace):
+                        return True
         return False
 
     async def on_event(self, event: events.Event) -> None:

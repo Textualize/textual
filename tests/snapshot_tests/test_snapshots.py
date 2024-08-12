@@ -796,7 +796,7 @@ def test_tooltips_in_compound_widgets(snap_compare):
     async def run_before(pilot) -> None:
         await pilot.pause()
         await pilot.hover("ProgressBar")
-        await pilot.pause(0.3)
+        await pilot.pause(0.4)
         await pilot.pause()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
@@ -1400,3 +1400,13 @@ def test_enter_or_leave(snap_compare) -> None:
 def test_remove_tab_no_animation(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4814"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "remove_tab.py", press=["space"])
+
+
+def test_auto_height_scrollbar(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4778"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_auto_height.py")
+
+
+def test_bind_override(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4755"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "bind_override.py")

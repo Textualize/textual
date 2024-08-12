@@ -36,7 +36,7 @@ from ._context import active_message_pump, visible_screen_stack
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .await_complete import AwaitComplete
-from .binding import ActiveBinding, Binding, _Bindings
+from .binding import ActiveBinding, Binding, BindingsMap
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
@@ -289,12 +289,12 @@ class Screen(Generic[ScreenResultType], Widget):
         self.check_idle()
 
     @property
-    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """Binding chain from this screen."""
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
-        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
         if focused is None:
             namespace_bindings = [
@@ -309,7 +309,7 @@ class Screen(Generic[ScreenResultType], Widget):
         return namespace_bindings
 
     @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """The binding chain, ignoring everything before the last modal."""
         binding_chain = self._binding_chain
         for index, (node, _bindings) in enumerate(binding_chain, 1):
@@ -327,24 +327,34 @@ class Screen(Generic[ScreenResultType], Widget):
         This property may be used to inspect current bindings.
 
         Returns:
-            A map of keys to a tuple containing (namespace, binding, enabled boolean).
+            A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
 
         bindings_map: dict[str, ActiveBinding] = {}
         for namespace, bindings in self._modal_binding_chain:
-            for key, binding in bindings.keys.items():
+            for key, binding in bindings:
+                # This will call the nodes `check_action` method.
                 action_state = self.app._check_action_state(binding.action, namespace)
                 if action_state is False:
+                    # An action_state of False indicates the action is disabled and not shown
+                    # Note that None has a different meaning, which is why there is an `is False`
+                    # rather than a truthy check.
                     continue
+                enabled = bool(action_state)
                 if existing_key_and_binding := bindings_map.get(key):
-                    _, existing_binding, _ = existing_key_and_binding
-                    if binding.priority and not existing_binding.priority:
+                    # This key has already been bound
+                    # Replace priority bindings
+                    if (
+                        binding.priority
+                        and not existing_key_and_binding.binding.priority
+                    ):
                         bindings_map[key] = ActiveBinding(
-                            namespace, binding, bool(action_state)
+                            namespace, binding, enabled, binding.tooltip
                         )
                 else:
+                    # New binding
                     bindings_map[key] = ActiveBinding(
-                        namespace, binding, bool(action_state)
+                        namespace, binding, enabled, binding.tooltip
                     )
 
         return bindings_map
@@ -1163,7 +1173,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self._tooltip_timer.stop()
 
                         self._tooltip_timer = self.set_timer(
-                            0.3,
+                            self.app.TOOLTIP_DELAY,
                             partial(self._handle_tooltip_timer, widget),
                             name="tooltip-timer",
                         )
