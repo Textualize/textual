@@ -366,10 +366,21 @@ class App(Generic[ReturnType], DOMNode):
     Should be a set of [command.Provider][textual.command.Provider] classes.
     """
 
+    COMMAND_PALETTE_BINDING: ClassVar[str] = "ctrl+p"
+    """The key that launches the command palette (if enabled)."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
+        Binding(
+            COMMAND_PALETTE_BINDING,
+            "command_palette",
+            "palette",
+            show=False,
+            priority=True,
+            tooltip="Open command palette",
+        ),
     ]
+    """The default key bindings."""
 
     CLOSE_TIMEOUT: float | None = 5.0
     """Timeout waiting for widget's to close, or `None` for no timeout."""

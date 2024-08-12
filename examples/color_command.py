@@ -48,7 +48,7 @@ class ColorApp(App):
     """Experiment with the command palette."""
 
     COMMANDS = App.COMMANDS | {ColorCommands}
-    TITLE = "Press ctrl + \\ and type a color"
+    TITLE = "Press ctrl + p and type a color"
 
     def compose(self) -> ComposeResult:
         yield Header()

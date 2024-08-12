@@ -283,7 +283,6 @@ class DOMNode(MessagePump):
                 yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
             ```
 
-
         Raises:
             ReactiveError: If the data wasn't bound.
 
