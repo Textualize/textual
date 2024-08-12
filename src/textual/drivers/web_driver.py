@@ -243,7 +243,7 @@ class WebDriver(Driver):
             raise _ExitInput()
         elif packet_type == "deliver_chunk_request":
             # A request from the server to deliver another chunk of a file
-            log.info(f"Deliver chunk request: {payload}")
+            log.debug(f"Deliver chunk request: {payload}")
             try:
                 delivery_key = cast(str, payload["key"])
                 requested_size = cast(int, payload["size"])
@@ -265,9 +265,9 @@ class WebDriver(Driver):
             else:
                 # Read the requested number of bytes from the file
                 try:
-                    log.info(f"Reading {requested_size} bytes from {delivery_key}")
+                    log.debug(f"Reading {requested_size} bytes from {delivery_key}")
                     chunk = binary_io.read(requested_size)
-                    log.info(f"Delivering chunk {delivery_key} of size {len(chunk)}")
+                    log.debug(f"Delivering chunk {delivery_key!r} of len {len(chunk)}")
                     self.write_packed(("deliver_chunk", delivery_key, chunk))
                     if not chunk:
                         log.info(f"Delivery complete for {delivery_key}")
@@ -331,14 +331,13 @@ class WebDriver(Driver):
             self._deliveries[key] = binary
 
         # Inform the server that we're starting a new file delivery
-        log.info(f"Delivering file {save_path} to {open_method}")
-        self.write_meta(
-            {
-                "type": "deliver_file_start",
-                "key": key,
-                "path": str(save_path.resolve()),
-                "open_method": open_method,
-                "encoding": encoding,
-                "mime_type": mime_type,
-            }
-        )
+        meta: dict[str, object] = {
+            "type": "deliver_file_start",
+            "key": key,
+            "path": str(save_path.resolve()),
+            "open_method": open_method,
+            "encoding": encoding,
+            "mime_type": mime_type,
+        }
+        self.write_meta(meta)
+        log.info(f"Delivering file {meta['path']!r}: {meta!r}")
