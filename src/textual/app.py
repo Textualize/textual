@@ -3733,16 +3733,33 @@ class App(Generic[ReturnType], DOMNode):
                 the filename will be generated from the path.
             encoding: The encoding to use when saving the file. If `None`,
                 the encoding will be determined by supplied file-like object
-                (if possible). If this is not possible, the encoding of the
-                current locale will be used.
+                (if possible). If this is not possible, 'utf-8' will be used.
             mime_type: The MIME type of the file or None to guess based on file extension.
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "text/plain".
         """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+            file_name = save_filename or binary_path.name
+        else:
+            encoding = encoding or getattr(path_or_file, "encoding", None) or "utf-8"
+            binary = path_or_file
+            file_name = save_filename or getattr(path_or_file, "name", None)
+
+        # If we could infer a filename, and no MIME type was supplied, guess the MIME type.
+        if file_name and not mime_type:
+            mime_type, _ = mimetypes.guess_type(file_name)
+
+        # Still no MIME type? Default it to "text/plain".
+        if mime_type is None:
+            mime_type = "text/plain"
+
         self._deliver_binary(
-            path_or_file,
+            binary,
             save_directory=save_directory,
-            save_filename=save_filename,
+            save_filename=file_name,
             open_method=open_method,
             encoding=encoding,
             mime_type=mime_type,
@@ -3759,7 +3776,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Deliver a binary file to the end-user of the application.
 
-        If a BinaryIO object is supplied, it will be closed by this method
+        If an IO object is supplied, it will be closed by this method
         and *must not be used* after it is supplied to this method.
 
         If running in a terminal, this will save the file to the user's
@@ -3790,13 +3807,36 @@ class App(Generic[ReturnType], DOMNode):
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "application/octet-stream".
         """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+            file_name = save_filename or binary_path.name
+        else:  # IO object
+            binary = path_or_file
+            file_name = save_filename or getattr(path_or_file, "name", None)
+
+        # If we could infer a filename, and no MIME type was supplied, guess the MIME type.
+        if file_name and not mime_type:
+            mime_type, _ = mimetypes.guess_type(file_name)
+
+        # Still no MIME type? Default it to "application/octet-stream".
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+
         self._deliver_binary(
-            path_or_file, save_directory, save_filename, open_method, mime_type
+            binary,
+            save_directory=save_directory,
+            save_filename=file_name,
+            open_method=open_method,
+            mime_type=mime_type,
+            encoding=None,
         )
 
     def _deliver_binary(
         self,
-        path_or_file: str | Path | BinaryIO | TextIO,
+        binary: BinaryIO,
+        *,
         save_directory: str | Path | None,
         save_filename: str | None,
         open_method: Literal["browser", "download"],
@@ -3807,35 +3847,9 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
 
-        # Ensure `path_or_file` is a file-like object - convert if needed.
-        if isinstance(path_or_file, (str, Path)):
-            binary_path = Path(path_or_file)
-            binary = binary_path.open("rb")
-            file_name = save_filename or binary_path.name
-            if not mime_type:
-                mime_type, _ = mimetypes.guess_type(file_name)
-                if mime_type is None:
-                    mime_type = "application/octet-stream"
-        elif isinstance(path_or_file, TextIO):
-            binary = path_or_file.buffer
-            file_name = save_filename or getattr(binary, "name", None)
-            # If we have a filename and no MIME type, try to guess the MIME type.
-            if file_name and not mime_type:
-                mime_type, _ = mimetypes.guess_type(file_name)
-                if mime_type is None:
-                    mime_type = "text/plain"
-        else:  # isinstance(path_or_file, BinaryIO):
-            binary = path_or_file
-            file_name = save_filename or getattr(binary, "name", None)
-            # If we have a filename and no MIME type, try to guess the MIME type.
-            if file_name and not mime_type:
-                mime_type, _ = mimetypes.guess_type(file_name)
-                if mime_type is None:
-                    mime_type = "application/octet-stream"
-
         # Generate a filename if the file-like object doesn't have one.
-        if not file_name:
-            file_name = generate_datetime_filename(self.title, "")
+        if save_filename is None:
+            save_filename = generate_datetime_filename(self.title, "")
 
         # Find the appropriate save location if not specified.
         save_directory = (
@@ -3847,7 +3861,7 @@ class App(Generic[ReturnType], DOMNode):
         # sending the file to the web browser for download.
         self._driver.deliver_binary(
             binary,
-            save_path=save_directory / file_name,
+            save_path=save_directory / save_filename,
             encoding=encoding,
             open_method=open_method,
             mime_type=mime_type,
