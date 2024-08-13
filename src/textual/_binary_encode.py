@@ -5,6 +5,7 @@ This is based on https://en.wikipedia.org/wiki/Bencode with some extensions.
 
 The following data types may be encoded:
 
+- None
 - int
 - bool
 - bytes
@@ -34,6 +35,18 @@ def dump(data: object) -> bytes:
         A byte string encoding the data.
     """
 
+    def encode_none(datum: None) -> bytes:
+        """
+        Encodes a None value.
+
+        Args:
+            datum: Always None.
+
+        Returns:
+            None encoded.
+        """
+        return b"N"
+
     def encode_bool(datum: bool) -> bytes:
         """
         Encode a boolean value.
@@ -44,7 +57,7 @@ def dump(data: object) -> bytes:
         Returns:
             The encoded bytes.
         """
-        return b"b%ie" % int(datum)
+        return b"T" if datum else b"F"
 
     def encode_int(datum: int) -> bytes:
         """
@@ -121,6 +134,7 @@ def dump(data: object) -> bytes:
         )
 
     ENCODERS: dict[type, Callable[[Any], Any]] = {
+        type(None): encode_none,
         bool: encode_bool,
         int: encode_int,
         bytes: encode_bytes,
@@ -221,17 +235,6 @@ def load(encoded: bytes) -> object:
             int_bytes += byte
         return int(int_bytes)
 
-    def decode_bool() -> bool:
-        """Decode a bool from the encoded data.
-
-        Returns:
-            A bool.
-        """
-        int_bytes = b""
-        while (byte := get_byte()) != b"e":
-            int_bytes += byte
-        return int(int_bytes) == 1
-
     def decode_bytes(size_bytes: bytes) -> bytes:
         """Decode a bytes string from the encoded data.
 
@@ -297,11 +300,13 @@ def load(encoded: bytes) -> object:
 
     DECODERS = {
         b"i": decode_int,
-        b"b": decode_bool,
         b"s": decode_string,
         b"l": decode_list,
         b"t": decode_tuple,
         b"d": decode_dict,
+        b"T": lambda: True,
+        b"F": lambda: False,
+        b"N": lambda: None,
     }
 
     def decode() -> object:

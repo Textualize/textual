@@ -6,6 +6,7 @@ from textual._binary_encode import DecodeError, dump, load
 @pytest.mark.parametrize(
     "data",
     [
+        None,
         False,
         True,
         -10,
@@ -19,6 +20,7 @@ from textual._binary_encode import DecodeError, dump, load
         b"",
         [],
         (),
+        [None],
         [1, 2, 3],
         ["hello", "world"],
         ["hello", b"world"],
