@@ -17,6 +17,8 @@ The following data types may be encoded:
 
 from __future__ import annotations
 
+from typing import Any, Callable
+
 
 class DecodeError(Exception):
     """A problem decoding data."""
@@ -32,6 +34,102 @@ def dump(data: object) -> bytes:
         A byte string encoding the data.
     """
 
+    def encode_bool(datum: bool) -> bytes:
+        """
+        Encode a boolean value.
+
+        Args:
+            datum: The boolean value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"b%ie" % int(datum)
+
+    def encode_int(datum: int) -> bytes:
+        """
+        Encode an integer value.
+
+        Args:
+            datum: The integer value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"i%ie" % datum
+
+    def encode_bytes(datum: bytes) -> bytes:
+        """
+        Encode a bytes value.
+
+        Args:
+            datum: The bytes value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"%i:%s" % (len(datum), datum)
+
+    def encode_string(datum: str) -> bytes:
+        """
+        Encode a string value.
+
+        Args:
+            datum: The string value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"s%i:%s" % (len(datum), datum.encode("utf-8"))
+
+    def encode_list(datum: list) -> bytes:
+        """
+        Encode a list value.
+
+        Args:
+            datum: The list value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"l%se" % b"".join(encode(element) for element in datum)
+
+    def encode_tuple(datum: tuple) -> bytes:
+        """
+        Encode a tuple value.
+
+        Args:
+            datum: The tuple value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"t%se" % b"".join(encode(element) for element in datum)
+
+    def encode_dict(datum: dict) -> bytes:
+        """
+        Encode a dictionary value.
+
+        Args:
+            datum: The dictionary value to encode.
+
+        Returns:
+            The encoded bytes.
+        """
+        return b"d%se" % b"".join(
+            b"%s%s" % (encode(key), encode(value)) for key, value in datum.items()
+        )
+
+    ENCODERS: dict[type, Callable[[Any], Any]] = {
+        bool: encode_bool,
+        int: encode_int,
+        bytes: encode_bytes,
+        str: encode_string,
+        list: encode_list,
+        tuple: encode_tuple,
+        dict: encode_dict,
+    }
+
     def encode(datum: object) -> bytes:
         """Recursively encode data.
 
@@ -44,24 +142,10 @@ def dump(data: object) -> bytes:
         Returns:
             Encoded data bytes.
         """
-        if isinstance(datum, bool):
-            return b"b%ie" % int(datum)
-        if isinstance(datum, int):
-            return b"i%ie" % datum
-        if isinstance(datum, bytes):
-            return b"%i:%s" % (len(datum), datum)
-        if isinstance(datum, str):
-            return b"s%i:%s" % (len(datum), datum.encode("utf-8"))
-        if isinstance(datum, list):
-            return b"l%se" % b"".join(encode(element) for element in datum)
-        if isinstance(datum, tuple):
-            return b"t%se" % b"".join(encode(element) for element in datum)
-        if isinstance(datum, dict):
-            return b"d%se" % b"".join(
-                b"%s%s" % (encode(key), encode(value)) for key, value in datum.items()
-            )
-
-        raise TypeError("Can't encode {datum!r}")
+        try:
+            return ENCODERS[type(datum)](datum)
+        except KeyError:
+            raise TypeError("Can't encode {datum!r}") from None
 
     return encode(data)
 
@@ -78,9 +162,8 @@ def load(encoded: bytes) -> object:
     Returns:
         Decoded data.
     """
-    position = 0
-
     max_position = len(encoded)
+    position = 0
 
     def get_byte() -> bytes:
         """Get an encoded byte and advance position.
