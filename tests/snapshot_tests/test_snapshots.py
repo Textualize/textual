@@ -3,11 +3,10 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual.pilot import Pilot
 from textual.app import App
-from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import RichLog, TextArea, Input, Button
-from textual.widgets.text_area import TextAreaTheme
+from textual.pilot import Pilot
+from textual.widgets import Button, Input, RichLog, TextArea
+from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -1433,8 +1432,9 @@ def test_command_palette_dismiss_escape_no_results(snap_compare):
         await pilot.press(App.COMMAND_PALETTE_BINDING)
         await pilot.pause()
         await pilot.press(*"foo")
-        await pilot.pause()
-        await pilot.pause()
+        # await pilot.pause()
+        # await pilot.pause()
+        await pilot.app.workers.wait_for_complete()
         await pilot.press("escape")
 
     assert snap_compare(
