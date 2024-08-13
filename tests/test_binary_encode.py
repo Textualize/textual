@@ -8,6 +8,8 @@ from textual._binary_encode import DecodeError, dump, load
     [
         False,
         True,
+        -10,
+        -1,
         0,
         1,
         100,
