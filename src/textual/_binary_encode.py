@@ -162,6 +162,8 @@ def load(encoded: bytes) -> object:
     Returns:
         Decoded data.
     """
+    if not isinstance(encoded, bytes):
+        raise TypeError("must be bytes")
     max_position = len(encoded)
     position = 0
 

@@ -44,6 +44,7 @@ def test_round_trip(data: object) -> None:
 @pytest.mark.parametrize(
     "data",
     [
+        b"",
         b"100:hello",
         b"i",
         b"i1",
@@ -55,3 +56,10 @@ def test_round_trip(data: object) -> None:
 def test_bad_encoding(data: bytes) -> None:
     with pytest.raises(DecodeError):
         load(data)
+
+
+def test_load_wrong_type():
+    with pytest.raises(TypeError):
+        load(None)
+    with pytest.raises(TypeError):
+        load("foo")
