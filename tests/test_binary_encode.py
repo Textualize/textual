@@ -60,6 +60,20 @@ def test_bad_encoding(data: bytes) -> None:
         load(data)
 
 
+@pytest.mark.parametrize(
+    "data",
+    [
+        set(),
+        float,
+        ...,
+        [float],
+    ],
+)
+def test_dump_invalid_type(data):
+    with pytest.raises(TypeError):
+        dump(data)
+
+
 def test_load_wrong_type():
     with pytest.raises(TypeError):
         load(None)
