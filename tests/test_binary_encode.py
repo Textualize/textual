@@ -49,6 +49,7 @@ def test_round_trip(data: object) -> None:
         b"i1",
         b"i10",
         b"li1e",
+        b"x100",
     ],
 )
 def test_bad_encoding(data: bytes) -> None:
