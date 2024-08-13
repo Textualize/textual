@@ -351,16 +351,16 @@ class MonthCalendar(Widget):
         table.action_select_cursor()
 
     def action_previous_day(self) -> None:
-        self.date -= relativedelta(days=1)
+        self.date -= datetime.timedelta(days=1)
 
     def action_next_day(self) -> None:
-        self.date += relativedelta(days=1)
+        self.date += datetime.timedelta(days=1)
 
     def action_previous_week(self) -> None:
-        self.date -= relativedelta(weeks=1)
+        self.date -= datetime.timedelta(weeks=1)
 
     def action_next_week(self) -> None:
-        self.date += relativedelta(weeks=1)
+        self.date += datetime.timedelta(weeks=1)
 
     def action_previous_month(self) -> None:
         self.previous_month()
