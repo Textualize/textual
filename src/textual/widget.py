@@ -2000,7 +2000,7 @@ class Widget(DOMNode):
                 break
             if node.styles.has_rule("layers"):
                 layers = node.styles.layers
-
+        return ("textual-system-low", *layers, "textual-system-high")
         return layers
 
     @property

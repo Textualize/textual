@@ -24,8 +24,9 @@ class KeyPanel(VerticalScroll):
     
         
         dock: right;
-        # layer: textual-high;
+        # layer: textual-system-high;
         width: auto;
+        # overlay: screen;
        
         max-width: 40;    
         border-left: vkey $foreground 30%;
