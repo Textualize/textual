@@ -35,7 +35,7 @@ def dump(data: object) -> bytes:
         A byte string encoding the data.
     """
 
-    def encode_none(datum: None) -> bytes:
+    def encode_none(_datum: None) -> bytes:
         """
         Encodes a None value.
 
@@ -157,9 +157,10 @@ def dump(data: object) -> bytes:
             Encoded data bytes.
         """
         try:
-            return ENCODERS[type(datum)](datum)
+            decoder = ENCODERS[type(datum)]
         except KeyError:
             raise TypeError("Can't encode {datum!r}") from None
+        return decoder(datum)
 
     return encode(data)
 
