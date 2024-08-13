@@ -190,10 +190,16 @@ class MonthCalendar(Widget):
         self.date += relativedelta(months=1)
 
     def previous_year(self) -> None:
-        self.date -= relativedelta(years=1)
+        year = self.date.year - 1
+        month = self.date.month
+        day = min(self.date.day, calendar.monthrange(year, month)[1])
+        self.date = datetime.date(year, month, day)
 
     def next_year(self) -> None:
-        self.date += relativedelta(years=1)
+        year = self.date.year + 1
+        month = self.date.month
+        day = min(self.date.day, calendar.monthrange(year, month)[1])
+        self.date = datetime.date(year, month, day)
 
     def _on_mount(self, _: Mount) -> None:
         self._update_calendar_table(update_week_header=True)
