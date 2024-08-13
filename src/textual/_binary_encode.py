@@ -231,38 +231,3 @@ def load(encoded: bytes) -> object:
         return decoder()
 
     return decode()
-
-
-if __name__ == "__main__":
-    tests = [
-        False,
-        True,
-        0,
-        1,
-        100,
-        "Hello",
-        b"World",
-        [],
-        [1, 2, 3],
-        ["hello", "world"],
-        ["hello", b"world"],
-        ("hello", "world"),
-        ("hello", b"world"),
-        {},
-        {"foo": "bar"},
-        {"foo": "bar", b"egg": b"baz"},
-        [{}],
-        [[1]],
-        [(1, 2), (3, 4)],
-    ]
-
-    from rich import print
-
-    for test in tests:
-        print("")
-        print(f"Encoding: \t{test!r}")
-        encoded = dump(test)
-        print(f"Encoded: \t{encoded!r}")
-        decoded = load(encoded)
-        print(f"Decoded: \t{decoded!r}")
-        assert test == decoded
