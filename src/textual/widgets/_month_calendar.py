@@ -184,10 +184,22 @@ class MonthCalendar(Widget):
         pass
 
     def previous_month(self) -> None:
-        self.date -= relativedelta(months=1)
+        year = self.date.year
+        month = self.date.month - 1
+        if month < 1:
+            year -= 1
+            month += 12
+        day = min(self.date.day, calendar.monthrange(year, month)[1])
+        self.date = datetime.date(year, month, day)
 
     def next_month(self) -> None:
-        self.date += relativedelta(months=1)
+        year = self.date.year
+        month = self.date.month + 1
+        if month > 12:
+            year += 1
+            month -= 12
+        day = min(self.date.day, calendar.monthrange(year, month)[1])
+        self.date = datetime.date(year, month, day)
 
     def previous_year(self) -> None:
         year = self.date.year - 1
