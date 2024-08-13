@@ -1432,7 +1432,6 @@ def test_command_palette_dismiss_escape_no_results(snap_compare):
         await pilot.press(App.COMMAND_PALETTE_BINDING)
         await pilot.pause()
         await pilot.press(*"foo")
-        # await pilot.pause()
         await pilot.app.workers.wait_for_complete()
         await pilot.press("escape")
 
