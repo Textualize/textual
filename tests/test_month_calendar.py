@@ -240,6 +240,7 @@ async def test_previous_month():
 
         assert month_calendar.date.year == 2021
         assert month_calendar.date.month == 5
+        assert month_calendar.date.day == 3
 
         table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 4, 26)
@@ -256,12 +257,35 @@ async def test_previous_month_when_month_is_january():
 
         assert month_calendar.date.year == 2020
         assert month_calendar.date.month == 12
+        assert month_calendar.date.day == 1
 
         table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2020, 11, 30)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
+
+
+async def test_previous_month_accounts_for_leap_years():
+    app = MonthCalendarApp(date=datetime.date(2024, 3, 29))
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.previous_month()
+
+        assert month_calendar.date.year == 2024
+        assert month_calendar.date.month == 2
+        assert month_calendar.date.day == 29
+
+
+async def test_previous_month_accounts_for_nonleap_years():
+    app = MonthCalendarApp(date=datetime.date(2021, 3, 29))
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.previous_month()
+
+        assert month_calendar.date.year == 2021
+        assert month_calendar.date.month == 2
+        assert month_calendar.date.day == 28
 
 
 async def test_next_month():
@@ -272,6 +296,7 @@ async def test_next_month():
 
         assert month_calendar.date.year == 2021
         assert month_calendar.date.month == 7
+        assert month_calendar.date.day == 3
 
         table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 6, 28)
@@ -288,12 +313,35 @@ async def test_next_month_when_month_is_december():
 
         assert month_calendar.date.year == 2022
         assert month_calendar.date.month == 1
+        assert month_calendar.date.day == 1
 
         table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 12, 27)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)).plain == "27"
+
+
+async def test_next_month_accounts_for_leap_years():
+    app = MonthCalendarApp(date=datetime.date(2024, 1, 29))
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.next_month()
+
+        assert month_calendar.date.year == 2024
+        assert month_calendar.date.month == 2
+        assert month_calendar.date.day == 29
+
+
+async def test_next_month_accounts_for_nonleap_years():
+    app = MonthCalendarApp(date=datetime.date(2021, 1, 29))
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.next_month()
+
+        assert month_calendar.date.year == 2021
+        assert month_calendar.date.month == 2
+        assert month_calendar.date.day == 28
 
 
 async def test_cell_highlighted_updates_date():
