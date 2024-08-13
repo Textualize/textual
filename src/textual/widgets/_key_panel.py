@@ -6,7 +6,9 @@ from typing import TYPE_CHECKING
 from rich.table import Table
 from rich.text import Text
 
+from ..app import ComposeResult
 from ..binding import Binding
+from ..containers import VerticalScroll
 from ..reactive import reactive
 from ..widgets import Static
 
@@ -14,27 +16,22 @@ if TYPE_CHECKING:
     from ..screen import Screen
 
 
-class KeyPanel(Static):
-    COMPONENT_CLASSES = {
-        "footer-key--key",
-        "footer-key--description",
-    }
+class KeyPanel(VerticalScroll):
+    COMPONENT_CLASSES = {"footer-key--key", "footer-key--description"}
 
     DEFAULT_CSS = """
     KeyPanel {        
-        layout: vertical;
+    
+        
         dock: right;
         # layer: textual-high;
-        width: 20;
-        # min-width: 20;
-        max-width: 33%;    
-        # border-left: vkey $foreground 30%;
+        width: auto;
+       
+        max-width: 40;    
+        border-left: vkey $foreground 30%;
         
-        padding: 0 1;
+        padding: 1 1;
         height: 1fr;
-
-        border-left: vkey $primary;
-        
 
         padding-right: 1;
 
@@ -49,15 +46,17 @@ class KeyPanel(Static):
             color: $text;
         }
 
-      
-
+        #bindings-table {
+            width: auto;
+            height: auto;
+        }
       
     }
     """
 
     _bindings_ready = reactive(False, repaint=False, recompose=True)
 
-    def update_bindings(self) -> None:
+    def render_bindings_table(self) -> Table:
         bindings = [
             (binding, enabled, tooltip)
             for (_, binding, enabled, tooltip) in self.screen.active_bindings.values()
@@ -73,6 +72,7 @@ class KeyPanel(Static):
         description_style = self.get_component_rich_style("footer-key--description")
 
         def render_description(binding: Binding) -> Text:
+            """Render description text from a binding."""
             text = Text.from_markup(
                 binding.description, end="", style=description_style
             )
@@ -92,15 +92,23 @@ class KeyPanel(Static):
                 render_description(binding),
             )
 
-        self.update(table)
+        return table
 
-    def on_mount(self) -> None:
+    def compose(self) -> ComposeResult:
+        table = self.render_bindings_table()
+        self.log(table)
+        yield Static(table, id="bindings-table", shrink=True, expand=False)
+
+    async def on_mount(self) -> None:
+        self.shrink = False
+
         async def bindings_changed(screen: Screen) -> None:
             self._bindings_ready = True
             if self.is_attached and screen is self.screen:
-                self.update_bindings()
+                await self.recompose()
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+        await self.recompose()
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)

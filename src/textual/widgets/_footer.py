@@ -145,15 +145,13 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         background: $panel;
         color: $text;
         dock: bottom;
-        layer: textual-high;
         height: 1;
         scrollbar-size: 0 0;
         &.-compact {
             grid-gutter: 1;
         }
         FooterKey.-command-palette  {
-            dock: right;
-                        
+            dock: right;                        
             padding-right: 1;
             border-left: vkey $foreground 20%;                
         }
