@@ -4,8 +4,6 @@ import calendar
 import datetime
 from typing import Sequence
 
-# TODO: Does `python-dateutil` need adding as a dependency?
-from dateutil.relativedelta import relativedelta  # type: ignore[import-untyped]
 from rich.text import Text
 
 from textual import on
@@ -269,6 +267,7 @@ class MonthCalendar(Widget):
         """
         month_weeks = self._calendar.monthdatescalendar(self.date.year, self.date.month)
         calendar_dates: list[Sequence[datetime.date | None]]
+
         if not self.show_other_months:
             calendar_dates = [
                 [date if date.month == self.date.month else None for date in week]
@@ -278,14 +277,22 @@ class MonthCalendar(Widget):
 
         calendar_dates = [[date for date in week] for week in month_weeks]
         if len(calendar_dates) < 6:
-            prev_month = self.date - relativedelta(months=1)
+            prev_month = self.date.month - 1
+            prev_month_year = self.date.year
+            if prev_month < 1:
+                prev_month_year -= 1
+                prev_month += 12
             prev_month_weeks = self._calendar.monthdatescalendar(
-                prev_month.year, prev_month.month
+                prev_month_year, prev_month
             )
 
-            next_month = self.date + relativedelta(months=1)
+            next_month = self.date.month + 1
+            next_month_year = self.date.year
+            if next_month > 12:
+                next_month_year += 1
+                next_month -= 12
             next_month_weeks = self._calendar.monthdatescalendar(
-                next_month.year, next_month.month
+                next_month_year, next_month
             )
 
             curr_first_date = calendar_dates[0][0]
