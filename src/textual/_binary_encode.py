@@ -83,41 +83,87 @@ def load(encoded: bytes) -> object:
     max_position = len(encoded)
 
     def get_byte() -> bytes:
+        """Get an encoded byte and advance position.
+
+        Raises:
+            DecodeError: If the end of the data was reached
+
+        Returns:
+            A bytes object with a single byte.
+        """
         nonlocal position
         if position >= max_position:
-            raise DecodeError(f"Failed to decode {encoded!r}")
+            raise DecodeError("More data expected")
         character = encoded[position : position + 1]
         position += 1
         return character
 
     def peek_byte() -> bytes:
+        """Get the byte at the current position, but don't advance position.
+
+        Returns:
+            A bytes object with a single byte.
+        """
         return encoded[position : position + 1]
 
     def get_bytes(size: int) -> bytes:
+        """Get a number of bytes of encode data.
+
+        Args:
+            size: Number of bytes to retrieve.
+
+        Raises:
+            DecodeError: If there aren't enough bytes.
+
+        Returns:
+            A bytes object.
+        """
         nonlocal position
         bytes_data = encoded[position : position + size]
+        if len(bytes_data) != size:
+            raise DecodeError(b"Missing bytes in {bytes_data!r}")
         position += size
         return bytes_data
 
-    def decode_int():
+    def decode_int() -> int:
+        """Decode an int from the encoded data.
+
+        Returns:
+            An integer.
+        """
         int_bytes = b""
         while (byte := get_byte()) != b"e":
             int_bytes += byte
         return int(int_bytes)
 
     def decode_bool() -> bool:
+        """Decode a bool from the encoded data.
+
+        Returns:
+            A bool.
+        """
         int_bytes = b""
         while (byte := get_byte()) != b"e":
             int_bytes += byte
         return int(int_bytes) == 1
 
     def decode_bytes(size_bytes: bytes) -> bytes:
+        """Decode a bytes string from the encoded data.
+
+        Returns:
+            A bytes object.
+        """
         while (byte := get_byte()) != b":":
             size_bytes += byte
         bytes_string = get_bytes(int(size_bytes))
         return bytes_string
 
     def decode_string() -> str:
+        """Decode a (utf-8 encoded) string from the encoded data.
+
+        Returns:
+            A string.
+        """
         size_bytes = b""
         while (byte := get_byte()) != b":":
             size_bytes += byte
@@ -126,6 +172,11 @@ def load(encoded: bytes) -> object:
         return decoded_string
 
     def decode_list() -> list[object]:
+        """Decode a list.
+
+        Returns:
+            A list of data.
+        """
         elements: list[object] = []
         add_element = elements.append
         while peek_byte() != b"e":
@@ -134,6 +185,11 @@ def load(encoded: bytes) -> object:
         return elements
 
     def decode_tuple() -> tuple[object, ...]:
+        """Decode a tuple.
+
+        Returns:
+            A tuple of decoded data.
+        """
         elements: list[object] = []
         add_element = elements.append
         while peek_byte() != b"e":
@@ -142,6 +198,11 @@ def load(encoded: bytes) -> object:
         return tuple(elements)
 
     def decode_dict() -> dict[object, object]:
+        """Decode a dict.
+
+        Returns:
+            A dict of decoded data.
+        """
         elements: dict[object, object] = {}
         add_element = elements.__setitem__
         while peek_byte() != b"e":
@@ -159,7 +220,11 @@ def load(encoded: bytes) -> object:
     }
 
     def decode() -> object:
-        """Decode bytes."""
+        """Recursively decode data.
+
+        Returns:
+            Decoded data.
+        """
         decoder = DECODERS.get(initial := get_byte(), None)
         if decoder is None:
             return decode_bytes(initial)
