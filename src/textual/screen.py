@@ -284,7 +284,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
-        self.log.debug("Bindings updated")
         self._bindings_updated = True
         self.check_idle()
 
