@@ -13,6 +13,8 @@ actions available via the [command palette][textual.command.CommandPalette].
 
 from __future__ import annotations
 
+from typing import Sequence
+
 from .command import DiscoveryHit, Hit, Hits, Provider
 from .types import IgnoreReturnCallbackType
 
@@ -24,7 +26,7 @@ class SystemCommands(Provider):
     """
 
     @property
-    def _system_commands(self) -> list[tuple[str, IgnoreReturnCallbackType, str]]:
+    def _system_commands(self) -> Sequence[tuple[str, IgnoreReturnCallbackType, str]]:
         """The system commands to reveal to the command palette."""
         commands = [
             (
