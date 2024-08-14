@@ -748,6 +748,20 @@ class StylesBuilder:
         dock = tokens[0].value
         self.styles._rules["dock"] = dock
 
+    def process_split(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+
+        if len(tokens) > 1 or tokens[0].value not in VALID_EDGE:
+            self.error(
+                name,
+                tokens[0],
+                split_property_help_text(name, context="css"),
+            )
+
+        dock = tokens[0].value
+        self.styles._rules["split"] = dock
+
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
             self.error(name, tokens[1], "unexpected tokens in dock-edge declaration")

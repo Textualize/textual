@@ -23,12 +23,13 @@ class KeyPanel(VerticalScroll):
     KeyPanel {        
     
         
-        dock: right;
+        split: right;
         # layer: textual-system-high;
-        width: auto;
+        width: 33%;
+        min-width: 30;
         # overlay: screen;
        
-        max-width: 40;    
+        max-width: 60;    
         border-left: vkey $foreground 30%;
         
         padding: 1 1;
@@ -55,6 +56,10 @@ class KeyPanel(VerticalScroll):
     }
     """
 
+    upper_case_keys = reactive(False)
+    """Upper case key display."""
+    ctrl_to_caret = reactive(True)
+    """Convert 'ctrl+' prefix to '^'."""
     _bindings_ready = reactive(False, repaint=False, recompose=True)
 
     def render_bindings_table(self) -> Table:
@@ -87,7 +92,12 @@ class KeyPanel(VerticalScroll):
             binding, enabled, tooltip = multi_bindings[0]
             table.add_row(
                 Text(
-                    binding.key_display or self.app.get_key_display(binding.key),
+                    binding.key_display
+                    or self.app.get_key_display(
+                        binding.key,
+                        upper_case_keys=self.upper_case_keys,
+                        ctrl_to_caret=self.ctrl_to_caret,
+                    ),
                     style=key_style,
                 ),
                 render_description(binding),

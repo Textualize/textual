@@ -48,7 +48,9 @@ def arrange(
     placements: list[WidgetPlacement] = []
     scroll_spacing = Spacing()
     get_dock = attrgetter("styles.dock")
+    get_split = attrgetter("styles.split")
     styles = widget.styles
+    null_spacing = Spacing()
 
     # Widgets which will be displayed
     display_widgets = [child for child in children if child.styles.display != "none"]
@@ -56,22 +58,32 @@ def arrange(
     # Widgets organized into layers
     dock_layers = _build_dock_layers(display_widgets)
 
-    layer_region = size.region
     for widgets in dock_layers.values():
-        region = layer_region
+        # Partition widgets in to split widgets and non-split widgets
+        non_split_widgets, split_widgets = partition(get_split, widgets)
+        if split_widgets:
+            _split_placements, dock_region = _arrange_split_widgets(
+                split_widgets, size, viewport
+            )
+            placements.extend(_split_placements)
+        else:
+            dock_region = size.region
 
         # Partition widgets into "layout" widgets (those that appears in the normal 'flow' of the
         # document), and "dock" widgets which are positioned relative to an edge
-        layout_widgets, dock_widgets = partition(get_dock, widgets)
+        layout_widgets, dock_widgets = partition(get_dock, non_split_widgets)
 
         # Arrange docked widgets
-        _dock_placements, dock_spacing = _arrange_dock_widgets(
-            dock_widgets, size, viewport
-        )
-        placements.extend(_dock_placements)
+        if dock_widgets:
+            _dock_placements, dock_spacing = _arrange_dock_widgets(
+                dock_widgets, dock_region, viewport
+            )
+            placements.extend(_dock_placements)
+        else:
+            dock_spacing = null_spacing
 
         # Reduce the region to compensate for docked widgets
-        region = region.shrink(dock_spacing)
+        region = dock_region.shrink(dock_spacing)
 
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
@@ -103,20 +115,22 @@ def arrange(
 
 
 def _arrange_dock_widgets(
-    dock_widgets: Sequence[Widget], size: Size, viewport: Size
+    dock_widgets: Sequence[Widget], region: Region, viewport: Size
 ) -> tuple[list[WidgetPlacement], Spacing]:
     """Arrange widgets which are *docked*.
 
     Args:
         dock_widgets: Widgets with a non-empty dock.
-        size: Size of the container.
+        region: Region to dock within.
         viewport: Size of the viewport.
 
     Returns:
-        A tuple of widget placements, and additional spacing around them
+        A tuple of widget placements, and additional spacing around them.
     """
     _WidgetPlacement = WidgetPlacement
     top_z = TOP_Z
+    region_offset = region.offset
+    size = region.size
     width, height = size
     null_spacing = Spacing()
 
@@ -132,7 +146,6 @@ def _arrange_dock_widgets(
             size, viewport, Fraction(size.width), Fraction(size.height)
         )
         widget_width_fraction, widget_height_fraction, margin = box_model
-
         widget_width = int(widget_width_fraction) + margin.width
         widget_height = int(widget_height_fraction) + margin.height
 
@@ -157,7 +170,58 @@ def _arrange_dock_widgets(
         )
         dock_region = dock_region.shrink(margin).translate(align_offset)
         append_placement(
-            _WidgetPlacement(dock_region, null_spacing, dock_widget, top_z, True)
+            _WidgetPlacement(
+                dock_region.translate(region_offset),
+                null_spacing,
+                dock_widget,
+                top_z,
+                True,
+            )
         )
     dock_spacing = Spacing(top, right, bottom, left)
     return (placements, dock_spacing)
+
+
+def _arrange_split_widgets(
+    split_widgets: Sequence[Widget], size: Size, viewport: Size
+) -> tuple[list[WidgetPlacement], Region]:
+    """Arrange split widgets.
+
+    Split widgets are "docked" but also reduce the area available for regular widgets.
+
+    Args:
+        split_widgets: Widgets to arrange.
+        size: Available area to arrange.
+        viewport: Viewport (size of terminal).
+
+    Returns:
+        A tuple of widget placements, and the remaining view area.
+    """
+    _WidgetPlacement = WidgetPlacement
+    placements: list[WidgetPlacement] = []
+    append_placement = placements.append
+    view_region = size.region
+    null_spacing = Spacing()
+
+    for split_widget in split_widgets:
+        split = split_widget.styles.split
+        box_model = split_widget._get_box_model(
+            size, viewport, Fraction(size.width), Fraction(size.height)
+        )
+        widget_width_fraction, widget_height_fraction, margin = box_model
+        widget_width = int(widget_width_fraction) + margin.width
+        widget_height = int(widget_height_fraction) + margin.height
+
+        if split == "bottom":
+            split_region, view_region = view_region.split_horizontal(-widget_height)
+        elif split == "top":
+            view_region, split_region = view_region.split_horizontal(widget_height)
+        elif split == "left":
+            split_region, view_region = view_region.split_vertical(widget_width)
+        elif split == "right":
+            view_region, split_region = view_region.split_vertical(-widget_width)
+        append_placement(
+            _WidgetPlacement(split_region, null_spacing, split_widget, 1, True)
+        )
+
+    return placements, view_region
