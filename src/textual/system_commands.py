@@ -24,9 +24,9 @@ class SystemCommands(Provider):
     """
 
     @property
-    def _system_commands(self) -> tuple[tuple[str, IgnoreReturnCallbackType, str], ...]:
+    def _system_commands(self) -> list[tuple[str, IgnoreReturnCallbackType, str]]:
         """The system commands to reveal to the command palette."""
-        return (
+        commands = [
             (
                 "Toggle light/dark mode",
                 self.app.action_toggle_dark,
@@ -37,7 +37,22 @@ class SystemCommands(Provider):
                 self.app.action_quit,
                 "Quit the application as soon as possible",
             ),
-        )
+        ]
+        if self.screen.query("KeyPanel"):
+            commands.append(
+                ("Hide keys", self.app.action_hide_keys, "Hide the keys panel")
+            )
+        else:
+            commands.append(
+                (
+                    "Show keys",
+                    self.app.action_show_keys,
+                    "Show a summary of available keys",
+                )
+            )
+        commands.sort(key=lambda command: command[0])
+
+        return commands
 
     async def discover(self) -> Hits:
         """Handle a request for the discovery commands for this provider.

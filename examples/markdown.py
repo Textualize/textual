@@ -6,7 +6,7 @@ from sys import argv
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.reactive import var
-from textual.widgets import Footer, KeyPanel, MarkdownViewer
+from textual.widgets import Footer, MarkdownViewer
 
 
 class MarkdownApp(App):
@@ -33,7 +33,6 @@ class MarkdownApp(App):
     def compose(self) -> ComposeResult:
         yield Footer()
         yield MarkdownViewer()
-        yield KeyPanel()
 
     async def on_mount(self) -> None:
         """Go to the first path when the app starts."""

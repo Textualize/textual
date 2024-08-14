@@ -3504,6 +3504,19 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
 
+    def action_hide_keys(self) -> None:
+        """Hide the keys panel (if present)."""
+        self.screen.query("KeyPanel").remove()
+
+    def action_show_keys(self) -> None:
+        """Show the keys panel."""
+        from .widgets import KeyPanel
+
+        try:
+            self.query_one(KeyPanel)
+        except NoMatches:
+            self.mount(KeyPanel())
+
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
