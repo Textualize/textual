@@ -252,26 +252,26 @@ class WebDriver(Driver):
 
             deliveries = self._deliveries
 
-            binary_io: BinaryIO | TextIO | None = None
+            file_like: BinaryIO | TextIO | None = None
             try:
-                binary_io = deliveries[delivery_key]
+                file_like = deliveries[delivery_key]
             except KeyError:
                 log.error(
                     f"Protocol error: deliver_chunk_request invalid key {delivery_key!r}"
                 )
             else:
-                # Read the requested number of bytes from the file
+                # Read the requested amount of data from the file
                 try:
                     log.debug(f"Reading {requested_size} bytes from {delivery_key}")
-                    chunk = binary_io.read(requested_size)
+                    chunk = file_like.read(requested_size)
                     log.debug(f"Delivering chunk {delivery_key!r} of len {len(chunk)}")
                     self.write_packed(("deliver_chunk", delivery_key, chunk))
                     if not chunk:
                         log.info(f"Delivery complete for {delivery_key}")
-                        binary_io.close()
+                        file_like.close()
                         del deliveries[delivery_key]
                 except Exception:
-                    binary_io.close()
+                    file_like.close()
                     del deliveries[delivery_key]
 
                     log.error(
