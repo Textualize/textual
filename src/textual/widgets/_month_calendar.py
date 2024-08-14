@@ -275,46 +275,47 @@ class MonthCalendar(Widget):
             ]
             return calendar_dates
 
-        calendar_dates = [[date for date in week] for week in month_weeks]
+        calendar_dates = [list(week) for week in month_weeks]
+
         if len(calendar_dates) < 6:
-            prev_month = self.date.month - 1
-            prev_month_year = self.date.year
-            if prev_month < 1:
-                prev_month_year -= 1
-                prev_month += 12
-            prev_month_weeks = self._calendar.monthdatescalendar(
-                prev_month_year, prev_month
-            )
+            previous_month_weeks = self._get_previous_month_weeks()
+            next_month_weeks = self._get_next_month_weeks()
 
-            next_month = self.date.month + 1
-            next_month_year = self.date.year
-            if next_month > 12:
-                next_month_year += 1
-                next_month -= 12
-            next_month_weeks = self._calendar.monthdatescalendar(
-                next_month_year, next_month
-            )
+            current_first_date = calendar_dates[0][0]
+            assert isinstance(current_first_date, datetime.date)
+            current_last_date = calendar_dates[-1][6]
+            assert isinstance(current_last_date, datetime.date)
 
-            curr_first_date = calendar_dates[0][0]
-            assert isinstance(curr_first_date, datetime.date)
-
-            if len(calendar_dates) == 4:  # special case for February
+            if len(calendar_dates) == 4:
                 calendar_dates = (
-                    [prev_month_weeks[-1]] + calendar_dates + [next_month_weeks[0]]
+                    [previous_month_weeks[-1]] + calendar_dates + [next_month_weeks[0]]
                 )
-            elif curr_first_date.day == 1:
-                calendar_dates = [prev_month_weeks[-1]] + calendar_dates
+            elif current_first_date.day == 1:
+                calendar_dates = [previous_month_weeks[-1]] + calendar_dates
+            elif current_last_date.month == self.date.month:
+                calendar_dates = calendar_dates + [next_month_weeks[0]]
             else:
-                curr_last_date = calendar_dates[-1][6]
-                assert isinstance(curr_last_date, datetime.date)
-                if curr_last_date.month == self.date.month:
-                    calendar_dates = calendar_dates + [next_month_weeks[0]]
-                else:
-                    calendar_dates = calendar_dates + [next_month_weeks[1]]
+                calendar_dates = calendar_dates + [next_month_weeks[1]]
 
         assert len(calendar_dates) == 6
 
         return calendar_dates
+
+    def _get_previous_month_weeks(self) -> list[list[datetime.date]]:
+        previous_month = self.date.month - 1
+        previous_month_year = self.date.year
+        if previous_month < 1:
+            previous_month_year -= 1
+            previous_month += 12
+        return self._calendar.monthdatescalendar(previous_month_year, previous_month)
+
+    def _get_next_month_weeks(self) -> list[list[datetime.date]]:
+        next_month = self.date.month + 1
+        next_month_year = self.date.year
+        if next_month > 12:
+            next_month_year += 1
+            next_month -= 12
+        return self._calendar.monthdatescalendar(next_month_year, next_month)
 
     def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
         for week_index, week in enumerate(self._calendar_dates):
