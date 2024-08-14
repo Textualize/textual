@@ -21,7 +21,7 @@ from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
 from threading import Event, Thread
-from typing import Any, BinaryIO, Literal, cast
+from typing import Any, BinaryIO, Literal, TextIO, cast
 
 import msgpack
 
@@ -67,7 +67,7 @@ class WebDriver(Driver):
         self._key_thread: Thread = Thread(target=self.run_input_thread)
         self._input_reader = InputReader()
 
-        self._deliveries: dict[str, BinaryIO] = {}
+        self._deliveries: dict[str, BinaryIO | TextIO] = {}
         """Maps delivery keys to file-like objects, used
         for delivering files to the browser."""
 
@@ -252,7 +252,7 @@ class WebDriver(Driver):
 
             deliveries = self._deliveries
 
-            binary_io: BinaryIO | None = None
+            binary_io: BinaryIO | TextIO | None = None
             try:
                 binary_io = deliveries[delivery_key]
             except KeyError:
@@ -293,7 +293,7 @@ class WebDriver(Driver):
 
     def deliver_binary(
         self,
-        binary: BinaryIO,
+        binary: BinaryIO | TextIO,
         *,
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
@@ -310,7 +310,7 @@ class WebDriver(Driver):
 
     def _deliver_file(
         self,
-        binary: BinaryIO,
+        binary: BinaryIO | TextIO,
         *,
         save_path: Path,
         open_method: Literal["browser", "download"],
