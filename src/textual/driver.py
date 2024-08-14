@@ -5,7 +5,7 @@ import shutil
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal
+from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal, TextIO
 
 from . import events
 from .events import MouseUp
@@ -201,7 +201,7 @@ class Driver(ABC):
 
     def deliver_binary(
         self,
-        binary: BinaryIO,
+        binary: BinaryIO | TextIO,
         *,
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
@@ -228,6 +228,11 @@ class Driver(ABC):
             mime_type: *web only* The MIME type of the file. This will be used to
                 set the `Content-Type` header in the HTTP response.
         """
-        with open(save_path, "wb") as destination_file:
-            shutil.copyfileobj(binary, destination_file)
+        if isinstance(binary, BinaryIO):
+            with open(save_path, "wb") as destination_file:
+                shutil.copyfileobj(binary, destination_file)
+        else:  # isinstance(binary, TextIO):
+            with open(save_path, "w", encoding=encoding) as destination_file:
+                shutil.copyfileobj(binary, destination_file)
+
         binary.close()

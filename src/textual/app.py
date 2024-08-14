@@ -3835,7 +3835,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _deliver_binary(
         self,
-        binary: BinaryIO,
+        binary: BinaryIO | TextIO,
         *,
         save_directory: str | Path | None,
         save_filename: str | None,
