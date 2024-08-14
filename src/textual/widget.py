@@ -389,8 +389,6 @@ class Widget(DOMNode):
         self._scrollbar_changes: set[tuple[bool, bool]] = set()
         """Used to stabilize scrollbars."""
 
-        self.stretch = False
-
         super().__init__(
             name=name,
             id=id,
