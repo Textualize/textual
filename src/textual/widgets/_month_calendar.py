@@ -22,14 +22,14 @@ class InvalidWeekdayNumber(Exception):
     pass
 
 
-class MonthCalendarTable(DataTable, inherit_bindings=False):
+class CalendarGrid(DataTable, inherit_bindings=False):
     # TODO: Ideally we want to hide that there's a DataTable underneath the
     # `MonthCalendar` widget. Is there any mechanism so component classes could be
     # defined in the parent and substitute the component styles in the child?
-    # For example, allow styling the table header using `.month-calendar--header`
+    # For example, allow styling the header using `.month-calendar--header`
     # rather than `.datatable--header`?
     DEFAULT_CSS = """
-    MonthCalendarTable {
+    CalendarGrid {
         height: auto;
         width: auto;
 
@@ -124,22 +124,22 @@ class MonthCalendar(Widget):
         self._calendar_dates = self._get_calendar_dates()
 
     def compose(self) -> ComposeResult:
-        yield MonthCalendarTable(show_cursor=self.show_cursor)
+        yield CalendarGrid(show_cursor=self.show_cursor)
 
-    @on(MonthCalendarTable.CellHighlighted)
-    def _on_table_cell_highlighted(
+    @on(CalendarGrid.CellHighlighted)
+    def _on_calendar_grid_cell_highlighted(
         self,
-        event: MonthCalendarTable.CellHighlighted,
+        event: CalendarGrid.CellHighlighted,
     ) -> None:
         event.stop()
         if not self.show_other_months and event.value is None:
             # TODO: This handling of blank cells is obviously a bit hacky.
             # Instead this widget should prevent highlighting a blank cell
             # altogether, either with the keyboard or mouse.
-            table = self.query_one(MonthCalendarTable)
+            calendar_grid = self.query_one(CalendarGrid)
             date_coordinate = self._get_date_coordinate(self.date)
-            with self.prevent(MonthCalendarTable.CellHighlighted):
-                table.cursor_coordinate = date_coordinate
+            with self.prevent(CalendarGrid.CellHighlighted):
+                calendar_grid.cursor_coordinate = date_coordinate
         else:
             cursor_row, cursor_column = event.coordinate
             new_date = self._calendar_dates[cursor_row][cursor_column]
@@ -151,19 +151,19 @@ class MonthCalendar(Widget):
             self.set_reactive(MonthCalendar.date, new_date)
             if (new_date.month != old_date.month) or (new_date.year != old_date.year):
                 self._calendar_dates = self._get_calendar_dates()
-                self._update_calendar_table(update_week_header=False)
+                self._update_calendar_grid(update_week_header=False)
 
             self.post_message(MonthCalendar.DateHighlighted(self, self.date))
 
-    @on(MonthCalendarTable.CellSelected)
-    def _on_table_cell_selected(
+    @on(CalendarGrid.CellSelected)
+    def _on_calendar_grid_cell_selected(
         self,
-        event: MonthCalendarTable.CellSelected,
+        event: CalendarGrid.CellSelected,
     ) -> None:
         event.stop()
         if not self.show_other_months and event.value is None:
-            table = self.query_one(MonthCalendarTable)
-            table._show_hover_cursor = False
+            calendar_grid = self.query_one(CalendarGrid)
+            calendar_grid._show_hover_cursor = False
             return
         # We cannot rely on the `event.coordinate` for the selected date,
         # as selecting a date from the previous or next month will update the
@@ -173,10 +173,10 @@ class MonthCalendar(Widget):
         # `CellHighlighted` message *before* the `CellSelected` message.
         self.post_message(MonthCalendar.DateSelected(self, self.date))
 
-    @on(MonthCalendarTable.HeaderSelected)
-    def _on_table_header_selected(
+    @on(CalendarGrid.HeaderSelected)
+    def _on_calendar_grid_header_selected(
         self,
-        event: MonthCalendarTable.HeaderSelected,
+        event: CalendarGrid.HeaderSelected,
     ) -> None:
         event.stop()
         pass
@@ -212,41 +212,41 @@ class MonthCalendar(Widget):
         self.date = datetime.date(year, month, day)
 
     def _on_mount(self, _: Mount) -> None:
-        self._update_calendar_table(update_week_header=True)
+        self._update_calendar_grid(update_week_header=True)
 
         def hide_hover_cursor_if_blank_cell(hover_coordinate: Coordinate) -> None:
-            table = self.query_one(MonthCalendarTable)
+            calendar_grid = self.query_one(CalendarGrid)
             try:
-                hover_cell_value = table.get_cell_at(hover_coordinate)
+                hover_cell_value = calendar_grid.get_cell_at(hover_coordinate)
             except CellDoesNotExist:
-                table._set_hover_cursor(False)
+                calendar_grid._set_hover_cursor(False)
                 return
             if hover_cell_value is None:
-                table._set_hover_cursor(False)
+                calendar_grid._set_hover_cursor(False)
 
         self.watch(
-            self.query_one(MonthCalendarTable),
+            self.query_one(CalendarGrid),
             "hover_coordinate",
             hide_hover_cursor_if_blank_cell,
         )
 
-    def _update_calendar_table(self, update_week_header: bool) -> None:
-        table = self.query_one(MonthCalendarTable)
-        old_hover_coordinate = table.hover_coordinate
-        table.clear()
+    def _update_calendar_grid(self, update_week_header: bool) -> None:
+        calendar_grid = self.query_one(CalendarGrid)
+        old_hover_coordinate = calendar_grid.hover_coordinate
+        calendar_grid.clear()
 
         if update_week_header:
-            old_columns = table.columns.copy()
+            old_columns = calendar_grid.columns.copy()
             for old_column in old_columns:
-                table.remove_column(old_column)
+                calendar_grid.remove_column(old_column)
 
             day_names = calendar.day_abbr
             for day in self._calendar.iterweekdays():
-                table.add_column(day_names[day])
+                calendar_grid.add_column(day_names[day])
 
-        with self.prevent(MonthCalendarTable.CellHighlighted):
+        with self.prevent(CalendarGrid.CellHighlighted):
             for week in self._calendar_dates:
-                table.add_row(
+                calendar_grid.add_row(
                     *[
                         self._format_day(date) if date is not None else None
                         for date in week
@@ -254,9 +254,9 @@ class MonthCalendar(Widget):
                 )
 
         date_coordinate = self._get_date_coordinate(self.date)
-        table.cursor_coordinate = date_coordinate
+        calendar_grid.cursor_coordinate = date_coordinate
 
-        table.hover_coordinate = old_hover_coordinate
+        calendar_grid.hover_coordinate = old_hover_coordinate
 
     def _get_calendar_dates(self) -> list[Sequence[datetime.date | None]]:
         """A matrix of `datetime.date` objects for this month calendar, where
@@ -345,36 +345,36 @@ class MonthCalendar(Widget):
             return
         if (new_date.month != old_date.month) or (new_date.year != old_date.year):
             self._calendar_dates = self._get_calendar_dates()
-            self._update_calendar_table(update_week_header=False)
+            self._update_calendar_grid(update_week_header=False)
         else:
-            table = self.query_one(MonthCalendarTable)
-            cursor_row, cursor_column = table.cursor_coordinate
+            calendar_grid = self.query_one(CalendarGrid)
+            cursor_row, cursor_column = calendar_grid.cursor_coordinate
             if self._calendar_dates[cursor_row][cursor_column] != new_date:
                 date_coordinate = self._get_date_coordinate(self.date)
-                table.cursor_coordinate = date_coordinate
+                calendar_grid.cursor_coordinate = date_coordinate
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
         self._calendar_dates = self._get_calendar_dates()
         if not self.is_mounted:
             return
-        self._update_calendar_table(update_week_header=True)
+        self._update_calendar_grid(update_week_header=True)
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
         if not self.is_mounted:
             return
-        table = self.query_one(MonthCalendarTable)
-        table.show_cursor = show_cursor
+        calendar_grid = self.query_one(CalendarGrid)
+        calendar_grid.show_cursor = show_cursor
 
     def watch_show_other_months(self) -> None:
         self._calendar_dates = self._get_calendar_dates()
         if not self.is_mounted:
             return
-        self._update_calendar_table(update_week_header=False)
+        self._update_calendar_grid(update_week_header=False)
 
     def action_select_date(self) -> None:
-        table = self.query_one(MonthCalendarTable)
-        table.action_select_cursor()
+        calendar_grid = self.query_one(CalendarGrid)
+        calendar_grid.action_select_cursor()
 
     def action_previous_day(self) -> None:
         self.date -= datetime.timedelta(days=1)
