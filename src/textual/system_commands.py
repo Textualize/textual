@@ -13,7 +13,7 @@ actions available via the [command palette][textual.command.CommandPalette].
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Iterable
 
 from .command import DiscoveryHit, Hit, Hits, Provider
 from .types import IgnoreReturnCallbackType
@@ -26,35 +26,35 @@ class SystemCommands(Provider):
     """
 
     @property
-    def _system_commands(self) -> Sequence[tuple[str, IgnoreReturnCallbackType, str]]:
+    def _system_commands(self) -> Iterable[tuple[str, IgnoreReturnCallbackType, str]]:
         """The system commands to reveal to the command palette."""
-        commands = [
-            (
-                "Toggle light/dark mode",
+        if self.app.dark:
+            yield (
+                "Light mode",
                 self.app.action_toggle_dark,
-                "Toggle the application between light and dark mode",
-            ),
-            (
-                "Quit the application",
-                self.app.action_quit,
-                "Quit the application as soon as possible",
-            ),
-        ]
-        if self.screen.query("KeyPanel"):
-            commands.append(
-                ("Hide keys", self.app.action_hide_keys, "Hide the keys panel")
+                "Switch to a light background",
             )
         else:
-            commands.append(
-                (
-                    "Show keys",
-                    self.app.action_show_keys,
-                    "Show a summary of available keys",
-                )
+            yield (
+                "Dark mode",
+                self.app.action_toggle_dark,
+                "Switch to a dark background",
             )
-        commands.sort(key=lambda command: command[0])
 
-        return commands
+        yield (
+            "Quit the application",
+            self.app.action_quit,
+            "Quit the application as soon as possible",
+        )
+
+        if self.screen.query("KeyPanel"):
+            yield ("Hide keys", self.app.action_hide_keys, "Hide the keys panel")
+        else:
+            yield (
+                "Show keys",
+                self.app.action_show_keys,
+                "Show a summary of available keys",
+            )
 
     async def discover(self) -> Hits:
         """Handle a request for the discovery commands for this provider.
@@ -62,7 +62,8 @@ class SystemCommands(Provider):
         Yields:
             Commands that can be discovered.
         """
-        for name, runnable, help_text in self._system_commands:
+        commands = sorted(self._system_commands, key=lambda command: command[0])
+        for name, runnable, help_text in commands:
             yield DiscoveryHit(
                 name,
                 runnable,

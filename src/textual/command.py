@@ -702,7 +702,7 @@ class CommandPalette(SystemModalScreen):
             self._no_matches_timer.stop()
             self._no_matches_timer = None
 
-    _NO_MATCHES_COUNTDOWN: Final[float] = 0.25
+    _NO_MATCHES_COUNTDOWN: Final[float] = 0.5
     """How many seconds to wait before showing 'No matches found'."""
 
     def _start_no_matches_countdown(self, search_value: str) -> None:
@@ -1074,7 +1074,8 @@ class CommandPalette(SystemModalScreen):
                 self._action_cursor_down()
                 # If there is one option, assume the user wants to select it
                 if command_list.option_count == 1:
-                    self._action_command_list("select")
+                    # Call after a short delay to provide a little visual feedback
+                    self.set_timer(0.1, lambda: self._action_command_list("select"))
             else:
                 # The list is visible, something is highlighted, the user
                 # made a selection "gesture"; let's go select it!
