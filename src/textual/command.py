@@ -436,7 +436,6 @@ class CommandPalette(SystemModalScreen):
     """
 
     DEFAULT_CSS = """
-    
    
     CommandPalette:inline {
         /* If the command palette is invoked in inline mode, we may need additional lines. */
@@ -627,7 +626,7 @@ class CommandPalette(SystemModalScreen):
         Returns:
             The content of the screen.
         """
-        with Vertical():
+        with Vertical(id="--container"):
             with Horizontal(id="--input"):
                 yield SearchIcon()
                 yield CommandInput(placeholder="Search for commands…")
@@ -703,7 +702,7 @@ class CommandPalette(SystemModalScreen):
             self._no_matches_timer.stop()
             self._no_matches_timer = None
 
-    _NO_MATCHES_COUNTDOWN: Final[float] = 0.5
+    _NO_MATCHES_COUNTDOWN: Final[float] = 0.25
     """How many seconds to wait before showing 'No matches found'."""
 
     def _start_no_matches_countdown(self, search_value: str) -> None:
@@ -1068,10 +1067,14 @@ class CommandPalette(SystemModalScreen):
         if event is not None:
             event.stop()
         if self._list_visible:
+            command_list = self.query_one(CommandList)
             # ...so if nothing in the list is highlighted yet...
-            if self.query_one(CommandList).highlighted is None:
+            if command_list.highlighted is None:
                 # ...cause the first completion to be highlighted.
                 self._action_cursor_down()
+                # If there is one option, assume the user wants to select it
+                if command_list.option_count == 1:
+                    self._action_command_list("select")
             else:
                 # The list is visible, something is highlighted, the user
                 # made a selection "gesture"; let's go select it!

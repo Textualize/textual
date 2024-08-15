@@ -16,43 +16,13 @@ if TYPE_CHECKING:
     from ..screen import Screen
 
 
-class KeyPanel(VerticalScroll):
-    COMPONENT_CLASSES = {"footer-key--key", "footer-key--description"}
+class BindingsTable(Static):
+    COMPONENT_CLASSES = {"bindings-table--key", "bindings-table--description"}
 
     DEFAULT_CSS = """
-    KeyPanel {        
-    
-        
-        split: right;
-        # layer: textual-system-high;
-        width: 33%;
-        min-width: 30;
-        # overlay: screen;
-       
-        max-width: 60;    
-        border-left: vkey $foreground 30%;
-        
-        padding: 1 1;
-        height: 1fr;
-
-        padding-right: 1;
-
-        &>.footer-key--key {
-            color: $secondary;
-           
-            text-style: bold;
-            padding: 0 1;
-        }
-
-        &>.footer-key--description {
-            color: $text;
-        }
-
-        #bindings-table {
-            width: auto;
-            height: auto;
-        }
-      
+    BindingsTable {
+        width: auto;
+        height: auto;
     }
     """
 
@@ -60,9 +30,13 @@ class KeyPanel(VerticalScroll):
     """Upper case key display."""
     ctrl_to_caret = reactive(True)
     """Convert 'ctrl+' prefix to '^'."""
-    _bindings_ready = reactive(False, repaint=False, recompose=True)
 
     def render_bindings_table(self) -> Table:
+        """Render a table with all the key bindings.
+
+        Returns:
+            A Rich Table.
+        """
         bindings = [
             (binding, enabled, tooltip)
             for (_, binding, enabled, tooltip) in self.screen.active_bindings.values()
@@ -73,9 +47,8 @@ class KeyPanel(VerticalScroll):
             action_to_bindings[binding.action].append((binding, enabled, tooltip))
 
         table = Table.grid(padding=(0, 1))
-
-        key_style = self.get_component_rich_style("footer-key--key")
-        description_style = self.get_component_rich_style("footer-key--description")
+        key_style = self.get_component_rich_style("bindings-table--key")
+        description_style = self.get_component_rich_style("bindings-table--description")
 
         def render_description(binding: Binding) -> Text:
             """Render description text from a binding."""
@@ -105,21 +78,56 @@ class KeyPanel(VerticalScroll):
 
         return table
 
+    def render(self) -> Table:
+        return self.render_bindings_table()
+
+
+class KeyPanel(VerticalScroll, can_focus=False):
+    DEFAULT_CSS = """
+    KeyPanel {                    
+        split: right;
+        width: 33%;
+        min-width: 30;              
+        max-width: 60;    
+        border-left: vkey $foreground 30%;        
+        padding: 1 1;
+        height: 1fr;
+        padding-right: 1;
+
+        &> BindingsTable > .bindings-table--key {
+            color: $secondary;           
+            text-style: bold;
+            padding: 0 1;
+        }
+
+        &> BindingsTable > .bindings-table--description {
+            color: $text;
+        }
+
+        #bindings-table {
+            width: auto;
+            height: auto;
+        }      
+    }
+    """
+
+    upper_case_keys = reactive(False)
+    """Upper case key display."""
+    ctrl_to_caret = reactive(True)
+    """Convert 'ctrl+' prefix to '^'."""
+
     def compose(self) -> ComposeResult:
-        table = self.render_bindings_table()
-        self.log(table)
-        yield Static(table, id="bindings-table", shrink=True, expand=False)
+        yield BindingsTable(shrink=True, expand=False).data_bind(
+            KeyPanel.upper_case_keys,
+            KeyPanel.ctrl_to_caret,
+        )
 
     async def on_mount(self) -> None:
-        self.shrink = False
-
         async def bindings_changed(screen: Screen) -> None:
-            self._bindings_ready = True
             if self.is_attached and screen is self.screen:
-                await self.recompose()
+                self.refresh()
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
-        await self.recompose()
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)
