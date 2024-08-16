@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class BindingsTable(Static):
+    """A widget to display bindings."""
+
     COMPONENT_CLASSES = {"bindings-table--key", "bindings-table--description"}
 
     DEFAULT_CSS = """
@@ -115,6 +117,8 @@ class KeyPanel(VerticalScroll, can_focus=False):
     """Upper case key display."""
     ctrl_to_caret = reactive(True)
     """Convert 'ctrl+' prefix to '^'."""
+
+    DEFAULT_CLASSES = "-textual-system"
 
     def compose(self) -> ComposeResult:
         yield BindingsTable(shrink=True, expand=False).data_bind(
