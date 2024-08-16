@@ -346,7 +346,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
         name: str | None = None,
         pause: bool = False,
     ) -> Timer:
-        """Make a function call after a delay.
+        """call a function after a delay.
+
+        Example:
+            ```python
+            def ready():
+                self.notify("Your soft boiled egg is ready!")
+            # Call ready() after 3 minutes
+            self.set_timer(3 * 60, ready)
+            ```
 
         Args:
             delay: Time (in seconds) to wait before invoking callback.
