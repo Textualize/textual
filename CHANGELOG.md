@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
 - Added a link to the command palette to the Footer (set `show_command_palette=False` to disable) https://github.com/Textualize/textual/pull/4867
 - Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
+- Added "Show keys" option to system commands to show a summary of key bindings. https://github.com/Textualize/textual/pull/4876
+- Added "split" CSS style, currently undocumented, and may change. https://github.com/Textualize/textual/pull/4876
 
 ### Changed
 
