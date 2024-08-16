@@ -209,16 +209,17 @@ def _arrange_split_widgets(
             size, viewport, Fraction(size.width), Fraction(size.height)
         )
         widget_width_fraction, widget_height_fraction, margin = box_model
-        widget_width = int(widget_width_fraction) + margin.width
-        widget_height = int(widget_height_fraction) + margin.height
-
         if split == "bottom":
-            split_region, view_region = view_region.split_horizontal(-widget_height)
+            widget_height = int(widget_height_fraction) + margin.height
+            view_region, split_region = view_region.split_horizontal(-widget_height)
         elif split == "top":
-            view_region, split_region = view_region.split_horizontal(widget_height)
+            widget_height = int(widget_height_fraction) + margin.height
+            split_region, view_region = view_region.split_horizontal(widget_height)
         elif split == "left":
+            widget_width = int(widget_width_fraction) + margin.width
             split_region, view_region = view_region.split_vertical(widget_width)
         elif split == "right":
+            widget_width = int(widget_width_fraction) + margin.width
             view_region, split_region = view_region.split_vertical(-widget_width)
         append_placement(
             _WidgetPlacement(split_region, null_spacing, split_widget, 1, True)

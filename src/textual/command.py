@@ -1099,15 +1099,9 @@ class CommandPalette(SystemModalScreen):
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
-        input = self.query_one(CommandInput)
-        # Hide the options if there are result and there is input
-        if self._list_visible and (self._hit_count and input.value):
-            self._list_visible = False
-        # Otherwise dismiss modal
-        else:
-            self._cancel_gather_commands()
-            self.app.post_message(CommandPalette.Closed(option_selected=False))
-            self.dismiss()
+        self._cancel_gather_commands()
+        self.app.post_message(CommandPalette.Closed(option_selected=False))
+        self.dismiss()
 
     def _action_command_list(self, action: str) -> None:
         """Pass an action on to the [`CommandList`][textual.command.CommandList].
