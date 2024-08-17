@@ -537,3 +537,52 @@ async def test_default_custom_screen() -> None:
         assert len(app.screen_stack) == 1
         assert isinstance(app.screen_stack[0], CustomScreen)
         assert app.screen is app.screen_stack[0]
+
+
+async def test_worker_cancellation():
+    """Regression test for https://github.com/Textualize/textual/issues/4884"""
+    from textual import on, work
+    from textual.app import App
+    from textual.containers import Vertical
+    from textual.screen import Screen
+    from textual.widgets import Button, Footer, Label
+
+    class InfoScreen(Screen[bool]):
+        def __init__(self, question: str) -> None:
+            self.question = question
+            super().__init__()
+
+        def compose(self) -> ComposeResult:
+            yield Vertical(
+                Label(self.question, id="info-label"),
+                Button("Ok", variant="primary", id="ok"),
+                id="info-vertical",
+            )
+            yield Footer()
+
+        @on(Button.Pressed, "#ok")
+        def handle_ok(self) -> None:
+            self.dismiss(True)  # Changed the `dismiss` result to compatible type
+
+    class ExampleApp(App):
+        BINDINGS = [("i", "info", "Info")]
+
+        screen_count = 0
+
+        def compose(self) -> ComposeResult:
+            yield Label("This is the default screen")
+            yield Footer()
+
+        @work(exclusive=True)
+        async def action_info(self) -> None:
+            self.screen_count += 1
+            await self.push_screen_wait(
+                InfoScreen(f"This is info screen #{self.screen_count}")
+            )
+
+    app = ExampleApp()
+    async with app.run_test() as pilot:
+        await pilot.press("i")
+        await pilot.press("i")
+        await pilot.press("enter")
+        await pilot.press("enter")
