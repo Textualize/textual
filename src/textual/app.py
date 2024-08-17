@@ -659,7 +659,7 @@ class App(Generic[ReturnType], DOMNode):
                         key_display=self.COMMAND_PALETTE_DISPLAY,
                         priority=True,
                         tooltip="Open command palette",
-                    ),
+                    )
                 )
 
     def validate_title(self, title: Any) -> str:
