@@ -31,6 +31,7 @@ from ._help_text import (
     scrollbar_size_single_axis_help_text,
     spacing_invalid_value_help_text,
     spacing_wrong_number_of_values_help_text,
+    split_property_help_text,
     string_enum_help_text,
     style_flags_property_help_text,
     table_rows_or_columns_help_text,
