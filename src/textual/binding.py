@@ -123,6 +123,14 @@ class BindingsMap:
         for binding in make_bindings(bindings or {}):
             self.key_to_bindings.setdefault(binding.key, []).append(binding)
 
+    def _add_binding(self, binding: Binding) -> None:
+        """Add a new binding.
+
+        Args:
+            binding: New Binding to add.
+        """
+        self.key_to_bindings.setdefault(binding.key, []).append(binding)
+
     def __iter__(self) -> Iterator[tuple[str, Binding]]:
         """Iterating produces a sequence of (KEY, BINDING) tuples."""
         return iter(

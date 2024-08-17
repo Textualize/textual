@@ -367,18 +367,13 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     COMMAND_PALETTE_BINDING: ClassVar[str] = "ctrl+p"
-    """The key that launches the command palette (if enabled)."""
+    """The key that launches the command palette (if enabled by [`App.ENABLE_COMMAND_PALETTE`][textual.app.App.ENABLE_COMMAND_PALETTE])."""
+
+    COMMAND_PALETTE_DISPLAY: ClassVar[str | None] = None
+    """How the command palette key should be displayed in the footer (or `None` for default)."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding(
-            COMMAND_PALETTE_BINDING,
-            "command_palette",
-            "palette",
-            show=False,
-            priority=True,
-            tooltip="Open command palette",
-        ),
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
     ]
     """The default key bindings."""
 
@@ -649,6 +644,23 @@ class App(Generic[ReturnType], DOMNode):
 
         # Size of previous inline update
         self._previous_inline_height: int | None = None
+
+        if self.ENABLE_COMMAND_PALETTE:
+            for _key, binding in self._bindings:
+                if binding.action in {"command_palette", "app.command_palette"}:
+                    break
+            else:
+                self._bindings._add_binding(
+                    Binding(
+                        self.COMMAND_PALETTE_BINDING,
+                        "command_palette",
+                        "palette",
+                        show=False,
+                        key_display=self.COMMAND_PALETTE_DISPLAY,
+                        priority=True,
+                        tooltip="Open command palette",
+                    ),
+                )
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
