@@ -2181,7 +2181,7 @@ class App(Generic[ReturnType], DOMNode):
             The screen's result.
         """
         await self._flush_next_callbacks()
-        return await self.push_screen(screen, wait_for_dismiss=True)
+        return await asyncio.shield(self.push_screen(screen, wait_for_dismiss=True))
 
     def switch_screen(self, screen: Screen | str) -> AwaitComplete:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
