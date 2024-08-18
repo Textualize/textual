@@ -2836,9 +2836,8 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close pre-defined screens.
         for screen in self.SCREENS.values():
-            # TODO: This is now dead code, since instances cannot be in SCREENS
-            if isinstance(screen, Screen) and screen._running:
-                await self._prune(screen)
+            # This is now dead code, since instances cannot be in SCREENS.
+            assert (not isinstance(screen, Screen)), "instances in SCREENS are no longer possible"
 
         # Close any remaining nodes
         # Should be empty by now
