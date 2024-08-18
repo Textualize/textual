@@ -40,7 +40,7 @@ async def test_installed_screens():
     class ScreensApp(App):
         SCREENS = {
             "home": Screen,  # Screen type
-            "one": Screen(),  # Screen instance
+            "one": Screen,  # Screen instance, disallowed as of #4893
             "two": Screen,  # Callable[[], Screen]
         }
 
@@ -354,7 +354,7 @@ async def test_switch_screen_no_op():
         pass
 
     class MyApp(App[None]):
-        SCREENS = {"screen": MyScreen()}
+        SCREENS = {"screen": MyScreen}
 
         def on_mount(self):
             self.push_screen("screen")
@@ -379,8 +379,8 @@ async def test_switch_screen_updates_results_callback_stack():
 
     class MyApp(App[None]):
         SCREENS = {
-            "a": ScreenA(),
-            "b": ScreenB(),
+            "a": ScreenA,
+            "b": ScreenB,
         }
 
         def callback(self, _):
@@ -407,7 +407,7 @@ async def test_screen_receives_mouse_move_events():
             MouseMoveRecordingScreen.mouse_events.append(event)
 
     class SimpleApp(App[None]):
-        SCREENS = {"a": MouseMoveRecordingScreen()}
+        SCREENS = {"a": MouseMoveRecordingScreen}
 
         def on_mount(self):
             self.push_screen("a")
@@ -439,7 +439,7 @@ async def test_mouse_move_event_bubbles_to_screen_from_widget():
             MouseMoveRecordingScreen.mouse_events.append(event)
 
     class SimpleApp(App[None]):
-        SCREENS = {"a": MouseMoveRecordingScreen()}
+        SCREENS = {"a": MouseMoveRecordingScreen}
 
         def on_mount(self):
             self.push_screen("a")

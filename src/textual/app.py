@@ -562,6 +562,9 @@ class App(Generic[ReturnType], DOMNode):
         """Number of lines to scroll in the Y direction with wheel or trackpad."""
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
+        for v in self.SCREENS.values():
+            if isinstance(v, Screen) or (not issubclass(v, Screen)):
+                raise TypeError("SCREENS should contain a Screen type, not an instance")
         self._installed_screens.update(**self.SCREENS)
 
         self._compose_stacks: list[list[Widget]] = []
@@ -2833,6 +2836,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close pre-defined screens.
         for screen in self.SCREENS.values():
+            # TODO: This is now dead code, since instances cannot be in SCREENS
             if isinstance(screen, Screen) and screen._running:
                 await self._prune(screen)
 
