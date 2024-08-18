@@ -652,7 +652,7 @@ class App(Generic[ReturnType], DOMNode):
         # Size of previous inline update
         self._previous_inline_height: int | None = None
 
-    def __init_subclass__(cls) -> None:
+    def __init_subclass__(cls, *args, **kwargs) -> None:
         for variable_name, screen_collection in (
             ("SCREENS", cls.SCREENS),
             ("MODES", cls.MODES),
@@ -668,7 +668,7 @@ class App(Generic[ReturnType], DOMNode):
                         f"expected a callable or string, got {screen_object!r}"
                     )
 
-        return super().__init_subclass__()
+        return super().__init_subclass__(*args, **kwargs)
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
