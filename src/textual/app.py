@@ -562,10 +562,11 @@ class App(Generic[ReturnType], DOMNode):
         """Number of lines to scroll in the Y direction with wheel or trackpad."""
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
-        for v in self.SCREENS.values():
+        for screen_name, v in self.SCREENS.items():
             if isinstance(v, Screen) or (not callable(v)):
                 raise TypeError(
-                    "SCREENS should contain a Screen type or callable, not an instance",
+                    "SCREENS should contain a Screen type or callable, not an instance"
+                    f" (got instance of {type(v).__name__} for {screen_name!r})"
                 )
         self._installed_screens.update(**self.SCREENS)
 
