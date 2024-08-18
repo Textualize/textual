@@ -575,6 +575,7 @@ class App(Generic[ReturnType], DOMNode):
                     )
         self._installed_screens.update(**self.SCREENS)
         self.modes: dict[str, str | Callable[[], Screen]] = self.MODES.copy()
+        """Contains the working-copy of the `MODES` for each instance."""
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
