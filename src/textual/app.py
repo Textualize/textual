@@ -658,7 +658,13 @@ class App(Generic[ReturnType], DOMNode):
             ("MODES", cls.MODES),
         ):
             for screen_name, screen_object in screen_collection.items():
-                if not (isinstance(screen_name, str) or callable(screen_object)):
+                if not isinstance(screen_name, str):
+                    # Sanity check
+                    raise TypeError(
+                        f"expected a string for the name in {variable_name}, got {screen_name!r}",
+                    )
+
+                if not (isinstance(screen_object, str) or callable(screen_object)):
                     if isinstance(screen_object, Screen):
                         raise ValueError(
                             f"{variable_name} should contain a Screen type or callable, not an instance"
