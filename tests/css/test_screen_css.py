@@ -230,8 +230,8 @@ async def test_screen_css_switch_mode_screen_instance():
 
     class MyApp(BaseApp):
         MODES = {
-            "base": BaseScreen(),
-            "mode": ScreenWithCSS(),
+            "base": BaseScreen,
+            "mode": ScreenWithCSS,
         }
 
         def key_p(self):
@@ -259,7 +259,7 @@ async def test_screen_css_switch_mode_screen_instance_by_name():
         }
 
         MODES = {
-            "base": BaseScreen(),
+            "base": BaseScreen,
             "mode": "screenwithcss",
         }
 
@@ -288,7 +288,7 @@ async def test_screen_css_switch_mode_screen_type_by_name():
         }
 
         MODES = {
-            "base": BaseScreen(),
+            "base": BaseScreen,
             "mode": "screenwithcss",
         }
 

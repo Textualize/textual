@@ -295,7 +295,7 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    MODES: ClassVar[dict[str, str | Screen | Callable[[], Screen]]] = {}
+    MODES: ClassVar[dict[str, str | Callable[[], Screen]]] = {}
     """Modes associated with the app and their base screens.
 
     The base screen is the screen at the bottom of the mode stack. You can think of
@@ -1879,6 +1879,11 @@ class App(Generic[ReturnType], DOMNode):
             await_mount = AwaitMount(stack[0], [])
         else:
             _screen = self.MODES[mode]
+            if isinstance(_screen, Screen):
+                raise TypeError(
+                    "MODES cannot contain instances, use a type instead "
+                    f"(got instance of {type(_screen).__name__} for {mode!r})"
+                )
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
@@ -1920,9 +1925,7 @@ class App(Generic[ReturnType], DOMNode):
 
         return await_mount
 
-    def add_mode(
-        self, mode: str, base_screen: str | Screen | Callable[[], Screen]
-    ) -> None:
+    def add_mode(self, mode: str, base_screen: str | Callable[[], Screen]) -> None:
         """Adds a mode and its corresponding base screen to the app.
 
         Args:
@@ -1937,6 +1940,11 @@ class App(Generic[ReturnType], DOMNode):
         elif mode in self.MODES:
             raise InvalidModeError(f"Duplicated mode name {mode!r}.")
 
+        if isinstance(base_screen, Screen):
+            raise TypeError(
+                "add_mode() must be called with a Screen type, not an instance"
+                f" (got instance of {type(base_screen).__name__})"
+            )
         self.MODES[mode] = base_screen
 
     def remove_mode(self, mode: str) -> AwaitComplete:
