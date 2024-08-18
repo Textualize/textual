@@ -545,8 +545,19 @@ async def test_disallow_screen_instances() -> None:
     class CustomScreen(Screen):
         pass
 
-    class CustomScreenApp(App):
-        SCREENS = {"a": CustomScreen()}  # type: ignore
+    with pytest.raises(TypeError):
+
+        class Bad(App):
+            SCREENS = {"a": CustomScreen()}  # type: ignore
 
     with pytest.raises(TypeError):
-        app = CustomScreenApp()
+
+        class Worse(App):
+            MODES = {"a": CustomScreen()}  # type: ignore
+
+    # While we're here, let's make sure that other types
+    # are disallowed.
+    with pytest.raises(TypeError):
+
+        class Terrible(App):
+            MODES = {"a": 42, "b": CustomScreen}  # type: ignore
