@@ -537,3 +537,18 @@ async def test_default_custom_screen() -> None:
         assert len(app.screen_stack) == 1
         assert isinstance(app.screen_stack[0], CustomScreen)
         assert app.screen is app.screen_stack[0]
+
+
+async def test_disallow_screen_instances() -> None:
+    """Test that screen instances are disallowed."""
+
+    class CustomScreen(Screen):
+        pass
+
+    class CustomScreenApp(App):
+        SCREENS = {"a": CustomScreen()}  # type: ignore
+
+    app = CustomScreenApp()
+    with pytest.raises(TypeError):
+        async with app.run_test():
+            ...
