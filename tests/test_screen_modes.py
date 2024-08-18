@@ -117,7 +117,7 @@ async def test_remove_mode(ModesApp: Type[App]):
         await pilot.pause()
         assert str(app.screen.query_one(Label).renderable) == "two"
         app.remove_mode("one")
-        assert "one" not in app.modes
+        assert "one" not in app._modes
 
 
 async def test_remove_active_mode(ModesApp: Type[App]):
