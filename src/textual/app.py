@@ -324,7 +324,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
+    SCREENS: ClassVar[dict[str, Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -563,8 +563,10 @@ class App(Generic[ReturnType], DOMNode):
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         for v in self.SCREENS.values():
-            if isinstance(v, Screen) or (not issubclass(v, Screen)):
-                raise TypeError("SCREENS should contain a Screen type, not an instance")
+            if isinstance(v, Screen) or (not callable(v)):
+                raise TypeError(
+                    "SCREENS should contain a Screen type or callable, not an instance",
+                )
         self._installed_screens.update(**self.SCREENS)
 
         self._compose_stacks: list[list[Widget]] = []
