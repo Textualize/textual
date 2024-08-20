@@ -11,10 +11,12 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
+import os
 import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
 from functools import partial
+from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -48,6 +50,7 @@ if TYPE_CHECKING:
     from .app import App
     from .css.model import SelectorSet
 
+SLOW_THRESHOLD_MS = int(os.getenv('TEXTUAL_SLOW_THRESHOLD_MS', 500))
 
 Callback: TypeAlias = "Callable[..., Any] | Callable[..., Awaitable[Any]]"
 
@@ -655,6 +658,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Allow apps to treat events and messages separately
             if isinstance(message, Event):
                 await self.on_event(message)
+            elif not isinstance(message, Event) and "debug" in self.app.features:
+                start = perf_counter()
+                await self._on_message(message)
+                if perf_counter() - start > SLOW_THRESHOLD_MS / 1000:
+                    log.warning.verbosity(message.verbose)(
+                        f"method=<{self.__class__.__name__}.{message.handler_name}>",
+                        ">>>",
+                        f"Took over {SLOW_THRESHOLD_MS}ms to process.",
+                        "\nTo avoid screen freezes use the [work decorator](/guide/workers/#workers)"
+                    )
             else:
                 await self._on_message(message)
             if self._next_callbacks:
