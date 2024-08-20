@@ -22,9 +22,8 @@ from pathlib import Path
 from threading import Event, Thread
 from typing import Any, BinaryIO, Literal, TextIO, cast
 
-import msgpack
-
 from .. import events, log, messages
+from .._binary_encode import dump as binary_dump
 from .._xterm_parser import XTermParser
 from ..app import App
 from ..driver import Driver
@@ -91,13 +90,13 @@ class WebDriver(Driver):
         meta_bytes = json.dumps(data).encode("utf-8", errors="ignore")
         self._write(b"M%s%s" % (len(meta_bytes).to_bytes(4, "big"), meta_bytes))
 
-    def write_packed(self, data: tuple[str | bytes, ...]) -> None:
-        """Pack a msgpack compatible data-structure and write to stdout.
+    def write_binary_encoded(self, data: tuple[str | bytes, ...]) -> None:
+        """Binary encode a data-structure and write to stdout.
 
         Args:
-            data: The dictionary to pack and write.
+            data: The data to binary encode and write.
         """
-        packed_bytes = msgpack.packb(data)
+        packed_bytes = binary_dump(data)
         self._write(b"P%s%s" % (len(packed_bytes).to_bytes(4, "big"), packed_bytes))
 
     def flush(self) -> None:
@@ -264,7 +263,7 @@ class WebDriver(Driver):
                     log.debug(f"Reading {requested_size} bytes from {delivery_key}")
                     chunk = file_like.read(requested_size)
                     log.debug(f"Delivering chunk {delivery_key!r} of len {len(chunk)}")
-                    self.write_packed(("deliver_chunk", delivery_key, chunk))
+                    self.write_binary_encoded(("deliver_chunk", delivery_key, chunk))
                     # We've hit an empty chunk, so we're done
                     if not chunk:
                         log.info(f"Delivery complete for {delivery_key}")
