@@ -129,7 +129,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
     async def on_mount(self) -> None:
         async def bindings_changed(screen: Screen) -> None:
             if self.is_attached and screen is self.screen:
-                self.refresh()
+                self.refresh(recompose=True)
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
