@@ -51,7 +51,7 @@ class BindingsTable(Static):
         )
         table.add_column("", justify="right")
 
-        previous_namespace = None
+        previous_namespace: object = None
         for namespace, _bindings in groupby(bindings, key=itemgetter(0)):
             table_bindings = list(_bindings)
             if not table_bindings:
