@@ -16,11 +16,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added "Show keys" option to system commands to show a summary of key bindings. https://github.com/Textualize/textual/pull/4876
 - Added "split" CSS style, currently undocumented, and may change. https://github.com/Textualize/textual/pull/4876
 - Added `Region.get_spacing_between` https://github.com/Textualize/textual/pull/4876
+- Added `App.COMMAND_PALETTE_KEY` to change default command palette key binding https://github.com/Textualize/textual/pull/4867
+- Added `App.get_key_display` https://github.com/Textualize/textual/pull/4890
 
 ### Changed
 
 - Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
 - Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
+- Changed default command palette binding to `ctrl+p` https://github.com/Textualize/textual/pull/4867
+- Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
 
 ### Fixed
 
