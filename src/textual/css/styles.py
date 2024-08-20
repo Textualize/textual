@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import lru_cache, partial
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, Any, Callable, Iterable, cast
 
 import rich.repr
 from rich.style import Style
@@ -33,6 +33,7 @@ from ._style_properties import (
     ScalarProperty,
     ScrollbarColorProperty,
     SpacingProperty,
+    SplitProperty,
     StringEnumProperty,
     StyleFlagsProperty,
     TransitionsProperty,
@@ -58,7 +59,6 @@ from .types import (
     BoxSizing,
     Constrain,
     Display,
-    Edge,
     Overflow,
     Overlay,
     ScrollbarGutter,
@@ -122,6 +122,7 @@ class RulesMap(TypedDict, total=False):
     max_height: Scalar
 
     dock: str
+    split: str
 
     overflow_x: Overflow
     overflow_y: Overflow
@@ -195,12 +196,6 @@ class RulesMap(TypedDict, total=False):
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
 _rule_getter = attrgetter(*RULE_NAMES)
-
-
-class DockGroup(NamedTuple):
-    name: str
-    edge: Edge
-    z: int
 
 
 class StylesBase:
@@ -282,6 +277,7 @@ class StylesBase:
     max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
 
     dock = DockProperty()
+    split = SplitProperty()
 
     overflow_x = OverflowProperty(VALID_OVERFLOW, "hidden")
     overflow_y = OverflowProperty(VALID_OVERFLOW, "hidden")
@@ -894,6 +890,8 @@ class Styles(StylesBase):
             append_declaration("offset", f"{x} {y}")
         if "dock" in rules:
             append_declaration("dock", rules["dock"])
+        if "split" in rules:
+            append_declaration("split", rules["split"])
         if "layers" in rules:
             append_declaration("layers", " ".join(self.layers))
         if "layer" in rules:

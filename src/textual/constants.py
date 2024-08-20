@@ -113,8 +113,8 @@ MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
 """Force color system override."""
 
-TEXTUAL_ANIMATIONS: AnimationLevel = _get_textual_animations()
+TEXTUAL_ANIMATIONS: Final[AnimationLevel] = _get_textual_animations()
 """Determines whether animations run or not."""
 
-ESCAPE_DELAY: float = _get_environ_int("ESCDELAY", 100) / 1000.0
+ESCAPE_DELAY: Final[float] = _get_environ_int("ESCDELAY", 100) / 1000.0
 """The delay (in seconds) before reporting an escape key (not used if the extend key protocol is available)."""
