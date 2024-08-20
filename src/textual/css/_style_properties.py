@@ -599,6 +599,37 @@ class DockProperty:
             obj.refresh(layout=True)
 
 
+class SplitProperty:
+    """Descriptor for getting and setting the split property. The split property
+    allows you to specify which edge you want to split.
+    """
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> DockEdge:
+        """Get the Dock property.
+
+        Args:
+            obj: The ``Styles`` object.
+            objtype: The ``Styles`` class.
+
+        Returns:
+            The dock name as a string, or "" if the rule is not set.
+        """
+        return obj.get_rule("split", "")  # type: ignore[return-value]
+
+    def __set__(self, obj: StylesBase, dock_name: str | None):
+        """Set the Dock property.
+
+        Args:
+            obj: The ``Styles`` object.
+            dock_name: The name of the dock to attach this widget to.
+        """
+        _rich_traceback_omit = True
+        if obj.set_rule("split", dock_name):
+            obj.refresh(layout=True)
+
+
 class LayoutProperty:
     """Descriptor for getting and setting layout."""
 

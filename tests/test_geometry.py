@@ -504,3 +504,16 @@ def test_size_clamp_offset():
     assert Size(3, 3).clamp_offset(Offset(3, 2)) == Offset(2, 2)
     assert Size(3, 3).clamp_offset(Offset(-3, 2)) == Offset(0, 2)
     assert Size(3, 3).clamp_offset(Offset(5, 4)) == Offset(2, 2)
+
+
+@pytest.mark.parametrize(
+    ("region1", "region2", "expected"),
+    [
+        (Region(0, 0, 100, 80), Region(0, 0, 100, 80), Spacing(0, 0, 0, 0)),
+        (Region(0, 0, 100, 80), Region(10, 10, 10, 10), Spacing(10, 80, 60, 10)),
+    ],
+)
+def test_get_spacing_between(region1: Region, region2: Region, expected: Spacing):
+    spacing = region1.get_spacing_between(region2)
+    assert spacing == expected
+    assert region1.shrink(spacing) == region2

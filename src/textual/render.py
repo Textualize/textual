@@ -30,13 +30,12 @@ def measure(
     renderable = rich_cast(renderable)
     get_console_width = getattr(renderable, "__rich_measure__", None)
     if get_console_width is not None:
-        render_width = get_console_width(
-            console,
-            (
-                console.options
-                if container_width is None
-                else console.options.update_width(container_width)
-            ),
-        ).maximum
+        options = (
+            console.options
+            if container_width is None
+            else console.options.update_width(container_width)
+        )
+        render_width = get_console_width(console, options).maximum
         width = max(0, render_width)
+
     return width

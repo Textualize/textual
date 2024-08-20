@@ -1233,6 +1233,7 @@ class Widget(DOMNode):
             content_width = Fraction(content_container.width - margin.width)
         elif is_auto_width:
             # When width is auto, we want enough space to always fit the content
+
             content_width = Fraction(
                 self.get_content_width(content_container - margin.totals, viewport)
             )
@@ -1348,7 +1349,6 @@ class Widget(DOMNode):
         """
 
         if self.is_container:
-            assert self._layout is not None
             width = self._layout.get_content_width(self, container, viewport)
             return width
 
@@ -1368,6 +1368,7 @@ class Widget(DOMNode):
             width = min(width, container.width)
 
         self._content_width_cache = (cache_key, width)
+
         return width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
@@ -1997,7 +1998,6 @@ class Widget(DOMNode):
                 break
             if node.styles.has_rule("layers"):
                 layers = node.styles.layers
-
         return layers
 
     @property

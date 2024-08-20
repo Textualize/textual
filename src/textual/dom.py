@@ -206,9 +206,7 @@ class DOMNode(MessagePump):
         self._reactive_connect: (
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
-
         self._pruning = False
-
         super().__init__()
 
     def set_reactive(
@@ -1168,13 +1166,10 @@ class DOMNode(MessagePump):
         """Watches for modifications to reactive attributes on another object.
 
         Example:
-
-            Here's how you could detect when the app changes from dark to light mode (and vice versa).
-
             ```python
-            def on_dark_change(old_value:bool, new_value:bool):
+            def on_dark_change(old_value:bool, new_value:bool) -> None:
                 # Called when app.dark changes.
-                print("App.dark when from {old_value} to {new_value}")
+                print("App.dark went from {old_value} to {new_value}")
 
             self.watch(self.app, "dark", self.on_dark_change, init=False)
             ```
