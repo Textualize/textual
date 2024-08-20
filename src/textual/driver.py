@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import shutil
+import threading
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from pathlib import Path
@@ -229,10 +229,25 @@ class Driver(ABC):
                 set the `Content-Type` header in the HTTP response.
         """
         if isinstance(binary, BinaryIO):
-            with open(save_path, "wb") as destination_file:
-                shutil.copyfileobj(binary, destination_file)
-        else:  # isinstance(binary, TextIO):
-            with open(save_path, "w", encoding=encoding) as destination_file:
-                shutil.copyfileobj(binary, destination_file)
+            mode = "wb"
+        else:
+            mode = "w"
 
-        binary.close()
+        def save_file_thread():
+            with open(save_path, mode) as destination_file:
+                read = binary.read
+                write = destination_file.write
+                while True:
+                    data = read(1024)
+                    if not data:
+                        break
+                    write(data)
+            binary.close()
+            self._app.call_from_thread(self._delivery_complete, save_path=save_path)
+
+        thread = threading.Thread(target=save_file_thread)
+        thread.start()
+
+    def _delivery_complete(self, save_path: Path) -> None:
+        """Called when a file has been delivered."""
+        self._app.post_message(events.DeliveryComplete(save_path=save_path))

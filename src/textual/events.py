@@ -14,6 +14,7 @@ textual console -v
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -732,3 +733,11 @@ class Print(Event, bubble=False):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.text
         yield self.stderr
+
+
+@dataclass
+class DeliveryComplete(Event, bubble=False):
+    """Sent to App when a file has been delivered."""
+
+    save_path: Path
+    """The save_path to the file that was delivered."""
