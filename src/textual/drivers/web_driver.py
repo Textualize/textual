@@ -334,8 +334,8 @@ class WebDriver(Driver):
             "key": delivery_key,
             "path": str(save_path.resolve()),
             "open_method": open_method,
-            "encoding": encoding,
-            "mime_type": mime_type,
+            "encoding": encoding or "",
+            "mime_type": mime_type or "",
         }
         self.write_meta(meta)
         log.info(f"Delivering file {meta['path']!r}: {meta!r}")
