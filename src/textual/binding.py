@@ -53,6 +53,15 @@ class Binding:
     tooltip: str = ""
     """Optional tooltip to show in footer."""
 
+    def parse_key(self) -> tuple[list[str], str]:
+        """Parse a key in to a list of modifiers, and the actual key.
+
+        Returns:
+            A tuple of (MODIFIER LIST, KEY).
+        """
+        *modifiers, key = self.key.split("+")
+        return modifiers, key
+
 
 class ActiveBinding(NamedTuple):
     """Information about an active binding (returned from [active_bindings][textual.screen.Screen.active_bindings])."""

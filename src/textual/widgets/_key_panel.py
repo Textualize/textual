@@ -9,7 +9,6 @@ from rich.text import Text
 from ..app import ComposeResult
 from ..binding import Binding
 from ..containers import VerticalScroll
-from ..reactive import reactive
 from ..widgets import Static
 
 if TYPE_CHECKING:
@@ -27,11 +26,6 @@ class BindingsTable(Static):
         height: auto;
     }
     """
-
-    upper_case_keys = reactive(False)
-    """Upper case key display."""
-    ctrl_to_caret = reactive(True)
-    """Convert 'ctrl+' prefix to '^'."""
 
     def render_bindings_table(self) -> Table:
         """Render a table with all the key bindings.
@@ -66,15 +60,7 @@ class BindingsTable(Static):
         for multi_bindings in action_to_bindings.values():
             binding, enabled, tooltip = multi_bindings[0]
             table.add_row(
-                Text(
-                    binding.key_display
-                    or self.app.get_key_display(
-                        binding.key,
-                        upper_case_keys=self.upper_case_keys,
-                        ctrl_to_caret=self.ctrl_to_caret,
-                    ),
-                    style=key_style,
-                ),
+                Text(self.app.get_key_display(binding), style=key_style),
                 render_description(binding),
             )
 
@@ -113,18 +99,10 @@ class KeyPanel(VerticalScroll, can_focus=False):
     }
     """
 
-    upper_case_keys = reactive(False)
-    """Upper case key display."""
-    ctrl_to_caret = reactive(True)
-    """Convert 'ctrl+' prefix to '^'."""
-
     DEFAULT_CLASSES = "-textual-system"
 
     def compose(self) -> ComposeResult:
-        yield BindingsTable(shrink=True, expand=False).data_bind(
-            KeyPanel.upper_case_keys,
-            KeyPanel.ctrl_to_caret,
-        )
+        yield BindingsTable(shrink=True, expand=False)
 
     async def on_mount(self) -> None:
         async def bindings_changed(screen: Screen) -> None:

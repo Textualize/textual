@@ -96,8 +96,8 @@ from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
     _character_to_key,
-    _get_key_display,
     _get_unicode_name_from_key,
+    format_key,
 )
 from .messages import CallbackType, Prune
 from .notifications import Notification, Notifications, Notify, SeverityLevel
@@ -1331,27 +1331,35 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def get_key_display(
-        self, key: str, upper_case_keys: bool = False, ctrl_to_caret: bool = True
-    ) -> str:
-        """For a given key, return how it should be displayed in an app
-        (e.g. in the Footer widget).
-        By key, we refer to the string used in the "key" argument for
-        a Binding instance. By overriding this method, you can ensure that
-        keys are displayed consistently throughout your app, without
-        needing to add a key_display to every binding.
+    def get_key_display(self, binding: Binding) -> str:
+        """Format a bound key for display in footer / key panel etc.
+
+        !!! note
+            You can implement this in a subclass if you want to change how keys are displayed in your app.
 
         Args:
-            key: The binding key string.
-            upper_case_keys: Upper case printable keys.
-            ctrl_to_caret: Replace `ctrl+` with `^`.
+            binding: A Binding.
 
         Returns:
-            The display string for the input key.
+            A string used to represent the key.
         """
-        return _get_key_display(
-            key, upper_case_keys=upper_case_keys, ctrl_to_caret=ctrl_to_caret
-        )
+        # Dev has overridden the key display, so use that
+        if binding.key_display:
+            return binding.key_display
+
+        # Extract modifiers
+        modifiers, key = binding.parse_key()
+
+        # Format the key (replace unicode names with character)
+        key = format_key(key)
+
+        # Convert ctrl modifier to caret
+        if "ctrl" in modifiers:
+            modifiers.pop(modifiers.index("ctrl"))
+            key = f"^{key}"
+        # Join everything with +
+        key_tokens = modifiers + [key]
+        return "+".join(key_tokens)
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
