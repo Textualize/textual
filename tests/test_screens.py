@@ -540,7 +540,13 @@ async def test_default_custom_screen() -> None:
 
 
 async def test_worker_cancellation():
-    """Regression test for https://github.com/Textualize/textual/issues/4884"""
+    """Regression test for https://github.com/Textualize/textual/issues/4884
+
+    The MRE below was pushing a screen in an exclusive worker.
+    This was previously breaking because the second time the worker was launched,
+    it cancelled the first one which was awaiting the screen.
+
+    """
     from textual import on, work
     from textual.app import App
     from textual.containers import Vertical
@@ -582,7 +588,9 @@ async def test_worker_cancellation():
 
     app = ExampleApp()
     async with app.run_test() as pilot:
+        # Press i twice to launch 2 InfoScreens
         await pilot.press("i")
         await pilot.press("i")
+        # Press enter to activate button to dismiss them
         await pilot.press("enter")
         await pilot.press("enter")

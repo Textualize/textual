@@ -2181,6 +2181,7 @@ class App(Generic[ReturnType], DOMNode):
             The screen's result.
         """
         await self._flush_next_callbacks()
+        # The shield prevents the cancellation of the current task from canceling the push_screen awaitable
         return await asyncio.shield(self.push_screen(screen, wait_for_dismiss=True))
 
     def switch_screen(self, screen: Screen | str) -> AwaitComplete:
