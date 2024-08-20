@@ -581,6 +581,8 @@ async def test_worker_cancellation():
 
         @work(exclusive=True)
         async def action_info(self) -> None:
+            # Since this is an exclusive worker, the second time it is called,
+            # the original `push_screen_wait` is also cancelled
             self.screen_count += 1
             await self.push_screen_wait(
                 InfoScreen(f"This is info screen #{self.screen_count}")
