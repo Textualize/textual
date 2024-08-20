@@ -85,9 +85,6 @@ def arrange(
         else:
             dock_spacing = null_spacing
 
-        # Reduce the region to compensate for docked widgets
-        region = dock_region
-
         dock_spacing += split_spacing
 
         if layout_widgets:
@@ -95,17 +92,17 @@ def arrange(
             layout_placements = widget._layout.arrange(
                 widget,
                 layout_widgets,
-                region.size,
+                dock_region.size,
             )
 
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
 
-            placement_offset = region.offset
+            placement_offset = dock_region.offset
             # Perform any alignment of the widgets.
             if styles.align_horizontal != "left" or styles.align_vertical != "top":
                 bounding_region = WidgetPlacement.get_bounds(layout_placements)
                 placement_offset += styles._align_size(
-                    bounding_region.size, region.size
+                    bounding_region.size, dock_region.size
                 ).clamped
 
             if placement_offset:
