@@ -658,12 +658,6 @@ class App(Generic[ReturnType], DOMNode):
             ("MODES", cls.MODES),
         ):
             for screen_name, screen_object in screen_collection.items():
-                if not isinstance(screen_name, str):
-                    # Sanity check
-                    raise TypeError(
-                        f"expected a string for the name in {variable_name}, got {screen_name!r}",
-                    )
-
                 if not (isinstance(screen_object, str) or callable(screen_object)):
                     if isinstance(screen_object, Screen):
                         raise ValueError(
@@ -2864,13 +2858,6 @@ class App(Generic[ReturnType], DOMNode):
                 if stack_screen._running:
                     await self._prune(stack_screen)
             stack.clear()
-
-        # Close pre-defined screens.
-        for screen in self.SCREENS.values():
-            # This is now dead code, since instances cannot be in SCREENS.
-            assert not isinstance(
-                screen, Screen
-            ), "instances in SCREENS are no longer possible"
 
         # Close any remaining nodes
         # Should be empty by now
