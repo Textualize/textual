@@ -1075,7 +1075,7 @@ class CommandPalette(SystemModalScreen):
                 # If there is one option, assume the user wants to select it
                 if command_list.option_count == 1:
                     # Call after a short delay to provide a little visual feedback
-                    self.set_timer(0.1, lambda: self._action_command_list("select"))
+                    self._action_command_list("select")
             else:
                 # The list is visible, something is highlighted, the user
                 # made a selection "gesture"; let's go select it!
