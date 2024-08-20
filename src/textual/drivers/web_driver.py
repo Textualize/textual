@@ -73,7 +73,7 @@ class WebDriver(Driver):
 
     def write(self, data: str) -> None:
         """Write string data to the output device, which may be piped to
-        the controlling process (i.e. textual-web).
+        the parent process (i.e. textual-web/textual-serve).
 
         Args:
             data: Raw data.
@@ -84,7 +84,7 @@ class WebDriver(Driver):
 
     def write_meta(self, data: dict[str, object]) -> None:
         """Write a dictionary containing some metadata to stdout, which
-        may be piped to the controlling process (i.e. textual-web).
+        may be piped to the parent process (i.e. textual-web/textual-serve).
 
         Args:
             data: Meta dict.
