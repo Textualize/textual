@@ -69,6 +69,8 @@ def arrange(
         else:
             dock_region = size.region
 
+        split_spacing = size.region.get_spacing_between(dock_region)
+
         # Partition widgets into "layout" widgets (those that appears in the normal 'flow' of the
         # document), and "dock" widgets which are positioned relative to an edge
         layout_widgets, dock_widgets = partition(get_dock, non_split_widgets)
@@ -79,11 +81,14 @@ def arrange(
                 dock_widgets, dock_region, viewport
             )
             placements.extend(_dock_placements)
+            dock_region = dock_region.shrink(dock_spacing)
         else:
             dock_spacing = null_spacing
 
         # Reduce the region to compensate for docked widgets
-        region = dock_region.shrink(dock_spacing)
+        region = dock_region
+
+        dock_spacing += split_spacing
 
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
