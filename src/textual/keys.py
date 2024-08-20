@@ -265,6 +265,7 @@ KEY_DISPLAY_ALIASES = {
     "space": "space",
     "pagedown": "pgdn",
     "pageup": "pgup",
+    "delete": "del",
 }
 
 
