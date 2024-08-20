@@ -247,7 +247,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
-        self.write("\x1b[1;u")
+        self.write("\x1b[=1;u")
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()

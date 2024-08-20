@@ -21,6 +21,7 @@ if typing.TYPE_CHECKING:
     from ._footer import Footer
     from ._header import Header
     from ._input import Input
+    from ._key_panel import KeyPanel
     from ._label import Label
     from ._list_item import ListItem
     from ._list_view import ListView
@@ -60,6 +61,7 @@ __all__ = [
     "Footer",
     "Header",
     "Input",
+    "KeyPanel",
     "Label",
     "ListItem",
     "ListView",

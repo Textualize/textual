@@ -96,8 +96,8 @@ from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
     _character_to_key,
-    _get_key_display,
     _get_unicode_name_from_key,
+    format_key,
 )
 from .messages import CallbackType, Prune
 from .notifications import Notification, Notifications, Notify, SeverityLevel
@@ -366,13 +366,22 @@ class App(Generic[ReturnType], DOMNode):
     Should be a set of [command.Provider][textual.command.Provider] classes.
     """
 
+    COMMAND_PALETTE_BINDING: ClassVar[str] = "ctrl+p"
+    """The key that launches the command palette (if enabled by [`App.ENABLE_COMMAND_PALETTE`][textual.app.App.ENABLE_COMMAND_PALETTE])."""
+
+    COMMAND_PALETTE_DISPLAY: ClassVar[str | None] = None
+    """How the command palette key should be displayed in the footer (or `None` for default)."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
     ]
+    """The default key bindings."""
 
     CLOSE_TIMEOUT: float | None = 5.0
     """Timeout waiting for widget's to close, or `None` for no timeout."""
+
+    TOOLTIP_DELAY: float = 0.5
+    """The time in seconds after which a tooltip gets displayed."""
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -636,6 +645,23 @@ class App(Generic[ReturnType], DOMNode):
         # Size of previous inline update
         self._previous_inline_height: int | None = None
 
+        if self.ENABLE_COMMAND_PALETTE:
+            for _key, binding in self._bindings:
+                if binding.action in {"command_palette", "app.command_palette"}:
+                    break
+            else:
+                self._bindings._add_binding(
+                    Binding(
+                        self.COMMAND_PALETTE_BINDING,
+                        "command_palette",
+                        "palette",
+                        show=False,
+                        key_display=self.COMMAND_PALETTE_DISPLAY,
+                        priority=True,
+                        tooltip="Open command palette",
+                    )
+                )
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
@@ -870,7 +896,7 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            Active binding information
+            A dict that maps keys on to binding information.
         """
         return self.screen.active_bindings
 
@@ -1305,21 +1331,35 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def get_key_display(self, key: str) -> str:
-        """For a given key, return how it should be displayed in an app
-        (e.g. in the Footer widget).
-        By key, we refer to the string used in the "key" argument for
-        a Binding instance. By overriding this method, you can ensure that
-        keys are displayed consistently throughout your app, without
-        needing to add a key_display to every binding.
+    def get_key_display(self, binding: Binding) -> str:
+        """Format a bound key for display in footer / key panel etc.
+
+        !!! note
+            You can implement this in a subclass if you want to change how keys are displayed in your app.
 
         Args:
-            key: The binding key string.
+            binding: A Binding.
 
         Returns:
-            The display string for the input key.
+            A string used to represent the key.
         """
-        return _get_key_display(key)
+        # Dev has overridden the key display, so use that
+        if binding.key_display:
+            return binding.key_display
+
+        # Extract modifiers
+        modifiers, key = binding.parse_key()
+
+        # Format the key (replace unicode names with character)
+        key = format_key(key)
+
+        # Convert ctrl modifier to caret
+        if "ctrl" in modifiers:
+            modifiers.pop(modifiers.index("ctrl"))
+            key = f"^{key}"
+        # Join everything with +
+        key_tokens = modifiers + [key]
+        return "+".join(key_tokens)
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
@@ -2167,7 +2207,8 @@ class App(Generic[ReturnType], DOMNode):
             The screen's result.
         """
         await self._flush_next_callbacks()
-        return await self.push_screen(screen, wait_for_dismiss=True)
+        # The shield prevents the cancellation of the current task from canceling the push_screen awaitable
+        return await asyncio.shield(self.push_screen(screen, wait_for_dismiss=True))
 
     def switch_screen(self, screen: Screen | str) -> AwaitComplete:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
@@ -2601,10 +2642,10 @@ class App(Generic[ReturnType], DOMNode):
                         self._driver.write(
                             Control.move(-cursor_x, -cursor_y + 1).segment.text
                         )
-                    if inline_no_clear:
-                        console = Console()
-                        console.print(self.screen._compositor)
-                        console.print()
+                        if inline_no_clear and not not self.app._exit_renderables:
+                            console = Console()
+                            console.print(self.screen._compositor)
+                            console.print()
 
                     driver.stop_application_mode()
         except Exception as error:
@@ -3483,6 +3524,19 @@ class App(Generic[ReturnType], DOMNode):
     def action_focus_previous(self) -> None:
         """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
+
+    def action_hide_keys(self) -> None:
+        """Hide the keys panel (if present)."""
+        self.screen.query("KeyPanel").remove()
+
+    def action_show_keys(self) -> None:
+        """Show the keys panel."""
+        from .widgets import KeyPanel
+
+        try:
+            self.query_one(KeyPanel)
+        except NoMatches:
+            self.mount(KeyPanel())
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput

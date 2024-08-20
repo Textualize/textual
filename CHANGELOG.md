@@ -7,9 +7,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
 ### Added
 
 - Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
+- Added a link to the command palette to the Footer (set `show_command_palette=False` to disable) https://github.com/Textualize/textual/pull/4867
+- Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
+- Added "Show keys" option to system commands to show a summary of key bindings. https://github.com/Textualize/textual/pull/4876
+- Added "split" CSS style, currently undocumented, and may change. https://github.com/Textualize/textual/pull/4876
+- Added `Region.get_spacing_between` https://github.com/Textualize/textual/pull/4876
+- Added `App.COMMAND_PALETTE_KEY` to change default command palette key binding https://github.com/Textualize/textual/pull/4867
+- Added `App.get_key_display` https://github.com/Textualize/textual/pull/4890
+
+### Changed
+
+- Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
+- Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
+- Changed default command palette binding to `ctrl+p` https://github.com/Textualize/textual/pull/4867
+- Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
+
+### Fixed
+
+- Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
+- Fix `Input.cursor_blink` having no effect on the blink cycle after mounting https://github.com/Textualize/textual/pull/4869
 
 ## [0.76.0]
 

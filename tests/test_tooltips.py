@@ -7,6 +7,7 @@ from textual.widgets import Static
 
 
 class TooltipApp(App[None]):
+    TOOLTIP_DELAY = 0.4
     CSS = """
     Static {
         width: 1fr;
@@ -24,10 +25,10 @@ class TooltipApp(App[None]):
         yield self.tip(Static(id="mr-blue"))
 
 
-TOOLTIP_TIMEOUT: Final[float] = 0.3 + 0.1
+TOOLTIP_TIMEOUT: Final[float] = 0.4 + 0.1
 """How long to wait for a tooltip to appear.
 
-The 0.3 is the currently-hard-coded value in Screen, and the 0.1 is a bit of
+The 0.4 is the value defined with TOOLTIP_DELAY, and the 0.1 is a bit of
 wiggle room.
 """
 

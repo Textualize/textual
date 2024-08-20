@@ -160,8 +160,10 @@ class Layout(ABC):
         if not widget._nodes:
             width = 0
         else:
-            arrangement = widget._arrange(Size(0, 0))
-            return arrangement.total_region.right
+            arrangement = widget._arrange(
+                Size(0 if widget.shrink else container.width, 0)
+            )
+            width = arrangement.total_region.right
         return width
 
     def get_content_height(

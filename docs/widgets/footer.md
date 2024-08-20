@@ -30,11 +30,12 @@ widget. Notice how the `Footer` automatically displays the keybinding.
 
 ## Reactive Attributes
 
-| Name              | Type   | Default | Description                                                             |
-| ----------------- | ------ | ------- | ----------------------------------------------------------------------- |
-| `upper_case_keys` | `bool` | `False` | Display the keys in upper case.                                         |
-| `ctrl_to_caret`   | `bool` | `True`  | Replace "ctrl+" with "^" to denote a key that requires holding ++CTRL++ |
-| `compact`         | `bool` | `False` | Display a more compact footer.                                          |
+| Name                   | Type   | Default | Description                                                                                |
+| ---------------------- | ------ | ------- | ------------------------------------------------------------------------------------------ |
+| `upper_case_keys`      | `bool` | `False` | Display the keys in upper case.                                                            |
+| `ctrl_to_caret`        | `bool` | `True`  | Replace "ctrl+" with "^" to denote a key that requires holding ++CTRL++                    |
+| `compact`              | `bool` | `False` | Display a more compact footer.                                                             |
+| `show_command_palette` | `bool` | `True`  | Display the key to invoke the command palette (show on the right hand side of the footer). |
 
 ## Messages
 
