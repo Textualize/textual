@@ -63,7 +63,6 @@ class BindingsTable(Static):
             title = Text(name, style="dim", end="")
             title.stylize("italic")
             table.add_row("", title)
-            # table.add_row("", Rule(style="dim"))
 
             action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
             action_to_bindings = defaultdict(list)
@@ -109,7 +108,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         min-width: 30;              
         max-width: 60;    
         border-left: vkey $foreground 30%;
-        padding: 1 1;
+        padding: 0 1;
         height: 1fr;
         padding-right: 1;
         align: center top;
