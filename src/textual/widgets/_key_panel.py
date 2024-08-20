@@ -114,7 +114,6 @@ class KeyPanel(VerticalScroll, can_focus=False):
 
         &> BindingsTable > .bindings-table--description {
             color: $foreground;
-
         }
 
         &> BindingsTable > .bindings-table--divider {
