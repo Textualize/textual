@@ -281,9 +281,7 @@ def _get_key_aliases(key: str) -> list[str]:
     return [key] + KEY_ALIASES.get(key, [])
 
 
-def format_key(
-    key: str,
-) -> str:
+def format_key(key: str) -> str:
     """Given a key (i.e. the `key` string argument to Binding __init__),
     return the value that should be displayed in the app when referring
     to this key (e.g. in the Footer widget)."""
@@ -295,12 +293,12 @@ def format_key(
     original_key = REPLACED_KEYS.get(key, key)
     tentative_unicode_name = _get_unicode_name_from_key(original_key)
     try:
-        unicode = unicodedata.lookup(tentative_unicode_name)
+        unicode_name = unicodedata.lookup(tentative_unicode_name)
     except KeyError:
         pass
     else:
-        if unicode.isprintable():
-            return unicode
+        if unicode_name.isprintable():
+            return unicode_name
     return tentative_unicode_name
 
 
