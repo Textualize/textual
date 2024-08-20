@@ -91,7 +91,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         width: 33%;
         min-width: 30;              
         max-width: 60;    
-        border-left: vkey $foreground 30%;        
+        border-left: vkey $foreground 30%;
         padding: 1 1;
         height: 1fr;
         padding-right: 1;
