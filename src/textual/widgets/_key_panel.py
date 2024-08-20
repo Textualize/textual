@@ -43,6 +43,8 @@ class BindingsTable(Static):
 
         bindings = self.screen.active_bindings.values()
 
+        key_style = self.get_component_rich_style("bindings-table--key")
+
         table = Table(
             padding=(0, 0),
             show_header=False,
@@ -56,12 +58,18 @@ class BindingsTable(Static):
             table_bindings = list(_bindings)
             if not table_bindings:
                 continue
+
+            name = namespace.BINDING_GROUP or namespace.__class__.__name__
+            title = Text(name, style="dim", end="")
+            title.stylize("italic")
+            table.add_row("", title)
+            # table.add_row("", Rule(style="dim"))
+
             action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
             action_to_bindings = defaultdict(list)
             for _, binding, enabled, tooltip in table_bindings:
                 action_to_bindings[binding.action].append((binding, enabled, tooltip))
 
-            key_style = self.get_component_rich_style("bindings-table--key")
             description_style = self.get_component_rich_style(
                 "bindings-table--description"
             )
