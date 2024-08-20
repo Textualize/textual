@@ -16,6 +16,7 @@ import os
 import signal
 import sys
 import threading
+import uuid
 import warnings
 from asyncio import Task, create_task
 from concurrent.futures import Future
@@ -3712,7 +3713,7 @@ class App(Generic[ReturnType], DOMNode):
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
         mime_type: str | None = None,
-    ) -> None:
+    ) -> str | None:
         """Deliver a text file to the end-user of the application.
 
         If a TextIO object is supplied, it will be closed by this method
@@ -3723,6 +3724,11 @@ class App(Generic[ReturnType], DOMNode):
 
         If running via a web browser, this will initiate a download via
         a single-use URL.
+
+        After the file has been delivered, a `DeliveryComplete` message will be posted
+        to this `App`, which contains the `delivery_key` returned by this method. By
+        handling this message, you can add custom logic to your application that fires
+        only after the file has been delivered.
 
         Args:
             path_or_file: The path or file-like object to save.
@@ -3737,6 +3743,9 @@ class App(Generic[ReturnType], DOMNode):
             mime_type: The MIME type of the file or None to guess based on file extension.
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "text/plain".
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
         """
         # Ensure `path_or_file` is a file-like object - convert if needed.
         if isinstance(path_or_file, (str, Path)):
@@ -3756,7 +3765,7 @@ class App(Generic[ReturnType], DOMNode):
         if mime_type is None:
             mime_type = "text/plain"
 
-        self._deliver_binary(
+        return self._deliver_binary(
             binary,
             save_directory=save_directory,
             save_filename=file_name,
@@ -3773,7 +3782,7 @@ class App(Generic[ReturnType], DOMNode):
         save_filename: str | None = None,
         open_method: Literal["browser", "download"] = "download",
         mime_type: str | None = None,
-    ) -> None:
+    ) -> str | None:
         """Deliver a binary file to the end-user of the application.
 
         If an IO object is supplied, it will be closed by this method
@@ -3787,6 +3796,11 @@ class App(Generic[ReturnType], DOMNode):
 
         This operation runs in a thread when running on web, so this method
         returning does not indicate that the file has been delivered.
+
+        After the file has been delivered, a `DeliveryComplete` message will be posted
+        to this `App`, which contains the `delivery_key` returned by this method. By
+        handling this message, you can add custom logic to your application that fires
+        only after the file has been delivered.
 
         Args:
             path_or_file: The path or file-like object to save.
@@ -3806,6 +3820,9 @@ class App(Generic[ReturnType], DOMNode):
             mime_type: The MIME type of the file or None to guess based on file extension.
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "application/octet-stream".
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
         """
         # Ensure `path_or_file` is a file-like object - convert if needed.
         if isinstance(path_or_file, (str, Path)):
@@ -3824,7 +3841,7 @@ class App(Generic[ReturnType], DOMNode):
         if mime_type is None:
             mime_type = "application/octet-stream"
 
-        self._deliver_binary(
+        return self._deliver_binary(
             binary,
             save_directory=save_directory,
             save_filename=file_name,
@@ -3842,7 +3859,7 @@ class App(Generic[ReturnType], DOMNode):
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
         mime_type: str | None = None,
-    ) -> None:
+    ) -> str | None:
         """Deliver a binary file to the end-user of the application."""
         if self._driver is None:
             return
@@ -3856,13 +3873,19 @@ class App(Generic[ReturnType], DOMNode):
             user_downloads_path() if save_directory is None else Path(save_directory)
         )
 
+        # Generate a unique key for this delivery
+        delivery_key = str(uuid.uuid4().hex)
+
         # Save the file. The driver will determine the appropriate action
         # to take here. It could mean simply writing to the save_path, or
         # sending the file to the web browser for download.
         self._driver.deliver_binary(
             binary,
+            delivery_key=delivery_key,
             save_path=save_directory / save_filename,
             encoding=encoding,
             open_method=open_method,
             mime_type=mime_type,
         )
+
+        return delivery_key

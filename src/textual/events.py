@@ -14,7 +14,6 @@ textual console -v
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -739,5 +738,5 @@ class Print(Event, bubble=False):
 class DeliveryComplete(Event, bubble=False):
     """Sent to App when a file has been delivered."""
 
-    save_path: Path
-    """The save_path to the file that was delivered."""
+    key: str
+    """The key that was used to deliver the file."""

@@ -16,7 +16,6 @@ import json
 import os
 import signal
 import sys
-import uuid
 from codecs import getincrementaldecoder
 from functools import partial
 from pathlib import Path
@@ -266,10 +265,14 @@ class WebDriver(Driver):
                     chunk = file_like.read(requested_size)
                     log.debug(f"Delivering chunk {delivery_key!r} of len {len(chunk)}")
                     self.write_packed(("deliver_chunk", delivery_key, chunk))
+                    # We've hit an empty chunk, so we're done
                     if not chunk:
                         log.info(f"Delivery complete for {delivery_key}")
                         file_like.close()
                         del deliveries[delivery_key]
+                        self._app.call_from_thread(
+                            self._delivery_complete, delivery_key=delivery_key
+                        )
                 except Exception:
                     file_like.close()
                     del deliveries[delivery_key]
@@ -295,6 +298,7 @@ class WebDriver(Driver):
         self,
         binary: BinaryIO | TextIO,
         *,
+        delivery_key: str,
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
@@ -302,6 +306,7 @@ class WebDriver(Driver):
     ) -> None:
         self._deliver_file(
             binary,
+            delivery_key=delivery_key,
             save_path=save_path,
             open_method=open_method,
             encoding=encoding,
@@ -312,6 +317,7 @@ class WebDriver(Driver):
         self,
         binary: BinaryIO | TextIO,
         *,
+        delivery_key: str,
         save_path: Path,
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
@@ -320,15 +326,12 @@ class WebDriver(Driver):
         """Deliver a file to the end-user of the application."""
         binary.seek(0)
 
-        # Generate a unique key for this delivery
-        key = str(uuid.uuid4().hex)
-
-        self._deliveries[key] = binary
+        self._deliveries[delivery_key] = binary
 
         # Inform the server that we're starting a new file delivery
         meta: dict[str, object] = {
             "type": "deliver_file_start",
-            "key": key,
+            "key": delivery_key,
             "path": str(save_path.resolve()),
             "open_method": open_method,
             "encoding": encoding,

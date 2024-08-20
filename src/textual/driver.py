@@ -203,6 +203,7 @@ class Driver(ABC):
         self,
         binary: BinaryIO | TextIO,
         *,
+        delivery_key: str,
         save_path: Path,
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
@@ -215,6 +216,7 @@ class Driver(ABC):
 
         Args:
             binary: The binary file to save.
+            delivery_key: The unique key that was used to deliver the file.
             save_path: The location to save the file to. If None,
                 the default "downloads" directory will be used. When
                 running via web, only the file name will be used.
@@ -243,11 +245,13 @@ class Driver(ABC):
                         break
                     write(data)
             binary.close()
-            self._app.call_from_thread(self._delivery_complete, save_path=save_path)
+            self._app.call_from_thread(
+                self._delivery_complete, delivery_key=delivery_key
+            )
 
         thread = threading.Thread(target=save_file_thread)
         thread.start()
 
-    def _delivery_complete(self, save_path: Path) -> None:
+    def _delivery_complete(self, delivery_key: str) -> None:
         """Called when a file has been delivered."""
-        self._app.post_message(events.DeliveryComplete(save_path=save_path))
+        self._app.post_message(events.DeliveryComplete(delivery_key))
