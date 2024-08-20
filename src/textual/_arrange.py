@@ -50,7 +50,6 @@ def arrange(
     get_dock = attrgetter("styles.dock")
     get_split = attrgetter("styles.split")
     styles = widget.styles
-    null_spacing = Spacing()
 
     # Widgets which will be displayed
     display_widgets = [child for child in children if child.styles.display != "none"]
@@ -83,7 +82,7 @@ def arrange(
             placements.extend(_dock_placements)
             dock_region = dock_region.shrink(dock_spacing)
         else:
-            dock_spacing = null_spacing
+            dock_spacing = Spacing()
 
         dock_spacing += split_spacing
 
@@ -94,9 +93,7 @@ def arrange(
                 layout_widgets,
                 dock_region.size,
             )
-
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
-
             placement_offset = dock_region.offset
             # Perform any alignment of the widgets.
             if styles.align_horizontal != "left" or styles.align_vertical != "top":
