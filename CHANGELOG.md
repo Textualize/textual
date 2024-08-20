@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
+- Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
 
 ### Fixed
 
