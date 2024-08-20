@@ -75,7 +75,6 @@ types-tree-sitter = "^0.20.1.4"
 types-tree-sitter-languages = "^1.7.0.1"
 isort = "^5.13.2"
 pytest-textual-snapshot = "^1.0.0"
-msgpack-types = "^0.3.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
