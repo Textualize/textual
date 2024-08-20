@@ -61,7 +61,6 @@ __all__ = [
     "Header",
     "Input",
     "KeyPanel",
-    "KeyPanel",
     "Label",
     "ListItem",
     "ListView",
