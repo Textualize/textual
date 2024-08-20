@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
 - Added "Show keys" option to system commands to show a summary of key bindings. https://github.com/Textualize/textual/pull/4876
 - Added "split" CSS style, currently undocumented, and may change. https://github.com/Textualize/textual/pull/4876
+- Added `Region.get_spacing_between` https://github.com/Textualize/textual/pull/4876
 
 ### Changed
 
