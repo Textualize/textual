@@ -250,6 +250,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     def on_mount(self) -> None:
         async def bindings_changed(screen: Screen) -> None:
             self._bindings_ready = True
+            if not screen.app.app_focus:
+                return
             if self.is_attached and screen is self.screen:
                 await self.recompose()
 
