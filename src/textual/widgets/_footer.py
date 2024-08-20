@@ -151,8 +151,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             grid-gutter: 1;
         }
         FooterKey.-command-palette  {
-            dock: right;
-                        
+            dock: right;                        
             padding-right: 1;
             border-left: vkey $foreground 20%;                
         }
@@ -251,6 +250,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     def on_mount(self) -> None:
         async def bindings_changed(screen: Screen) -> None:
             self._bindings_ready = True
+            if not screen.app.app_focus:
+                return
             if self.is_attached and screen is self.screen:
                 await self.recompose()
 

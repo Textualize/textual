@@ -1331,7 +1331,9 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def get_key_display(self, key: str) -> str:
+    def get_key_display(
+        self, key: str, upper_case_keys: bool = False, ctrl_to_caret: bool = True
+    ) -> str:
         """For a given key, return how it should be displayed in an app
         (e.g. in the Footer widget).
         By key, we refer to the string used in the "key" argument for
@@ -1341,11 +1343,15 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             key: The binding key string.
+            upper_case_keys: Upper case printable keys.
+            ctrl_to_caret: Replace `ctrl+` with `^`.
 
         Returns:
             The display string for the input key.
         """
-        return _get_key_display(key)
+        return _get_key_display(
+            key, upper_case_keys=upper_case_keys, ctrl_to_caret=ctrl_to_caret
+        )
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
@@ -2627,10 +2633,10 @@ class App(Generic[ReturnType], DOMNode):
                         self._driver.write(
                             Control.move(-cursor_x, -cursor_y + 1).segment.text
                         )
-                    if inline_no_clear:
-                        console = Console()
-                        console.print(self.screen._compositor)
-                        console.print()
+                        if inline_no_clear and not not self.app._exit_renderables:
+                            console = Console()
+                            console.print(self.screen._compositor)
+                            console.print()
 
                     driver.stop_application_mode()
         except Exception as error:
@@ -3509,6 +3515,19 @@ class App(Generic[ReturnType], DOMNode):
     def action_focus_previous(self) -> None:
         """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
+
+    def action_hide_keys(self) -> None:
+        """Hide the keys panel (if present)."""
+        self.screen.query("KeyPanel").remove()
+
+    def action_show_keys(self) -> None:
+        """Show the keys panel."""
+        from .widgets import KeyPanel
+
+        try:
+            self.query_one(KeyPanel)
+        except NoMatches:
+            self.mount(KeyPanel())
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput

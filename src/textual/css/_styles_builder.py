@@ -31,6 +31,7 @@ from ._help_text import (
     scrollbar_size_single_axis_help_text,
     spacing_invalid_value_help_text,
     spacing_wrong_number_of_values_help_text,
+    split_property_help_text,
     string_enum_help_text,
     style_flags_property_help_text,
     table_rows_or_columns_help_text,
@@ -747,6 +748,20 @@ class StylesBuilder:
 
         dock = tokens[0].value
         self.styles._rules["dock"] = dock
+
+    def process_split(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+
+        if len(tokens) > 1 or tokens[0].value not in VALID_EDGE:
+            self.error(
+                name,
+                tokens[0],
+                split_property_help_text(name, context="css"),
+            )
+
+        dock = tokens[0].value
+        self.styles._rules["split"] = dock
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
