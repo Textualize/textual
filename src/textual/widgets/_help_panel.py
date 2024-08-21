@@ -66,6 +66,11 @@ class HelpPanel(Widget):
         self.watch(self.screen, "focused", self.update_help)
 
     def update_help(self, focused_widget: Widget | None) -> None:
+        """Update the help for the focused widget.
+
+        Args:
+            focused_widget: The currently focused widget, or `None` if no widget was focused.
+        """
         if not self.app.app_focus:
             return
         self.set_class(focused_widget is not None, "-show-help")
