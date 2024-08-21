@@ -107,10 +107,15 @@ class Matcher:
         if match is None:
             return text
         assert match.lastindex is not None
-        offsets = [
-            match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
-        ]
-        for offset in offsets:
-            text.stylize(self._match_style, offset, offset + 1)
+        if self._query in text.plain:
+            # Favor complete matches
+            offset = text.plain.index(self._query)
+            text.stylize(self._match_style, offset, offset + len(self._query))
+        else:
+            offsets = [
+                match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
+            ]
+            for offset in offsets:
+                text.stylize(self._match_style, offset, offset + 1)
 
         return text

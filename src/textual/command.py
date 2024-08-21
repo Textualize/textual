@@ -751,7 +751,7 @@ class CommandPalette(SystemModalScreen):
             _show_no_matches,
         )
 
-    async def _watch__list_visible(self) -> None:
+    def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
         self.query_one(CommandList).set_class(self._list_visible, "--visible")
         self.query_one("#--input", Horizontal).set_class(
