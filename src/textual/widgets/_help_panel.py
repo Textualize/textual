@@ -73,6 +73,8 @@ class HelpPanel(Widget):
         """
         if not self.app.app_focus:
             return
+        if not self.screen.is_active:
+            return
         self.set_class(focused_widget is not None, "-show-help")
         if focused_widget is not None:
             help = focused_widget.HELP or ""
