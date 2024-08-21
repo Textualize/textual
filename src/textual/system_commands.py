@@ -47,7 +47,7 @@ class SystemCommands(Provider):
             "Quit the application as soon as possible",
         )
 
-        if self.screen.query("KeyPanel"):
+        if self.screen.query("HelpPanel"):
             yield ("Hide keys", self.app.action_hide_keys, "Hide the keys panel")
         else:
             yield (

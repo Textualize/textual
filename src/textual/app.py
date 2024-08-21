@@ -3529,16 +3529,16 @@ class App(Generic[ReturnType], DOMNode):
 
     def action_hide_keys(self) -> None:
         """Hide the keys panel (if present)."""
-        self.screen.query("KeyPanel").remove()
+        self.screen.query("KelpPanel").remove()
 
     def action_show_keys(self) -> None:
         """Show the keys panel."""
-        from .widgets import KeyPanel
+        from .widgets import HelpPanel
 
         try:
-            self.query_one(KeyPanel)
+            self.query_one(HelpPanel)
         except NoMatches:
-            self.mount(KeyPanel())
+            self.mount(HelpPanel())
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput

@@ -145,6 +145,9 @@ class DOMNode(MessagePump):
     SCOPED_CSS: ClassVar[bool] = True
     """Should default css be limited to the widget type?"""
 
+    HELP: ClassVar[str | None] = None
+    """Optional help text shown in help panel (Markdown format)."""
+
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
 
