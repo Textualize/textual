@@ -145,20 +145,6 @@ class Button(Widget, can_focus=True):
     }
     """
 
-    HELP = """
-    A simple button.
-
-    1. Foo
-    2. Bar
-    3. Baz
-
-    ```python
-    import this
-    for n in range(100):
-        print(n)
-    ```
-    """
-
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
     label: reactive[TextType] = reactive[TextType]("")
