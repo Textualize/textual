@@ -66,4 +66,4 @@ def test_get_key_display():
         app.get_key_display(Binding("shift+ctrl+right_square_bracket", "", ""))
         == "shift+^]"
     )
-    assert app.get_key_display(Binding("delete", "", "")) == "delete"
+    assert app.get_key_display(Binding("delete", "", "")) == "del"

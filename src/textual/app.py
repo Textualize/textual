@@ -383,6 +383,8 @@ class App(Generic[ReturnType], DOMNode):
     TOOLTIP_DELAY: float = 0.5
     """The time in seconds after which a tooltip gets displayed."""
 
+    BINDING_GROUP_TITLE = "App"
+
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
 
