@@ -399,17 +399,18 @@ class OptionList(ScrollView, can_focus=True):
         )
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        # Get the content height without requiring a refresh
+        # TODO: Internal data structure could be simplified
         style = self.rich_style
-        return sum(
-            (
-                1
-                if isinstance(content, Separator)
-                else len(
-                    self._render_option_content(index, content, style, container.width)
-                )
-            )
-            for index, content in enumerate(self._contents)
+        _render_option_content = self._render_option_content
+        heights = [
+            len(_render_option_content(index, option, style, width))
+            for index, option in enumerate(self._options)
+        ]
+        separator_count = sum(
+            1 for content in self._contents if isinstance(content, Separator)
         )
+        return sum(heights) + separator_count
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
         """React to the mouse moving.
