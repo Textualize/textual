@@ -135,7 +135,7 @@ class DOMNode(MessagePump):
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
-    BINDING_GROUP: str | None = None
+    BINDING_GROUP_TITLE: str | None = None
     """Title of widget used where bindings are displayed (such as in the key panel)."""
 
     # Mapping of key bindings

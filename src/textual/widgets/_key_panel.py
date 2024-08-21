@@ -61,7 +61,7 @@ class BindingsTable(Static):
             if not table_bindings:
                 continue
 
-            name = namespace.BINDING_GROUP or namespace.__class__.__name__
+            name = namespace.BINDING_GROUP_TITLE or namespace.__class__.__name__
             title = Text(name, end="")
             title.stylize(header_style)
             table.add_row("", title)
