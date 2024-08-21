@@ -739,4 +739,7 @@ class DeliveryComplete(Event, bubble=False):
     """Sent to App when a file has been delivered."""
 
     key: str
-    """The key that was used to deliver the file."""
+    """The delivery key associated with the delivery.
+    
+    This is the same key that was returned by `App.deliver_text`/`App.deliver_binary`.
+    """
