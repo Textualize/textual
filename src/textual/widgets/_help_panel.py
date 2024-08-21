@@ -31,7 +31,7 @@ class HelpPanel(Widget):
         #widget-help {
             height: auto;
             max-height: 50%;
-            width: 100%;
+            width: 1fr;
             padding: 0;
             margin: 0;
             padding: 1 0;
@@ -50,8 +50,9 @@ class HelpPanel(Widget):
         }
 
         KeyPanel#keys-help {
-            width: 100%;
-            height: 1fr;            
+            width: 1fr;
+            height: 1fr;
+            min-width: initial;
             split: initial;
             border-left: none;          
             padding: 0;
