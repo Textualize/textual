@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `App.COMMAND_PALETTE_KEY` to change default command palette key binding https://github.com/Textualize/textual/pull/4867
 - Added `App.get_key_display` https://github.com/Textualize/textual/pull/4890
 - Added `DOMNode.BINDING_GROUP` https://github.com/Textualize/textual/pull/4906
-- Added `DOMNode.HELP` classvar https://github.com/Textualize/textual/pull/4915
+- Added `DOMNode.HELP` classvar which contains Markdown help to be shown in the help panel https://github.com/Textualize/textual/pull/4915
 
 ### Changed
 
