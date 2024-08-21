@@ -583,6 +583,22 @@ class Region(NamedTuple):
             return Region(x - ox, y - oy, width, height)
         return NotImplemented
 
+    def get_spacing_between(self, region: Region) -> Spacing:
+        """Get spacing between two regions.
+
+        Args:
+            region: Another region.
+
+        Returns:
+            Spacing that if subtracted from `self` produces `region`.
+        """
+        return Spacing(
+            region.y - self.y,
+            self.right - region.right,
+            self.bottom - region.bottom,
+            region.x - self.x,
+        )
+
     def at_offset(self, offset: tuple[int, int]) -> Region:
         """Get a new Region with the same size at a given offset.
 

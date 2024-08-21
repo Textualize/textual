@@ -1438,3 +1438,13 @@ def test_command_palette_dismiss_escape_no_results(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "command_palette_dismiss.py", run_before=run_before
     )
+
+
+def test_command_palette_key_change(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4887"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette_key.py")
+
+
+def test_split(snap_compare):
+    """Test split rule."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "split.py", terminal_size=(100, 30))

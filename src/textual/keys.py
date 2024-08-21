@@ -259,10 +259,13 @@ KEY_DISPLAY_ALIASES = {
     "left": "←",
     "right": "→",
     "backspace": "⌫",
-    "escape": "ESC",
+    "escape": "esc",
     "enter": "⏎",
     "minus": "-",
-    "space": "SPACE",
+    "space": "space",
+    "pagedown": "pgdn",
+    "pageup": "pgup",
+    "delete": "del",
 }
 
 
@@ -279,12 +282,10 @@ def _get_key_aliases(key: str) -> list[str]:
     return [key] + KEY_ALIASES.get(key, [])
 
 
-def _get_key_display(key: str) -> str:
+def format_key(key: str) -> str:
     """Given a key (i.e. the `key` string argument to Binding __init__),
     return the value that should be displayed in the app when referring
     to this key (e.g. in the Footer widget)."""
-    if "+" in key:
-        return "+".join([_get_key_display(key) for key in key.split("+")])
 
     display_alias = KEY_DISPLAY_ALIASES.get(key)
     if display_alias:
@@ -293,14 +294,12 @@ def _get_key_display(key: str) -> str:
     original_key = REPLACED_KEYS.get(key, key)
     tentative_unicode_name = _get_unicode_name_from_key(original_key)
     try:
-        unicode_character = unicodedata.lookup(tentative_unicode_name)
+        unicode_name = unicodedata.lookup(tentative_unicode_name)
     except KeyError:
-        return tentative_unicode_name
-
-    # Check if printable. `delete` for example maps to a control sequence
-    # which we don't want to write to the terminal.
-    if unicode_character.isprintable():
-        return unicode_character
+        pass
+    else:
+        if unicode_name.isprintable():
+            return unicode_name
     return tentative_unicode_name
 
 

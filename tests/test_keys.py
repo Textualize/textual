@@ -1,7 +1,8 @@
 import pytest
 
 from textual.app import App
-from textual.keys import _character_to_key, _get_key_display
+from textual.binding import Binding
+from textual.keys import _character_to_key, format_key
 
 
 @pytest.mark.parametrize(
@@ -50,22 +51,19 @@ async def test_character_bindings():
         assert counter == 3
 
 
+def test_format_key():
+    assert format_key("minus") == "-"
+
+
 def test_get_key_display():
-    assert _get_key_display("minus") == "-"
+    app = App()
 
-
-def test_get_key_display_when_used_in_conjunction():
-    """Test a key display is the same if used in conjunction with another key.
-    For example, "ctrl+right_square_bracket" should display the bracket as "]",
-    the same as it would without the ctrl modifier.
-
-    Regression test for #3035 https://github.com/Textualize/textual/issues/3035
-    """
-
-    right_square_bracket = _get_key_display("right_square_bracket")
-    ctrl_right_square_bracket = _get_key_display("ctrl+right_square_bracket")
-    assert ctrl_right_square_bracket == f"ctrl+{right_square_bracket}"
-
-    left = _get_key_display("left")
-    ctrl_left = _get_key_display("ctrl+left")
-    assert ctrl_left == f"ctrl+{left}"
+    assert app.get_key_display(Binding("p", "", "")) == "p"
+    assert app.get_key_display(Binding("ctrl+p", "", "")) == "^p"
+    assert app.get_key_display(Binding("right_square_bracket", "", "")) == "]"
+    assert app.get_key_display(Binding("ctrl+right_square_bracket", "", "")) == "^]"
+    assert (
+        app.get_key_display(Binding("shift+ctrl+right_square_bracket", "", ""))
+        == "shift+^]"
+    )
+    assert app.get_key_display(Binding("delete", "", "")) == "del"

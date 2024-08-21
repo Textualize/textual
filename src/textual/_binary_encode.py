@@ -93,7 +93,8 @@ def dump(data: object) -> bytes:
         Returns:
             The encoded bytes.
         """
-        return b"s%i:%s" % (len(datum), datum.encode("utf-8"))
+        encoded_data = datum.encode("utf-8")
+        return b"s%i:%s" % (len(encoded_data), encoded_data)
 
     def encode_list(datum: list) -> bytes:
         """

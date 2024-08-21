@@ -135,6 +135,9 @@ class DOMNode(MessagePump):
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
+    BINDING_GROUP_TITLE: str | None = None
+    """Title of widget used where bindings are displayed (such as in the key panel)."""
+
     # Mapping of key bindings
     BINDINGS: ClassVar[list[BindingType]] = []
 
@@ -206,9 +209,7 @@ class DOMNode(MessagePump):
         self._reactive_connect: (
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
-
         self._pruning = False
-
         super().__init__()
 
     def set_reactive(
