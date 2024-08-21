@@ -6,15 +6,12 @@ from textual.app import ComposeResult
 from textual.widget import Widget
 from textual.widgets import KeyPanel, Markdown
 
-MD = """\
-Hello *world*
-
-1. Foo
-2. Bar
-"""
-
 
 class HelpPanel(Widget):
+    """
+    Shows context sensitive help for the currently focused widget.
+    """
+
     DEFAULT_CSS = """
 
     HelpPanel {
@@ -58,10 +55,11 @@ class HelpPanel(Widget):
             border-left: none;          
             padding: 0;
         }
-
     }
 
     """
+
+    DEFAULT_CLASSES = "-textual-system"
 
     def on_mount(self):
         self.watch(self.screen, "focused", self.update_help)
@@ -77,5 +75,5 @@ class HelpPanel(Widget):
             self.query_one(Markdown).update(dedent(help.rstrip()))
 
     def compose(self) -> ComposeResult:
-        yield Markdown(MD, id="widget-help")
+        yield Markdown(id="widget-help")
         yield KeyPanel(id="keys-help")

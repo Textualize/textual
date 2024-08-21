@@ -103,6 +103,10 @@ class BindingsTable(Static):
 
 
 class KeyPanel(VerticalScroll, can_focus=False):
+    """
+    Shows bindings for currently focused widget.
+    """
+
     DEFAULT_CSS = """
     KeyPanel {                    
         split: right;
