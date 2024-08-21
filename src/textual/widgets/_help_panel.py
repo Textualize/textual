@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from textwrap import dedent
 
-from textual.app import ComposeResult
-from textual.widget import Widget
-from textual.widgets import KeyPanel, Markdown
+from ..app import ComposeResult
+from ..css.query import NoMatches
+from ..widget import Widget
+from ..widgets import KeyPanel, Markdown
 
 
 class HelpPanel(Widget):
@@ -72,7 +73,10 @@ class HelpPanel(Widget):
             help = focused_widget.HELP or ""
             if not help:
                 self.remove_class("-show-help")
-            self.query_one(Markdown).update(dedent(help.rstrip()))
+            try:
+                self.query_one(Markdown).update(dedent(help.rstrip()))
+            except NoMatches:
+                pass
 
     def compose(self) -> ComposeResult:
         yield Markdown(id="widget-help")
