@@ -25,6 +25,7 @@ class BindingsTable(Static):
         "bindings-table--key",
         "bindings-table--description",
         "bindings-table--divider",
+        "bindings-table--header",
     }
 
     DEFAULT_CSS = """
@@ -53,6 +54,7 @@ class BindingsTable(Static):
         )
         table.add_column("", justify="right")
 
+        header_style = self.get_component_rich_style("bindings-table--header")
         previous_namespace: object = None
         for namespace, _bindings in groupby(bindings, key=itemgetter(0)):
             table_bindings = list(_bindings)
@@ -60,8 +62,8 @@ class BindingsTable(Static):
                 continue
 
             name = namespace.BINDING_GROUP or namespace.__class__.__name__
-            title = Text(name, style="dim", end="")
-            title.stylize("italic")
+            title = Text(name, end="")
+            title.stylize(header_style)
             table.add_row("", title)
 
             action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
@@ -125,6 +127,10 @@ class KeyPanel(VerticalScroll, can_focus=False):
 
         &> BindingsTable > .bindings-table--divider {
             color: transparent;
+        }
+
+        &> BindingsTable > .bindings-table--header {
+            text-style: dim italic;
         }
 
         #bindings-table {
