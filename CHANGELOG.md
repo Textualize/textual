@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
 - Fix `Input.cursor_blink` having no effect on the blink cycle after mounting https://github.com/Textualize/textual/pull/4869
+- Fixed scrolling by page not taking scrollbar in to account 
 
 ## [0.76.0]
 
