@@ -398,6 +398,13 @@ class OptionList(ScrollView, can_focus=True):
             for option in self._options
         )
 
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        console = self.app.console
+        options = console.options.update(highlight=False)
+        return sum(
+            len(console.render_lines(option, options)) for option in self._options
+        )
+
     def _on_mouse_move(self, event: events.MouseMove) -> None:
         """React to the mouse moving.
 
