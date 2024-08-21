@@ -3527,11 +3527,11 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
 
-    def action_hide_keys(self) -> None:
+    def action_hide_help_panel(self) -> None:
         """Hide the keys panel (if present)."""
-        self.screen.query("KelpPanel").remove()
+        self.screen.query("HelpPanel").remove()
 
-    def action_show_keys(self) -> None:
+    def action_show_help_panel(self) -> None:
         """Show the keys panel."""
         from .widgets import HelpPanel
 
