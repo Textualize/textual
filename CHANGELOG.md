@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `App.get_key_display` https://github.com/Textualize/textual/pull/4890
 - Added `DOMNode.BINDING_GROUP` https://github.com/Textualize/textual/pull/4906
 - Added `DOMNode.HELP` classvar which contains Markdown help to be shown in the help panel https://github.com/Textualize/textual/pull/4915
+- Added `App.get_system_commands` https://github.com/Textualize/textual/pull/4920
 
 ### Changed
 
@@ -30,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
 - Changed default command palette binding to `ctrl+p` https://github.com/Textualize/textual/pull/4867
 - Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
+- Renamed `SystemCommands` to `SystemCommandsProvider` https://github.com/Textualize/textual/pull/4920
 
 ### Fixed
 

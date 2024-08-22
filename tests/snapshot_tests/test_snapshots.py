@@ -1450,6 +1450,15 @@ def test_split(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "split.py", terminal_size=(100, 30))
 
 
+def test_system_commands(snap_compare):
+    """Test help panel."""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "help_panel.py",
+        terminal_size=(100, 30),
+        press=["ctrl+p"],
+    )
+
+
 def test_help_panel(snap_compare):
     """Test help panel."""
     assert snap_compare(
