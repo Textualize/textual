@@ -176,8 +176,6 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
-            upper_case_keys: Show the keys in upper case.
-            ctrl_to_caret: Show `ctrl+` as `^`.
             show_command_palette: Show key binding to command palette, on the right of the footer.
         """
         super().__init__(
