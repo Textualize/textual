@@ -992,7 +992,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.action_show_help_panel,
             )
 
-        # Don't save screenshot until we have the deliver_file in place
+        # Don't save screenshot for web drivers until we have the deliver_file in place
         if self._driver.__class__.__name__ in {"LinuxDriver", "WindowsDriver"}:
 
             def export_screenshot() -> None:
