@@ -15542,8 +15542,8 @@ building a Textual app.</p>
     </table>
       <p>Implement this method in your App subclass if you want to add custom commands.
 Here is an example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_system_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SystemCommand</span><span class="p">]:</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">yield from</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_system_commands</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_system_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">:</span> <span class="n">Screen</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SystemCommand</span><span class="p">]:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">yield from</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_system_commands</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">yield</span> <span class="n">SystemCommand</span><span class="p">(</span><span class="s2">&quot;Bell&quot;</span><span class="p">,</span> <span class="s2">&quot;Ring the bell&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bell</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
