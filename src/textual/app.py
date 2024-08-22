@@ -992,6 +992,28 @@ class App(Generic[ReturnType], DOMNode):
                 self.action_show_help_panel,
             )
 
+        # Don't save screenshot for web drivers until we have the deliver_file in place
+        if self._driver.__class__.__name__ in {"LinuxDriver", "WindowsDriver"}:
+
+            def export_screenshot() -> None:
+                """Export a screenshot and write a notification."""
+                filename = self.save_screenshot()
+                try:
+                    self.notify(f"Saved {filename}", title="Screenshot")
+                except Exception as error:
+                    self.log.error(error)
+                    self.notify(
+                        "Failed to save screenshot.",
+                        title="Screenshot",
+                        severity="warning",
+                    )
+
+            yield SystemCommand(
+                "Save screenshot",
+                "Save an SVG 'screenshot' of the current screen (in the current working directory)",
+                export_screenshot,
+            )
+
     def get_default_screen(self) -> Screen:
         """Get the default screen.
 
