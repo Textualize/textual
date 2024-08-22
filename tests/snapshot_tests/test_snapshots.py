@@ -1472,6 +1472,7 @@ def test_help_panel(snap_compare):
             yield Input()
 
     async def run_before(pilot: Pilot):
+        pilot.app.query(Input).first().cursor_blink = False
         await pilot.press(App.COMMAND_PALETTE_BINDING)
         await pilot.pause()
         await pilot.press(*"keys")

@@ -177,7 +177,7 @@ CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
 
 
 class SystemCommand(NamedTuple):
-    """Defines a system command (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
+    """Defines a system command used in the command palette (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
 
     title: str
     """The title of the command (used in search)."""
