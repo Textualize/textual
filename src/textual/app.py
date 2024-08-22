@@ -180,9 +180,13 @@ class SystemCommand(NamedTuple):
     """Defines a system command (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
 
     title: str
+    """The title of the command (used in search)."""
     help: str
+    """Additional help text, shown under the title."""
     callback: CommandCallback
+    """A callback to invoke when the command is selected."""
     discover: bool = True
+    """Should the command show when the search is empty?"""
 
 
 def get_system_commands_provider() -> type[SystemCommandsProvider]:
