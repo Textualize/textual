@@ -5,7 +5,7 @@ from textwrap import dedent
 from ..app import ComposeResult
 from ..css.query import NoMatches
 from ..widget import Widget
-from ..widgets import KeyPanel, Markdown
+from ..widgets import KeyPanel, Label, Markdown
 
 
 class HelpPanel(Widget):
@@ -27,7 +27,13 @@ class HelpPanel(Widget):
         layout: vertical;
         height: 100%;
       
-
+        #title {
+            width: 1fr;
+            text-align: center;
+            text-style: bold;
+            dock: top;
+        }
+        
         #widget-help {
             height: auto;
             max-height: 50%;
@@ -87,5 +93,6 @@ class HelpPanel(Widget):
                 pass
 
     def compose(self) -> ComposeResult:
+        yield Label("Help", id="title")
         yield Markdown(id="widget-help")
         yield KeyPanel(id="keys-help")
