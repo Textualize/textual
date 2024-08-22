@@ -3891,8 +3891,6 @@ window.onload = async (event) => {
         
       
         
-      
-        
           
         
       
@@ -4020,27 +4018,6 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Checkbox
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/classic_footer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    ClassicFooter
   </span>
   
 
@@ -5206,6 +5183,24 @@ window.onload = async (event) => {
   
     <nav class="md-nav" aria-label=" DOMNode">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.BINDING_GROUP_TITLE" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;BINDING_GROUP_TITLE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.HELP" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;HELP
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.SCOPED_CSS" class="md-nav__link">
@@ -7491,6 +7486,24 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.BINDING_GROUP_TITLE" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;BINDING_GROUP_TITLE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.HELP" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;HELP
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.SCOPED_CSS" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;SCOPED_CSS
@@ -8671,6 +8684,53 @@ which includes all Widgets, Screens, and Apps.</p>
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.dom.DOMNode.BINDING_GROUP_TITLE" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">BINDING_GROUP_TITLE</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.BINDING_GROUP_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDING_GROUP_TITLE</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Title of widget used where bindings are displayed (such as in the key panel).</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.dom.DOMNode.HELP" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">HELP</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.HELP" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">HELP</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Optional help text shown in help panel (Markdown format).</p>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-attribute">
 
@@ -11663,18 +11723,17 @@ or <code>None</code> to sort without a key function.</p>
     <div class="doc doc-contents ">
 
       <p>Watches for modifications to reactive attributes on another object.</p>
-<p>Example:</p>
-<div class="highlight"><pre><span></span><code>Here&#39;s how you could detect when the app changes from dark to light mode (and vice versa).
 
-```python
-def on_dark_change(old_value:bool, new_value:bool):
-    # Called when app.dark changes.
-    print(&quot;App.dark when from {old_value} to {new_value}&quot;)
 
-self.watch(self.app, &quot;dark&quot;, self.on_dark_change, init=False)
-```
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_dark_change</span><span class="p">(</span><span class="n">old_value</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span><span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Called when app.dark changes.</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;App.dark went from </span><span class="si">{old_value}</span><span class="s2"> to </span><span class="si">{new_value}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="bp">self</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_dark_change</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
-
+</details>
 
 <p><span class="doc-section-title">Parameters:</span></p>
     <table>

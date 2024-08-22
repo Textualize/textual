@@ -3891,8 +3891,6 @@ window.onload = async (event) => {
         
       
         
-      
-        
           
         
       
@@ -4020,27 +4018,6 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Checkbox
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/classic_footer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    ClassicFooter
   </span>
   
 
@@ -8310,8 +8287,17 @@ scheduled (may occur if the message pump was closed or closing).</p>
 
     <div class="doc doc-contents ">
 
-      <p>Make a function call after a delay.</p>
+      <p>call a function after a delay.</p>
 
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">ready</span><span class="p">():</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s2">&quot;Your soft boiled egg is ready!&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Call ready() after 3 minutes</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="bp">self</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">ready</span><span class="p">)</span>
+</code></pre></div>
+</details>
 
 <p><span class="doc-section-title">Parameters:</span></p>
     <table>

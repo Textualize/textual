@@ -3891,8 +3891,6 @@ window.onload = async (event) => {
         
       
         
-      
-        
           
         
       
@@ -4020,27 +4018,6 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Checkbox
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/classic_footer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    ClassicFooter
   </span>
   
 
@@ -5968,6 +5945,30 @@ window.onload = async (event) => {
   <a href="#textual.geometry.Region.get_scroll_to_visible(top)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;top
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Region.get_spacing_between" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_spacing_between
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" get_spacing_between">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Region.get_spacing_between(region)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;region
     </span>
   </a>
   
@@ -8563,6 +8564,30 @@ window.onload = async (event) => {
   <a href="#textual.geometry.Region.get_scroll_to_visible(top)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;top
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Region.get_spacing_between" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_spacing_between
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" get_spacing_between">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Region.get_spacing_between(region)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;region
     </span>
   </a>
   
@@ -11507,6 +11532,79 @@ another region.</p>
             <td>
               <div class="doc-md-description">
                 <p>An offset required to add to region to move it inside window_region.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.geometry.Region.get_spacing_between" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_spacing_between</span>
+
+
+<a href="#textual.geometry.Region.get_spacing_between" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_spacing_between</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.geometry.Region.get_spacing_between(region)">region</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Get spacing between two regions.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.geometry.Region.get_spacing_between(region)" class="doc doc-heading doc-heading-parameter">                  <code>region</code>
+<a href="#textual.geometry.Region.get_spacing_between(region)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Another region.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="textual.geometry.Spacing" href="#textual.geometry.Spacing">Spacing</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Spacing that if subtracted from <code>self</code> produces <code>region</code>.</p>
               </div>
             </td>
           </tr>
