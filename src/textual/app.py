@@ -38,6 +38,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    NamedTuple,
     Sequence,
     Type,
     TypeVar,
@@ -128,7 +129,7 @@ if TYPE_CHECKING:
     from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
-    from .system_commands import SystemCommands
+    from .system_commands import SystemCommandsProvider
     from .widget import MountError  # type: ignore  # noqa: F401
 
 WINDOWS = sys.platform == "win32"
@@ -171,16 +172,32 @@ AutopilotCallbackType: TypeAlias = (
 )
 """Signature for valid callbacks that can be used to control apps."""
 
+CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
+"""Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
 
-def get_system_commands() -> type[SystemCommands]:
+
+class SystemCommand(NamedTuple):
+    """Defines a system command used in the command palette (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
+
+    title: str
+    """The title of the command (used in search)."""
+    help: str
+    """Additional help text, shown under the title."""
+    callback: CommandCallback
+    """A callback to invoke when the command is selected."""
+    discover: bool = True
+    """Should the command show when the search is empty?"""
+
+
+def get_system_commands_provider() -> type[SystemCommandsProvider]:
     """Callable to lazy load the system commands.
 
     Returns:
         System commands class.
     """
-    from .system_commands import SystemCommands
+    from .system_commands import SystemCommandsProvider
 
-    return SystemCommands
+    return SystemCommandsProvider
 
 
 class AppError(Exception):
@@ -359,7 +376,7 @@ class App(Generic[ReturnType], DOMNode):
     """Default number of seconds to show notifications before removing them."""
 
     COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
-        get_system_commands
+        get_system_commands_provider
     }
     """Command providers used by the [command palette](/guide/command_palette).
 
@@ -921,6 +938,59 @@ class App(Generic[ReturnType], DOMNode):
             A dict that maps keys on to binding information.
         """
         return self.screen.active_bindings
+
+    def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+        """A generator of system commands used in the command palette.
+
+        Args:
+            screen: The screen where the command palette was invoked from.
+
+        Implement this method in your App subclass if you want to add custom commands.
+        Here is an example:
+
+        ```python
+        def get_system_commands(self) -> Iterable[SystemCommand]:
+            yield from super().get_system_commands()
+            yield SystemCommand("Bell", "Ring the bell", self.bell)
+        ```
+
+        !!! note
+            Requires that [`SystemCommandsProvider`][textual.system_commands.SystemCommandsProvider] is in `App.COMMANDS` class variable.
+
+        Yields:
+            [SystemCommand][textual.app.SystemCommand] instances.
+        """
+        if self.dark:
+            yield SystemCommand(
+                "Light mode",
+                "Switch to a light background",
+                self.action_toggle_dark,
+            )
+        else:
+            yield SystemCommand(
+                "Dark mode",
+                "Switch to a dark background",
+                self.action_toggle_dark,
+            )
+
+        yield SystemCommand(
+            "Quit the application",
+            "Quit the application as soon as possible",
+            self.action_quit,
+        )
+
+        if screen.query("HelpPanel"):
+            yield SystemCommand(
+                "Hide keys and help panel",
+                "Hide the keys and widget help panel",
+                self.action_hide_help_panel,
+            )
+        else:
+            yield SystemCommand(
+                "Show keys and help panel",
+                "Show help for the focused widget and a summary of available keys",
+                self.action_show_help_panel,
+            )
 
     def get_default_screen(self) -> Screen:
         """Get the default screen.
