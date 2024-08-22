@@ -1457,3 +1457,11 @@ def test_help_panel(snap_compare):
         terminal_size=(100, 30),
         press=["ctrl+p", *"keys", "enter"],
     )
+
+
+def test_scroll_page_down(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4914"""
+    # Should show 25 at the top
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "scroll_page.py", press=["pagedown"], terminal_size=(80, 25)
+    )
