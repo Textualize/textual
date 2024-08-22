@@ -174,6 +174,9 @@ AutopilotCallbackType: TypeAlias = (
 CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
 """Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
 
+SystemCommandsResult: TypeAlias = "Iterable[tuple[str, str, CommandCallback]]"
+"""The return type of App.get_system_commands"""
+
 
 def get_system_commands_provider() -> type[SystemCommandsProvider]:
     """Callable to lazy load the system commands.
@@ -927,7 +930,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def get_system_commands(
         self,
-    ) -> Iterable[tuple[str, str, CommandCallback]]:
+    ) -> SystemCommandsResult:
         """A generator of system commands used in the command palette.
 
         Implement this method in your App subclass if you want to add custom commands.

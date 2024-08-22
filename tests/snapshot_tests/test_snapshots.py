@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.pilot import Pilot
 from textual.widgets import Button, Input, RichLog, TextArea
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -1452,8 +1452,13 @@ def test_split(snap_compare):
 
 def test_system_commands(snap_compare):
     """Test help panel."""
+
+    class SimpleApp(App):
+        def compose(self) -> ComposeResult:
+            yield Input()
+
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "help_panel.py",
+        SimpleApp(),
         terminal_size=(100, 30),
         press=["ctrl+p"],
     )
@@ -1461,6 +1466,7 @@ def test_system_commands(snap_compare):
 
 def test_help_panel(snap_compare):
     """Test help panel."""
+
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "help_panel.py",
         terminal_size=(100, 30),

@@ -30,19 +30,33 @@ This scheme allows the user to quickly get to a particular command with a minimu
     ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p,t,d"}
     ```
 
+## System commands
 
+Textual apps have a number of *system* commands enabled by default.
+These are declared in the [`App.get_system_commands`][textual.app.App.get_system_commands] method.
+You can implement this method in your App class to add more commands.
 
-## Default commands
+To declare a command `yield` a tuple of `(TITLE, HELP TEXT, CALLABLE)`.
+The `TITLE` and `HELP TEXT` values are shown in the command palette.
+If the user selects that command, then Textual will invoke `CALLABLE`.
 
-Textual apps have the following commands enabled by default:
+Here's how we would add a command to ring the terminal bell (a super useful piece of functionality):
 
-- `"Toggle light/dark mode"`
-  This will toggle between light and dark mode, by setting `App.dark` to either `True` or `False`.
-- `"Quit the application"`
-  Quits the application. The equivalent of pressing ++ctrl+C++.
-- `"Play the bell"`
-  Plays the terminal bell, by calling [`App.bell`][textual.app.App.bell].
+=== "command01.py"
 
+    ```python title="command01.py" hl_lines="18-24 29"
+    --8<-- "docs/examples/guide/command_palette/command01.py"
+    ```
+    1. Adds the default commands from the base class.
+    2. Adds a new command.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p"}
+    ```
+
+This is a straightforward way of adding commands to your app.
+For more advanced integrations you can implement your own *command providers*.
 
 ## Command providers
 
@@ -57,8 +71,8 @@ The following example will display a blank screen initially, but if you bring up
     If you are running that example from the repository, you may want to add some additional Python files to see how the examples works with multiple files.
 
 
-  ```python title="command01.py" hl_lines="12-40 46"
-  --8<-- "docs/examples/guide/command_palette/command01.py"
+  ```python title="command02.py" hl_lines="12-40 46"
+  --8<-- "docs/examples/guide/command_palette/command02.py"
   ```
 
   1. This method is called when the command palette is first opened.
