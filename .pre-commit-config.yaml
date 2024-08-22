@@ -21,7 +21,7 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
-        language_version: '3.11'
+        language_version: '3.8'
         args: ['--profile', 'black', '--filter-files']
   - repo: https://github.com/psf/black
     rev: '24.1.1'
@@ -31,6 +31,6 @@ repos:
     rev: v2.3.0
     hooks:
       - id: pycln
-        language_version: '3.11'
+        language_version: '3.8'
         args: [--all]
 exclude: ^tests/snapshot_tests

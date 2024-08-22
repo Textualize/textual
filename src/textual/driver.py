@@ -239,8 +239,9 @@ class Driver(ABC):
             with open(save_path, mode) as destination_file:
                 read = binary.read
                 write = destination_file.write
+                chunk_size = 1024 * 64
                 while True:
-                    data = read(1024)
+                    data = read(chunk_size)
                     if not data:
                         break
                     write(data)
