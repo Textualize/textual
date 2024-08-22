@@ -217,9 +217,7 @@ class Driver(ABC):
         Args:
             binary: The binary file to save.
             delivery_key: The unique key that was used to deliver the file.
-            save_path: The location to save the file to. If None,
-                the default "downloads" directory will be used. When
-                running via web, only the file name will be used.
+            save_path: The location to save the file to.
             open_method: *web only* Whether to open the file in the browser or
                 to prompt the user to download it. When running via a standard
                 (non-web) terminal, this is ignored.
@@ -230,29 +228,52 @@ class Driver(ABC):
             mime_type: *web only* The MIME type of the file. This will be used to
                 set the `Content-Type` header in the HTTP response.
         """
+
+        def save_file_thread(binary: BinaryIO | TextIO, mode: str) -> None:
+            try:
+                with open(save_path, mode) as destination_file:
+                    read = binary.read
+                    write = destination_file.write
+                    chunk_size = 1024 * 64
+                    while True:
+                        data = read(chunk_size)
+                        if not data:
+                            # No data left to read - delivery is complete.
+                            self._delivery_complete(delivery_key, save_path)
+                            break
+                        write(data)
+            except Exception as error:
+                # If any exception occurs during the delivery, pass
+                # it on to the app via a DeliveryFailed event.
+                self._delivery_failed(delivery_key, exception=error)
+            finally:
+                if not binary.closed:
+                    binary.close()
+
         if isinstance(binary, BinaryIO):
             mode = "wb"
         else:
             mode = "w"
 
-        def save_file_thread():
-            with open(save_path, mode) as destination_file:
-                read = binary.read
-                write = destination_file.write
-                chunk_size = 1024 * 64
-                while True:
-                    data = read(chunk_size)
-                    if not data:
-                        break
-                    write(data)
-            binary.close()
-            self._app.call_from_thread(
-                self._delivery_complete, delivery_key=delivery_key
-            )
-
-        thread = threading.Thread(target=save_file_thread)
+        thread = threading.Thread(target=save_file_thread, args=(binary, mode))
         thread.start()
 
-    def _delivery_complete(self, delivery_key: str) -> None:
-        """Called when a file has been delivered."""
-        self._app.post_message(events.DeliveryComplete(delivery_key))
+    def _delivery_complete(self, delivery_key: str, save_path: Path | None) -> None:
+        """Called when a file has been delivered successfully.
+
+        Delivers a DeliveryComplete event to the app.
+        """
+        self._app.call_from_thread(
+            self._app.post_message,
+            events.DeliveryComplete(key=delivery_key, path=save_path),
+        )
+
+    def _delivery_failed(self, delivery_key: str, exception: BaseException) -> None:
+        """Called when a file delivery fails.
+
+        Delivers a DeliveryFailed event to the app.
+        """
+        self._app.call_from_thread(
+            self._app.post_message,
+            events.DeliveryFailed(key=delivery_key, exception=exception),
+        )
