@@ -38,8 +38,9 @@ You can implement this method in your App class to add more commands.
 
 To declare a command, define a `get_system_commands` method on your App.
 Textual will call this method with the screen that was active when the user summoned the command palette. 
-You can add a command by yielding a [`SystemCommand`][textual.app.SystemCommand] object which contains `title` and `help` text to be shown in the command palette, and `callback` which is the function to run if the user selects the command.
 
+You can add a command by yielding a [`SystemCommand`][textual.app.SystemCommand] object which contains `title` and `help` text to be shown in the command palette, and `callback` which is a callable to run when the user selects the command.
+Additionally, there is a `discover` boolean which when `True` (the default) shows the command even if the search import is empty. When set to `False`, the command will show only when there is input.
 
 Here's how we would add a command to ring the terminal bell (a super useful piece of functionality):
 
