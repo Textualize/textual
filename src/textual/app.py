@@ -943,7 +943,7 @@ class App(Generic[ReturnType], DOMNode):
         ```
 
         !!! note
-            Requires that [`SystemCommandProvider`][textual.system_commands.SystemCommandProvider] is in `App.COMMANDS` class variable.
+            Requires that [`SystemCommandsProvider`][textual.system_commands.SystemCommandsProvider] is in `App.COMMANDS` class variable.
 
         Yields:
             tuples of (TITLE, HELP TEXT, CALLBACK)

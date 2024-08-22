@@ -47,6 +47,7 @@ Here's how we would add a command to ring the terminal bell (a super useful piec
     ```python title="command01.py" hl_lines="18-24 29"
     --8<-- "docs/examples/guide/command_palette/command01.py"
     ```
+    
     1. Adds the default commands from the base class.
     2. Adds a new command.
 
@@ -57,6 +58,7 @@ Here's how we would add a command to ring the terminal bell (a super useful piec
 
 This is a straightforward way of adding commands to your app.
 For more advanced integrations you can implement your own *command providers*.
+
 
 ## Command providers
 
