@@ -2647,7 +2647,7 @@ class Widget(DOMNode):
             level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
-            y=self.scroll_y - self.container_size.height,
+            y=self.scroll_y - self.scrollable_content_region.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2680,7 +2680,7 @@ class Widget(DOMNode):
             level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
-            y=self.scroll_y + self.container_size.height,
+            y=self.scroll_y + self.scrollable_content_region.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2715,7 +2715,7 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 0.3
         self.scroll_to(
-            x=self.scroll_x - self.container_size.width,
+            x=self.scroll_x - self.scrollable_content_region.width,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2750,7 +2750,7 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 0.3
         self.scroll_to(
-            x=self.scroll_x + self.container_size.width,
+            x=self.scroll_x + self.scrollable_content_region.width,
             animate=animate,
             speed=speed,
             duration=duration,
