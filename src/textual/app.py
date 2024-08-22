@@ -928,10 +928,11 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.active_bindings
 
-    def get_system_commands(
-        self,
-    ) -> SystemCommandsResult:
+    def get_system_commands(self, screen: Screen) -> SystemCommandsResult:
         """A generator of system commands used in the command palette.
+
+        Args:
+            screen: The screen where the command palette was invoked from.
 
         Implement this method in your App subclass if you want to add custom commands.
         Here is an example:
@@ -967,7 +968,7 @@ class App(Generic[ReturnType], DOMNode):
             self.action_quit,
         )
 
-        if self.screen.query("HelpPanel"):
+        if screen.query("HelpPanel"):
             yield (
                 "Hide keys and help panel",
                 "Hide the keys and widget help panel",

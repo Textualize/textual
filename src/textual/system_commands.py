@@ -28,7 +28,7 @@ class SystemCommandsProvider(Provider):
     @property
     def _system_commands(self) -> Iterable[tuple[str, str, IgnoreReturnCallbackType]]:
         """The system commands to reveal to the command palette."""
-        yield from self.app.get_system_commands()
+        yield from self.app.get_system_commands(self.screen)
 
     async def discover(self) -> Hits:
         """Handle a request for the discovery commands for this provider.

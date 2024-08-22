@@ -36,7 +36,8 @@ Textual apps have a number of *system* commands enabled by default.
 These are declared in the [`App.get_system_commands`][textual.app.App.get_system_commands] method.
 You can implement this method in your App class to add more commands.
 
-To declare a command `yield` a tuple of `(TITLE, HELP TEXT, CALLABLE)`.
+To declare a command, define a `get_system_commands` method, which will receive the screen that was active when the user summoned the command palette. 
+You can add a command by yielding a tuple of `(TITLE, HELP TEXT, CALLABLE)`.
 The `TITLE` and `HELP TEXT` values are shown in the command palette.
 If the user selects that command, then Textual will invoke `CALLABLE`.
 
@@ -47,7 +48,7 @@ Here's how we would add a command to ring the terminal bell (a super useful piec
     ```python title="command01.py" hl_lines="18-24 29"
     --8<-- "docs/examples/guide/command_palette/command01.py"
     ```
-    
+
     1. Adds the default commands from the base class.
     2. Adds a new command.
 
