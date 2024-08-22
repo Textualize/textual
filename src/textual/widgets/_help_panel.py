@@ -32,6 +32,7 @@ class HelpPanel(Widget):
             text-align: center;
             text-style: bold;
             dock: top;
+            display: none;
         }
         
         #widget-help {
