@@ -1451,7 +1451,7 @@ def test_split(snap_compare):
 
 
 def test_system_commands(snap_compare):
-    """Test help panel."""
+    """The system commands should appear in the command palette."""
 
     class SimpleApp(App):
         def compose(self) -> ComposeResult:
