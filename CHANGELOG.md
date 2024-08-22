@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
 - Changed default command palette binding to `ctrl+p` https://github.com/Textualize/textual/pull/4867
 - Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
-- Breaking change: Removed ClassicFooter (please use Footer widget)
+- Breaking change: Removed ClassicFooter (please use new Footer widget) https://github.com/Textualize/textual/pull/4921
 
 ### Fixed
 
