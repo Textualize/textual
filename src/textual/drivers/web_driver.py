@@ -269,10 +269,8 @@ class WebDriver(Driver):
                         log.info(f"Delivery complete for {delivery_key}")
                         file_like.close()
                         del deliveries[delivery_key]
-                        self._app.call_from_thread(
-                            self._delivery_complete, delivery_key=delivery_key
-                        )
-                except Exception:
+                        self._delivery_complete(delivery_key, save_path=None)
+                except Exception as error:
                     file_like.close()
                     del deliveries[delivery_key]
 
@@ -283,6 +281,8 @@ class WebDriver(Driver):
                     import traceback
 
                     log.error(str(traceback.format_exc()))
+
+                    self._delivery_failed(delivery_key, exception=error)
 
     def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal, TextIO
 
-from . import events
+from . import events, log
 from .events import MouseUp
 
 if TYPE_CHECKING:
@@ -245,6 +245,10 @@ class Driver(ABC):
             except Exception as error:
                 # If any exception occurs during the delivery, pass
                 # it on to the app via a DeliveryFailed event.
+                log.error(f"Failed to deliver file: {error}")
+                import traceback
+
+                log.error(str(traceback.format_exc()))
                 self._delivery_failed(delivery_key, exception=error)
             finally:
                 if not binary.closed:
