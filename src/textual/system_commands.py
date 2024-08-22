@@ -13,10 +13,12 @@ actions available via the [command palette][textual.command.CommandPalette].
 
 from __future__ import annotations
 
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 from .command import DiscoveryHit, Hit, Hits, Provider
-from .types import IgnoreReturnCallbackType
+
+if TYPE_CHECKING:
+    from .app import SystemCommandsResult
 
 
 class SystemCommandsProvider(Provider):
@@ -26,7 +28,7 @@ class SystemCommandsProvider(Provider):
     """
 
     @property
-    def _system_commands(self) -> Iterable[tuple[str, str, IgnoreReturnCallbackType]]:
+    def _system_commands(self) -> SystemCommandsResult:
         """The system commands to reveal to the command palette."""
         yield from self.app.get_system_commands(self.screen)
 
@@ -37,12 +39,13 @@ class SystemCommandsProvider(Provider):
             Commands that can be discovered.
         """
         commands = sorted(self._system_commands, key=lambda command: command[0])
-        for name, help_text, callback in commands:
-            yield DiscoveryHit(
-                name,
-                callback,
-                help=help_text,
-            )
+        for name, help_text, callback, discover in commands:
+            if discover:
+                yield DiscoveryHit(
+                    name,
+                    callback,
+                    help=help_text,
+                )
 
     async def search(self, query: str) -> Hits:
         """Handle a request to search for system commands that match the query.
@@ -59,7 +62,7 @@ class SystemCommandsProvider(Provider):
 
         # Loop over all applicable commands, find those that match and offer
         # them up to the command palette.
-        for name, help_text, callback in self._system_commands:
+        for name, help_text, callback, *_ in self._system_commands:
             if (match := matcher.match(name)) > 0:
                 yield Hit(
                     match,

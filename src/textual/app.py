@@ -38,6 +38,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    NamedTuple,
     Sequence,
     Type,
     TypeVar,
@@ -174,8 +175,14 @@ AutopilotCallbackType: TypeAlias = (
 CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
 """Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
 
-SystemCommandsResult: TypeAlias = "Iterable[tuple[str, str, CommandCallback]]"
-"""The return type of App.get_system_commands"""
+
+class SystemCommand(NamedTuple):
+    """Defines a system command (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
+
+    title: str
+    help: str
+    callback: CommandCallback
+    discover: bool = True
 
 
 def get_system_commands_provider() -> type[SystemCommandsProvider]:
@@ -928,7 +935,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.active_bindings
 
-    def get_system_commands(self, screen: Screen) -> SystemCommandsResult:
+    def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
         """A generator of system commands used in the command palette.
 
         Args:
@@ -938,44 +945,44 @@ class App(Generic[ReturnType], DOMNode):
         Here is an example:
 
         ```python
-        def get_system_commands(self):
+        def get_system_commands(self) -> Iterable[SystemCommand]:
             yield from super().get_system_commands()
-            yield ("Bell", "Ring the bell", self.bell)
+            yield SystemCommand("Bell", "Ring the bell", self.bell)
         ```
 
         !!! note
             Requires that [`SystemCommandsProvider`][textual.system_commands.SystemCommandsProvider] is in `App.COMMANDS` class variable.
 
         Yields:
-            tuples of (TITLE, HELP TEXT, CALLBACK)
+            [SystemCommand][textual.app.SystemCommand] instances.
         """
         if self.dark:
-            yield (
+            yield SystemCommand(
                 "Light mode",
                 "Switch to a light background",
                 self.action_toggle_dark,
             )
         else:
-            yield (
+            yield SystemCommand(
                 "Dark mode",
                 "Switch to a dark background",
                 self.action_toggle_dark,
             )
 
-        yield (
+        yield SystemCommand(
             "Quit the application",
             "Quit the application as soon as possible",
             self.action_quit,
         )
 
         if screen.query("HelpPanel"):
-            yield (
+            yield SystemCommand(
                 "Hide keys and help panel",
                 "Hide the keys and widget help panel",
                 self.action_hide_help_panel,
             )
         else:
-            yield (
+            yield SystemCommand(
                 "Show keys and help panel",
                 "Show help for the focused widget and a summary of available keys",
                 self.action_show_help_panel,
