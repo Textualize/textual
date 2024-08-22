@@ -1448,3 +1448,12 @@ def test_command_palette_key_change(snap_compare):
 def test_split(snap_compare):
     """Test split rule."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "split.py", terminal_size=(100, 30))
+
+
+def test_help_panel(snap_compare):
+    """Test help panel."""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "help_panel.py",
+        terminal_size=(100, 30),
+        press=["ctrl+p", *"keys", "enter"],
+    )
