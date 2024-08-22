@@ -2,9 +2,6 @@
 
 !!! tip "Added in version 0.63.0"
 
-    This is a second iteration of the Footer.
-    The version prior to 0.63.0 is available as [ClassicFooter](./classic_footer.md) to help with backwards compatibility, but will be removed in v1.0.
-
 A simple footer widget which is docked to the bottom of its parent container. Displays
 available keybindings for the currently focused widget.
 
