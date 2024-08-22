@@ -47,13 +47,17 @@ class SystemCommands(Provider):
             "Quit the application as soon as possible",
         )
 
-        if self.screen.query("KeyPanel"):
-            yield ("Hide keys", self.app.action_hide_keys, "Hide the keys panel")
+        if self.screen.query("HelpPanel"):
+            yield (
+                "Hide keys and help panel",
+                self.app.action_hide_help_panel,
+                "Hide the keys and widget help panel",
+            )
         else:
             yield (
-                "Show keys",
-                self.app.action_show_keys,
-                "Show a summary of available keys",
+                "Show keys and help panel",
+                self.app.action_show_help_panel,
+                "Show help for the focused widget and a summary of available keys",
             )
 
     async def discover(self) -> Hits:

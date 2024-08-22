@@ -20,6 +20,7 @@ if typing.TYPE_CHECKING:
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
     from ._header import Header
+    from ._help_panel import HelpPanel
     from ._input import Input
     from ._key_panel import KeyPanel
     from ._label import Label
@@ -59,6 +60,7 @@ __all__ = [
     "DirectoryTree",
     "Footer",
     "Header",
+    "HelpPanel",
     "Input",
     "KeyPanel",
     "Label",

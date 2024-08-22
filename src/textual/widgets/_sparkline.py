@@ -32,7 +32,7 @@ class Sparkline(Widget):
     | Class | Description |
     | :- | :- |
     | `sparkline--max-color` | The color used for the larger values in the data. |
-    | `sparkline--min-color` | The colour used for the smaller values in the data. |
+    | `sparkline--min-color` | The color used for the smaller values in the data. |
     """
 
     DEFAULT_CSS = """
