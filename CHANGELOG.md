@@ -5,11 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-
-- Disallowed `Screen` instances in `App.SCREENS` and `App.MODES`
-- Fixed `App.MODES` being the same for all instances -- per-instance modes now exist internally
-
+## [0.77.0] - 2024-08-22
 
 ### Added
 
@@ -24,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DOMNode.BINDING_GROUP` https://github.com/Textualize/textual/pull/4906
 - Added `DOMNode.HELP` classvar which contains Markdown help to be shown in the help panel https://github.com/Textualize/textual/pull/4915
 - Added `App.get_system_commands` https://github.com/Textualize/textual/pull/4920
+- Added "Save Screenshot" system command.
 
 ### Changed
 
@@ -33,12 +30,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
 - Renamed `SystemCommands` to `SystemCommandsProvider` https://github.com/Textualize/textual/pull/4920
 - Breaking change: Removed ClassicFooter (please use new Footer widget) https://github.com/Textualize/textual/pull/4921
+- Disallowed `Screen` instances in `App.SCREENS` and `App.MODES`
 
 ### Fixed
 
 - Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
 - Fix `Input.cursor_blink` having no effect on the blink cycle after mounting https://github.com/Textualize/textual/pull/4869
 - Fixed scrolling by page not taking scrollbar in to account https://github.com/Textualize/textual/pull/4916
+- Fixed `App.MODES` being the same for all instances -- per-instance modes now exist internally
 
 ## [0.76.0]
 
@@ -2310,6 +2309,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.77.0]: https://github.com/Textualize/textual/compare/v0.76.0...v0.77.0
 [0.76.0]: https://github.com/Textualize/textual/compare/v0.75.1...v0.76.0
 [0.75.1]: https://github.com/Textualize/textual/compare/v0.75.0...v0.75.1
 [0.75.0]: https://github.com/Textualize/textual/compare/v0.74.0...v0.75.0
