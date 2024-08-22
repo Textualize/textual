@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Disallowed `Screen` instances in `App.SCREENS` and `App.MODES`
+- Fixed `App.MODES` being the same for all instances -- per-instance modes now exist internally
+
 
 ### Added
 

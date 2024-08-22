@@ -117,7 +117,7 @@ async def test_remove_mode(ModesApp: Type[App]):
         await pilot.pause()
         assert str(app.screen.query_one(Label).renderable) == "two"
         app.remove_mode("one")
-        assert "one" not in app.MODES
+        assert "one" not in app._modes
 
 
 async def test_remove_active_mode(ModesApp: Type[App]):
@@ -130,7 +130,7 @@ async def test_remove_active_mode(ModesApp: Type[App]):
 async def test_add_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
-        app.add_mode("three", BaseScreen("three"))
+        app.add_mode("three", lambda: BaseScreen("three"))
         await app.switch_mode("three")
         await pilot.pause()
         assert str(app.screen.query_one(Label).renderable) == "three"
@@ -140,7 +140,7 @@ async def test_add_mode_duplicated(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
         with pytest.raises(InvalidModeError):
-            app.add_mode("one", BaseScreen("one"))
+            app.add_mode("one", lambda: BaseScreen("one"))
 
 
 async def test_screen_stack_preserved(ModesApp: Type[App]):

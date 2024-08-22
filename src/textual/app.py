@@ -295,7 +295,7 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    MODES: ClassVar[dict[str, str | Screen | Callable[[], Screen]]] = {}
+    MODES: ClassVar[dict[str, str | Callable[[], Screen]]] = {}
     """Modes associated with the app and their base screens.
 
     The base screen is the screen at the bottom of the mode stack. You can think of
@@ -324,7 +324,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
+    SCREENS: ClassVar[dict[str, Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -560,6 +560,8 @@ class App(Generic[ReturnType], DOMNode):
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
+        self._modes: dict[str, str | Callable[[], Screen]] = self.MODES.copy()
+        """Contains the working-copy of the `MODES` for each instance."""
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
@@ -663,6 +665,24 @@ class App(Generic[ReturnType], DOMNode):
                         tooltip="Open command palette",
                     )
                 )
+
+    def __init_subclass__(cls, *args, **kwargs) -> None:
+        for variable_name, screen_collection in (
+            ("SCREENS", cls.SCREENS),
+            ("MODES", cls.MODES),
+        ):
+            for screen_name, screen_object in screen_collection.items():
+                if not (isinstance(screen_object, str) or callable(screen_object)):
+                    if isinstance(screen_object, Screen):
+                        raise ValueError(
+                            f"{variable_name} should contain a Screen type or callable, not an instance"
+                            f" (got instance of {type(screen_object).__name__} for {screen_name!r})"
+                        )
+                    raise TypeError(
+                        f"expected a callable or string, got {screen_object!r}"
+                    )
+
+        return super().__init_subclass__(*args, **kwargs)
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -1901,7 +1921,12 @@ class App(Generic[ReturnType], DOMNode):
         if stack:
             await_mount = AwaitMount(stack[0], [])
         else:
-            _screen = self.MODES[mode]
+            _screen = self._modes[mode]
+            if isinstance(_screen, Screen):
+                raise TypeError(
+                    "MODES cannot contain instances, use a type instead "
+                    f"(got instance of {type(_screen).__name__} for {mode!r})"
+                )
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
@@ -1923,7 +1948,7 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
         """
-        if mode not in self.MODES:
+        if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
         self.screen.post_message(events.ScreenSuspend())
@@ -1943,9 +1968,7 @@ class App(Generic[ReturnType], DOMNode):
 
         return await_mount
 
-    def add_mode(
-        self, mode: str, base_screen: str | Screen | Callable[[], Screen]
-    ) -> None:
+    def add_mode(self, mode: str, base_screen: str | Callable[[], Screen]) -> None:
         """Adds a mode and its corresponding base screen to the app.
 
         Args:
@@ -1957,10 +1980,15 @@ class App(Generic[ReturnType], DOMNode):
         """
         if mode == "_default":
             raise InvalidModeError("Cannot use '_default' as a custom mode.")
-        elif mode in self.MODES:
+        elif mode in self._modes:
             raise InvalidModeError(f"Duplicated mode name {mode!r}.")
 
-        self.MODES[mode] = base_screen
+        if isinstance(base_screen, Screen):
+            raise TypeError(
+                "add_mode() must be called with a Screen type, not an instance"
+                f" (got instance of {type(base_screen).__name__})"
+            )
+        self._modes[mode] = base_screen
 
     def remove_mode(self, mode: str) -> AwaitComplete:
         """Removes a mode from the app.
@@ -1976,10 +2004,10 @@ class App(Generic[ReturnType], DOMNode):
         """
         if mode == self._current_mode:
             raise ActiveModeError(f"Can't remove active mode {mode!r}")
-        elif mode not in self.MODES:
+        elif mode not in self._modes:
             raise UnknownModeError(f"Unknown mode {mode!r}")
         else:
-            del self.MODES[mode]
+            del self._modes[mode]
 
         if mode not in self._screen_stacks:
             return AwaitComplete.nothing()
@@ -2859,11 +2887,6 @@ class App(Generic[ReturnType], DOMNode):
                 if stack_screen._running:
                     await self._prune(stack_screen)
             stack.clear()
-
-        # Close pre-defined screens.
-        for screen in self.SCREENS.values():
-            if isinstance(screen, Screen) and screen._running:
-                await self._prune(screen)
 
         # Close any remaining nodes
         # Should be empty by now

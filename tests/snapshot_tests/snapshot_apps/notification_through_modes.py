@@ -11,7 +11,7 @@ class Mode(Screen):
 class NotifyThroughModesApp(App[None]):
 
     MODES = {
-        "test": Mode()
+        "test": Mode
     }
 
     def compose(self) -> ComposeResult:
