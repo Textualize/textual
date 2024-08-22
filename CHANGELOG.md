@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DOMNode.BINDING_GROUP` https://github.com/Textualize/textual/pull/4906
 - Added `DOMNode.HELP` classvar which contains Markdown help to be shown in the help panel https://github.com/Textualize/textual/pull/4915
 - Added `App.get_system_commands` https://github.com/Textualize/textual/pull/4920
-- Added "Save Screenshot" system command.
+- Added "Save Screenshot" system command https://github.com/Textualize/textual/pull/4922
 
 ### Changed
 
