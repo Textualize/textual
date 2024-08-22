@@ -949,8 +949,8 @@ class App(Generic[ReturnType], DOMNode):
         Here is an example:
 
         ```python
-        def get_system_commands(self) -> Iterable[SystemCommand]:
-            yield from super().get_system_commands()
+        def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+            yield from super().get_system_commands(screen)
             yield SystemCommand("Bell", "Ring the bell", self.bell)
         ```
 
