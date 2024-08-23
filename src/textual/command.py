@@ -978,7 +978,7 @@ class CommandPalette(SystemModalScreen):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                help_text = Text(hit.help)
+                help_text = Text.from_markup(hit.help)
                 help_text.stylize(help_style)
                 prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))

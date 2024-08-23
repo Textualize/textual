@@ -103,7 +103,7 @@ class Matcher:
             A [rich.text.Text][`Text`] object with highlighted matches.
         """
         match = self._query_regex.search(candidate)
-        text = Text(candidate)
+        text = Text.from_markup(candidate)
         if match is None:
             return text
         assert match.lastindex is not None

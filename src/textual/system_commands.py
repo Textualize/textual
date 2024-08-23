@@ -13,12 +13,7 @@ actions available via the [command palette][textual.command.CommandPalette].
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from .command import DiscoveryHit, Hit, Hits, Provider
-
-if TYPE_CHECKING:
-    from .app import SystemCommandsResult
 
 
 class SystemCommandsProvider(Provider):
@@ -27,18 +22,15 @@ class SystemCommandsProvider(Provider):
     Used by default in [`App.COMMANDS`][textual.app.App.COMMANDS].
     """
 
-    @property
-    def _system_commands(self) -> SystemCommandsResult:
-        """The system commands to reveal to the command palette."""
-        yield from self.app.get_system_commands(self.screen)
-
     async def discover(self) -> Hits:
         """Handle a request for the discovery commands for this provider.
 
         Yields:
             Commands that can be discovered.
         """
-        commands = sorted(self._system_commands, key=lambda command: command[0])
+        commands = sorted(
+            self.app.get_system_commands(self.screen), key=lambda command: command[0]
+        )
         for name, help_text, callback, discover in commands:
             if discover:
                 yield DiscoveryHit(
@@ -62,7 +54,7 @@ class SystemCommandsProvider(Provider):
 
         # Loop over all applicable commands, find those that match and offer
         # them up to the command palette.
-        for name, help_text, callback, *_ in self._system_commands:
+        for name, help_text, callback, *_ in self.app.get_system_commands(self.screen):
             if (match := matcher.match(name)) > 0:
                 yield Hit(
                     match,
