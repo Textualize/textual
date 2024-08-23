@@ -658,7 +658,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Allow apps to treat events and messages separately
             if isinstance(message, Event):
                 await self.on_event(message)
-            elif not isinstance(message, Event) and "debug" in self.app.features:
+            elif "debug" in self.app.features:
                 start = perf_counter()
                 await self._on_message(message)
                 if perf_counter() - start > SLOW_THRESHOLD_MS / 1000:
