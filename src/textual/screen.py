@@ -653,13 +653,6 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._move_focus(-1, selector)
 
-    def action_toggle_maximize(self) -> None:
-        if self.maximized is None:
-            if self.focused is not None:
-                self.maximize(self.focused)
-        else:
-            self.minimize()
-
     def maximize(self, widget: Widget) -> None:
         """Maximize a widget, so it fills the screen.
 
