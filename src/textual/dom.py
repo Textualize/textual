@@ -157,6 +157,9 @@ class DOMNode(MessagePump):
     # True to inherit bindings from base class
     _inherit_bindings: ClassVar[bool] = True
 
+    # True if the widget may be maximized
+    _allow_maximize: ClassVar[bool] = False
+
     # List of names of base classes that inherit CSS
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
@@ -495,6 +498,7 @@ class DOMNode(MessagePump):
         inherit_css: bool = True,
         inherit_bindings: bool = True,
         inherit_component_classes: bool = True,
+        allow_maximize: bool = False,
     ) -> None:
         super().__init_subclass__()
 
@@ -511,6 +515,7 @@ class DOMNode(MessagePump):
         cls._inherit_css = inherit_css
         cls._inherit_bindings = inherit_bindings
         cls._inherit_component_classes = inherit_component_classes
+        cls._allow_maximize = allow_maximize
         css_type_names: set[str] = set()
         bases = cls._css_bases(cls)
         cls._css_type_name = bases[0].__name__

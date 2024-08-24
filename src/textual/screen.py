@@ -30,9 +30,11 @@ from rich.console import RenderableType
 from rich.style import Style
 
 from . import constants, errors, events, messages
+from ._arrange import arrange
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
+from ._layout import DockArrangeResult
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .await_complete import AwaitComplete
@@ -185,6 +187,9 @@ class Screen(Generic[ScreenResultType], Widget):
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
 
+    maximized: Reactive[Widget | None] = Reactive(None, layout=True)
+    """The currently maximized widget, or `None` for no maximized widget."""
+
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
@@ -276,7 +281,7 @@ class Screen(Generic[ScreenResultType], Widget):
             extras.append("_tooltips")
         return (*super().layers, *extras)
 
-    def _watch_focused(self):
+    def _watch_focused(self, focused: Widget):
         self.refresh_bindings()
 
     def _watch_stack_updates(self):
@@ -286,6 +291,9 @@ class Screen(Generic[ScreenResultType], Widget):
         """Call to request a refresh of bindings."""
         self._bindings_updated = True
         self.check_idle()
+
+    def watch_maximized(self, maximized: Widget | None) -> None:
+        self.set_class(maximized is not None, "-maximized")
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
@@ -357,6 +365,29 @@ class Screen(Generic[ScreenResultType], Widget):
                     )
 
         return bindings_map
+
+    def _arrange(self, size: Size) -> DockArrangeResult:
+        """Arrange children.
+
+        Args:
+            size: Size of container.
+
+        Returns:
+            Widget locations.
+        """
+        cache_key = (size, self._nodes._updates, self.maximized)
+        cached_result = self._arrangement_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
+
+        arrangement = self._arrangement_cache[cache_key] = arrange(
+            self,
+            [self.maximized] if self.maximized is not None else self._nodes,
+            size,
+            self.screen.size,
+        )
+
+        return arrangement
 
     @property
     def is_active(self) -> bool:
@@ -542,6 +573,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
+
         # TODO: This shouldn't be required
         self._compositor._full_map_invalidated = True
         if not isinstance(selector, str):
@@ -620,6 +652,44 @@ class Screen(Generic[ScreenResultType], Widget):
                 the CSS selectors given in the argument.
         """
         return self._move_focus(-1, selector)
+
+    def action_toggle_maximize(self) -> None:
+        if self.maximized is None:
+            if self.focused is not None:
+                self.maximize(self.focused)
+        else:
+            self.minimize()
+
+    def maximize(self, widget: Widget) -> None:
+        """Maximize a widget, so it fills the screen.
+
+        Args:
+            widget: Widget to maximize.
+        """
+        for maximize_widget in widget.ancestors:
+            if not isinstance(maximize_widget, Widget):
+                break
+            if maximize_widget._allow_maximize:
+                widget = maximize_widget
+                break
+        self.maximized = widget
+
+    def minimize(self) -> None:
+        """Restore any maximized widget to normal state."""
+        current_maximized = self.maximized
+        self.maximized = None
+        if current_maximized is not None and self.focused is not None:
+            self.refresh(layout=True)
+            self.call_after_refresh(self.focused.scroll_visible, animate=False)
+
+    def action_maximize(self) -> None:
+        """Action to maximize the currently focused widget."""
+        if self.focused is not None:
+            self.maximize(self.focused)
+
+    def action_minimize(self) -> None:
+        """Action to minimize the currently focused widget."""
+        self.minimize()
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None

@@ -306,6 +306,13 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+        Screen.-maximized { 
+            padding: 1 2;           
+            layout: vertical !important;
+            hatch: right $panel;
+            overflow-y: auto !important;
+            align: center middle;
+        }
     }
     *:disabled:can-focus {
         opacity: 0.7;
@@ -990,6 +997,17 @@ class App(Generic[ReturnType], DOMNode):
                 "Show keys and help panel",
                 "Show help for the focused widget and a summary of available keys",
                 self.action_show_help_panel,
+            )
+
+        if screen.maximized is not None:
+            yield SystemCommand(
+                "Minimize",
+                "Minimize the widget and restore to normal size",
+                screen.action_minimize,
+            )
+        elif screen.focused is not None:
+            yield SystemCommand(
+                "Maximize", "Maximize the focused widget", screen.action_maximize
             )
 
         # Don't save screenshot for web drivers until we have the deliver_file in place
@@ -3441,6 +3459,11 @@ class App(Generic[ReturnType], DOMNode):
         message.stop()
 
     async def _on_key(self, event: events.Key) -> None:
+        # Special case for maximized widgets
+        # If something is maximized, then escape should minimize
+        if self.screen.maximized is not None and event.key == "escape":
+            self.screen.minimize()
+            return
         if not (await self._check_bindings(event.key)):
             await dispatch_key(self, event)
 

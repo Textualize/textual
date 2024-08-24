@@ -558,6 +558,14 @@ class Widget(DOMNode):
                 return True
         return False
 
+    @property
+    def is_maximized(self) -> bool:
+        """Is this widget maximized?"""
+        try:
+            return self.screen.maximized is self
+        except NoScreen:
+            return False
+
     def anchor(self, *, animate: bool = False) -> None:
         """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
         but also keeps it in view if the widget's size changes, or the size of its container changes.
@@ -3041,16 +3049,18 @@ class Widget(DOMNode):
         can_focus_children: bool | None = None,
         inherit_css: bool = True,
         inherit_bindings: bool = True,
+        allow_maximize: bool = False,
     ) -> None:
         name = cls.__name__
         if not name[0].isupper() and not name.startswith("_"):
             raise BadWidgetName(
-                f"Widget subclass {name!r} should be capitalised or start with '_'."
+                f"Widget subclass {name!r} should be capitalized or start with '_'."
             )
 
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
+            allow_maximize=allow_maximize,
         )
         base = cls.__mro__[0]
         if issubclass(base, Widget):

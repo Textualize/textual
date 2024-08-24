@@ -189,7 +189,7 @@ class DarkSwitch(Horizontal):
         self.app.dark = event.value
 
 
-class Welcome(Container):
+class Welcome(Container, allow_maximize=True):
     def compose(self) -> ComposeResult:
         yield Static(Markdown(WELCOME_MD))
         yield Button("Start", variant="success")
@@ -255,7 +255,7 @@ class LocationLink(Static):
         app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
 
 
-class LoginForm(Container):
+class LoginForm(Container, allow_maximize=True):
     def compose(self) -> ComposeResult:
         yield Static("Username", classes="label")
         yield Input(placeholder="Username")
