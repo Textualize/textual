@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unreleased
+
+### Added
+
+- Added Maximize and Minimize system commands.
+- Added `Screen.maximize`, `Screen.minimize`, `Screen.action_maximize`, `Screen.action_minimize`.
+
 ## [0.77.0] - 2024-08-22
 
 ### Added
