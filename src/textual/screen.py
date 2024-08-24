@@ -580,6 +580,11 @@ class Screen(Generic[ScreenResultType], Widget):
             selector = selector.__name__
         selector_set = parse_selectors(selector)
         focus_chain = self.focus_chain
+
+        if self.maximized is not None:
+            focusable = set(self.maximized.walk_children(with_self=True))
+            focus_chain = [widget for widget in focus_chain if widget in focusable]
+
         filtered_focus_chain = (
             node for node in focus_chain if match(selector_set, node)
         )
