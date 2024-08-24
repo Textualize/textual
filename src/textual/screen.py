@@ -375,6 +375,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             Widget locations.
         """
+        # This is customized over the base class to allow for a widget to be maximized
         cache_key = (size, self._nodes._updates, self.maximized)
         cached_result = self._arrangement_cache.get(cache_key)
         if cached_result is not None:
@@ -382,7 +383,11 @@ class Screen(Generic[ScreenResultType], Widget):
 
         arrangement = self._arrangement_cache[cache_key] = arrange(
             self,
-            [self.maximized] if self.maximized is not None else self._nodes,
+            (
+                [self.maximized, *self.query_children(".-textual-system")]
+                if self.maximized is not None
+                else self._nodes
+            ),
             size,
             self.screen.size,
         )
