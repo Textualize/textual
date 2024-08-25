@@ -594,6 +594,7 @@ class Screen(Generic[ScreenResultType], Widget):
         selector_set = parse_selectors(selector)
         focus_chain = self.focus_chain
 
+        # If a widget is maximized we want to limit the focus chain to the visible widgets
         if self.maximized is not None:
             focusable = set(self.maximized.walk_children(with_self=True))
             focus_chain = [widget for widget in focus_chain if widget in focusable]
@@ -679,6 +680,7 @@ class Screen(Generic[ScreenResultType], Widget):
             container: Maximize container if possible.
         """
         if container:
+            # If we want to maximize the container, look up the dom to find a suitable widget
             for maximize_widget in widget.ancestors:
                 if not isinstance(maximize_widget, Widget):
                     break
@@ -690,11 +692,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def minimize(self) -> None:
         """Restore any maximized widget to normal state."""
-        current_maximized = self.maximized
         self.maximized = None
-        if current_maximized is not None and self.focused is not None:
-            self.refresh(layout=True)
-            self.call_after_refresh(self.focused.scroll_visible, animate=False)
 
     def action_maximize(self) -> None:
         """Action to maximize the currently focused widget."""
