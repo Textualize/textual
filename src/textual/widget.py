@@ -304,6 +304,15 @@ class Widget(DOMNode):
     BORDER_SUBTITLE: ClassVar[str] = ""
     """Initial value for border_subtitle attribute."""
 
+    ALLOW_MAXIMIZE: ClassVar[bool | None] = None
+    """Defines default logic to allow the widget to be maximized.
+    
+    - `None` Use default behavior (Focusable widgets may be maximized)
+    - `False` Do not allow widget to be maximized.
+    - `True` Allow widget to be maximized.
+    
+    """
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -513,6 +522,15 @@ class Widget(DOMNode):
         return self.is_scrollable and (
             self.allow_horizontal_scroll or self.allow_vertical_scroll
         )
+
+    @property
+    def allow_maximize(self) -> bool:
+        """Check if the widget may be maximized.
+
+        Returns:
+            `True` if the widget may be maximized, or `False` if it should not be maximized.
+        """
+        return self.can_focus if self.ALLOW_MAXIMIZE is None else self.ALLOW_MAXIMIZE
 
     @property
     def offset(self) -> Offset:
@@ -3049,7 +3067,6 @@ class Widget(DOMNode):
         can_focus_children: bool | None = None,
         inherit_css: bool = True,
         inherit_bindings: bool = True,
-        allow_maximize: bool = False,
     ) -> None:
         name = cls.__name__
         if not name[0].isupper() and not name.startswith("_"):
@@ -3060,7 +3077,6 @@ class Widget(DOMNode):
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
-            allow_maximize=allow_maximize,
         )
         base = cls.__mro__[0]
         if issubclass(base, Widget):

@@ -186,6 +186,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
+    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
 
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
@@ -292,8 +294,14 @@ class Screen(Generic[ScreenResultType], Widget):
         self._bindings_updated = True
         self.check_idle()
 
-    def watch_maximized(self, maximized: Widget | None) -> None:
-        self.set_class(maximized is not None, "-maximized")
+    def watch_maximized(
+        self, previously_maximized: Widget | None, maximized: Widget | None
+    ) -> None:
+        self.set_class(maximized is not None, "-maximized-view")
+        if previously_maximized is not None:
+            previously_maximized.remove_class("-maximized")
+        if maximized is not None:
+            maximized.add_class("-maximized")
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
@@ -384,7 +392,7 @@ class Screen(Generic[ScreenResultType], Widget):
         arrangement = self._arrangement_cache[cache_key] = arrange(
             self,
             (
-                [self.maximized, *self.query_children(".-textual-system")]
+                [self.maximized, *self.query_children(self.ALLOW_IN_MAXIMIZED_VIEW)]
                 if self.maximized is not None
                 else self._nodes
             ),
@@ -663,19 +671,22 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._move_focus(-1, selector)
 
-    def maximize(self, widget: Widget) -> None:
+    def maximize(self, widget: Widget, container: bool = True) -> None:
         """Maximize a widget, so it fills the screen.
 
         Args:
             widget: Widget to maximize.
+            container: Maximize container if possible.
         """
-        for maximize_widget in widget.ancestors:
-            if not isinstance(maximize_widget, Widget):
-                break
-            if maximize_widget._allow_maximize:
-                widget = maximize_widget
-                break
-        self.maximized = widget
+        if container:
+            for maximize_widget in widget.ancestors:
+                if not isinstance(maximize_widget, Widget):
+                    break
+                if maximize_widget.allow_maximize:
+                    self.maximized = maximize_widget
+                    return
+        if widget.allow_maximize:
+            self.maximized = widget
 
     def minimize(self) -> None:
         """Restore any maximized widget to normal state."""

@@ -306,12 +306,14 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
-        Screen.-maximized { 
-            padding: 1 2;           
+        Screen.-maximized-view {                    
             layout: vertical !important;
             hatch: right $panel;
             overflow-y: auto !important;
             align: center middle;
+            .-maximized {
+                dock: initial !important;
+            }
         }
     }
     *:disabled:can-focus {

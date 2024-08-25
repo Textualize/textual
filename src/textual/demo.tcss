@@ -8,7 +8,7 @@ Screen {
     &:inline {
         height: 50vh;
     }
-    &.-maximized {
+    &.-maximized-view {
         overflow: auto; 
     }
 }

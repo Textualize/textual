@@ -162,7 +162,7 @@ JSON_EXAMPLE = """{
             }
         }
     }
-}
+}   
 """
 
 
@@ -189,7 +189,9 @@ class DarkSwitch(Horizontal):
         self.app.dark = event.value
 
 
-class Welcome(Container, allow_maximize=True):
+class Welcome(Container):
+    ALLOW_MAXIMIZE = True
+
     def compose(self) -> ComposeResult:
         yield Static(Markdown(WELCOME_MD))
         yield Button("Start", variant="success")
@@ -255,7 +257,9 @@ class LocationLink(Static):
         app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
 
 
-class LoginForm(Container, allow_maximize=True):
+class LoginForm(Container):
+    ALLOW_MAXIMIZE = True
+
     def compose(self) -> ComposeResult:
         yield Static("Username", classes="label")
         yield Input(placeholder="Username")
