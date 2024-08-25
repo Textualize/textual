@@ -256,7 +256,7 @@ class RowRenderables(NamedTuple):
     cells: list[RenderableType]
 
 
-class DataTable(ScrollView, Generic[CellType]):
+class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """A tabular widget that contains data."""
 
     BINDINGS: ClassVar[list[BindingType]] = [

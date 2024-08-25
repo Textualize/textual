@@ -283,7 +283,7 @@ class Screen(Generic[ScreenResultType], Widget):
             extras.append("_tooltips")
         return (*super().layers, *extras)
 
-    def _watch_focused(self, focused: Widget):
+    def _watch_focused(self):
         self.refresh_bindings()
 
     def _watch_stack_updates(self):
@@ -294,9 +294,11 @@ class Screen(Generic[ScreenResultType], Widget):
         self._bindings_updated = True
         self.check_idle()
 
-    def watch_maximized(
+    def _watch_maximized(
         self, previously_maximized: Widget | None, maximized: Widget | None
     ) -> None:
+        # The screen gets a `-maximized-view` class if there is a maximized widget
+        # The widget gets a `-maximized` class if it is maximized
         self.set_class(maximized is not None, "-maximized-view")
         if previously_maximized is not None:
             previously_maximized.remove_class("-maximized")

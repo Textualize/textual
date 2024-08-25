@@ -4,8 +4,9 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.app import App, ComposeResult
+from textual.containers import Vertical
 from textual.pilot import Pilot
-from textual.widgets import Button, Input, RichLog, TextArea
+from textual.widgets import Button, Input, RichLog, TextArea, Footer
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -1488,3 +1489,37 @@ def test_scroll_page_down(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "scroll_page.py", press=["pagedown"], terminal_size=(80, 25)
     )
+
+
+def test_maximize(snap_compare):
+    class MaximizeApp(App):
+        BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
+
+        def compose(self) -> ComposeResult:
+            yield Button("Hello")
+            yield Button("World")
+            yield Footer()
+
+    assert snap_compare(MaximizeApp(), press=["m"])
+
+
+def test_maximize_container(snap_compare):
+    class FormContainer(Vertical):
+        ALLOW_MAXIMIZE = True
+        DEFAULT_CSS = """
+        FormContainer {
+            width: 50%;
+            border: blue;            
+        }
+        """
+
+    class MaximizeApp(App):
+        BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
+
+        def compose(self) -> ComposeResult:
+            with FormContainer():
+                yield Button("Hello")
+                yield Button("World")
+            yield Footer()
+
+    assert snap_compare(MaximizeApp(), press=["m"])
