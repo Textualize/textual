@@ -695,6 +695,10 @@ class Screen(Generic[ScreenResultType], Widget):
     def minimize(self) -> None:
         """Restore any maximized widget to normal state."""
         self.maximized = None
+        if self.focused is not None:
+            self.call_after_refresh(
+                self.scroll_to_widget, self.focused, animate=False, center=True
+            )
 
     def action_maximize(self) -> None:
         """Action to maximize the currently focused widget."""
