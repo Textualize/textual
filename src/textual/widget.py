@@ -308,8 +308,8 @@ class Widget(DOMNode):
     """Defines default logic to allow the widget to be maximized.
     
     - `None` Use default behavior (Focusable widgets may be maximized)
-    - `False` Do not allow widget to be maximized.
-    - `True` Allow widget to be maximized.
+    - `False` Do not allow widget to be maximized
+    - `True` Allow widget to be maximized
     
     """
 

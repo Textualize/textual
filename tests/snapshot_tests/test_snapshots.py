@@ -1492,6 +1492,8 @@ def test_scroll_page_down(snap_compare):
 
 
 def test_maximize(snap_compare):
+    """Check that maximize isolates a single widget."""
+
     class MaximizeApp(App):
         BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
 
@@ -1504,6 +1506,8 @@ def test_maximize(snap_compare):
 
 
 def test_maximize_container(snap_compare):
+    """Check maximizing a widget in a maximizeable container, maximizes the container."""
+
     class FormContainer(Vertical):
         ALLOW_MAXIMIZE = True
         DEFAULT_CSS = """
