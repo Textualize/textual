@@ -1007,7 +1007,7 @@ class App(Generic[ReturnType], DOMNode):
                 "Minimize the widget and restore to normal size",
                 screen.action_minimize,
             )
-        elif screen.focused is not None:
+        elif screen.focused is not None and screen.focused.allow_maximize:
             yield SystemCommand(
                 "Maximize", "Maximize the focused widget", screen.action_maximize
             )
