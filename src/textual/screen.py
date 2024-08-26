@@ -707,7 +707,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self.maximize(self.focused)
 
     def action_minimize(self) -> None:
-        """Action to minimize the currently focused widget."""
+        """Action to minimize the currently maximized widget."""
         self.minimize()
 
     def _reset_focus(
