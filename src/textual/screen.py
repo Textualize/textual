@@ -679,7 +679,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Args:
             widget: Widget to maximize.
-            container: If one of the widgets ancestors is a maximizeable widget, also maximize that.
+            container: If one of the widgets ancestors is a maximizeable widget, maximize that instead.
         """
         if widget.allow_maximize:
             if container:
