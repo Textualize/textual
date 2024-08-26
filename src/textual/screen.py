@@ -681,15 +681,16 @@ class Screen(Generic[ScreenResultType], Widget):
             widget: Widget to maximize.
             container: Maximize container if possible.
         """
-        if container:
-            # If we want to maximize the container, look up the dom to find a suitable widget
-            for maximize_widget in widget.ancestors:
-                if not isinstance(maximize_widget, Widget):
-                    break
-                if maximize_widget.allow_maximize:
-                    self.maximized = maximize_widget
-                    return
         if widget.allow_maximize:
+            if container:
+                # If we want to maximize the container, look up the dom to find a suitable widget
+                for maximize_widget in widget.ancestors:
+                    if not isinstance(maximize_widget, Widget):
+                        break
+                    if maximize_widget.allow_maximize:
+                        self.maximized = maximize_widget
+                        return
+
             self.maximized = widget
 
     def minimize(self) -> None:
