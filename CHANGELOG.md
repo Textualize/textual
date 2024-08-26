@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unreleased
+
+### Added
+
+- Added Maximize and Minimize system commands. https://github.com/Textualize/textual/pull/4931
+- Added `Screen.maximize`, `Screen.minimize`, `Screen.action_maximize`, `Screen.action_minimize`, `Widget.is_maximized`, `Widget.allow_maximize`. https://github.com/Textualize/textual/pull/4931
+- Added `Widget.ALLOW_MAXIMIZE`, `Screen.ALLOW_IN_MAXIMIZED_VIEW` classvars https://github.com/Textualize/textual/pull/4931
+
 ## [0.77.0] - 2024-08-22
 
 ### Added

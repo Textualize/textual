@@ -304,6 +304,15 @@ class Widget(DOMNode):
     BORDER_SUBTITLE: ClassVar[str] = ""
     """Initial value for border_subtitle attribute."""
 
+    ALLOW_MAXIMIZE: ClassVar[bool | None] = None
+    """Defines default logic to allow the widget to be maximized.
+    
+    - `None` Use default behavior (Focusable widgets may be maximized)
+    - `False` Do not allow widget to be maximized
+    - `True` Allow widget to be maximized
+    
+    """
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -515,6 +524,15 @@ class Widget(DOMNode):
         )
 
     @property
+    def allow_maximize(self) -> bool:
+        """Check if the widget may be maximized.
+
+        Returns:
+            `True` if the widget may be maximized, or `False` if it should not be maximized.
+        """
+        return self.can_focus if self.ALLOW_MAXIMIZE is None else self.ALLOW_MAXIMIZE
+
+    @property
     def offset(self) -> Offset:
         """Widget offset from origin.
 
@@ -557,6 +575,14 @@ class Widget(DOMNode):
             if widget is self:
                 return True
         return False
+
+    @property
+    def is_maximized(self) -> bool:
+        """Is this widget maximized?"""
+        try:
+            return self.screen.maximized is self
+        except NoScreen:
+            return False
 
     def anchor(self, *, animate: bool = False) -> None:
         """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
@@ -3045,7 +3071,7 @@ class Widget(DOMNode):
         name = cls.__name__
         if not name[0].isupper() and not name.startswith("_"):
             raise BadWidgetName(
-                f"Widget subclass {name!r} should be capitalised or start with '_'."
+                f"Widget subclass {name!r} should be capitalized or start with '_'."
             )
 
         super().__init_subclass__(
