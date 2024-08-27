@@ -162,7 +162,7 @@ JSON_EXAMPLE = """{
             }
         }
     }
-}
+}   
 """
 
 
@@ -190,6 +190,8 @@ class DarkSwitch(Horizontal):
 
 
 class Welcome(Container):
+    ALLOW_MAXIMIZE = True
+
     def compose(self) -> ComposeResult:
         yield Static(Markdown(WELCOME_MD))
         yield Button("Start", variant="success")
@@ -256,6 +258,8 @@ class LocationLink(Static):
 
 
 class LoginForm(Container):
+    ALLOW_MAXIMIZE = True
+
     def compose(self) -> ComposeResult:
         yield Static("Username", classes="label")
         yield Input(placeholder="Username")

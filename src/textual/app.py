@@ -38,6 +38,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    NamedTuple,
     Sequence,
     Type,
     TypeVar,
@@ -96,8 +97,8 @@ from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
     _character_to_key,
-    _get_key_display,
     _get_unicode_name_from_key,
+    format_key,
 )
 from .messages import CallbackType, Prune
 from .notifications import Notification, Notifications, Notify, SeverityLevel
@@ -128,7 +129,7 @@ if TYPE_CHECKING:
     from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
-    from .system_commands import SystemCommands
+    from .system_commands import SystemCommandsProvider
     from .widget import MountError  # type: ignore  # noqa: F401
 
 WINDOWS = sys.platform == "win32"
@@ -171,16 +172,32 @@ AutopilotCallbackType: TypeAlias = (
 )
 """Signature for valid callbacks that can be used to control apps."""
 
+CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
+"""Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
 
-def get_system_commands() -> type[SystemCommands]:
+
+class SystemCommand(NamedTuple):
+    """Defines a system command used in the command palette (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
+
+    title: str
+    """The title of the command (used in search)."""
+    help: str
+    """Additional help text, shown under the title."""
+    callback: CommandCallback
+    """A callback to invoke when the command is selected."""
+    discover: bool = True
+    """Should the command show when the search is empty?"""
+
+
+def get_system_commands_provider() -> type[SystemCommandsProvider]:
     """Callable to lazy load the system commands.
 
     Returns:
         System commands class.
     """
-    from .system_commands import SystemCommands
+    from .system_commands import SystemCommandsProvider
 
-    return SystemCommands
+    return SystemCommandsProvider
 
 
 class AppError(Exception):
@@ -289,13 +306,22 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+        Screen.-maximized-view {                    
+            layout: vertical !important;
+            hatch: right $panel;
+            overflow-y: auto !important;
+            align: center middle;
+            .-maximized {
+                dock: initial !important;
+            }
+        }
     }
     *:disabled:can-focus {
         opacity: 0.7;
     }
     """
 
-    MODES: ClassVar[dict[str, str | Screen | Callable[[], Screen]]] = {}
+    MODES: ClassVar[dict[str, str | Callable[[], Screen]]] = {}
     """Modes associated with the app and their base screens.
 
     The base screen is the screen at the bottom of the mode stack. You can think of
@@ -324,7 +350,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
+    SCREENS: ClassVar[dict[str, Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -359,20 +385,31 @@ class App(Generic[ReturnType], DOMNode):
     """Default number of seconds to show notifications before removing them."""
 
     COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
-        get_system_commands
+        get_system_commands_provider
     }
     """Command providers used by the [command palette](/guide/command_palette).
 
     Should be a set of [command.Provider][textual.command.Provider] classes.
     """
 
+    COMMAND_PALETTE_BINDING: ClassVar[str] = "ctrl+p"
+    """The key that launches the command palette (if enabled by [`App.ENABLE_COMMAND_PALETTE`][textual.app.App.ENABLE_COMMAND_PALETTE])."""
+
+    COMMAND_PALETTE_DISPLAY: ClassVar[str | None] = None
+    """How the command palette key should be displayed in the footer (or `None` for default)."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
     ]
+    """The default key bindings."""
 
     CLOSE_TIMEOUT: float | None = 5.0
     """Timeout waiting for widget's to close, or `None` for no timeout."""
+
+    TOOLTIP_DELAY: float = 0.5
+    """The time in seconds after which a tooltip gets displayed."""
+
+    BINDING_GROUP_TITLE = "App"
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -549,6 +586,8 @@ class App(Generic[ReturnType], DOMNode):
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
+        self._modes: dict[str, str | Callable[[], Screen]] = self.MODES.copy()
+        """Contains the working-copy of the `MODES` for each instance."""
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
@@ -635,6 +674,41 @@ class App(Generic[ReturnType], DOMNode):
 
         # Size of previous inline update
         self._previous_inline_height: int | None = None
+
+        if self.ENABLE_COMMAND_PALETTE:
+            for _key, binding in self._bindings:
+                if binding.action in {"command_palette", "app.command_palette"}:
+                    break
+            else:
+                self._bindings._add_binding(
+                    Binding(
+                        self.COMMAND_PALETTE_BINDING,
+                        "command_palette",
+                        "palette",
+                        show=False,
+                        key_display=self.COMMAND_PALETTE_DISPLAY,
+                        priority=True,
+                        tooltip="Open command palette",
+                    )
+                )
+
+    def __init_subclass__(cls, *args, **kwargs) -> None:
+        for variable_name, screen_collection in (
+            ("SCREENS", cls.SCREENS),
+            ("MODES", cls.MODES),
+        ):
+            for screen_name, screen_object in screen_collection.items():
+                if not (isinstance(screen_object, str) or callable(screen_object)):
+                    if isinstance(screen_object, Screen):
+                        raise ValueError(
+                            f"{variable_name} should contain a Screen type or callable, not an instance"
+                            f" (got instance of {type(screen_object).__name__} for {screen_name!r})"
+                        )
+                    raise TypeError(
+                        f"expected a callable or string, got {screen_object!r}"
+                    )
+
+        return super().__init_subclass__(*args, **kwargs)
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -870,9 +944,95 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            Active binding information
+            A dict that maps keys on to binding information.
         """
         return self.screen.active_bindings
+
+    def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+        """A generator of system commands used in the command palette.
+
+        Args:
+            screen: The screen where the command palette was invoked from.
+
+        Implement this method in your App subclass if you want to add custom commands.
+        Here is an example:
+
+        ```python
+        def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+            yield from super().get_system_commands(screen)
+            yield SystemCommand("Bell", "Ring the bell", self.bell)
+        ```
+
+        !!! note
+            Requires that [`SystemCommandsProvider`][textual.system_commands.SystemCommandsProvider] is in `App.COMMANDS` class variable.
+
+        Yields:
+            [SystemCommand][textual.app.SystemCommand] instances.
+        """
+        if self.dark:
+            yield SystemCommand(
+                "Light mode",
+                "Switch to a light background",
+                self.action_toggle_dark,
+            )
+        else:
+            yield SystemCommand(
+                "Dark mode",
+                "Switch to a dark background",
+                self.action_toggle_dark,
+            )
+
+        yield SystemCommand(
+            "Quit the application",
+            "Quit the application as soon as possible",
+            self.action_quit,
+        )
+
+        if screen.query("HelpPanel"):
+            yield SystemCommand(
+                "Hide keys and help panel",
+                "Hide the keys and widget help panel",
+                self.action_hide_help_panel,
+            )
+        else:
+            yield SystemCommand(
+                "Show keys and help panel",
+                "Show help for the focused widget and a summary of available keys",
+                self.action_show_help_panel,
+            )
+
+        if screen.maximized is not None:
+            yield SystemCommand(
+                "Minimize",
+                "Minimize the widget and restore to normal size",
+                screen.action_minimize,
+            )
+        elif screen.focused is not None and screen.focused.allow_maximize:
+            yield SystemCommand(
+                "Maximize", "Maximize the focused widget", screen.action_maximize
+            )
+
+        # Don't save screenshot for web drivers until we have the deliver_file in place
+        if self._driver.__class__.__name__ in {"LinuxDriver", "WindowsDriver"}:
+
+            def export_screenshot() -> None:
+                """Export a screenshot and write a notification."""
+                filename = self.save_screenshot()
+                try:
+                    self.notify(f"Saved {filename}", title="Screenshot")
+                except Exception as error:
+                    self.log.error(error)
+                    self.notify(
+                        "Failed to save screenshot.",
+                        title="Screenshot",
+                        severity="warning",
+                    )
+
+            yield SystemCommand(
+                "Save screenshot",
+                "Save an SVG 'screenshot' of the current screen (in the current working directory)",
+                export_screenshot,
+            )
 
     def get_default_screen(self) -> Screen:
         """Get the default screen.
@@ -1305,21 +1465,35 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def get_key_display(self, key: str) -> str:
-        """For a given key, return how it should be displayed in an app
-        (e.g. in the Footer widget).
-        By key, we refer to the string used in the "key" argument for
-        a Binding instance. By overriding this method, you can ensure that
-        keys are displayed consistently throughout your app, without
-        needing to add a key_display to every binding.
+    def get_key_display(self, binding: Binding) -> str:
+        """Format a bound key for display in footer / key panel etc.
+
+        !!! note
+            You can implement this in a subclass if you want to change how keys are displayed in your app.
 
         Args:
-            key: The binding key string.
+            binding: A Binding.
 
         Returns:
-            The display string for the input key.
+            A string used to represent the key.
         """
-        return _get_key_display(key)
+        # Dev has overridden the key display, so use that
+        if binding.key_display:
+            return binding.key_display
+
+        # Extract modifiers
+        modifiers, key = binding.parse_key()
+
+        # Format the key (replace unicode names with character)
+        key = format_key(key)
+
+        # Convert ctrl modifier to caret
+        if "ctrl" in modifiers:
+            modifiers.pop(modifiers.index("ctrl"))
+            key = f"^{key}"
+        # Join everything with +
+        key_tokens = modifiers + [key]
+        return "+".join(key_tokens)
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
@@ -1859,7 +2033,12 @@ class App(Generic[ReturnType], DOMNode):
         if stack:
             await_mount = AwaitMount(stack[0], [])
         else:
-            _screen = self.MODES[mode]
+            _screen = self._modes[mode]
+            if isinstance(_screen, Screen):
+                raise TypeError(
+                    "MODES cannot contain instances, use a type instead "
+                    f"(got instance of {type(_screen).__name__} for {mode!r})"
+                )
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
@@ -1881,7 +2060,7 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
         """
-        if mode not in self.MODES:
+        if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
         self.screen.post_message(events.ScreenSuspend())
@@ -1901,9 +2080,7 @@ class App(Generic[ReturnType], DOMNode):
 
         return await_mount
 
-    def add_mode(
-        self, mode: str, base_screen: str | Screen | Callable[[], Screen]
-    ) -> None:
+    def add_mode(self, mode: str, base_screen: str | Callable[[], Screen]) -> None:
         """Adds a mode and its corresponding base screen to the app.
 
         Args:
@@ -1915,10 +2092,15 @@ class App(Generic[ReturnType], DOMNode):
         """
         if mode == "_default":
             raise InvalidModeError("Cannot use '_default' as a custom mode.")
-        elif mode in self.MODES:
+        elif mode in self._modes:
             raise InvalidModeError(f"Duplicated mode name {mode!r}.")
 
-        self.MODES[mode] = base_screen
+        if isinstance(base_screen, Screen):
+            raise TypeError(
+                "add_mode() must be called with a Screen type, not an instance"
+                f" (got instance of {type(base_screen).__name__})"
+            )
+        self._modes[mode] = base_screen
 
     def remove_mode(self, mode: str) -> AwaitComplete:
         """Removes a mode from the app.
@@ -1934,10 +2116,10 @@ class App(Generic[ReturnType], DOMNode):
         """
         if mode == self._current_mode:
             raise ActiveModeError(f"Can't remove active mode {mode!r}")
-        elif mode not in self.MODES:
+        elif mode not in self._modes:
             raise UnknownModeError(f"Unknown mode {mode!r}")
         else:
-            del self.MODES[mode]
+            del self._modes[mode]
 
         if mode not in self._screen_stacks:
             return AwaitComplete.nothing()
@@ -2167,7 +2349,8 @@ class App(Generic[ReturnType], DOMNode):
             The screen's result.
         """
         await self._flush_next_callbacks()
-        return await self.push_screen(screen, wait_for_dismiss=True)
+        # The shield prevents the cancellation of the current task from canceling the push_screen awaitable
+        return await asyncio.shield(self.push_screen(screen, wait_for_dismiss=True))
 
     def switch_screen(self, screen: Screen | str) -> AwaitComplete:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
@@ -2601,10 +2784,10 @@ class App(Generic[ReturnType], DOMNode):
                         self._driver.write(
                             Control.move(-cursor_x, -cursor_y + 1).segment.text
                         )
-                    if inline_no_clear:
-                        console = Console()
-                        console.print(self.screen._compositor)
-                        console.print()
+                        if inline_no_clear and not not self.app._exit_renderables:
+                            console = Console()
+                            console.print(self.screen._compositor)
+                            console.print()
 
                     driver.stop_application_mode()
         except Exception as error:
@@ -2816,11 +2999,6 @@ class App(Generic[ReturnType], DOMNode):
                 if stack_screen._running:
                     await self._prune(stack_screen)
             stack.clear()
-
-        # Close pre-defined screens.
-        for screen in self.SCREENS.values():
-            if isinstance(screen, Screen) and screen._running:
-                await self._prune(screen)
 
         # Close any remaining nodes
         # Should be empty by now
@@ -3283,6 +3461,11 @@ class App(Generic[ReturnType], DOMNode):
         message.stop()
 
     async def _on_key(self, event: events.Key) -> None:
+        # Special case for maximized widgets
+        # If something is maximized, then escape should minimize
+        if self.screen.maximized is not None and event.key == "escape":
+            self.screen.minimize()
+            return
         if not (await self._check_bindings(event.key)):
             await dispatch_key(self, event)
 
@@ -3483,6 +3666,19 @@ class App(Generic[ReturnType], DOMNode):
     def action_focus_previous(self) -> None:
         """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
+
+    def action_hide_help_panel(self) -> None:
+        """Hide the keys panel (if present)."""
+        self.screen.query("HelpPanel").remove()
+
+    def action_show_help_panel(self) -> None:
+        """Show the keys panel."""
+        from .widgets import HelpPanel
+
+        try:
+            self.query_one(HelpPanel)
+        except NoMatches:
+            self.mount(HelpPanel())
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput

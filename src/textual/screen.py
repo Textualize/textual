@@ -30,9 +30,11 @@ from rich.console import RenderableType
 from rich.style import Style
 
 from . import constants, errors, events, messages
+from ._arrange import arrange
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
+from ._layout import DockArrangeResult
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .await_complete import AwaitComplete
@@ -184,6 +186,11 @@ class Screen(Generic[ScreenResultType], Widget):
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
+    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
+
+    maximized: Reactive[Widget | None] = Reactive(None, layout=True)
+    """The currently maximized widget, or `None` for no maximized widget."""
 
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
@@ -284,9 +291,19 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
-        self.log.debug("Bindings updated")
         self._bindings_updated = True
         self.check_idle()
+
+    def _watch_maximized(
+        self, previously_maximized: Widget | None, maximized: Widget | None
+    ) -> None:
+        # The screen gets a `-maximized-view` class if there is a maximized widget
+        # The widget gets a `-maximized` class if it is maximized
+        self.set_class(maximized is not None, "-maximized-view")
+        if previously_maximized is not None:
+            previously_maximized.remove_class("-maximized")
+        if maximized is not None:
+            maximized.add_class("-maximized")
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
@@ -358,6 +375,34 @@ class Screen(Generic[ScreenResultType], Widget):
                     )
 
         return bindings_map
+
+    def _arrange(self, size: Size) -> DockArrangeResult:
+        """Arrange children.
+
+        Args:
+            size: Size of container.
+
+        Returns:
+            Widget locations.
+        """
+        # This is customized over the base class to allow for a widget to be maximized
+        cache_key = (size, self._nodes._updates, self.maximized)
+        cached_result = self._arrangement_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
+
+        arrangement = self._arrangement_cache[cache_key] = arrange(
+            self,
+            (
+                [self.maximized, *self.query_children(self.ALLOW_IN_MAXIMIZED_VIEW)]
+                if self.maximized is not None
+                else self._nodes
+            ),
+            size,
+            self.screen.size,
+        )
+
+        return arrangement
 
     @property
     def is_active(self) -> bool:
@@ -543,12 +588,19 @@ class Screen(Generic[ScreenResultType], Widget):
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
+
         # TODO: This shouldn't be required
         self._compositor._full_map_invalidated = True
         if not isinstance(selector, str):
             selector = selector.__name__
         selector_set = parse_selectors(selector)
         focus_chain = self.focus_chain
+
+        # If a widget is maximized we want to limit the focus chain to the visible widgets
+        if self.maximized is not None:
+            focusable = set(self.maximized.walk_children(with_self=True))
+            focus_chain = [widget for widget in focus_chain if widget in focusable]
+
         filtered_focus_chain = (
             node for node in focus_chain if match(selector_set, node)
         )
@@ -621,6 +673,42 @@ class Screen(Generic[ScreenResultType], Widget):
                 the CSS selectors given in the argument.
         """
         return self._move_focus(-1, selector)
+
+    def maximize(self, widget: Widget, container: bool = True) -> None:
+        """Maximize a widget, so it fills the screen.
+
+        Args:
+            widget: Widget to maximize.
+            container: If one of the widgets ancestors is a maximizeable widget, maximize that instead.
+        """
+        if widget.allow_maximize:
+            if container:
+                # If we want to maximize the container, look up the dom to find a suitable widget
+                for maximize_widget in widget.ancestors:
+                    if not isinstance(maximize_widget, Widget):
+                        break
+                    if maximize_widget.allow_maximize:
+                        self.maximized = maximize_widget
+                        return
+
+            self.maximized = widget
+
+    def minimize(self) -> None:
+        """Restore any maximized widget to normal state."""
+        self.maximized = None
+        if self.focused is not None:
+            self.call_after_refresh(
+                self.scroll_to_widget, self.focused, animate=False, center=True
+            )
+
+    def action_maximize(self) -> None:
+        """Action to maximize the currently focused widget."""
+        if self.focused is not None:
+            self.maximize(self.focused)
+
+    def action_minimize(self) -> None:
+        """Action to minimize the currently maximized widget."""
+        self.minimize()
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
@@ -1173,7 +1261,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self._tooltip_timer.stop()
 
                         self._tooltip_timer = self.set_timer(
-                            0.3,
+                            self.app.TOOLTIP_DELAY,
                             partial(self._handle_tooltip_timer, widget),
                             name="tooltip-timer",
                         )

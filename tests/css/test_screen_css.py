@@ -126,7 +126,7 @@ async def test_screen_css_push_screen_instance_by_name():
     """Check that screen CSS is loaded and applied when pushing a screen name that points to a screen instance."""
 
     class MyApp(BaseApp):
-        SCREENS = {"screenwithcss": ScreenWithCSS()}
+        SCREENS = {"screenwithcss": ScreenWithCSS}
 
         def key_p(self):
             self.push_screen("screenwithcss")
@@ -187,7 +187,7 @@ async def test_screen_css_switch_screen_instance_by_name():
     """Check that screen CSS is loaded and applied when switching a screen name that points to a screen instance."""
 
     class MyApp(SwitchBaseApp):
-        SCREENS = {"screenwithcss": ScreenWithCSS()}
+        SCREENS = {"screenwithcss": ScreenWithCSS}
 
         def key_p(self):
             self.switch_screen("screenwithcss")
@@ -230,8 +230,8 @@ async def test_screen_css_switch_mode_screen_instance():
 
     class MyApp(BaseApp):
         MODES = {
-            "base": BaseScreen(),
-            "mode": ScreenWithCSS(),
+            "base": BaseScreen,
+            "mode": ScreenWithCSS,
         }
 
         def key_p(self):
@@ -255,11 +255,11 @@ async def test_screen_css_switch_mode_screen_instance_by_name():
 
     class MyApp(BaseApp):
         SCREENS = {
-            "screenwithcss": ScreenWithCSS(),
+            "screenwithcss": ScreenWithCSS,
         }
 
         MODES = {
-            "base": BaseScreen(),
+            "base": BaseScreen,
             "mode": "screenwithcss",
         }
 
@@ -288,7 +288,7 @@ async def test_screen_css_switch_mode_screen_type_by_name():
         }
 
         MODES = {
-            "base": BaseScreen(),
+            "base": BaseScreen,
             "mode": "screenwithcss",
         }
 
