@@ -361,6 +361,19 @@ class Input(Widget, can_focus=True):
         """Flag to indicate if the cursor is at the end"""
         return self.cursor_position >= len(self.value)
 
+    def check_consume_key(self, key: str) -> bool:
+        """Check if the widget may consume the given key.
+
+        As an input we are expecting to capture printable keys.
+
+        Args:
+            key: A key identifier.
+
+        Returns:
+            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+        """
+        return len(key) == 1 and key.isprintable()
+
     def validate_cursor_position(self, cursor_position: int) -> int:
         return min(max(0, cursor_position), len(self.value))
 

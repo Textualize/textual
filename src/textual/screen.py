@@ -308,6 +308,7 @@ class Screen(Generic[ScreenResultType], Widget):
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """Binding chain from this screen."""
+
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
@@ -315,13 +316,23 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if focused is None:
             namespace_bindings = [
-                (self, self._bindings),
-                (self.app, self.app._bindings),
+                (self, self._bindings.copy()),
+                (self.app, self.app._bindings.copy()),
             ]
         else:
             namespace_bindings = [
-                (node, node._bindings) for node in focused.ancestors_with_self
+                (node, node._bindings.copy()) for node in focused.ancestors_with_self
             ]
+
+        # Filter out bindings that could be captures by widgets (such as Input, TextArea)
+        filter_namespaces: list[DOMNode] = []
+        for namespace, bindings_map in namespace_bindings:
+            for filter_namespace in filter_namespaces:
+                check_consume_key = filter_namespace.check_consume_key
+                for key in list(bindings_map.key_to_bindings):
+                    if check_consume_key(key):
+                        del bindings_map.key_to_bindings[key]
+            filter_namespaces.append(namespace)
 
         return namespace_bindings
 
@@ -346,7 +357,6 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
-
         bindings_map: dict[str, ActiveBinding] = {}
         for namespace, bindings in self._modal_binding_chain:
             for key, binding in bindings:
