@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+
+### Changed
+
+- KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
 
 ## [0.78.0] - 2024-08-27
 
