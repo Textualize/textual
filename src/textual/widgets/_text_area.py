@@ -559,6 +559,8 @@ TextArea {
         """
         if self.read_only:
             return False
+        if self.tab_behavior == "indent" and key == "tab":
+            return True
         return len(key) == 1 and key.isprintable()
 
     def _build_highlight_map(self) -> None:
