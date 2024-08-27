@@ -553,7 +553,7 @@ TextArea {
 
         Args:
             key: A key identifier.
-            character: A character associated with they key, or `None` if there isn't one.
+            character: A character associated with the key, or `None` if there isn't one.
 
         Returns:
             `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
