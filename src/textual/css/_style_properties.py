@@ -290,7 +290,7 @@ class BoxProperty:
 
         Returns:
             A ``tuple[EdgeType, Style]`` containing the string type of the box and
-                it's style. Example types are "rounded", "solid", and "dashed".
+                its style. Example types are "rounded", "solid", and "dashed".
         """
         return obj.get_rule(self.name) or ("", self._default_color)  # type: ignore[return-value]
 
