@@ -1037,7 +1037,7 @@ class DOMNode(MessagePump):
 
         Args:
             key: A key identifier.
-            character: A printable character associated with they key, or `None` if character is not printable.
+            character: A character associated with they key, or `None` if there isn't one.
 
         Returns:
             `True` if the widget may capture the key in its `Key` event handler, or `False` if it won't.
