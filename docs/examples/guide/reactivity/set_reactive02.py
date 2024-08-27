@@ -49,7 +49,7 @@ class NameApp(App):
     CSS = """
     Screen {
         align: center middle;
-    }   
+    }
     """
     greeting_no: var[int] = var(0)
     BINDINGS = [("space", "greeting")]
