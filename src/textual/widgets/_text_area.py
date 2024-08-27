@@ -546,13 +546,14 @@ TextArea {
 
         return highlight_query
 
-    def check_consume_key(self, key: str) -> bool:
+    def check_consume_key(self, key: str, character: str | None = None) -> bool:
         """Check if the widget may consume the given key.
 
         As a textarea we are expecting to capture printable keys.
 
         Args:
             key: A key identifier.
+            character: A printable character associated with they key, or `None` if character is not printable.
 
         Returns:
             `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
@@ -561,7 +562,7 @@ TextArea {
             return False
         if self.tab_behavior == "indent" and key == "tab":
             return True
-        return len(key) == 1 and key.isprintable()
+        return character is not None and character.isprintable()
 
     def _build_highlight_map(self) -> None:
         """Query the tree for ranges to highlights, and update the internal highlights mapping."""

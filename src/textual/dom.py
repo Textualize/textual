@@ -1026,7 +1026,7 @@ class DOMNode(MessagePump):
         )
         return style
 
-    def check_consume_key(self, key: str) -> bool:
+    def check_consume_key(self, key: str, character: str | None) -> bool:
         """Check if the widget may consume the given key.
 
         This should be implemented in widgets that handle [`Key`][textual.events.Key] events and
@@ -1037,6 +1037,7 @@ class DOMNode(MessagePump):
 
         Args:
             key: A key identifier.
+            character: A printable character associated with they key, or `None` if character is not printable.
 
         Returns:
             `True` if the widget may capture the key in its `Key` event handler, or `False` if it won't.

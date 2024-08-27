@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unicodedata
 from enum import Enum
+from functools import lru_cache
 
 
 # Adapted from prompt toolkit https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/prompt_toolkit/keys.py
@@ -282,6 +283,7 @@ def _get_key_aliases(key: str) -> list[str]:
     return [key] + KEY_ALIASES.get(key, [])
 
 
+@lru_cache(1024)
 def format_key(key: str) -> str:
     """Given a key (i.e. the `key` string argument to Binding __init__),
     return the value that should be displayed in the app when referring
@@ -301,6 +303,32 @@ def format_key(key: str) -> str:
         if unicode_name.isprintable():
             return unicode_name
     return tentative_unicode_name
+
+
+@lru_cache(1024)
+def key_to_character(key: str) -> str | None:
+    """Given a key identifier, return the character associated with it.
+
+    Args:
+        key: The key identifier.
+
+    Returns:
+        A key if one could be found, otherwise `None`.
+    """
+    _, separator, key = key.rpartition("+")
+    if separator:
+        return None
+    if len(key) == 1:
+        return key
+    try:
+        return unicodedata.lookup(KEY_TO_UNICODE_NAME[key])
+    except KeyError:
+        pass
+    try:
+        return unicodedata.lookup(key.replace("_", " ").upper())
+    except KeyError:
+        pass
+    return None
 
 
 def _character_to_key(character: str) -> str:
