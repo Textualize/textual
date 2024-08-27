@@ -559,9 +559,12 @@ TextArea {
             `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
         """
         if self.read_only:
+            # In read only mode we don't consume any key events
             return False
         if self.tab_behavior == "indent" and key == "tab":
+            # If tab_behavior is indent, then we consume the tab
             return True
+        # Otherwise we capture all printable keys
         return character is not None and character.isprintable()
 
     def _build_highlight_map(self) -> None:
