@@ -177,7 +177,7 @@ the cursor, selection, gutter, and more.
 
 #### Default theme
 
-The default `TextArea` theme is called `css`, which takes it's values entirely from CSS.
+The default `TextArea` theme is called `css`, which takes its values entirely from CSS.
 This means that the default appearance of the widget fits nicely into a standard Textual application,
 and looks right on both dark and light mode.
 

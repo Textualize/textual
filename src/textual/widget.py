@@ -1813,7 +1813,7 @@ class Widget(DOMNode):
 
     @property
     def virtual_region(self) -> Region:
-        """The widget region relative to it's container (which may not be visible,
+        """The widget region relative to its container (which may not be visible,
         depending on scroll offset).
 
 
@@ -2845,7 +2845,7 @@ class Widget(DOMNode):
                     scrolled = True
 
             # Adjust the region by the amount we just scrolled it, and convert to
-            # it's parent's virtual coordinate system.
+            # its parent's virtual coordinate system.
 
             region = (
                 (

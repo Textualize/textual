@@ -582,7 +582,7 @@ class Compositor:
 
             Args:
                 widget: The widget to add.
-                virtual_region: The Widget region relative to it's container.
+                virtual_region: The Widget region relative to its container.
                 region: The region the widget will occupy.
                 order: Painting order information.
                 layer_order: The order of the widget in its layer.
