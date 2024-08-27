@@ -20,7 +20,7 @@ If not provided, a Textual action link will have `link-color-hover` set to `whit
 
 ## Example
 
-The example below shows some links that have their colour changed when the mouse moves over it.
+The example below shows some links that have their color changed when the mouse moves over it.
 It also shows that `link-color-hover` does not affect hyperlinks.
 
 === "Output"
