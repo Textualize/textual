@@ -1582,7 +1582,7 @@ def test_escape_to_minimize(snap_compare):
 
         def compose(self) -> ComposeResult:
             with Vertical(id="code-container"):
-                text_area = TextArea.code_editor(TEXT, language="python")
+                text_area = TextArea.code_editor(TEXT)
                 text_area.cursor_blink = False
                 yield text_area
 
