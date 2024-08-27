@@ -336,7 +336,7 @@ class DirectoryTree(Tree[DirEntry]):
         await self.reload()
 
     def process_label(self, label: TextType) -> Text:
-        """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
+        """Process a str or Text into a label. May be overridden in a subclass to modify how labels are rendered.
 
         Args:
             label: Label.
