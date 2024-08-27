@@ -3276,6 +3276,11 @@ class App(Generic[ReturnType], DOMNode):
                         pass
 
             elif isinstance(event, events.Key):
+                # Special case for maximized widgets
+                # If something is maximized, then escape should minimize
+                if self.screen.maximized is not None and event.key == "escape":
+                    self.screen.minimize()
+                    return
                 if self.focused:
                     try:
                         self.screen._clear_tooltip()
@@ -3461,11 +3466,6 @@ class App(Generic[ReturnType], DOMNode):
         message.stop()
 
     async def _on_key(self, event: events.Key) -> None:
-        # Special case for maximized widgets
-        # If something is maximized, then escape should minimize
-        if self.screen.maximized is not None and event.key == "escape":
-            self.screen.minimize()
-            return
         if not (await self._check_bindings(event.key)):
             await dispatch_key(self, event)
 

@@ -1554,3 +1554,35 @@ def test_check_consume_keys(snap_compare):
             yield Footer()
 
     assert snap_compare(MyApp())
+
+
+def test_escape_to_minimize(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4939"""
+
+    TEXT = """\
+    def hello(name):
+        print("hello" + name)
+
+    def goodbye(name):
+        print("goodbye" + name)
+    """
+
+    class TextAreaExample(App):
+        BINDINGS = [("ctrl+m", "screen.maximize")]
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+
+        #code-container {
+            width: 20;
+            height: 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="code-container"):
+                yield TextArea.code_editor(TEXT, language="python")
+
+    # ctrl+m to maximize, escape should minimize
+    assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
