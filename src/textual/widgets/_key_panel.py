@@ -85,10 +85,14 @@ class BindingsTable(Static):
                     text.append(binding.tooltip, "dim")
                 return text
 
+            get_key_display = self.app.get_key_display
             for multi_bindings in action_to_bindings.values():
                 binding, enabled, tooltip = multi_bindings[0]
+                key_display = " ".join(
+                    get_key_display(binding) for binding, _, _ in multi_bindings
+                )
                 table.add_row(
-                    Text(self.app.get_key_display(binding), style=key_style),
+                    Text(key_display, style=key_style),
                     render_description(binding),
                 )
             if namespace != previous_namespace:

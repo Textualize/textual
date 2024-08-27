@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
 
+### Changed
+
+- KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
+
 ## [0.78.0] - 2024-08-27
 
 ### Added
