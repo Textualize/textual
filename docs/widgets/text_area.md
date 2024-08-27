@@ -292,7 +292,7 @@ This immediately updates the appearance of the `TextArea`:
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
 
-### Tab and Escape behaviour
+### Tab and Escape behavior
 
 Pressing the ++tab++ key will shift focus to the next widget in your application by default.
 This matches how other widgets work in Textual.
