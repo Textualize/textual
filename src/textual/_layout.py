@@ -20,7 +20,7 @@ ArrangeResult: TypeAlias = "list[WidgetPlacement]"
 @dataclass
 class DockArrangeResult:
     placements: list[WidgetPlacement]
-    """A `WidgetPlacement` for every widget to describe it's location on screen."""
+    """A `WidgetPlacement` for every widget to describe its location on screen."""
     widgets: set[Widget]
     """A set of widgets in the arrangement."""
     scroll_spacing: Spacing

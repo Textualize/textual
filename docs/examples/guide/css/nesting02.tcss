@@ -9,11 +9,11 @@
         padding: 1 2;
         margin: 1 2;
         text-align: center;
-        border: heavy $panel;    
+        border: heavy $panel;
 
         /* Style the Yes button */
         &.affirmative {
-            border: heavy $success;        
+            border: heavy $success;
         }
 
         /* Style the No button */
