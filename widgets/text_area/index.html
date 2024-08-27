@@ -4915,9 +4915,9 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
-  <a href="#tab-and-escape-behaviour" class="md-nav__link">
+  <a href="#tab-and-escape-behavior" class="md-nav__link">
     <span class="md-ellipsis">
-      Tab and Escape behaviour
+      Tab and Escape behavior
     </span>
   </a>
   
@@ -5917,6 +5917,30 @@ window.onload = async (event) => {
   <a href="#textual.widgets._text_area.TextArea.cell_width_to_column_index(row_index)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;row_index
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.check_consume_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;check_consume_key
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" check_consume_key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.check_consume_key(key)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;key
     </span>
   </a>
   
@@ -10599,9 +10623,9 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
-  <a href="#tab-and-escape-behaviour" class="md-nav__link">
+  <a href="#tab-and-escape-behavior" class="md-nav__link">
     <span class="md-ellipsis">
-      Tab and Escape behaviour
+      Tab and Escape behavior
     </span>
   </a>
   
@@ -11601,6 +11625,30 @@ window.onload = async (event) => {
   <a href="#textual.widgets._text_area.TextArea.cell_width_to_column_index(row_index)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;row_index
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.check_consume_key" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;check_consume_key
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" check_consume_key">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.check_consume_key(key)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;key
     </span>
   </a>
   
@@ -14826,7 +14874,7 @@ to its current location.</p>
 <p>Themes give you control over the look and feel, including syntax highlighting,
 the cursor, selection, gutter, and more.</p>
 <h4 id="default-theme">Default theme<a class="headerlink" href="#default-theme" title="Permanent link">&para;</a></h4>
-<p>The default <code>TextArea</code> theme is called <code>css</code>, which takes it's values entirely from CSS.
+<p>The default <code>TextArea</code> theme is called <code>css</code>, which takes its values entirely from CSS.
 This means that the default appearance of the widget fits nicely into a standard Textual application,
 and looks right on both dark and light mode.</p>
 <p>When using the <code>css</code> theme, you can make use of <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.COMPONENT_CLASSES">component classes</a> to style elements of the <code>TextArea</code>.
@@ -14995,7 +15043,7 @@ For more details, see <a href="#syntax-highlighting">syntax highlighting</a>.</p
     </g>
 </svg>
 </p>
-<h3 id="tab-and-escape-behaviour">Tab and Escape behaviour<a class="headerlink" href="#tab-and-escape-behaviour" title="Permanent link">&para;</a></h3>
+<h3 id="tab-and-escape-behavior">Tab and Escape behavior<a class="headerlink" href="#tab-and-escape-behavior" title="Permanent link">&para;</a></h3>
 <p>Pressing the <span class="keys"><kbd class="key-tab">Tab</kbd></span> key will shift focus to the next widget in your application by default.
 This matches how other widgets work in Textual.</p>
 <p>To have <span class="keys"><kbd class="key-tab">Tab</kbd></span> insert a <code>\t</code> character, set the <code>tab_behavior</code> attribute to the string value <code>"indent"</code>.
@@ -17913,6 +17961,80 @@ This action does not skip leading whitespace, whereas cursor movement does.</p>
             <td>
               <div class="doc-md-description">
                 <p>The column corresponding to the cell width on that row.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.widgets._text_area.TextArea.check_consume_key" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">check_consume_key</span>
+
+
+<a href="#textual.widgets._text_area.TextArea.check_consume_key" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">check_consume_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.check_consume_key(key)">key</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Check if the widget may consume the given key.</p>
+<p>As a textarea we are expecting to capture printable keys.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets._text_area.TextArea.check_consume_key(key)" class="doc doc-heading doc-heading-parameter">                  <code>key</code>
+<a href="#textual.widgets._text_area.TextArea.check_consume_key(key)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A key identifier.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the widget may capture the key in it's <code>Key</code> message, or <code>False</code> if it won't.</p>
               </div>
             </td>
           </tr>
@@ -21541,7 +21663,7 @@ wrapping is involved).</p>
 than the raw document. So, for example, pressing down on the keyboard
 may move your cursor to a position further along the current raw document line,
 rather than on to the next line in the raw document.</p>
-<p>The DocumentNavigator class manages that behaviour.</p>
+<p>The DocumentNavigator class manages that behavior.</p>
 <p>Given a cursor location in the unwrapped document, and a cursor movement action,
 this class can inform us of the destination the cursor will move to considering
 the current wrapping width and document content. It can also translate between
@@ -21562,9 +21684,9 @@ For example the line "ABCDEF" when wrapped at width 3 will result in 2 sections:
 <p>A "wrap offset" is an integer representing the index at which wrapping occurs in a
 document-space line. This is a codepoint index, rather than a visual offset.
 In "ABCDEF" with wrapping at width 3, there is a single wrap offset of 3.</p>
-<p>"Smart home" refers to a modification of the "home" key behaviour. If smart home is
+<p>"Smart home" refers to a modification of the "home" key behavior. If smart home is
 enabled, the first non-whitespace character is considered to be the home location.
-If the cursor is currently at this position, then the normal home behaviour applies.
+If the cursor is currently at this position, then the normal home behavior applies.
 This is designed to make cursor movement more useful to end users.</p>
 
 
@@ -22077,7 +22199,7 @@ of the document.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Enable/disable 'smart home' behaviour.</p>
+                <p>Enable/disable 'smart home' behavior.</p>
               </div>
             </td>
             <td>
@@ -25960,7 +26082,7 @@ reuse the  tab width.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">July 11, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">August 27, 2024</span>
   </span>
 
     

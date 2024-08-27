@@ -5,16 +5,16 @@ Grid {
     keyline: heavy green;
 }
 Placeholder {
-    height: 1fr;      
+    height: 1fr;
 }
 .hidden {
     visibility: hidden;
-} 
+}
 #foo {
     column-span: 2;
 }
 #bar {
-    row-span: 2;        
+    row-span: 2;
 }
 #baz {
     column-span:3;
