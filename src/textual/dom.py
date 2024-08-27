@@ -1032,13 +1032,14 @@ class DOMNode(MessagePump):
         This should be implemented in widgets that handle [`Key`][textual.events.Key] events and
         stop propagation (such as Input and TextArea).
 
-        It allows the Footer and KeyPanel to hide keys that will be consumed by a focused widget.
+        Implementing this method will hide key bindings from the footer and key panel that would
+        be *consumed* by the focused widget.
 
         Args:
             key: A key identifier.
 
         Returns:
-            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+            `True` if the widget may capture the key in its `Key` event handler, or `False` if it won't.
         """
         return False
 
