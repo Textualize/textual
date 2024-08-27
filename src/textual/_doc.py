@@ -65,6 +65,7 @@ def take_svg_screenshot(
     terminal_size: tuple[int, int] = (80, 24),
     run_before: Callable[[Pilot], Awaitable[None] | None] | None = None,
     wait_for_animation: bool = True,
+    simplify=True,
 ) -> str:
     """
 
@@ -129,7 +130,7 @@ def take_svg_screenshot(
             await pilot.pause()
         await pilot.pause()
         await pilot.wait_for_scheduled_animations()
-        svg = app.export_screenshot(title=title)
+        svg = app.export_screenshot(title=title, simplify=simplify)
 
         app.exit(svg)
 
