@@ -317,8 +317,11 @@ def key_to_character(key: str) -> str | None:
     """
     _, separator, key = key.rpartition("+")
     if separator:
+        # If there is a separator, then it means a modifier (other than shift) is applied.
+        # Keys with modifiers, don't come from printable keys.
         return None
     if len(key) == 1:
+        # Key identifiers with a length of one, are also characters.
         return key
     try:
         return unicodedata.lookup(KEY_TO_UNICODE_NAME[key])
@@ -328,6 +331,7 @@ def key_to_character(key: str) -> str | None:
         return unicodedata.lookup(key.replace("_", " ").upper())
     except KeyError:
         pass
+    # Return None if we couldn't identify the key.
     return None
 
 
