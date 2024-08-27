@@ -5860,6 +5860,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.ALLOW_MAXIMIZE" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;ALLOW_MAXIMIZE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.BORDER_SUBTITLE" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;BORDER_SUBTITLE
@@ -5881,6 +5890,15 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.allow_horizontal_scroll" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;allow_horizontal_scroll
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.allow_maximize" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;allow_maximize
     </span>
   </a>
   
@@ -6097,6 +6115,15 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.is_horizontal_scrollbar_grabbed" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_horizontal_scrollbar_grabbed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.is_maximized" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_maximized
     </span>
   </a>
   
@@ -9769,6 +9796,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.ALLOW_MAXIMIZE" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;ALLOW_MAXIMIZE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.BORDER_SUBTITLE" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;BORDER_SUBTITLE
@@ -9790,6 +9826,15 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.allow_horizontal_scroll" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;allow_horizontal_scroll
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.allow_maximize" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;allow_maximize
     </span>
   </a>
   
@@ -10006,6 +10051,15 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.is_horizontal_scrollbar_grabbed" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_horizontal_scrollbar_grabbed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.is_maximized" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_maximized
     </span>
   </a>
   
@@ -13325,6 +13379,34 @@ cache-key.</p>
 
 
 
+<h3 id="textual.widget.Widget.ALLOW_MAXIMIZE" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">ALLOW_MAXIMIZE</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.ALLOW_MAXIMIZE" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ALLOW_MAXIMIZE</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Defines default logic to allow the widget to be maximized.</p>
+<ul>
+<li><code>None</code> Use default behavior (Focusable widgets may be maximized)</li>
+<li><code>False</code> Do not allow widget to be maximized</li>
+<li><code>True</code> Allow widget to be maximized</li>
+</ul>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widget.Widget.BORDER_SUBTITLE" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">BORDER_SUBTITLE</span>
 
@@ -13387,6 +13469,52 @@ cache-key.</p>
 
       <p>Check if horizontal scroll is permitted.</p>
 <p>May be overridden if you want different logic regarding allowing scrolling.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widget.Widget.allow_maximize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">allow_maximize</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.allow_maximize" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">allow_maximize</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Check if the widget may be maximized.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the widget may be maximized, or <code>False</code> if it should not be maximized.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
     </div>
 
 </div>
@@ -14139,6 +14267,29 @@ cache-key.</p>
     <div class="doc doc-contents ">
 
       <p>Is the user dragging the vertical scrollbar?</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widget.Widget.is_maximized" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">is_maximized</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.is_maximized" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_maximized</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Is this widget maximized?</p>
     </div>
 
 </div>
