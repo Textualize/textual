@@ -1582,7 +1582,9 @@ def test_escape_to_minimize(snap_compare):
 
         def compose(self) -> ComposeResult:
             with Vertical(id="code-container"):
-                yield TextArea.code_editor(TEXT, language="python")
+                text_area = TextArea.code_editor(TEXT, language="python")
+                text_area.cursor_blink = False
+                yield text_area
 
     # ctrl+m to maximize, escape should minimize
     assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
