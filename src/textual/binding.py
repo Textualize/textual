@@ -132,16 +132,6 @@ class BindingsMap:
         for binding in make_bindings(bindings or {}):
             self.key_to_bindings.setdefault(binding.key, []).append(binding)
 
-    def copy(self) -> BindingsMap:
-        """Create a copy of this bindings map.
-
-        Returns:
-            A copy.
-        """
-        bindings_map = BindingsMap()
-        bindings_map.key_to_bindings = self.key_to_bindings.copy()
-        return bindings_map
-
     def _add_binding(self, binding: Binding) -> None:
         """Add a new binding.
 
