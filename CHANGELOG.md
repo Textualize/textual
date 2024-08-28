@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+- Added `MaskedInput` widget https://github.com/Textualize/textual/pull/4783
 
 ### Changed
 
@@ -22,7 +23,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Maximize and Minimize system commands. https://github.com/Textualize/textual/pull/4931
 - Added `Screen.maximize`, `Screen.minimize`, `Screen.action_maximize`, `Screen.action_minimize`, `Widget.is_maximized`, `Widget.allow_maximize`. https://github.com/Textualize/textual/pull/4931
 - Added `Widget.ALLOW_MAXIMIZE`, `Screen.ALLOW_IN_MAXIMIZED_VIEW` classvars https://github.com/Textualize/textual/pull/4931
-- Added `MaskedInput` widget https://github.com/Textualize/textual/pull/4783
 
 ## [0.77.0] - 2024-08-22
 
