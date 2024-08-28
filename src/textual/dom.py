@@ -29,6 +29,8 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
+from textual.cache import LRUCache
+
 from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
@@ -216,6 +218,7 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
         self._pruning = False
+        self._query_one_cache: LRUCache[tuple[object, ...], DOMNode] = LRUCache(1024)
 
         super().__init__()
 
@@ -745,7 +748,7 @@ class DOMNode(MessagePump):
             ValueError: If the ID has already been set.
         """
         check_identifiers("id", new_id)
-
+        self._nodes.update()
         if self._id is not None:
             raise ValueError(
                 f"Node 'id' attribute may not be changed once set (current id={self._id!r})"
@@ -1410,11 +1413,21 @@ class DOMNode(MessagePump):
 
         selector_set = parse_selectors(query_selector)
 
+        if all(selectors.is_simple for selectors in selector_set):
+            cache_key = (self._nodes._updates, query_selector, expect_type)
+            cached_result = self._query_one_cache.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+        else:
+            cache_key = None
+
         for node in walk_depth_first(self):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
                 continue
+            if cache_key is not None:
+                self._query_one_cache[cache_key] = node
             return node
 
         raise NoMatches(f"No nodes match {selector!r} on {self!r}")
@@ -1464,6 +1477,14 @@ class DOMNode(MessagePump):
 
         selector_set = parse_selectors(query_selector)
 
+        if all(selectors.is_simple for selectors in selector_set):
+            cache_key = (self._nodes._updates, query_selector, expect_type)
+            cached_result = self._query_one_cache.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+        else:
+            cache_key = None
+
         children = walk_depth_first(self)
         iter_children = iter(children)
         for node in iter_children:
@@ -1478,6 +1499,8 @@ class DOMNode(MessagePump):
                     raise TooManyMatches(
                         "Call to query_one resulted in more than one matched node"
                     )
+            if cache_key is not None:
+                self._query_one_cache[cache_key] = node
             return node
 
         raise NoMatches(f"No nodes match {selector!r} on {self!r}")
