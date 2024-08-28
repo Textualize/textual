@@ -29,12 +29,11 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
-from textual.cache import LRUCache
-
 from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
 from .binding import Binding, BindingsMap, BindingType
+from .cache import LRUCache
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
