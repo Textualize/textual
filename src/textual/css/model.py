@@ -198,9 +198,8 @@ class SelectorSet:
         """Are all the selectors simple (i.e. only dependent on static DOM state)."""
         simple_types = {SelectorType.ID, SelectorType.TYPE}
         return all(
-            selector.type in simple_types
+            (selector.type in simple_types and not selector.pseudo_classes)
             for selector in self.selectors
-            if not selector.pseudo_classes
         )
 
     def __rich_repr__(self) -> rich.repr.Result:

@@ -78,6 +78,10 @@ WalkMethod: TypeAlias = Literal["depth", "breadth"]
 ReactiveType = TypeVar("ReactiveType")
 
 
+QueryOneCacheKey: TypeAlias = "tuple[int, str, Type[Widget]]"
+"""The key used to cache query_one results."""
+
+
 class BadIdentifier(Exception):
     """Exception raised if you supply a `id` attribute or class name in the wrong format."""
 
@@ -218,7 +222,7 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
         self._pruning = False
-        self._query_one_cache: LRUCache[tuple[object, ...], DOMNode] = LRUCache(1024)
+        self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
 
         super().__init__()
 
