@@ -810,11 +810,10 @@ class Widget(DOMNode):
         # We use Widget as a filter_type so that the inferred type of child is Widget.
         for child in walk_depth_first(self, filter_type=Widget):
             try:
-                if child._nodes:
-                    if expect_type is None:
-                        return child.get_child_by_id(id)
-                    else:
-                        return child.get_child_by_id(id, expect_type=expect_type)
+                if expect_type is None:
+                    return child.get_child_by_id(id)
+                else:
+                    return child.get_child_by_id(id, expect_type=expect_type)
             except NoMatches:
                 pass
             except WrongType as exc:
