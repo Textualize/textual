@@ -82,6 +82,7 @@ async def test_editing():
         assert input.cursor_position == 4
         assert input.value == "ABCD"
         input.value = serial
+        input.action_end()
         assert input.is_valid
         app.set_focus(None)
         input.focus()
@@ -97,6 +98,7 @@ async def test_key_movement_actions():
     async with app.run_test():
         input = app.query_one(MaskedInput)
         input.value = serial
+        input.action_home()
         assert input.is_valid
         input.action_cursor_right_word()
         assert input.cursor_position == 6
@@ -117,6 +119,7 @@ async def test_key_modification_actions():
         input = app.query_one(MaskedInput)
         input.value = serial
         assert input.is_valid
+        input.cursor_position = 0
         input.action_delete_right()
         assert input.value == " BCDE-FGHIJ-KLMNO-PQRST"
         input.cursor_position = 3
