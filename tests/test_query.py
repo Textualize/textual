@@ -103,7 +103,7 @@ def test_query():
         assert app.query_one("#widget1") == widget1
         assert app.query_one("#widget1", Widget) == widget1
         with pytest.raises(TooManyMatches):
-            _ = app.query_one(Widget)
+            _ = app.query_exactly_one(Widget)
 
         assert app.query("Widget.float")[0] == sidebar
         assert app.query("Widget.float")[0:2] == [sidebar, tooltip]

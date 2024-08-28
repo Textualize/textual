@@ -37,7 +37,9 @@ from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import DeclarationError, StyleValueError
-from .css.parse import parse_declarations
+from .css.match import match
+from .css.parse import parse_declarations, parse_selectors
+from .css.query import NoMatches, TooManyMatches
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
@@ -60,7 +62,7 @@ if TYPE_CHECKING:
     from .worker import Worker, WorkType, ResultType
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .css.query import NoMatches, TooManyMatches, WrongType  # type: ignore  # noqa: F401
+    from .css.query import WrongType  # type: ignore  # noqa: F401
 
 from typing_extensions import Literal
 
@@ -184,13 +186,14 @@ class DOMNode(MessagePump):
         self._name = name
         self._id = None
         if id is not None:
-            self.id = id
+            check_identifiers("id", id)
+            self._id = id
 
         _classes = classes.split() if classes else []
         check_identifiers("class name", *_classes)
         self._classes.update(_classes)
 
-        self._nodes: NodeList = NodeList()
+        self._nodes: NodeList = NodeList(self)
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles: RenderStyles = RenderStyles(
@@ -213,6 +216,7 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
         self._pruning = False
+
         super().__init__()
 
     def set_reactive(
@@ -1393,21 +1397,90 @@ class DOMNode(MessagePump):
         Raises:
             WrongType: If the wrong type was found.
             NoMatches: If no node matches the query.
-            TooManyMatches: If there is more than one matching node in the query.
 
         Returns:
             A widget matching the selector.
         """
         _rich_traceback_omit = True
-        from .css.query import DOMQuery
 
         if isinstance(selector, str):
             query_selector = selector
         else:
             query_selector = selector.__name__
-        query: DOMQuery[Widget] = DOMQuery(self, filter=query_selector)
 
-        return query.only_one() if expect_type is None else query.only_one(expect_type)
+        selector_set = parse_selectors(query_selector)
+
+        children = walk_depth_first(self)
+        iter_children = iter(children)
+        for node in iter_children:
+            if not match(selector_set, node):
+                continue
+            if expect_type is not None and not isinstance(node, expect_type):
+                continue
+            return node
+
+        raise NoMatches(f"No nodes match {selector!r} on {self!r}")
+
+    if TYPE_CHECKING:
+
+        @overload
+        def query_exactly_one(self, selector: str) -> Widget: ...
+
+        @overload
+        def query_exactly_one(self, selector: type[QueryType]) -> QueryType: ...
+
+        @overload
+        def query_exactly_one(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType: ...
+
+    def query_exactly_one(
+        self,
+        selector: str | type[QueryType],
+        expect_type: type[QueryType] | None = None,
+    ) -> QueryType | Widget:
+        """Get a widget from this widget's children that matches a selector or widget type.
+
+        !!! Note
+            This method is similar to [query_one][textual.dom.DOMNode.query_one].
+            The only difference is that it will raise `TooManyMatches` if there is more than a single match.
+
+        Args:
+            selector: A selector or widget type.
+            expect_type: Require the object be of the supplied type, or None for any type.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            NoMatches: If no node matches the query.
+            TooManyMatches: If there is more than one matching node in the query (and `exactly_one==True`).
+
+        Returns:
+            A widget matching the selector.
+        """
+        _rich_traceback_omit = True
+
+        if isinstance(selector, str):
+            query_selector = selector
+        else:
+            query_selector = selector.__name__
+
+        selector_set = parse_selectors(query_selector)
+
+        children = walk_depth_first(self)
+        iter_children = iter(children)
+        for node in iter_children:
+            if not match(selector_set, node):
+                continue
+            if expect_type is not None and not isinstance(node, expect_type):
+                continue
+            for later_node in iter_children:
+                if match(selector_set, later_node):
+                    raise TooManyMatches(
+                        "Call to query_one resulted in more than one matched node"
+                    )
+            return node
+
+        raise NoMatches(f"No nodes match {selector!r} on {self!r}")
 
     def set_styles(self, css: str | None = None, **update_styles: Any) -> Self:
         """Set custom styles on this object.
