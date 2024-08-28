@@ -9,6 +9,7 @@ import rich.repr
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
 
+    from .dom import DOMNode
     from .widget import Widget
 
 
@@ -24,7 +25,8 @@ class NodeList(Sequence["Widget"]):
     Although named a list, widgets may appear only once, making them more like a set.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, parent: DOMNode | None = None) -> None:
+        self._parent = parent
         # The nodes in the list
         self._nodes: list[Widget] = []
         self._nodes_set: set[Widget] = set()
@@ -52,6 +54,13 @@ class NodeList(Sequence["Widget"]):
     def __contains__(self, widget: object) -> bool:
         return widget in self._nodes
 
+    def updated(self) -> None:
+        """Mark the nodes as having been updated."""
+        self._updates += 1
+        node = self._parent
+        while node is not None and (node := node._parent) is not None:
+            node._nodes._updates += 1
+
     def _sort(
         self,
         *,
@@ -69,7 +78,7 @@ class NodeList(Sequence["Widget"]):
         else:
             self._nodes.sort(key=key, reverse=reverse)
 
-        self._updates += 1
+        self.updated()
 
     def index(self, widget: Any, start: int = 0, stop: int = sys.maxsize) -> int:
         """Return the index of the given widget.
@@ -102,7 +111,7 @@ class NodeList(Sequence["Widget"]):
             if widget_id is not None:
                 self._ensure_unique_id(widget_id)
                 self._nodes_by_id[widget_id] = widget
-            self._updates += 1
+            self.updated()
 
     def _insert(self, index: int, widget: Widget) -> None:
         """Insert a Widget.
@@ -117,7 +126,7 @@ class NodeList(Sequence["Widget"]):
             if widget_id is not None:
                 self._ensure_unique_id(widget_id)
                 self._nodes_by_id[widget_id] = widget
-            self._updates += 1
+            self.updated()
 
     def _ensure_unique_id(self, widget_id: str) -> None:
         if widget_id in self._nodes_by_id:
@@ -141,7 +150,7 @@ class NodeList(Sequence["Widget"]):
             widget_id = widget.id
             if widget_id in self._nodes_by_id:
                 del self._nodes_by_id[widget_id]
-            self._updates += 1
+            self.updated()
 
     def _clear(self) -> None:
         """Clear the node list."""
@@ -149,7 +158,7 @@ class NodeList(Sequence["Widget"]):
             self._nodes.clear()
             self._nodes_set.clear()
             self._nodes_by_id.clear()
-            self._updates += 1
+            self.updated()
 
     def __iter__(self) -> Iterator[Widget]:
         return iter(self._nodes)

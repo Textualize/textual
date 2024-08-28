@@ -10,10 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+- Added `DOMNode.query_exactly_one` https://github.com/Textualize/textual/pull/4950
+- Added `SelectorSet.is_simple` https://github.com/Textualize/textual/pull/4950
 
 ### Changed
 
 - KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
+- Breaking change: `DOMNode.query_one` will not `raise TooManyMatches` https://github.com/Textualize/textual/pull/4950
 
 ## [0.78.0] - 2024-08-27
 
