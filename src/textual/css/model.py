@@ -194,15 +194,14 @@ class SelectorSet:
         return RuleSet._selector_to_css(self.selectors)
 
     @property
-    def has_pseudo_selectors(self) -> bool:
-        """Are there any pseudo selectors in the SelectorSet?"""
-        return any(selector.pseudo_classes for selector in self.selectors)
-
-    @property
     def is_simple(self) -> bool:
         """Are all the selectors simple (i.e. only dependent on static DOM state)."""
         simple_types = {SelectorType.ID, SelectorType.TYPE}
-        return all(selector.type in simple_types for selector in self.selectors)
+        return all(
+            selector.type in simple_types
+            for selector in self.selectors
+            if not selector.pseudo_classes
+        )
 
     def __rich_repr__(self) -> rich.repr.Result:
         selectors = RuleSet._selector_to_css(self.selectors)
