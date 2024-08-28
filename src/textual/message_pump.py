@@ -37,6 +37,7 @@ from ._context import message_hook as message_hook_context_var
 from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
+from .constants import SLOW_THRESHOLD
 from .css.match import match
 from .events import Event
 from .message import Message
@@ -50,7 +51,6 @@ if TYPE_CHECKING:
     from .app import App
     from .css.model import SelectorSet
 
-SLOW_THRESHOLD_MS = int(os.getenv('TEXTUAL_SLOW_THRESHOLD_MS', 500))
 
 Callback: TypeAlias = "Callable[..., Any] | Callable[..., Awaitable[Any]]"
 
@@ -661,12 +661,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
             elif "debug" in self.app.features:
                 start = perf_counter()
                 await self._on_message(message)
-                if perf_counter() - start > SLOW_THRESHOLD_MS / 1000:
-                    log.warning.verbosity(message.verbose)(
-                        f"method=<{self.__class__.__name__}.{message.handler_name}>",
-                        ">>>",
-                        f"Took over {SLOW_THRESHOLD_MS}ms to process.",
-                        "\nTo avoid screen freezes use the [work decorator](/guide/workers/#workers)"
+                if perf_counter() - start > SLOW_THRESHOLD / 1000:
+                    log.warning(
+                        f"method=<{self.__class__.__name__}."
+                        f"{message.handler_name}>",
+                        f"Took over {SLOW_THRESHOLD}ms to process.",
+                        "\nTo avoid screen freezes, consider using a worker.",
                     )
             else:
                 await self._on_message(message)
