@@ -1410,9 +1410,7 @@ class DOMNode(MessagePump):
 
         selector_set = parse_selectors(query_selector)
 
-        children = walk_depth_first(self)
-        iter_children = iter(children)
-        for node in iter_children:
+        for node in walk_depth_first(self):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
@@ -1475,6 +1473,8 @@ class DOMNode(MessagePump):
                 continue
             for later_node in iter_children:
                 if match(selector_set, later_node):
+                    if expect_type is not None and not isinstance(node, expect_type):
+                        continue
                     raise TooManyMatches(
                         "Call to query_one resulted in more than one matched node"
                     )
