@@ -78,7 +78,7 @@ WalkMethod: TypeAlias = Literal["depth", "breadth"]
 ReactiveType = TypeVar("ReactiveType")
 
 
-QueryOneCacheKey: TypeAlias = "tuple[int, str, Type[Widget]]"
+QueryOneCacheKey: TypeAlias = "tuple[int, str, Type[Widget] | None]"
 """The key used to cache query_one results."""
 
 
