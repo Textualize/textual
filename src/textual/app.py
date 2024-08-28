@@ -410,7 +410,7 @@ class App(Generic[ReturnType], DOMNode):
     """The time in seconds after which a tooltip gets displayed."""
 
     BINDING_GROUP_TITLE = "App"
-    """Shown in the key panel"""
+    """Shown in the key panel."""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
     """Use escape key to minimize in default screen (potentially overriding bindings)."""
