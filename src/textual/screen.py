@@ -29,6 +29,8 @@ import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
+from textual.keys import key_to_character
+
 from . import constants, errors, events, messages
 from ._arrange import arrange
 from ._callback import invoke
@@ -330,7 +332,7 @@ class Screen(Generic[ScreenResultType], Widget):
             for filter_namespace in filter_namespaces:
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
-                    if check_consume_key(key):
+                    if check_consume_key(key, key_to_character(key)):
                         del bindings_map.key_to_bindings[key]
             filter_namespaces.append(namespace)
 
