@@ -1026,6 +1026,24 @@ class DOMNode(MessagePump):
         )
         return style
 
+    def check_consume_key(self, key: str, character: str | None) -> bool:
+        """Check if the widget may consume the given key.
+
+        This should be implemented in widgets that handle [`Key`][textual.events.Key] events and
+        stop propagation (such as Input and TextArea).
+
+        Implementing this method will hide key bindings from the footer and key panel that would
+        be *consumed* by the focused widget.
+
+        Args:
+            key: A key identifier.
+            character: A character associated with the key, or `None` if there isn't one.
+
+        Returns:
+            `True` if the widget may capture the key in its `Key` event handler, or `False` if it won't.
+        """
+        return False
+
     def _get_title_style_information(
         self, background: Color
     ) -> tuple[Color, Color, Style]:

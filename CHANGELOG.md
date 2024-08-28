@@ -5,8 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
+
+### Added
+
+- Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+
+### Changed
+
+- KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
+
+## [0.78.0] - 2024-08-27
 
 ### Added
 
@@ -2320,6 +2329,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.78.0]: https://github.com/Textualize/textual/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/Textualize/textual/compare/v0.76.0...v0.77.0
 [0.76.0]: https://github.com/Textualize/textual/compare/v0.75.1...v0.76.0
 [0.75.1]: https://github.com/Textualize/textual/compare/v0.75.0...v0.75.1

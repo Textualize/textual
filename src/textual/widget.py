@@ -639,7 +639,7 @@ class Widget(DOMNode):
         """Check if the widget is permitted to focus.
 
         The base class returns [`can_focus`][textual.widget.Widget.can_focus].
-        This method maybe overridden if additional logic is required.
+        This method may be overridden if additional logic is required.
 
         Returns:
             `True` if the widget may be focused, or `False` if it may not be focused.
@@ -650,7 +650,7 @@ class Widget(DOMNode):
         """Check if a widget's children may be focused.
 
         The base class returns [`can_focus_children`][textual.widget.Widget.can_focus_children].
-        This method maybe overridden if additional logic is required.
+        This method may be overridden if additional logic is required.
 
         Returns:
             `True` if the widget's children may be focused, or `False` if the widget's children may not be focused.
@@ -1813,7 +1813,7 @@ class Widget(DOMNode):
 
     @property
     def virtual_region(self) -> Region:
-        """The widget region relative to it's container (which may not be visible,
+        """The widget region relative to its container (which may not be visible,
         depending on scroll offset).
 
 
@@ -2845,7 +2845,7 @@ class Widget(DOMNode):
                     scrolled = True
 
             # Adjust the region by the amount we just scrolled it, and convert to
-            # it's parent's virtual coordinate system.
+            # its parent's virtual coordinate system.
 
             region = (
                 (
