@@ -748,7 +748,7 @@ class DOMNode(MessagePump):
             ValueError: If the ID has already been set.
         """
         check_identifiers("id", new_id)
-        self._nodes.update()
+        self._nodes.updated()
         if self._id is not None:
             raise ValueError(
                 f"Node 'id' attribute may not be changed once set (current id={self._id!r})"
