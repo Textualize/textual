@@ -87,7 +87,6 @@ from .render import measure
 from .renderables.blank import Blank
 from .rlock import RLock
 from .strip import Strip
-from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -807,21 +806,14 @@ class Widget(DOMNode):
             NoMatches: if no children could be found for this ID.
             WrongType: if the wrong type was found.
         """
-        # We use Widget as a filter_type so that the inferred type of child is Widget.
-        for child in walk_depth_first(self, filter_type=Widget):
-            try:
-                if expect_type is None:
-                    return child.get_child_by_id(id)
-                else:
-                    return child.get_child_by_id(id, expect_type=expect_type)
-            except NoMatches:
-                pass
-            except WrongType as exc:
-                raise WrongType(
-                    f"Descendant with id={id!r} is wrong type; expected {expect_type},"
-                    f" got {type(child)}"
-                ) from exc
-        raise NoMatches(f"No descendant found with id={id!r}")
+
+        widget = self.query_one(f"#{id}")
+        if expect_type is not None and not isinstance(widget, expect_type):
+            raise WrongType(
+                f"Descendant with id={id!r} is wrong type; expected {expect_type},"
+                f" got {type(widget)}"
+            )
+        return widget
 
     def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
         """Get the first immediate child of a given type.
