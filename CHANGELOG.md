@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
-- `DOMNode.query_one` will not `raise TooManyMatches` https://github.com/Textualize/textual/pull/4950
+- Breaking change: `DOMNode.query_one` will not `raise TooManyMatches` https://github.com/Textualize/textual/pull/4950
 
 ## [0.78.0] - 2024-08-27
 
