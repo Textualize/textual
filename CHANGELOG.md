@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+- Added `Screen.ESCAPE_TO_MINIMIZE`
 
 ### Changed
 

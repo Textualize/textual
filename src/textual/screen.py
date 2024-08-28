@@ -191,6 +191,9 @@ class Screen(Generic[ScreenResultType], Widget):
     ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
     """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
 
+    ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
+    """Use escape key to minimize (potentially overriding bindings)."""
+
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
 
@@ -246,6 +249,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Indicates that a binding update was requested."""
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
+        self._escape_to_minimize = self.ESCAPE_TO_MINIMIZE
 
     @property
     def is_modal(self) -> bool:

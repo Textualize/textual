@@ -410,6 +410,10 @@ class App(Generic[ReturnType], DOMNode):
     """The time in seconds after which a tooltip gets displayed."""
 
     BINDING_GROUP_TITLE = "App"
+    """Shown in the key panel"""
+
+    ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
+    """Use escape key to minimize in default screen (potentially overriding bindings)."""
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -3238,6 +3242,7 @@ class App(Generic[ReturnType], DOMNode):
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
             screen: Screen[Any] = self.get_default_screen()
+            screen._escape_to_minimize = self.ESCAPE_TO_MINIMIZE
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
@@ -3278,7 +3283,11 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(event, events.Key):
                 # Special case for maximized widgets
                 # If something is maximized, then escape should minimize
-                if self.screen.maximized is not None and event.key == "escape":
+                if (
+                    self.screen._escape_to_minimize
+                    and self.screen.maximized is not None
+                    and event.key == "escape"
+                ):
                     self.screen.minimize()
                     return
                 if self.focused:
