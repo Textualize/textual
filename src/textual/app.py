@@ -1451,7 +1451,8 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             filename: Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time.
-            path: Path to directory for output. Defaults to current working directory.
+            path: Path to directory for output when saving locally (not used when app is running in the browser).
+                Defaults to current working directory.
             time_format: Date and time format to use if filename is None.
                 Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
 
