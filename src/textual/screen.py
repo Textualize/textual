@@ -191,6 +191,9 @@ class Screen(Generic[ScreenResultType], Widget):
     ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
     """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
 
+    ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
+    """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
+
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
 

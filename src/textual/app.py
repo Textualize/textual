@@ -410,9 +410,18 @@ class App(Generic[ReturnType], DOMNode):
     """The time in seconds after which a tooltip gets displayed."""
 
     BINDING_GROUP_TITLE = "App"
+    """Shown in the key panel."""
+
+    ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
+    """Use escape key to minimize widgets (potentially overriding bindings).
+    
+    This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
+    """
 
     title: Reactive[str] = Reactive("", compute=False)
+    """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
+    """The app's sub-title, combined with [`title`][textual.app.App.title] in the header."""
 
     dark: Reactive[bool] = Reactive(True, compute=False)
     """Use a dark theme if `True`, otherwise use a light theme.
@@ -3278,7 +3287,11 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(event, events.Key):
                 # Special case for maximized widgets
                 # If something is maximized, then escape should minimize
-                if self.screen.maximized is not None and event.key == "escape":
+                if (
+                    self.screen.maximized is not None
+                    and event.key == "escape"
+                    and self.escape_to_minimize
+                ):
                     self.screen.minimize()
                     return
                 if self.focused:
@@ -3299,6 +3312,23 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen._forward_event(event)
         else:
             await super().on_event(event)
+
+    @property
+    def escape_to_minimize(self) -> bool:
+        """Use the escape key to minimize?
+
+        When a widget is [maximized][textual.screen.Screen.maximize], this boolean determines if the `escape` key will
+        minimize the widget (potentially overriding any bindings).
+
+        The default logic is to use the screen's `ESCAPE_TO_MINIMIZE` classvar if it is set to `True` or `False`.
+        If the classvar on the screen is *not* set (and left as `None`), then the app's `ESCAPE_TO_MINIMIZE` is used.
+
+        """
+        return bool(
+            self.ESCAPE_TO_MINIMIZE
+            if self.screen.ESCAPE_TO_MINIMIZE is None
+            else self.screen.ESCAPE_TO_MINIMIZE
+        )
 
     def _parse_action(
         self, action: str | ActionParseResult, default_namespace: DOMNode
@@ -3336,7 +3366,6 @@ class App(Generic[ReturnType], DOMNode):
         self, action: str, default_namespace: DOMNode
     ) -> bool | None:
         """Check if an action is enabled.
-
         Args:
             action: An action string.
 
