@@ -3366,8 +3366,10 @@ class App(Generic[ReturnType], DOMNode):
         self, action: str, default_namespace: DOMNode
     ) -> bool | None:
         """Check if an action is enabled.
+
         Args:
             action: An action string.
+            default_namespace: The default namespace if one is not specified in the action.
 
         Returns:
             State of an action.
