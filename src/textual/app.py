@@ -1369,7 +1369,9 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
+    def action_screenshot(
+        self, filename: str | None = None, path: str | None = None
+    ) -> None:
         """This [action](/guide/actions) will save an SVG file containing the current contents of the screen.
 
         Args:
@@ -1377,7 +1379,6 @@ class App(Generic[ReturnType], DOMNode):
             path: Path to directory. Defaults to current working directory.
         """
         self.deliver_screenshot(filename, path)
-        self.notify("Exported screenshot")
 
     def export_screenshot(self, *, title: str | None = None) -> str:
         """Export an SVG screenshot of the current screen.
@@ -1457,7 +1458,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The delivery key that uniquely identifies the file delivery.
         """
-        path = path or "./"
         if not filename:
             svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
         else:
@@ -4142,7 +4142,8 @@ class App(Generic[ReturnType], DOMNode):
                 self.notify("Saved screenshot", title="Screenshot")
             else:
                 self.notify(
-                    f"Saved screenshot to {event.path.name!r}", title="Screenshot"
+                    f"Saved screenshot to [green]{str(event.path)!r}",
+                    title="Screenshot",
                 )
 
     @on(events.DeliveryFailed)
