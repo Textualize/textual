@@ -303,6 +303,7 @@ class WebDriver(Driver):
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
         mime_type: str | None = None,
+        name: str | None = None,
     ) -> None:
         self._deliver_file(
             binary,
@@ -311,6 +312,7 @@ class WebDriver(Driver):
             open_method=open_method,
             encoding=encoding,
             mime_type=mime_type,
+            name=name,
         )
 
     def _deliver_file(
