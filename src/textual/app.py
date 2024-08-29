@@ -3317,7 +3317,7 @@ class App(Generic[ReturnType], DOMNode):
     def escape_to_minimize(self) -> bool:
         """Use the escape key to minimize?
 
-        When a widget is [maximized][textual.screen.Screen.maximize], this value determines if the `escape` key will
+        When a widget is [maximized][textual.screen.Screen.maximize], this boolean determines if the `escape` key will
         minimize the widget (potentially overriding any bindings).
 
         The default logic is to use the screen's `ESCAPE_TO_MINIMIZE` classvar if it is set to `True` or `False`.
