@@ -413,13 +413,15 @@ class App(Generic[ReturnType], DOMNode):
     """Shown in the key panel."""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
-    """Use escape key to minimize in default screen (potentially overriding bindings).
+    """Use escape key to minimize widgets (potentially overriding bindings).
     
-    This is the default value, used if `ESCAPE_TO_MINIMIZE` is not defined in the Screen.
+    This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
     """
 
     title: Reactive[str] = Reactive("", compute=False)
+    """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
+    """The app's sub-title, combined with [`title`][textual.app.App.title] in the header."""
 
     dark: Reactive[bool] = Reactive(True, compute=False)
     """Use a dark theme if `True`, otherwise use a light theme.
