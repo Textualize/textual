@@ -1027,27 +1027,11 @@ class App(Generic[ReturnType], DOMNode):
                 "Maximize", "Maximize the focused widget", screen.action_maximize
             )
 
-        # Don't save screenshot for web drivers until we have the deliver_file in place
-        if self._driver.__class__.__name__ in {"LinuxDriver", "WindowsDriver"}:
-
-            def export_screenshot() -> None:
-                """Export a screenshot and write a notification."""
-                filename = self.save_screenshot()
-                try:
-                    self.notify(f"Saved {filename}", title="Screenshot")
-                except Exception as error:
-                    self.log.error(error)
-                    self.notify(
-                        "Failed to save screenshot.",
-                        title="Screenshot",
-                        severity="warning",
-                    )
-
-            yield SystemCommand(
-                "Save screenshot",
-                "Save an SVG 'screenshot' of the current screen (in the current working directory)",
-                export_screenshot,
-            )
+        yield SystemCommand(
+            "Save screenshot",
+            "Save an SVG 'screenshot' of the current screen (in the current working directory)",
+            self.deliver_screenshot,
+        )
 
     def get_default_screen(self) -> Screen:
         """Get the default screen.
@@ -1392,7 +1376,8 @@ class App(Generic[ReturnType], DOMNode):
             filename: Filename of screenshot, or None to auto-generate.
             path: Path to directory. Defaults to current working directory.
         """
-        self.save_screenshot(filename, path)
+        self.deliver_screenshot(filename, path)
+        self.notify("Exported screenshot")
 
     def export_screenshot(self, *, title: str | None = None) -> str:
         """Export an SVG screenshot of the current screen.
@@ -1450,6 +1435,42 @@ class App(Generic[ReturnType], DOMNode):
         with open(svg_path, "w", encoding="utf-8") as svg_file:
             svg_file.write(screenshot_svg)
         return svg_path
+
+    def deliver_screenshot(
+        self,
+        filename: str | None = None,
+        path: str | None = None,
+        time_format: str | None = None,
+    ) -> str | None:
+        """Deliver a screenshot of the app.
+
+        This with save the screenshot when running locally, or serve it when the app
+        is running in a web browser.
+
+        Args:
+            filename: Filename of SVG screenshot, or None to auto-generate
+                a filename with the date and time.
+            path: Path to directory for output. Defaults to current working directory.
+            time_format: Date and time format to use if filename is None.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        path = path or "./"
+        if not filename:
+            svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
+        else:
+            svg_filename = filename
+        screenshot_svg = self.export_screenshot()
+        return self.deliver_text(
+            io.StringIO(screenshot_svg),
+            save_directory=path,
+            save_filename=svg_filename,
+            open_method="browser",
+            mime_type="image/svg+xml",
+            name="screenshot",
+        )
 
     def bind(
         self,
@@ -3926,6 +3947,7 @@ class App(Generic[ReturnType], DOMNode):
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
         mime_type: str | None = None,
+        name: str | None = None,
     ) -> str | None:
         """Deliver a text file to the end-user of the application.
 
@@ -3956,6 +3978,8 @@ class App(Generic[ReturnType], DOMNode):
             mime_type: The MIME type of the file or None to guess based on file extension.
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "text/plain".
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
 
         Returns:
             The delivery key that uniquely identifies the file delivery.
@@ -3985,6 +4009,7 @@ class App(Generic[ReturnType], DOMNode):
             open_method=open_method,
             encoding=encoding,
             mime_type=mime_type,
+            name=name,
         )
 
     def deliver_binary(
@@ -3995,6 +4020,7 @@ class App(Generic[ReturnType], DOMNode):
         save_filename: str | None = None,
         open_method: Literal["browser", "download"] = "download",
         mime_type: str | None = None,
+        name: str | None = None,
     ) -> str | None:
         """Deliver a binary file to the end-user of the application.
 
@@ -4033,6 +4059,8 @@ class App(Generic[ReturnType], DOMNode):
             mime_type: The MIME type of the file or None to guess based on file extension.
                 If no MIME type is supplied and we cannot guess the MIME type, from the
                 file extension, the MIME type will be set to "application/octet-stream".
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
 
         Returns:
             The delivery key that uniquely identifies the file delivery.
@@ -4061,6 +4089,7 @@ class App(Generic[ReturnType], DOMNode):
             open_method=open_method,
             mime_type=mime_type,
             encoding=None,
+            name=name,
         )
 
     def _deliver_binary(
@@ -4072,10 +4101,11 @@ class App(Generic[ReturnType], DOMNode):
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
         mime_type: str | None = None,
+        name: str | None = None,
     ) -> str | None:
         """Deliver a binary file to the end-user of the application."""
         if self._driver is None:
-            return
+            return None
 
         # Generate a filename if the file-like object doesn't have one.
         if save_filename is None:
@@ -4099,6 +4129,17 @@ class App(Generic[ReturnType], DOMNode):
             encoding=encoding,
             open_method=open_method,
             mime_type=mime_type,
+            name=name,
         )
 
         return delivery_key
+
+    @on(events.DeliveryComplete)
+    def _on_delivery_complete(self, event: events.DeliveryComplete) -> None:
+        if event.name == "screenshot":
+            if event.path is None:
+                self.notify("Saved screenshot", title="Screenshot")
+            else:
+                self.notify(
+                    f"Saved screenshot to {event.path.name!r}", title="Screenshot"
+                )
