@@ -1559,7 +1559,7 @@ def test_check_consume_keys(snap_compare):
 
 
 def test_escape_to_minimize(snap_compare):
-    """Check escape minimizes"""
+    """Check escape minimizes. Regression test for https://github.com/Textualize/textual/issues/4939"""
 
     TEXT = """\
     def hello(name):
