@@ -3320,11 +3320,11 @@ class App(Generic[ReturnType], DOMNode):
         When a widget is [maximized][textual.screen.Screen.maximize], this value determines if the `escape` key will
         minimize the widget (potentially overriding any bindings).
 
-        The default logic is to use the screen's `ESCAPE_TO_MINIMIZE` classvar if it is set to `True` or `False`,
-        defaulting to `App.ESCAPE_TO_MINIMIZE` if `Screen.ESCAPE_TO_MINIMIZE` is `None` (the default).
+        The default logic is to use the screen's `ESCAPE_TO_MINIMIZE` classvar if it is set to `True` or `False`.
+        If the classvar on the screen is *not* set (and left as `None`), then the app's `ESCAPE_TO_MINIMIZE` is used.
 
         """
-        return (
+        return bool(
             self.ESCAPE_TO_MINIMIZE
             if self.screen.ESCAPE_TO_MINIMIZE is None
             else self.screen.ESCAPE_TO_MINIMIZE
