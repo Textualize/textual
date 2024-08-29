@@ -1629,7 +1629,7 @@ def test_escape_to_minimize_disabled(snap_compare):
 
 
 def test_escape_to_minimize_screen_override(snap_compare):
-    """test escape to minimize can be overridden by the screen"""
+    """Test escape to minimize can be overridden by the screen"""
 
     TEXT = """\
     def hello(name):
