@@ -1376,7 +1376,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             filename: Filename of screenshot, or None to auto-generate.
-            path: Path to directory. Defaults to current working directory.
+            path: Path to directory. Defaults to the user's Downloads directory.
         """
         self.deliver_screenshot(filename, path)
 
