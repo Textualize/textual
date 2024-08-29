@@ -750,6 +750,9 @@ class DeliveryComplete(Event, bubble=False):
     example if the file was delivered via web browser.
     """
 
+    name: str | None = None
+    """Optional name returned to the app to identify the download."""
+
 
 @dataclass
 class DeliveryFailed(Event, bubble=False):
@@ -760,3 +763,6 @@ class DeliveryFailed(Event, bubble=False):
 
     exception: BaseException
     """The exception that was raised during the delivery."""
+
+    name: str | None = None
+    """Optional name returned to the app to identify the download."""

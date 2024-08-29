@@ -259,6 +259,7 @@ class WebDriver(Driver):
                 )
             else:
                 # Read the requested amount of data from the file
+                name = payload.get("name", None)
                 try:
                     log.debug(f"Reading {requested_size} bytes from {delivery_key}")
                     chunk = file_like.read(requested_size)
@@ -269,7 +270,7 @@ class WebDriver(Driver):
                         log.info(f"Delivery complete for {delivery_key}")
                         file_like.close()
                         del deliveries[delivery_key]
-                        self._delivery_complete(delivery_key, save_path=None)
+                        self._delivery_complete(delivery_key, save_path=None, name=name)
                 except Exception as error:
                     file_like.close()
                     del deliveries[delivery_key]
@@ -282,7 +283,7 @@ class WebDriver(Driver):
 
                     log.error(str(traceback.format_exc()))
 
-                    self._delivery_failed(delivery_key, exception=error)
+                    self._delivery_failed(delivery_key, exception=error, name=name)
 
     def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.
@@ -321,6 +322,7 @@ class WebDriver(Driver):
         open_method: Literal["browser", "download"],
         encoding: str | None = None,
         mime_type: str | None = None,
+        name: str | None = None,
     ) -> None:
         """Deliver a file to the end-user of the application."""
         binary.seek(0)
@@ -335,6 +337,7 @@ class WebDriver(Driver):
             "open_method": open_method,
             "encoding": encoding or "",
             "mime_type": mime_type or "",
+            "name": name,
         }
         self.write_meta(meta)
         log.info(f"Delivering file {meta['path']!r}: {meta!r}")

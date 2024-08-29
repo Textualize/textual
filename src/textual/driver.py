@@ -208,6 +208,7 @@ class Driver(ABC):
         open_method: Literal["browser", "download"] = "download",
         encoding: str | None = None,
         mime_type: str | None = None,
+        name: str | None = None,
     ) -> None:
         """Save the file `path_or_file` to `save_path`.
 
@@ -227,6 +228,9 @@ class Driver(ABC):
                 in the `Content-Type` header.
             mime_type: *web only* The MIME type of the file. This will be used to
                 set the `Content-Type` header in the HTTP response.
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
+
         """
 
         def save_file_thread(binary: BinaryIO | TextIO, mode: str) -> None:
@@ -239,7 +243,9 @@ class Driver(ABC):
                         data = read(chunk_size)
                         if not data:
                             # No data left to read - delivery is complete.
-                            self._delivery_complete(delivery_key, save_path)
+                            self._delivery_complete(
+                                delivery_key, save_path=save_path, name=name
+                            )
                             break
                         write(data)
             except Exception as error:
@@ -249,7 +255,7 @@ class Driver(ABC):
                 import traceback
 
                 log.error(str(traceback.format_exc()))
-                self._delivery_failed(delivery_key, exception=error)
+                self._delivery_failed(delivery_key, exception=error, name=name)
             finally:
                 if not binary.closed:
                     binary.close()
@@ -262,22 +268,26 @@ class Driver(ABC):
         thread = threading.Thread(target=save_file_thread, args=(binary, mode))
         thread.start()
 
-    def _delivery_complete(self, delivery_key: str, save_path: Path | None) -> None:
+    def _delivery_complete(
+        self, delivery_key: str, save_path: Path | None, name: str | None
+    ) -> None:
         """Called when a file has been delivered successfully.
 
         Delivers a DeliveryComplete event to the app.
         """
         self._app.call_from_thread(
             self._app.post_message,
-            events.DeliveryComplete(key=delivery_key, path=save_path),
+            events.DeliveryComplete(key=delivery_key, path=save_path, name=name),
         )
 
-    def _delivery_failed(self, delivery_key: str, exception: BaseException) -> None:
+    def _delivery_failed(
+        self, delivery_key: str, exception: BaseException, name: str | None
+    ) -> None:
         """Called when a file delivery fails.
 
         Delivers a DeliveryFailed event to the app.
         """
         self._app.call_from_thread(
             self._app.post_message,
-            events.DeliveryFailed(key=delivery_key, exception=exception),
+            events.DeliveryFailed(key=delivery_key, exception=exception, name=name),
         )
