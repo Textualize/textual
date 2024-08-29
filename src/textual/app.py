@@ -1029,7 +1029,7 @@ class App(Generic[ReturnType], DOMNode):
 
         yield SystemCommand(
             "Save screenshot",
-            "Save an SVG 'screenshot' of the current screen (in the current working directory)",
+            "Save an SVG 'screenshot' of the current screen",
             self.deliver_screenshot,
         )
 
