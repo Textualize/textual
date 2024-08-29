@@ -259,7 +259,7 @@ class WebDriver(Driver):
                 )
             else:
                 # Read the requested amount of data from the file
-                name = payload.get("name", None)
+                name: str | None = payload.get("name", None)
                 try:
                     log.debug(f"Reading {requested_size} bytes from {delivery_key}")
                     chunk = file_like.read(requested_size)
