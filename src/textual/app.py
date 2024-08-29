@@ -4136,6 +4136,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @on(events.DeliveryComplete)
     def _on_delivery_complete(self, event: events.DeliveryComplete) -> None:
+        """Handle a successfully delivered screenshot."""
         if event.name == "screenshot":
             if event.path is None:
                 self.notify("Saved screenshot", title="Screenshot")
@@ -4143,3 +4144,11 @@ class App(Generic[ReturnType], DOMNode):
                 self.notify(
                     f"Saved screenshot to {event.path.name!r}", title="Screenshot"
                 )
+
+    @on(events.DeliveryFailed)
+    def _on_delivery_failed(self, event: events.DeliveryComplete) -> None:
+        """Handle a failure to deliver the screenshot."""
+        if event.name == "screenshot":
+            self.notify(
+                "Failed to save screenshot", title="Screenshot", severity="error"
+            )
