@@ -59,7 +59,7 @@ For instance, the following will run the `textual colors` command:
 textual run -c textual colors
 ```
 
-### Serve
+## Serve
 
 The devtools can also serve your application in a browser.
 Effectively turning your terminal app in to a web application!
@@ -91,6 +91,12 @@ You can serve multiple instances of your application at once!
 
     Textual serve is also useful when developing your app.
     If you make changes to your code, simply refresh the browser to update.
+
+There are some additional switches for serving Textual apps. Run the following for a list:
+
+```
+textual serve -h
+```
 
 ## Live editing
 
