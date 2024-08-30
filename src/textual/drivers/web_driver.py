@@ -152,10 +152,6 @@ class WebDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h")
-        self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
-        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-        # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
-        self.write("\x1b[=1;u")
 
         size = Size(80, 24) if self._size is None else Size(*self._size)
         event = events.Resize(size, size)
@@ -190,14 +186,17 @@ class WebDriver(Driver):
         byte_stream = ByteStream()
         try:
             for data in input_reader:
-                for packet_type, payload in byte_stream.feed(data):
-                    if packet_type == "D":
-                        # Treat as stdin
-                        for event in parser.feed(decode(payload)):
-                            self.process_event(event)
-                    else:
-                        # Process meta information separately
-                        self._on_meta(packet_type, payload)
+                if data:
+                    for packet_type, payload in byte_stream.feed(data):
+                        if packet_type == "D":
+                            # Treat as stdin
+                            for event in parser.feed(decode(payload)):
+                                self.process_event(event)
+                        else:
+                            # Process meta information separately
+                            self._on_meta(packet_type, payload)
+                for event in parser.tick():
+                    self.process_event(event)
         except _ExitInput:
             pass
         except Exception:
