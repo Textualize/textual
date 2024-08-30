@@ -152,6 +152,10 @@ class WebDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h")
+        self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
+        self.write("\x1b[=1;u")
 
         size = Size(80, 24) if self._size is None else Size(*self._size)
         event = events.Resize(size, size)
