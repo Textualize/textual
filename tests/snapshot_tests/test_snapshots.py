@@ -1460,10 +1460,14 @@ def test_system_commands(snap_compare):
 
     class SimpleApp(App):
         def compose(self) -> ComposeResult:
-            yield Input()
+            input = Input()
+            input.cursor_blink = False
+            yield input
 
+    app = SimpleApp()
+    app.animation_level = "none"
     assert snap_compare(
-        SimpleApp(),
+        app,
         terminal_size=(100, 30),
         press=["ctrl+p"],
     )
