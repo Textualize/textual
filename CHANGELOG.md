@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed broken updates when non active screen changes
+- Fixed broken updates when non active screen changes https://github.com/Textualize/textual/pull/4957
 
 ## [0.79.0] - 2024-08-30
 
