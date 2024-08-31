@@ -2,7 +2,7 @@ Screen {
     background: $panel;
 }
 
-Input {
+Input#dictionary-search {
     dock: top;
     margin: 1 0;
 }

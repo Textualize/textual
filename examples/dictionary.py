@@ -18,7 +18,7 @@ class DictionaryApp(App):
     CSS_PATH = "dictionary.tcss"
 
     def compose(self) -> ComposeResult:
-        yield Input(placeholder="Search for a word")
+        yield Input(placeholder="Search for a word", id="dictionary-search")
         with VerticalScroll(id="results-container"):
             yield Markdown(id="results")
 

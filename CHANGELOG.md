@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.79.1] - 2024-08-31
+
+### Fixed
+
+- Fixed broken updates when non active screen changes
+
 ## [0.79.0] - 2024-08-30
 
 ### Added
