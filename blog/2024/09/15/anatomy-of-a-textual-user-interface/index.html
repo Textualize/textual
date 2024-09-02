@@ -6516,7 +6516,7 @@ window.onload = async (event) => {
 
 
 <h1 id="anatomy-of-a-textual-user-interface">Anatomy of a Textual User Interface<a class="headerlink" href="#anatomy-of-a-textual-user-interface" title="Permanent link">&para;</a></h1>
-<p>I recently wrote a <a href="https://en.wikipedia.org/wiki/Text-based_user_interface">TUI</a> to chat to an LLM in the terminal.
+<p>I recently wrote a <a href="https://en.wikipedia.org/wiki/Text-based_user_interface">TUI</a> to chat to an AI agent in the terminal.
 I'm not the first to do this (shout out to <a href="https://github.com/darrenburns/elia">Elia</a> and <a href="https://github.com/villekr/paita">Paita</a>), but I <em>may</em> be the first to have it reply as if it were the AI from the Aliens movies?</p>
 <p>Here's a video of it in action:</p>
 <iframe width="100%" style="aspect-ratio:1512 / 982"  src="https://www.youtube.com/embed/hr5JvQS4d_w" title="Mother AI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -6611,6 +6611,7 @@ Virtually any layout is possible, and you never have to do any math to calculate
 <p>We could add a little CSS to tweak the layout, but the defaults work well here.
 The header and footer are <em>docked</em> to an appropriate edge.
 The <code>VerticalScroll</code> widget is styled to consume any available space, leaving room for widgets with a defined height (like our <code>Input</code>).</p>
+<p>If you resize the terminal it will keep those relative proportions.</p>
 <h2 id="look-into-my-eye">Look into my eye.<a class="headerlink" href="#look-into-my-eye" title="Permanent link">&para;</a></h2>
 <p>The next method is an <em>event handler</em>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
