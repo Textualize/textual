@@ -14,6 +14,7 @@ textual console -v
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -732,3 +733,36 @@ class Print(Event, bubble=False):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.text
         yield self.stderr
+
+
+@dataclass
+class DeliveryComplete(Event, bubble=False):
+    """Sent to App when a file has been delivered."""
+
+    key: str
+    """The delivery key associated with the delivery.
+    
+    This is the same key that was returned by `App.deliver_text`/`App.deliver_binary`.
+    """
+
+    path: Path | None = None
+    """The path where the file was saved, or `None` if the path is not available, for
+    example if the file was delivered via web browser.
+    """
+
+    name: str | None = None
+    """Optional name returned to the app to identify the download."""
+
+
+@dataclass
+class DeliveryFailed(Event, bubble=False):
+    """Sent to App when a file delivery fails."""
+
+    key: str
+    """The delivery key associated with the delivery."""
+
+    exception: BaseException
+    """The exception that was raised during the delivery."""
+
+    name: str | None = None
+    """Optional name returned to the app to identify the download."""

@@ -11,10 +11,12 @@ import asyncio
 import importlib
 import inspect
 import io
+import mimetypes
 import os
 import signal
 import sys
 import threading
+import uuid
 import warnings
 from asyncio import Task, create_task
 from concurrent.futures import Future
@@ -24,14 +26,15 @@ from contextlib import (
     redirect_stderr,
     redirect_stdout,
 )
-from datetime import datetime
 from functools import partial
+from pathlib import Path
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
     AsyncGenerator,
     Awaitable,
+    BinaryIO,
     Callable,
     ClassVar,
     Generator,
@@ -40,6 +43,7 @@ from typing import (
     Iterator,
     NamedTuple,
     Sequence,
+    TextIO,
     Type,
     TypeVar,
     overload,
@@ -48,6 +52,7 @@ from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
+from platformdirs import user_downloads_path
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
@@ -75,6 +80,7 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._dispatch_key import dispatch_key
 from ._event_broker import NoHandler, extract_handler_actions
+from ._files import generate_datetime_filename
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
@@ -410,9 +416,18 @@ class App(Generic[ReturnType], DOMNode):
     """The time in seconds after which a tooltip gets displayed."""
 
     BINDING_GROUP_TITLE = "App"
+    """Shown in the key panel."""
+
+    ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
+    """Use escape key to minimize widgets (potentially overriding bindings).
+    
+    This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
+    """
 
     title: Reactive[str] = Reactive("", compute=False)
+    """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
+    """The app's sub-title, combined with [`title`][textual.app.App.title] in the header."""
 
     dark: Reactive[bool] = Reactive(True, compute=False)
     """Use a dark theme if `True`, otherwise use a light theme.
@@ -1012,27 +1027,11 @@ class App(Generic[ReturnType], DOMNode):
                 "Maximize", "Maximize the focused widget", screen.action_maximize
             )
 
-        # Don't save screenshot for web drivers until we have the deliver_file in place
-        if self._driver.__class__.__name__ in {"LinuxDriver", "WindowsDriver"}:
-
-            def export_screenshot() -> None:
-                """Export a screenshot and write a notification."""
-                filename = self.save_screenshot()
-                try:
-                    self.notify(f"Saved {filename}", title="Screenshot")
-                except Exception as error:
-                    self.log.error(error)
-                    self.notify(
-                        "Failed to save screenshot.",
-                        title="Screenshot",
-                        severity="warning",
-                    )
-
-            yield SystemCommand(
-                "Save screenshot",
-                "Save an SVG 'screenshot' of the current screen (in the current working directory)",
-                export_screenshot,
-            )
+        yield SystemCommand(
+            "Save screenshot",
+            "Save an SVG 'screenshot' of the current screen",
+            self.deliver_screenshot,
+        )
 
     def get_default_screen(self) -> Screen:
         """Get the default screen.
@@ -1370,14 +1369,16 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
+    def action_screenshot(
+        self, filename: str | None = None, path: str | None = None
+    ) -> None:
         """This [action](/guide/actions) will save an SVG file containing the current contents of the screen.
 
         Args:
             filename: Filename of screenshot, or None to auto-generate.
-            path: Path to directory. Defaults to current working directory.
+            path: Path to directory. Defaults to the user's Downloads directory.
         """
-        self.save_screenshot(filename, path)
+        self.deliver_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
         """Export an SVG screenshot of the current screen.
@@ -1427,14 +1428,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         path = path or "./"
         if not filename:
-            if time_format is None:
-                dt = datetime.now().isoformat()
-            else:
-                dt = datetime.now().strftime(time_format)
-            svg_filename_stem = f"{self.title.lower()} {dt}"
-            for reserved in ' <>:"/\\|?*.':
-                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
-            svg_filename = svg_filename_stem + ".svg"
+            svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -1442,6 +1436,42 @@ class App(Generic[ReturnType], DOMNode):
         with open(svg_path, "w", encoding="utf-8") as svg_file:
             svg_file.write(screenshot_svg)
         return svg_path
+
+    def deliver_screenshot(
+        self,
+        filename: str | None = None,
+        path: str | None = None,
+        time_format: str | None = None,
+    ) -> str | None:
+        """Deliver a screenshot of the app.
+
+        This with save the screenshot when running locally, or serve it when the app
+        is running in a web browser.
+
+        Args:
+            filename: Filename of SVG screenshot, or None to auto-generate
+                a filename with the date and time.
+            path: Path to directory for output when saving locally (not used when app is running in the browser).
+                Defaults to current working directory.
+            time_format: Date and time format to use if filename is None.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        if not filename:
+            svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
+        else:
+            svg_filename = filename
+        screenshot_svg = self.export_screenshot()
+        return self.deliver_text(
+            io.StringIO(screenshot_svg),
+            save_directory=path,
+            save_filename=svg_filename,
+            open_method="browser",
+            mime_type="image/svg+xml",
+            name="screenshot",
+        )
 
     def bind(
         self,
@@ -3278,7 +3308,11 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(event, events.Key):
                 # Special case for maximized widgets
                 # If something is maximized, then escape should minimize
-                if self.screen.maximized is not None and event.key == "escape":
+                if (
+                    self.screen.maximized is not None
+                    and event.key == "escape"
+                    and self.escape_to_minimize
+                ):
                     self.screen.minimize()
                     return
                 if self.focused:
@@ -3299,6 +3333,23 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen._forward_event(event)
         else:
             await super().on_event(event)
+
+    @property
+    def escape_to_minimize(self) -> bool:
+        """Use the escape key to minimize?
+
+        When a widget is [maximized][textual.screen.Screen.maximize], this boolean determines if the `escape` key will
+        minimize the widget (potentially overriding any bindings).
+
+        The default logic is to use the screen's `ESCAPE_TO_MINIMIZE` classvar if it is set to `True` or `False`.
+        If the classvar on the screen is *not* set (and left as `None`), then the app's `ESCAPE_TO_MINIMIZE` is used.
+
+        """
+        return bool(
+            self.ESCAPE_TO_MINIMIZE
+            if self.screen.ESCAPE_TO_MINIMIZE is None
+            else self.screen.ESCAPE_TO_MINIMIZE
+        )
 
     def _parse_action(
         self, action: str | ActionParseResult, default_namespace: DOMNode
@@ -3339,6 +3390,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             action: An action string.
+            default_namespace: The default namespace if one is not specified in the action.
 
         Returns:
             State of an action.
@@ -3886,3 +3938,219 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
+
+    def deliver_text(
+        self,
+        path_or_file: str | Path | TextIO,
+        *,
+        save_directory: str | Path | None = None,
+        save_filename: str | None = None,
+        open_method: Literal["browser", "download"] = "download",
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> str | None:
+        """Deliver a text file to the end-user of the application.
+
+        If a TextIO object is supplied, it will be closed by this method
+        and *must not be used* after this method is called.
+
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download via
+        a single-use URL.
+
+        After the file has been delivered, a `DeliveryComplete` message will be posted
+        to this `App`, which contains the `delivery_key` returned by this method. By
+        handling this message, you can add custom logic to your application that fires
+        only after the file has been delivered.
+
+        Args:
+            path_or_file: The path or file-like object to save.
+            save_directory: The directory to save the file to.
+            save_filename: The filename to save the file to.  If `path_or_file`
+                is a file-like object, the filename will be generated from
+                the `name` attribute if available. If `path_or_file` is a path
+                the filename will be generated from the path.
+            encoding: The encoding to use when saving the file. If `None`,
+                the encoding will be determined by supplied file-like object
+                (if possible). If this is not possible, 'utf-8' will be used.
+            mime_type: The MIME type of the file or None to guess based on file extension.
+                If no MIME type is supplied and we cannot guess the MIME type, from the
+                file extension, the MIME type will be set to "text/plain".
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+            file_name = save_filename or binary_path.name
+        else:
+            encoding = encoding or getattr(path_or_file, "encoding", None) or "utf-8"
+            binary = path_or_file
+            file_name = save_filename or getattr(path_or_file, "name", None)
+
+        # If we could infer a filename, and no MIME type was supplied, guess the MIME type.
+        if file_name and not mime_type:
+            mime_type, _ = mimetypes.guess_type(file_name)
+
+        # Still no MIME type? Default it to "text/plain".
+        if mime_type is None:
+            mime_type = "text/plain"
+
+        return self._deliver_binary(
+            binary,
+            save_directory=save_directory,
+            save_filename=file_name,
+            open_method=open_method,
+            encoding=encoding,
+            mime_type=mime_type,
+            name=name,
+        )
+
+    def deliver_binary(
+        self,
+        path_or_file: str | Path | BinaryIO,
+        *,
+        save_directory: str | Path | None = None,
+        save_filename: str | None = None,
+        open_method: Literal["browser", "download"] = "download",
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> str | None:
+        """Deliver a binary file to the end-user of the application.
+
+        If an IO object is supplied, it will be closed by this method
+        and *must not be used* after it is supplied to this method.
+
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download via
+        a single-use URL.
+
+        This operation runs in a thread when running on web, so this method
+        returning does not indicate that the file has been delivered.
+
+        After the file has been delivered, a `DeliveryComplete` message will be posted
+        to this `App`, which contains the `delivery_key` returned by this method. By
+        handling this message, you can add custom logic to your application that fires
+        only after the file has been delivered.
+
+        Args:
+            path_or_file: The path or file-like object to save.
+            save_directory: The directory to save the file to. If None,
+                the default "downloads" directory will be used. This
+                argument is ignored when running via the web.
+            save_filename: The filename to save the file to. If None, the following logic
+                applies to generate the filename:
+                - If `path_or_file` is a file-like object, the filename will be taken from
+                  the `name` attribute if available.
+                - If `path_or_file` is a path, the filename will be taken from the path.
+                - If a filename is not available, a filename will be generated using the
+                  App's title and the current date and time.
+            open_method: The method to use to open the file. "browser" will open the file in the
+                web browser, "download" will initiate a download. Note that this can sometimes
+                be impacted by the browser's settings.
+            mime_type: The MIME type of the file or None to guess based on file extension.
+                If no MIME type is supplied and we cannot guess the MIME type, from the
+                file extension, the MIME type will be set to "application/octet-stream".
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+            file_name = save_filename or binary_path.name
+        else:  # IO object
+            binary = path_or_file
+            file_name = save_filename or getattr(path_or_file, "name", None)
+
+        # If we could infer a filename, and no MIME type was supplied, guess the MIME type.
+        if file_name and not mime_type:
+            mime_type, _ = mimetypes.guess_type(file_name)
+
+        # Still no MIME type? Default it to "application/octet-stream".
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+
+        return self._deliver_binary(
+            binary,
+            save_directory=save_directory,
+            save_filename=file_name,
+            open_method=open_method,
+            mime_type=mime_type,
+            encoding=None,
+            name=name,
+        )
+
+    def _deliver_binary(
+        self,
+        binary: BinaryIO | TextIO,
+        *,
+        save_directory: str | Path | None,
+        save_filename: str | None,
+        open_method: Literal["browser", "download"],
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> str | None:
+        """Deliver a binary file to the end-user of the application."""
+        if self._driver is None:
+            return None
+
+        # Generate a filename if the file-like object doesn't have one.
+        if save_filename is None:
+            save_filename = generate_datetime_filename(self.title, "")
+
+        # Find the appropriate save location if not specified.
+        save_directory = (
+            user_downloads_path() if save_directory is None else Path(save_directory)
+        )
+
+        # Generate a unique key for this delivery
+        delivery_key = str(uuid.uuid4().hex)
+
+        # Save the file. The driver will determine the appropriate action
+        # to take here. It could mean simply writing to the save_path, or
+        # sending the file to the web browser for download.
+        self._driver.deliver_binary(
+            binary,
+            delivery_key=delivery_key,
+            save_path=save_directory / save_filename,
+            encoding=encoding,
+            open_method=open_method,
+            mime_type=mime_type,
+            name=name,
+        )
+
+        return delivery_key
+
+    @on(events.DeliveryComplete)
+    def _on_delivery_complete(self, event: events.DeliveryComplete) -> None:
+        """Handle a successfully delivered screenshot."""
+        if event.name == "screenshot":
+            if event.path is None:
+                self.notify("Saved screenshot", title="Screenshot")
+            else:
+                self.notify(
+                    f"Saved screenshot to [green]{str(event.path)!r}",
+                    title="Screenshot",
+                )
+
+    @on(events.DeliveryFailed)
+    def _on_delivery_failed(self, event: events.DeliveryComplete) -> None:
+        """Handle a failure to deliver the screenshot."""
+        if event.name == "screenshot":
+            self.notify(
+                "Failed to save screenshot", title="Screenshot", severity="error"
+            )

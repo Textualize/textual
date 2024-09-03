@@ -191,6 +191,9 @@ class Screen(Generic[ScreenResultType], Widget):
     ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
     """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
 
+    ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
+    """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
+
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
 
@@ -932,8 +935,9 @@ class Screen(Generic[ScreenResultType], Widget):
             elif (
                 self in self.app._background_screens and self._compositor._dirty_regions
             ):
-                # Background screen
+                self._set_dirty(*self._compositor._dirty_regions)
                 app.screen.refresh(*self._compositor._dirty_regions)
+                self._repaint_required = True
                 self._compositor._dirty_regions.clear()
                 self._dirty_widgets.clear()
         app._update_mouse_over(self)
@@ -1094,6 +1098,7 @@ class Screen(Generic[ScreenResultType], Widget):
         message.prevent_default()
         widget = message.widget
         assert isinstance(widget, Widget)
+
         self._dirty_widgets.add(widget)
         self.check_idle()
 
