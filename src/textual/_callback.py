@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from functools import lru_cache, partial
+from functools import partial
 from inspect import isawaitable, signature
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -16,16 +16,25 @@ INVOKE_TIMEOUT_WARNING = 3
 
 def count_parameters(func: Callable) -> int:
     """Count the number of parameters in a callable"""
-    if isinstance(func, partial):
-        return _count_parameters(func.func) + len(func.args)
-    if hasattr(func, "__self__"):
-        # Bound method
-        func = func.__func__  # type: ignore
-        return _count_parameters(func) - 1
-    return _count_parameters(func)
+    from ._profile import timer
+
+    with timer("count"):
+        try:
+            return func._param_count
+        except AttributeError:
+            pass
+        if isinstance(func, partial):
+            param_count = _count_parameters(func) + len(func.args)
+        elif hasattr(func, "__self__"):
+            # Bound method
+            func = func.__func__  # type: ignore
+            param_count = _count_parameters(func) - 1
+        else:
+            param_count = _count_parameters(func)
+        func._param_count = param_count
+        return param_count
 
 
-@lru_cache(maxsize=2048)
 def _count_parameters(func: Callable) -> int:
     """Count the number of parameters in a callable"""
     return len(signature(func).parameters)

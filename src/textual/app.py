@@ -1784,7 +1784,8 @@ class App(Generic[ReturnType], DOMNode):
                     await asyncio.shield(app._shutdown())
                 except asyncio.CancelledError:
                     pass
-
+        active_app.set(None)
+        active_message_pump.set(None)
         return app.return_value
 
     def run(
@@ -3029,6 +3030,8 @@ class App(Generic[ReturnType], DOMNode):
                 if stack_screen._running:
                     await self._prune(stack_screen)
             stack.clear()
+        self._installed_screens.clear()
+        self._modes.clear()
 
         # Close any remaining nodes
         # Should be empty by now
