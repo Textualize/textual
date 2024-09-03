@@ -14,9 +14,9 @@ In this post we'll look at some new functionality available in Textual apps whic
 
 ## What is `textual-serve`?
 
-`textual-serve` is an open source project which allows you to serve and access your Textual app via a browser. The Textual app runs on a machine/server under your control, and communicates with the browser via a protocol which runs over websocket. End-users interacting with the app via their browser do not have access to the machine the application is running on via their browser, only the running Textual app.
+[`textual-serve`](https://github.com/Textualize/textual-serve) is an open source project which allows you to serve and access your Textual app via a browser. The Textual app runs on a machine/server under your control, and communicates with the browser via a protocol which runs over websocket. End-users interacting with the app via their browser do not have access to the machine the application is running on via their browser, only the running Textual app.
 
-For example, you could install `harlequin` (a terminal-based SQL IDE)  on a machine on your network, run it using `textual-serve`, and then share the URL with others. Anyone with the URL would then be able to use `harlequin` to query databases accessible from that server. Or, you could deploy `posting` (a terminal-based API client) on a server, and provide your colleagues with the URL, allowing them to quickly send HTTP requests *from that server*, right from within their browser.
+For example, you could install [`harlequin`](https://github.com/tconbeer/harlequin) (a terminal-based SQL IDE)  on a machine on your network, run it using `textual-serve`, and then share the URL with others. Anyone with the URL would then be able to use `harlequin` to query databases accessible from that server. Or, you could deploy [`posting`](https://github.com/darrenburns/posting) (a terminal-based API client) on a server, and provide your colleagues with the URL, allowing them to quickly send HTTP requests *from that server*, right from within their browser.
 
 <figure markdown>
 ![posting running in a browser](../images/textual-serve-files/posting-textual-serve.png)
@@ -25,7 +25,7 @@ For example, you could install `harlequin` (a terminal-based SQL IDE)  on a mach
 
 ## Providing an equal experience
 
-While you're interacting with the Textual app using your web browser, it's not *running* in your browser. It's running on the machine you've installed it on, similar to typical server driven web app. This creates some interesting challenges and an unequal experience for users running "natively" in the terminal versus those in a web browser.
+While you're interacting with the Textual app using your web browser, it's not *running* in your browser. It's running on the machine you've installed it on, similar to typical server driven web app. This creates some interesting challenges for us if we want to provide an equal experience across browser and terminal.
 
 A Textual app running in the browser is inherently more accessible to non-technical users, and we don't want to limit access to important functionality for those users. We also don't want Textual app developers to have to repeatedly check "is the the end-user using a browser or a terminal?".
 
