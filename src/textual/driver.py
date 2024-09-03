@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any, Iterator
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal, TextIO
 
-from . import events
+from . import events, log
 from .events import MouseUp
 
 if TYPE_CHECKING:
@@ -146,19 +148,6 @@ class Driver(ABC):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
 
-    def open_url(self, url: str, new_tab: bool = True) -> None:
-        """Open a URL in the default web browser.
-
-        Args:
-            url: The URL to open.
-            new_tab: Whether to open the URL in a new tab.
-                This is only relevant when running via the WebDriver,
-                and is ignored when called while running through the terminal.
-        """
-        import webbrowser
-
-        webbrowser.open(url)
-
     def suspend_application_mode(self) -> None:
         """Suspend application mode.
 
@@ -196,3 +185,109 @@ class Driver(ABC):
 
     def close(self) -> None:
         """Perform any final cleanup."""
+
+    def open_url(self, url: str, new_tab: bool = True) -> None:
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+            new_tab: Whether to open the URL in a new tab.
+                This is only relevant when running via the WebDriver,
+                and is ignored when called while running through the terminal.
+        """
+        import webbrowser
+
+        webbrowser.open(url)
+
+    def deliver_binary(
+        self,
+        binary: BinaryIO | TextIO,
+        *,
+        delivery_key: str,
+        save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> None:
+        """Save the file `path_or_file` to `save_path`.
+
+        If running via web through Textual Web or Textual Serve,
+        this will initiate a download in the web browser.
+
+        Args:
+            binary: The binary file to save.
+            delivery_key: The unique key that was used to deliver the file.
+            save_path: The location to save the file to.
+            open_method: *web only* Whether to open the file in the browser or
+                to prompt the user to download it. When running via a standard
+                (non-web) terminal, this is ignored.
+            encoding: *web only* The text encoding to use when saving the file.
+                This will be passed to Python's `open()` built-in function.
+                When running via web, this will be used to set the charset
+                in the `Content-Type` header.
+            mime_type: *web only* The MIME type of the file. This will be used to
+                set the `Content-Type` header in the HTTP response.
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
+
+        """
+
+        def save_file_thread(binary: BinaryIO | TextIO, mode: str) -> None:
+            try:
+                with open(save_path, mode) as destination_file:
+                    read = binary.read
+                    write = destination_file.write
+                    chunk_size = 1024 * 64
+                    while True:
+                        data = read(chunk_size)
+                        if not data:
+                            # No data left to read - delivery is complete.
+                            self._delivery_complete(
+                                delivery_key, save_path=save_path, name=name
+                            )
+                            break
+                        write(data)
+            except Exception as error:
+                # If any exception occurs during the delivery, pass
+                # it on to the app via a DeliveryFailed event.
+                log.error(f"Failed to deliver file: {error}")
+                import traceback
+
+                log.error(str(traceback.format_exc()))
+                self._delivery_failed(delivery_key, exception=error, name=name)
+            finally:
+                if not binary.closed:
+                    binary.close()
+
+        if isinstance(binary, BinaryIO):
+            mode = "wb"
+        else:
+            mode = "w"
+
+        thread = threading.Thread(target=save_file_thread, args=(binary, mode))
+        thread.start()
+
+    def _delivery_complete(
+        self, delivery_key: str, save_path: Path | None, name: str | None
+    ) -> None:
+        """Called when a file has been delivered successfully.
+
+        Delivers a DeliveryComplete event to the app.
+        """
+        self._app.call_from_thread(
+            self._app.post_message,
+            events.DeliveryComplete(key=delivery_key, path=save_path, name=name),
+        )
+
+    def _delivery_failed(
+        self, delivery_key: str, exception: BaseException, name: str | None
+    ) -> None:
+        """Called when a file delivery fails.
+
+        Delivers a DeliveryFailed event to the app.
+        """
+        self._app.call_from_thread(
+            self._app.post_message,
+            events.DeliveryFailed(key=delivery_key, exception=exception, name=name),
+        )

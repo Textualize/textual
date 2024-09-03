@@ -31,6 +31,12 @@ Here's what the finished app will look like:
 ```{.textual path="docs/examples/tutorial/stopwatch.py" title="stopwatch.py" press="tab,enter,tab,enter,tab,enter,tab,enter"}
 ```
 
+!!! info
+
+    Did you notice the `^p palette` at the bottom right hand corner?
+    This is the [Command Palette](./guide/command_palette.md).
+    You can think of it as a dedicated command prompt for your app.
+
 ### Try it out!
 
 The following is *not* a screenshot, but a fully interactive Textual app running in your browser.
