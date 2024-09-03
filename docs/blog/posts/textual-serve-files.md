@@ -35,11 +35,11 @@ To solve this, we've created APIs which allow developers to add web links to the
 
 The ability to click on and open links is a pretty fundamental expectation when interacting with an app running in your browser.
 
-Python offers a `webbrowser` module which allows you to open a URL in a web browser. When a Textual app is running in a terminal, a simple call to this module does exactly what we'd expect.
+Python offers a [`webbrowser`](https://docs.python.org/3/library/webbrowser.html) module which allows you to open a URL in a web browser. When a Textual app is running in a terminal, a simple call to this module does exactly what we'd expect.
 
 If the app is being used via a browser however, the `webbrowser` module would attempt to open the browser on the machine the app is being served from. This is clearly not very useful to the end-user!
 
-To solve this, we've added a new method to Textual: `App.open_url`. When running in the terminal, this will use `webbrowser` to open the URL as you would expect. 
+To solve this, we've added a new method to Textual: [`App.open_url`](https://textual.textualize.io/api/app/#textual.app.App.open_url). When running in the terminal, this will use `webbrowser` to open the URL as you would expect. 
 
 When the Textual app is being served and used via the browser however, the running app will inform `textual-serve`, which will in turn tell the browser via websocket that the end-user is requesting to open a link, which will then be opened in their browser - just like a normal web link.
 
@@ -51,7 +51,7 @@ When running a Textual app in the terminal, getting a file into the hands of the
 
 Run that same app in the browser however, and we have a problem. If you simply write the file to disk, the end-user would need to be able to access the machine the app is running on and navigate the file system in order to retrieve it. This may not be possible: they may not be permitted to access the machine, or they simply may not know how!
 
-The new `App.deliver_text` and `App.deliver_binary` methods are designed to let developers get files into the hands of end users, regardless of whether the app is being accessed via the browser or a terminal.
+The new [`App.deliver_text`](https://textual.textualize.io/api/app/#textual.app.App.deliver_text) and [`App.deliver_binary`](https://textual.textualize.io/api/app/#textual.app.App.deliver_binary) methods are designed to let developers get files into the hands of end users, regardless of whether the app is being accessed via the browser or a terminal.
 
 When accessing a Textual app using a terminal, these methods will write a file to disk, and notify the `App` when the write is complete.
 
@@ -63,7 +63,7 @@ Input in Textual apps is handled, at the lowest level, by "driver" classes. We h
 
 When running in a terminal, the Windows/Linux drivers will read `stdin`, and parse incoming ANSI escape sequences sent by the terminal emulator as a result of mouse movement or keyboard interaction. The driver translates these escape sequences into Textual "Events", which are sent on to your application's message queue for asynchronous handling.
 
-For apps being served over the web, things are again a bit more complex. Interaction between the application and the end-user happens inside the browser - with a terminal rendered using `xterm.js` - the same front-end terminal engine used in VS Code. `xterm.js` fills the roll of a terminal emulator here, translating user interactions into ANSI escape codes on `stdin`.
+For apps being served over the web, things are again a bit more complex. Interaction between the application and the end-user happens inside the browser - with a terminal rendered using [`xterm.js`](https://xtermjs.org/) - the same front-end terminal engine used in VS Code. `xterm.js` fills the roll of a terminal emulator here, translating user interactions into ANSI escape codes on `stdin`.
 
 These escape codes are sent through websocket to `textual-serve` and then piped to the `stdin` stream of the Textual app which is running as a subprocess. Inside the Textual app, these can be processed and converted into events as normal by Textual's web driver.
 
@@ -73,7 +73,7 @@ Although most of the data flowing back and forth from browser to Textual app is 
 
 To support file delivery we updated our protocol to allow applications to signal that a file is "ready" for delivery when one of the new "deliver file" APIs is called. An ephemeral, single-use, download link is then generated and sent to the browser via websocket. The front-end of `textual-serve` opens this URL and the file is streamed to the browser.
 
-This streaming process involves continuous delivery of encoded chunks of the file (using a variation of Bencode - the encoding used by BitTorrent) from the Textual app process to `textual-serve`, and then through to the end-user via the download URL.
+This streaming process involves continuous delivery of encoded chunks of the file (using a variation of [Bencode](https://en.wikipedia.org/wiki/Bencode) - the encoding used by [BitTorrent](https://en.wikipedia.org/wiki/BitTorrent)) from the Textual app process to `textual-serve`, and then through to the end-user via the download URL.
 
 ![textual-serve-overview](../images/textual-serve-files/textual-serve-overview.png)
 
