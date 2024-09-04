@@ -7,6 +7,7 @@ from datetime import datetime
 from rich.text import Text
 
 from ..app import RenderResult
+from ..css.query import NoMatches
 from ..dom import NoScreen
 from ..events import Click, Mount
 from ..reactive import Reactive
@@ -219,13 +220,13 @@ class Header(Widget):
         async def set_title() -> None:
             try:
                 self.query_one(HeaderTitle).text = self.screen_title
-            except NoScreen:
+            except (NoScreen, NoMatches):
                 pass
 
         async def set_sub_title() -> None:
             try:
                 self.query_one(HeaderTitle).sub_text = self.screen_sub_title
-            except NoScreen:
+            except (NoScreen, NoMatches):
                 pass
 
         self.watch(self.app, "title", set_title)
