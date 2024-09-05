@@ -8,23 +8,35 @@ from textual.widgets._input import _RESTRICT_TYPES
 
 
 def test_input_number_type():
-    """Test number type regex."""
+    """Test number type regex, value should be number or the prefix of a valid number"""
     number = _RESTRICT_TYPES["number"]
     assert re.fullmatch(number, "0")
     assert re.fullmatch(number, "0.")
     assert re.fullmatch(number, ".")
+    assert re.fullmatch(number, "-")
+    assert re.fullmatch(number, "+")
     assert re.fullmatch(number, ".0")
     assert re.fullmatch(number, "1.1")
+    assert re.fullmatch(number, "1_")
+    assert re.fullmatch(number, "1_2")
+    assert re.fullmatch(number, "-000_123_456.78e01_234")
     assert re.fullmatch(number, "1e1")
+    assert re.fullmatch(number, "1")
+    assert re.fullmatch(number, "1.")
+    assert re.fullmatch(number, "1.2")
     assert re.fullmatch(number, "1.2e")
-    assert re.fullmatch(number, "1.2e10")
-    assert re.fullmatch(number, "1.2E10")
     assert re.fullmatch(number, "1.2e-")
+    assert re.fullmatch(number, "1.2e-1")
     assert re.fullmatch(number, "1.2e-10")
+    assert re.fullmatch(number, "1.2E10")
     assert not re.fullmatch(number, "1.2e10e")
+    assert not re.fullmatch(number, "-000_123_456.78e01_234.")
+    assert not re.fullmatch(number, "e")  # float("e23") is not valid
     assert not re.fullmatch(number, "1f2")
     assert not re.fullmatch(number, "inf")
     assert not re.fullmatch(number, "nan")
+    assert not re.fullmatch(number, "-inf")
+
 
 
 def test_input_integer_type():
@@ -38,6 +50,13 @@ def test_input_integer_type():
     assert re.fullmatch(integer, "+")
     assert re.fullmatch(integer, "-1")
     assert re.fullmatch(integer, "+2")
+    assert re.fullmatch(integer, "+0")
+    assert re.fullmatch(integer, "+0_")
+    assert re.fullmatch(integer, "+0_1")
+    assert re.fullmatch(integer, "+0_12")
+    assert re.fullmatch(integer, "+0_123")
+    assert not re.fullmatch(integer, "+_123")
+    assert not re.fullmatch(integer, "123.")
     assert not re.fullmatch(integer, "+2e")
     assert not re.fullmatch(integer, "foo")
 
@@ -125,9 +144,9 @@ async def test_restrict_type():
 
         integer_input.focus()
         await pilot.press("a")
-        assert integer_input.value == ""
-
+        assert not integer_input.value
         await pilot.press("-")
+        assert integer_input.value == "-"
         assert integer_input.is_valid is False
 
         await pilot.press("1")
