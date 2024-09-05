@@ -1,6 +1,6 @@
 # MaskedInput
 
-!!! tip "Added in version 0.74.0"
+!!! tip "Added in version 0.80.0"
 
 A masked input derived from `Input`, allowing to restrict user input and give visual aid via a simple template mask, which also acts as an implicit *[validator][textual.validation.Validator]*.
 
