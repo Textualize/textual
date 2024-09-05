@@ -5,11 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [Unreleased]
 
 ### Added
 
 - Added `MaskedInput` widget https://github.com/Textualize/textual/pull/4783
+- Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid. https://github.com/Textualize/textual/pull/4784
+
+### Changed
+
+- Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int. https://github.com/Textualize/textual/pull/4784
+
+### Fixed
+
+- Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
 
 ## [0.79.1] - 2024-08-31
 
