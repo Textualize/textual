@@ -20,24 +20,27 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
-    Type,
+    Optional,
     TypeVar,
     Union,
-    cast,
 )
 
 import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
+from textual.keys import key_to_character
+
 from . import constants, errors, events, messages
+from ._arrange import arrange
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
+from ._layout import DockArrangeResult
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .await_complete import AwaitComplete
-from .binding import ActiveBinding, Binding, _Bindings
+from .binding import ActiveBinding, Binding, BindingsMap
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
@@ -68,7 +71,8 @@ ScreenResultType = TypeVar("ScreenResultType")
 """The result type of a screen."""
 
 ScreenResultCallbackType = Union[
-    Callable[[ScreenResultType], None], Callable[[ScreenResultType], Awaitable[None]]
+    Callable[[Optional[ScreenResultType]], None],
+    Callable[[Optional[ScreenResultType]], Awaitable[None]],
 ]
 """Type of a screen result callback function."""
 
@@ -110,6 +114,7 @@ class ResultCallback(Generic[ScreenResultType]):
             self.future.set_result(result)
         if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
+        self.callback = None
 
 
 @rich.repr.auto
@@ -183,6 +188,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
+    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
+
+    ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
+    """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
+
+    maximized: Reactive[Widget | None] = Reactive(None, layout=True)
+    """The currently maximized widget, or `None` for no maximized widget."""
 
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
@@ -209,7 +222,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._dirty_widgets: set[Widget] = set()
         self.__update_timer: Timer | None = None
         self._callbacks: list[tuple[CallbackType, MessagePump]] = []
-        self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
+        self._result_callbacks: list[ResultCallback[ScreenResultType | None]] = []
 
         self._tooltip_widget: Widget | None = None
         self._tooltip_timer: Timer | None = None
@@ -283,32 +296,53 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
-        self.log.debug("Bindings updated")
         self._bindings_updated = True
         self.check_idle()
 
+    def _watch_maximized(
+        self, previously_maximized: Widget | None, maximized: Widget | None
+    ) -> None:
+        # The screen gets a `-maximized-view` class if there is a maximized widget
+        # The widget gets a `-maximized` class if it is maximized
+        self.set_class(maximized is not None, "-maximized-view")
+        if previously_maximized is not None:
+            previously_maximized.remove_class("-maximized")
+        if maximized is not None:
+            maximized.add_class("-maximized")
+
     @property
-    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """Binding chain from this screen."""
+
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
-        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
         if focused is None:
             namespace_bindings = [
-                (self, self._bindings),
-                (self.app, self.app._bindings),
+                (self, self._bindings.copy()),
+                (self.app, self.app._bindings.copy()),
             ]
         else:
             namespace_bindings = [
-                (node, node._bindings) for node in focused.ancestors_with_self
+                (node, node._bindings.copy()) for node in focused.ancestors_with_self
             ]
+
+        # Filter out bindings that could be captures by widgets (such as Input, TextArea)
+        filter_namespaces: list[DOMNode] = []
+        for namespace, bindings_map in namespace_bindings:
+            for filter_namespace in filter_namespaces:
+                check_consume_key = filter_namespace.check_consume_key
+                for key in list(bindings_map.key_to_bindings):
+                    if check_consume_key(key, key_to_character(key)):
+                        del bindings_map.key_to_bindings[key]
+            filter_namespaces.append(namespace)
 
         return namespace_bindings
 
     @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
         """The binding chain, ignoring everything before the last modal."""
         binding_chain = self._binding_chain
         for index, (node, _bindings) in enumerate(binding_chain, 1):
@@ -326,27 +360,64 @@ class Screen(Generic[ScreenResultType], Widget):
         This property may be used to inspect current bindings.
 
         Returns:
-            A map of keys to a tuple containing (namespace, binding, enabled boolean).
+            A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
-
         bindings_map: dict[str, ActiveBinding] = {}
         for namespace, bindings in self._modal_binding_chain:
-            for key, binding in bindings.keys.items():
+            for key, binding in bindings:
+                # This will call the nodes `check_action` method.
                 action_state = self.app._check_action_state(binding.action, namespace)
                 if action_state is False:
+                    # An action_state of False indicates the action is disabled and not shown
+                    # Note that None has a different meaning, which is why there is an `is False`
+                    # rather than a truthy check.
                     continue
+                enabled = bool(action_state)
                 if existing_key_and_binding := bindings_map.get(key):
-                    _, existing_binding, _ = existing_key_and_binding
-                    if binding.priority and not existing_binding.priority:
+                    # This key has already been bound
+                    # Replace priority bindings
+                    if (
+                        binding.priority
+                        and not existing_key_and_binding.binding.priority
+                    ):
                         bindings_map[key] = ActiveBinding(
-                            namespace, binding, bool(action_state)
+                            namespace, binding, enabled, binding.tooltip
                         )
                 else:
+                    # New binding
                     bindings_map[key] = ActiveBinding(
-                        namespace, binding, bool(action_state)
+                        namespace, binding, enabled, binding.tooltip
                     )
 
         return bindings_map
+
+    def _arrange(self, size: Size) -> DockArrangeResult:
+        """Arrange children.
+
+        Args:
+            size: Size of container.
+
+        Returns:
+            Widget locations.
+        """
+        # This is customized over the base class to allow for a widget to be maximized
+        cache_key = (size, self._nodes._updates, self.maximized)
+        cached_result = self._arrangement_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
+
+        arrangement = self._arrangement_cache[cache_key] = arrange(
+            self,
+            (
+                [self.maximized, *self.query_children(self.ALLOW_IN_MAXIMIZED_VIEW)]
+                if self.maximized is not None
+                else self._nodes
+            ),
+            size,
+            self.screen.size,
+        )
+
+        return arrangement
 
     @property
     def is_active(self) -> bool:
@@ -532,12 +603,19 @@ class Screen(Generic[ScreenResultType], Widget):
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
+
         # TODO: This shouldn't be required
         self._compositor._full_map_invalidated = True
         if not isinstance(selector, str):
             selector = selector.__name__
         selector_set = parse_selectors(selector)
         focus_chain = self.focus_chain
+
+        # If a widget is maximized we want to limit the focus chain to the visible widgets
+        if self.maximized is not None:
+            focusable = set(self.maximized.walk_children(with_self=True))
+            focus_chain = [widget for widget in focus_chain if widget in focusable]
+
         filtered_focus_chain = (
             node for node in focus_chain if match(selector_set, node)
         )
@@ -610,6 +688,42 @@ class Screen(Generic[ScreenResultType], Widget):
                 the CSS selectors given in the argument.
         """
         return self._move_focus(-1, selector)
+
+    def maximize(self, widget: Widget, container: bool = True) -> None:
+        """Maximize a widget, so it fills the screen.
+
+        Args:
+            widget: Widget to maximize.
+            container: If one of the widgets ancestors is a maximizeable widget, maximize that instead.
+        """
+        if widget.allow_maximize:
+            if container:
+                # If we want to maximize the container, look up the dom to find a suitable widget
+                for maximize_widget in widget.ancestors:
+                    if not isinstance(maximize_widget, Widget):
+                        break
+                    if maximize_widget.allow_maximize:
+                        self.maximized = maximize_widget
+                        return
+
+            self.maximized = widget
+
+    def minimize(self) -> None:
+        """Restore any maximized widget to normal state."""
+        self.maximized = None
+        if self.focused is not None:
+            self.call_after_refresh(
+                self.scroll_to_widget, self.focused, animate=False, center=True
+            )
+
+    def action_maximize(self) -> None:
+        """Action to maximize the currently focused widget."""
+        if self.focused is not None:
+            self.maximize(self.focused)
+
+    def action_minimize(self) -> None:
+        """Action to minimize the currently maximized widget."""
+        self.minimize()
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
@@ -821,8 +935,9 @@ class Screen(Generic[ScreenResultType], Widget):
             elif (
                 self in self.app._background_screens and self._compositor._dirty_regions
             ):
-                # Background screen
+                self._set_dirty(*self._compositor._dirty_regions)
                 app.screen.refresh(*self._compositor._dirty_regions)
+                self._repaint_required = True
                 self._compositor._dirty_regions.clear()
                 self._dirty_widgets.clear()
         app._update_mouse_over(self)
@@ -884,7 +999,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: asyncio.Future[ScreenResultType] | None = None,
+        future: asyncio.Future[ScreenResultType | None] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 
@@ -894,7 +1009,7 @@ class Screen(Generic[ScreenResultType], Widget):
             future: A Future to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[ScreenResultType](requester, callback, future)
+            ResultCallback[Optional[ScreenResultType]](requester, callback, future)
         )
 
     def _pop_result_callback(self) -> None:
@@ -983,6 +1098,7 @@ class Screen(Generic[ScreenResultType], Widget):
         message.prevent_default()
         widget = message.widget
         assert isinstance(widget, Widget)
+
         self._dirty_widgets.add(widget)
         self.check_idle()
 
@@ -1162,7 +1278,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self._tooltip_timer.stop()
 
                         self._tooltip_timer = self.set_timer(
-                            0.3,
+                            self.app.TOOLTIP_DELAY,
                             partial(self._handle_tooltip_timer, widget),
                             name="tooltip-timer",
                         )
@@ -1227,43 +1343,48 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             self.post_message(event)
 
-    class _NoResult:
-        """Class used to mark that there is no result."""
-
-    def dismiss(
-        self, result: ScreenResultType | Type[_NoResult] = _NoResult
-    ) -> AwaitComplete:
+    def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
 
-        !!! note
+        Any callback provided in [push_screen][textual.app.App.push_screen] will be invoked with the supplied result.
 
-            Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
-            this method will raise a `ScreenError`.
+        Only the active screen may be dismissed. This method will produce a warning in the logs if
+        called on an inactive screen (but otherwise have no effect).
 
-        If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
-        the callback will be invoked with `result`.
+        !!! warning
+
+            Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
+            message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
+            call `self.dismiss()` _without_ awaiting.
 
         Args:
             result: The optional result to be passed to the result callback.
 
-        Raises:
-            ScreenError: If the screen being dismissed is not active.
-            ScreenStackError: If trying to dismiss a screen that is not at the top of
-                the stack.
-
         """
+        _rich_traceback_omit = True
         if not self.is_active:
-            from .app import ScreenError
-
-            raise ScreenError("Screen is not active")
-        if result is not self._NoResult and self._result_callbacks:
-            self._result_callbacks[-1](cast(ScreenResultType, result))
+            self.log.warning("Can't dismiss inactive screen")
+            return AwaitComplete()
+        if self._result_callbacks:
+            callback = self._result_callbacks[-1]
+            callback(result)
         await_pop = self.app.pop_screen()
+
+        def pre_await() -> None:
+            """Called by the AwaitComplete object."""
+            _rich_traceback_omit = True
+            if active_message_pump.get() is self:
+                from textual.app import ScreenError
+
+                raise ScreenError(
+                    "Can't await screen.dismiss() from the screen's message handler; try removing the await keyword."
+                )
+
+        await_pop.set_pre_await_callback(pre_await)
+
         return await_pop
 
-    async def action_dismiss(
-        self, result: ScreenResultType | Type[_NoResult] = _NoResult
-    ) -> None:
+    async def action_dismiss(self, result: ScreenResultType | None = None) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
 
         Args:

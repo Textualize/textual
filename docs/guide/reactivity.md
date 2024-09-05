@@ -200,7 +200,7 @@ The color is parsed in `on_input_submitted` and assigned to `self.color`. Becaus
 
 Textual only calls watch methods if the value of a reactive attribute _changes_.
 If the newly assigned value is the same as the previous value, the watch method is not called.
-You can override this behaviour by passing `always_update=True` to `reactive`.
+You can override this behavior by passing `always_update=True` to `reactive`.
 
 
 ### Dynamically watching reactive attributes
@@ -410,7 +410,8 @@ Note the call to `mutate_reactive`. Without it, the display would not update whe
 
 ## Data binding
 
-Reactive attributes from one widget may be *bound* (connected) to another widget, so that changes to a single reactive will automatically update another widget (potentially more than one).
+Reactive attributes may be *bound* (connected) to attributes on child widgets, so that changes to the parent are automatically reflected in the children.
+This can simplify working with compound widgets where the value of an attribute might be used in multiple places.
 
 To bind reactive attributes, call [data_bind][textual.dom.DOMNode.data_bind] on a widget.
 This method accepts reactives (as class attributes) in positional arguments or keyword arguments.

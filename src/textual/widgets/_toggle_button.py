@@ -73,7 +73,7 @@ class ToggleButton(Static, can_focus=True):
         text-style: underline;
     }
 
-    /* Base button colours (including in dark mode). */
+    /* Base button colors (including in dark mode). */
 
     ToggleButton > .toggle--button {
         color: $background;

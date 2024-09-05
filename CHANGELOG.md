@@ -5,15 +5,86 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [Unreleased]
 
 ### Added
 
-- Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid.  https://github.com/Textualize/textual/pull/4784
+- Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid. https://github.com/Textualize/textual/pull/4784
 
 ### Changed
 
-- Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int.  https://github.com/Textualize/textual/pull/4784
+- Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int. https://github.com/Textualize/textual/pull/4784
+
+### Fixed
+
+- Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
+
+## [0.79.1] - 2024-08-31
+
+### Fixed
+
+- Fixed broken updates when non active screen changes https://github.com/Textualize/textual/pull/4957
+
+## [0.79.0] - 2024-08-30
+
+### Added
+
+- Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+- Added `App.ESCAPE_TO_MINIMIZE`, `App.screen_to_minimize`, and `Screen.ESCAPE_TO_MINIMIZE` https://github.com/Textualize/textual/pull/4951
+- Added `DOMNode.query_exactly_one` https://github.com/Textualize/textual/pull/4950
+- Added `SelectorSet.is_simple` https://github.com/Textualize/textual/pull/4950
+
+### Changed
+
+- KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
+- Breaking change: `DOMNode.query_one` will not `raise TooManyMatches` https://github.com/Textualize/textual/pull/4950
+
+## [0.78.0] - 2024-08-27
+
+### Added
+
+- Added Maximize and Minimize system commands. https://github.com/Textualize/textual/pull/4931
+- Added `Screen.maximize`, `Screen.minimize`, `Screen.action_maximize`, `Screen.action_minimize`, `Widget.is_maximized`, `Widget.allow_maximize`. https://github.com/Textualize/textual/pull/4931
+- Added `Widget.ALLOW_MAXIMIZE`, `Screen.ALLOW_IN_MAXIMIZED_VIEW` classvars https://github.com/Textualize/textual/pull/4931
+
+## [0.77.0] - 2024-08-22
+
+### Added
+
+- Added `tooltip` to Binding https://github.com/Textualize/textual/pull/4859
+- Added a link to the command palette to the Footer (set `show_command_palette=False` to disable) https://github.com/Textualize/textual/pull/4867
+- Added `TOOLTIP_DELAY` to App to customize time until a tooltip is displayed
+- Added "Show keys" option to system commands to show a summary of key bindings. https://github.com/Textualize/textual/pull/4876
+- Added "split" CSS style, currently undocumented, and may change. https://github.com/Textualize/textual/pull/4876
+- Added `Region.get_spacing_between` https://github.com/Textualize/textual/pull/4876
+- Added `App.COMMAND_PALETTE_KEY` to change default command palette key binding https://github.com/Textualize/textual/pull/4867
+- Added `App.get_key_display` https://github.com/Textualize/textual/pull/4890
+- Added `DOMNode.BINDING_GROUP` https://github.com/Textualize/textual/pull/4906
+- Added `DOMNode.HELP` classvar which contains Markdown help to be shown in the help panel https://github.com/Textualize/textual/pull/4915
+- Added `App.get_system_commands` https://github.com/Textualize/textual/pull/4920
+- Added "Save Screenshot" system command https://github.com/Textualize/textual/pull/4922
+
+### Changed
+
+- Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
+- Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
+- Changed default command palette binding to `ctrl+p` https://github.com/Textualize/textual/pull/4867
+- Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
+- Renamed `SystemCommands` to `SystemCommandsProvider` https://github.com/Textualize/textual/pull/4920
+- Breaking change: Removed `ClassicFooter` widget (please use new `Footer` widget) https://github.com/Textualize/textual/pull/4921
+- Disallowed `Screen` instances in `App.SCREENS` and `App.MODES`
+
+### Fixed
+
+- Fix crash when `validate_on` value isn't a set https://github.com/Textualize/textual/pull/4868
+- Fix `Input.cursor_blink` having no effect on the blink cycle after mounting https://github.com/Textualize/textual/pull/4869
+- Fixed scrolling by page not taking scrollbar in to account https://github.com/Textualize/textual/pull/4916
+- Fixed `App.MODES` being the same for all instances -- per-instance modes now exist internally
+
+## [0.76.0]
+
+### Changed
+
 - Input cursor will no longer jump to the end on focus https://github.com/Textualize/textual/pull/4773
 - Removed `Size.cip_size`, which was a clone of `crop_size`
 - Widgets with auto dimensions will now grow if there is a scrollbar https://github.com/Textualize/textual/pull/4844
@@ -22,8 +93,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
 - Input cursor blink effect will now restart correctly when any action is performed on the input https://github.com/Textualize/textual/pull/4773
+- Fixed bindings on same key not updating description https://github.com/Textualize/textual/pull/4850
+
+### Added
+
+- Textual will use the `ESCDELAY` env var when detecting escape keys https://github.com/Textualize/textual/pull/4848
 
 ## [0.75.1] - 2024-08-02
 
@@ -2276,6 +2351,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.79.0]: https://github.com/Textualize/textual/compare/v0.78.0...v0.79.0
+[0.78.0]: https://github.com/Textualize/textual/compare/v0.77.0...v0.78.0
+[0.77.0]: https://github.com/Textualize/textual/compare/v0.76.0...v0.77.0
+[0.76.0]: https://github.com/Textualize/textual/compare/v0.75.1...v0.76.0
 [0.75.1]: https://github.com/Textualize/textual/compare/v0.75.0...v0.75.1
 [0.75.0]: https://github.com/Textualize/textual/compare/v0.74.0...v0.75.0
 [0.74.0]: https://github.com/Textualize/textual/compare/v0.73.0...v0.74.0

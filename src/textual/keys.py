@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unicodedata
 from enum import Enum
+from functools import lru_cache
 
 
 # Adapted from prompt toolkit https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/prompt_toolkit/keys.py
@@ -259,10 +260,13 @@ KEY_DISPLAY_ALIASES = {
     "left": "←",
     "right": "→",
     "backspace": "⌫",
-    "escape": "ESC",
+    "escape": "esc",
     "enter": "⏎",
     "minus": "-",
-    "space": "SPACE",
+    "space": "space",
+    "pagedown": "pgdn",
+    "pageup": "pgup",
+    "delete": "del",
 }
 
 
@@ -279,12 +283,11 @@ def _get_key_aliases(key: str) -> list[str]:
     return [key] + KEY_ALIASES.get(key, [])
 
 
-def _get_key_display(key: str) -> str:
+@lru_cache(1024)
+def format_key(key: str) -> str:
     """Given a key (i.e. the `key` string argument to Binding __init__),
     return the value that should be displayed in the app when referring
     to this key (e.g. in the Footer widget)."""
-    if "+" in key:
-        return "+".join([_get_key_display(key) for key in key.split("+")])
 
     display_alias = KEY_DISPLAY_ALIASES.get(key)
     if display_alias:
@@ -293,15 +296,43 @@ def _get_key_display(key: str) -> str:
     original_key = REPLACED_KEYS.get(key, key)
     tentative_unicode_name = _get_unicode_name_from_key(original_key)
     try:
-        unicode_character = unicodedata.lookup(tentative_unicode_name)
+        unicode_name = unicodedata.lookup(tentative_unicode_name)
     except KeyError:
-        return tentative_unicode_name
-
-    # Check if printable. `delete` for example maps to a control sequence
-    # which we don't want to write to the terminal.
-    if unicode_character.isprintable():
-        return unicode_character
+        pass
+    else:
+        if unicode_name.isprintable():
+            return unicode_name
     return tentative_unicode_name
+
+
+@lru_cache(1024)
+def key_to_character(key: str) -> str | None:
+    """Given a key identifier, return the character associated with it.
+
+    Args:
+        key: The key identifier.
+
+    Returns:
+        A key if one could be found, otherwise `None`.
+    """
+    _, separator, key = key.rpartition("+")
+    if separator:
+        # If there is a separator, then it means a modifier (other than shift) is applied.
+        # Keys with modifiers, don't come from printable keys.
+        return None
+    if len(key) == 1:
+        # Key identifiers with a length of one, are also characters.
+        return key
+    try:
+        return unicodedata.lookup(KEY_TO_UNICODE_NAME[key])
+    except KeyError:
+        pass
+    try:
+        return unicodedata.lookup(key.replace("_", " ").upper())
+    except KeyError:
+        pass
+    # Return None if we couldn't identify the key.
+    return None
 
 
 def _character_to_key(character: str) -> str:

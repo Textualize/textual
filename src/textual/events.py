@@ -14,6 +14,7 @@ textual console -v
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -27,6 +28,7 @@ from .message import Message
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .timer import Timer as TimerClass
     from .timer import TimerCallback
     from .widget import Widget
@@ -289,8 +291,12 @@ class Key(InputEvent):
 
 def _key_to_identifier(key: str) -> str:
     """Convert the key string to a name suitable for use as a Python identifier."""
-    if len(key) == 1 and key.isupper():
-        key = f"upper_{key.lower()}"
+    key_no_modifiers = key.split("+")[-1]
+    if len(key_no_modifiers) == 1 and key_no_modifiers.isupper():
+        if "+" in key:
+            key = f"{key.rpartition('+')[0]}+upper_{key_no_modifiers}"
+        else:
+            key = f"upper_{key_no_modifiers}"
     return key.replace("+", "_").lower()
 
 
@@ -548,21 +554,43 @@ class Timer(Event, bubble=False, verbose=True):
         yield "count", self.count
 
 
-class Enter(Event, bubble=False, verbose=True):
+class Enter(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved over a widget.
 
-    - [ ] Bubbles
+    Note that this event bubbles, so a widget may receive this event when the mouse
+    moves over a child widget. Check the `node` attribute for the widget directly under
+    the mouse.
+
+    - [X] Bubbles
     - [X] Verbose
     """
 
+    __slots__ = ["node"]
 
-class Leave(Event, bubble=False, verbose=True):
+    def __init__(self, node: DOMNode) -> None:
+        self.node = node
+        """The node directly under the mouse."""
+        super().__init__()
+
+
+class Leave(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved away from a widget, or if a widget is
     programmatically disabled while hovered.
 
-    - [ ] Bubbles
+    Note that this widget bubbles, so a widget may receive Leave events for any child widgets.
+    Check the `node` parameter for the original widget that was previously under the mouse.
+
+
+    - [X] Bubbles
     - [X] Verbose
     """
+
+    __slots__ = ["node"]
+
+    def __init__(self, node: DOMNode) -> None:
+        self.node = node
+        """The node that was previously directly under the mouse."""
+        super().__init__()
 
 
 class Focus(Event, bubble=False):
@@ -705,3 +733,36 @@ class Print(Event, bubble=False):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.text
         yield self.stderr
+
+
+@dataclass
+class DeliveryComplete(Event, bubble=False):
+    """Sent to App when a file has been delivered."""
+
+    key: str
+    """The delivery key associated with the delivery.
+    
+    This is the same key that was returned by `App.deliver_text`/`App.deliver_binary`.
+    """
+
+    path: Path | None = None
+    """The path where the file was saved, or `None` if the path is not available, for
+    example if the file was delivered via web browser.
+    """
+
+    name: str | None = None
+    """Optional name returned to the app to identify the download."""
+
+
+@dataclass
+class DeliveryFailed(Event, bubble=False):
+    """Sent to App when a file delivery fails."""
+
+    key: str
+    """The delivery key associated with the delivery."""
+
+    exception: BaseException
+    """The exception that was raised during the delivery."""
+
+    name: str | None = None
+    """Optional name returned to the app to identify the download."""

@@ -17,4 +17,6 @@ It will be helpful if you run the following command and paste the results:
 textual diagnose
 ```
 
+If you don't have the `textual` command on your path, you may have forgotten to install the `textual-dev` package.
+
 Feel free to add screenshots and / or videos. These can be very helpful!

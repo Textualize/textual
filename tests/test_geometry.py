@@ -210,10 +210,6 @@ def test_crop_size():
     assert Region(10, 20, 100, 200).crop_size((500, 40)) == Region(10, 20, 100, 40)
 
 
-def test_clip_size():
-    assert Region(10, 10, 100, 80).clip_size((50, 100)) == Region(10, 10, 50, 80)
-
-
 def test_region_overlaps():
     assert Region(10, 10, 30, 20).overlaps(Region(0, 0, 20, 20))
     assert not Region(10, 10, 5, 5).overlaps(Region(15, 15, 20, 20))
@@ -508,3 +504,16 @@ def test_size_clamp_offset():
     assert Size(3, 3).clamp_offset(Offset(3, 2)) == Offset(2, 2)
     assert Size(3, 3).clamp_offset(Offset(-3, 2)) == Offset(0, 2)
     assert Size(3, 3).clamp_offset(Offset(5, 4)) == Offset(2, 2)
+
+
+@pytest.mark.parametrize(
+    ("region1", "region2", "expected"),
+    [
+        (Region(0, 0, 100, 80), Region(0, 0, 100, 80), Spacing(0, 0, 0, 0)),
+        (Region(0, 0, 100, 80), Region(10, 10, 10, 10), Spacing(10, 80, 60, 10)),
+    ],
+)
+def test_get_spacing_between(region1: Region, region2: Region, expected: Spacing):
+    spacing = region1.get_spacing_between(region2)
+    assert spacing == expected
+    assert region1.shrink(spacing) == region2

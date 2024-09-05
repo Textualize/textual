@@ -540,11 +540,32 @@ TextArea {
                 Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
             )
             highlight_query = highlight_query_path.read_text()
-        except OSError as e:
-            log.warning(f"Unable to load highlight query. {e}")
+        except OSError as error:
+            log.warning(f"Unable to load highlight query. {error}")
             highlight_query = ""
 
         return highlight_query
+
+    def check_consume_key(self, key: str, character: str | None = None) -> bool:
+        """Check if the widget may consume the given key.
+
+        As a textarea we are expecting to capture printable keys.
+
+        Args:
+            key: A key identifier.
+            character: A character associated with the key, or `None` if there isn't one.
+
+        Returns:
+            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+        """
+        if self.read_only:
+            # In read only mode we don't consume any key events
+            return False
+        if self.tab_behavior == "indent" and key == "tab":
+            # If tab_behavior is indent, then we consume the tab
+            return True
+        # Otherwise we capture all printable keys
+        return character is not None and character.isprintable()
 
     def _build_highlight_map(self) -> None:
         """Query the tree for ranges to highlights, and update the internal highlights mapping."""

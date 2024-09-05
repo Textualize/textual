@@ -23,7 +23,7 @@ from ..css._error_tools import friendly_list
 from ..events import Blur, Focus, Mount
 from ..geometry import Offset, Size
 from ..message import Message
-from ..reactive import reactive, var
+from ..reactive import Reactive, reactive, var
 from ..suggester import Suggester, SuggestionReady
 from ..timer import Timer
 from ..validation import ValidationResult, Validator
@@ -173,7 +173,7 @@ class Input(Widget, can_focus=True):
     cursor_blink = reactive(True, init=False)
     value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
-    cursor_position = reactive(0)
+    cursor_position: Reactive[int] = reactive(0)
     view_position = reactive(0)
     placeholder = reactive("")
     complete = reactive("")
@@ -299,8 +299,8 @@ class Input(Widget, can_focus=True):
         else:
             self.validators = list(validators)
 
-        self.validate_on = (
-            set(validate_on) & _POSSIBLE_VALIDATE_ON_VALUES
+        self.validate_on: set[str] = (
+            (_POSSIBLE_VALIDATE_ON_VALUES & set(validate_on))
             if validate_on is not None
             else _POSSIBLE_VALIDATE_ON_VALUES
         )
@@ -334,8 +334,11 @@ class Input(Widget, can_focus=True):
             elif self.type == "number":
                 self.validators.append(Number())
 
+        self._initial_value = True
+        """Indicates if the value has been set for the first time yet."""
         if value is not None:
             self.value = value
+
         if tooltip is not None:
             self.tooltip = tooltip
 
@@ -356,6 +359,20 @@ class Input(Widget, can_focus=True):
     def _cursor_at_end(self) -> bool:
         """Flag to indicate if the cursor is at the end"""
         return self.cursor_position >= len(self.value)
+
+    def check_consume_key(self, key: str, character: str | None) -> bool:
+        """Check if the widget may consume the given key.
+
+        As an input we are expecting to capture printable keys.
+
+        Args:
+            key: A key identifier.
+            character: A character associated with the key, or `None` if there isn't one.
+
+        Returns:
+            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+        """
+        return character is not None and character.isprintable()
 
     def validate_cursor_position(self, cursor_position: int) -> int:
         return min(max(0, cursor_position), len(self.value))
@@ -390,8 +407,8 @@ class Input(Widget, can_focus=True):
             if blink:
                 self._blink_timer.resume()
             else:
+                self._pause_blink_cycle()
                 self._cursor_visible = True
-                self._blink_timer.pause()
 
     @property
     def cursor_screen_offset(self) -> Offset:
@@ -410,6 +427,11 @@ class Input(Widget, can_focus=True):
             self.validate(value) if "changed" in self.validate_on else None
         )
         self.post_message(self.Changed(self, value, validation_result))
+
+        # If this is the first time the value has been updated, set the cursor position to the end
+        if self._initial_value:
+            self.cursor_position = len(self.value)
+            self._initial_value = False
 
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
@@ -505,29 +527,25 @@ class Input(Widget, can_focus=True):
         """Toggle visibility of cursor."""
         self._cursor_visible = not self._cursor_visible
 
-    def _on_mount(self, _: Mount) -> None:
+    def _on_mount(self, event: Mount) -> None:
         self._blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor,
             pause=not (self.cursor_blink and self.has_focus),
         )
 
-    def _on_blur(self, _: Blur) -> None:
-        self._blink_timer.pause()
+    def _on_blur(self, event: Blur) -> None:
+        self._pause_blink_cycle()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
-    def _on_focus(self, _: Focus) -> None:
-        self.cursor_position = len(self.value)
-        if self.cursor_blink:
-            self._blink_timer.resume()
+    def _on_focus(self, event: Focus) -> None:
+        self._restart_blink_cycle()
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
-        self._cursor_visible = True
-        if self.cursor_blink:
-            self._blink_timer.reset()
+        self._restart_blink_cycle()
 
         if event.is_printable:
             event.stop()
@@ -558,10 +576,28 @@ class Input(Widget, can_focus=True):
         else:
             self.cursor_position = len(self.value)
 
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
+        self._pause_blink_cycle()
+
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+        self._restart_blink_cycle()
+
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
         if event.value == self.value:
             self._suggestion = event.suggestion
+
+    def _restart_blink_cycle(self) -> None:
+        """Restart the cursor blink cycle."""
+        self._cursor_visible = True
+        if self.cursor_blink and self._blink_timer:
+            self._blink_timer.reset()
+
+    def _pause_blink_cycle(self) -> None:
+        """Hide the blinking cursor and pause the blink cycle."""
+        self._cursor_visible = False
+        if self._blink_timer:
+            self._blink_timer.pause()
 
     def insert_text_at_cursor(self, text: str) -> None:
         """Insert new text at the cursor, move the cursor to the end of the new text.
@@ -735,7 +771,8 @@ class Input(Widget, can_focus=True):
                 self.cursor_position = 0
             else:
                 self.cursor_position = hit.start()
-            self.value = f"{self.value[: self.cursor_position]}{after}"
+            new_value = f"{self.value[: self.cursor_position]}{after}"
+            self.value = new_value
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""

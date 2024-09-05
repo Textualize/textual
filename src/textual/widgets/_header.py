@@ -32,6 +32,9 @@ class HeaderIcon(Widget):
     icon = Reactive("⭘")
     """The character to use as the icon within the header."""
 
+    def on_mount(self) -> None:
+        self.tooltip = "Open the command palette"
+
     async def on_click(self, event: Click) -> None:
         """Launch the command palette when icon is clicked."""
         event.stop()
@@ -81,7 +84,7 @@ class HeaderClock(HeaderClockSpace):
     time_format: Reactive[str] = Reactive("%X")
 
     def _on_mount(self, _: Mount) -> None:
-        self.set_interval(1, callback=self.refresh, name=f"update header clock")
+        self.set_interval(1, callback=self.refresh, name="update header clock")
 
     def render(self) -> RenderResult:
         """Render the header clock.

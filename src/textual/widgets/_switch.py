@@ -78,7 +78,7 @@ class Switch(Widget, can_focus=True):
     value: reactive[bool] = reactive(False, init=False)
     """The value of the switch; `True` for on and `False` for off."""
 
-    slider_pos = reactive(0.0)
+    _slider_position = reactive(0.0)
     """The position of the slider."""
 
     class Changed(Message):
@@ -126,34 +126,34 @@ class Switch(Widget, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if value:
-            self.slider_pos = 1.0
+            self._slider_position = 1.0
             self.set_reactive(Switch.value, value)
         self._should_animate = animate
         if tooltip is not None:
             self.tooltip = tooltip
 
     def watch_value(self, value: bool) -> None:
-        target_slider_pos = 1.0 if value else 0.0
+        target_slider_position = 1.0 if value else 0.0
         if self._should_animate:
             self.animate(
-                "slider_pos",
-                target_slider_pos,
+                "_slider_position",
+                target_slider_position,
                 duration=0.3,
                 level="basic",
             )
         else:
-            self.slider_pos = target_slider_pos
+            self._slider_position = target_slider_position
         self.post_message(self.Changed(self, self.value))
 
-    def watch_slider_pos(self, slider_pos: float) -> None:
-        self.set_class(slider_pos == 1, "-on")
+    def watch__slider_position(self, slider_position: float) -> None:
+        self.set_class(slider_position == 1, "-on")
 
     def render(self) -> RenderResult:
         style = self.get_component_rich_style("switch--slider")
         return ScrollBarRender(
             virtual_size=100,
             window_size=50,
-            position=self.slider_pos * 50,
+            position=self._slider_position * 50,
             style=style,
             vertical=False,
         )

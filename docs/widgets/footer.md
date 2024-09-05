@@ -2,9 +2,6 @@
 
 !!! tip "Added in version 0.63.0"
 
-    This is a second iteration of the Footer.
-    The version prior to 0.63.0 is available as [ClassicFooter](./classic_footer.md) to help with backwards compatibility, but will be removed in v1.0.
-
 A simple footer widget which is docked to the bottom of its parent container. Displays
 available keybindings for the currently focused widget.
 
@@ -30,11 +27,10 @@ widget. Notice how the `Footer` automatically displays the keybinding.
 
 ## Reactive Attributes
 
-| Name              | Type   | Default | Description                                                             |
-| ----------------- | ------ | ------- | ----------------------------------------------------------------------- |
-| `upper_case_keys` | `bool` | `False` | Display the keys in upper case.                                         |
-| `ctrl_to_caret`   | `bool` | `True`  | Replace "ctrl+" with "^" to denote a key that requires holding ++CTRL++ |
-| `compact`         | `bool` | `False` | Display a more compact footer.                                          |
+| Name                   | Type   | Default | Description                                                                                |
+| ---------------------- | ------ | ------- | ------------------------------------------------------------------------------------------ |
+| `compact`              | `bool` | `False` | Display a more compact footer.                                                             |
+| `show_command_palette` | `bool` | `True`  | Display the key to invoke the command palette (show on the right hand side of the footer). |
 
 ## Messages
 

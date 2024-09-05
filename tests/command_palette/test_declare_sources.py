@@ -1,7 +1,7 @@
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
-from textual.system_commands import SystemCommands
+from textual.system_commands import SystemCommandsProvider
 
 
 async def test_sources_with_no_known_screen() -> None:
@@ -30,7 +30,7 @@ async def test_no_app_command_sources() -> None:
     """An app with no sources declared should work fine."""
     async with AppWithNoSources().run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert pilot.app.screen._provider_classes == {SystemCommands}
+        assert pilot.app.screen._provider_classes == {SystemCommandsProvider}
 
 
 class AppWithSources(AppWithActiveCommandPalette):
@@ -62,7 +62,7 @@ async def test_no_screen_command_sources() -> None:
     """An app with a screen with no sources declared should work fine."""
     async with AppWithInitialScreen(ScreenWithNoSources()).run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert pilot.app.screen._provider_classes == {SystemCommands}
+        assert pilot.app.screen._provider_classes == {SystemCommandsProvider}
 
 
 class ScreenWithSources(ScreenWithNoSources):
@@ -74,7 +74,7 @@ async def test_screen_command_sources() -> None:
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
         assert pilot.app.screen._provider_classes == {
-            SystemCommands,
+            SystemCommandsProvider,
             ExampleCommandSource,
         }
 

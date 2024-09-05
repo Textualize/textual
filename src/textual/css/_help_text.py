@@ -476,6 +476,39 @@ def dock_property_help_text(property_name: str, context: StylingContext) -> Help
     )
 
 
+def split_property_help_text(property_name: str, context: StylingContext) -> HelpText:
+    """Help text to show when the user supplies an invalid value for split.
+
+    Args:
+        property_name: The name of the property.
+        context: The context the property is being used in.
+
+    Returns:
+        Renderable for displaying the help text for this property.
+    """
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/] property",
+        bullets=[
+            Bullet("The value must be one of 'top', 'right', 'bottom' or 'left'"),
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        "The 'split' splits the container and aligns the widget to the given edge.",
+                        examples=[Example('header.styles.split = "top"')],
+                    )
+                ],
+                css=[
+                    Bullet(
+                        "The 'split' splits the container and aligns the widget to the given edge.",
+                        examples=[Example("split: top")],
+                    )
+                ],
+            ).get_by_context(context),
+        ],
+    )
+
+
 def fractional_property_help_text(
     property_name: str, context: StylingContext
 ) -> HelpText:

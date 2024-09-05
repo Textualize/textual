@@ -233,7 +233,7 @@ class Size(NamedTuple):
         """Get a new Size with just the height changed.
 
         Args:
-            width: New height.
+            height: New height.
 
         Returns:
             New Size instance.
@@ -583,6 +583,22 @@ class Region(NamedTuple):
             return Region(x - ox, y - oy, width, height)
         return NotImplemented
 
+    def get_spacing_between(self, region: Region) -> Spacing:
+        """Get spacing between two regions.
+
+        Args:
+            region: Another region.
+
+        Returns:
+            Spacing that if subtracted from `self` produces `region`.
+        """
+        return Spacing(
+            region.y - self.y,
+            self.right - region.right,
+            self.bottom - region.bottom,
+            region.x - self.x,
+        )
+
     def at_offset(self, offset: tuple[int, int]) -> Region:
         """Get a new Region with the same size at a given offset.
 
@@ -626,19 +642,6 @@ class Region(NamedTuple):
             width + expand_width * 2,
             height + expand_height * 2,
         )
-
-    def clip_size(self, size: tuple[int, int]) -> Region:
-        """Clip the size to fit within minimum values.
-
-        Args:
-            size: Maximum width and height.
-
-        Returns:
-            No region, not bigger than size.
-        """
-        x, y, width, height = self
-        max_width, max_height = size
-        return Region(x, y, min(width, max_width), min(height, max_height))
 
     @lru_cache(maxsize=1024)
     def overlaps(self, other: Region) -> bool:
@@ -713,7 +716,7 @@ class Region(NamedTuple):
             offset: Offset to add to region.
 
         Returns:
-            A new region shifted by (x, y)
+            A new region shifted by (x, y).
         """
 
         self_x, self_y, width, height = self

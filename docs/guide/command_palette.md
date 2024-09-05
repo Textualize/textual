@@ -6,7 +6,7 @@ In this chapter we will explain what a command palette is, how to use it, and ho
 
 ## Launching the command palette
 
-Press ++ctrl++ + `\` (ctrl and backslash) to invoke the command palette screen, which contains of a single input widget.
+Press ++ctrl+p++ to invoke the command palette screen, which contains of a single input widget.
 Textual will suggest commands as you type in that input.
 Press ++up++ or ++down++ to select a command from the list, and ++enter++ to invoke it.
 
@@ -17,31 +17,49 @@ This scheme allows the user to quickly get to a particular command with a minimu
 
 === "Command Palette"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p"}
     ```
 
 === "Command Palette after 't'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p,t"}
     ```
 
 === "Command Palette after 'td'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t,d"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p,t,d"}
     ```
 
+## System commands
 
+Textual apps have a number of *system* commands enabled by default.
+These are declared in the [`App.get_system_commands`][textual.app.App.get_system_commands] method.
+You can implement this method in your App class to add more commands.
 
-## Default commands
+To declare a command, define a `get_system_commands` method on your App.
+Textual will call this method with the screen that was active when the user summoned the command palette. 
 
-Textual apps have the following commands enabled by default:
+You can add a command by yielding a [`SystemCommand`][textual.app.SystemCommand] object which contains `title` and `help` text to be shown in the command palette, and `callback` which is a callable to run when the user selects the command.
+Additionally, there is a `discover` boolean which when `True` (the default) shows the command even if the search import is empty. When set to `False`, the command will show only when there is input.
 
-- `"Toggle light/dark mode"`
-  This will toggle between light and dark mode, by setting `App.dark` to either `True` or `False`.
-- `"Quit the application"`
-  Quits the application. The equivalent of pressing ++ctrl+C++.
-- `"Play the bell"`
-  Plays the terminal bell, by calling [`App.bell`][textual.app.App.bell].
+Here's how we would add a command to ring the terminal bell (a super useful piece of functionality):
+
+=== "command01.py"
+
+    ```python title="command01.py" hl_lines="18-24 29"
+    --8<-- "docs/examples/guide/command_palette/command01.py"
+    ```
+
+    1. Adds the default commands from the base class.
+    2. Adds a new command.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+p"}
+    ```
+
+This is a straightforward way of adding commands to your app.
+For more advanced integrations you can implement your own *command providers*.
 
 
 ## Command providers
@@ -57,8 +75,8 @@ The following example will display a blank screen initially, but if you bring up
     If you are running that example from the repository, you may want to add some additional Python files to see how the examples works with multiple files.
 
 
-  ```python title="command01.py" hl_lines="12-40 46"
-  --8<-- "docs/examples/guide/command_palette/command01.py"
+  ```python title="command02.py" hl_lines="12-40 46"
+  --8<-- "docs/examples/guide/command_palette/command02.py"
   ```
 
   1. This method is called when the command palette is first opened.
@@ -138,4 +156,16 @@ Here's an app class with no command palette:
 ```python
 class NoPaletteApp(App):
     ENABLE_COMMAND_PALETTE = False
+```
+
+## Changing command palette key
+
+You can change the key that opens the command palette by setting the class variable `COMMAND_PALETTE_BINDING` on your app.
+
+Prior to version 0.77.0, Textual used the binding `ctrl+backslash` to launch the command palette.
+Here's how you would restore the older key binding:
+
+```python
+class NewPaletteBindingApp(App):
+    COMMAND_PALETTE_BINDING = "ctrl+backslash"
 ```

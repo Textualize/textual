@@ -12,7 +12,6 @@ if typing.TYPE_CHECKING:
     from ..widget import Widget
     from ._button import Button
     from ._checkbox import Checkbox
-    from ._classic_footer import ClassicFooter
     from ._collapsible import Collapsible
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
@@ -20,7 +19,9 @@ if typing.TYPE_CHECKING:
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
     from ._header import Header
+    from ._help_panel import HelpPanel
     from ._input import Input
+    from ._key_panel import KeyPanel
     from ._label import Label
     from ._list_item import ListItem
     from ._list_view import ListView
@@ -50,7 +51,6 @@ if typing.TYPE_CHECKING:
 __all__ = [
     "Button",
     "Checkbox",
-    "ClassicFooter",
     "Collapsible",
     "ContentSwitcher",
     "DataTable",
@@ -58,7 +58,9 @@ __all__ = [
     "DirectoryTree",
     "Footer",
     "Header",
+    "HelpPanel",
     "Input",
+    "KeyPanel",
     "Label",
     "ListItem",
     "ListView",

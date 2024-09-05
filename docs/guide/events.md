@@ -157,7 +157,7 @@ Textual uses the following scheme to map messages classes on to a Python method.
 
 Messages have a namespace if they are defined as a child class of a Widget.
 The namespace is the name of the parent class.
-For instance, the builtin `Input` class defines it's `Changed` message as follow:
+For instance, the builtin `Input` class defines its `Changed` message as follows:
 
 ```python
 class Input(Widget):

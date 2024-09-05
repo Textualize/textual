@@ -232,6 +232,9 @@ Textual will send a [MouseCapture](../events/mouse_capture.md) event when the mo
 
 Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave.md) event when the cursor moves off a widget.
 
+Both `Enter` and `Leave` _bubble_, so a widget may receive these events from a child widget.
+You can check the initial widget these events were sent to by comparing the `node` attribute against `self` in the message handler.
+
 ### Click events
 
 There are three events associated with clicking a button on your mouse. When the button is initially pressed, Textual sends a [MouseDown](../events/mouse_down.md) event, followed by [MouseUp](../events/mouse_up.md) when the button is released. Textual then sends a final [Click](../events/click.md) event.

@@ -39,7 +39,7 @@ from .message import Message
 from .reactive import var
 from .screen import Screen, SystemModalScreen
 from .timer import Timer
-from .types import CallbackType, IgnoreReturnCallbackType
+from .types import IgnoreReturnCallbackType
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
 from .widgets.option_list import Option
@@ -419,7 +419,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(SystemModalScreen[CallbackType]):
+class CommandPalette(SystemModalScreen):
     """The Textual command palette."""
 
     AUTO_FOCUS = "CommandInput"
@@ -436,7 +436,6 @@ class CommandPalette(SystemModalScreen[CallbackType]):
     """
 
     DEFAULT_CSS = """
-    
    
     CommandPalette:inline {
         /* If the command palette is invoked in inline mode, we may need additional lines. */
@@ -444,7 +443,17 @@ class CommandPalette(SystemModalScreen[CallbackType]):
     }
     CommandPalette {
         background: $background 60%;
-        align-horizontal: center;      
+        align-horizontal: center;        
+
+        #--container {
+            display: none;
+        }
+    }
+
+    CommandPalette.-ready {
+        #--container {
+            display: block;
+        }
     }
 
     CommandPalette > .command-palette--help-text {           
@@ -575,6 +584,8 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         """Keeps track of if there are 'No matches found' message waiting to be displayed."""
         self._providers: list[Provider] = []
         """List of Provider instances involved in searches."""
+        self._hit_count: int = 0
+        """Number of hits displayed."""
 
     @staticmethod
     def is_open(app: App) -> bool:
@@ -625,7 +636,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         Returns:
             The content of the screen.
         """
-        with Vertical():
+        with Vertical(id="--container"):
             with Horizontal(id="--input"):
                 yield SearchIcon()
                 yield CommandInput(placeholder="Search for commands…")
@@ -882,7 +893,9 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         command_list.clear_options().add_options(commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
+
         self._list_visible = bool(command_list.option_count)
+        self._hit_count = command_list.option_count
 
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
@@ -965,7 +978,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                help_text = Text(hit.help)
+                help_text = Text.from_markup(hit.help)
                 help_text.stylize(help_style)
                 prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
@@ -1014,7 +1027,10 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
+            self._hit_count = 0
             self._start_no_matches_countdown(search_value)
+
+        self.add_class("-ready")
 
     def _cancel_gather_commands(self) -> None:
         """Cancel any operation that is gather commands."""
@@ -1049,6 +1065,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         input.action_end()
         self._list_visible = False
         self.query_one(CommandList).clear_options()
+        self._hit_count = 0
         if self.run_on_select:
             self._select_or_command()
 
@@ -1063,10 +1080,15 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         if event is not None:
             event.stop()
         if self._list_visible:
+            command_list = self.query_one(CommandList)
             # ...so if nothing in the list is highlighted yet...
-            if self.query_one(CommandList).highlighted is None:
+            if command_list.highlighted is None:
                 # ...cause the first completion to be highlighted.
                 self._action_cursor_down()
+                # If there is one option, assume the user wants to select it
+                if command_list.option_count == 1:
+                    # Call after a short delay to provide a little visual feedback
+                    self._action_command_list("select")
             else:
                 # The list is visible, something is highlighted, the user
                 # made a selection "gesture"; let's go select it!
@@ -1079,7 +1101,8 @@ class CommandPalette(SystemModalScreen[CallbackType]):
                 # decide what to do with it (hopefully it'll run it).
                 self._cancel_gather_commands()
                 self.app.post_message(CommandPalette.Closed(option_selected=True))
-                self.dismiss(self._selected_command.command)
+                self.dismiss()
+                self.call_later(self._selected_command.command)
 
     @on(OptionList.OptionHighlighted)
     def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
@@ -1089,12 +1112,9 @@ class CommandPalette(SystemModalScreen[CallbackType]):
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
-        if self._list_visible:
-            self._list_visible = False
-        else:
-            self._cancel_gather_commands()
-            self.app.post_message(CommandPalette.Closed(option_selected=False))
-            self.dismiss()
+        self._cancel_gather_commands()
+        self.app.post_message(CommandPalette.Closed(option_selected=False))
+        self.dismiss()
 
     def _action_command_list(self, action: str) -> None:
         """Pass an action on to the [`CommandList`][textual.command.CommandList].

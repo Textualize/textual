@@ -20,7 +20,7 @@ If not provided, a Textual action link will have `link-background-hover` set to 
 
 ## Example
 
-The example below shows some links that have their background colour changed when the mouse moves over it and it shows that there is a default color for `link-background-hover`.
+The example below shows some links that have their background color changed when the mouse moves over it and it shows that there is a default color for `link-background-hover`.
 
 It also shows that `link-background-hover` does not affect hyperlinks.
 
