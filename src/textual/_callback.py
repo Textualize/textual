@@ -21,7 +21,9 @@ def count_parameters(func: Callable) -> int:
     except AttributeError:
         pass
     if isinstance(func, partial):
-        param_count = _count_parameters(func) + len(func.args)
+        param_count = _count_parameters(func.func) - (
+            len(func.args) + len(func.keywords)
+        )
     elif hasattr(func, "__self__"):
         # Bound method
         func = func.__func__  # type: ignore

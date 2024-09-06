@@ -518,6 +518,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
                     await Timer._stop_all(self._timers)
                     self._timers.clear()
             finally:
+                if hasattr(self, "_watchers"):
+                    self._watchers.clear()
                 await self._message_loop_exit()
 
     async def _message_loop_exit(self) -> None:

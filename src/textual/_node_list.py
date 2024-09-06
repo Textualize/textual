@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import weakref
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 
@@ -26,7 +27,7 @@ class NodeList(Sequence["Widget"]):
     """
 
     def __init__(self, parent: DOMNode | None = None) -> None:
-        self._parent = parent
+        self._parent = None if parent is None else weakref.ref(parent)
         # The nodes in the list
         self._nodes: list[Widget] = []
         self._nodes_set: set[Widget] = set()
@@ -57,7 +58,9 @@ class NodeList(Sequence["Widget"]):
     def updated(self) -> None:
         """Mark the nodes as having been updated."""
         self._updates += 1
-        node = self._parent
+        node = None if self._parent is None else self._parent()
+        if node is None:
+            return
         while node is not None and (node := node._parent) is not None:
             node._nodes._updates += 1
 

@@ -1194,9 +1194,11 @@ class Widget(DOMNode):
             return
 
         async with self.batch():
-            await self.query("*").exclude(".-textual-system").remove()
+            await self.query_children("*").exclude(".-textual-system").remove()
             if self.is_attached:
-                await self.mount_all(compose(self))
+                compose_nodes = compose(self)
+                print("COMPOSE", compose_nodes)
+                await self.mount_all(compose_nodes)
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -3677,6 +3679,10 @@ class Widget(DOMNode):
         self.app._registry.discard(self)
         self._detach()
         self._arrangement_cache.clear()
+        self._nodes._clear()
+        self._render_cache = _RenderCache(NULL_SIZE, [])
+        self._component_styles.clear()
+        self._query_one_cache.clear()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

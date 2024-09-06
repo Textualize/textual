@@ -1784,8 +1784,7 @@ class App(Generic[ReturnType], DOMNode):
                     await asyncio.shield(app._shutdown())
                 except asyncio.CancelledError:
                     pass
-        active_app.set(None)
-        active_message_pump.set(None)
+
         return app.return_value
 
     def run(
@@ -2810,6 +2809,8 @@ class App(Generic[ReturnType], DOMNode):
                             await run_process_messages()
 
                 finally:
+                    if hasattr(self, "_watchers"):
+                        self._watchers.clear()
                     if self._driver.is_inline:
                         cursor_x, cursor_y = self._previous_cursor_position
                         self._driver.write(
@@ -3053,6 +3054,8 @@ class App(Generic[ReturnType], DOMNode):
 
         if self._driver is not None:
             self._driver.close()
+
+        self._nodes._clear()
 
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()

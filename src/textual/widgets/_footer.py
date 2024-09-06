@@ -96,6 +96,9 @@ class FooterKey(Widget):
         if tooltip:
             self.tooltip = tooltip
 
+    def __repr__(self) -> str:
+        return f"FooterKey({self._parent!r})"
+
     def render(self) -> Text:
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")
@@ -227,15 +230,15 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     )
                     break
 
-    def on_mount(self) -> None:
-        async def bindings_changed(screen: Screen) -> None:
-            self._bindings_ready = True
-            if not screen.app.app_focus:
-                return
-            if self.is_attached and screen is self.screen:
-                await self.recompose()
+    async def bindings_changed(self, screen: Screen) -> None:
+        self._bindings_ready = True
+        if not screen.app.app_focus:
+            return
+        if self.is_attached and screen is self.screen:
+            await self.recompose()
 
-        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+    def on_mount(self) -> None:
+        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)
