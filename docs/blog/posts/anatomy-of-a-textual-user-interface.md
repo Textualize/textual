@@ -46,7 +46,13 @@ SYSTEM = """Formulate all responses as if you where the sentient AI named Mother
 
 The text in the comment is a relatively new addition to the Python ecosystem.
 It allows you to specify dependencies inline so that tools can setup an environment automatically.
-The only tool that I know of it that uses it is [uv](https://docs.astral.sh/uv/guides/scripts/#running-scripts).
+The format of the comment was developed by [Ofek Lev](https://github.com/ofek) and first implemented in [Hatch](https://hatch.pypa.io/latest/blog/2024/05/02/hatch-v1100/#python-script-runner), and has since become a Python standard via [PEP 0723](https://peps.python.org/pep-0723/) (also authored by Ofek). 
+
+!!! note
+
+    PEP 0723 is also implemented in [uv](https://docs.astral.sh/uv/guides/scripts/#running-scripts).
+
+I really like this addition to Python because it means I can now share a Python script without the recipient needing to manually setup a fresh environment and install dependencies.
 
 After this comment we have a bunch of imports: [textual](https://github.com/textualize/textual) for the UI, and [llm](https://llm.datasette.io/en/stable/) to talk to ChatGPT (also supports other LLMs).
 
