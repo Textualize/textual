@@ -6543,7 +6543,12 @@ I'm not the first to do this (shout out to <a href="https://github.com/darrenbur
 </code></pre></div>
 <p>The text in the comment is a relatively new addition to the Python ecosystem.
 It allows you to specify dependencies inline so that tools can setup an environment automatically.
-The only tool that I know of it that uses it is <a href="https://docs.astral.sh/uv/guides/scripts/#running-scripts">uv</a>.</p>
+The format of the comment was developed by <a href="https://github.com/ofek">Ofek Lev</a> and first implemented in <a href="https://hatch.pypa.io/latest/blog/2024/05/02/hatch-v1100/#python-script-runner">Hatch</a>, and has since become a Python standard via <a href="https://peps.python.org/pep-0723/">PEP 0723</a> (also authored by Ofek). </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PEP 0723 is also implemented in <a href="https://docs.astral.sh/uv/guides/scripts/#running-scripts">uv</a>.</p>
+</div>
+<p>I really like this addition to Python because it means I can now share a Python script without the recipient needing to manually setup a fresh environment and install dependencies.</p>
 <p>After this comment we have a bunch of imports: <a href="https://github.com/textualize/textual">textual</a> for the UI, and <a href="https://llm.datasette.io/en/stable/">llm</a> to talk to ChatGPT (also supports other LLMs).</p>
 <p>Finally, we define <code>SYSTEM</code>, which is the <em>system prompt</em> for the LLM.</p>
 <h2 id="look-those-two-specimens-are-worth-millions-to-the-bio-weapons-division">Look, those two specimens are worth millions to the bio-weapons division.<a class="headerlink" href="#look-those-two-specimens-are-worth-millions-to-the-bio-weapons-division" title="Permanent link">&para;</a></h2>
@@ -6692,7 +6697,7 @@ Or if you prefer, you could set in the <code>on_mount</code> function with the f
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 2, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 6, 2024</span>
   </span>
 
     
