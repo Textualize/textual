@@ -64,7 +64,6 @@ mkdocs-rss-plugin = "^1.5.0"
 mkdocstrings = { extras = ["python"], version = "^0.20.0" }
 mkdocstrings-python = "0.10.1"
 mypy = "^1.0.0"
-objgraph = "^3.6.1"
 pre-commit = "^2.13.0"
 pytest = "^8.3.1"
 pytest-xdist = "^3.6.1"
