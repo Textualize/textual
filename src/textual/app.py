@@ -2687,6 +2687,7 @@ class App(Generic[ReturnType], DOMNode):
         return driver
 
     async def _init_devtools(self):
+        """Initialize developer tools."""
         if self.devtools is not None:
             from textual_dev.client import DevtoolsConnectionError
 
@@ -2707,6 +2708,11 @@ class App(Generic[ReturnType], DOMNode):
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
         async def app_prelude() -> bool:
+            """Work required before running the app.
+
+            Returns:
+                `True` if the app should continue, or `False` if there was a problem starting.
+            """
             await self._init_devtools()
             self.log.system("---")
             self.log.system(loop=asyncio.get_running_loop())

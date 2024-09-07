@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
     from .app import App
@@ -12,10 +12,6 @@ if TYPE_CHECKING:
 
 class NoActiveAppError(RuntimeError):
     """Runtime error raised if we try to retrieve the active app when there is none."""
-
-
-ContextVarType = TypeVar("ContextVarType")
-DefaultType = TypeVar("DefaultType")
 
 
 active_app: ContextVar["App[Any]"] = ContextVar("active_app")

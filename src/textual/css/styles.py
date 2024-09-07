@@ -554,7 +554,6 @@ class StylesBase:
         return rule in cls.ANIMATABLE
 
     @classmethod
-    # @lru_cache(maxsize=1024)
     def parse(
         cls, css: str, read_from: CSSLocation, *, node: DOMNode | None = None
     ) -> Styles:
