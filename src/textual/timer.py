@@ -97,7 +97,6 @@ class Timer:
         self._active.set()
         self._task.cancel()
         self._task = None
-        return self._task
 
     @classmethod
     async def _stop_all(cls, timers: Iterable[Timer]) -> None:

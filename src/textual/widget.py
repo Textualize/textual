@@ -49,7 +49,7 @@ from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
-from ._context import NoActiveAppError, active_app
+from ._context import NoActiveAppError
 from ._debug import get_caller_file_and_line
 from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
@@ -1197,7 +1197,6 @@ class Widget(DOMNode):
             await self.query_children("*").exclude(".-textual-system").remove()
             if self.is_attached:
                 compose_nodes = compose(self)
-                print("COMPOSE", compose_nodes)
                 await self.mount_all(compose_nodes)
 
     def _post_register(self, app: App) -> None:
@@ -1885,7 +1884,7 @@ class Widget(DOMNode):
         Returns:
             A Rich console object.
         """
-        return active_app.get().console
+        return self.app.console
 
     @property
     def _has_relative_children_width(self) -> bool:

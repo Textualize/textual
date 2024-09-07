@@ -50,4 +50,7 @@ async def test_unmount() -> None:
         "MyScreen#main",
     ]
 
+    print(unmount_ids)
+    print(expected)
+
     assert unmount_ids == expected

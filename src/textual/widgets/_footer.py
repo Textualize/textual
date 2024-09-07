@@ -96,9 +96,6 @@ class FooterKey(Widget):
         if tooltip:
             self.tooltip = tooltip
 
-    def __repr__(self) -> str:
-        return f"FooterKey({self._parent!r})"
-
     def render(self) -> Text:
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")

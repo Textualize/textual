@@ -979,11 +979,8 @@ class Screen(Generic[ScreenResultType], Widget):
             callbacks = self._callbacks[:]
             self._callbacks.clear()
             for callback, message_pump in callbacks:
-                reset_token = active_message_pump.set(message_pump)
-                try:
+                with message_pump._context():
                     await invoke(callback)
-                finally:
-                    active_message_pump.reset(reset_token)
 
     def _invoke_later(self, callback: CallbackType, sender: MessagePump) -> None:
         """Enqueue a callback to be invoked after the screen is repainted.
@@ -1014,12 +1011,14 @@ class Screen(Generic[ScreenResultType], Widget):
         )
 
     async def _message_loop_exit(self) -> None:
+        await super()._message_loop_exit()
         self._compositor.clear()
         self._dirty_widgets.clear()
         self._dirty_regions.clear()
         self._arrangement_cache.clear()
         self.screen_layout_refresh_signal.unsubscribe(self)
         self._nodes._clear()
+        self._task = None
 
     def _pop_result_callback(self) -> None:
         """Remove the latest result callback from the stack."""

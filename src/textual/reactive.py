@@ -24,7 +24,6 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._context import active_message_pump
 from ._types import (
     MessageTarget,
     WatchCallbackBothValuesType,
@@ -82,8 +81,8 @@ def invoke_watcher(
     _rich_traceback_omit = True
 
     param_count = count_parameters(watch_function)
-    reset_token = active_message_pump.set(watcher_object)
-    try:
+
+    with watcher_object._context():
         if param_count == 2:
             watch_result = cast(WatchCallbackBothValuesType, watch_function)(
                 old_value, value
@@ -97,8 +96,6 @@ def invoke_watcher(
             watcher_object.call_next(
                 partial(await_watcher, watcher_object, watch_result)
             )
-    finally:
-        active_message_pump.reset(reset_token)
 
 
 @rich.repr.auto
@@ -203,7 +200,7 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj: A reactive object.
         """
-        getattr(obj, "__watchers", {}).clear()
+        getattr(obj, "_watchers", {}).clear()
         getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
@@ -351,7 +348,7 @@ class Reactive(Generic[ReactiveType]):
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, WatchCallbackType]]
-        watchers = getattr(obj, "__watchers", {}).get(name, [])
+        watchers = getattr(obj, "_watchers", {}).get(name, [])
         # Remove any watchers for reactables that have since closed
         if watchers:
             watchers[:] = [

@@ -229,7 +229,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 if node is None:
                     raise NoActiveAppError()
                 node = node._parent
-            active_app.set(node)
+
             return node
 
     @property
@@ -501,26 +501,27 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     async def _process_messages(self) -> None:
         self._running = True
-        active_message_pump.set(self)
 
-        if not await self._pre_process():
-            self._running = False
-            return
+        with self._context():
+            if not await self._pre_process():
+                self._running = False
+                return
 
-        try:
-            await self._process_messages_loop()
-        except CancelledError:
-            pass
-        finally:
-            self._running = False
             try:
-                if self._timers:
-                    await Timer._stop_all(self._timers)
-                    self._timers.clear()
+                await self._process_messages_loop()
+            except CancelledError:
+                pass
             finally:
-                if hasattr(self, "_watchers"):
-                    self._watchers.clear()
-                await self._message_loop_exit()
+                self._running = False
+                try:
+                    if self._timers:
+                        await Timer._stop_all(self._timers)
+                        self._timers.clear()
+                    if hasattr(self, "_watchers"):
+                        self._watchers.clear()
+                finally:
+                    await self._message_loop_exit()
+        self._task = None
 
     async def _message_loop_exit(self) -> None:
         """Called when the message loop has completed."""
@@ -559,6 +560,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
         self._message_queue.put_nowait(messages.CloseMessages())
+
+    @contextmanager
+    def _context(self) -> Generator[None, None, None]:
+        """Context manager to set ContextVars."""
+        reset_token = active_message_pump.set(self)
+        try:
+            yield
+        finally:
+            active_message_pump.reset(reset_token)
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
         await self._close_messages()
