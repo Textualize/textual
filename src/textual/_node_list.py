@@ -27,6 +27,12 @@ class NodeList(Sequence["Widget"]):
     """
 
     def __init__(self, parent: DOMNode | None = None) -> None:
+        """Initialize a node list.
+
+        Args:
+            parent: The parent node which holds a reference to this object, or `None` if
+                there is no parent.
+        """
         self._parent = None if parent is None else weakref.ref(parent)
         # The nodes in the list
         self._nodes: list[Widget] = []
