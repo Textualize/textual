@@ -2702,6 +2702,20 @@ class App(Generic[ReturnType], DOMNode):
             except DevtoolsConnectionError:
                 self.log.system(f"Couldn't connect to devtools ( {self.devtools.url} )")
 
+            from .devtools.inspector import Inspector
+
+            app = self
+            def add_inspector() -> None:
+                app.mount(Inspector())
+                app.bind("f12", "toggle_inspector", description="Toggle Inspector", show=False)
+                def action_toggle_inspector() -> None:
+                    inspector = self.query_one(Inspector)
+                    inspector.display = not inspector.display
+                    if not inspector.display:
+                        inspector.picking = False
+                app.action_toggle_inspector = action_toggle_inspector # type: ignore
+            app.call_later(add_inspector)
+
         self.log.system("---")
 
         self.log.system(loop=asyncio.get_running_loop())
