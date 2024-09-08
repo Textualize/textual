@@ -9,6 +9,10 @@ authors:
 
 # Anatomy of a Textual User Interface
 
+!!! note "My bad 🤦"
+
+    The date is wrong on this post&mdash;it was actually published on the 2nd of September 2024.
+    I don't want to fix it, as that would break the URL.  
 
 I recently wrote a [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) to chat to an AI agent in the terminal.
 I'm not the first to do this (shout out to [Elia](https://github.com/darrenburns/elia) and [Paita](https://github.com/villekr/paita)), but I *may* be the first to have it reply as if it were the AI from the Aliens movies?

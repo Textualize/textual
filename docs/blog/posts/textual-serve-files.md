@@ -1,14 +1,14 @@
 ---
 draft: false 
-date: 2024-08-30
+date: 2024-09-08
 categories:
   - DevLog
 authors:
   - darrenburns
-title: "Improving Textual apps running in the browser"
+title: "Towards Textual Web Applications"
 ---
 
-In this post we'll look at some new functionality available in Textual apps which are being accessed via a browser and how it helps provide a more equal experience across platforms.
+In this post we'll look at some new functionality available in Textual apps accessed via a browser and how it helps provide a more equal experience across platforms.
 
 <!-- more -->
 
@@ -51,7 +51,7 @@ When running a Textual app in the terminal, getting a file into the hands of the
 
 Run that same app in the browser however, and we have a problem. If you simply write the file to disk, the end-user would need to be able to access the machine the app is running on and navigate the file system in order to retrieve it. This may not be possible: they may not be permitted to access the machine, or they simply may not know how!
 
-The new [`App.deliver_text`](https://textual.textualize.io/api/app/#textual.app.App.deliver_text) and [`App.deliver_binary`](https://textual.textualize.io/api/app/#textual.app.App.deliver_binary) methods are designed to let developers get files into the hands of end users, regardless of whether the app is being accessed via the browser or a terminal.
+The new [`App.deliver_text`][textual.app.App.deliver_text] and [`App.deliver_binary`][textual.app.App.deliver_binary] methods are designed to let developers get files into the hands of end users, regardless of whether the app is being accessed via the browser or a terminal.
 
 When accessing a Textual app using a terminal, these methods will write a file to disk, and notify the `App` when the write is complete.
 
@@ -80,3 +80,7 @@ This streaming process involves continuous delivery of encoded chunks of the fil
 ## The result
 
 These new APIs close an important feature gap and give developers the option to build apps that can accessed via terminals or browsers without worrying that those on the web might miss out on important functionality!
+
+## Found this interesting?
+
+Join our [Discord server](https://discord.gg/Enf6Z3qhVr) to chat to myself and other Textual developers.
