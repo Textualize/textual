@@ -12,8 +12,10 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.text import Text
 
+from textual.events import Resize
+
 from ..cache import LRUCache
-from ..geometry import Region, Size, clamp
+from ..geometry import Size
 from ..reactive import var
 from ..scroll_view import ScrollView
 from ..strip import Strip
@@ -88,14 +90,17 @@ class RichLog(ScrollView, can_focus=True):
         self.highlighter: Highlighter = ReprHighlighter()
         """Rich Highlighter used to highlight content when highlight is True"""
 
+        self._widest_line_width = 0
+        """The width of the widest line currently in the log."""
+
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
     def on_mount(self) -> None:
-        # Set the initial virtual size to the minimum width.
-        # We should ensure the virtual size never falls below the min width,
-        # and all rendering should be based on/restricted to the virtual size.
-        self.virtual_size = Size(self.min_width, len(self.lines))
+        print("mounting!")
+
+    def on_resize(self, event: Resize) -> None:
+        print("resize", event)
 
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.
@@ -170,15 +175,14 @@ class RichLog(ScrollView, can_focus=True):
                 console, render_options, [renderable]
             ).maximum
 
-            render_width = clamp(
-                renderable_width, self.min_width, self.virtual_size.width
-            )
+            render_width = renderable_width
             scrollable_content_width = self.scrollable_content_region.width
+
             if expand:
                 # Expand the renderable to the width of the scrollable content region.
                 render_width = max(renderable_width, scrollable_content_width)
 
-            if shrink:
+            if shrink and not expand:
                 # Shrink the renderable down to fit within the scrollable content region.
                 render_width = min(renderable_width, scrollable_content_width)
 
@@ -191,14 +195,9 @@ class RichLog(ScrollView, can_focus=True):
         lines = list(Segment.split_lines(segments))
 
         if not lines:
-            max_width = max(render_width, self.virtual_size.width)
+            self._widest_line_width = max(render_width, self._widest_line_width)
             self.lines.append(Strip.blank(render_width))
         else:
-            # Compute the width after wrapping
-            max_width = max(
-                self.virtual_size.width,
-                max(sum([segment.cell_length for segment in _line]) for _line in lines),
-            )
             strips = Strip.from_lines(lines)
             for strip in strips:
                 strip.adjust_cell_length(render_width)
@@ -209,9 +208,17 @@ class RichLog(ScrollView, can_focus=True):
                 self.refresh()
                 self.lines = self.lines[-self.max_lines :]
 
+            # Compute the width after wrapping and trimming
+            # TODO - this is wrong because if we trim a long line, the max width
+            #  could decrease, but we don't look at which lines were trimmed here.
+            self._widest_line_width = max(
+                self._widest_line_width,
+                max(sum([segment.cell_length for segment in _line]) for _line in lines),
+            )
+
         # Update the virtual size - the width may have changed after adding
         # the new line(s), and the height will definitely have changed.
-        self.virtual_size = Size(max_width, len(self.lines))
+        self.virtual_size = Size(self._widest_line_width, len(self.lines))
 
         if auto_scroll:
             self.scroll_end(animate=False)
@@ -233,27 +240,17 @@ class RichLog(ScrollView, can_focus=True):
 
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
-        line = self._render_line(scroll_y + y, scroll_x, self.size.width)
+        line = self._render_line(
+            scroll_y + y, scroll_x, self.scrollable_content_region.width
+        )
         strip = line.apply_style(self.rich_style)
         return strip
-
-    def render_lines(self, crop: Region) -> list[Strip]:
-        """Render the widget in to lines.
-
-        Args:
-            crop: Region within visible area to.
-
-        Returns:
-            A list of list of segments.
-        """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
         if y >= len(self.lines):
             return Strip.blank(width, self.rich_style)
 
-        key = (y + self._start_line, scroll_x, width, self.virtual_size.width)
+        key = (y + self._start_line, scroll_x, width, self._widest_line_width)
         if key in self._line_cache:
             return self._line_cache[key]
 
