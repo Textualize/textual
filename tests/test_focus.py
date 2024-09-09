@@ -22,46 +22,47 @@ class ChildrenFocusableOnly(Widget, can_focus=False, can_focus_children=True):
 @pytest.fixture
 def screen() -> Screen:
     app = App()
-    app._set_active()
-    app.push_screen(Screen())
 
-    screen = app.screen
+    with app._context():
+        app.push_screen(Screen())
 
-    # The classes even/odd alternate along the focus chain.
-    # The classes in/out identify nested widgets.
-    screen._add_children(
-        Focusable(id="foo", classes="a"),
-        NonFocusable(id="bar"),
-        Focusable(Focusable(id="Paul", classes="c"), id="container1", classes="b"),
-        NonFocusable(Focusable(id="Jessica", classes="a"), id="container2"),
-        Focusable(id="baz", classes="b"),
-        ChildrenFocusableOnly(Focusable(id="child", classes="c")),
-    )
+        screen = app.screen
 
-    return screen
+        # The classes even/odd alternate along the focus chain.
+        # The classes in/out identify nested widgets.
+        screen._add_children(
+            Focusable(id="foo", classes="a"),
+            NonFocusable(id="bar"),
+            Focusable(Focusable(id="Paul", classes="c"), id="container1", classes="b"),
+            NonFocusable(Focusable(id="Jessica", classes="a"), id="container2"),
+            Focusable(id="baz", classes="b"),
+            ChildrenFocusableOnly(Focusable(id="child", classes="c")),
+        )
+
+        return screen
 
 
 def test_focus_chain():
     app = App()
-    app._set_active()
-    app.push_screen(Screen())
+    with app._context():
+        app.push_screen(Screen())
 
-    screen = app.screen
+        screen = app.screen
 
-    # Check empty focus chain
-    assert not screen.focus_chain
+        # Check empty focus chain
+        assert not screen.focus_chain
 
-    app.screen._add_children(
-        Focusable(id="foo"),
-        NonFocusable(id="bar"),
-        Focusable(Focusable(id="Paul"), id="container1"),
-        NonFocusable(Focusable(id="Jessica"), id="container2"),
-        Focusable(id="baz"),
-        ChildrenFocusableOnly(Focusable(id="child")),
-    )
+        app.screen._add_children(
+            Focusable(id="foo"),
+            NonFocusable(id="bar"),
+            Focusable(Focusable(id="Paul"), id="container1"),
+            NonFocusable(Focusable(id="Jessica"), id="container2"),
+            Focusable(id="baz"),
+            ChildrenFocusableOnly(Focusable(id="child")),
+        )
 
-    focus_chain = [widget.id for widget in screen.focus_chain]
-    assert focus_chain == ["foo", "container1", "Paul", "baz", "child"]
+        focus_chain = [widget.id for widget in screen.focus_chain]
+        assert focus_chain == ["foo", "container1", "Paul", "baz", "child"]
 
 
 def test_allow_focus():
@@ -90,18 +91,19 @@ def test_allow_focus():
             return False
 
     app = App()
-    app._set_active()
-    app.push_screen(Screen())
 
-    app.screen._add_children(
-        Focusable(id="foo"),
-        NonFocusable(id="bar"),
-        FocusableContainer(Button("egg", id="egg")),
-        NonFocusableContainer(Button("EGG", id="qux")),
-    )
-    assert [widget.id for widget in app.screen.focus_chain] == ["foo", "egg"]
-    assert focusable_allow_focus_called
-    assert non_focusable_allow_focus_called
+    with app._context():
+        app.push_screen(Screen())
+
+        app.screen._add_children(
+            Focusable(id="foo"),
+            NonFocusable(id="bar"),
+            FocusableContainer(Button("egg", id="egg")),
+            NonFocusableContainer(Button("EGG", id="qux")),
+        )
+        assert [widget.id for widget in app.screen.focus_chain] == ["foo", "egg"]
+        assert focusable_allow_focus_called
+        assert non_focusable_allow_focus_called
 
 
 def test_focus_next_and_previous(screen: Screen):
@@ -188,47 +190,47 @@ def test_focus_next_and_previous_with_str_selector(screen: Screen):
 def test_focus_next_and_previous_with_type_selector_without_self():
     """Test moving the focus with a selector that does not match the currently focused node."""
     app = App()
-    app._set_active()
-    app.push_screen(Screen())
+    with app._context():
+        app.push_screen(Screen())
 
-    screen = app.screen
+        screen = app.screen
 
-    from textual.containers import Horizontal, VerticalScroll
-    from textual.widgets import Button, Input, Switch
+        from textual.containers import Horizontal, VerticalScroll
+        from textual.widgets import Button, Input, Switch
 
-    screen._add_children(
-        VerticalScroll(
-            Horizontal(
-                Input(id="w3"),
-                Switch(id="w4"),
-                Input(id="w5"),
-                Button(id="w6"),
-                Switch(id="w7"),
-                id="w2",
-            ),
-            Horizontal(
-                Button(id="w9"),
-                Switch(id="w10"),
-                Button(id="w11"),
-                Input(id="w12"),
-                Input(id="w13"),
-                id="w8",
-            ),
-            id="w1",
+        screen._add_children(
+            VerticalScroll(
+                Horizontal(
+                    Input(id="w3"),
+                    Switch(id="w4"),
+                    Input(id="w5"),
+                    Button(id="w6"),
+                    Switch(id="w7"),
+                    id="w2",
+                ),
+                Horizontal(
+                    Button(id="w9"),
+                    Switch(id="w10"),
+                    Button(id="w11"),
+                    Input(id="w12"),
+                    Input(id="w13"),
+                    id="w8",
+                ),
+                id="w1",
+            )
         )
-    )
 
-    screen.set_focus(screen.query_one("#w3"))
-    assert screen.focused.id == "w3"
+        screen.set_focus(screen.query_one("#w3"))
+        assert screen.focused.id == "w3"
 
-    assert screen.focus_next(Button).id == "w6"
-    assert screen.focus_next(Switch).id == "w7"
-    assert screen.focus_next(Input).id == "w12"
+        assert screen.focus_next(Button).id == "w6"
+        assert screen.focus_next(Switch).id == "w7"
+        assert screen.focus_next(Input).id == "w12"
 
-    assert screen.focus_previous(Button).id == "w11"
-    assert screen.focus_previous(Switch).id == "w10"
-    assert screen.focus_previous(Button).id == "w9"
-    assert screen.focus_previous(Input).id == "w5"
+        assert screen.focus_previous(Button).id == "w11"
+        assert screen.focus_previous(Switch).id == "w10"
+        assert screen.focus_previous(Button).id == "w9"
+        assert screen.focus_previous(Input).id == "w5"
 
 
 def test_focus_next_and_previous_with_str_selector_without_self(screen: Screen):

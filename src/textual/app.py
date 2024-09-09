@@ -809,6 +809,17 @@ class App(Generic[ReturnType], DOMNode):
         if not self._batch_count:
             self.check_idle()
 
+    @contextmanager
+    def _context(self) -> Generator[None, None, None]:
+        """Context manager to set ContextVars."""
+        app_reset_token = active_app.set(self)
+        message_pump_reset_token = active_message_pump.set(self)
+        try:
+            yield
+        finally:
+            active_message_pump.reset(message_pump_reset_token)
+            active_app.reset(app_reset_token)
+
     def animate(
         self,
         attribute: str,
@@ -1045,10 +1056,6 @@ class App(Generic[ReturnType], DOMNode):
             A screen instance.
         """
         return Screen(id="_default")
-
-    def _set_active(self) -> None:
-        """Set this app to be the currently active app."""
-        active_app.set(self)
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container.
@@ -1355,8 +1362,8 @@ class App(Generic[ReturnType], DOMNode):
 
         async def run_callback() -> CallThreadReturnType:
             """Run the callback, set the result or error on the future."""
-            self._set_active()
-            return await invoke(callback_with_args)
+            with self._context():
+                return await invoke(callback_with_args)
 
         # Post the message to the main loop
         future: Future[CallThreadReturnType] = asyncio.run_coroutine_threadsafe(
@@ -1667,41 +1674,39 @@ class App(Generic[ReturnType], DOMNode):
                 app: App to run.
             """
 
-            try:
-                if message_hook is not None:
-                    message_hook_context_var.set(message_hook)
-                app._loop = asyncio.get_running_loop()
-                app._thread_id = threading.get_ident()
-                await app._process_messages(
-                    ready_callback=on_app_ready,
-                    headless=headless,
-                    terminal_size=size,
-                )
-            finally:
-                app_ready_event.set()
+            with app._context():
+                try:
+                    if message_hook is not None:
+                        message_hook_context_var.set(message_hook)
+                    app._loop = asyncio.get_running_loop()
+                    app._thread_id = threading.get_ident()
+                    await app._process_messages(
+                        ready_callback=on_app_ready,
+                        headless=headless,
+                        terminal_size=size,
+                    )
+                finally:
+                    app_ready_event.set()
 
         # Launch the app in the "background"
-        active_message_pump.set(app)
+
         app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
-
-        # Get the app in an active state.
-        app._set_active()
-
-        # Context manager returns pilot object to manipulate the app
-        try:
-            pilot = Pilot(app)
-            await pilot._wait_for_screen()
-            yield pilot
-        finally:
-            # Shutdown the app cleanly
-            await app._shutdown()
-            await app_task
-            # Re-raise the exception which caused panic so test frameworks are aware
-            if self._exception:
-                raise self._exception
+        with app._context():
+            # Context manager returns pilot object to manipulate the app
+            try:
+                pilot = Pilot(app)
+                await pilot._wait_for_screen()
+                yield pilot
+            finally:
+                # Shutdown the app cleanly
+                await app._shutdown()
+                await app_task
+                # Re-raise the exception which caused panic so test frameworks are aware
+                if self._exception:
+                    raise self._exception
 
     async def run_async(
         self,
@@ -1751,14 +1756,14 @@ class App(Generic[ReturnType], DOMNode):
                 async def run_auto_pilot(
                     auto_pilot: AutopilotCallbackType, pilot: Pilot
                 ) -> None:
-                    try:
-                        await auto_pilot(pilot)
-                    except Exception:
-                        app.exit()
-                        raise
+                    with self._context():
+                        try:
+                            await auto_pilot(pilot)
+                        except Exception:
+                            app.exit()
+                            raise
 
                 pilot = Pilot(app)
-                active_message_pump.set(self)
                 auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
@@ -1816,18 +1821,19 @@ class App(Generic[ReturnType], DOMNode):
             """Run the app."""
             self._loop = asyncio.get_running_loop()
             self._thread_id = threading.get_ident()
-            try:
-                await self.run_async(
-                    headless=headless,
-                    inline=inline,
-                    inline_no_clear=inline_no_clear,
-                    mouse=mouse,
-                    size=size,
-                    auto_pilot=auto_pilot,
-                )
-            finally:
-                self._loop = None
-                self._thread_id = 0
+            with self._context():
+                try:
+                    await self.run_async(
+                        headless=headless,
+                        inline=inline,
+                        inline_no_clear=inline_no_clear,
+                        mouse=mouse,
+                        size=size,
+                        auto_pilot=auto_pilot,
+                    )
+                finally:
+                    self._loop = None
+                    self._thread_id = 0
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
@@ -2680,6 +2686,17 @@ class App(Generic[ReturnType], DOMNode):
         )
         return driver
 
+    async def _init_devtools(self):
+        """Initialize developer tools."""
+        if self.devtools is not None:
+            from textual_dev.client import DevtoolsConnectionError
+
+            try:
+                await self.devtools.connect()
+                self.log.system(f"Connected to devtools ( {self.devtools.url} )")
+            except DevtoolsConnectionError:
+                self.log.system(f"Couldn't connect to devtools ( {self.devtools.url} )")
+
     async def _process_messages(
         self,
         ready_callback: CallbackType | None = None,
@@ -2690,54 +2707,49 @@ class App(Generic[ReturnType], DOMNode):
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
-        self._set_active()
-        active_message_pump.set(self)
+        async def app_prelude() -> bool:
+            """Work required before running the app.
 
-        if self.devtools is not None:
-            from textual_dev.client import DevtoolsConnectionError
+            Returns:
+                `True` if the app should continue, or `False` if there was a problem starting.
+            """
+            await self._init_devtools()
+            self.log.system("---")
+            self.log.system(loop=asyncio.get_running_loop())
+            self.log.system(features=self.features)
+            if constants.LOG_FILE is not None:
+                _log_path = os.path.abspath(constants.LOG_FILE)
+                self.log.system(f"Writing logs to {_log_path!r}")
 
             try:
-                await self.devtools.connect()
-                self.log.system(f"Connected to devtools ( {self.devtools.url} )")
-            except DevtoolsConnectionError:
-                self.log.system(f"Couldn't connect to devtools ( {self.devtools.url} )")
+                if self.css_path:
+                    self.stylesheet.read_all(self.css_path)
+                for read_from, css, tie_breaker, scope in self._get_default_css():
+                    self.stylesheet.add_source(
+                        css,
+                        read_from=read_from,
+                        is_default_css=True,
+                        tie_breaker=tie_breaker,
+                        scope=scope,
+                    )
+                if self.CSS:
+                    try:
+                        app_path = inspect.getfile(self.__class__)
+                    except (TypeError, OSError):
+                        app_path = ""
+                    read_from = (app_path, f"{self.__class__.__name__}.CSS")
+                    self.stylesheet.add_source(
+                        self.CSS, read_from=read_from, is_default_css=False
+                    )
+            except Exception as error:
+                self._handle_exception(error)
+                self._print_error_renderables()
+                return False
 
-        self.log.system("---")
-
-        self.log.system(loop=asyncio.get_running_loop())
-        self.log.system(features=self.features)
-        if constants.LOG_FILE is not None:
-            _log_path = os.path.abspath(constants.LOG_FILE)
-            self.log.system(f"Writing logs to {_log_path!r}")
-
-        try:
-            if self.css_path:
-                self.stylesheet.read_all(self.css_path)
-            for read_from, css, tie_breaker, scope in self._get_default_css():
-                self.stylesheet.add_source(
-                    css,
-                    read_from=read_from,
-                    is_default_css=True,
-                    tie_breaker=tie_breaker,
-                    scope=scope,
-                )
-            if self.CSS:
-                try:
-                    app_path = inspect.getfile(self.__class__)
-                except (TypeError, OSError):
-                    app_path = ""
-                read_from = (app_path, f"{self.__class__.__name__}.CSS")
-                self.stylesheet.add_source(
-                    self.CSS, read_from=read_from, is_default_css=False
-                )
-        except Exception as error:
-            self._handle_exception(error)
-            self._print_error_renderables()
-            return
-
-        if self.css_monitor:
-            self.set_interval(0.25, self.css_monitor, name="css monitor")
-            self.log.system("STARTED", self.css_monitor)
+            if self.css_monitor:
+                self.set_interval(0.25, self.css_monitor, name="css monitor")
+                self.log.system("STARTED", self.css_monitor)
+            return True
 
         async def run_process_messages():
             """The main message loop, invoke below."""
@@ -2788,40 +2800,44 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     await Timer._stop_all(self._timers)
 
-        self._running = True
-        try:
-            load_event = events.Load()
-            await self._dispatch_message(load_event)
+        with self._context():
+            if not await app_prelude():
+                return
+            self._running = True
+            try:
+                load_event = events.Load()
+                await self._dispatch_message(load_event)
 
-            driver = self._driver = self._build_driver(
-                headless=headless,
-                inline=inline,
-                mouse=mouse,
-                size=terminal_size,
-            )
-            self.log(driver=driver)
+                driver = self._driver = self._build_driver(
+                    headless=headless,
+                    inline=inline,
+                    mouse=mouse,
+                    size=terminal_size,
+                )
+                self.log(driver=driver)
 
-            if not self._exit:
-                driver.start_application_mode()
-                try:
-                    with redirect_stdout(self._capture_stdout):
-                        with redirect_stderr(self._capture_stderr):
-                            await run_process_messages()
+                if not self._exit:
+                    driver.start_application_mode()
+                    try:
+                        with redirect_stdout(self._capture_stdout):
+                            with redirect_stderr(self._capture_stderr):
+                                await run_process_messages()
 
-                finally:
-                    if self._driver.is_inline:
-                        cursor_x, cursor_y = self._previous_cursor_position
-                        self._driver.write(
-                            Control.move(-cursor_x, -cursor_y + 1).segment.text
-                        )
-                        if inline_no_clear and not not self.app._exit_renderables:
-                            console = Console()
-                            console.print(self.screen._compositor)
-                            console.print()
+                    finally:
+                        Reactive._clear_watchers(self)
+                        if self._driver.is_inline:
+                            cursor_x, cursor_y = self._previous_cursor_position
+                            self._driver.write(
+                                Control.move(-cursor_x, -cursor_y + 1).segment.text
+                            )
+                            if inline_no_clear and not not self.app._exit_renderables:
+                                console = Console()
+                                console.print(self.screen._compositor)
+                                console.print()
 
-                    driver.stop_application_mode()
-        except Exception as error:
-            self._handle_exception(error)
+                        driver.stop_application_mode()
+            except Exception as error:
+                self._handle_exception(error)
 
     async def _pre_process(self) -> bool:
         """Special case for the app, which doesn't need the functionality in MessagePump."""
@@ -3029,6 +3045,8 @@ class App(Generic[ReturnType], DOMNode):
                 if stack_screen._running:
                     await self._prune(stack_screen)
             stack.clear()
+        self._installed_screens.clear()
+        self._modes.clear()
 
         # Close any remaining nodes
         # Should be empty by now
@@ -3045,11 +3063,12 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._close_all()
         await self._close_messages()
-
         await self._dispatch_message(events.Unmount())
 
         if self._driver is not None:
             self._driver.close()
+
+        self._nodes._clear()
 
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()

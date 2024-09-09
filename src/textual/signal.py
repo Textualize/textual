@@ -10,7 +10,7 @@ This is experimental for now, for internal use. It may be part of the public API
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generic, TypeVar, Union
-from weakref import WeakKeyDictionary
+from weakref import WeakKeyDictionary, ref
 
 import rich.repr
 
@@ -41,16 +41,21 @@ class Signal(Generic[SignalT]):
             owner: The owner of this signal.
             name: An identifier for debugging purposes.
         """
-        self._owner = owner
+        self._owner = ref(owner)
         self._name = name
         self._subscriptions: WeakKeyDictionary[
             MessagePump, list[SignalCallbackType]
         ] = WeakKeyDictionary()
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "owner", self._owner
+        yield "owner", self.owner
         yield "name", self._name
         yield "subscriptions", list(self._subscriptions.keys())
+
+    @property
+    def owner(self) -> DOMNode | None:
+        """The owner of this Signal, or `None` if there is no owner."""
+        return self._owner()
 
     def subscribe(
         self,
@@ -108,9 +113,12 @@ class Signal(Generic[SignalT]):
 
         """
         # Don't publish if the DOM is not ready or shutting down
-        if not self._owner.is_attached or self._owner._pruning:
+        owner = self.owner
+        if owner is None:
             return
-        for ancestor_node in self._owner.ancestors_with_self:
+        if not owner.is_attached or owner._pruning:
+            return
+        for ancestor_node in owner.ancestors_with_self:
             if not ancestor_node.is_running:
                 return
 

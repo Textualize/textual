@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from functools import lru_cache, partial
+from functools import partial
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Callable, Iterable, cast
 
@@ -554,7 +554,6 @@ class StylesBase:
         return rule in cls.ANIMATABLE
 
     @classmethod
-    @lru_cache(maxsize=1024)
     def parse(
         cls, css: str, read_from: CSSLocation, *, node: DOMNode | None = None
     ) -> Styles:

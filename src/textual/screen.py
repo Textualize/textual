@@ -892,7 +892,8 @@ class Screen(Generic[ScreenResultType], Widget):
         finally:
             if self._bindings_updated:
                 self._bindings_updated = False
-                self.app.call_later(self.bindings_updated_signal.publish, self)
+                if self.is_attached and not self.app._exit:
+                    self.app.call_later(self.bindings_updated_signal.publish, self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
@@ -978,11 +979,8 @@ class Screen(Generic[ScreenResultType], Widget):
             callbacks = self._callbacks[:]
             self._callbacks.clear()
             for callback, message_pump in callbacks:
-                reset_token = active_message_pump.set(message_pump)
-                try:
+                with message_pump._context():
                     await invoke(callback)
-                finally:
-                    active_message_pump.reset(reset_token)
 
     def _invoke_later(self, callback: CallbackType, sender: MessagePump) -> None:
         """Enqueue a callback to be invoked after the screen is repainted.
@@ -1011,6 +1009,16 @@ class Screen(Generic[ScreenResultType], Widget):
         self._result_callbacks.append(
             ResultCallback[Optional[ScreenResultType]](requester, callback, future)
         )
+
+    async def _message_loop_exit(self) -> None:
+        await super()._message_loop_exit()
+        self._compositor.clear()
+        self._dirty_widgets.clear()
+        self._dirty_regions.clear()
+        self._arrangement_cache.clear()
+        self.screen_layout_refresh_signal.unsubscribe(self)
+        self._nodes._clear()
+        self._task = None
 
     def _pop_result_callback(self) -> None:
         """Remove the latest result callback from the stack."""

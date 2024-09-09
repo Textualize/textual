@@ -241,6 +241,7 @@ class Provider(ABC):
         """Wait for initialization."""
         if self._init_task is not None:
             await self._init_task
+        self._init_task = None
 
     async def startup(self) -> None:
         """Called after the Provider is initialized, but before any calls to `search`."""
