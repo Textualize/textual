@@ -13,7 +13,7 @@ from rich.segment import Segment
 from rich.text import Text
 
 from ..cache import LRUCache
-from ..geometry import Region, Size
+from ..geometry import Region, Size, clamp
 from ..reactive import var
 from ..scroll_view import ScrollView
 from ..strip import Strip
@@ -75,7 +75,6 @@ class RichLog(ScrollView, can_focus=True):
         self.lines: list[Strip] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
         self._line_cache = LRUCache(1024)
-        self.max_width: int = 0
         self.min_width = min_width
         """Minimum width of renderables."""
         self.wrap = wrap
@@ -89,14 +88,14 @@ class RichLog(ScrollView, can_focus=True):
         self.highlighter: Highlighter = ReprHighlighter()
         """Rich Highlighter used to highlight content when highlight is True"""
 
-        self._last_container_width: int = min_width
-        """Record the last width we rendered content at."""
-
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
-    def on_resize(self) -> None:
-        self._last_container_width = self.scrollable_content_region.width
+    def on_mount(self) -> None:
+        # Set the initial virtual size to the minimum width.
+        # We should ensure the virtual size never falls below the min width,
+        # and all rendering should be based on/restricted to the virtual size.
+        self.virtual_size = Size(self.min_width, len(self.lines))
 
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.
@@ -134,13 +133,17 @@ class RichLog(ScrollView, can_focus=True):
         shrink: bool = True,
         scroll_end: bool | None = None,
     ) -> Self:
-        """Write text or a rich renderable.
+        """Write a string or a Rich renderable to the log.
 
         Args:
-            content: Rich renderable (or text).
+            content: Rich renderable (or a string).
             width: Width to render or `None` to use optimal width.
+                If a `min_width` is specified on the widget, then the width will be
+                expanded to be at least `min_width`.
             expand: Enable expand to widget width, or `False` to use `width`.
+                If `width` is not `None`, then `expand` will be ignored.
             shrink: Enable shrinking of content to fit width.
+                If `width` is not `None`, then `shrink` will be ignored.
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
         Returns:
@@ -157,35 +160,43 @@ class RichLog(ScrollView, can_focus=True):
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
 
-        render_width = measure_renderables(
-            console, render_options, [renderable]
-        ).maximum
+        if width is not None:
+            # Use the width specified by the caller.
+            # Note that we ignore `expand` and `shrink` when a width is specified.
+            render_width = width
+        else:
+            # Compute the width based on available information.
+            renderable_width = measure_renderables(
+                console, render_options, [renderable]
+            ).maximum
 
-        container_width = (
-            self.scrollable_content_region.width if width is None else width
-        )
+            render_width = clamp(
+                renderable_width, self.min_width, self.virtual_size.width
+            )
+            scrollable_content_width = self.scrollable_content_region.width
+            if expand:
+                # Expand the renderable to the width of the scrollable content region.
+                render_width = max(renderable_width, scrollable_content_width)
 
-        # Use the container_width if it's available, otherwise use the last available width.
-        container_width = (
-            container_width if container_width else self._last_container_width
-        )
+            if shrink:
+                # Shrink the renderable down to fit within the scrollable content region.
+                render_width = min(renderable_width, scrollable_content_width)
 
-        if expand and render_width < container_width:
-            render_width = container_width
-        if shrink and render_width > container_width:
-            render_width = container_width
-
+        # Ensure we don't render below the minimum width.
         render_width = max(render_width, self.min_width)
+        render_options = render_options.update_width(render_width)
 
-        segments = self.app.console.render(
-            renderable, render_options.update_width(render_width)
-        )
+        # Render into possibly wrapped lines.
+        segments = self.app.console.render(renderable, render_options)
         lines = list(Segment.split_lines(segments))
+
         if not lines:
+            max_width = max(render_width, self.virtual_size.width)
             self.lines.append(Strip.blank(render_width))
         else:
-            self.max_width = max(
-                self.max_width,
+            # Compute the width after wrapping
+            max_width = max(
+                self.virtual_size.width,
                 max(sum([segment.cell_length for segment in _line]) for _line in lines),
             )
             strips = Strip.from_lines(lines)
@@ -197,7 +208,11 @@ class RichLog(ScrollView, can_focus=True):
                 self._start_line += len(self.lines) - self.max_lines
                 self.refresh()
                 self.lines = self.lines[-self.max_lines :]
-        self.virtual_size = Size(self.max_width, len(self.lines))
+
+        # Update the virtual size - the width may have changed after adding
+        # the new line(s), and the height will definitely have changed.
+        self.virtual_size = Size(max_width, len(self.lines))
+
         if auto_scroll:
             self.scroll_end(animate=False)
 
@@ -212,8 +227,7 @@ class RichLog(ScrollView, can_focus=True):
         self.lines.clear()
         self._line_cache.clear()
         self._start_line = 0
-        self.max_width = 0
-        self.virtual_size = Size(self.max_width, len(self.lines))
+        self.virtual_size = Size(0, len(self.lines))
         self.refresh()
         return self
 
@@ -239,7 +253,7 @@ class RichLog(ScrollView, can_focus=True):
         if y >= len(self.lines):
             return Strip.blank(width, self.rich_style)
 
-        key = (y + self._start_line, scroll_x, width, self.max_width)
+        key = (y + self._start_line, scroll_x, width, self.virtual_size.width)
         if key in self._line_cache:
             return self._line_cache[key]
 
