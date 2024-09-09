@@ -312,6 +312,8 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+
+        /* When a widget is maximized */
         Screen.-maximized-view {                    
             layout: vertical !important;
             hatch: right $panel;
@@ -321,8 +323,9 @@ class App(Generic[ReturnType], DOMNode):
                 dock: initial !important;
             }
         }
-        &:blur Screen Widget{           
-            tint: $panel 50%;
+        /* Fade the header title when app is blurred */
+        &:blur HeaderTitle {           
+            text-opacity: 50%;           
         }
     }
     *:disabled:can-focus {
