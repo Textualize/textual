@@ -832,11 +832,8 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Names of the pseudo classes.
         """
-        if self.app_focus:
-            yield "focus"
-        else:
-            yield "blur"
-        yield "dark" if self.app.dark else "light"
+        yield "focus" if self.app_focus else "blur"
+        yield "dark" if self.dark else "light"
         if self.is_inline:
             yield "inline"
 
