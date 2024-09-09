@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, cast
+from collections import deque
+from typing import TYPE_CHECKING, NamedTuple, Optional, cast
 
 from rich.console import RenderableType
 from rich.highlighter import Highlighter, ReprHighlighter
@@ -24,8 +25,23 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
+class DeferredRender(NamedTuple):
+    """A renderable which is awaiting rendering.
+    This may happen if a `write` occurs before the width is known.
+
+    The arguments are the same as for `RichLog.write`, as this just
+    represents a deferred call to that method.
+    """
+
+    content: RenderableType | object
+    width: int | None = None
+    expand: bool = False
+    shrink: bool = True
+    scroll_end: bool | None = None
+
+
 class RichLog(ScrollView, can_focus=True):
-    """A widget for logging text."""
+    """A widget for logging Rich renderables and text."""
 
     DEFAULT_CSS = """
     RichLog{
@@ -56,11 +72,13 @@ class RichLog(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Create a RichLog widget.
+        """Create a `RichLog` widget.
 
         Args:
             max_lines: Maximum number of lines in the log or `None` for no maximum.
-            min_width: Minimum width of renderables.
+            min_width: Minimum width of the renderable area. Ensures that even if the
+                width of the `RichLog` is constrained, content will always be written at
+                at least this width.
             wrap: Enable word wrapping (default is off).
             highlight: Automatically highlight content.
             markup: Apply Rich console markup.
@@ -77,6 +95,8 @@ class RichLog(ScrollView, can_focus=True):
         self.lines: list[Strip] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
         self._line_cache = LRUCache(1024)
+        self._deferred_renders: deque[DeferredRender] = deque()
+        """Queue of deferred renderables to be rendered."""
         self.min_width = min_width
         """Minimum width of renderables."""
         self.wrap = wrap
@@ -93,14 +113,19 @@ class RichLog(ScrollView, can_focus=True):
         self._widest_line_width = 0
         """The width of the widest line currently in the log."""
 
+        self._size_known = False
+
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
-    def on_mount(self) -> None:
-        print("mounting!")
-
     def on_resize(self, event: Resize) -> None:
-        print("resize", event)
+        if event.size.width and not self._size_known:
+            # This size is known for the first time.
+            self._size_known = True
+            deferred_renders = self._deferred_renders
+            while deferred_renders:
+                deferred_render = deferred_renders.popleft()
+                self.write(*deferred_render)
 
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.
@@ -154,13 +179,18 @@ class RichLog(ScrollView, can_focus=True):
         Returns:
             The `RichLog` instance.
         """
+        if not self._size_known:
+            # We don't know the size yet, so we'll need to render this later.
+            self._deferred_renders.append(
+                DeferredRender(content, width, expand, shrink, scroll_end)
+            )
+            return self
 
+        renderable = self._make_renderable(content)
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
         console = self.app.console
         render_options = console.options
-
-        renderable = self._make_renderable(content)
 
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
@@ -188,9 +218,10 @@ class RichLog(ScrollView, can_focus=True):
 
         # Ensure we don't render below the minimum width.
         render_width = max(render_width, self.min_width)
+
         render_options = render_options.update_width(render_width)
 
-        # Render into possibly wrapped lines.
+        # Render into (possibly) wrapped lines.
         segments = self.app.console.render(renderable, render_options)
         lines = list(Segment.split_lines(segments))
 

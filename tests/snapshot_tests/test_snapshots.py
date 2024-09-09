@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.app import App, ComposeResult
@@ -202,10 +203,6 @@ def test_list_view(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
     )
-
-
-def test_richlog_max_lines(snap_compare):
-    assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
 
 
 def test_log_write_lines(snap_compare):
@@ -568,29 +565,76 @@ def test_table_markup(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "table_markup.py")
 
 
+def test_richlog_max_lines(snap_compare):
+    assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
+
+
 def test_richlog_scroll(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
 
 
 def test_richlog_width(snap_compare):
-    """Check that min_width applies in RichLog and that we can write
-    to the RichLog when it's not visible, and it still renders as expected
-    when made visible again."""
+    """Check that the width of RichLog is respected, even when it's not visible."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py", press=["p"])
 
-    async def setup(pilot):
-        from rich.text import Text
 
-        rich_log: RichLog = pilot.app.query_one(RichLog)
-        rich_log.write(Text("hello1", style="on red", justify="right"), expand=True)
-        rich_log.visible = False
-        rich_log.write(Text("world2", style="on green", justify="right"), expand=True)
-        rich_log.visible = True
-        rich_log.write(Text("hello3", style="on blue", justify="right"), expand=True)
-        rich_log.display = False
-        rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
-        rich_log.display = True
+def test_richlog_min_width(snap_compare):
+    """The available space of this RichLog is less than the minimum width, so written
+    content should be rendered at `min_width`. This snapshot should show the renderable
+    clipping at the right edge, as there's not enough space to satisfy the minimum width."""
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py", run_before=setup)
+    class RichLogMinWidth20(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=20)
+            text = Text("0123456789", style="on red", justify="right")
+            rich_log.write(text)
+            yield rich_log
+
+    assert snap_compare(RichLogMinWidth20(), terminal_size=(20, 6))
+
+
+def test_richlog_deferred_render_no_expand(snap_compare):
+    """Check we can write to a RichLog before its size is known i.e. in `compose`."""
+
+    class RichLogNoExpand(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=10)
+            text = Text("0123456789", style="on red", justify="right")
+            # Perform the write in compose - it'll be deferred until the size is known
+            rich_log.write(text)
+            yield rich_log
+
+    assert snap_compare(RichLogNoExpand(), terminal_size=(20, 6))
+
+
+def test_richlog_deferred_render_expand(snap_compare):
+    """Check we can write to a RichLog before its size is known i.e. in `compose`.
+
+    The renderable should expand to fill full the width of the RichLog.
+    """
+
+    class RichLogExpand(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=10)
+            text = Text("0123456789", style="on red", justify="right")
+            # Perform the write in compose - it'll be deferred until the size is known
+            rich_log.write(text, expand=True)
+            yield rich_log
+
+    assert snap_compare(RichLogExpand(), terminal_size=(20, 6))
+
+
+def test_richlog_markup(snap_compare):
+    """Check that Rich markup works in RichLog when markup=True."""
+
+    class RichLogWidth(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=10, markup=True)
+            rich_log.write("[black on red u]black text on red, underlined")
+            rich_log.write("normal text, no markup")
+            yield rich_log
+
+    assert snap_compare(RichLogWidth(), terminal_size=(42, 6))
 
 
 def test_tabs_invalidate(snap_compare):
