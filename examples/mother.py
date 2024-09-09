@@ -98,7 +98,7 @@ if __name__ == "__main__":
         "https://textual.textualize.io/blog/2024/09/15/anatomy-of-a-textual-user-interface/"
     )
     print(
-        "You will need an OpenAI API key for this example. See https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key"
+        "You will need an OpenAI API key for this example.\nSee https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key"
     )
     app = MotherApp()
     app.run()
