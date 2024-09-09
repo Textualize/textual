@@ -321,6 +321,9 @@ class App(Generic[ReturnType], DOMNode):
                 dock: initial !important;
             }
         }
+        &:blur Screen Widget{           
+            tint: $panel 50%;
+        }
     }
     *:disabled:can-focus {
         opacity: 0.7;
@@ -819,6 +822,20 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
+
+    def get_pseudo_classes(self) -> Iterable[str]:
+        """Pseudo classes for a widget.
+
+        Returns:
+            Names of the pseudo classes.
+        """
+        if self.app_focus:
+            yield "focus"
+        else:
+            yield "blur"
+        yield "dark" if self.app.dark else "light"
+        if self.is_inline:
+            yield "inline"
 
     def animate(
         self,
@@ -3608,6 +3625,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
+        self.screen._update_styles()
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
             # and if the screen is still the current screen and if nothing
