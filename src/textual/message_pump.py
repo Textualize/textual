@@ -517,8 +517,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                     if self._timers:
                         await Timer._stop_all(self._timers)
                         self._timers.clear()
-                    if hasattr(self, "_watchers"):
-                        self._watchers.clear()
+                    Reactive._clear_watchers(self)
                 finally:
                     await self._message_loop_exit()
         self._task = None

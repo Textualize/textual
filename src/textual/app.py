@@ -2824,8 +2824,7 @@ class App(Generic[ReturnType], DOMNode):
                                 await run_process_messages()
 
                     finally:
-                        if hasattr(self, "_watchers"):
-                            self._watchers.clear()
+                        Reactive._clear_watchers(self)
                         if self._driver.is_inline:
                             cursor_x, cursor_y = self._previous_cursor_position
                             self._driver.write(

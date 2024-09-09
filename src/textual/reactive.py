@@ -149,6 +149,18 @@ class Reactive(Generic[ReactiveType]):
         yield "bindings", self._bindings, False
         yield "name", getattr(self, "name", None), None
 
+    @classmethod
+    def _clear_watchers(cls, obj: Reactable) -> None:
+        """Clear any watchers on a given object.
+
+        Args:
+            obj: A reactive object.
+        """
+        try:
+            getattr(obj, "__watchers").clear()
+        except AttributeError:
+            pass
+
     @property
     def owner(self) -> Type[MessageTarget]:
         """The owner (class) where the reactive was declared."""
@@ -200,7 +212,7 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj: A reactive object.
         """
-        getattr(obj, "_watchers", {}).clear()
+        getattr(obj, "__watchers", {}).clear()
         getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
@@ -348,7 +360,7 @@ class Reactive(Generic[ReactiveType]):
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, WatchCallbackType]]
-        watchers = getattr(obj, "_watchers", {}).get(name, [])
+        watchers = getattr(obj, "__watchers", {}).get(name, [])
         # Remove any watchers for reactables that have since closed
         if watchers:
             watchers[:] = [
@@ -463,11 +475,10 @@ def _watch(
         callback: A callable to call when the attribute changes.
         init: True to call watcher initialization.
     """
-    if not hasattr(obj, "_watchers"):
-        setattr(obj, "_watchers", {})
-    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = getattr(
-        obj, "_watchers"
-    )
+    if not hasattr(obj, "__watchers"):
+        setattr(obj, "__watchers", {})
+    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]]
+    watchers = getattr(obj, "__watchers")
     watcher_list = watchers.setdefault(attribute_name, [])
     if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return
