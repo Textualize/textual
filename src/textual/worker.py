@@ -359,30 +359,30 @@ class Worker(Generic[ResultType]):
         Args:
             app: App instance.
         """
-        app._set_active()
-        active_worker.set(self)
+        with app._context():
+            active_worker.set(self)
 
-        self.state = WorkerState.RUNNING
-        app.log.worker(self)
-        try:
-            self._result = await self.run()
-        except asyncio.CancelledError as error:
-            self.state = WorkerState.CANCELLED
-            self._error = error
+            self.state = WorkerState.RUNNING
             app.log.worker(self)
-        except Exception as error:
-            self.state = WorkerState.ERROR
-            self._error = error
-            app.log.worker(self, "failed", repr(error))
-            from rich.traceback import Traceback
+            try:
+                self._result = await self.run()
+            except asyncio.CancelledError as error:
+                self.state = WorkerState.CANCELLED
+                self._error = error
+                app.log.worker(self)
+            except Exception as error:
+                self.state = WorkerState.ERROR
+                self._error = error
+                app.log.worker(self, "failed", repr(error))
+                from rich.traceback import Traceback
 
-            app.log.worker(Traceback())
-            if self.exit_on_error:
-                worker_failed = WorkerFailed(self._error)
-                app._handle_exception(worker_failed)
-        else:
-            self.state = WorkerState.SUCCESS
-            app.log.worker(self)
+                app.log.worker(Traceback())
+                if self.exit_on_error:
+                    worker_failed = WorkerFailed(self._error)
+                    app._handle_exception(worker_failed)
+            else:
+                self.state = WorkerState.SUCCESS
+                app.log.worker(self)
 
     def _start(
         self, app: App, done_callback: Callable[[Worker], None] | None = None

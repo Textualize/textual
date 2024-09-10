@@ -57,22 +57,21 @@ def test_widget_content_width():
     widget3 = TextWidget("foo\nbar\nbaz", id="widget3")
 
     app = App()
-    app._set_active()
+    with app._context():
+        width = widget1.get_content_width(Size(20, 20), Size(80, 24))
+        height = widget1.get_content_height(Size(20, 20), Size(80, 24), width)
+        assert width == 3
+        assert height == 1
 
-    width = widget1.get_content_width(Size(20, 20), Size(80, 24))
-    height = widget1.get_content_height(Size(20, 20), Size(80, 24), width)
-    assert width == 3
-    assert height == 1
+        width = widget2.get_content_width(Size(20, 20), Size(80, 24))
+        height = widget2.get_content_height(Size(20, 20), Size(80, 24), width)
+        assert width == 3
+        assert height == 2
 
-    width = widget2.get_content_width(Size(20, 20), Size(80, 24))
-    height = widget2.get_content_height(Size(20, 20), Size(80, 24), width)
-    assert width == 3
-    assert height == 2
-
-    width = widget3.get_content_width(Size(20, 20), Size(80, 24))
-    height = widget3.get_content_height(Size(20, 20), Size(80, 24), width)
-    assert width == 3
-    assert height == 3
+        width = widget3.get_content_width(Size(20, 20), Size(80, 24))
+        height = widget3.get_content_height(Size(20, 20), Size(80, 24), width)
+        assert width == 3
+        assert height == 3
 
 
 class GetByIdApp(App):
@@ -87,34 +86,38 @@ class GetByIdApp(App):
             id="parent",
         )
 
+    @property
+    def parent(self) -> Widget:
+        return self.query_one("#parent")
+
 
 @pytest.fixture
 async def hierarchy_app():
     app = GetByIdApp()
-    async with app.run_test():
-        yield app
+    yield app
 
 
-@pytest.fixture
-async def parent(hierarchy_app):
-    yield hierarchy_app.get_widget_by_id("parent")
+async def test_get_child_by_id_gets_first_child(hierarchy_app):
+    async with hierarchy_app.run_test():
+        parent = hierarchy_app.parent
+        child = parent.get_child_by_id(id="child1")
+        assert child.id == "child1"
+        assert child.get_child_by_id(id="grandchild1").id == "grandchild1"
+        assert parent.get_child_by_id(id="child2").id == "child2"
 
 
-def test_get_child_by_id_gets_first_child(parent):
-    child = parent.get_child_by_id(id="child1")
-    assert child.id == "child1"
-    assert child.get_child_by_id(id="grandchild1").id == "grandchild1"
-    assert parent.get_child_by_id(id="child2").id == "child2"
+async def test_get_child_by_id_no_matching_child(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        with pytest.raises(NoMatches):
+            parent.get_child_by_id(id="doesnt-exist")
 
 
-def test_get_child_by_id_no_matching_child(parent):
-    with pytest.raises(NoMatches):
-        parent.get_child_by_id(id="doesnt-exist")
-
-
-def test_get_child_by_id_only_immediate_descendents(parent):
-    with pytest.raises(NoMatches):
-        parent.get_child_by_id(id="grandchild1")
+async def test_get_child_by_id_only_immediate_descendents(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        with pytest.raises(NoMatches):
+            parent.get_child_by_id(id="grandchild1")
 
 
 async def test_get_child_by_type():
@@ -135,51 +138,65 @@ async def test_get_child_by_type():
             app.get_child_by_type(Label)
 
 
-def test_get_widget_by_id_no_matching_child(parent):
-    with pytest.raises(NoMatches):
-        parent.get_widget_by_id(id="i-dont-exist")
+async def test_get_widget_by_id_no_matching_child(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        with pytest.raises(NoMatches):
+            parent.get_widget_by_id(id="i-dont-exist")
 
 
-def test_get_widget_by_id_non_immediate_descendants(parent):
-    result = parent.get_widget_by_id("grandchild1")
-    assert result.id == "grandchild1"
+async def test_get_widget_by_id_non_immediate_descendants(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        result = parent.get_widget_by_id("grandchild1")
+        assert result.id == "grandchild1"
 
 
-def test_get_widget_by_id_immediate_descendants(parent):
-    result = parent.get_widget_by_id("child1")
-    assert result.id == "child1"
+async def test_get_widget_by_id_immediate_descendants(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        result = parent.get_widget_by_id("child1")
+        assert result.id == "child1"
 
 
-def test_get_widget_by_id_doesnt_return_self(parent):
-    with pytest.raises(NoMatches):
-        parent.get_widget_by_id("parent")
+async def test_get_widget_by_id_doesnt_return_self(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        with pytest.raises(NoMatches):
+            parent.get_widget_by_id("parent")
 
 
-def test_get_widgets_app_delegated(hierarchy_app, parent):
+async def test_get_widgets_app_delegated(hierarchy_app):
     # Check that get_child_by_id finds the parent, which is a child of the default Screen
-    queried_parent = hierarchy_app.get_child_by_id("parent")
-    assert queried_parent is parent
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        queried_parent = hierarchy_app.get_child_by_id("parent")
+        assert queried_parent is parent
 
-    # Check that the grandchild (descendant of the default screen) is found
-    grandchild = hierarchy_app.get_widget_by_id("grandchild1")
-    assert grandchild.id == "grandchild1"
-
-
-def test_widget_mount_ids_must_be_unique_mounting_all_in_one_go(parent):
-    widget1 = Widget(id="hello")
-    widget2 = Widget(id="hello")
-
-    with pytest.raises(MountError):
-        parent.mount(widget1, widget2)
+        # Check that the grandchild (descendant of the default screen) is found
+        grandchild = hierarchy_app.get_widget_by_id("grandchild1")
+        assert grandchild.id == "grandchild1"
 
 
-def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
-    widget1 = Widget(id="hello")
-    widget2 = Widget(id="hello")
+async def test_widget_mount_ids_must_be_unique_mounting_all_in_one_go(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        widget1 = Widget(id="hello")
+        widget2 = Widget(id="hello")
 
-    parent.mount(widget1)
-    with pytest.raises(DuplicateIds):
-        parent.mount(widget2)
+        with pytest.raises(MountError):
+            parent.mount(widget1, widget2)
+
+
+async def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(hierarchy_app):
+    async with hierarchy_app.run_test() as pilot:
+        parent = pilot.app.parent
+        widget1 = Widget(id="hello")
+        widget2 = Widget(id="hello")
+
+        parent.mount(widget1)
+        with pytest.raises(DuplicateIds):
+            parent.mount(widget2)
 
 
 def test_get_pseudo_class_state():

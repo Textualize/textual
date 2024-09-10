@@ -24,7 +24,6 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._context import active_message_pump
 from ._types import (
     MessageTarget,
     WatchCallbackBothValuesType,
@@ -82,8 +81,8 @@ def invoke_watcher(
     _rich_traceback_omit = True
 
     param_count = count_parameters(watch_function)
-    reset_token = active_message_pump.set(watcher_object)
-    try:
+
+    with watcher_object._context():
         if param_count == 2:
             watch_result = cast(WatchCallbackBothValuesType, watch_function)(
                 old_value, value
@@ -97,8 +96,6 @@ def invoke_watcher(
             watcher_object.call_next(
                 partial(await_watcher, watcher_object, watch_result)
             )
-    finally:
-        active_message_pump.reset(reset_token)
 
 
 @rich.repr.auto
@@ -151,6 +148,18 @@ class Reactive(Generic[ReactiveType]):
         yield "recompose", self._recompose, False
         yield "bindings", self._bindings, False
         yield "name", getattr(self, "name", None), None
+
+    @classmethod
+    def _clear_watchers(cls, obj: Reactable) -> None:
+        """Clear any watchers on a given object.
+
+        Args:
+            obj: A reactive object.
+        """
+        try:
+            getattr(obj, "__watchers").clear()
+        except AttributeError:
+            pass
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -468,9 +477,8 @@ def _watch(
     """
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = getattr(
-        obj, "__watchers"
-    )
+    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]]
+    watchers = getattr(obj, "__watchers")
     watcher_list = watchers.setdefault(attribute_name, [])
     if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return

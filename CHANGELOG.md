@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
+- Fixed issues with screenshots by simplifying segments only for snapshot tests https://github.com/Textualize/textual/issues/4929
 
 ## [0.79.1] - 2024-08-31
 

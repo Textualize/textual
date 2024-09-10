@@ -49,7 +49,7 @@ from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
-from ._context import NoActiveAppError, active_app
+from ._context import NoActiveAppError
 from ._debug import get_caller_file_and_line
 from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
@@ -1194,9 +1194,10 @@ class Widget(DOMNode):
             return
 
         async with self.batch():
-            await self.query("*").exclude(".-textual-system").remove()
+            await self.query_children("*").exclude(".-textual-system").remove()
             if self.is_attached:
-                await self.mount_all(compose(self))
+                compose_nodes = compose(self)
+                await self.mount_all(compose_nodes)
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -1883,7 +1884,7 @@ class Widget(DOMNode):
         Returns:
             A Rich console object.
         """
-        return active_app.get().console
+        return self.app.console
 
     @property
     def _has_relative_children_width(self) -> bool:
@@ -3676,6 +3677,11 @@ class Widget(DOMNode):
         parent._nodes._remove(self)
         self.app._registry.discard(self)
         self._detach()
+        self._arrangement_cache.clear()
+        self._nodes._clear()
+        self._render_cache = _RenderCache(NULL_SIZE, [])
+        self._component_styles.clear()
+        self._query_one_cache.clear()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

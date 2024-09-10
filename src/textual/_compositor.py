@@ -309,6 +309,15 @@ class Compositor:
         # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
 
+    def clear(self) -> None:
+        """Remove all references to widgets (used when the screen closes)."""
+        self._full_map.clear()
+        self._visible_map = None
+        self._layers = None
+        self.widgets.clear()
+        self._visible_widgets = None
+        self._layers_visible = None
+
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]

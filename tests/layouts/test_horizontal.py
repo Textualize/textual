@@ -19,11 +19,11 @@ async def app():
             yield self.horizontal
 
     app = HorizontalAutoWidth()
-    async with app.run_test():
-        yield app
+    yield app
 
 
 async def test_horizontal_get_content_width(app):
-    size = app.screen.size
-    width = app.horizontal.get_content_width(size, size)
-    assert width == 15
+    async with app.run_test():
+        size = app.screen.size
+        width = app.horizontal.get_content_width(size, size)
+        assert width == 15

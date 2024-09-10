@@ -30,14 +30,15 @@ class ListPathApp(App[None]):
 
 
 @pytest.mark.parametrize(
-    "app,expected_css_path_attribute",
+    "app_class,expected_css_path_attribute",
     [
-        (RelativePathObjectApp(), [APP_DIR / "test.tcss"]),
-        (RelativePathStrApp(), [APP_DIR / "test.tcss"]),
-        (AbsolutePathObjectApp(), [Path("/tmp/test.tcss")]),
-        (AbsolutePathStrApp(), [Path("/tmp/test.tcss")]),
-        (ListPathApp(), [APP_DIR / "test.tcss", Path("/another/path.tcss")]),
+        (RelativePathObjectApp, [APP_DIR / "test.tcss"]),
+        (RelativePathStrApp, [APP_DIR / "test.tcss"]),
+        (AbsolutePathObjectApp, [Path("/tmp/test.tcss")]),
+        (AbsolutePathStrApp, [Path("/tmp/test.tcss")]),
+        (ListPathApp, [APP_DIR / "test.tcss", Path("/another/path.tcss")]),
     ],
 )
-def test_css_paths_of_various_types(app, expected_css_path_attribute):
+def test_css_paths_of_various_types(app_class, expected_css_path_attribute):
+    app = app_class()
     assert app.css_path == [path.absolute() for path in expected_css_path_attribute]
