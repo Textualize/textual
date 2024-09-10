@@ -175,9 +175,9 @@ class RichLog(ScrollView, can_focus=True):
             width: Width to render or `None` to use optimal width.
                 If a `min_width` is specified on the widget, then the width will be
                 expanded to be at least `min_width`.
-            expand: Enable expand to widget width, or `False` to use `width`.
+            expand: Permit expanding of content to the width of the RichLog.
                 If `width` is not `None`, then `expand` will be ignored.
-            shrink: Enable shrinking of content to fit width.
+            shrink: Permit shrinking of content to fit within the RichLog.
                 If `width` is not `None`, or `expand` is `True`, then `shrink` will be ignored.
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
