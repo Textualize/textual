@@ -687,6 +687,28 @@ def test_richlog_write_at_specific_width(snap_compare):
     assert snap_compare(RichLogWriteAtSpecificWidth())
 
 
+def test_richlog_highlight(snap_compare):
+    """Check that RichLog.highlight correctly highlights with the ReprHighlighter.
+
+    Also ensures that interaction between CSS and highlighting is as expected -
+    non-highlighted text should have the CSS styles applied, but highlighted text
+    should ignore the CSS (and use the highlights returned from the highlighter).
+    """
+
+    class RichLogHighlight(App[None]):
+        # Add some CSS to check interaction with highlighting.
+        CSS = """
+        RichLog { color: red; background: dodgerblue 40%; }
+        """
+
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(highlight=True)
+            rich_log.write("Foo('bar', x=1, y=[1, 2, 3])")
+            yield rich_log
+
+    assert snap_compare(RichLogHighlight(), terminal_size=(30, 3))
+
+
 def test_tabs_invalidate(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "tabs_invalidate.py",

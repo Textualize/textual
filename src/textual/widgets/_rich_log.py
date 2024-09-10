@@ -85,7 +85,9 @@ class RichLog(ScrollView, can_focus=True):
                 width of the `RichLog` is constrained, content will always be written at
                 at least this width.
             wrap: Enable word wrapping (default is off).
-            highlight: Automatically highlight content.
+            highlight: Automatically highlight content. By default, the `ReprHighlighter` is used.
+                To customize highlighting, set `highlight=True` and then set the `highlighter`
+                attribute to an instance of `Highlighter`.
             markup: Apply Rich console markup.
             auto_scroll: Enable automatic scrolling to end.
             name: The name of the text log.
@@ -182,9 +184,9 @@ class RichLog(ScrollView, can_focus=True):
             content: Rich renderable (or a string).
             width: Width to render, or `None` to use `RichLog.min_width`.
                 If specified, `expand` and `shrink` will be ignored.
-            expand: Permit expanding of content to the width of the RichLog.
+            expand: Permit expanding of content to the width of the content region of the RichLog.
                 If `width` is specified, then `expand` will be ignored.
-            shrink: Permit shrinking of content to fit within the RichLog.
+            shrink: Permit shrinking of content to fit within the content region of the RichLog.
                 If `width` is specified, then `shrink` will be ignored.
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
