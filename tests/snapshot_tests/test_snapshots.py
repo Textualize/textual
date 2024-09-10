@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import pytest
+from rich.panel import Panel
+from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
@@ -635,6 +637,19 @@ def test_richlog_markup(snap_compare):
             yield rich_log
 
     assert snap_compare(RichLogWidth(), terminal_size=(42, 6))
+
+
+def test_richlog_shrink(snap_compare):
+    class RichLogShrink(App[None]):
+        CSS = "RichLog { width: 20; background: red;}"
+
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=4)
+            panel = Panel("lorem ipsum dolor sit amet lorem ipsum dolor sit amet")
+            rich_log.write(panel)
+            yield rich_log
+
+    assert snap_compare(RichLogShrink(), terminal_size=(24, 6))
 
 
 def test_tabs_invalidate(snap_compare):
