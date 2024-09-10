@@ -658,19 +658,31 @@ def test_richlog_shrink(snap_compare):
 def test_richlog_write_at_specific_width(snap_compare):
     """Ensure we can write renderables at a specific width.
     `min_width` should be respected, but `width` should override.
+
+    The green label at the bottom should be equal in width to the bottom
+    renderable (equal to min_width).
     """
 
     class RichLogWriteAtSpecificWidth(App[None]):
-        CSS = "RichLog { width: 1fr; }"
+        CSS = """
+        RichLog { width: 1fr; height: auto; }
+        #width-marker { background: green; width: 50; }
+        """
 
         def compose(self) -> ComposeResult:
             rich_log = RichLog(min_width=50)
-            panel = Panel("foo", style="black on red")
-            rich_log.write(panel, width=20)
-            rich_log.write(panel, width=40)
-            rich_log.write(panel, width=80)
-            rich_log.write(panel)
+            rich_log.write(Panel("width=20", style="black on red"), width=20)
+            rich_log.write(Panel("width=40", style="black on red"), width=40)
+            rich_log.write(Panel("width=60", style="black on red"), width=60)
+            rich_log.write(Panel("width=120", style="black on red"), width=120)
+            rich_log.write(
+                Panel("width=None (fallback to min_width)", style="black on red")
+            )
             yield rich_log
+            width_marker = Label(
+                f"this label is width 50 (same as min_width)", id="width-marker"
+            )
+            yield width_marker
 
     assert snap_compare(RichLogWriteAtSpecificWidth())
 
