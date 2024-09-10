@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from fractions import Fraction
 from operator import attrgetter
-from typing import TYPE_CHECKING, Iterable, Mapping, Sequence
+from typing import TYPE_CHECKING, Callable, Iterable, Mapping, Sequence
 
 from ._layout import DockArrangeResult, WidgetPlacement
 from ._partition import partition
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 TOP_Z = 2**31 - 1
 
 
-def _build_dock_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
+def _build_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
     """Organize widgets into layers.
 
     Args:
@@ -47,17 +47,28 @@ def arrange(
 
     placements: list[WidgetPlacement] = []
     scroll_spacing = Spacing()
-    get_dock = attrgetter("styles.dock")
-    get_split = attrgetter("styles.split")
+
+    def _attrgetter_convert_none(attribute: str) -> Callable[[Widget], str | None]:
+        """Get an attribute of a widget, but return None if the attribute is "none"."""
+
+        def getter(widget: Widget):
+            value = attrgetter(attribute)(widget)
+            return value if value != "none" else None
+
+        return getter
+
+    get_dock = _attrgetter_convert_none("styles.dock")
+    get_split = _attrgetter_convert_none("styles.split")
+
     styles = widget.styles
 
     # Widgets which will be displayed
     display_widgets = [child for child in children if child.styles.display != "none"]
 
     # Widgets organized into layers
-    dock_layers = _build_dock_layers(display_widgets)
+    layers = _build_layers(display_widgets)
 
-    for widgets in dock_layers.values():
+    for widgets in layers.values():
         # Partition widgets in to split widgets and non-split widgets
         non_split_widgets, split_widgets = partition(get_split, widgets)
         if split_widgets:

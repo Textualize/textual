@@ -587,7 +587,7 @@ class DockProperty:
         """
         return obj.get_rule("dock", "")  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, dock_name: str | None):
+    def __set__(self, obj: StylesBase, dock_name: str):
         """Set the Dock property.
 
         Args:
@@ -618,7 +618,7 @@ class SplitProperty:
         """
         return obj.get_rule("split", "")  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, dock_name: str | None):
+    def __set__(self, obj: StylesBase, dock_name: str):
         """Set the Dock property.
 
         Args:
