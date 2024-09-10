@@ -173,7 +173,7 @@ class RichLog(ScrollView, can_focus=True):
             expand: Enable expand to widget width, or `False` to use `width`.
                 If `width` is not `None`, then `expand` will be ignored.
             shrink: Enable shrinking of content to fit width.
-                If `width` is not `None`, then `shrink` will be ignored.
+                If `width` is not `None`, or `expand` is `True`, then `shrink` will be ignored.
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
         Returns:
@@ -197,7 +197,7 @@ class RichLog(ScrollView, can_focus=True):
 
         if width is not None:
             # Use the width specified by the caller.
-            # Note that we ignore `expand` and `shrink` when a width is specified.
+            # We ignore `expand` and `shrink` when a width is specified.
             render_width = width
         else:
             # Compute the width based on available information.
@@ -211,8 +211,7 @@ class RichLog(ScrollView, can_focus=True):
             if expand:
                 # Expand the renderable to the width of the scrollable content region.
                 render_width = max(renderable_width, scrollable_content_width)
-
-            if shrink and not expand:
+            elif shrink:
                 # Shrink the renderable down to fit within the scrollable content region.
                 render_width = min(renderable_width, scrollable_content_width)
 
