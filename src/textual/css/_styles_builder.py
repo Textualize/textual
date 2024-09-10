@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from functools import lru_cache
-from typing import Iterable, NoReturn, Sequence, cast
+from typing import Iterable, NoReturn, cast
 
 import rich.repr
 
@@ -136,19 +135,6 @@ class StylesBuilder:
             raise
         except Exception as error:
             self.error(declaration.name, declaration.token, str(error))
-
-    @lru_cache(maxsize=None)
-    def _get_processable_rule_names(self) -> Sequence[str]:
-        """
-        Returns the list of CSS properties we can manage -
-        i.e. the ones for which we have a `process_[property name]` method
-
-        Returns:
-            All the "Python-ised" CSS property names this class can handle.
-
-        Example: ("width", "background", "offset_x", ...)
-        """
-        return [attr[8:] for attr in dir(self) if attr.startswith("process_")]
 
     def _process_enum_multiple(
         self, name: str, tokens: list[Token], valid_values: set[str], count: int
@@ -1154,4 +1140,7 @@ class StylesBuilder:
 
         Example: returns "background" for rule_name "bkgrund", "offset_x" for "ofset_x"
         """
-        return get_suggestion(rule_name, self._get_processable_rule_names())
+        processable_rules_name = [
+            attr[8:] for attr in dir(self) if attr.startswith("process_")
+        ]
+        return get_suggestion(rule_name, processable_rules_name)

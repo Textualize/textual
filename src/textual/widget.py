@@ -49,7 +49,7 @@ from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
-from ._context import NoActiveAppError, active_app
+from ._context import NoActiveAppError
 from ._debug import get_caller_file_and_line
 from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
@@ -87,7 +87,6 @@ from .render import measure
 from .renderables.blank import Blank
 from .rlock import RLock
 from .strip import Strip
-from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -639,7 +638,7 @@ class Widget(DOMNode):
         """Check if the widget is permitted to focus.
 
         The base class returns [`can_focus`][textual.widget.Widget.can_focus].
-        This method maybe overridden if additional logic is required.
+        This method may be overridden if additional logic is required.
 
         Returns:
             `True` if the widget may be focused, or `False` if it may not be focused.
@@ -650,7 +649,7 @@ class Widget(DOMNode):
         """Check if a widget's children may be focused.
 
         The base class returns [`can_focus_children`][textual.widget.Widget.can_focus_children].
-        This method maybe overridden if additional logic is required.
+        This method may be overridden if additional logic is required.
 
         Returns:
             `True` if the widget's children may be focused, or `False` if the widget's children may not be focused.
@@ -807,21 +806,14 @@ class Widget(DOMNode):
             NoMatches: if no children could be found for this ID.
             WrongType: if the wrong type was found.
         """
-        # We use Widget as a filter_type so that the inferred type of child is Widget.
-        for child in walk_depth_first(self, filter_type=Widget):
-            try:
-                if expect_type is None:
-                    return child.get_child_by_id(id)
-                else:
-                    return child.get_child_by_id(id, expect_type=expect_type)
-            except NoMatches:
-                pass
-            except WrongType as exc:
-                raise WrongType(
-                    f"Descendant with id={id!r} is wrong type; expected {expect_type},"
-                    f" got {type(child)}"
-                ) from exc
-        raise NoMatches(f"No descendant found with id={id!r}")
+
+        widget = self.query_one(f"#{id}")
+        if expect_type is not None and not isinstance(widget, expect_type):
+            raise WrongType(
+                f"Descendant with id={id!r} is wrong type; expected {expect_type},"
+                f" got {type(widget)}"
+            )
+        return widget
 
     def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
         """Get the first immediate child of a given type.
@@ -958,7 +950,7 @@ class Widget(DOMNode):
         # can be passed to query_one. So let's use that to get a widget to
         # work on.
         if isinstance(spot, str):
-            spot = self.query_one(spot, Widget)
+            spot = self.query_exactly_one(spot, Widget)
 
         # At this point we should have a widget, either because we got given
         # one, or because we pulled one out of the query. First off, does it
@@ -1202,9 +1194,10 @@ class Widget(DOMNode):
             return
 
         async with self.batch():
-            await self.query("*").exclude(".-textual-system").remove()
+            await self.query_children("*").exclude(".-textual-system").remove()
             if self.is_attached:
-                await self.mount_all(compose(self))
+                compose_nodes = compose(self)
+                await self.mount_all(compose_nodes)
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -1813,7 +1806,7 @@ class Widget(DOMNode):
 
     @property
     def virtual_region(self) -> Region:
-        """The widget region relative to it's container (which may not be visible,
+        """The widget region relative to its container (which may not be visible,
         depending on scroll offset).
 
 
@@ -1891,7 +1884,7 @@ class Widget(DOMNode):
         Returns:
             A Rich console object.
         """
-        return active_app.get().console
+        return self.app.console
 
     @property
     def _has_relative_children_width(self) -> bool:
@@ -2845,7 +2838,7 @@ class Widget(DOMNode):
                     scrolled = True
 
             # Adjust the region by the amount we just scrolled it, and convert to
-            # it's parent's virtual coordinate system.
+            # its parent's virtual coordinate system.
 
             region = (
                 (
@@ -3684,6 +3677,11 @@ class Widget(DOMNode):
         parent._nodes._remove(self)
         self.app._registry.discard(self)
         self._detach()
+        self._arrangement_cache.clear()
+        self._nodes._clear()
+        self._render_cache = _RenderCache(NULL_SIZE, [])
+        self._component_styles.clear()
+        self._query_one_cache.clear()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

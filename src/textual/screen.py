@@ -29,6 +29,8 @@ import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
+from textual.keys import key_to_character
+
 from . import constants, errors, events, messages
 from ._arrange import arrange
 from ._callback import invoke
@@ -189,6 +191,9 @@ class Screen(Generic[ScreenResultType], Widget):
     ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
     """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
 
+    ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
+    """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
+
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
 
@@ -330,7 +335,7 @@ class Screen(Generic[ScreenResultType], Widget):
             for filter_namespace in filter_namespaces:
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
-                    if check_consume_key(key):
+                    if check_consume_key(key, key_to_character(key)):
                         del bindings_map.key_to_bindings[key]
             filter_namespaces.append(namespace)
 
@@ -887,7 +892,8 @@ class Screen(Generic[ScreenResultType], Widget):
         finally:
             if self._bindings_updated:
                 self._bindings_updated = False
-                self.app.call_later(self.bindings_updated_signal.publish, self)
+                if self.is_attached and not self.app._exit:
+                    self.app.call_later(self.bindings_updated_signal.publish, self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
@@ -930,8 +936,9 @@ class Screen(Generic[ScreenResultType], Widget):
             elif (
                 self in self.app._background_screens and self._compositor._dirty_regions
             ):
-                # Background screen
+                self._set_dirty(*self._compositor._dirty_regions)
                 app.screen.refresh(*self._compositor._dirty_regions)
+                self._repaint_required = True
                 self._compositor._dirty_regions.clear()
                 self._dirty_widgets.clear()
         app._update_mouse_over(self)
@@ -972,11 +979,8 @@ class Screen(Generic[ScreenResultType], Widget):
             callbacks = self._callbacks[:]
             self._callbacks.clear()
             for callback, message_pump in callbacks:
-                reset_token = active_message_pump.set(message_pump)
-                try:
+                with message_pump._context():
                     await invoke(callback)
-                finally:
-                    active_message_pump.reset(reset_token)
 
     def _invoke_later(self, callback: CallbackType, sender: MessagePump) -> None:
         """Enqueue a callback to be invoked after the screen is repainted.
@@ -1005,6 +1009,16 @@ class Screen(Generic[ScreenResultType], Widget):
         self._result_callbacks.append(
             ResultCallback[Optional[ScreenResultType]](requester, callback, future)
         )
+
+    async def _message_loop_exit(self) -> None:
+        await super()._message_loop_exit()
+        self._compositor.clear()
+        self._dirty_widgets.clear()
+        self._dirty_regions.clear()
+        self._arrangement_cache.clear()
+        self.screen_layout_refresh_signal.unsubscribe(self)
+        self._nodes._clear()
+        self._task = None
 
     def _pop_result_callback(self) -> None:
         """Remove the latest result callback from the stack."""
@@ -1092,6 +1106,7 @@ class Screen(Generic[ScreenResultType], Widget):
         message.prevent_default()
         widget = message.widget
         assert isinstance(widget, Widget)
+
         self._dirty_widgets.add(widget)
         self.check_idle()
 

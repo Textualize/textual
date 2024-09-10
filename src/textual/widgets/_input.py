@@ -34,10 +34,9 @@ InputValidationOn = Literal["blur", "changed", "submitted"]
 _POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
 """Set literal with the legal values for the type `InputValidationOn`."""
 
-
 _RESTRICT_TYPES = {
-    "integer": r"[-+]?\d*",
-    "number": r"[-+]?\d*\.?\d*[eE]?[-+]?\d*",
+    "integer": r"[-+]?(?:\d*|\d+_)*",
+    "number": r"[-+]?(?:\d*|\d+_)*\.?(?:\d*|\d+_)*(?:\d[eE]?[-+]?(?:\d*|\d+_)*)?",
     "text": None,
 }
 InputType = Literal["integer", "number", "text"]
@@ -361,18 +360,19 @@ class Input(Widget, can_focus=True):
         """Flag to indicate if the cursor is at the end"""
         return self.cursor_position >= len(self.value)
 
-    def check_consume_key(self, key: str) -> bool:
+    def check_consume_key(self, key: str, character: str | None) -> bool:
         """Check if the widget may consume the given key.
 
         As an input we are expecting to capture printable keys.
 
         Args:
             key: A key identifier.
+            character: A character associated with the key, or `None` if there isn't one.
 
         Returns:
             `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
         """
-        return len(key) == 1 and key.isprintable()
+        return character is not None and character.isprintable()
 
     def validate_cursor_position(self, cursor_position: int) -> int:
         return min(max(0, cursor_position), len(self.value))

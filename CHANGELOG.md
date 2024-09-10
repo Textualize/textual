@@ -5,15 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [Unreleased]
+
+### Added
+
+- Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid. https://github.com/Textualize/textual/pull/4784
+
+### Changed
+
+- Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int. https://github.com/Textualize/textual/pull/4784
+
+### Fixed
+
+- Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
+
+## [0.79.1] - 2024-08-31
+
+### Fixed
+
+- Fixed broken updates when non active screen changes https://github.com/Textualize/textual/pull/4957
+
+## [0.79.0] - 2024-08-30
 
 ### Added
 
 - Added `DOMNode.check_consume_key` https://github.com/Textualize/textual/pull/4940
+- Added `App.ESCAPE_TO_MINIMIZE`, `App.screen_to_minimize`, and `Screen.ESCAPE_TO_MINIMIZE` https://github.com/Textualize/textual/pull/4951
+- Added `DOMNode.query_exactly_one` https://github.com/Textualize/textual/pull/4950
+- Added `SelectorSet.is_simple` https://github.com/Textualize/textual/pull/4950
 
 ### Changed
 
 - KeyPanel will show multiple keys if bound to the same action https://github.com/Textualize/textual/pull/4940
+- Breaking change: `DOMNode.query_one` will not `raise TooManyMatches` https://github.com/Textualize/textual/pull/4950
 
 ## [0.78.0] - 2024-08-27
 
@@ -2327,6 +2351,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.79.0]: https://github.com/Textualize/textual/compare/v0.78.0...v0.79.0
 [0.78.0]: https://github.com/Textualize/textual/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/Textualize/textual/compare/v0.76.0...v0.77.0
 [0.76.0]: https://github.com/Textualize/textual/compare/v0.75.1...v0.76.0

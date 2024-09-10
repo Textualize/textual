@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.78.0"
+version = "0.79.1"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -47,6 +47,7 @@ rich = ">=13.3.3"
 typing-extensions = "^4.4.0"
 tree-sitter = { version = "^0.20.1", optional = true }
 tree-sitter-languages = { version = "1.10.2", optional = true }
+platformdirs = ">=3.6.0,<5"
 
 [tool.poetry.extras]
 syntax = ["tree-sitter", "tree_sitter_languages"]
@@ -82,6 +83,7 @@ addopts = "--strict-markers"
 markers = [
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
+asyncio_default_fixture_loop_scope = "function"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
