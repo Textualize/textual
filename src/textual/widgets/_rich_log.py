@@ -34,10 +34,15 @@ class DeferredRender(NamedTuple):
     """
 
     content: RenderableType | object
+    """The content to render."""
     width: int | None = None
+    """The width to render or `None` to use optimal width."""
     expand: bool = False
+    """Enable expand to widget width, or `False` to use `width`."""
     shrink: bool = True
+    """Enable shrinking of content to fit width."""
     scroll_end: bool | None = None
+    """Enable automatic scroll to end, or `None` to use `self.auto_scroll`."""
 
 
 class RichLog(ScrollView, can_focus=True):
@@ -209,10 +214,11 @@ class RichLog(ScrollView, can_focus=True):
             render_width = renderable_width
             scrollable_content_width = self.scrollable_content_region.width
 
-            if expand:
+            if expand and renderable_width < scrollable_content_width:
                 # Expand the renderable to the width of the scrollable content region.
                 render_width = max(renderable_width, scrollable_content_width)
-            elif shrink:
+
+            if shrink and renderable_width > scrollable_content_width:
                 # Shrink the renderable down to fit within the scrollable content region.
                 render_width = min(renderable_width, scrollable_content_width)
 
