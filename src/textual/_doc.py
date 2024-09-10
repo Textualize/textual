@@ -42,6 +42,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
                 title=title,
                 terminal_size=(columns, rows),
                 wait_for_animation=False,
+                simplify=False,
             )
         finally:
             os.chdir(cwd)
