@@ -81,9 +81,7 @@ class RichLog(ScrollView, can_focus=True):
 
         Args:
             max_lines: Maximum number of lines in the log or `None` for no maximum.
-            min_width: Minimum width of the renderable area. Ensures that even if the
-                width of the `RichLog` is constrained, content will always be written at
-                at least this width.
+            min_width: Width to use for calls to `write` with no specified `width`.
             wrap: Enable word wrapping (default is off).
             highlight: Automatically highlight content. By default, the `ReprHighlighter` is used.
                 To customize highlighting, set `highlight=True` and then set the `highlighter`
