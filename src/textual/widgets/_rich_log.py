@@ -98,6 +98,7 @@ class RichLog(ScrollView, can_focus=True):
         """Maximum number of lines in the log or `None` for no maximum."""
         self._start_line: int = 0
         self.lines: list[Strip] = []
+        """The lines currently visible in the log."""
         self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
         self._line_cache = LRUCache(1024)
         self._deferred_renders: deque[DeferredRender] = deque()
@@ -119,6 +120,8 @@ class RichLog(ScrollView, can_focus=True):
         """The width of the widest line currently in the log."""
 
         self._size_known = False
+        """Flag which is set to True when the size of the RichLog is known,
+        indicating we can proceed with rendering deferred writes."""
 
     def notify_style_update(self) -> None:
         self._line_cache.clear()
@@ -277,6 +280,7 @@ class RichLog(ScrollView, can_focus=True):
         self._line_cache.clear()
         self._start_line = 0
         self._widest_line_width = 0
+        self._deferred_renders.clear()
         self.virtual_size = Size(0, len(self.lines))
         self.refresh()
         return self
