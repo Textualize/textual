@@ -572,6 +572,7 @@ def test_richlog_max_lines(snap_compare):
 
 
 def test_richlog_scroll(snap_compare):
+    """Ensure `RichLog.auto_scroll` causes the log to scroll to the end when new content is written."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
 
 
@@ -627,7 +628,7 @@ def test_richlog_deferred_render_expand(snap_compare):
 
 
 def test_richlog_markup(snap_compare):
-    """Check that Rich markup works in RichLog when markup=True."""
+    """Check that Rich markup is rendered in RichLog when markup=True."""
 
     class RichLogWidth(App[None]):
         def compose(self) -> ComposeResult:
@@ -640,6 +641,8 @@ def test_richlog_markup(snap_compare):
 
 
 def test_richlog_shrink(snap_compare):
+    """Ensure that when shrink=True, the renderable shrinks to fit the width of the RichLog."""
+
     class RichLogShrink(App[None]):
         CSS = "RichLog { width: 20; background: red;}"
 
@@ -650,6 +653,26 @@ def test_richlog_shrink(snap_compare):
             yield rich_log
 
     assert snap_compare(RichLogShrink(), terminal_size=(24, 6))
+
+
+def test_richlog_write_at_specific_width(snap_compare):
+    """Ensure we can write renderables at a specific width.
+    `min_width` should be respected, but `width` should override.
+    """
+
+    class RichLogWriteAtSpecificWidth(App[None]):
+        CSS = "RichLog { width: 1fr; }"
+
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=50)
+            panel = Panel("foo", style="black on red")
+            rich_log.write(panel, width=20)
+            rich_log.write(panel, width=40)
+            rich_log.write(panel, width=80)
+            rich_log.write(panel)
+            yield rich_log
+
+    assert snap_compare(RichLogWriteAtSpecificWidth())
 
 
 def test_tabs_invalidate(snap_compare):

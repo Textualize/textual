@@ -198,6 +198,7 @@ class RichLog(ScrollView, can_focus=True):
         if width is not None:
             # Use the width specified by the caller.
             # We ignore `expand` and `shrink` when a width is specified.
+            # This also overrides `min_width` set on the RichLog.
             render_width = width
         else:
             # Compute the width based on available information.
@@ -215,8 +216,8 @@ class RichLog(ScrollView, can_focus=True):
                 # Shrink the renderable down to fit within the scrollable content region.
                 render_width = min(renderable_width, scrollable_content_width)
 
-        # Ensure we don't render below the minimum width.
-        render_width = max(render_width, self.min_width)
+            # The user has not supplied a width, so make sure min_width is respected.
+            render_width = max(render_width, self.min_width)
 
         render_options = render_options.update_width(render_width)
 
@@ -264,6 +265,7 @@ class RichLog(ScrollView, can_focus=True):
         self.lines.clear()
         self._line_cache.clear()
         self._start_line = 0
+        self._widest_line_width = 0
         self.virtual_size = Size(0, len(self.lines))
         self.refresh()
         return self
