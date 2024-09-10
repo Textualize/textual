@@ -81,6 +81,7 @@ def take_svg_screenshot(
             screenshot. Use this to simulate complex user interactions with the app
             that cannot be simulated by key presses.
         wait_for_animation: Wait for animation to complete before taking screenshot.
+        simplify: Simplify the segments by combining contiguous segments with the same style.
 
     Returns:
         An SVG string, showing the content of the terminal window at the time
