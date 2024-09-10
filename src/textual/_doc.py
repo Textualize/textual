@@ -42,6 +42,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
                 title=title,
                 terminal_size=(columns, rows),
                 wait_for_animation=False,
+                simplify=False,
             )
         finally:
             os.chdir(cwd)
@@ -65,6 +66,7 @@ def take_svg_screenshot(
     terminal_size: tuple[int, int] = (80, 24),
     run_before: Callable[[Pilot], Awaitable[None] | None] | None = None,
     wait_for_animation: bool = True,
+    simplify=True,
 ) -> str:
     """
 
@@ -79,6 +81,7 @@ def take_svg_screenshot(
             screenshot. Use this to simulate complex user interactions with the app
             that cannot be simulated by key presses.
         wait_for_animation: Wait for animation to complete before taking screenshot.
+        simplify: Simplify the segments by combining contiguous segments with the same style.
 
     Returns:
         An SVG string, showing the content of the terminal window at the time
@@ -129,7 +132,7 @@ def take_svg_screenshot(
             await pilot.pause()
         await pilot.pause()
         await pilot.wait_for_scheduled_animations()
-        svg = app.export_screenshot(title=title)
+        svg = app.export_screenshot(title=title, simplify=simplify)
 
         app.exit(svg)
 

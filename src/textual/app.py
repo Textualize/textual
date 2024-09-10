@@ -1387,7 +1387,12 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.deliver_screenshot(filename, path)
 
-    def export_screenshot(self, *, title: str | None = None) -> str:
+    def export_screenshot(
+        self,
+        *,
+        title: str | None = None,
+        simplify: bool = False,
+    ) -> str:
         """Export an SVG screenshot of the current screen.
 
         See also [save_screenshot][textual.app.App.save_screenshot] which writes the screenshot to a file.
@@ -1395,6 +1400,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             title: The title of the exported screenshot or None
                 to use app title.
+            simplify: Simplify the segments by combining contiguous segments with the same style.
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
@@ -1410,7 +1416,7 @@ class App(Generic[ReturnType], DOMNode):
             safe_box=False,
         )
         screen_render = self.screen._compositor.render_update(
-            full=True, screen_stack=self.app._background_screens, simplify=True
+            full=True, screen_stack=self.app._background_screens, simplify=simplify
         )
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
