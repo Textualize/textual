@@ -1392,7 +1392,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             title: The title of the exported screenshot or None
                 to use app title.
-                simplify: Simplify the segments by combining contiguous segments with the same style.
+            simplify: Simplify the segments by combining contiguous segments with the same style.
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
