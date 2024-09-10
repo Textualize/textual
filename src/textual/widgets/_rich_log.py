@@ -168,7 +168,12 @@ class RichLog(ScrollView, can_focus=True):
         shrink: bool = True,
         scroll_end: bool | None = None,
     ) -> Self:
-        """Write a string or a Rich renderable to the log.
+        """Write a string or a Rich renderable to the bottom of the log.
+
+        Notes:
+            The rendering of content will be deferred until the size of the `RichLog` is known.
+            This means if you call `write` in `compose` or `on_mount`, the content will not be
+            rendered immediately.
 
         Args:
             content: Rich renderable (or a string).
@@ -185,6 +190,7 @@ class RichLog(ScrollView, can_focus=True):
         """
         if not self._size_known:
             # We don't know the size yet, so we'll need to render this later.
+            # We defer ALL writes until the size is known, to ensure ordering is preserved.
             self._deferred_renders.append(
                 DeferredRender(content, width, expand, shrink, scroll_end)
             )
