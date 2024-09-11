@@ -194,6 +194,8 @@ class RichLog(ScrollView, can_focus=True):
         if not self._size_known:
             # We don't know the size yet, so we'll need to render this later.
             # We defer ALL writes until the size is known, to ensure ordering is preserved.
+            if isinstance(content, Text):
+                content = content.copy()
             self._deferred_renders.append(
                 DeferredRender(content, width, expand, shrink, scroll_end)
             )
