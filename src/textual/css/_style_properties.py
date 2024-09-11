@@ -630,7 +630,7 @@ class SplitProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> DockEdge:
-        """Get the Dock property.
+        """Get the Split property.
 
         Args:
             obj: The ``Styles`` object.

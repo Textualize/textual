@@ -314,48 +314,85 @@ class StylesBase:
     border_subtitle_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "right")
 
     outline = BorderProperty(layout=False)
+    """Set the outline of the widget e.g. ("rounded", "green") or "none".
+    The outline is drawn *on top* of the widget, rather than around it like border.
+    """
     outline_top = BoxProperty(Color(0, 255, 0))
+    """Set the top outline of the widget e.g. ("rounded", "green") or "none"."""
     outline_right = BoxProperty(Color(0, 255, 0))
+    """Set the right outline of the widget e.g. ("rounded", "green") or "none"."""
     outline_bottom = BoxProperty(Color(0, 255, 0))
+    """Set the bottom outline of the widget e.g. ("rounded", "green") or "none"."""
     outline_left = BoxProperty(Color(0, 255, 0))
+    """Set the left outline of the widget e.g. ("rounded", "green") or "none"."""
 
     keyline = KeylineProperty()
 
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
     width = ScalarProperty(percent_unit=Unit.WIDTH)
+    """Set the width of the widget."""
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
+    """Set the height of the widget."""
     min_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
+    """Set the minimum width of the widget."""
     min_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
+    """Set the minimum height of the widget."""
     max_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
+    """Set the maximum width of the widget."""
     max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
-
+    """Set the maximum height of the widget."""
     dock = DockProperty()
+    """Set which edge of the parent to dock this widget to e.g. "top", "left", "right", "bottom".
+    """
     split = SplitProperty()
 
     overflow_x = OverflowProperty(VALID_OVERFLOW, "hidden")
+    """Control what happens when the content extends horizontally beyond the widget's width.
+
+    Valid values are "scroll", "hidden", or "auto".
+    """
+
     overflow_y = OverflowProperty(VALID_OVERFLOW, "hidden")
+    """Control what happens when the content extends vertically beyond the widget's height.
+
+    Valid values are "scroll", "hidden", or "auto".
+    """
 
     layer = NameProperty()
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
     tint = ColorProperty("transparent")
+    """Set the tint of the widget. This allows you apply a opaque color above the widget.
+
+    You can specify an opacity after a color e.g. "blue 10%"
+    """
     scrollbar_color = ScrollbarColorProperty("ansi_bright_magenta")
+    """Set the color of the handle of the scrollbar."""
     scrollbar_color_hover = ScrollbarColorProperty("ansi_yellow")
+    """Set the color of the handle of the scrollbar when hovered."""
     scrollbar_color_active = ScrollbarColorProperty("ansi_bright_yellow")
-
+    """Set the color of the handle of the scrollbar when active (being dragged)."""
     scrollbar_corner_color = ScrollbarColorProperty("#666666")
-
+    """Set the color of the space between the horizontal and vertical scrollbars."""
     scrollbar_background = ScrollbarColorProperty("#555555")
+    """Set the background color of the scrollbar (the track that the handle sits on)."""
     scrollbar_background_hover = ScrollbarColorProperty("#444444")
+    """Set the background color of the scrollbar when hovered."""
     scrollbar_background_active = ScrollbarColorProperty("black")
+    """Set the background color of the scrollbar when active (being dragged)."""
 
     scrollbar_gutter = StringEnumProperty(
         VALID_SCROLLBAR_GUTTER, "auto", layout=True, refresh_children=True
     )
+    """Set to "stable" to reserve space for the scrollbar even when it's not visible.
+    This can prevent content from shifting when a scrollbar appears.
+    """
 
-    scrollbar_size_vertical = IntegerProperty(default=1, layout=True)
+    scrollbar_size_vertical = IntegerProperty(default=2, layout=True)
+    """Set the width of the vertical scrollbar (measured in cells)."""
     scrollbar_size_horizontal = IntegerProperty(default=1, layout=True)
+    """Set the height of the horizontal scrollbar (measured in cells)."""
 
     align_horizontal = StringEnumProperty(
         VALID_ALIGN_HORIZONTAL, "left", layout=True, refresh_children=True
