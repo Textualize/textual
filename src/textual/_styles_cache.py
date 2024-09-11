@@ -315,7 +315,6 @@ class StylesCache:
             """Apply effects to segments inside the border."""
             if styles.has_rule("hatch") and styles.hatch != "none":
                 character, color = styles.hatch
-                print(character, color)
                 if character != " " and color.a > 0:
                     hatch_style = Style.from_color(
                         (background + color).rich_color, background.rich_color
