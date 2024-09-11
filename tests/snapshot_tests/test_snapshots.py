@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Vertical
@@ -1676,3 +1677,37 @@ def test_escape_to_minimize_screen_override(snap_compare):
 
     # ctrl+m to maximize, escape *should* minimize
     assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
+
+
+async def test_app_focus_style(snap_compare):
+    class FocusApp(App):
+        CSS = """
+        Label {
+            padding: 1 2;
+            margin: 1 2;
+            background: $panel;
+            border: $primary;
+        }
+        App:focus {
+            .blurred {
+                visibility: hidden;
+            }            
+        }
+
+        App:blur {
+            .focussed {
+                visibility: hidden;
+            }            
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("BLURRED", classes="blurred")
+            yield Label("FOCUSED", classes="focussed")
+
+    async def run_before(pilot: Pilot) -> None:
+        pilot.app.post_message(events.AppBlur())
+        await pilot.pause()
+
+    assert snap_compare(FocusApp(), run_before=run_before)
