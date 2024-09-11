@@ -9,7 +9,16 @@ when setting and getting.
 from __future__ import annotations
 
 from operator import attrgetter
-from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, Sequence, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    Iterable,
+    Literal,
+    NamedTuple,
+    Sequence,
+    TypeVar,
+    cast,
+)
 
 import rich.errors
 import rich.repr
@@ -294,7 +303,11 @@ class BoxProperty:
         """
         return obj.get_rule(self.name) or ("", self._default_color)  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, border: tuple[EdgeType, str | Color] | None):
+    def __set__(
+        self,
+        obj: StylesBase,
+        border: tuple[EdgeType, str | Color] | Literal["none"] | None,
+    ):
         """Set the box property.
 
         Args:
@@ -304,13 +317,14 @@ class BoxProperty:
                 ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
 
         Raises:
-            StyleSyntaxError: If the string supplied for the color has invalid syntax.
+            StyleValueError: If the string supplied for the color is not a valid color.
         """
-        _rich_traceback_omit = True
 
         if border is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
+        elif border == "none":
+            obj.set_rule(self.name, ("", obj.get_rule(self.name)[1]))
         else:
             _type, color = border
             if _type in ("none", "hidden"):
@@ -453,6 +467,16 @@ class BorderProperty:
             clear_rule(left)
             check_refresh()
             return
+        elif border == "none":
+            set_rule = obj.set_rule
+            get_rule = obj.get_rule
+            set_rule(top, ("", get_rule(top)[1]))
+            set_rule(right, ("", get_rule(right)[1]))
+            set_rule(bottom, ("", get_rule(bottom)[1]))
+            set_rule(left, ("", get_rule(left)[1]))
+            check_refresh()
+            return
+
         if isinstance(border, tuple) and len(border) == 2:
             _border = normalize_border_value(border)  # type: ignore
             setattr(obj, top, _border)
@@ -1170,25 +1194,35 @@ class AlignProperty:
 class HatchProperty:
     """Property to expose hatch style."""
 
-    def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
-        return obj.get_rule("hatch", (" ", TRANSPARENT))  # type: ignore[return-value]
+    def __get__(
+        self, obj: StylesBase, type: type[StylesBase]
+    ) -> tuple[str, Color] | Literal["none"]:
+        return obj.get_rule("hatch")  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, value: tuple[str, Color | str] | None) -> None:
+    def __set__(
+        self, obj: StylesBase, value: tuple[str, Color | str] | Literal["none"] | None
+    ) -> None:
         _rich_traceback_omit = True
         if value is None:
-            obj.clear_rule("hatch")
+            if obj.clear_rule("hatch"):
+                obj.refresh(children=True)
             return
-        character, color = value
-        if len(character) != 1:
-            try:
-                character = HATCHES[character]
-            except KeyError:
-                raise ValueError(
-                    f"Expected a character or hatch value here; found {character!r}"
-                ) from None
-        if cell_len(character) != 1:
-            raise ValueError("Hatch character must have a cell length of 1")
-        if isinstance(color, str):
-            color = Color.parse(color)
-        hatch = (character, color)
+
+        if value == "none":
+            hatch = "none"
+        else:
+            character, color = value
+            if len(character) != 1:
+                try:
+                    character = HATCHES[character]
+                except KeyError:
+                    raise ValueError(
+                        f"Expected a character or hatch value here; found {character!r}"
+                    ) from None
+            if cell_len(character) != 1:
+                raise ValueError("Hatch character must have a cell length of 1")
+            if isinstance(color, str):
+                color = Color.parse(color)
+            hatch = (character, color)
+
         obj.set_rule("hatch", hatch)

@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Iterable, cast
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Literal, cast
 
 import rich.repr
 from rich.style import Style
@@ -187,7 +187,7 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_background: Color
     border_subtitle_style: Style
 
-    hatch: tuple[str, Color]
+    hatch: tuple[str, Color] | Literal["none"]
 
     overlay: Overlay
     constrain: Constrain
@@ -234,28 +234,81 @@ class StylesBase:
     display = StringEnumProperty(
         VALID_DISPLAY, "block", layout=True, refresh_parent=True, refresh_children=True
     )
+    """Set the display of the widget, defining how it's rendered.
+
+    Valid values are "block" or "none".
+    
+    "none" will hide and allow other widgets to fill the space that this widget would occupy.
+    
+    Set to None to clear any value that was set at runtime.
+
+    Raises:
+        StyleValueError: If an invalid display is specified.
+    """
+
     visibility = StringEnumProperty(
         VALID_VISIBILITY, "visible", layout=True, refresh_parent=True
     )
+    """Set the visibility of the widget.
+    
+    Valid values are "visible" or "hidden".
+
+    "hidden" will hide the widget, but reserve the space for this widget.
+    If you want to hide the widget and allow another widget to fill the space,
+    set the display attribute to "none" instead.
+    
+    Set to None to clear any value that was set at runtime.
+
+    Raises:
+        StyleValueError: If an invalid visibility is specified.
+    """
+
     layout = LayoutProperty()
+    """Set the layout of the widget, defining how it's children are laid out.
+    
+    Valid values are "grid", "horizontal", and "vertical" or None to clear any layout
+    that was set at runtime.
+
+    Raises:
+        MissingLayout: If an invalid layout is specified.
+    """
 
     auto_color = BooleanProperty(default=False)
     color = ColorProperty(Color(255, 255, 255))
+    """Set the foreground (text) color of the widget.
+    Supports `Color` objects but also strings e.g. "red" or "#ff0000".
+    You can also specify an opacity after a color e.g. "blue 10%"
+    """
     background = ColorProperty(Color(0, 0, 0, 0))
+    """Set the background color of the widget.
+    Supports `Color` objects but also strings e.g. "red" or "#ff0000"
+    You can also specify an opacity after a color e.g. "blue 10%"
+    """
     text_style = StyleFlagsProperty()
-
+    """Set the text style of the widget using Rich StyleFlags.
+    e.g. `"bold underline"` or `"b u strikethrough"`.
+    """
     opacity = FractionalProperty(children=True)
+    """Set the opacity of the widget, defining how it blends with the parent."""
     text_opacity = FractionalProperty()
-
+    """Set the opacity of the content within the widget against the widget's background."""
     padding = SpacingProperty()
+    """Set the padding (spacing between border and content) of the widget."""
     margin = SpacingProperty()
+    """Set the margin (spacing outside the border) of the widget."""
     offset = OffsetProperty()
-
+    """Set the offset of the widget relative to where it would have been otherwise."""
     border = BorderProperty(layout=True)
+    """Set the border of the widget e.g. ("rounded", "green") or "none"."""
+
     border_top = BoxProperty(Color(0, 255, 0))
+    """Set the top border of the widget e.g. ("rounded", "green") or "none"."""
     border_right = BoxProperty(Color(0, 255, 0))
+    """Set the right border of the widget e.g. ("rounded", "green") or "none"."""
     border_bottom = BoxProperty(Color(0, 255, 0))
+    """Set the bottom border of the widget e.g. ("rounded", "green") or "none"."""
     border_left = BoxProperty(Color(0, 255, 0))
+    """Set the left border of the widget e.g. ("rounded", "green") or "none"."""
 
     border_title_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     border_subtitle_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "right")
@@ -354,6 +407,8 @@ class StylesBase:
     border_subtitle_style = StyleFlagsProperty()
 
     hatch = HatchProperty()
+    """Add a hatched background effect e.g. ("right", "yellow") or "none" to use no hatch.
+    """
 
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
@@ -453,22 +508,22 @@ class StylesBase:
         height = self.height
         return height is not None and height.unit == Unit.AUTO
 
-    def has_rule(self, rule: str) -> bool:
+    def has_rule(self, rule_name: str) -> bool:
         """Check if a rule is set on this Styles object.
 
         Args:
-            rule: Rule name.
+            rule_name: Rule name.
 
         Returns:
             ``True`` if the rules is present, otherwise ``False``.
         """
         raise NotImplementedError()
 
-    def clear_rule(self, rule: str) -> bool:
+    def clear_rule(self, rule_name: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
 
         Args:
-            rule: Rule name.
+            rule_name: Rule name.
 
         Returns:
             ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
@@ -483,11 +538,11 @@ class StylesBase:
         """
         raise NotImplementedError()
 
-    def set_rule(self, rule: str, value: object | None) -> bool:
+    def set_rule(self, rule_name: str, value: object | None) -> bool:
         """Set a rule.
 
         Args:
-            rule: Rule name.
+            rule_name: Rule name.
             value: New rule value.
 
         Returns:
@@ -495,11 +550,11 @@ class StylesBase:
         """
         raise NotImplementedError()
 
-    def get_rule(self, rule: str, default: object = None) -> object:
+    def get_rule(self, rule_name: str, default: object = None) -> object:
         """Get an individual rule.
 
         Args:
-            rule: Name of rule.
+            rule_name: Name of rule.
             default: Default if rule does not exists.
 
         Returns:
@@ -669,9 +724,7 @@ class StylesBase:
 @dataclass
 class Styles(StylesBase):
     node: DOMNode | None = None
-    _rules: RulesMap = field(
-        default_factory=RulesMap
-    )  # mypy won't be happy with `default_factory=RulesMap`
+    _rules: RulesMap = field(default_factory=RulesMap)
     _updates: int = 0
 
     important: set[str] = field(default_factory=set)
@@ -688,16 +741,16 @@ class Styles(StylesBase):
             important=self.important,
         )
 
-    def clear_rule(self, rule: str) -> bool:
+    def clear_rule(self, rule_name: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
 
         Args:
-            rule: Rule name.
+            rule_name: Rule name.
 
         Returns:
             ``True`` if a rule was cleared, or ``False`` if it was already not set.
         """
-        changed = self._rules.pop(rule, None) is not None  # type: ignore
+        changed = self._rules.pop(rule_name, None) is not None  # type: ignore
         if changed:
             self._updates += 1
         return changed
@@ -1219,18 +1272,20 @@ class RenderStyles(StylesBase):
         self._inline_styles.reset()
         self._updates += 1
 
-    def has_rule(self, rule: str) -> bool:
+    def has_rule(self, rule_name: str) -> bool:
         """Check if a rule has been set."""
-        return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
+        return self._inline_styles.has_rule(rule_name) or self._base_styles.has_rule(
+            rule_name
+        )
 
-    def set_rule(self, rule: str, value: object | None) -> bool:
+    def set_rule(self, rule_name: str, value: object | None) -> bool:
         self._updates += 1
-        return self._inline_styles.set_rule(rule, value)
+        return self._inline_styles.set_rule(rule_name, value)
 
-    def get_rule(self, rule: str, default: object = None) -> object:
-        if self._inline_styles.has_rule(rule):
-            return self._inline_styles.get_rule(rule, default)
-        return self._base_styles.get_rule(rule, default)
+    def get_rule(self, rule_name: str, default: object = None) -> object:
+        if self._inline_styles.has_rule(rule_name):
+            return self._inline_styles.get_rule(rule_name, default)
+        return self._base_styles.get_rule(rule_name, default)
 
     def clear_rule(self, rule_name: str) -> bool:
         """Clear a rule (from inline)."""

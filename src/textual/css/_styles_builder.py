@@ -1065,6 +1065,10 @@ class StylesBuilder:
         color = TRANSPARENT
         opacity = 1.0
 
+        if len(tokens) == 1 and tokens[0].value == "none":
+            self.styles._rules[name] = "none"
+            return
+
         if len(tokens) not in (2, 3):
             self.error(name, tokens[0], "2 or 3 values expected here")
 
