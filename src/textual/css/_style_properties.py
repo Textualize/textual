@@ -58,13 +58,12 @@ from .transition import Transition
 if TYPE_CHECKING:
     from ..canvas import CanvasLineType
     from .._layout import Layout
-    from ..widget import Widget
     from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
 BorderDefinition: TypeAlias = (
-    "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
+    "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color] | Literal['none']"
 )
 
 PropertyGetType = TypeVar("PropertyGetType")
