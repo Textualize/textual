@@ -70,7 +70,7 @@ class MonthCalendar(Widget):
         "month-calendar--outside-month",
     }
 
-    date: Reactive[datetime.date] = Reactive(datetime.date.today())
+    date: Reactive[datetime.date] = Reactive(datetime.date.today)
     first_weekday: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(True)
     show_other_months: Reactive[bool] = Reactive(True)
