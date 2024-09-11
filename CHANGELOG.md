@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added `MaskedInput` widget https://github.com/Textualize/textual/pull/4783
 - Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid. https://github.com/Textualize/textual/pull/4784
 
 ### Changed
@@ -106,6 +107,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue with Enter events causing unresponsive UI https://github.com/Textualize/textual/pull/4833
+
 
 ## [0.75.0] - 2024-08-01
 
