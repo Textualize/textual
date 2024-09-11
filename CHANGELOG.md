@@ -15,11 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int. https://github.com/Textualize/textual/pull/4784
+- Some fixes in `RichLog` result in slightly different semantics, see docstrings for details https://github.com/Textualize/textual/pull/4978
 
 ### Fixed
 
 - Input validation of floats no longer accepts NaN (not a number). https://github.com/Textualize/textual/pull/4784
 - Fixed issues with screenshots by simplifying segments only for snapshot tests https://github.com/Textualize/textual/issues/4929
+- Fixed `RichLog.write` not respecting `width` parameter https://github.com/Textualize/textual/pull/4978
+- Fixed `RichLog` writing at wrong width when `write` occurs before width is known (e.g. in `compose` or `on_mount`) https://github.com/Textualize/textual/pull/4978
+- Fixed `RichLog.write` incorrectly shrinking width to `RichLog.min_width` when `shrink=True` (now shrinks to fit content area instead) https://github.com/Textualize/textual/pull/4978
 
 ## [0.79.1] - 2024-08-31
 
