@@ -121,6 +121,12 @@ Textual will handle keyboard focus automatically, but you can tell Textual to fo
 
 When a widget receives focus, it is sent a [Focus](../events/focus.md) event. When a widget loses focus it is sent a [Blur](../events/blur.md) event.
 
+### Focusable widgets
+
+Each widget has a boolean `can_focus` attribute which determines if it is capable of receiving focus.
+Note that `can_focus=True` does not mean the widget will _always_ be focusable.
+For example, a disabled widget cannot receive focus even if `can_focus` is `True`.
+
 ## Bindings
 
 Keys may be associated with [actions](../guide/actions.md) for a given widget. This association is known as a key _binding_.
