@@ -122,7 +122,9 @@ def test_masked_input(snap_compare):
         pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "masked_input.py", press=["A","B","C","0","1","-","D","E"], run_before=run_before
+        SNAPSHOT_APPS_DIR / "masked_input.py",
+        press=["A", "B", "C", "0", "1", "-", "D", "E"],
+        run_before=run_before,
     )
 
 
@@ -1688,7 +1690,9 @@ def test_escape_to_minimize_screen_override(snap_compare):
     assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
 
 
-async def test_app_focus_style(snap_compare):
+def test_app_focus_style(snap_compare):
+    """Test that app blur style can be selected."""
+
     class FocusApp(App):
         CSS = """
         Label {
@@ -1700,13 +1704,13 @@ async def test_app_focus_style(snap_compare):
         App:focus {
             .blurred {
                 visibility: hidden;
-            }            
+            }
         }
 
         App:blur {
             .focussed {
                 visibility: hidden;
-            }            
+            }
         }
 
         """
