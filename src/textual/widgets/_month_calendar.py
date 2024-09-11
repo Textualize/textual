@@ -6,16 +6,16 @@ from typing import Sequence
 
 from rich.text import Text
 
-from textual import on
-from textual.app import ComposeResult
-from textual.binding import Binding
-from textual.coordinate import Coordinate
-from textual.events import Mount
-from textual.message import Message
-from textual.reactive import Reactive
-from textual.widget import Widget
-from textual.widgets import DataTable
-from textual.widgets.data_table import CellDoesNotExist
+from .. import on
+from ..app import ComposeResult
+from ..binding import Binding
+from ..coordinate import Coordinate
+from ..events import Mount
+from ..message import Message
+from ..reactive import Reactive
+from ..widget import Widget
+from ..widgets import DataTable
+from ..widgets.data_table import CellDoesNotExist
 
 
 class InvalidWeekdayNumber(Exception):
