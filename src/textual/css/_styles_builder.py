@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from functools import lru_cache
-from typing import Iterable, NoReturn, Sequence, cast
+from typing import Iterable, NoReturn, cast
 
 import rich.repr
 
@@ -31,6 +30,7 @@ from ._help_text import (
     scrollbar_size_single_axis_help_text,
     spacing_invalid_value_help_text,
     spacing_wrong_number_of_values_help_text,
+    split_property_help_text,
     string_enum_help_text,
     style_flags_property_help_text,
     table_rows_or_columns_help_text,
@@ -135,19 +135,6 @@ class StylesBuilder:
             raise
         except Exception as error:
             self.error(declaration.name, declaration.token, str(error))
-
-    @lru_cache(maxsize=None)
-    def _get_processable_rule_names(self) -> Sequence[str]:
-        """
-        Returns the list of CSS properties we can manage -
-        i.e. the ones for which we have a `process_[property name]` method
-
-        Returns:
-            All the "Python-ised" CSS property names this class can handle.
-
-        Example: ("width", "background", "offset_x", ...)
-        """
-        return [attr[8:] for attr in dir(self) if attr.startswith("process_")]
 
     def _process_enum_multiple(
         self, name: str, tokens: list[Token], valid_values: set[str], count: int
@@ -748,6 +735,20 @@ class StylesBuilder:
         dock = tokens[0].value
         self.styles._rules["dock"] = dock
 
+    def process_split(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+
+        if len(tokens) > 1 or tokens[0].value not in VALID_EDGE:
+            self.error(
+                name,
+                tokens[0],
+                split_property_help_text(name, context="css"),
+            )
+
+        dock = tokens[0].value
+        self.styles._rules["split"] = dock
+
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
             self.error(name, tokens[1], "unexpected tokens in dock-edge declaration")
@@ -1139,4 +1140,7 @@ class StylesBuilder:
 
         Example: returns "background" for rule_name "bkgrund", "offset_x" for "ofset_x"
         """
-        return get_suggestion(rule_name, self._get_processable_rule_names())
+        processable_rules_name = [
+            attr[8:] for attr in dir(self) if attr.startswith("process_")
+        ]
+        return get_suggestion(rule_name, processable_rules_name)

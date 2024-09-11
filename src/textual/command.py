@@ -241,6 +241,7 @@ class Provider(ABC):
         """Wait for initialization."""
         if self._init_task is not None:
             await self._init_task
+        self._init_task = None
 
     async def startup(self) -> None:
         """Called after the Provider is initialized, but before any calls to `search`."""
@@ -436,7 +437,6 @@ class CommandPalette(SystemModalScreen):
     """
 
     DEFAULT_CSS = """
-    
    
     CommandPalette:inline {
         /* If the command palette is invoked in inline mode, we may need additional lines. */
@@ -444,7 +444,17 @@ class CommandPalette(SystemModalScreen):
     }
     CommandPalette {
         background: $background 60%;
-        align-horizontal: center;      
+        align-horizontal: center;        
+
+        #--container {
+            display: none;
+        }
+    }
+
+    CommandPalette.-ready {
+        #--container {
+            display: block;
+        }
     }
 
     CommandPalette > .command-palette--help-text {           
@@ -627,7 +637,7 @@ class CommandPalette(SystemModalScreen):
         Returns:
             The content of the screen.
         """
-        with Vertical():
+        with Vertical(id="--container"):
             with Horizontal(id="--input"):
                 yield SearchIcon()
                 yield CommandInput(placeholder="Search for commands…")
@@ -884,6 +894,7 @@ class CommandPalette(SystemModalScreen):
         command_list.clear_options().add_options(commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
+
         self._list_visible = bool(command_list.option_count)
         self._hit_count = command_list.option_count
 
@@ -968,7 +979,7 @@ class CommandPalette(SystemModalScreen):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                help_text = Text(hit.help)
+                help_text = Text.from_markup(hit.help)
                 help_text.stylize(help_style)
                 prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
@@ -1020,6 +1031,8 @@ class CommandPalette(SystemModalScreen):
             self._hit_count = 0
             self._start_no_matches_countdown(search_value)
 
+        self.add_class("-ready")
+
     def _cancel_gather_commands(self) -> None:
         """Cancel any operation that is gather commands."""
         self.workers.cancel_group(self, self._GATHER_COMMANDS_GROUP)
@@ -1068,10 +1081,15 @@ class CommandPalette(SystemModalScreen):
         if event is not None:
             event.stop()
         if self._list_visible:
+            command_list = self.query_one(CommandList)
             # ...so if nothing in the list is highlighted yet...
-            if self.query_one(CommandList).highlighted is None:
+            if command_list.highlighted is None:
                 # ...cause the first completion to be highlighted.
                 self._action_cursor_down()
+                # If there is one option, assume the user wants to select it
+                if command_list.option_count == 1:
+                    # Call after a short delay to provide a little visual feedback
+                    self._action_command_list("select")
             else:
                 # The list is visible, something is highlighted, the user
                 # made a selection "gesture"; let's go select it!
@@ -1095,15 +1113,9 @@ class CommandPalette(SystemModalScreen):
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
-        input = self.query_one(CommandInput)
-        # Hide the options if there are result and there is input
-        if self._list_visible and (self._hit_count and input.value):
-            self._list_visible = False
-        # Otherwise dismiss modal
-        else:
-            self._cancel_gather_commands()
-            self.app.post_message(CommandPalette.Closed(option_selected=False))
-            self.dismiss()
+        self._cancel_gather_commands()
+        self.app.post_message(CommandPalette.Closed(option_selected=False))
+        self.dismiss()
 
     def _action_command_list(self, action: str) -> None:
         """Pass an action on to the [`CommandList`][textual.command.CommandList].

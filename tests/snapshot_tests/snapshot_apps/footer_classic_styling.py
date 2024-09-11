@@ -39,11 +39,6 @@ class ClassicFooterStylingApp(App):
     def compose(self) -> ComposeResult:
         yield Footer()
 
-    def on_mount(self) -> None:
-        footer = self.query_one(Footer)
-        footer.upper_case_keys = True
-        footer.ctrl_to_caret = False
-
 
 if __name__ == "__main__":
     app = ClassicFooterStylingApp()

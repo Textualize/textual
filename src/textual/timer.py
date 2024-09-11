@@ -84,7 +84,7 @@ class Timer:
         """Start the timer."""
         self._task = create_task(self._run_timer(), name=self.name)
 
-    def stop(self) -> Task:
+    def stop(self) -> None:
         """Stop the timer.
 
         Returns:
@@ -92,15 +92,11 @@ class Timer:
 
         """
         if self._task is None:
-
-            async def noop() -> None:
-                """A dummy task."""
-
-            return create_task(noop())
+            return
 
         self._active.set()
         self._task.cancel()
-        return self._task
+        self._task = None
 
     @classmethod
     async def _stop_all(cls, timers: Iterable[Timer]) -> None:
@@ -123,6 +119,7 @@ class Timer:
                     await timer._task
                 except CancelledError:
                     pass
+                timer._task = None
 
         await gather(*[stop_timer(timer) for timer in list(timers)])
 

@@ -28,7 +28,7 @@ async def test_switch_animates_on_full() -> None:
         # Move to the next frame.
         animator()
         # The animation should still be running.
-        assert app.animator.is_being_animated(switch, "slider_pos")
+        assert app.animator.is_being_animated(switch, "_slider_position")
 
 
 async def test_switch_animates_on_basic() -> None:
@@ -47,7 +47,7 @@ async def test_switch_animates_on_basic() -> None:
         # Move to the next frame.
         animator()
         # The animation should still be running.
-        assert app.animator.is_being_animated(switch, "slider_pos")
+        assert app.animator.is_being_animated(switch, "_slider_position")
 
 
 async def test_switch_does_not_animate_on_none() -> None:
@@ -66,4 +66,4 @@ async def test_switch_does_not_animate_on_none() -> None:
         # Move to the next frame.
         animator()
         # The animation should still be running.
-        assert not app.animator.is_being_animated(switch, "slider_pos")
+        assert not app.animator.is_being_animated(switch, "_slider_position")

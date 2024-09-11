@@ -18,10 +18,12 @@ import signal
 import sys
 from codecs import getincrementaldecoder
 from functools import partial
+from pathlib import Path
 from threading import Event, Thread
-from typing import Any
+from typing import Any, BinaryIO, Literal, TextIO, cast
 
 from .. import events, log, messages
+from .._binary_encode import dump as binary_dump
 from .._xterm_parser import XTermParser
 from ..app import App
 from ..driver import Driver
@@ -63,9 +65,13 @@ class WebDriver(Driver):
         self._key_thread: Thread = Thread(target=self.run_input_thread)
         self._input_reader = InputReader()
 
+        self._deliveries: dict[str, BinaryIO | TextIO] = {}
+        """Maps delivery keys to file-like objects, used
+        for delivering files to the browser."""
+
     def write(self, data: str) -> None:
         """Write string data to the output device, which may be piped to
-        the controlling process (i.e. textual-web).
+        the parent process (i.e. textual-web/textual-serve).
 
         Args:
             data: Raw data.
@@ -76,13 +82,22 @@ class WebDriver(Driver):
 
     def write_meta(self, data: dict[str, object]) -> None:
         """Write a dictionary containing some metadata to stdout, which
-        may be piped to the controlling process (i.e. textual-web).
+        may be piped to the parent process (i.e. textual-web/textual-serve).
 
         Args:
             data: Meta dict.
         """
         meta_bytes = json.dumps(data).encode("utf-8", errors="ignore")
         self._write(b"M%s%s" % (len(meta_bytes).to_bytes(4, "big"), meta_bytes))
+
+    def write_binary_encoded(self, data: tuple[str | bytes, ...]) -> None:
+        """Binary encode a data-structure and write to stdout.
+
+        Args:
+            data: The data to binary encode and write.
+        """
+        packed_bytes = binary_dump(data)
+        self._write(b"P%s%s" % (len(packed_bytes).to_bytes(4, "big"), packed_bytes))
 
     def flush(self) -> None:
         pass
@@ -171,14 +186,17 @@ class WebDriver(Driver):
         byte_stream = ByteStream()
         try:
             for data in input_reader:
-                for packet_type, payload in byte_stream.feed(data):
-                    if packet_type == "D":
-                        # Treat as stdin
-                        for event in parser.feed(decode(payload)):
-                            self.process_event(event)
-                    else:
-                        # Process meta information separately
-                        self._on_meta(packet_type, payload)
+                if data:
+                    for packet_type, payload in byte_stream.feed(data):
+                        if packet_type == "D":
+                            # Treat as stdin
+                            for event in parser.feed(decode(payload)):
+                                self.process_event(event)
+                        else:
+                            # Process meta information separately
+                            self._on_meta(packet_type, payload)
+                for event in parser.tick():
+                    self.process_event(event)
         except _ExitInput:
             pass
         except Exception:
@@ -213,8 +231,8 @@ class WebDriver(Driver):
         """
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
-            size = Size(*self._size)
-            self._app.post_message(events.Resize(size, size))
+            requested_size = Size(*self._size)
+            self._app.post_message(events.Resize(requested_size, requested_size))
         elif packet_type == "focus":
             self._app.post_message(events.AppFocus())
         elif packet_type == "blur":
@@ -223,6 +241,52 @@ class WebDriver(Driver):
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":
             raise _ExitInput()
+        elif packet_type == "deliver_chunk_request":
+            # A request from the server to deliver another chunk of a file
+            log.debug(f"Deliver chunk request: {payload}")
+            try:
+                delivery_key = cast(str, payload["key"])
+                requested_size = cast(int, payload["size"])
+            except KeyError:
+                log.error("Protocol error: deliver_chunk_request missing key or size")
+                return
+
+            deliveries = self._deliveries
+
+            file_like: BinaryIO | TextIO | None = None
+            try:
+                file_like = deliveries[delivery_key]
+            except KeyError:
+                log.error(
+                    f"Protocol error: deliver_chunk_request invalid key {delivery_key!r}"
+                )
+            else:
+                # Read the requested amount of data from the file
+                name: str | None = payload.get("name", None)
+                try:
+                    log.debug(f"Reading {requested_size} bytes from {delivery_key}")
+                    chunk = file_like.read(requested_size)
+                    log.debug(f"Delivering chunk {delivery_key!r} of len {len(chunk)}")
+                    self.write_binary_encoded(("deliver_chunk", delivery_key, chunk))
+                    # We've hit an empty chunk, so we're done
+                    if not chunk:
+                        log.info(f"Delivery complete for {delivery_key}")
+                        file_like.close()
+                        del deliveries[delivery_key]
+                        self._delivery_complete(delivery_key, save_path=None, name=name)
+                except Exception as error:
+                    file_like.close()
+                    del deliveries[delivery_key]
+
+                    log.error(
+                        f"Error delivering file chunk for key {delivery_key!r}. "
+                        "Cancelling delivery."
+                    )
+                    import traceback
+
+                    log.error(str(traceback.format_exc()))
+
+                    self._delivery_failed(delivery_key, exception=error, name=name)
 
     def open_url(self, url: str, new_tab: bool = True) -> None:
         """Open a URL in the default web browser.
@@ -232,3 +296,53 @@ class WebDriver(Driver):
             new_tab: Whether to open the URL in a new tab.
         """
         self.write_meta({"type": "open_url", "url": url, "new_tab": new_tab})
+
+    def deliver_binary(
+        self,
+        binary: BinaryIO | TextIO,
+        *,
+        delivery_key: str,
+        save_path: Path,
+        open_method: Literal["browser", "download"] = "download",
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> None:
+        self._deliver_file(
+            binary,
+            delivery_key=delivery_key,
+            save_path=save_path,
+            open_method=open_method,
+            encoding=encoding,
+            mime_type=mime_type,
+            name=name,
+        )
+
+    def _deliver_file(
+        self,
+        binary: BinaryIO | TextIO,
+        *,
+        delivery_key: str,
+        save_path: Path,
+        open_method: Literal["browser", "download"],
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> None:
+        """Deliver a file to the end-user of the application."""
+        binary.seek(0)
+
+        self._deliveries[delivery_key] = binary
+
+        # Inform the server that we're starting a new file delivery
+        meta: dict[str, object] = {
+            "type": "deliver_file_start",
+            "key": delivery_key,
+            "path": str(save_path.resolve()),
+            "open_method": open_method,
+            "encoding": encoding or "",
+            "mime_type": mime_type or "",
+            "name": name,
+        }
+        self.write_meta(meta)
+        log.info(f"Delivering file {meta['path']!r}: {meta!r}")

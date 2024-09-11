@@ -116,8 +116,10 @@ async def test_mount_via_app() -> None:
             await pilot.app.mount(Static(), before="Static")
 
 
-def test_mount_error() -> None:
+async def test_mount_error() -> None:
     """Mounting a widget on an un-mounted widget should raise an error."""
-    with pytest.raises(MountError):
-        widget = Widget()
-        widget.mount(Static())
+    app = App()
+    async with app.run_test():
+        with pytest.raises(MountError):
+            widget = Widget()
+            widget.mount(Static())

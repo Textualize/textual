@@ -73,8 +73,6 @@ class FooterKey(Widget):
     }
     """
 
-    upper_case_keys = reactive(False)
-    ctrl_to_caret = reactive(True)
     compact = reactive(True)
 
     def __init__(
@@ -106,10 +104,6 @@ class FooterKey(Widget):
         description_padding = self.get_component_styles(
             "footer-key--description"
         ).padding
-        if self.upper_case_keys:
-            key_display = key_display.upper()
-        if self.ctrl_to_caret and key_display.lower().startswith("ctrl+"):
-            key_display = "^" + key_display.split("+", 1)[1]
         description = self.description
         label_text = Text.assemble(
             (
@@ -151,18 +145,13 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             grid-gutter: 1;
         }
         FooterKey.-command-palette  {
-            dock: right;
-                        
+            dock: right;                        
             padding-right: 1;
             border-left: vkey $foreground 20%;                
         }
     }
     """
 
-    upper_case_keys = reactive(False)
-    """Upper case key display."""
-    ctrl_to_caret = reactive(True)
-    """Convert 'ctrl+' prefix to '^'."""
     compact = reactive(False)
     """Display in compact style."""
     _bindings_ready = reactive(False, repaint=False)
@@ -177,8 +166,6 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        upper_case_keys: bool = False,
-        ctrl_to_caret: bool = True,
         show_command_palette: bool = True,
     ) -> None:
         """A footer to show key bindings.
@@ -189,8 +176,6 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
-            upper_case_keys: Show the keys in upper case.
-            ctrl_to_caret: Show `ctrl+` as `^`.
             show_command_palette: Show key binding to command palette, on the right of the footer.
         """
         super().__init__(
@@ -200,8 +185,6 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             classes=classes,
             disabled=disabled,
         )
-        self.set_reactive(Footer.upper_case_keys, upper_case_keys)
-        self.set_reactive(Footer.ctrl_to_caret, ctrl_to_caret)
         self.set_reactive(Footer.show_command_palette, show_command_palette)
 
     def compose(self) -> ComposeResult:
@@ -222,16 +205,12 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             binding, enabled, tooltip = multi_bindings[0]
             yield FooterKey(
                 binding.key,
-                binding.key_display or self.app.get_key_display(binding.key),
+                self.app.get_key_display(binding),
                 binding.description,
                 binding.action,
                 disabled=not enabled,
                 tooltip=tooltip,
-            ).data_bind(
-                Footer.upper_case_keys,
-                Footer.ctrl_to_caret,
-                Footer.compact,
-            )
+            ).data_bind(Footer.compact)
         if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             for key, binding in self.app._bindings:
                 if binding.action in (
@@ -240,7 +219,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 ):
                     yield FooterKey(
                         key,
-                        binding.key_display or binding.key,
+                        self.app.get_key_display(binding),
                         binding.description,
                         binding.action,
                         classes="-command-palette",
@@ -248,13 +227,15 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     )
                     break
 
-    def on_mount(self) -> None:
-        async def bindings_changed(screen: Screen) -> None:
-            self._bindings_ready = True
-            if self.is_attached and screen is self.screen:
-                await self.recompose()
+    async def bindings_changed(self, screen: Screen) -> None:
+        self._bindings_ready = True
+        if not screen.app.app_focus:
+            return
+        if self.is_attached and screen is self.screen:
+            await self.recompose()
 
-        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+    def on_mount(self) -> None:
+        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)

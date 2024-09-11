@@ -134,13 +134,14 @@ class XTermParser(Parser[Message]):
             Args:
                 reissue_sequence: Key sequence to report to the app.
             """
-            self.debug_log("REISSUE", repr(reissue_sequence))
-            for character in reissue_sequence:
-                key_events = sequence_to_key_events(character)
-                for event in key_events:
-                    if event.key == "escape":
-                        event = events.Key("circumflex_accent", "^")
-                    on_token(event)
+            if reissue_sequence:
+                self.debug_log("REISSUE", repr(reissue_sequence))
+                for character in reissue_sequence:
+                    key_events = sequence_to_key_events(character)
+                    for event in key_events:
+                        if event.key == "escape":
+                            event = events.Key("circumflex_accent", "^")
+                        on_token(event)
 
         while not self.is_eof:
             if not bracketed_paste and paste_buffer:

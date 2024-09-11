@@ -37,3 +37,4 @@ class InputReader:
                     if not data:
                         return
                     yield data
+            yield b""

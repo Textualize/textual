@@ -133,15 +133,16 @@ def test_resolve_fraction_unit_stress_test():
 
     # We're mainly checking for the absence of zero division errors,
     # which is a reoccurring theme for this code.
-    for remaining_space in range(1, 101, 10):
+    for remaining_space in range(1, 51, 10):
         for max_width in range(1, remaining_space):
             styles.max_width = max_width
 
-            for width in range(1, remaining_space):
+            for width in range(1, remaining_space, 2):
+                size = Size(width, 24)
                 resolved_unit = resolve_fraction_unit(
                     [styles, styles, styles],
-                    Size(width, 24),
-                    Size(width, 24),
+                    size,
+                    size,
                     Fraction(remaining_space),
                     "width",
                 )

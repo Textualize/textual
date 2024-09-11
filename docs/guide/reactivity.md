@@ -200,7 +200,7 @@ The color is parsed in `on_input_submitted` and assigned to `self.color`. Becaus
 
 Textual only calls watch methods if the value of a reactive attribute _changes_.
 If the newly assigned value is the same as the previous value, the watch method is not called.
-You can override this behaviour by passing `always_update=True` to `reactive`.
+You can override this behavior by passing `always_update=True` to `reactive`.
 
 
 ### Dynamically watching reactive attributes
