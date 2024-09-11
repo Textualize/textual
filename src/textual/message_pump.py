@@ -11,7 +11,6 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
-import os
 import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
@@ -207,7 +206,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._message_queue.qsize()
 
     @property
-    def is_dom_root(self):
+    def is_dom_root(self) -> bool:
         """Is this a root node (i.e. the App)?"""
         return False
 
@@ -264,7 +263,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Returns:
             A logger.
         """
-        return self.app._logger
+        return self.app.log
 
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
@@ -669,11 +668,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Allow apps to treat events and messages separately
             if isinstance(message, Event):
                 await self.on_event(message)
-            elif "debug" in self.app.features:
+            elif self.app.debug:
                 start = perf_counter()
                 await self._on_message(message)
                 if perf_counter() - start > SLOW_THRESHOLD / 1000:
-                    log.warning(
+                    self.log.warning(
                         f"method=<{self.__class__.__name__}."
                         f"{message.handler_name}>",
                         f"Took over {SLOW_THRESHOLD}ms to process.",

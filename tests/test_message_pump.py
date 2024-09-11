@@ -1,5 +1,8 @@
+from unittest.mock import Mock
+
 import pytest
 
+from textual import Logger
 from textual._dispatch_key import dispatch_key
 from textual.app import App, ComposeResult
 from textual.errors import DuplicateKeyHandlers
@@ -169,3 +172,35 @@ async def test_prevent_default():
     async with app.run_test() as pilot:
         await pilot.click(MyButton)
         assert app_button_pressed
+
+
+async def test_slow_handler(monkeypatch):
+    """Test that a slow handler results in a logged warning."""
+
+    log_mock = Mock()
+    monkeypatch.setenv("TEXTUAL_SLOW_THRESHOLD", "200")
+
+    class SlowHandlerApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Button("Press me")
+
+        async def on_button_pressed(self, event: Button.Pressed) -> None:
+            import time
+
+            time.sleep(0.5)
+
+        @property
+        def log(self) -> Logger:
+            return log_mock
+
+        @property
+        def debug(self) -> bool:
+            return True
+
+    app = SlowHandlerApp()
+    async with app.run_test() as pilot:
+        await pilot.click(Button)
+        warning_logs = log_mock.warning.call_args_list
+        assert len(warning_logs) == 1
+        assert "method=<SlowHandlerApp.on_button_pressed>" in warning_logs[0][0]
+        assert "consider using a worker" in warning_logs[0][0][2]
