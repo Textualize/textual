@@ -176,8 +176,6 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
-            upper_case_keys: Show the keys in upper case.
-            ctrl_to_caret: Show `ctrl+` as `^`.
             show_command_palette: Show key binding to command palette, on the right of the footer.
         """
         super().__init__(
@@ -229,15 +227,15 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     )
                     break
 
-    def on_mount(self) -> None:
-        async def bindings_changed(screen: Screen) -> None:
-            self._bindings_ready = True
-            if not screen.app.app_focus:
-                return
-            if self.is_attached and screen is self.screen:
-                await self.recompose()
+    async def bindings_changed(self, screen: Screen) -> None:
+        self._bindings_ready = True
+        if not screen.app.app_focus:
+            return
+        if self.is_attached and screen is self.screen:
+            await self.recompose()
 
-        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+    def on_mount(self) -> None:
+        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)

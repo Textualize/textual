@@ -2,14 +2,14 @@ Screen {
     background: $panel;
 }
 
-Input {
+Input#dictionary-search {
     dock: top;
     margin: 1 0;
 }
 
 #results {
     width: 100%;
-    height: auto;    
+    height: auto;
 }
 
 #results-container {

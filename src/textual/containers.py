@@ -29,6 +29,10 @@ class Container(Widget):
 class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     """A scrollable container with vertical layout, and auto scrollbars on both axis."""
 
+    # We don't typically want to maximize scrollable containers,
+    # since the user can easily navigate the contents
+    ALLOW_MAXIMIZE = False
+
     DEFAULT_CSS = """
     ScrollableContainer {
         width: 1fr;

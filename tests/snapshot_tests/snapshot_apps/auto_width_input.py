@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Input, ClassicFooter
+from textual.widgets import Header, Footer, Input
 
 
 class InputWidthAutoApp(App[None]):

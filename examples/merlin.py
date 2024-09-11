@@ -49,8 +49,8 @@ class LabelSwitch(Widget):
     DEFAULT_CSS = """
     LabelSwitch Label {
         text-align: center;
-        width: 1fr;       
-        text-style: bold;         
+        width: 1fr;
+        text-style: bold;
     }
 
     LabelSwitch Label#label-5 {
@@ -101,7 +101,7 @@ class MerlinApp(App):
 
     CSS = """
     Screen {
-        align: center middle;   
+        align: center middle;
     }
 
     Screen.-win {
@@ -110,8 +110,8 @@ class MerlinApp(App):
 
     Screen.-win Timer {
         color: $success;
-    }    
-    
+    }
+
     Grid {
         width: auto;
         height: auto;

@@ -1,11 +1,19 @@
 from pathlib import Path
 
 import pytest
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual.app import App
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.containers import Vertical
 from textual.pilot import Pilot
-from textual.widgets import Button, Input, RichLog, TextArea
+from textual.screen import Screen
+from textual.widgets import Button, Input, RichLog, TextArea, Footer
+from textual.widgets import Switch
+from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -111,6 +119,15 @@ def test_input_suggestions(snap_compare):
     )
 
 
+def test_masked_input(snap_compare):
+    async def run_before(pilot):
+        pilot.app.query(Input).first().cursor_blink = False
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "masked_input.py", press=["A","B","C","0","1","-","D","E"], run_before=run_before
+    )
+
+
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
@@ -197,10 +214,6 @@ def test_list_view(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
     )
-
-
-def test_richlog_max_lines(snap_compare):
-    assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
 
 
 def test_log_write_lines(snap_compare):
@@ -563,29 +576,146 @@ def test_table_markup(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "table_markup.py")
 
 
+def test_richlog_max_lines(snap_compare):
+    assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
+
+
 def test_richlog_scroll(snap_compare):
+    """Ensure `RichLog.auto_scroll` causes the log to scroll to the end when new content is written."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
 
 
 def test_richlog_width(snap_compare):
-    """Check that min_width applies in RichLog and that we can write
-    to the RichLog when it's not visible, and it still renders as expected
-    when made visible again."""
+    """Check that the width of RichLog is respected, even when it's not visible."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py", press=["p"])
 
-    async def setup(pilot):
-        from rich.text import Text
 
-        rich_log: RichLog = pilot.app.query_one(RichLog)
-        rich_log.write(Text("hello1", style="on red", justify="right"), expand=True)
-        rich_log.visible = False
-        rich_log.write(Text("world2", style="on green", justify="right"), expand=True)
-        rich_log.visible = True
-        rich_log.write(Text("hello3", style="on blue", justify="right"), expand=True)
-        rich_log.display = False
-        rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
-        rich_log.display = True
+def test_richlog_min_width(snap_compare):
+    """The available space of this RichLog is less than the minimum width, so written
+    content should be rendered at `min_width`. This snapshot should show the renderable
+    clipping at the right edge, as there's not enough space to satisfy the minimum width."""
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py", run_before=setup)
+    class RichLogMinWidth20(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=20)
+            text = Text("0123456789", style="on red", justify="right")
+            rich_log.write(text)
+            yield rich_log
+
+    assert snap_compare(RichLogMinWidth20(), terminal_size=(20, 6))
+
+
+def test_richlog_deferred_render_no_expand(snap_compare):
+    """Check we can write to a RichLog before its size is known i.e. in `compose`."""
+
+    class RichLogNoExpand(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=10)
+            text = Text("0123456789", style="on red", justify="right")
+            # Perform the write in compose - it'll be deferred until the size is known
+            rich_log.write(text)
+            yield rich_log
+
+    assert snap_compare(RichLogNoExpand(), terminal_size=(20, 6))
+
+
+def test_richlog_deferred_render_expand(snap_compare):
+    """Check we can write to a RichLog before its size is known i.e. in `compose`.
+
+    The renderable should expand to fill full the width of the RichLog.
+    """
+
+    class RichLogExpand(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=10)
+            text = Text("0123456789", style="on red", justify="right")
+            # Perform the write in compose - it'll be deferred until the size is known
+            rich_log.write(text, expand=True)
+            yield rich_log
+
+    assert snap_compare(RichLogExpand(), terminal_size=(20, 6))
+
+
+def test_richlog_markup(snap_compare):
+    """Check that Rich markup is rendered in RichLog when markup=True."""
+
+    class RichLogWidth(App[None]):
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=10, markup=True)
+            rich_log.write("[black on red u]black text on red, underlined")
+            rich_log.write("normal text, no markup")
+            yield rich_log
+
+    assert snap_compare(RichLogWidth(), terminal_size=(42, 6))
+
+
+def test_richlog_shrink(snap_compare):
+    """Ensure that when shrink=True, the renderable shrinks to fit the width of the RichLog."""
+
+    class RichLogShrink(App[None]):
+        CSS = "RichLog { width: 20; background: red;}"
+
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=4)
+            panel = Panel("lorem ipsum dolor sit amet lorem ipsum dolor sit amet")
+            rich_log.write(panel)
+            yield rich_log
+
+    assert snap_compare(RichLogShrink(), terminal_size=(24, 6))
+
+
+def test_richlog_write_at_specific_width(snap_compare):
+    """Ensure we can write renderables at a specific width.
+    `min_width` should be respected, but `width` should override.
+
+    The green label at the bottom should be equal in width to the bottom
+    renderable (equal to min_width).
+    """
+
+    class RichLogWriteAtSpecificWidth(App[None]):
+        CSS = """
+        RichLog { width: 1fr; height: auto; }
+        #width-marker { background: green; width: 50; }
+        """
+
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(min_width=50)
+            rich_log.write(Panel("width=20", style="black on red"), width=20)
+            rich_log.write(Panel("width=40", style="black on red"), width=40)
+            rich_log.write(Panel("width=60", style="black on red"), width=60)
+            rich_log.write(Panel("width=120", style="black on red"), width=120)
+            rich_log.write(
+                Panel("width=None (fallback to min_width)", style="black on red")
+            )
+            yield rich_log
+            width_marker = Label(
+                f"this label is width 50 (same as min_width)", id="width-marker"
+            )
+            yield width_marker
+
+    assert snap_compare(RichLogWriteAtSpecificWidth())
+
+
+def test_richlog_highlight(snap_compare):
+    """Check that RichLog.highlight correctly highlights with the ReprHighlighter.
+
+    Also ensures that interaction between CSS and highlighting is as expected -
+    non-highlighted text should have the CSS styles applied, but highlighted text
+    should ignore the CSS (and use the highlights returned from the highlighter).
+    """
+
+    class RichLogHighlight(App[None]):
+        # Add some CSS to check interaction with highlighting.
+        CSS = """
+        RichLog { color: red; background: dodgerblue 40%; }
+        """
+
+        def compose(self) -> ComposeResult:
+            rich_log = RichLog(highlight=True)
+            rich_log.write("Foo('bar', x=1, y=[1, 2, 3])")
+            yield rich_log
+
+    assert snap_compare(RichLogHighlight(), terminal_size=(30, 3))
 
 
 def test_tabs_invalidate(snap_compare):
@@ -1448,3 +1578,226 @@ def test_command_palette_key_change(snap_compare):
 def test_split(snap_compare):
     """Test split rule."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "split.py", terminal_size=(100, 30))
+
+
+def test_system_commands(snap_compare):
+    """The system commands should appear in the command palette."""
+
+    class SimpleApp(App):
+        def compose(self) -> ComposeResult:
+            input = Input()
+            input.cursor_blink = False
+            yield input
+
+    app = SimpleApp()
+    app.animation_level = "none"
+    assert snap_compare(
+        app,
+        terminal_size=(100, 30),
+        press=["ctrl+p"],
+    )
+
+
+def test_help_panel(snap_compare):
+    """Test help panel."""
+
+    class HelpPanelApp(App):
+        def compose(self) -> ComposeResult:
+            yield Input()
+
+    async def run_before(pilot: Pilot):
+        pilot.app.query(Input).first().cursor_blink = False
+        await pilot.press(App.COMMAND_PALETTE_BINDING)
+        await pilot.pause()
+        await pilot.press(*"keys")
+        await pilot.press("enter")
+        await pilot.app.workers.wait_for_complete()
+
+    assert snap_compare(HelpPanelApp(), terminal_size=(100, 30), run_before=run_before)
+
+
+def test_scroll_page_down(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4914"""
+    # Should show 25 at the top
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "scroll_page.py", press=["pagedown"], terminal_size=(80, 25)
+    )
+
+
+def test_maximize(snap_compare):
+    """Check that maximize isolates a single widget."""
+
+    class MaximizeApp(App):
+        BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
+
+        def compose(self) -> ComposeResult:
+            yield Button("Hello")
+            yield Button("World")
+            yield Footer()
+
+    assert snap_compare(MaximizeApp(), press=["m"])
+
+
+def test_maximize_container(snap_compare):
+    """Check maximizing a widget in a maximizeable container, maximizes the container."""
+
+    class FormContainer(Vertical):
+        ALLOW_MAXIMIZE = True
+        DEFAULT_CSS = """
+        FormContainer {
+            width: 50%;
+            border: blue;            
+        }
+        """
+
+    class MaximizeApp(App):
+        BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
+
+        def compose(self) -> ComposeResult:
+            with FormContainer():
+                yield Button("Hello")
+                yield Button("World")
+            yield Footer()
+
+    assert snap_compare(MaximizeApp(), press=["m"])
+
+
+def test_check_consume_keys(snap_compare):
+    """Check that when an Input is focused it hides printable keys from the footer."""
+
+    class MyApp(App):
+        BINDINGS = [
+            Binding(key="q", action="quit", description="Quit the app"),
+            Binding(
+                key="question_mark",
+                action="help",
+                description="Show help screen",
+                key_display="?",
+            ),
+            Binding(key="delete", action="delete", description="Delete the thing"),
+            Binding(key="j", action="down", description="Scroll down", show=False),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Input(placeholder="First Name")
+            yield Input(placeholder="Last Name")
+            yield Switch()
+            yield Footer()
+
+    assert snap_compare(MyApp())
+
+
+def test_escape_to_minimize(snap_compare):
+    """Check escape minimizes. Regression test for https://github.com/Textualize/textual/issues/4939"""
+
+    TEXT = """\
+    def hello(name):
+        print("hello" + name)
+
+    def goodbye(name):
+        print("goodbye" + name)
+    """
+
+    class TextAreaExample(App):
+        BINDINGS = [("ctrl+m", "screen.maximize")]
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+
+        #code-container {
+            width: 20;
+            height: 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="code-container"):
+                text_area = TextArea.code_editor(TEXT)
+                text_area.cursor_blink = False
+                yield text_area
+
+    # ctrl+m to maximize, escape should minimize
+    assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
+
+
+def test_escape_to_minimize_disabled(snap_compare):
+    """Set escape to minimize disabled by app"""
+
+    TEXT = """\
+    def hello(name):
+        print("hello" + name)
+
+    def goodbye(name):
+        print("goodbye" + name)
+    """
+
+    class TextAreaExample(App):
+        # Disables escape to minimize
+        ESCAPE_TO_MINIMIZE = False
+        BINDINGS = [("ctrl+m", "screen.maximize")]
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+
+        #code-container {
+            width: 20;
+            height: 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="code-container"):
+                text_area = TextArea.code_editor(TEXT)
+                text_area.cursor_blink = False
+                yield text_area
+
+    # ctrl+m to maximize, escape should *not* minimize
+    assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
+
+
+def test_escape_to_minimize_screen_override(snap_compare):
+    """Test escape to minimize can be overridden by the screen"""
+
+    TEXT = """\
+    def hello(name):
+        print("hello" + name)
+
+    def goodbye(name):
+        print("goodbye" + name)
+    """
+
+    class TestScreen(Screen):
+        # Disabled on the screen
+        ESCAPE_TO_MINIMIZE = True
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="code-container"):
+                text_area = TextArea.code_editor(TEXT)
+                text_area.cursor_blink = False
+                yield text_area
+
+    class TextAreaExample(App):
+        # Enabled on app
+        ESCAPE_TO_MINIMIZE = False
+        BINDINGS = [("ctrl+m", "screen.maximize")]
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+
+        #code-container {
+            width: 20;
+            height: 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("You are looking at the default screen")
+
+        def on_mount(self) -> None:
+            self.push_screen(TestScreen())
+
+    # ctrl+m to maximize, escape *should* minimize
+    assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])

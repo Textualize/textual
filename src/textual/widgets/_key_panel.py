@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from itertools import groupby
+from operator import itemgetter
 from typing import TYPE_CHECKING
 
+from rich import box
 from rich.table import Table
 from rich.text import Text
 
@@ -18,7 +21,12 @@ if TYPE_CHECKING:
 class BindingsTable(Static):
     """A widget to display bindings."""
 
-    COMPONENT_CLASSES = {"bindings-table--key", "bindings-table--description"}
+    COMPONENT_CLASSES = {
+        "bindings-table--key",
+        "bindings-table--description",
+        "bindings-table--divider",
+        "bindings-table--header",
+    }
 
     DEFAULT_CSS = """
     BindingsTable {
@@ -33,36 +41,64 @@ class BindingsTable(Static):
         Returns:
             A Rich Table.
         """
-        bindings = [
-            (binding, enabled, tooltip)
-            for (_, binding, enabled, tooltip) in self.screen.active_bindings.values()
-        ]
-        action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
-        action_to_bindings = defaultdict(list)
-        for binding, enabled, tooltip in bindings:
-            action_to_bindings[binding.action].append((binding, enabled, tooltip))
 
-        table = Table.grid(padding=(0, 1))
+        bindings = self.screen.active_bindings.values()
+
         key_style = self.get_component_rich_style("bindings-table--key")
-        description_style = self.get_component_rich_style("bindings-table--description")
 
-        def render_description(binding: Binding) -> Text:
-            """Render description text from a binding."""
-            text = Text.from_markup(
-                binding.description, end="", style=description_style
-            )
-            if binding.tooltip:
-                text.append(" ")
-                text.append(binding.tooltip, "dim")
-            return text
-
+        table = Table(
+            padding=(0, 0),
+            show_header=False,
+            box=box.HORIZONTALS,
+            border_style=self.get_component_rich_style("bindings-table--divider"),
+        )
         table.add_column("", justify="right")
-        for multi_bindings in action_to_bindings.values():
-            binding, enabled, tooltip = multi_bindings[0]
-            table.add_row(
-                Text(self.app.get_key_display(binding), style=key_style),
-                render_description(binding),
+
+        header_style = self.get_component_rich_style("bindings-table--header")
+        previous_namespace: object = None
+        for namespace, _bindings in groupby(bindings, key=itemgetter(0)):
+            table_bindings = list(_bindings)
+            if not table_bindings:
+                continue
+
+            name = namespace.BINDING_GROUP_TITLE or namespace.__class__.__name__
+            title = Text(name, end="")
+            title.stylize(header_style)
+            table.add_row("", title)
+
+            action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
+            action_to_bindings = defaultdict(list)
+            for _, binding, enabled, tooltip in table_bindings:
+                action_to_bindings[binding.action].append((binding, enabled, tooltip))
+
+            description_style = self.get_component_rich_style(
+                "bindings-table--description"
             )
+
+            def render_description(binding: Binding) -> Text:
+                """Render description text from a binding."""
+                text = Text.from_markup(
+                    binding.description, end="", style=description_style
+                )
+                if binding.tooltip:
+                    text.append(" ")
+                    text.append(binding.tooltip, "dim")
+                return text
+
+            get_key_display = self.app.get_key_display
+            for multi_bindings in action_to_bindings.values():
+                binding, enabled, tooltip = multi_bindings[0]
+                key_display = " ".join(
+                    get_key_display(binding) for binding, _, _ in multi_bindings
+                )
+                table.add_row(
+                    Text(key_display, style=key_style),
+                    render_description(binding),
+                )
+            if namespace != previous_namespace:
+                table.add_section()
+
+            previous_namespace = namespace
 
         return table
 
@@ -71,6 +107,10 @@ class BindingsTable(Static):
 
 
 class KeyPanel(VerticalScroll, can_focus=False):
+    """
+    Shows bindings for currently focused widget.
+    """
+
     DEFAULT_CSS = """
     KeyPanel {                    
         split: right;
@@ -78,9 +118,10 @@ class KeyPanel(VerticalScroll, can_focus=False):
         min-width: 30;              
         max-width: 60;    
         border-left: vkey $foreground 30%;
-        padding: 1 1;
+        padding: 0 1;
         height: 1fr;
         padding-right: 1;
+        align: center top;
 
         &> BindingsTable > .bindings-table--key {
             color: $secondary;           
@@ -89,7 +130,15 @@ class KeyPanel(VerticalScroll, can_focus=False):
         }
 
         &> BindingsTable > .bindings-table--description {
-            color: $text;
+            color: $foreground;
+        }
+
+        &> BindingsTable > .bindings-table--divider {
+            color: transparent;
+        }
+
+        &> BindingsTable > .bindings-table--header {
+            text-style: dim italic;
         }
 
         #bindings-table {

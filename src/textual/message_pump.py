@@ -11,10 +11,12 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
+import os
 import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
 from functools import partial
+from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -35,6 +37,7 @@ from ._context import message_hook as message_hook_context_var
 from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
+from .constants import SLOW_THRESHOLD
 from .css.match import match
 from .events import Event
 from .message import Message
@@ -229,7 +232,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 if node is None:
                     raise NoActiveAppError()
                 node = node._parent
-            active_app.set(node)
+
             return node
 
     @property
@@ -501,24 +504,26 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     async def _process_messages(self) -> None:
         self._running = True
-        active_message_pump.set(self)
 
-        if not await self._pre_process():
-            self._running = False
-            return
+        with self._context():
+            if not await self._pre_process():
+                self._running = False
+                return
 
-        try:
-            await self._process_messages_loop()
-        except CancelledError:
-            pass
-        finally:
-            self._running = False
             try:
-                if self._timers:
-                    await Timer._stop_all(self._timers)
-                    self._timers.clear()
+                await self._process_messages_loop()
+            except CancelledError:
+                pass
             finally:
-                await self._message_loop_exit()
+                self._running = False
+                try:
+                    if self._timers:
+                        await Timer._stop_all(self._timers)
+                        self._timers.clear()
+                    Reactive._clear_watchers(self)
+                finally:
+                    await self._message_loop_exit()
+        self._task = None
 
     async def _message_loop_exit(self) -> None:
         """Called when the message loop has completed."""
@@ -557,6 +562,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
         self._message_queue.put_nowait(messages.CloseMessages())
+
+    @contextmanager
+    def _context(self) -> Generator[None, None, None]:
+        """Context manager to set ContextVars."""
+        reset_token = active_message_pump.set(self)
+        try:
+            yield
+        finally:
+            active_message_pump.reset(reset_token)
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
         await self._close_messages()
@@ -655,6 +669,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Allow apps to treat events and messages separately
             if isinstance(message, Event):
                 await self.on_event(message)
+            elif "debug" in self.app.features:
+                start = perf_counter()
+                await self._on_message(message)
+                if perf_counter() - start > SLOW_THRESHOLD / 1000:
+                    log.warning(
+                        f"method=<{self.__class__.__name__}."
+                        f"{message.handler_name}>",
+                        f"Took over {SLOW_THRESHOLD}ms to process.",
+                        "\nTo avoid screen freezes, consider using a worker.",
+                    )
             else:
                 await self._on_message(message)
             if self._next_callbacks:

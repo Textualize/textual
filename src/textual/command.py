@@ -241,6 +241,7 @@ class Provider(ABC):
         """Wait for initialization."""
         if self._init_task is not None:
             await self._init_task
+        self._init_task = None
 
     async def startup(self) -> None:
         """Called after the Provider is initialized, but before any calls to `search`."""
@@ -443,7 +444,17 @@ class CommandPalette(SystemModalScreen):
     }
     CommandPalette {
         background: $background 60%;
-        align-horizontal: center;      
+        align-horizontal: center;        
+
+        #--container {
+            display: none;
+        }
+    }
+
+    CommandPalette.-ready {
+        #--container {
+            display: block;
+        }
     }
 
     CommandPalette > .command-palette--help-text {           
@@ -883,6 +894,7 @@ class CommandPalette(SystemModalScreen):
         command_list.clear_options().add_options(commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
+
         self._list_visible = bool(command_list.option_count)
         self._hit_count = command_list.option_count
 
@@ -967,7 +979,7 @@ class CommandPalette(SystemModalScreen):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                help_text = Text(hit.help)
+                help_text = Text.from_markup(hit.help)
                 help_text.stylize(help_style)
                 prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
@@ -1018,6 +1030,8 @@ class CommandPalette(SystemModalScreen):
         if command_list.option_count == 0 and not worker.is_cancelled:
             self._hit_count = 0
             self._start_no_matches_countdown(search_value)
+
+        self.add_class("-ready")
 
     def _cancel_gather_commands(self) -> None:
         """Cancel any operation that is gather commands."""

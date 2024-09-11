@@ -141,7 +141,6 @@ nav:
       - Widgets:
           - "widgets/button.md"
           - "widgets/checkbox.md"
-          - "widgets/classic_footer.md"
           - "widgets/collapsible.md"
           - "widgets/content_switcher.md"
           - "widgets/data_table.md"
@@ -158,6 +157,7 @@ nav:
           - "widgets/log.md"
           - "widgets/markdown_viewer.md"
           - "widgets/markdown.md"
+          - "widgets/masked_input.md"
           - "widgets/option_list.md"
           - "widgets/placeholder.md"
           - "widgets/pretty.md"

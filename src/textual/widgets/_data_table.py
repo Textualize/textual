@@ -685,7 +685,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_type: The type of cursor to be used when navigating the data table
                 with the keyboard.
             cell_padding: The number of cells added on each side of each column. Setting
-                this value to zero will likely make your table very heard to read.
+                this value to zero will likely make your table very hard to read.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.

@@ -21,7 +21,7 @@ class DocumentNavigator:
     may move your cursor to a position further along the current raw document line,
     rather than on to the next line in the raw document.
 
-    The DocumentNavigator class manages that behaviour.
+    The DocumentNavigator class manages that behavior.
 
     Given a cursor location in the unwrapped document, and a cursor movement action,
     this class can inform us of the destination the cursor will move to considering
@@ -49,9 +49,9 @@ class DocumentNavigator:
     document-space line. This is a codepoint index, rather than a visual offset.
     In "ABCDEF" with wrapping at width 3, there is a single wrap offset of 3.
 
-    "Smart home" refers to a modification of the "home" key behaviour. If smart home is
+    "Smart home" refers to a modification of the "home" key behavior. If smart home is
     enabled, the first non-whitespace character is considered to be the home location.
-    If the cursor is currently at this position, then the normal home behaviour applies.
+    If the cursor is currently at this position, then the normal home behavior applies.
     This is designed to make cursor movement more useful to end users.
     """
 
@@ -389,7 +389,7 @@ class DocumentNavigator:
 
         Args:
             location: The location to consider.
-            smart_home: Enable/disable 'smart home' behaviour.
+            smart_home: Enable/disable 'smart home' behavior.
 
         Returns:
             The home location, relative to the given location.

@@ -25,7 +25,7 @@ class BSOD(Screen):
 
 class BSODApp(App):
     CSS_PATH = "screen01.tcss"
-    SCREENS = {"bsod": BSOD()}
+    SCREENS = {"bsod": BSOD}
     BINDINGS = [("b", "push_screen('bsod')", "BSOD")]
 
 

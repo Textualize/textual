@@ -11,10 +11,12 @@ import asyncio
 import importlib
 import inspect
 import io
+import mimetypes
 import os
 import signal
 import sys
 import threading
+import uuid
 import warnings
 from asyncio import Task, create_task
 from concurrent.futures import Future
@@ -24,21 +26,24 @@ from contextlib import (
     redirect_stderr,
     redirect_stdout,
 )
-from datetime import datetime
 from functools import partial
+from pathlib import Path
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
     AsyncGenerator,
     Awaitable,
+    BinaryIO,
     Callable,
     ClassVar,
     Generator,
     Generic,
     Iterable,
     Iterator,
+    NamedTuple,
     Sequence,
+    TextIO,
     Type,
     TypeVar,
     overload,
@@ -47,6 +52,7 @@ from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
+from platformdirs import user_downloads_path
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
@@ -74,6 +80,7 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._dispatch_key import dispatch_key
 from ._event_broker import NoHandler, extract_handler_actions
+from ._files import generate_datetime_filename
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
@@ -128,7 +135,7 @@ if TYPE_CHECKING:
     from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
-    from .system_commands import SystemCommands
+    from .system_commands import SystemCommandsProvider
     from .widget import MountError  # type: ignore  # noqa: F401
 
 WINDOWS = sys.platform == "win32"
@@ -171,16 +178,32 @@ AutopilotCallbackType: TypeAlias = (
 )
 """Signature for valid callbacks that can be used to control apps."""
 
+CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
+"""Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
 
-def get_system_commands() -> type[SystemCommands]:
+
+class SystemCommand(NamedTuple):
+    """Defines a system command used in the command palette (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
+
+    title: str
+    """The title of the command (used in search)."""
+    help: str
+    """Additional help text, shown under the title."""
+    callback: CommandCallback
+    """A callback to invoke when the command is selected."""
+    discover: bool = True
+    """Should the command show when the search is empty?"""
+
+
+def get_system_commands_provider() -> type[SystemCommandsProvider]:
     """Callable to lazy load the system commands.
 
     Returns:
         System commands class.
     """
-    from .system_commands import SystemCommands
+    from .system_commands import SystemCommandsProvider
 
-    return SystemCommands
+    return SystemCommandsProvider
 
 
 class AppError(Exception):
@@ -289,13 +312,22 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+        Screen.-maximized-view {                    
+            layout: vertical !important;
+            hatch: right $panel;
+            overflow-y: auto !important;
+            align: center middle;
+            .-maximized {
+                dock: initial !important;
+            }
+        }
     }
     *:disabled:can-focus {
         opacity: 0.7;
     }
     """
 
-    MODES: ClassVar[dict[str, str | Screen | Callable[[], Screen]]] = {}
+    MODES: ClassVar[dict[str, str | Callable[[], Screen]]] = {}
     """Modes associated with the app and their base screens.
 
     The base screen is the screen at the bottom of the mode stack. You can think of
@@ -324,7 +356,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
+    SCREENS: ClassVar[dict[str, Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -359,7 +391,7 @@ class App(Generic[ReturnType], DOMNode):
     """Default number of seconds to show notifications before removing them."""
 
     COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
-        get_system_commands
+        get_system_commands_provider
     }
     """Command providers used by the [command palette](/guide/command_palette).
 
@@ -383,8 +415,19 @@ class App(Generic[ReturnType], DOMNode):
     TOOLTIP_DELAY: float = 0.5
     """The time in seconds after which a tooltip gets displayed."""
 
+    BINDING_GROUP_TITLE = "App"
+    """Shown in the key panel."""
+
+    ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
+    """Use escape key to minimize widgets (potentially overriding bindings).
+    
+    This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
+    """
+
     title: Reactive[str] = Reactive("", compute=False)
+    """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
+    """The app's sub-title, combined with [`title`][textual.app.App.title] in the header."""
 
     dark: Reactive[bool] = Reactive(True, compute=False)
     """Use a dark theme if `True`, otherwise use a light theme.
@@ -558,6 +601,8 @@ class App(Generic[ReturnType], DOMNode):
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
+        self._modes: dict[str, str | Callable[[], Screen]] = self.MODES.copy()
+        """Contains the working-copy of the `MODES` for each instance."""
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
@@ -662,6 +707,24 @@ class App(Generic[ReturnType], DOMNode):
                     )
                 )
 
+    def __init_subclass__(cls, *args, **kwargs) -> None:
+        for variable_name, screen_collection in (
+            ("SCREENS", cls.SCREENS),
+            ("MODES", cls.MODES),
+        ):
+            for screen_name, screen_object in screen_collection.items():
+                if not (isinstance(screen_object, str) or callable(screen_object)):
+                    if isinstance(screen_object, Screen):
+                        raise ValueError(
+                            f"{variable_name} should contain a Screen type or callable, not an instance"
+                            f" (got instance of {type(screen_object).__name__} for {screen_name!r})"
+                        )
+                    raise TypeError(
+                        f"expected a callable or string, got {screen_object!r}"
+                    )
+
+        return super().__init_subclass__(*args, **kwargs)
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
@@ -745,6 +808,17 @@ class App(Generic[ReturnType], DOMNode):
         assert self._batch_count >= 0, "This won't happen if you use `batch_update`"
         if not self._batch_count:
             self.check_idle()
+
+    @contextmanager
+    def _context(self) -> Generator[None, None, None]:
+        """Context manager to set ContextVars."""
+        app_reset_token = active_app.set(self)
+        message_pump_reset_token = active_message_pump.set(self)
+        try:
+            yield
+        finally:
+            active_message_pump.reset(message_pump_reset_token)
+            active_app.reset(app_reset_token)
 
     def animate(
         self,
@@ -900,6 +974,76 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.active_bindings
 
+    def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+        """A generator of system commands used in the command palette.
+
+        Args:
+            screen: The screen where the command palette was invoked from.
+
+        Implement this method in your App subclass if you want to add custom commands.
+        Here is an example:
+
+        ```python
+        def get_system_commands(self, screen: Screen) -> Iterable[SystemCommand]:
+            yield from super().get_system_commands(screen)
+            yield SystemCommand("Bell", "Ring the bell", self.bell)
+        ```
+
+        !!! note
+            Requires that [`SystemCommandsProvider`][textual.system_commands.SystemCommandsProvider] is in `App.COMMANDS` class variable.
+
+        Yields:
+            [SystemCommand][textual.app.SystemCommand] instances.
+        """
+        if self.dark:
+            yield SystemCommand(
+                "Light mode",
+                "Switch to a light background",
+                self.action_toggle_dark,
+            )
+        else:
+            yield SystemCommand(
+                "Dark mode",
+                "Switch to a dark background",
+                self.action_toggle_dark,
+            )
+
+        yield SystemCommand(
+            "Quit the application",
+            "Quit the application as soon as possible",
+            self.action_quit,
+        )
+
+        if screen.query("HelpPanel"):
+            yield SystemCommand(
+                "Hide keys and help panel",
+                "Hide the keys and widget help panel",
+                self.action_hide_help_panel,
+            )
+        else:
+            yield SystemCommand(
+                "Show keys and help panel",
+                "Show help for the focused widget and a summary of available keys",
+                self.action_show_help_panel,
+            )
+
+        if screen.maximized is not None:
+            yield SystemCommand(
+                "Minimize",
+                "Minimize the widget and restore to normal size",
+                screen.action_minimize,
+            )
+        elif screen.focused is not None and screen.focused.allow_maximize:
+            yield SystemCommand(
+                "Maximize", "Maximize the focused widget", screen.action_maximize
+            )
+
+        yield SystemCommand(
+            "Save screenshot",
+            "Save an SVG 'screenshot' of the current screen",
+            self.deliver_screenshot,
+        )
+
     def get_default_screen(self) -> Screen:
         """Get the default screen.
 
@@ -912,10 +1056,6 @@ class App(Generic[ReturnType], DOMNode):
             A screen instance.
         """
         return Screen(id="_default")
-
-    def _set_active(self) -> None:
-        """Set this app to be the currently active app."""
-        active_app.set(self)
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container.
@@ -1222,8 +1362,8 @@ class App(Generic[ReturnType], DOMNode):
 
         async def run_callback() -> CallThreadReturnType:
             """Run the callback, set the result or error on the future."""
-            self._set_active()
-            return await invoke(callback_with_args)
+            with self._context():
+                return await invoke(callback_with_args)
 
         # Post the message to the main loop
         future: Future[CallThreadReturnType] = asyncio.run_coroutine_threadsafe(
@@ -1236,16 +1376,23 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
+    def action_screenshot(
+        self, filename: str | None = None, path: str | None = None
+    ) -> None:
         """This [action](/guide/actions) will save an SVG file containing the current contents of the screen.
 
         Args:
             filename: Filename of screenshot, or None to auto-generate.
-            path: Path to directory. Defaults to current working directory.
+            path: Path to directory. Defaults to the user's Downloads directory.
         """
-        self.save_screenshot(filename, path)
+        self.deliver_screenshot(filename, path)
 
-    def export_screenshot(self, *, title: str | None = None) -> str:
+    def export_screenshot(
+        self,
+        *,
+        title: str | None = None,
+        simplify: bool = False,
+    ) -> str:
         """Export an SVG screenshot of the current screen.
 
         See also [save_screenshot][textual.app.App.save_screenshot] which writes the screenshot to a file.
@@ -1253,6 +1400,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             title: The title of the exported screenshot or None
                 to use app title.
+            simplify: Simplify the segments by combining contiguous segments with the same style.
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
@@ -1268,7 +1416,7 @@ class App(Generic[ReturnType], DOMNode):
             safe_box=False,
         )
         screen_render = self.screen._compositor.render_update(
-            full=True, screen_stack=self.app._background_screens, simplify=True
+            full=True, screen_stack=self.app._background_screens, simplify=simplify
         )
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
@@ -1293,14 +1441,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         path = path or "./"
         if not filename:
-            if time_format is None:
-                dt = datetime.now().isoformat()
-            else:
-                dt = datetime.now().strftime(time_format)
-            svg_filename_stem = f"{self.title.lower()} {dt}"
-            for reserved in ' <>:"/\\|?*.':
-                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
-            svg_filename = svg_filename_stem + ".svg"
+            svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -1308,6 +1449,42 @@ class App(Generic[ReturnType], DOMNode):
         with open(svg_path, "w", encoding="utf-8") as svg_file:
             svg_file.write(screenshot_svg)
         return svg_path
+
+    def deliver_screenshot(
+        self,
+        filename: str | None = None,
+        path: str | None = None,
+        time_format: str | None = None,
+    ) -> str | None:
+        """Deliver a screenshot of the app.
+
+        This with save the screenshot when running locally, or serve it when the app
+        is running in a web browser.
+
+        Args:
+            filename: Filename of SVG screenshot, or None to auto-generate
+                a filename with the date and time.
+            path: Path to directory for output when saving locally (not used when app is running in the browser).
+                Defaults to current working directory.
+            time_format: Date and time format to use if filename is None.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        if not filename:
+            svg_filename = generate_datetime_filename(self.title, ".svg", time_format)
+        else:
+            svg_filename = filename
+        screenshot_svg = self.export_screenshot()
+        return self.deliver_text(
+            io.StringIO(screenshot_svg),
+            save_directory=path,
+            save_filename=svg_filename,
+            open_method="browser",
+            mime_type="image/svg+xml",
+            name="screenshot",
+        )
 
     def bind(
         self,
@@ -1503,41 +1680,39 @@ class App(Generic[ReturnType], DOMNode):
                 app: App to run.
             """
 
-            try:
-                if message_hook is not None:
-                    message_hook_context_var.set(message_hook)
-                app._loop = asyncio.get_running_loop()
-                app._thread_id = threading.get_ident()
-                await app._process_messages(
-                    ready_callback=on_app_ready,
-                    headless=headless,
-                    terminal_size=size,
-                )
-            finally:
-                app_ready_event.set()
+            with app._context():
+                try:
+                    if message_hook is not None:
+                        message_hook_context_var.set(message_hook)
+                    app._loop = asyncio.get_running_loop()
+                    app._thread_id = threading.get_ident()
+                    await app._process_messages(
+                        ready_callback=on_app_ready,
+                        headless=headless,
+                        terminal_size=size,
+                    )
+                finally:
+                    app_ready_event.set()
 
         # Launch the app in the "background"
-        active_message_pump.set(app)
+
         app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
-
-        # Get the app in an active state.
-        app._set_active()
-
-        # Context manager returns pilot object to manipulate the app
-        try:
-            pilot = Pilot(app)
-            await pilot._wait_for_screen()
-            yield pilot
-        finally:
-            # Shutdown the app cleanly
-            await app._shutdown()
-            await app_task
-            # Re-raise the exception which caused panic so test frameworks are aware
-            if self._exception:
-                raise self._exception
+        with app._context():
+            # Context manager returns pilot object to manipulate the app
+            try:
+                pilot = Pilot(app)
+                await pilot._wait_for_screen()
+                yield pilot
+            finally:
+                # Shutdown the app cleanly
+                await app._shutdown()
+                await app_task
+                # Re-raise the exception which caused panic so test frameworks are aware
+                if self._exception:
+                    raise self._exception
 
     async def run_async(
         self,
@@ -1587,14 +1762,14 @@ class App(Generic[ReturnType], DOMNode):
                 async def run_auto_pilot(
                     auto_pilot: AutopilotCallbackType, pilot: Pilot
                 ) -> None:
-                    try:
-                        await auto_pilot(pilot)
-                    except Exception:
-                        app.exit()
-                        raise
+                    with self._context():
+                        try:
+                            await auto_pilot(pilot)
+                        except Exception:
+                            app.exit()
+                            raise
 
                 pilot = Pilot(app)
-                active_message_pump.set(self)
                 auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
@@ -1652,18 +1827,19 @@ class App(Generic[ReturnType], DOMNode):
             """Run the app."""
             self._loop = asyncio.get_running_loop()
             self._thread_id = threading.get_ident()
-            try:
-                await self.run_async(
-                    headless=headless,
-                    inline=inline,
-                    inline_no_clear=inline_no_clear,
-                    mouse=mouse,
-                    size=size,
-                    auto_pilot=auto_pilot,
-                )
-            finally:
-                self._loop = None
-                self._thread_id = 0
+            with self._context():
+                try:
+                    await self.run_async(
+                        headless=headless,
+                        inline=inline,
+                        inline_no_clear=inline_no_clear,
+                        mouse=mouse,
+                        size=size,
+                        auto_pilot=auto_pilot,
+                    )
+                finally:
+                    self._loop = None
+                    self._thread_id = 0
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
@@ -1899,7 +2075,12 @@ class App(Generic[ReturnType], DOMNode):
         if stack:
             await_mount = AwaitMount(stack[0], [])
         else:
-            _screen = self.MODES[mode]
+            _screen = self._modes[mode]
+            if isinstance(_screen, Screen):
+                raise TypeError(
+                    "MODES cannot contain instances, use a type instead "
+                    f"(got instance of {type(_screen).__name__} for {mode!r})"
+                )
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
@@ -1921,7 +2102,7 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
         """
-        if mode not in self.MODES:
+        if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
         self.screen.post_message(events.ScreenSuspend())
@@ -1941,9 +2122,7 @@ class App(Generic[ReturnType], DOMNode):
 
         return await_mount
 
-    def add_mode(
-        self, mode: str, base_screen: str | Screen | Callable[[], Screen]
-    ) -> None:
+    def add_mode(self, mode: str, base_screen: str | Callable[[], Screen]) -> None:
         """Adds a mode and its corresponding base screen to the app.
 
         Args:
@@ -1955,10 +2134,15 @@ class App(Generic[ReturnType], DOMNode):
         """
         if mode == "_default":
             raise InvalidModeError("Cannot use '_default' as a custom mode.")
-        elif mode in self.MODES:
+        elif mode in self._modes:
             raise InvalidModeError(f"Duplicated mode name {mode!r}.")
 
-        self.MODES[mode] = base_screen
+        if isinstance(base_screen, Screen):
+            raise TypeError(
+                "add_mode() must be called with a Screen type, not an instance"
+                f" (got instance of {type(base_screen).__name__})"
+            )
+        self._modes[mode] = base_screen
 
     def remove_mode(self, mode: str) -> AwaitComplete:
         """Removes a mode from the app.
@@ -1974,10 +2158,10 @@ class App(Generic[ReturnType], DOMNode):
         """
         if mode == self._current_mode:
             raise ActiveModeError(f"Can't remove active mode {mode!r}")
-        elif mode not in self.MODES:
+        elif mode not in self._modes:
             raise UnknownModeError(f"Unknown mode {mode!r}")
         else:
-            del self.MODES[mode]
+            del self._modes[mode]
 
         if mode not in self._screen_stacks:
             return AwaitComplete.nothing()
@@ -2508,6 +2692,17 @@ class App(Generic[ReturnType], DOMNode):
         )
         return driver
 
+    async def _init_devtools(self):
+        """Initialize developer tools."""
+        if self.devtools is not None:
+            from textual_dev.client import DevtoolsConnectionError
+
+            try:
+                await self.devtools.connect()
+                self.log.system(f"Connected to devtools ( {self.devtools.url} )")
+            except DevtoolsConnectionError:
+                self.log.system(f"Couldn't connect to devtools ( {self.devtools.url} )")
+
     async def _process_messages(
         self,
         ready_callback: CallbackType | None = None,
@@ -2518,54 +2713,49 @@ class App(Generic[ReturnType], DOMNode):
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
-        self._set_active()
-        active_message_pump.set(self)
+        async def app_prelude() -> bool:
+            """Work required before running the app.
 
-        if self.devtools is not None:
-            from textual_dev.client import DevtoolsConnectionError
+            Returns:
+                `True` if the app should continue, or `False` if there was a problem starting.
+            """
+            await self._init_devtools()
+            self.log.system("---")
+            self.log.system(loop=asyncio.get_running_loop())
+            self.log.system(features=self.features)
+            if constants.LOG_FILE is not None:
+                _log_path = os.path.abspath(constants.LOG_FILE)
+                self.log.system(f"Writing logs to {_log_path!r}")
 
             try:
-                await self.devtools.connect()
-                self.log.system(f"Connected to devtools ( {self.devtools.url} )")
-            except DevtoolsConnectionError:
-                self.log.system(f"Couldn't connect to devtools ( {self.devtools.url} )")
+                if self.css_path:
+                    self.stylesheet.read_all(self.css_path)
+                for read_from, css, tie_breaker, scope in self._get_default_css():
+                    self.stylesheet.add_source(
+                        css,
+                        read_from=read_from,
+                        is_default_css=True,
+                        tie_breaker=tie_breaker,
+                        scope=scope,
+                    )
+                if self.CSS:
+                    try:
+                        app_path = inspect.getfile(self.__class__)
+                    except (TypeError, OSError):
+                        app_path = ""
+                    read_from = (app_path, f"{self.__class__.__name__}.CSS")
+                    self.stylesheet.add_source(
+                        self.CSS, read_from=read_from, is_default_css=False
+                    )
+            except Exception as error:
+                self._handle_exception(error)
+                self._print_error_renderables()
+                return False
 
-        self.log.system("---")
-
-        self.log.system(loop=asyncio.get_running_loop())
-        self.log.system(features=self.features)
-        if constants.LOG_FILE is not None:
-            _log_path = os.path.abspath(constants.LOG_FILE)
-            self.log.system(f"Writing logs to {_log_path!r}")
-
-        try:
-            if self.css_path:
-                self.stylesheet.read_all(self.css_path)
-            for read_from, css, tie_breaker, scope in self._get_default_css():
-                self.stylesheet.add_source(
-                    css,
-                    read_from=read_from,
-                    is_default_css=True,
-                    tie_breaker=tie_breaker,
-                    scope=scope,
-                )
-            if self.CSS:
-                try:
-                    app_path = inspect.getfile(self.__class__)
-                except (TypeError, OSError):
-                    app_path = ""
-                read_from = (app_path, f"{self.__class__.__name__}.CSS")
-                self.stylesheet.add_source(
-                    self.CSS, read_from=read_from, is_default_css=False
-                )
-        except Exception as error:
-            self._handle_exception(error)
-            self._print_error_renderables()
-            return
-
-        if self.css_monitor:
-            self.set_interval(0.25, self.css_monitor, name="css monitor")
-            self.log.system("STARTED", self.css_monitor)
+            if self.css_monitor:
+                self.set_interval(0.25, self.css_monitor, name="css monitor")
+                self.log.system("STARTED", self.css_monitor)
+            return True
 
         async def run_process_messages():
             """The main message loop, invoke below."""
@@ -2616,40 +2806,44 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     await Timer._stop_all(self._timers)
 
-        self._running = True
-        try:
-            load_event = events.Load()
-            await self._dispatch_message(load_event)
+        with self._context():
+            if not await app_prelude():
+                return
+            self._running = True
+            try:
+                load_event = events.Load()
+                await self._dispatch_message(load_event)
 
-            driver = self._driver = self._build_driver(
-                headless=headless,
-                inline=inline,
-                mouse=mouse,
-                size=terminal_size,
-            )
-            self.log(driver=driver)
+                driver = self._driver = self._build_driver(
+                    headless=headless,
+                    inline=inline,
+                    mouse=mouse,
+                    size=terminal_size,
+                )
+                self.log(driver=driver)
 
-            if not self._exit:
-                driver.start_application_mode()
-                try:
-                    with redirect_stdout(self._capture_stdout):
-                        with redirect_stderr(self._capture_stderr):
-                            await run_process_messages()
+                if not self._exit:
+                    driver.start_application_mode()
+                    try:
+                        with redirect_stdout(self._capture_stdout):
+                            with redirect_stderr(self._capture_stderr):
+                                await run_process_messages()
 
-                finally:
-                    if self._driver.is_inline:
-                        cursor_x, cursor_y = self._previous_cursor_position
-                        self._driver.write(
-                            Control.move(-cursor_x, -cursor_y + 1).segment.text
-                        )
-                        if inline_no_clear and not not self.app._exit_renderables:
-                            console = Console()
-                            console.print(self.screen._compositor)
-                            console.print()
+                    finally:
+                        Reactive._clear_watchers(self)
+                        if self._driver.is_inline:
+                            cursor_x, cursor_y = self._previous_cursor_position
+                            self._driver.write(
+                                Control.move(-cursor_x, -cursor_y + 1).segment.text
+                            )
+                            if inline_no_clear and not not self.app._exit_renderables:
+                                console = Console()
+                                console.print(self.screen._compositor)
+                                console.print()
 
-                    driver.stop_application_mode()
-        except Exception as error:
-            self._handle_exception(error)
+                        driver.stop_application_mode()
+            except Exception as error:
+                self._handle_exception(error)
 
     async def _pre_process(self) -> bool:
         """Special case for the app, which doesn't need the functionality in MessagePump."""
@@ -2857,11 +3051,8 @@ class App(Generic[ReturnType], DOMNode):
                 if stack_screen._running:
                     await self._prune(stack_screen)
             stack.clear()
-
-        # Close pre-defined screens.
-        for screen in self.SCREENS.values():
-            if isinstance(screen, Screen) and screen._running:
-                await self._prune(screen)
+        self._installed_screens.clear()
+        self._modes.clear()
 
         # Close any remaining nodes
         # Should be empty by now
@@ -2878,11 +3069,12 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._close_all()
         await self._close_messages()
-
         await self._dispatch_message(events.Unmount())
 
         if self._driver is not None:
             self._driver.close()
+
+        self._nodes._clear()
 
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
@@ -3139,6 +3331,15 @@ class App(Generic[ReturnType], DOMNode):
                         pass
 
             elif isinstance(event, events.Key):
+                # Special case for maximized widgets
+                # If something is maximized, then escape should minimize
+                if (
+                    self.screen.maximized is not None
+                    and event.key == "escape"
+                    and self.escape_to_minimize
+                ):
+                    self.screen.minimize()
+                    return
                 if self.focused:
                     try:
                         self.screen._clear_tooltip()
@@ -3157,6 +3358,23 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen._forward_event(event)
         else:
             await super().on_event(event)
+
+    @property
+    def escape_to_minimize(self) -> bool:
+        """Use the escape key to minimize?
+
+        When a widget is [maximized][textual.screen.Screen.maximize], this boolean determines if the `escape` key will
+        minimize the widget (potentially overriding any bindings).
+
+        The default logic is to use the screen's `ESCAPE_TO_MINIMIZE` classvar if it is set to `True` or `False`.
+        If the classvar on the screen is *not* set (and left as `None`), then the app's `ESCAPE_TO_MINIMIZE` is used.
+
+        """
+        return bool(
+            self.ESCAPE_TO_MINIMIZE
+            if self.screen.ESCAPE_TO_MINIMIZE is None
+            else self.screen.ESCAPE_TO_MINIMIZE
+        )
 
     def _parse_action(
         self, action: str | ActionParseResult, default_namespace: DOMNode
@@ -3197,6 +3415,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             action: An action string.
+            default_namespace: The default namespace if one is not specified in the action.
 
         Returns:
             State of an action.
@@ -3525,18 +3744,18 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
 
-    def action_hide_keys(self) -> None:
+    def action_hide_help_panel(self) -> None:
         """Hide the keys panel (if present)."""
-        self.screen.query("KeyPanel").remove()
+        self.screen.query("HelpPanel").remove()
 
-    def action_show_keys(self) -> None:
+    def action_show_help_panel(self) -> None:
         """Show the keys panel."""
-        from .widgets import KeyPanel
+        from .widgets import HelpPanel
 
         try:
-            self.query_one(KeyPanel)
+            self.query_one(HelpPanel)
         except NoMatches:
-            self.mount(KeyPanel())
+            self.mount(HelpPanel())
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
@@ -3744,3 +3963,219 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self._driver is not None:
             self._driver.open_url(url, new_tab)
+
+    def deliver_text(
+        self,
+        path_or_file: str | Path | TextIO,
+        *,
+        save_directory: str | Path | None = None,
+        save_filename: str | None = None,
+        open_method: Literal["browser", "download"] = "download",
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> str | None:
+        """Deliver a text file to the end-user of the application.
+
+        If a TextIO object is supplied, it will be closed by this method
+        and *must not be used* after this method is called.
+
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download via
+        a single-use URL.
+
+        After the file has been delivered, a `DeliveryComplete` message will be posted
+        to this `App`, which contains the `delivery_key` returned by this method. By
+        handling this message, you can add custom logic to your application that fires
+        only after the file has been delivered.
+
+        Args:
+            path_or_file: The path or file-like object to save.
+            save_directory: The directory to save the file to.
+            save_filename: The filename to save the file to.  If `path_or_file`
+                is a file-like object, the filename will be generated from
+                the `name` attribute if available. If `path_or_file` is a path
+                the filename will be generated from the path.
+            encoding: The encoding to use when saving the file. If `None`,
+                the encoding will be determined by supplied file-like object
+                (if possible). If this is not possible, 'utf-8' will be used.
+            mime_type: The MIME type of the file or None to guess based on file extension.
+                If no MIME type is supplied and we cannot guess the MIME type, from the
+                file extension, the MIME type will be set to "text/plain".
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+            file_name = save_filename or binary_path.name
+        else:
+            encoding = encoding or getattr(path_or_file, "encoding", None) or "utf-8"
+            binary = path_or_file
+            file_name = save_filename or getattr(path_or_file, "name", None)
+
+        # If we could infer a filename, and no MIME type was supplied, guess the MIME type.
+        if file_name and not mime_type:
+            mime_type, _ = mimetypes.guess_type(file_name)
+
+        # Still no MIME type? Default it to "text/plain".
+        if mime_type is None:
+            mime_type = "text/plain"
+
+        return self._deliver_binary(
+            binary,
+            save_directory=save_directory,
+            save_filename=file_name,
+            open_method=open_method,
+            encoding=encoding,
+            mime_type=mime_type,
+            name=name,
+        )
+
+    def deliver_binary(
+        self,
+        path_or_file: str | Path | BinaryIO,
+        *,
+        save_directory: str | Path | None = None,
+        save_filename: str | None = None,
+        open_method: Literal["browser", "download"] = "download",
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> str | None:
+        """Deliver a binary file to the end-user of the application.
+
+        If an IO object is supplied, it will be closed by this method
+        and *must not be used* after it is supplied to this method.
+
+        If running in a terminal, this will save the file to the user's
+        downloads directory.
+
+        If running via a web browser, this will initiate a download via
+        a single-use URL.
+
+        This operation runs in a thread when running on web, so this method
+        returning does not indicate that the file has been delivered.
+
+        After the file has been delivered, a `DeliveryComplete` message will be posted
+        to this `App`, which contains the `delivery_key` returned by this method. By
+        handling this message, you can add custom logic to your application that fires
+        only after the file has been delivered.
+
+        Args:
+            path_or_file: The path or file-like object to save.
+            save_directory: The directory to save the file to. If None,
+                the default "downloads" directory will be used. This
+                argument is ignored when running via the web.
+            save_filename: The filename to save the file to. If None, the following logic
+                applies to generate the filename:
+                - If `path_or_file` is a file-like object, the filename will be taken from
+                  the `name` attribute if available.
+                - If `path_or_file` is a path, the filename will be taken from the path.
+                - If a filename is not available, a filename will be generated using the
+                  App's title and the current date and time.
+            open_method: The method to use to open the file. "browser" will open the file in the
+                web browser, "download" will initiate a download. Note that this can sometimes
+                be impacted by the browser's settings.
+            mime_type: The MIME type of the file or None to guess based on file extension.
+                If no MIME type is supplied and we cannot guess the MIME type, from the
+                file extension, the MIME type will be set to "application/octet-stream".
+            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+                and [`DeliveryComplete`][textual.events.DeliveryComplete].
+
+        Returns:
+            The delivery key that uniquely identifies the file delivery.
+        """
+        # Ensure `path_or_file` is a file-like object - convert if needed.
+        if isinstance(path_or_file, (str, Path)):
+            binary_path = Path(path_or_file)
+            binary = binary_path.open("rb")
+            file_name = save_filename or binary_path.name
+        else:  # IO object
+            binary = path_or_file
+            file_name = save_filename or getattr(path_or_file, "name", None)
+
+        # If we could infer a filename, and no MIME type was supplied, guess the MIME type.
+        if file_name and not mime_type:
+            mime_type, _ = mimetypes.guess_type(file_name)
+
+        # Still no MIME type? Default it to "application/octet-stream".
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+
+        return self._deliver_binary(
+            binary,
+            save_directory=save_directory,
+            save_filename=file_name,
+            open_method=open_method,
+            mime_type=mime_type,
+            encoding=None,
+            name=name,
+        )
+
+    def _deliver_binary(
+        self,
+        binary: BinaryIO | TextIO,
+        *,
+        save_directory: str | Path | None,
+        save_filename: str | None,
+        open_method: Literal["browser", "download"],
+        encoding: str | None = None,
+        mime_type: str | None = None,
+        name: str | None = None,
+    ) -> str | None:
+        """Deliver a binary file to the end-user of the application."""
+        if self._driver is None:
+            return None
+
+        # Generate a filename if the file-like object doesn't have one.
+        if save_filename is None:
+            save_filename = generate_datetime_filename(self.title, "")
+
+        # Find the appropriate save location if not specified.
+        save_directory = (
+            user_downloads_path() if save_directory is None else Path(save_directory)
+        )
+
+        # Generate a unique key for this delivery
+        delivery_key = str(uuid.uuid4().hex)
+
+        # Save the file. The driver will determine the appropriate action
+        # to take here. It could mean simply writing to the save_path, or
+        # sending the file to the web browser for download.
+        self._driver.deliver_binary(
+            binary,
+            delivery_key=delivery_key,
+            save_path=save_directory / save_filename,
+            encoding=encoding,
+            open_method=open_method,
+            mime_type=mime_type,
+            name=name,
+        )
+
+        return delivery_key
+
+    @on(events.DeliveryComplete)
+    def _on_delivery_complete(self, event: events.DeliveryComplete) -> None:
+        """Handle a successfully delivered screenshot."""
+        if event.name == "screenshot":
+            if event.path is None:
+                self.notify("Saved screenshot", title="Screenshot")
+            else:
+                self.notify(
+                    f"Saved screenshot to [green]{str(event.path)!r}",
+                    title="Screenshot",
+                )
+
+    @on(events.DeliveryFailed)
+    def _on_delivery_failed(self, event: events.DeliveryComplete) -> None:
+        """Handle a failure to deliver the screenshot."""
+        if event.name == "screenshot":
+            self.notify(
+                "Failed to save screenshot", title="Screenshot", severity="error"
+            )

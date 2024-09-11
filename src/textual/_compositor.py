@@ -309,6 +309,15 @@ class Compositor:
         # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
 
+    def clear(self) -> None:
+        """Remove all references to widgets (used when the screen closes)."""
+        self._full_map.clear()
+        self._visible_map = None
+        self._layers = None
+        self.widgets.clear()
+        self._visible_widgets = None
+        self._layers_visible = None
+
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]
@@ -582,7 +591,7 @@ class Compositor:
 
             Args:
                 widget: The widget to add.
-                virtual_region: The Widget region relative to it's container.
+                virtual_region: The Widget region relative to its container.
                 region: The region the widget will occupy.
                 order: Painting order information.
                 layer_order: The order of the widget in its layer.
