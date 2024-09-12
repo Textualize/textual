@@ -9,8 +9,8 @@ try:
 except ImportError:
     TREE_SITTER = False
 
-from textual.document._document import Document, EditResult, Location, _utf8_encode
-from textual.document._languages import BUILTIN_LANGUAGES
+from ._document import Document, EditResult, Location, _utf8_encode
+from ._languages import BUILTIN_LANGUAGES
 
 
 class SyntaxAwareDocumentError(Exception):

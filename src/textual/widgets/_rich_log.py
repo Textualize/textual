@@ -13,9 +13,8 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.text import Text
 
-from textual.events import Resize
-
 from ..cache import LRUCache
+from ..events import Resize
 from ..geometry import Size
 from ..reactive import var
 from ..scroll_view import ScrollView

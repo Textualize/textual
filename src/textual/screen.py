@@ -29,8 +29,6 @@ import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
-from textual.keys import key_to_character
-
 from . import constants, errors, events, messages
 from ._arrange import arrange
 from ._callback import invoke
@@ -47,6 +45,7 @@ from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .errors import NoWidget
 from .geometry import Offset, Region, Size
+from .keys import key_to_character
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
@@ -1382,7 +1381,7 @@ class Screen(Generic[ScreenResultType], Widget):
             """Called by the AwaitComplete object."""
             _rich_traceback_omit = True
             if active_message_pump.get() is self:
-                from textual.app import ScreenError
+                from .app import ScreenError
 
                 raise ScreenError(
                     "Can't await screen.dismiss() from the screen's message handler; try removing the await keyword."

@@ -7,10 +7,9 @@ from rich.segment import Segment
 from rich.style import Style
 from typing_extensions import Literal
 
-from textual.geometry import Size
-
 from ..app import RenderResult
 from ..css._error_tools import friendly_list
+from ..geometry import Size
 from ..reactive import Reactive, reactive
 from ..widget import Widget
 

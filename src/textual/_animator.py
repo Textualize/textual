@@ -15,7 +15,7 @@ from ._types import AnimationLevel, CallbackType
 from .timer import Timer
 
 if TYPE_CHECKING:
-    from textual.app import App
+    from .app import App
 
     AnimationKey = tuple[int, str]
     """Animation keys are the id of the object and the attribute being animated."""

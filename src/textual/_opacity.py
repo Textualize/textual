@@ -3,7 +3,7 @@ from typing import Iterable, cast
 from rich.segment import Segment
 from rich.style import Style
 
-from textual.color import Color
+from .color import Color
 
 
 def _apply_opacity(

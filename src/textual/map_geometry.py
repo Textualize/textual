@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from textual.geometry import Region, Size, Spacing
+from .geometry import Region, Size, Spacing
 
 
 class MapGeometry(NamedTuple):

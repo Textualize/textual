@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 
 from rich.style import Style
 
-from textual.app import DEFAULT_COLORS
-from textual.color import Color
-from textual.design import DEFAULT_DARK_SURFACE
+from .app import DEFAULT_COLORS
+from .color import Color
+from .design import DEFAULT_DARK_SURFACE
 
 if TYPE_CHECKING:
     from textual.widgets import TextArea

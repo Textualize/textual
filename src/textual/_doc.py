@@ -7,9 +7,9 @@ import shlex
 from pathlib import Path
 from typing import Awaitable, Callable, Iterable, cast
 
-from textual._import_app import import_app
-from textual.app import App
-from textual.pilot import Pilot
+from ._import_app import import_app
+from .app import App
+from .pilot import Pilot
 
 SCREENSHOT_CACHE = ".screenshot_cache"
 

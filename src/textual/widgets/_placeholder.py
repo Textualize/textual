@@ -18,7 +18,7 @@ from ..reactive import Reactive, reactive
 from ..widget import Widget
 
 if TYPE_CHECKING:
-    from textual.app import App
+    from ..app import App
 
 PlaceholderVariant = Literal["default", "size", "text"]
 """The different variants of placeholder."""

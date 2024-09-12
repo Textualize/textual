@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from textual import events
-from textual.message import Message
-from textual.reactive import reactive
-from textual.widget import Widget
+
+from ..message import Message
+from ..reactive import reactive
+from ..widget import Widget
 
 
 class ListItem(Widget, can_focus=False):

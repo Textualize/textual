@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from tree_sitter import Node
     from tree_sitter.binding import Query
 
-from textual._cells import cell_len
-from textual.geometry import Size
+from .._cells import cell_len
+from ..geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
 """The type representing valid line separators."""

@@ -1032,7 +1032,7 @@ class OptionList(ScrollView, can_focus=True):
 
 
 if __name__ == "__main__":
-    from textual.app import App, ComposeResult
+    from ..app import App, ComposeResult
 
     class OptionApp(App):
         def compose(self) -> ComposeResult:

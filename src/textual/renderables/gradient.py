@@ -139,8 +139,9 @@ if __name__ == "__main__":
 
     from time import time
 
-    from textual.app import App, ComposeResult
     from textual.widgets import Static
+
+    from ..app import App, ComposeResult
 
     class GradientApp(App):
         CSS = """

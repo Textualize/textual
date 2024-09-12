@@ -4,11 +4,11 @@ from bisect import bisect_right
 
 from rich.text import Text
 
-from textual._cells import cell_len, cell_width_to_column_index
-from textual._wrap import compute_wrap_offsets
-from textual.document._document import DocumentBase, Location
-from textual.expand_tabs import expand_tabs_inline, get_tab_widths
-from textual.geometry import Offset, clamp
+from .._cells import cell_len, cell_width_to_column_index
+from .._wrap import compute_wrap_offsets
+from ..expand_tabs import expand_tabs_inline, get_tab_widths
+from ..geometry import Offset, clamp
+from ._document import DocumentBase, Location
 
 VerticalOffset = int
 LineIndex = int

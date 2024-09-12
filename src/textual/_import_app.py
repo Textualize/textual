@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    from textual.app import App
+    from .app import App
 
 
 class AppFail(Exception):
@@ -48,7 +48,7 @@ def import_app(import_name: str) -> App:
     import importlib
     import inspect
 
-    from textual.app import WINDOWS, App
+    from .app import WINDOWS, App
 
     import_name, *argv = shlex.split(import_name, posix=not WINDOWS)
     drive, import_name = os.path.splitdrive(import_name)

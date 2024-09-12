@@ -13,10 +13,10 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Literal
 
-from textual._text_area_theme import TextAreaTheme
-from textual._tree_sitter import TREE_SITTER
-from textual.color import Color
-from textual.document._document import (
+from .._text_area_theme import TextAreaTheme
+from .._tree_sitter import TREE_SITTER
+from ..color import Color
+from ..document._document import (
     Document,
     DocumentBase,
     EditResult,
@@ -24,28 +24,29 @@ from textual.document._document import (
     Selection,
     _utf8_encode,
 )
-from textual.document._document_navigator import DocumentNavigator
-from textual.document._edit import Edit
-from textual.document._history import EditHistory
-from textual.document._languages import BUILTIN_LANGUAGES
-from textual.document._syntax_aware_document import (
+from ..document._document_navigator import DocumentNavigator
+from ..document._edit import Edit
+from ..document._history import EditHistory
+from ..document._languages import BUILTIN_LANGUAGES
+from ..document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
 )
-from textual.document._wrapped_document import WrappedDocument
-from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
+from ..document._wrapped_document import WrappedDocument
+from ..expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
 
 if TYPE_CHECKING:
     from tree_sitter import Language
 
 from textual import events, log
-from textual._cells import cell_len, cell_width_to_column_index
-from textual.binding import Binding
-from textual.events import Message, MouseEvent
-from textual.geometry import Offset, Region, Size, Spacing, clamp
-from textual.reactive import Reactive, reactive
-from textual.scroll_view import ScrollView
-from textual.strip import Strip
+
+from .._cells import cell_len, cell_width_to_column_index
+from ..binding import Binding
+from ..events import Message, MouseEvent
+from ..geometry import Offset, Region, Size, Spacing, clamp
+from ..reactive import Reactive, reactive
+from ..scroll_view import ScrollView
+from ..strip import Strip
 
 _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
 _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}

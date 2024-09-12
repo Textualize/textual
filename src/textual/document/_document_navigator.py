@@ -2,10 +2,10 @@ import re
 from bisect import bisect, bisect_left, bisect_right
 from typing import Any, Sequence
 
-from textual._cells import cell_len
-from textual.document._document import Location
-from textual.document._wrapped_document import WrappedDocument
-from textual.geometry import Offset, clamp
+from .._cells import cell_len
+from ..geometry import Offset, clamp
+from ._document import Location
+from ._wrapped_document import WrappedDocument
 
 
 class DocumentNavigator:
