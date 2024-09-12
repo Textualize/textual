@@ -5,10 +5,10 @@ from functools import partial
 from inspect import isawaitable, signature
 from typing import TYPE_CHECKING, Any, Callable
 
-from . import active_app
+from textual import active_app
 
 if TYPE_CHECKING:
-    from .app import App
+    from textual.app import App
 
 # Maximum seconds before warning about a slow callback
 INVOKE_TIMEOUT_WARNING = 3

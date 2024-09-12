@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Callable, ClassVar, Optional, Sequence
 
-from ..app import RenderResult
-from ..reactive import reactive
-from ..renderables.sparkline import Sparkline as SparklineRenderable
-from ..widget import Widget
+from textual.app import RenderResult
+from textual.reactive import reactive
+from textual.renderables.sparkline import Sparkline as SparklineRenderable
+from textual.widget import Widget
 
 
 def _max_factory() -> Callable[[Sequence[float]], float]:

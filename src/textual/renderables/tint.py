@@ -7,8 +7,8 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.terminal_theme import TerminalTheme
 
-from ..color import Color
-from ..filter import ANSIToTruecolor
+from textual.color import Color
+from textual.filter import ANSIToTruecolor
 
 
 class Tint:

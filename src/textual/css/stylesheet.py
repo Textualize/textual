@@ -14,17 +14,17 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 
-from ..cache import LRUCache
-from ..dom import DOMNode
-from ..widget import Widget
-from .errors import StylesheetError
-from .match import _check_selectors
-from .model import RuleSet
-from .parse import parse
-from .styles import RulesMap, Styles
-from .tokenize import Token, tokenize_values
-from .tokenizer import TokenError
-from .types import CSSLocation, Specificity3, Specificity6
+from textual.cache import LRUCache
+from textual.css.errors import StylesheetError
+from textual.css.match import _check_selectors
+from textual.css.model import RuleSet
+from textual.css.parse import parse
+from textual.css.styles import RulesMap, Styles
+from textual.css.tokenize import Token, tokenize_values
+from textual.css.tokenizer import TokenError
+from textual.css.types import CSSLocation, Specificity3, Specificity6
+from textual.dom import DOMNode
+from textual.widget import Widget
 
 _DEFAULT_STYLES = Styles()
 

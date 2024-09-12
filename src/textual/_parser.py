@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import deque
 from typing import Callable, Deque, Generator, Generic, Iterable, NamedTuple, TypeVar
 
-from ._time import get_time
+from textual._time import get_time
 
 
 class ParseError(Exception):

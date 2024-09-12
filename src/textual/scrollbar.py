@@ -18,12 +18,12 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
-from . import events
-from .geometry import Offset
-from .message import Message
-from .reactive import Reactive
-from .renderables.blank import Blank
-from .widget import Widget
+from textual import events
+from textual.geometry import Offset
+from textual.message import Message
+from textual.reactive import Reactive
+from textual.renderables.blank import Blank
+from textual.widget import Widget
 
 
 class ScrollMessage(Message, bubble=False):

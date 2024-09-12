@@ -12,22 +12,22 @@ from rich.segment import Segment
 from rich.text import Text
 from typing_extensions import Literal
 
-from .. import events
-from .._segment_tools import line_crop
+from textual import events
+from textual._segment_tools import line_crop
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
 
-from ..binding import Binding, BindingType
-from ..css._error_tools import friendly_list
-from ..events import Blur, Focus, Mount
-from ..geometry import Offset, Size
-from ..message import Message
-from ..reactive import Reactive, reactive, var
-from ..suggester import Suggester, SuggestionReady
-from ..timer import Timer
-from ..validation import ValidationResult, Validator
-from ..widget import Widget
+from textual.binding import Binding, BindingType
+from textual.css._error_tools import friendly_list
+from textual.events import Blur, Focus, Mount
+from textual.geometry import Offset, Size
+from textual.message import Message
+from textual.reactive import Reactive, reactive, var
+from textual.suggester import Suggester, SuggestionReady
+from textual.timer import Timer
+from textual.validation import ValidationResult, Validator
+from textual.widget import Widget
 
 InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
@@ -327,7 +327,7 @@ class Input(Widget, can_focus=True):
         self.type = type
         self.max_length = max_length
         if not self.validators:
-            from ..validation import Integer, Number
+            from textual.validation import Integer, Number
 
             if self.type == "integer":
                 self.validators.append(Integer())

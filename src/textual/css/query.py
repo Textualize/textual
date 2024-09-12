@@ -17,16 +17,16 @@ from typing import TYPE_CHECKING, Generic, Iterable, Iterator, TypeVar, cast, ov
 
 import rich.repr
 
-from .._context import active_app
-from ..await_remove import AwaitRemove
-from .errors import DeclarationError, TokenError
-from .match import match
-from .model import SelectorSet
-from .parse import parse_declarations, parse_selectors
+from textual._context import active_app
+from textual.await_remove import AwaitRemove
+from textual.css.errors import DeclarationError, TokenError
+from textual.css.match import match
+from textual.css.model import SelectorSet
+from textual.css.parse import parse_declarations, parse_selectors
 
 if TYPE_CHECKING:
-    from ..dom import DOMNode
-    from ..widget import Widget
+    from textual.dom import DOMNode
+    from textual.widget import Widget
 
 
 class QueryError(Exception):
@@ -115,7 +115,7 @@ class DOMQuery(Generic[QueryType]):
     @property
     def nodes(self) -> list[QueryType]:
         """Lazily evaluate nodes."""
-        from ..widget import Widget
+        from textual.widget import Widget
 
         if self._nodes is None:
             initial_nodes = list(

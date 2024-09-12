@@ -9,13 +9,13 @@ from rich import box
 from rich.table import Table
 from rich.text import Text
 
-from ..app import ComposeResult
-from ..binding import Binding
-from ..containers import VerticalScroll
-from ..widgets import Static
+from textual.app import ComposeResult
+from textual.binding import Binding
+from textual.containers import VerticalScroll
+from textual.widgets import Static
 
 if TYPE_CHECKING:
-    from ..screen import Screen
+    from textual.screen import Screen
 
 
 class BindingsTable(Static):

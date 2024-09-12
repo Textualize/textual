@@ -22,9 +22,9 @@ from typing import (
 
 import rich.repr
 
-from . import events
-from ._callback import count_parameters
-from ._types import (
+from textual import events
+from textual._callback import count_parameters
+from textual._types import (
     MessageTarget,
     WatchCallbackBothValuesType,
     WatchCallbackNewValueType,
@@ -33,7 +33,7 @@ from ._types import (
 )
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
+    from textual.dom import DOMNode
 
     Reactable = DOMNode
 

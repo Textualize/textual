@@ -10,9 +10,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Iterable
 
-from .cache import LRUCache
-from .dom import DOMNode
-from .message import Message
+from textual.cache import LRUCache
+from textual.dom import DOMNode
+from textual.message import Message
 
 
 @dataclass

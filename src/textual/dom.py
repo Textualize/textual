@@ -29,41 +29,41 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
-from ._context import NoActiveAppError, active_message_pump
-from ._node_list import NodeList
-from ._types import WatchCallbackType
-from .binding import Binding, BindingsMap, BindingType
-from .cache import LRUCache
-from .color import BLACK, WHITE, Color
-from .css._error_tools import friendly_list
-from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
-from .css.errors import DeclarationError, StyleValueError
-from .css.match import match
-from .css.parse import parse_declarations, parse_selectors
-from .css.query import NoMatches, TooManyMatches
-from .css.styles import RenderStyles, Styles
-from .css.tokenize import IDENTIFIER
-from .message_pump import MessagePump
-from .reactive import Reactive, ReactiveError, _Mutated, _watch
-from .timer import Timer
-from .walk import walk_breadth_first, walk_depth_first
-from .worker_manager import WorkerManager
+from textual._context import NoActiveAppError, active_message_pump
+from textual._node_list import NodeList
+from textual._types import WatchCallbackType
+from textual.binding import Binding, BindingsMap, BindingType
+from textual.cache import LRUCache
+from textual.color import BLACK, WHITE, Color
+from textual.css._error_tools import friendly_list
+from textual.css.constants import VALID_DISPLAY, VALID_VISIBILITY
+from textual.css.errors import DeclarationError, StyleValueError
+from textual.css.match import match
+from textual.css.parse import parse_declarations, parse_selectors
+from textual.css.query import NoMatches, TooManyMatches
+from textual.css.styles import RenderStyles, Styles
+from textual.css.tokenize import IDENTIFIER
+from textual.message_pump import MessagePump
+from textual.reactive import Reactive, ReactiveError, _Mutated, _watch
+from textual.timer import Timer
+from textual.walk import walk_breadth_first, walk_depth_first
+from textual.worker_manager import WorkerManager
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias
     from _typeshed import SupportsRichComparison
 
     from rich.console import RenderableType
-    from .app import App
-    from .css.query import DOMQuery, QueryType
-    from .css.types import CSSLocation
-    from .message import Message
-    from .screen import Screen
-    from .widget import Widget
-    from .worker import Worker, WorkType, ResultType
+    from textual.app import App
+    from textual.css.query import DOMQuery, QueryType
+    from textual.css.types import CSSLocation
+    from textual.message import Message
+    from textual.screen import Screen
+    from textual.widget import Widget
+    from textual.worker import Worker, WorkType, ResultType
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .css.query import WrongType  # type: ignore  # noqa: F401
+    from textual.css.query import WrongType  # type: ignore  # noqa: F401
 
 from typing_extensions import Literal
 
@@ -726,7 +726,7 @@ class DOMNode(MessagePump):
         """
         # Get the node by looking up a chain of parents
         # Note that self.screen may not be the same as self.app.screen
-        from .screen import Screen
+        from textual.screen import Screen
 
         node: MessagePump | None = self
         while node is not None and not isinstance(node, Screen):
@@ -945,7 +945,7 @@ class DOMNode(MessagePump):
         from rich.panel import Panel
         from rich.pretty import Pretty
 
-        from .widget import Widget
+        from textual.widget import Widget
 
         def render_info(node: DOMNode) -> Columns:
             """Render a node for the tree."""
@@ -1226,7 +1226,7 @@ class DOMNode(MessagePump):
 
     def reset_styles(self) -> None:
         """Reset styles back to their initial state."""
-        from .widget import Widget
+        from textual.widget import Widget
 
         for node in self.walk_children(with_self=True):
             node._css_styles.reset()
@@ -1337,8 +1337,8 @@ class DOMNode(MessagePump):
         Returns:
             A query object.
         """
-        from .css.query import DOMQuery, QueryType
-        from .widget import Widget
+        from textual.css.query import DOMQuery, QueryType
+        from textual.widget import Widget
 
         if isinstance(selector, str) or selector is None:
             return DOMQuery[Widget](self, filter=selector)
@@ -1368,8 +1368,8 @@ class DOMNode(MessagePump):
         Returns:
             A query object.
         """
-        from .css.query import DOMQuery, QueryType
-        from .widget import Widget
+        from textual.css.query import DOMQuery, QueryType
+        from textual.widget import Widget
 
         if isinstance(selector, str) or selector is None:
             return DOMQuery[Widget](self, deep=False, filter=selector)

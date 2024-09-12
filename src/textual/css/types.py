@@ -4,7 +4,7 @@ from typing import Tuple
 
 from typing_extensions import Literal
 
-from ..color import Color
+from textual.color import Color
 
 DockEdge = Literal["none", "top", "right", "bottom", "left"]
 EdgeType = Literal[

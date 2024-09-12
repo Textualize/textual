@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from .binding import Binding, BindingType
-from .widget import Widget
+from textual.binding import Binding, BindingType
+from textual.widget import Widget
 
 
 class Container(Widget):

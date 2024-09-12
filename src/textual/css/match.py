@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable
 
-from .model import CombinatorType, Selector, SelectorSet
+from textual.css.model import CombinatorType, Selector, SelectorSet
 
 if TYPE_CHECKING:
-    from ..dom import DOMNode
+    from textual.dom import DOMNode
 
 
 def match(selector_sets: Iterable[SelectorSet], node: DOMNode) -> bool:

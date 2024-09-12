@@ -5,16 +5,16 @@ from typing import TYPE_CHECKING, ClassVar
 from rich.console import RenderableType
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
     from typing_extensions import Self
 
-from ..binding import Binding, BindingType
-from ..events import Click
-from ..geometry import Size
-from ..message import Message
-from ..reactive import reactive
-from ..scrollbar import ScrollBarRender
-from ..widget import Widget
+from textual.binding import Binding, BindingType
+from textual.events import Click
+from textual.geometry import Size
+from textual.message import Message
+from textual.reactive import reactive
+from textual.scrollbar import ScrollBarRender
+from textual.widget import Widget
 
 
 class Switch(Widget, can_focus=True):

@@ -4,11 +4,10 @@ import dataclasses
 from functools import lru_cache
 from typing import Iterable, Iterator, NoReturn
 
-from ..suggestions import get_suggestion
-from ._help_renderables import HelpText
-from ._styles_builder import DeclarationError, StylesBuilder
-from .errors import UnresolvedVariableError
-from .model import (
+from textual.css._help_renderables import HelpText
+from textual.css._styles_builder import DeclarationError, StylesBuilder
+from textual.css.errors import UnresolvedVariableError
+from textual.css.model import (
     CombinatorType,
     Declaration,
     RuleSet,
@@ -16,10 +15,11 @@ from .model import (
     SelectorSet,
     SelectorType,
 )
-from .styles import Styles
-from .tokenize import Token, tokenize, tokenize_declarations, tokenize_values
-from .tokenizer import EOFError, ReferencedBy
-from .types import CSSLocation, Specificity3
+from textual.css.styles import Styles
+from textual.css.tokenize import Token, tokenize, tokenize_declarations, tokenize_values
+from textual.css.tokenizer import EOFError, ReferencedBy
+from textual.css.types import CSSLocation, Specificity3
+from textual.suggestions import get_suggestion
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),

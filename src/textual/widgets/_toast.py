@@ -6,16 +6,16 @@ from typing import TYPE_CHECKING, ClassVar
 
 from rich.text import Text
 
-from .. import on
+from textual import on
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
 
-from ..containers import Container
-from ..css.query import NoMatches
-from ..events import Click, Mount
-from ..notifications import Notification, Notifications
-from ._static import Static
+from textual.containers import Container
+from textual.css.query import NoMatches
+from textual.events import Click, Mount
+from textual.notifications import Notification, Notifications
+from textual.widgets._static import Static
 
 
 class ToastHolder(Container, inherit_css=False):

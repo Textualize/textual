@@ -1,4 +1,4 @@
-from ._data_table import (
+from textual.widgets._data_table import (
     CellDoesNotExist,
     CellKey,
     CellType,

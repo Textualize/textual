@@ -13,7 +13,7 @@ actions available via the [command palette][textual.command.CommandPalette].
 
 from __future__ import annotations
 
-from .command import DiscoveryHit, Hit, Hits, Provider
+from textual.command import DiscoveryHit, Hit, Hits, Provider
 
 
 class SystemCommandsProvider(Provider):

@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .._animator import Animation, EasingFunction
-from .._types import AnimationLevel, CallbackType
-from .scalar import Scalar, ScalarOffset
+from textual._animator import Animation, EasingFunction
+from textual._types import AnimationLevel, CallbackType
+from textual.css.scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
-    from ..widget import Widget
-    from .styles import StylesBase
+    from textual.css.styles import StylesBase
+    from textual.widget import Widget
 
 
 class ScalarAnimation(Animation):

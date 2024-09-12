@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ._toggle_button import ToggleButton
+from textual.widgets._toggle_button import ToggleButton
 
 
 class Checkbox(ToggleButton):

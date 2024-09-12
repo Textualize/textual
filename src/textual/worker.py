@@ -27,11 +27,11 @@ from typing import (
 import rich.repr
 from typing_extensions import TypeAlias
 
-from .message import Message
+from textual.message import Message
 
 if TYPE_CHECKING:
-    from .app import App
-    from .dom import DOMNode
+    from textual.app import App
+    from textual.dom import DOMNode
 
 
 active_worker: ContextVar[Worker] = ContextVar("active_worker")

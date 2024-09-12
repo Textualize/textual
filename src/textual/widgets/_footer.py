@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING
 import rich.repr
 from rich.text import Text
 
-from ..app import ComposeResult
-from ..binding import Binding
-from ..containers import ScrollableContainer
-from ..reactive import reactive
-from ..widget import Widget
+from textual.app import ComposeResult
+from textual.binding import Binding
+from textual.containers import ScrollableContainer
+from textual.reactive import reactive
+from textual.widget import Widget
 
 if TYPE_CHECKING:
-    from ..screen import Screen
+    from textual.screen import Screen
 
 
 @rich.repr.auto

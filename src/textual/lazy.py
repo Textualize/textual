@@ -4,7 +4,7 @@ Tools for lazy loading widgets.
 
 from __future__ import annotations
 
-from .widget import Widget
+from textual.widget import Widget
 
 
 class Lazy(Widget):

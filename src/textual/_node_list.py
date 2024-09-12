@@ -10,8 +10,8 @@ import rich.repr
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
 
-    from .dom import DOMNode
-    from .widget import Widget
+    from textual.dom import DOMNode
+    from textual.widget import Widget
 
 
 class DuplicateIds(Exception):
