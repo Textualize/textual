@@ -156,7 +156,6 @@ class ToastRack(Container, inherit_css=False):
         layout: vertical;
         overflow-y: scroll;
         margin-bottom: 1;
-        margin-right: 1;
     }
     """
     DEFAULT_CLASSES = "-textual-system"

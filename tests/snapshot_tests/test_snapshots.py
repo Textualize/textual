@@ -6,12 +6,13 @@ from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Vertical
 from textual.pilot import Pilot
 from textual.screen import Screen
-from textual.widgets import Button, DataTable, Input, RichLog, TextArea, Footer
+from textual.widgets import Button, Header, DataTable, Input, RichLog, TextArea, Footer
 from textual.widgets import Switch
 from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -905,6 +906,25 @@ def test_dock_scroll_off_by_one(snap_compare):
         terminal_size=(80, 25),
         press=["_"],
     )
+
+
+def test_dock_none(snap_compare):
+    """Checking that `dock:none` works in CSS and Python.
+    The label should appear at the top here, since we've undocked both
+    the header and footer.
+    """
+
+    class DockNone(App[None]):
+        CSS = "Header { dock: none; }"
+
+        def compose(self) -> ComposeResult:
+            yield Label("Hello")
+            yield Header()
+            footer = Footer()
+            footer.styles.dock = "none"
+            yield footer
+
+    assert snap_compare(DockNone(), terminal_size=(30, 5))
 
 
 def test_scroll_to(snap_compare):
@@ -1845,3 +1865,39 @@ def test_escape_to_minimize_screen_override(snap_compare):
 
     # ctrl+m to maximize, escape *should* minimize
     assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
+
+
+def test_app_focus_style(snap_compare):
+    """Test that app blur style can be selected."""
+
+    class FocusApp(App):
+        CSS = """
+        Label {
+            padding: 1 2;
+            margin: 1 2;
+            background: $panel;
+            border: $primary;
+        }
+        App:focus {
+            .blurred {
+                visibility: hidden;
+            }
+        }
+
+        App:blur {
+            .focussed {
+                visibility: hidden;
+            }
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("BLURRED", classes="blurred")
+            yield Label("FOCUSED", classes="focussed")
+
+    async def run_before(pilot: Pilot) -> None:
+        pilot.app.post_message(events.AppBlur())
+        await pilot.pause()
+
+    assert snap_compare(FocusApp(), run_before=run_before)
