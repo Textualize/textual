@@ -2817,7 +2817,7 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-            if widget.styles.dock:
+            if widget.styles.dock != "none":
                 scroll_offset = Offset(0, 0)
             else:
                 scroll_offset = container.scroll_to_region(

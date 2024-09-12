@@ -342,7 +342,7 @@ class StylesBase:
     max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
     """Set the maximum height of the widget."""
     dock = DockProperty()
-    """Set which edge of the parent to dock this widget to e.g. "top", "left", "right", "bottom".
+    """Set which edge of the parent to dock this widget to e.g. "top", "left", "right", "bottom", "none".
     """
     split = SplitProperty()
 
@@ -544,6 +544,18 @@ class StylesBase:
         """Does the node have automatic height?"""
         height = self.height
         return height is not None and height.unit == Unit.AUTO
+
+    @property
+    def is_docked(self) -> bool:
+        """Is the node docked?"""
+        dock = self.dock
+        return dock != "none"
+
+    @property
+    def is_split(self) -> bool:
+        """Is the node split?"""
+        split = self.split
+        return split != "none"
 
     def has_rule(self, rule_name: str) -> bool:
         """Check if a rule is set on this Styles object.

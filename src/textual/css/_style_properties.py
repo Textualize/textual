@@ -606,9 +606,9 @@ class DockProperty:
             objtype: The ``Styles`` class.
 
         Returns:
-            The dock name as a string, or "" if the rule is not set.
+            The edge name as a string. Returns "none" if unset or if "none" has been explicitly set.
         """
-        return obj.get_rule("dock", "")  # type: ignore[return-value]
+        return obj.get_rule("dock", "none")  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, dock_name: str):
         """Set the Dock property.
@@ -623,8 +623,8 @@ class DockProperty:
 
 
 class SplitProperty:
-    """Descriptor for getting and setting the split property. The split property
-    allows you to specify which edge you want to split.
+    """Descriptor for getting and setting the split property.
+    The split property allows you to specify which edge you want to split.
     """
 
     def __get__(
@@ -637,9 +637,9 @@ class SplitProperty:
             objtype: The ``Styles`` class.
 
         Returns:
-            The dock name as a string, or "" if the rule is not set.
+            The edge name as a string. Returns "none" if unset or if "none" has been explicitly set.
         """
-        return obj.get_rule("split", "")  # type: ignore[return-value]
+        return obj.get_rule("split", "none")  # type: ignore[return-value]
 
     def __set__(self, obj: StylesBase, dock_name: str):
         """Set the Dock property.

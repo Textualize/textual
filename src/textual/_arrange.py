@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from fractions import Fraction
 from operator import attrgetter
-from typing import TYPE_CHECKING, Callable, Iterable, Mapping, Sequence
+from typing import TYPE_CHECKING, Iterable, Mapping, Sequence
 
 from ._layout import DockArrangeResult, WidgetPlacement
 from ._partition import partition
@@ -48,17 +48,8 @@ def arrange(
     placements: list[WidgetPlacement] = []
     scroll_spacing = Spacing()
 
-    def _attrgetter_convert_none(attribute: str) -> Callable[[Widget], str | None]:
-        """Get an attribute of a widget, but return None if the attribute is "none"."""
-
-        def getter(widget: Widget):
-            value = attrgetter(attribute)(widget)
-            return value if value != "none" else None
-
-        return getter
-
-    get_dock = _attrgetter_convert_none("styles.dock")
-    get_split = _attrgetter_convert_none("styles.split")
+    get_dock = attrgetter("styles.is_docked")
+    get_split = attrgetter("styles.is_split")
 
     styles = widget.styles
 
@@ -173,7 +164,7 @@ def _arrange_dock_widgets(
             right = max(right, widget_width)
         else:
             # Should not occur, mainly to keep Mypy happy
-            raise AssertionError("invalid value for edge")  # pragma: no-cover
+            raise AssertionError("invalid value for dock edge")  # pragma: no-cover
 
         align_offset = dock_widget.styles._align_size(
             (widget_width, widget_height), size
@@ -231,6 +222,9 @@ def _arrange_split_widgets(
         elif split == "right":
             widget_width = int(widget_width_fraction) + margin.width
             view_region, split_region = view_region.split_vertical(-widget_width)
+        else:
+            raise AssertionError("invalid value for split edge")  # pragma: no-cover
+
         append_placement(
             _WidgetPlacement(split_region, null_spacing, split_widget, 1, True)
         )
