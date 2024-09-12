@@ -60,10 +60,6 @@ class Toast(Static, inherit_css=False):
         text-style: bold;
     }
 
-    Toast {
-        border-right: outer $background;
-    }
-
     Toast.-information {
         border-left: outer $success;
     }

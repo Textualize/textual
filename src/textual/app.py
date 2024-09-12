@@ -1084,17 +1084,17 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
-        self.call_later(self.refresh_css)
+        self.call_next(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.dark:
             self._refresh_truecolor_filter(theme)
-            self.call_later(self.refresh_css)
+            self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         if not self.dark:
             self._refresh_truecolor_filter(theme)
-            self.call_later(self.refresh_css)
+            self.call_next(self.refresh_css)
 
     @property
     def ansi_theme(self) -> TerminalTheme:
@@ -3130,7 +3130,10 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.screen._refresh_layout(self.size)
+        try:
+            self.screen._refresh_layout(self.size)
+        except ScreenError:
+            pass
         # The other screens in the stack will need to know about some style
         # changes, as a final pass let's check in on every screen that isn't
         # the current one and update them too.

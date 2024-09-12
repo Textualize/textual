@@ -11,10 +11,12 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
+import os
 import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
 from functools import partial
+from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -35,6 +37,7 @@ from ._context import message_hook as message_hook_context_var
 from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
+from .constants import SLOW_THRESHOLD
 from .css.match import match
 from .events import Event
 from .message import Message
@@ -666,6 +669,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Allow apps to treat events and messages separately
             if isinstance(message, Event):
                 await self.on_event(message)
+            elif "debug" in self.app.features:
+                start = perf_counter()
+                await self._on_message(message)
+                if perf_counter() - start > SLOW_THRESHOLD / 1000:
+                    log.warning(
+                        f"method=<{self.__class__.__name__}."
+                        f"{message.handler_name}>",
+                        f"Took over {SLOW_THRESHOLD}ms to process.",
+                        "\nTo avoid screen freezes, consider using a worker.",
+                    )
             else:
                 await self._on_message(message)
             if self._next_callbacks:
