@@ -13,11 +13,11 @@ from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 import rich.repr
 
-from .worker import Worker, WorkerState, WorkType
+from textual.worker import Worker, WorkerState, WorkType
 
 if TYPE_CHECKING:
-    from .app import App
-    from .dom import DOMNode
+    from textual.app import App
+    from textual.dom import DOMNode
 
 
 @rich.repr.auto(angular=True)

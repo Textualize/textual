@@ -8,17 +8,17 @@ from weakref import WeakKeyDictionary
 
 from typing_extensions import Literal, Self
 
-from .. import events
+from textual import events
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
 
-from ..css._error_tools import friendly_list
-from ..reactive import Reactive, reactive
-from ..widget import Widget
+from textual.css._error_tools import friendly_list
+from textual.reactive import Reactive, reactive
+from textual.widget import Widget
 
 if TYPE_CHECKING:
-    from ..app import App
+    from textual.app import App
 
 PlaceholderVariant = Literal["default", "size", "text"]
 """The different variants of placeholder."""

@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING, Any, Awaitable, Generator
 import rich.repr
 from typing_extensions import Self
 
-from ._debug import get_caller_file_and_line
-from .message_pump import MessagePump
+from textual._debug import get_caller_file_and_line
+from textual.message_pump import MessagePump
 
 if TYPE_CHECKING:
-    from .types import CallbackType
+    from textual.types import CallbackType
 
 
 @rich.repr.auto(angular=True)

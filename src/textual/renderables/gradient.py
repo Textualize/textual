@@ -7,7 +7,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
-from ..color import Color, Gradient
+from textual.color import Color, Gradient
 
 
 class VerticalGradient:
@@ -139,9 +139,8 @@ if __name__ == "__main__":
 
     from time import time
 
+    from textual.app import App, ComposeResult
     from textual.widgets import Static
-
-    from ..app import App, ComposeResult
 
     class GradientApp(App):
         CSS = """

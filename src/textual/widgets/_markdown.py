@@ -16,15 +16,15 @@ from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
-from .._slug import TrackedSlugs
-from ..app import ComposeResult
-from ..await_complete import AwaitComplete
-from ..containers import Horizontal, Vertical, VerticalScroll
-from ..events import Mount
-from ..message import Message
-from ..reactive import reactive, var
-from ..widget import Widget
-from ..widgets import Static, Tree
+from textual._slug import TrackedSlugs
+from textual.app import ComposeResult
+from textual.await_complete import AwaitComplete
+from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.events import Mount
+from textual.message import Message
+from textual.reactive import reactive, var
+from textual.widget import Widget
+from textual.widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 """Information about the table of contents of a markdown document.

@@ -11,12 +11,12 @@ from rich.style import Style
 from rich.text import Text, TextType
 from typing_extensions import Self
 
-from .. import events
-from ..binding import Binding
-from ..messages import Message
-from ..strip import Strip
-from ._option_list import NewOptionListContent, Option, OptionList
-from ._toggle_button import ToggleButton
+from textual import events
+from textual.binding import Binding
+from textual.messages import Message
+from textual.strip import Strip
+from textual.widgets._option_list import NewOptionListContent, Option, OptionList
+from textual.widgets._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
 """The type for the value of a [`Selection`][textual.widgets.selection_list.Selection] in a [`SelectionList`][textual.widgets.SelectionList]"""

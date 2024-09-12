@@ -3,7 +3,7 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import NamedTuple
 
-from .geometry import Spacing
+from textual.geometry import Spacing
 
 
 class BoxModel(NamedTuple):

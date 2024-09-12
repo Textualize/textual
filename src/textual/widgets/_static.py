@@ -7,10 +7,10 @@ from rich.protocol import is_renderable
 from rich.text import Text
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
 
-from ..errors import RenderError
-from ..widget import Widget
+from textual.errors import RenderError
+from textual.widget import Widget
 
 
 def _check_renderable(renderable: object):

@@ -1,6 +1,6 @@
 from typing import Callable
 
-from .expand_tabs import get_tab_widths
+from textual.expand_tabs import get_tab_widths
 
 __all__ = ["cell_len", "cell_width_to_column_index"]
 

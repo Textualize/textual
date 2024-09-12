@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from rich.console import RenderableType
 
-from ._animator import EasingFunction
-from ._types import AnimationLevel, CallbackType
-from .containers import ScrollableContainer
-from .geometry import Region, Size
+from textual._animator import EasingFunction
+from textual._types import AnimationLevel, CallbackType
+from textual.containers import ScrollableContainer
+from textual.geometry import Region, Size
 
 
 class ScrollView(ScrollableContainer):

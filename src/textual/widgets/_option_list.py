@@ -9,15 +9,15 @@ from rich.padding import Padding
 from rich.rule import Rule
 from rich.style import NULL_STYLE, Style
 
-from .. import _widget_navigation, events
-from .._widget_navigation import Direction
-from ..binding import Binding, BindingType
-from ..cache import LRUCache
-from ..geometry import Region, Size
-from ..message import Message
-from ..reactive import reactive
-from ..scroll_view import ScrollView
-from ..strip import Strip
+from textual import _widget_navigation, events
+from textual._widget_navigation import Direction
+from textual.binding import Binding, BindingType
+from textual.cache import LRUCache
+from textual.geometry import Region, Size
+from textual.message import Message
+from textual.reactive import reactive
+from textual.scroll_view import ScrollView
+from textual.strip import Strip
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias
@@ -1032,7 +1032,7 @@ class OptionList(ScrollView, can_focus=True):
 
 
 if __name__ == "__main__":
-    from ..app import App, ComposeResult
+    from textual.app import App, ComposeResult
 
     class OptionApp(App):
         def compose(self) -> ComposeResult:

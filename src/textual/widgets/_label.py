@@ -1,6 +1,6 @@
 """Provides a simple Label widget."""
 
-from ._static import Static
+from textual.widgets._static import Static
 
 
 class Label(Static):

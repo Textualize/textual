@@ -6,11 +6,11 @@ from datetime import datetime
 
 from rich.text import Text
 
-from ..app import RenderResult
-from ..dom import NoScreen
-from ..events import Click, Mount
-from ..reactive import Reactive
-from ..widget import Widget
+from textual.app import RenderResult
+from textual.dom import NoScreen
+from textual.events import Click, Mount
+from textual.reactive import Reactive
+from textual.widget import Widget
 
 
 class HeaderIcon(Widget):

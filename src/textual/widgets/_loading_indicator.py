@@ -7,10 +7,10 @@ from rich.style import Style
 from rich.text import Text
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
-from ..color import Gradient
-from ..events import Mount
-from ..widget import Widget
+    from textual.app import RenderResult
+from textual.color import Gradient
+from textual.events import Mount
+from textual.widget import Widget
 
 
 class LoadingIndicator(Widget):

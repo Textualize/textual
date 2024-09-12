@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from .. import events
-from ..app import ComposeResult
-from ..binding import Binding
-from ..containers import Container
-from ..css.query import NoMatches
-from ..message import Message
-from ..reactive import reactive
-from ..widget import Widget
-from ..widgets import Static
+from textual import events
+from textual.app import ComposeResult
+from textual.binding import Binding
+from textual.containers import Container
+from textual.css.query import NoMatches
+from textual.message import Message
+from textual.reactive import reactive
+from textual.widget import Widget
+from textual.widgets import Static
 
 __all__ = ["Collapsible", "CollapsibleTitle"]
 

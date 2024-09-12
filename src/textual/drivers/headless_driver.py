@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import asyncio
 
-from .. import events
-from ..driver import Driver
-from ..geometry import Size
+from textual import events
+from textual.driver import Driver
+from textual.geometry import Size
 
 
 class HeadlessDriver(Driver):

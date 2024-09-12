@@ -4,7 +4,7 @@ import time
 from collections import deque
 from dataclasses import dataclass, field
 
-from ._edit import Edit
+from textual.document._edit import Edit
 
 
 class HistoryException(Exception):

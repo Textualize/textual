@@ -9,7 +9,7 @@ If there is *no* active app, then log messages will go to stderr or stdout, depe
 import sys
 from logging import Handler, LogRecord
 
-from ._context import active_app
+from textual._context import active_app
 
 
 class TextualHandler(Handler):

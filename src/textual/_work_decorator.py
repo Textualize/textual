@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, ove
 from typing_extensions import ParamSpec, TypeAlias
 
 if TYPE_CHECKING:
-    from .worker import Worker
+    from textual.worker import Worker
 
 
 FactoryParamSpec = ParamSpec("FactoryParamSpec")
@@ -119,7 +119,7 @@ def work(
             *args: DecoratorParamSpec.args, **kwargs: DecoratorParamSpec.kwargs
         ) -> Worker[ReturnType]:
             """The replaced callable."""
-            from .dom import DOMNode
+            from textual.dom import DOMNode
 
             self = args[0]
             assert isinstance(self, DOMNode)

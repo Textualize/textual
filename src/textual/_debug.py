@@ -4,7 +4,7 @@ Functions related to debugging.
 
 from __future__ import annotations
 
-from . import constants
+from textual import constants
 
 
 def get_caller_file_and_line() -> str | None:

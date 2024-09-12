@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from ._document import EditResult, Location, Selection
+from textual.document._document import EditResult, Location, Selection
 
 if TYPE_CHECKING:
     from textual.widgets import TextArea

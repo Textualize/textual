@@ -3,13 +3,13 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING, Iterable
 
-from .._layout import ArrangeResult, Layout, WidgetPlacement
-from .._resolve import resolve
-from ..css.scalar import Scalar
-from ..geometry import Region, Size, Spacing
+from textual._layout import ArrangeResult, Layout, WidgetPlacement
+from textual._resolve import resolve
+from textual.css.scalar import Scalar
+from textual.geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
-    from ..widget import Widget
+    from textual.widget import Widget
 
 
 class GridLayout(Layout):

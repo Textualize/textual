@@ -13,12 +13,12 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.text import Text
 
-from ..cache import LRUCache
-from ..events import Resize
-from ..geometry import Size
-from ..reactive import var
-from ..scroll_view import ScrollView
-from ..strip import Strip
+from textual.cache import LRUCache
+from textual.events import Resize
+from textual.geometry import Size
+from textual.reactive import var
+from textual.scroll_view import ScrollView
+from textual.strip import Strip
 
 if TYPE_CHECKING:
     from typing_extensions import Self

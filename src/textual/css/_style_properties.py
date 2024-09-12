@@ -25,12 +25,11 @@ import rich.repr
 from rich.style import Style
 from typing_extensions import TypeAlias
 
-from .._border import normalize_border_value
-from .._cells import cell_len
-from ..color import TRANSPARENT, Color, ColorParseError
-from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
-from ._error_tools import friendly_list
-from ._help_text import (
+from textual._border import normalize_border_value
+from textual._cells import cell_len
+from textual.color import TRANSPARENT, Color, ColorParseError
+from textual.css._error_tools import friendly_list
+from textual.css._help_text import (
     border_property_help_text,
     color_property_help_text,
     fractional_property_help_text,
@@ -41,9 +40,9 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import HATCHES, VALID_STYLE_FLAGS
-from .errors import StyleTypeError, StyleValueError
-from .scalar import (
+from textual.css.constants import HATCHES, VALID_STYLE_FLAGS
+from textual.css.errors import StyleTypeError, StyleValueError
+from textual.css.scalar import (
     NULL_SCALAR,
     UNIT_SYMBOL,
     Scalar,
@@ -53,14 +52,15 @@ from .scalar import (
     get_symbols,
     percentage_string_to_float,
 )
-from .transition import Transition
+from textual.css.transition import Transition
+from textual.geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
-    from ..canvas import CanvasLineType
-    from .._layout import Layout
-    from .styles import StylesBase
+    from textual.canvas import CanvasLineType
+    from textual._layout import Layout
+    from textual.css.styles import StylesBase
 
-from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
+from textual.css.types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
 BorderDefinition: TypeAlias = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color] | Literal['none']"
@@ -679,8 +679,8 @@ class LayoutProperty:
                 or a ``Layout`` object.
         """
 
-        from ..layouts.factory import Layout  # Prevents circular import
-        from ..layouts.factory import MissingLayout, get_layout
+        from textual.layouts.factory import Layout  # Prevents circular import
+        from textual.layouts.factory import MissingLayout, get_layout
 
         _rich_traceback_omit = True
         if layout is None:
@@ -858,7 +858,7 @@ class OverflowProperty(StringEnumProperty):
     """Descriptor for overflow styles that forces widgets to refresh scrollbars."""
 
     def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
-        from ..widget import Widget  # Avoid circular import
+        from textual.widget import Widget  # Avoid circular import
 
         if isinstance(obj.node, Widget):
             obj.node._refresh_scrollbars()
@@ -1005,7 +1005,7 @@ class ScrollbarColorProperty(ColorProperty):
         if obj.node is None:
             return
 
-        from ..widget import Widget
+        from textual.widget import Widget
 
         if isinstance(obj.node, Widget):
             widget = obj.node

@@ -6,16 +6,16 @@ from typing import Optional
 
 from rich.style import Style
 
-from .._types import UnusedParameter
-from ..app import ComposeResult, RenderResult
-from ..clock import Clock
-from ..color import Gradient
-from ..eta import ETA
-from ..geometry import clamp
-from ..reactive import reactive
-from ..renderables.bar import Bar as BarRenderable
-from ..widget import Widget
-from ..widgets import Label
+from textual._types import UnusedParameter
+from textual.app import ComposeResult, RenderResult
+from textual.clock import Clock
+from textual.color import Gradient
+from textual.eta import ETA
+from textual.geometry import clamp
+from textual.reactive import reactive
+from textual.renderables.bar import Bar as BarRenderable
+from textual.widget import Widget
+from textual.widgets import Label
 
 UNUSED = UnusedParameter()
 """Sentinel for method signatures."""

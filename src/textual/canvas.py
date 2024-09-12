@@ -18,10 +18,10 @@ from rich.segment import Segment
 from rich.style import Style
 from typing_extensions import Literal, TypeAlias
 
-from ._box_drawing import BOX_CHARACTERS, Quad, combine_quads
-from .color import Color
-from .geometry import Offset, clamp
-from .strip import Strip, StripRenderable
+from textual._box_drawing import BOX_CHARACTERS, Quad, combine_quads
+from textual.color import Color
+from textual.geometry import Offset, clamp
+from textual.strip import Strip, StripRenderable
 
 CanvasLineType: TypeAlias = Literal["thin", "heavy", "double"]
 

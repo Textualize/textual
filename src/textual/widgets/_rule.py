@@ -7,11 +7,11 @@ from rich.segment import Segment
 from rich.style import Style
 from typing_extensions import Literal
 
-from ..app import RenderResult
-from ..css._error_tools import friendly_list
-from ..geometry import Size
-from ..reactive import Reactive, reactive
-from ..widget import Widget
+from textual.app import RenderResult
+from textual.css._error_tools import friendly_list
+from textual.geometry import Size
+from textual.reactive import Reactive, reactive
+from textual.widget import Widget
 
 RuleOrientation = Literal["horizontal", "vertical"]
 """The valid orientations of the rule widget."""

@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING, Iterable, Sequence, cast
 
 from typing_extensions import Literal
 
-from .box_model import BoxModel
-from .css.scalar import Scalar
-from .css.styles import RenderStyles
-from .geometry import Size
+from textual.box_model import BoxModel
+from textual.css.scalar import Scalar
+from textual.css.styles import RenderStyles
+from textual.geometry import Size
 
 if TYPE_CHECKING:
-    from .widget import Widget
+    from textual.widget import Widget
 
 
 def resolve(

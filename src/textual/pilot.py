@@ -13,12 +13,12 @@ from typing import Any, Generic
 
 import rich.repr
 
-from ._wait import wait_for_idle
-from .app import App, ReturnType
-from .drivers.headless_driver import HeadlessDriver
-from .events import Click, MouseDown, MouseEvent, MouseMove, MouseUp, Resize
-from .geometry import Offset, Size
-from .widget import Widget
+from textual._wait import wait_for_idle
+from textual.app import App, ReturnType
+from textual.drivers.headless_driver import HeadlessDriver
+from textual.events import Click, MouseDown, MouseEvent, MouseMove, MouseUp, Resize
+from textual.geometry import Offset, Size
+from textual.widget import Widget
 
 
 def _get_mouse_message_arguments(

@@ -5,12 +5,12 @@ import sys
 from threading import Event, Thread
 from typing import TYPE_CHECKING, Callable
 
-from ..driver import Driver
-from . import win32
-from ._writer_thread import WriterThread
+from textual.driver import Driver
+from textual.drivers import win32
+from textual.drivers._writer_thread import WriterThread
 
 if TYPE_CHECKING:
-    from ..app import App
+    from textual.app import App
 
 
 class WindowsDriver(Driver):

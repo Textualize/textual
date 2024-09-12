@@ -9,11 +9,10 @@ import rich.repr
 from rich.style import Style
 from typing_extensions import TypedDict
 
-from .._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
-from .._types import AnimationLevel, CallbackType
-from ..color import Color
-from ..geometry import Offset, Spacing
-from ._style_properties import (
+from textual._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
+from textual._types import AnimationLevel, CallbackType
+from textual.color import Color
+from textual.css._style_properties import (
     AlignProperty,
     BooleanProperty,
     BorderProperty,
@@ -38,7 +37,7 @@ from ._style_properties import (
     StyleFlagsProperty,
     TransitionsProperty,
 )
-from .constants import (
+from textual.css.constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BOX_SIZING,
@@ -50,10 +49,10 @@ from .constants import (
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
 )
-from .scalar import Scalar, ScalarOffset, Unit
-from .scalar_animation import ScalarAnimation
-from .transition import Transition
-from .types import (
+from textual.css.scalar import Scalar, ScalarOffset, Unit
+from textual.css.scalar_animation import ScalarAnimation
+from textual.css.transition import Transition
+from textual.css.types import (
     AlignHorizontal,
     AlignVertical,
     BoxSizing,
@@ -67,11 +66,12 @@ from .types import (
     TextAlign,
     Visibility,
 )
+from textual.geometry import Offset, Spacing
 
 if TYPE_CHECKING:
-    from .._layout import Layout
-    from ..dom import DOMNode
-    from .types import CSSLocation
+    from textual._layout import Layout
+    from textual.css.types import CSSLocation
+    from textual.dom import DOMNode
 
 
 class RulesMap(TypedDict, total=False):
@@ -477,7 +477,7 @@ class StylesBase:
             if not isinstance(value, (Scalar, ScalarOffset)):
                 return None
 
-            from ..widget import Widget
+            from textual.widget import Widget
 
             assert isinstance(self.node, Widget)
             return ScalarAnimation(
@@ -671,7 +671,7 @@ class StylesBase:
         Returns:
             A Styles instance containing result of parsing CSS.
         """
-        from .parse import parse_declarations
+        from textual.css.parse import parse_declarations
 
         styles = parse_declarations(css, read_from)
         styles.node = node

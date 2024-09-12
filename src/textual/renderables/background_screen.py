@@ -6,10 +6,10 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
-from ..color import Color
+from textual.color import Color
 
 if TYPE_CHECKING:
-    from ..screen import Screen
+    from textual.screen import Screen
 
 
 class BackgroundScreen:

@@ -10,12 +10,12 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 
-from ..suggestions import get_suggestion
-from ._error_tools import friendly_list
-from .constants import VALID_PSEUDO_CLASSES
+from textual.css._error_tools import friendly_list
+from textual.css.constants import VALID_PSEUDO_CLASSES
+from textual.suggestions import get_suggestion
 
 if TYPE_CHECKING:
-    from .types import CSSLocation
+    from textual.css.types import CSSLocation
 
 
 class TokenError(Exception):

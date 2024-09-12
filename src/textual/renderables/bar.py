@@ -4,7 +4,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.style import Style, StyleType
 from rich.text import Text
 
-from ..color import Gradient
+from textual.color import Gradient
 
 
 class Bar:

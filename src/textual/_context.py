@@ -4,10 +4,10 @@ from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
-    from .app import App
-    from .message import Message
-    from .message_pump import MessagePump
-    from .screen import Screen
+    from textual.app import App
+    from textual.message import Message
+    from textual.message_pump import MessagePump
+    from textual.screen import Screen
 
 
 class NoActiveAppError(RuntimeError):

@@ -1,3 +1,3 @@
-from ._button import ButtonVariant
+from textual.widgets._button import ButtonVariant
 
 __all__ = ["ButtonVariant"]

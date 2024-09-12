@@ -4,16 +4,14 @@ from typing import Iterable, NoReturn, cast
 
 import rich.repr
 
-from .._border import BorderValue, normalize_border_value
-from .._cells import cell_len
-from .._duration import _duration_as_seconds
-from .._easing import EASING
-from ..color import TRANSPARENT, Color, ColorParseError
-from ..geometry import Spacing, SpacingDimensions, clamp
-from ..suggestions import get_suggestion
-from ._error_tools import friendly_list
-from ._help_renderables import HelpText
-from ._help_text import (
+from textual._border import BorderValue, normalize_border_value
+from textual._cells import cell_len
+from textual._duration import _duration_as_seconds
+from textual._easing import EASING
+from textual.color import TRANSPARENT, Color, ColorParseError
+from textual.css._error_tools import friendly_list
+from textual.css._help_renderables import HelpText
+from textual.css._help_text import (
     align_help_text,
     border_property_help_text,
     color_property_help_text,
@@ -36,7 +34,7 @@ from ._help_text import (
     table_rows_or_columns_help_text,
     text_align_help_text,
 )
-from .constants import (
+from textual.css.constants import (
     HATCHES,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
@@ -54,9 +52,9 @@ from .constants import (
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
 )
-from .errors import DeclarationError, StyleValueError
-from .model import Declaration
-from .scalar import (
+from textual.css.errors import DeclarationError, StyleValueError
+from textual.css.model import Declaration
+from textual.css.scalar import (
     Scalar,
     ScalarError,
     ScalarOffset,
@@ -64,10 +62,12 @@ from .scalar import (
     Unit,
     percentage_string_to_float,
 )
-from .styles import Styles
-from .tokenize import Token
-from .transition import Transition
-from .types import BoxSizing, Display, EdgeType, Overflow, Visibility
+from textual.css.styles import Styles
+from textual.css.tokenize import Token
+from textual.css.transition import Transition
+from textual.css.types import BoxSizing, Display, EdgeType, Overflow, Visibility
+from textual.geometry import Spacing, SpacingDimensions, clamp
+from textual.suggestions import get_suggestion
 
 
 class StylesBuilder:
@@ -611,7 +611,7 @@ class StylesBuilder:
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:
-        from ..layouts.factory import MissingLayout, get_layout
+        from textual.layouts.factory import MissingLayout, get_layout
 
         if tokens:
             if len(tokens) != 1:
