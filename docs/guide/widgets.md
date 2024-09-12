@@ -60,7 +60,7 @@ A widget's bindings will only be checked if it or one of its descendants has foc
 
 Let's look at Textual's builtin [Button](../widgets/button.md) widget to see an example of how widget bindings work.
 The `Button` widget has a single binding for the `enter` key.
-When a button is focused, and the user presses ++enter++, the `action_press` method inside button is called.
+When a button is focused, and the user presses ++enter++, the `action_press` method inside `Button` is called.
 
 ```python
 class Button(Widget, can_focus=True): # (1)!
