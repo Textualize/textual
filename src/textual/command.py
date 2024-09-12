@@ -20,7 +20,6 @@ from asyncio import (
 from dataclasses import dataclass
 from functools import total_ordering
 from inspect import isclass
-from operator import attrgetter
 from time import monotonic
 from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
 
@@ -893,7 +892,12 @@ class CommandPalette(SystemModalScreen):
             else None
         )
 
-        sorted_commands = sorted(commands, key=attrgetter("hit"), reverse=True)
+        def sort_key(command: Command) -> tuple[float, str]:
+            score = getattr(command.hit, "score", 0)
+            text = command.hit.text
+            return (-score, text or "")
+
+        sorted_commands = sorted(commands, key=sort_key)
         command_list.clear_options().add_options(sorted_commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
@@ -1064,8 +1068,9 @@ class CommandPalette(SystemModalScreen):
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
-            input.value = str(event.option.command.text)
-            self._selected_command = event.option.command
+            hit = event.option.hit
+            input.value = str(hit.text)
+            self._selected_command = hit
         input.action_end()
         self._list_visible = False
         self.query_one(CommandList).clear_options()
