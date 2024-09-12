@@ -6,6 +6,7 @@ from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Vertical
@@ -124,7 +125,9 @@ def test_masked_input(snap_compare):
         pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "masked_input.py", press=["A","B","C","0","1","-","D","E"], run_before=run_before
+        SNAPSHOT_APPS_DIR / "masked_input.py",
+        press=["A", "B", "C", "0", "1", "-", "D", "E"],
+        run_before=run_before,
     )
 
 
@@ -1820,3 +1823,39 @@ def test_escape_to_minimize_screen_override(snap_compare):
 
     # ctrl+m to maximize, escape *should* minimize
     assert snap_compare(TextAreaExample(), press=["ctrl+m", "escape"])
+
+
+def test_app_focus_style(snap_compare):
+    """Test that app blur style can be selected."""
+
+    class FocusApp(App):
+        CSS = """
+        Label {
+            padding: 1 2;
+            margin: 1 2;
+            background: $panel;
+            border: $primary;
+        }
+        App:focus {
+            .blurred {
+                visibility: hidden;
+            }
+        }
+
+        App:blur {
+            .focussed {
+                visibility: hidden;
+            }
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("BLURRED", classes="blurred")
+            yield Label("FOCUSED", classes="focussed")
+
+    async def run_before(pilot: Pilot) -> None:
+        pilot.app.post_message(events.AppBlur())
+        await pilot.pause()
+
+    assert snap_compare(FocusApp(), run_before=run_before)

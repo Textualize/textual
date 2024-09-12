@@ -312,6 +312,8 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+
+        /* When a widget is maximized */
         Screen.-maximized-view {                    
             layout: vertical !important;
             hatch: right $panel;
@@ -320,6 +322,10 @@ class App(Generic[ReturnType], DOMNode):
             .-maximized {
                 dock: initial !important;
             }
+        }
+        /* Fade the header title when app is blurred */
+        &:blur HeaderTitle {           
+            text-opacity: 50%;           
         }
     }
     *:disabled:can-focus {
@@ -819,6 +825,17 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
+
+    def get_pseudo_classes(self) -> Iterable[str]:
+        """Pseudo classes for a widget.
+
+        Returns:
+            Names of the pseudo classes.
+        """
+        yield "focus" if self.app_focus else "blur"
+        yield "dark" if self.dark else "light"
+        if self.is_inline:
+            yield "inline"
 
     def animate(
         self,
@@ -3617,6 +3634,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
+        self.screen._update_styles()
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
             # and if the screen is still the current screen and if nothing
