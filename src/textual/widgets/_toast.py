@@ -60,10 +60,6 @@ class Toast(Static, inherit_css=False):
         text-style: bold;
     }
 
-    Toast {
-        border-right: outer $background;
-    }
-
     Toast.-information {
         border-left: outer $success;
     }
@@ -160,7 +156,6 @@ class ToastRack(Container, inherit_css=False):
         layout: vertical;
         overflow-y: scroll;
         margin-bottom: 1;
-        margin-right: 1;
     }
     """
     DEFAULT_CLASSES = "-textual-system"

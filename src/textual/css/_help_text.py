@@ -457,17 +457,19 @@ def dock_property_help_text(property_name: str, context: StylingContext) -> Help
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
         bullets=[
-            Bullet("The value must be one of 'top', 'right', 'bottom' or 'left'"),
+            Bullet(
+                "The value must be one of 'top', 'right', 'bottom', 'left' or 'none'"
+            ),
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        "The 'dock' rule aligns a widget relative to the screen.",
+                        "The 'dock' rule attaches a widget to the edge of a container.",
                         examples=[Example('header.styles.dock = "top"')],
                     )
                 ],
                 css=[
                     Bullet(
-                        "The 'dock' rule aligns a widget relative to the screen.",
+                        "The 'dock' rule attaches a widget to the edge of a container.",
                         examples=[Example("dock: top")],
                     )
                 ],

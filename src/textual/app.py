@@ -312,6 +312,8 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+
+        /* When a widget is maximized */
         Screen.-maximized-view {                    
             layout: vertical !important;
             hatch: right $panel;
@@ -320,6 +322,10 @@ class App(Generic[ReturnType], DOMNode):
             .-maximized {
                 dock: initial !important;
             }
+        }
+        /* Fade the header title when app is blurred */
+        &:blur HeaderTitle {           
+            text-opacity: 50%;           
         }
     }
     *:disabled:can-focus {
@@ -820,6 +826,17 @@ class App(Generic[ReturnType], DOMNode):
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
 
+    def get_pseudo_classes(self) -> Iterable[str]:
+        """Pseudo classes for a widget.
+
+        Returns:
+            Names of the pseudo classes.
+        """
+        yield "focus" if self.app_focus else "blur"
+        yield "dark" if self.dark else "light"
+        if self.is_inline:
+            yield "inline"
+
     def animate(
         self,
         attribute: str,
@@ -1084,17 +1101,17 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
-        self.call_later(self.refresh_css)
+        self.call_next(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.dark:
             self._refresh_truecolor_filter(theme)
-            self.call_later(self.refresh_css)
+            self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         if not self.dark:
             self._refresh_truecolor_filter(theme)
-            self.call_later(self.refresh_css)
+            self.call_next(self.refresh_css)
 
     @property
     def ansi_theme(self) -> TerminalTheme:
@@ -3130,7 +3147,10 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.screen._refresh_layout(self.size)
+        try:
+            self.screen._refresh_layout(self.size)
+        except ScreenError:
+            pass
         # The other screens in the stack will need to know about some style
         # changes, as a final pass let's check in on every screen that isn't
         # the current one and update them too.
@@ -3614,6 +3634,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
+        self.screen._update_styles()
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
             # and if the screen is still the current screen and if nothing

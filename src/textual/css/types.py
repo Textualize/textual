@@ -6,8 +6,7 @@ from typing_extensions import Literal
 
 from ..color import Color
 
-Edge = Literal["top", "right", "bottom", "left"]
-DockEdge = Literal["top", "right", "bottom", "left", ""]
+DockEdge = Literal["none", "top", "right", "bottom", "left"]
 EdgeType = Literal[
     "",
     "ascii",
