@@ -11,7 +11,7 @@ from textual.binding import Binding
 from textual.containers import Vertical
 from textual.pilot import Pilot
 from textual.screen import Screen
-from textual.widgets import Button, Input, RichLog, TextArea, Footer
+from textual.widgets import Button, DataTable, Input, RichLog, TextArea, Footer
 from textual.widgets import Switch
 from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -124,7 +124,9 @@ def test_masked_input(snap_compare):
         pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "masked_input.py", press=["A","B","C","0","1","-","D","E"], run_before=run_before
+        SNAPSHOT_APPS_DIR / "masked_input.py",
+        press=["A", "B", "C", "0", "1", "-", "D", "E"],
+        run_before=run_before,
     )
 
 
@@ -188,6 +190,48 @@ def test_datatable_add_row_auto_height_sorted(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py", press=["s"]
     )
+
+
+def test_datatable_auto_height_future_updates(snap_compare):
+    """https://github.com/Textualize/textual/issues/4928 meant that when height=None,
+    in add_row, future updates to the table would be incorrect.
+
+    In this test, every 2nd row is auto height and every other row is height 2.
+    The table is cleared then fully repopulated with the same 4 rows. All 4 rows
+    should be visible and rendered at heights 2, 1, 2, 1.
+    """
+    ROWS = [
+        ("foo", "bar"),
+        (1, "abc"),
+        (2, "def"),
+        (3, "ghi"),
+        (4, "jkl"),
+    ]
+
+    class ExampleApp(App[None]):
+        CSS = "DataTable { border: solid red; }"
+
+        def compose(self) -> ComposeResult:
+            yield DataTable()
+
+        def on_mount(self) -> None:
+            table = self.query_one(DataTable)
+            table.add_columns(*ROWS[0])
+            self.populate_table()
+
+        def key_r(self) -> None:
+            self.populate_table()
+
+        def populate_table(self) -> None:
+            table = self.query_one(DataTable)
+            table.clear()
+            for i, row in enumerate(ROWS[1:]):
+                table.add_row(
+                    *row,
+                    height=None if i % 2 == 1 else 2,
+                )
+
+    assert snap_compare(ExampleApp(), press=["r"])
 
 
 def test_datatable_cell_padding(snap_compare):
