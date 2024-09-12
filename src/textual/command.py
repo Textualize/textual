@@ -892,10 +892,11 @@ class CommandPalette(SystemModalScreen):
             else None
         )
 
-        def sort_key(command: Command) -> tuple[float, str]:
+        def sort_key(command: Command) -> float:
+            # Only sort by score if it exists, otherwise do no sorting.
+            # This ensures we only sort Hits, and not DiscoveryHits.
             score = getattr(command.hit, "score", 0)
-            text = command.hit.text
-            return (-score, text or "")
+            return -score
 
         sorted_commands = sorted(commands, key=sort_key)
         command_list.clear_options().add_options(sorted_commands)
