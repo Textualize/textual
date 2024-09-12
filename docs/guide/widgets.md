@@ -51,6 +51,32 @@ The addition of the CSS has completely transformed our custom widget.
 ```{.textual path="docs/examples/guide/widgets/hello02.py"}
 ```
 
+### Responding to key presses
+
+Widgets can have a list of key [bindings](../guide/input.md#bindings) associated with them.
+This enables a widget to call [actions](../guide/actions.md) in response to key presses.
+
+A widget's bindings will only be checked if it or one of its descendants has focus.
+
+Let's look at Textual's builtin [Button](../widgets/button.md) widget to see an example of how widget bindings work.
+The `Button` widget has a single binding for the `enter` key.
+When a button is focused, and the user presses ++enter++, the `action_press` method inside button is called.
+
+```python
+class Button(Widget, can_focus=True): # (1)!
+    BINDINGS = [Binding("enter", "press", "Press Button", show=False)]  # (2)!
+    # ...
+    def action_press(self) -> None:  # (3)!
+        self.press()
+```
+
+1. The `Button` has `can_focus=True` to ensure it can be focused and therefore handle bindings.
+2. It has a binding which associates the ++enter++ key with the `action_press` method.
+3. `action_press` will be called when the user presses ++enter++ while the button is focused.
+
+Note that widgets cannot be focused by default.
+Setting `can_focus=True` is required to make a widget focusable.
+
 ## Static widget
 
 While you can extend the Widget class, a subclass will typically be a better starting point. The [Static][textual.widgets.Static] class is a widget subclass which caches the result of render, and provides an [update()][textual.widgets.Static.update] method to update the content area.
