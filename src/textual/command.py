@@ -20,6 +20,7 @@ from asyncio import (
 from dataclasses import dataclass
 from functools import total_ordering
 from inspect import isclass
+from operator import attrgetter
 from time import monotonic
 from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
 
@@ -312,12 +313,12 @@ class Provider(ABC):
 @rich.repr.auto
 @total_ordering
 class Command(Option):
-    """Class that holds a command in the [`CommandList`][textual.command.CommandList]."""
+    """Class that holds a hit in the [`CommandList`][textual.command.CommandList]."""
 
     def __init__(
         self,
         prompt: RenderableType,
-        command: DiscoveryHit | Hit,
+        hit: DiscoveryHit | Hit,
         id: str | None = None,
         disabled: bool = False,
     ) -> None:
@@ -325,22 +326,22 @@ class Command(Option):
 
         Args:
             prompt: The prompt for the option.
-            command: The details of the command associated with the option.
+            hit: The details of the hit associated with the option.
             id: The optional ID for the option.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         super().__init__(prompt, id, disabled)
-        self.command = command
-        """The details of the command associated with the option."""
+        self.hit = hit
+        """The details of the hit associated with the option."""
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, Command):
-            return self.command < other.command
+            return self.hit < other.hit
         return NotImplemented
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Command):
-            return self.command == other.command
+            return self.hit == other.hit
         return NotImplemented
 
 
@@ -891,7 +892,9 @@ class CommandPalette(SystemModalScreen):
             if command_list.highlighted is not None and not clear_current
             else None
         )
-        command_list.clear_options().add_options(commands)
+
+        sorted_commands = sorted(commands, key=attrgetter("hit"), reverse=True)
+        command_list.clear_options().add_options(sorted_commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
 
