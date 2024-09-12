@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 TOP_Z = 2**31 - 1
 
 
-def _build_dock_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
+def _build_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
     """Organize widgets into layers.
 
     Args:
@@ -47,17 +47,19 @@ def arrange(
 
     placements: list[WidgetPlacement] = []
     scroll_spacing = Spacing()
-    get_dock = attrgetter("styles.dock")
-    get_split = attrgetter("styles.split")
+
+    get_dock = attrgetter("styles.is_docked")
+    get_split = attrgetter("styles.is_split")
+
     styles = widget.styles
 
     # Widgets which will be displayed
     display_widgets = [child for child in children if child.styles.display != "none"]
 
     # Widgets organized into layers
-    dock_layers = _build_dock_layers(display_widgets)
+    layers = _build_layers(display_widgets)
 
-    for widgets in dock_layers.values():
+    for widgets in layers.values():
         # Partition widgets in to split widgets and non-split widgets
         non_split_widgets, split_widgets = partition(get_split, widgets)
         if split_widgets:
@@ -162,7 +164,7 @@ def _arrange_dock_widgets(
             right = max(right, widget_width)
         else:
             # Should not occur, mainly to keep Mypy happy
-            raise AssertionError("invalid value for edge")  # pragma: no-cover
+            raise AssertionError("invalid value for dock edge")  # pragma: no-cover
 
         align_offset = dock_widget.styles._align_size(
             (widget_width, widget_height), size
@@ -220,6 +222,9 @@ def _arrange_split_widgets(
         elif split == "right":
             widget_width = int(widget_width_fraction) + margin.width
             view_region, split_region = view_region.split_vertical(-widget_width)
+        else:
+            raise AssertionError("invalid value for split edge")  # pragma: no-cover
+
         append_placement(
             _WidgetPlacement(split_region, null_spacing, split_widget, 1, True)
         )

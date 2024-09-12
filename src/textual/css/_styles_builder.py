@@ -557,7 +557,7 @@ class StylesBuilder:
             elif token.name == "token":
                 try:
                     keyline_color = Color.parse(token.value)
-                except Exception as error:
+                except Exception:
                     keyline_style = token.value
                     if keyline_style not in VALID_KEYLINE:
                         self.error(name, token, keyline_help_text())
@@ -732,8 +732,8 @@ class StylesBuilder:
                 dock_property_help_text(name, context="css"),
             )
 
-        dock = tokens[0].value
-        self.styles._rules["dock"] = dock
+        dock_value = tokens[0].value
+        self.styles._rules["dock"] = dock_value
 
     def process_split(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -746,8 +746,8 @@ class StylesBuilder:
                 split_property_help_text(name, context="css"),
             )
 
-        dock = tokens[0].value
-        self.styles._rules["split"] = dock
+        split_value = tokens[0].value
+        self.styles._rules["split"] = split_value
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
@@ -1064,6 +1064,10 @@ class StylesBuilder:
         character: str | None = None
         color = TRANSPARENT
         opacity = 1.0
+
+        if len(tokens) == 1 and tokens[0].value == "none":
+            self.styles._rules[name] = "none"
+            return
 
         if len(tokens) not in (2, 3):
             self.error(name, tokens[0], "2 or 3 values expected here")

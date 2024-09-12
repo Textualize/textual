@@ -11,7 +11,7 @@ from textual.binding import Binding
 from textual.containers import Vertical
 from textual.pilot import Pilot
 from textual.screen import Screen
-from textual.widgets import Button, Input, RichLog, TextArea, Footer
+from textual.widgets import Button, Header, Input, RichLog, TextArea, Footer
 from textual.widgets import Switch
 from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -861,6 +861,25 @@ def test_dock_scroll_off_by_one(snap_compare):
         terminal_size=(80, 25),
         press=["_"],
     )
+
+
+def test_dock_none(snap_compare):
+    """Checking that `dock:none` works in CSS and Python.
+    The label should appear at the top here, since we've undocked both
+    the header and footer.
+    """
+
+    class DockNone(App[None]):
+        CSS = "Header { dock: none; }"
+
+        def compose(self) -> ComposeResult:
+            yield Label("Hello")
+            yield Header()
+            footer = Footer()
+            footer.styles.dock = "none"
+            yield footer
+
+    assert snap_compare(DockNone(), terminal_size=(30, 5))
 
 
 def test_scroll_to(snap_compare):
