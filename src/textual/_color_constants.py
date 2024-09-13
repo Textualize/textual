@@ -18,6 +18,7 @@ ANSI_COLORS = [
     "bright_cyan",
     "bright_white",
 ]
+"""The names of ANSI colors (prefixed with ansi_ in CSS)."""
 
 COLOR_NAME_TO_RGB: dict[str, tuple[int, int, int] | tuple[int, int, int, int]] = {
     # Let's start with a specific pseudo-color::
