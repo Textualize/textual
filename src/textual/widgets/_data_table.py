@@ -818,6 +818,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for row in self.ordered_rows:
                 y_offsets += [(row.key, y) for y in range(row.height)]
             self._offset_cache[self._update_count] = y_offsets
+
         return y_offsets
 
     @property
@@ -1397,6 +1398,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # If there are rows that need to have their height computed, render them correctly
         # so that we can cache this rendering for later.
         if auto_height_rows:
+            self._offset_cache.clear()
             render_cell = self._render_cell  # This method renders & caches.
             should_highlight = self._should_highlight
             cursor_type = self.cursor_type
@@ -1450,6 +1452,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                                 for _ in range(height - cell_height)
                             ]
                         )
+
+            self._line_cache.clear()
+            self._styles_cache.clear()
 
         data_cells_width = sum(
             column.get_render_width(self) for column in self.columns.values()
