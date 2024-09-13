@@ -19,10 +19,13 @@ from ..widgets.data_table import CellDoesNotExist
 
 
 class InvalidWeekdayNumber(Exception):
-    pass
+    """Exception raised if an invalid weekday number is supplied."""
 
 
 class CalendarGrid(DataTable, inherit_bindings=False):
+    """The grid used internally by the `MonthCalendar` widget for displaying
+    and navigating dates."""
+
     # TODO: Ideally we want to hide that there's a DataTable underneath the
     # `MonthCalendar` widget. Is there any mechanism so component classes could be
     # defined in the parent and substitute the component styles in the child?
@@ -48,10 +51,32 @@ class MonthCalendar(Widget):
         Binding("right", "next_day", "Next Day", show=False),
         Binding("left", "previous_day", "Previous Day", show=False),
         Binding("pageup", "previous_month", "Previous Month", show=False),
-        Binding("pagedown", "next_month", "Next month", show=False),
+        Binding("pagedown", "next_month", "Next Month", show=False),
         Binding("ctrl+pageup", "previous_year", "Previous Year", show=False),
         Binding("ctrl+pagedown", "next_year", "Next Year", show=False),
     ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Select the date under the cursor. |
+    | up | Move to the previous week. |
+    | down | Move to the next week. |
+    | right | Move to the next day.|
+    | left | Move to the previous day. |
+    | pageup | Move to the previous month. |
+    | pagedown | Move to the next month. |
+    | ctrl+pageup | Move to the previous year. |
+    | ctrl+pagedown | Move to the next year. |
+    """
+
+    COMPONENT_CLASSES = {
+        "month-calendar--outside-month",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `month-calendar--outside-month` | Target the dates outside the current calendar month. |
+    """
 
     # TODO: min-width?
     DEFAULT_CSS = """
@@ -66,16 +91,19 @@ class MonthCalendar(Widget):
     }
     """
 
-    COMPONENT_CLASSES = {
-        "month-calendar--outside-month",
-    }
-
     date: Reactive[datetime.date] = Reactive(datetime.date.today)
     first_weekday: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(True)
     show_other_months: Reactive[bool] = Reactive(True)
 
     class DateHighlighted(Message):
+        """Posted by the `MonthCalendar` widget when the cursor moves to
+        highlight a new date.
+
+        Can be handled using `on_month_calendar_date_highlighted` in a subclass
+        of `MonthCalendar` or in a parent node in the DOM.
+        """
+
         def __init__(
             self,
             month_calendar: MonthCalendar,
@@ -90,6 +118,12 @@ class MonthCalendar(Widget):
             return self.month_calendar
 
     class DateSelected(Message):
+        """Posted by the `MonthCalendar` widget when a date is selected.
+
+        Can be handled using `on_month_calendar_date_selected` in a subclass
+        of `MonthCalendar` or in a parent node in the DOM.
+        """
+
         def __init__(
             self,
             month_calendar: MonthCalendar,
@@ -259,12 +293,12 @@ class MonthCalendar(Widget):
         calendar_grid.hover_coordinate = old_hover_coordinate
 
     def _get_calendar_dates(self) -> list[Sequence[datetime.date | None]]:
-        """A matrix of `datetime.date` objects for this month calendar, where
-        each row represents a week. If `show_other_months` is True, this returns
-        a six-week calendar including dates from the previous and next month.
-        If `show_other_months` is False, only weeks required for the month are
-        included and any dates outside the month are 'None'.
-        """
+        """Returns a matrix of `datetime.date` objects for this month calendar,
+        where each row represents a week. If `show_other_months` is True, this
+        returns a six-week calendar including dates from the previous and next
+        month. If `show_other_months` is False, only weeks required for the
+        month are included and any dates outside the month are 'None'."""
+
         month_weeks = self._calendar.monthdatescalendar(self.date.year, self.date.month)
         calendar_dates: list[Sequence[datetime.date | None]]
 
@@ -336,7 +370,7 @@ class MonthCalendar(Widget):
     def validate_first_weekday(self, first_weekday: int) -> int:
         if not 0 <= first_weekday <= 6:
             raise InvalidWeekdayNumber(
-                "Weekday number must be 0 (Monday) to 6 (Sunday)."
+                "Weekday number must be between 0 (Monday) and 6 (Sunday)."
             )
         return first_weekday
 
