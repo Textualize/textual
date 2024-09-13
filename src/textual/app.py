@@ -462,11 +462,15 @@ class App(Generic[ReturnType], DOMNode):
     ansi_theme_light = Reactive(ALABASTER, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
 
+    force_truecolor = Reactive(True)
+    """Convert ANSI colors to truecolor (RGB)?"""
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
+        force_truecolor: bool = False,
     ):
         """Create an instance of an app.
 
@@ -478,6 +482,8 @@ class App(Generic[ReturnType], DOMNode):
                 will be loaded in order.
             watch_css: Reload CSS if the files changed. This is set automatically if
                 you are using `textual run` with the `dev` switch.
+            force_truecolor: Convert all ANSI colors to RGB when `True`. Set to `False`
+                to allow ANSI colors.
 
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -487,8 +493,10 @@ class App(Generic[ReturnType], DOMNode):
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
-        self._filters: list[LineFilter] = [ANSIToTruecolor(ansi_theme)]
-
+        self.set_reactive(App.force_truecolor, force_truecolor)
+        self._filters: list[LineFilter] = [
+            ANSIToTruecolor(ansi_theme, enabled=force_truecolor)
+        ]
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
@@ -840,6 +848,14 @@ class App(Generic[ReturnType], DOMNode):
         yield "dark" if self.dark else "light"
         if self.is_inline:
             yield "inline"
+        if not self.force_truecolor:
+            yield "ansi"
+
+    def _watch_force_truecolor(self, force_truecolor: bool) -> None:
+        """Enable or disable the truecolor filter when the reactive changes"""
+        for filter in self._filters:
+            if isinstance(filter, ANSIToTruecolor):
+                filter.enabled = force_truecolor
 
     def animate(
         self,
@@ -1135,7 +1151,7 @@ class App(Generic[ReturnType], DOMNode):
         filters = self._filters
         for index, filter in enumerate(filters):
             if isinstance(filter, ANSIToTruecolor):
-                filters[index] = ANSIToTruecolor(theme)
+                filters[index] = ANSIToTruecolor(theme, enabled=self.force_truecolor)
                 return
 
     def get_driver_class(self) -> Type[Driver]:

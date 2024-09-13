@@ -42,7 +42,7 @@ from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
 from typing_extensions import Final
 
-from textual._color_constants import COLOR_NAME_TO_RGB
+from textual._color_constants import ANSI_COLORS, COLOR_NAME_TO_RGB
 from textual.css.scalar import percentage_string_to_float
 from textual.css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
 from textual.geometry import clamp
@@ -165,6 +165,8 @@ class Color(NamedTuple):
     """Blue component in range 0 to 255."""
     a: float = 1.0
     """Alpha (opacity) component in range 0 to 1."""
+    ansi: int | None = None
+    """ANSI color index."""
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:
@@ -201,7 +203,7 @@ class Color(NamedTuple):
         Returns:
             Inverse color.
         """
-        r, g, b, a = self
+        r, g, b, a, _ = self
         return Color(255 - r, 255 - g, 255 - b, a)
 
     @property
@@ -212,7 +214,7 @@ class Color(NamedTuple):
     @property
     def clamped(self) -> Color:
         """A clamped color (this color with all values in expected range)."""
-        r, g, b, a = self
+        r, g, b, a, _ = self
         _clamp = clamp
         color = Color(
             _clamp(r, 0, 255),
@@ -230,7 +232,9 @@ class Color(NamedTuple):
         Returns:
             A color object as used by Rich.
         """
-        r, g, b, _a = self
+        r, g, b, _a, ansi = self
+        if ansi is not None:
+            return RichColor.parse("default") if ansi < 0 else RichColor.from_ansi(ansi)
         return RichColor(
             f"#{r:02x}{g:02x}{b:02x}", _TRUECOLOR, None, ColorTriplet(r, g, b)
         )
@@ -242,13 +246,13 @@ class Color(NamedTuple):
         Returns:
             Normalized components.
         """
-        r, g, b, _a = self
+        r, g, b, _a, _ = self
         return (r / 255, g / 255, b / 255)
 
     @property
     def rgb(self) -> tuple[int, int, int]:
         """The red, green, and blue color components as a tuple of ints."""
-        r, g, b, _ = self
+        r, g, b, _, _ = self
         return (r, g, b)
 
     @property
@@ -281,7 +285,7 @@ class Color(NamedTuple):
 
         For example, `"#46b3de"` for an RGB color, or `"#3342457f"` for a color with alpha.
         """
-        r, g, b, a = self.clamped
+        r, g, b, a, _ = self.clamped
         return (
             f"#{r:02X}{g:02X}{b:02X}"
             if a == 1
@@ -294,7 +298,7 @@ class Color(NamedTuple):
 
         For example, `"#46b3de"`.
         """
-        r, g, b, _a = self.clamped
+        r, g, b, _a, _ = self.clamped
         return f"#{r:02X}{g:02X}{b:02X}"
 
     @property
@@ -303,7 +307,7 @@ class Color(NamedTuple):
 
         For example, `"rgb(10,20,30)"` for an RGB color, or `"rgb(50,70,80,0.5)"` for an RGBA color.
         """
-        r, g, b, a = self
+        r, g, b, a, _ = self
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
 
     @property
@@ -313,16 +317,17 @@ class Color(NamedTuple):
         Returns:
             The monochrome (black and white) version of this color.
         """
-        r, g, b, a = self
+        r, g, b, a, _ = self
         gray = round(r * 0.2126 + g * 0.7152 + b * 0.0722)
         return Color(gray, gray, gray, a)
 
     def __rich_repr__(self) -> rich.repr.Result:
-        r, g, b, a = self
+        r, g, b, a, ansi = self
         yield r
         yield g
         yield b
         yield "a", a, 1.0
+        yield "ansi", ansi
 
     def with_alpha(self, alpha: float) -> Color:
         """Create a new color with the given alpha.
@@ -333,7 +338,7 @@ class Color(NamedTuple):
         Returns:
             A new color.
         """
-        r, g, b, _ = self
+        r, g, b, _, _ = self
         return Color(r, g, b, alpha)
 
     def multiply_alpha(self, alpha: float) -> Color:
@@ -345,7 +350,9 @@ class Color(NamedTuple):
         Returns:
             A new color.
         """
-        r, g, b, a = self
+        if self.ansi is not None:
+            return self
+        r, g, b, a, _ = self
         return Color(r, g, b, a * alpha)
 
     @lru_cache(maxsize=1024)
@@ -366,12 +373,14 @@ class Color(NamedTuple):
         Returns:
             A new color.
         """
+        if self.ansi is not None:
+            return destination
         if factor <= 0:
             return self
         elif factor >= 1:
             return destination
-        r1, g1, b1, a1 = self
-        r2, g2, b2, a2 = destination
+        r1, g1, b1, a1, _ = self
+        r2, g2, b2, a2, _ = destination
 
         if alpha is None:
             new_alpha = a1 + (a2 - a1) * factor
@@ -433,6 +442,15 @@ class Color(NamedTuple):
         """
         if isinstance(color_text, Color):
             return color_text
+        if color_text == "default":
+            return cls(0, 0, 0, ansi=-1)
+        if color_text.startswith("ansi_"):
+            try:
+                ansi = ANSI_COLORS.index(color_text[5:])
+            except ValueError:
+                pass
+            else:
+                return cls(*COLOR_NAME_TO_RGB.get(color_text), ansi=ansi)
         color_from_name = COLOR_NAME_TO_RGB.get(color_text)
         if color_from_name is not None:
             return cls(*color_from_name)

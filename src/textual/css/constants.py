@@ -60,6 +60,7 @@ VALID_STYLE_FLAGS: Final = {
     "uu",
 }
 VALID_PSEUDO_CLASSES: Final = {
+    "ansi",
     "blur",
     "can-focus",
     "dark",

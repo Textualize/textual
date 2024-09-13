@@ -3195,6 +3195,7 @@ class Widget(DOMNode):
         Returns:
             Names of the pseudo classes.
         """
+        app = self.app
         if self.mouse_hover:
             yield "hover"
         if self.has_focus:
@@ -3216,7 +3217,7 @@ class Widget(DOMNode):
         except NoScreen:
             pass
         else:
-            yield "dark" if self.app.dark else "light"
+            yield "dark" if app.dark else "light"
             if focused:
                 node = focused
                 while node is not None:
@@ -3224,8 +3225,11 @@ class Widget(DOMNode):
                         yield "focus-within"
                         break
                     node = node._parent
-        if self.app.is_inline:
+
+        if app.is_inline:
             yield "inline"
+        if not app.force_truecolor:
+            yield "ansi"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.
