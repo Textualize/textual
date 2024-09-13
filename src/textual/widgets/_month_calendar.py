@@ -111,10 +111,13 @@ class MonthCalendar(Widget):
         ) -> None:
             super().__init__()
             self.month_calendar: MonthCalendar = month_calendar
+            """The `MonthCalendar` that sent this message."""
             self.value: datetime.date = value
+            """The highlighted date."""
 
         @property
         def control(self) -> MonthCalendar:
+            """Alias for the `MonthCalendar` that sent this message."""
             return self.month_calendar
 
     class DateSelected(Message):
@@ -131,10 +134,13 @@ class MonthCalendar(Widget):
         ) -> None:
             super().__init__()
             self.month_calendar: MonthCalendar = month_calendar
+            """The `MonthCalendar` that sent this message."""
             self.value: datetime.date = value
+            """The selected date."""
 
         @property
         def control(self) -> MonthCalendar:
+            """Alias for the `MonthCalendar` that sent this message."""
             return self.month_calendar
 
     def __init__(
