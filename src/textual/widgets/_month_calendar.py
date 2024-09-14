@@ -181,11 +181,11 @@ class MonthCalendar(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.date = date
         self.first_weekday = first_weekday
-        self.show_cursor = show_cursor
-        self.show_other_months = show_other_months
         self._calendar = calendar.Calendar(first_weekday)
         """A `Calendar` object from Python's `calendar` module used for
         preparing the calendar data for this widget."""
+        self.show_cursor = show_cursor
+        self.show_other_months = show_other_months
         self._calendar_dates = self._get_calendar_dates()
         """The matrix of `datetime.date` objects for this month calendar, where
         each row represents a week. See the `_get_calendar_dates` method for
