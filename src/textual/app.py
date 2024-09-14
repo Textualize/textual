@@ -470,7 +470,7 @@ class App(Generic[ReturnType], DOMNode):
         driver_class: Type[Driver] | None = None,
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
-        force_truecolor: bool = False,
+        force_truecolor: bool = True,
     ):
         """Create an instance of an app.
 
