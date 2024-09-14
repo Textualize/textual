@@ -92,9 +92,15 @@ class MonthCalendar(Widget):
     """
 
     date: Reactive[datetime.date] = Reactive(datetime.date.today)
+    """The date currently highlighted and sets the displayed month in the
+    calendar."""
     first_weekday: Reactive[int] = Reactive(0)
+    """The first day of the week in the calendar. Monday is 0 (the default),
+    Sunday is 6."""
     show_cursor: Reactive[bool] = Reactive(True)
+    """Whether to display a cursor for navigating dates within the calendar."""
     show_other_months: Reactive[bool] = Reactive(True)
+    """Whether to display dates from other months for a six-week calendar."""
 
     class DateHighlighted(Message):
         """Posted by the `MonthCalendar` widget when the cursor moves to
@@ -155,13 +161,35 @@ class MonthCalendar(Widget):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialize a MonthCalendar widget.
+
+        Args:
+            date: The initial date to be highlighted (if `show_cursor` is True)
+                and sets the displayed month in the calendar. Defaults to today
+                if not supplied.
+            first_weekday: The first day of the week in the calendar.
+                Monday is 0 (the default), Sunday is 6.
+            show_cursor: Whether to display a cursor for navigating dates within
+                the calendar.
+            show_other_months: Whether to display dates from other months for
+                a six-week calendar.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes of the widget.
+            disabled: Whether the widget is disabled or not.
+        """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.date = date
         self.first_weekday = first_weekday
-        self._calendar = calendar.Calendar(first_weekday)
         self.show_cursor = show_cursor
         self.show_other_months = show_other_months
+        self._calendar = calendar.Calendar(first_weekday)
+        """A `Calendar` object from Python's `calendar` module used for
+        preparing the calendar data for this widget."""
         self._calendar_dates = self._get_calendar_dates()
+        """The matrix of `datetime.date` objects for this month calendar, where
+        each row represents a week. See the `_get_calendar_dates` method for
+        details."""
 
     def compose(self) -> ComposeResult:
         yield CalendarGrid(show_cursor=self.show_cursor)
@@ -171,6 +199,8 @@ class MonthCalendar(Widget):
         self,
         event: CalendarGrid.CellHighlighted,
     ) -> None:
+        """Post a `DateHighlighted` message when a date cell is highlighted in
+        the calendar grid."""
         event.stop()
         if not self.show_other_months and event.value is None:
             # TODO: This handling of blank cells is obviously a bit hacky.
@@ -200,6 +230,8 @@ class MonthCalendar(Widget):
         self,
         event: CalendarGrid.CellSelected,
     ) -> None:
+        """Post a `DateSelected` message when a date cell is selected in
+        the calendar grid."""
         event.stop()
         if not self.show_other_months and event.value is None:
             calendar_grid = self.query_one(CalendarGrid)
@@ -218,10 +250,15 @@ class MonthCalendar(Widget):
         self,
         event: CalendarGrid.HeaderSelected,
     ) -> None:
+        """Stop the propagation of the `HeaderSelected` message from the
+        underlying `DataTable`. Currently the `MonthCalendar` does not post its
+        own message when the header is selected as there doesn't seem any
+        practical purpose, but this could be easily added in future if needed."""
         event.stop()
         pass
 
     def previous_month(self) -> None:
+        """Move to the previous month."""
         year = self.date.year
         month = self.date.month - 1
         if month < 1:
@@ -231,6 +268,7 @@ class MonthCalendar(Widget):
         self.date = datetime.date(year, month, day)
 
     def next_month(self) -> None:
+        """Move to the next month."""
         year = self.date.year
         month = self.date.month + 1
         if month > 12:
@@ -240,12 +278,14 @@ class MonthCalendar(Widget):
         self.date = datetime.date(year, month, day)
 
     def previous_year(self) -> None:
+        """Move to the previous year."""
         year = self.date.year - 1
         month = self.date.month
         day = min(self.date.day, calendar.monthrange(year, month)[1])
         self.date = datetime.date(year, month, day)
 
     def next_year(self) -> None:
+        """Move to the next year."""
         year = self.date.year + 1
         month = self.date.month
         day = min(self.date.day, calendar.monthrange(year, month)[1])
@@ -271,6 +311,13 @@ class MonthCalendar(Widget):
         )
 
     def _update_calendar_grid(self, update_week_header: bool) -> None:
+        """Update the grid to display the dates of the current month calendar.
+        If specified, this will also update the weekday names in the header.
+
+        Args:
+            update_week_header: Whether the weekday names in the header should
+                be updated (e.g. following a change to the `first_weekday`).
+        """
         calendar_grid = self.query_one(CalendarGrid)
         old_hover_coordinate = calendar_grid.hover_coordinate
         calendar_grid.clear()
@@ -297,6 +344,23 @@ class MonthCalendar(Widget):
         calendar_grid.cursor_coordinate = date_coordinate
 
         calendar_grid.hover_coordinate = old_hover_coordinate
+
+    def _format_day(self, date: datetime.date) -> Text:
+        """Format a date for display in the calendar.
+
+        Args:
+            date: The date to format for display in the calendar.
+
+        Returns:
+            A Rich Text object containing the day.
+        """
+        formatted_day = Text(str(date.day), justify="center")
+        if date.month != self.date.month:
+            outside_month_style = self.get_component_rich_style(
+                "month-calendar--outside-month", partial=True
+            )
+            formatted_day.stylize(outside_month_style)
+        return formatted_day
 
     def _get_calendar_dates(self) -> list[Sequence[datetime.date | None]]:
         """Returns a matrix of `datetime.date` objects for this month calendar,
@@ -342,6 +406,8 @@ class MonthCalendar(Widget):
         return calendar_dates
 
     def _get_previous_month_weeks(self) -> list[list[datetime.date]]:
+        """Returns a matrix of `datetime.date` objects for the previous month,
+        used by the `_get_calendar_dates` method."""
         previous_month = self.date.month - 1
         previous_month_year = self.date.year
         if previous_month < 1:
@@ -350,6 +416,8 @@ class MonthCalendar(Widget):
         return self._calendar.monthdatescalendar(previous_month_year, previous_month)
 
     def _get_next_month_weeks(self) -> list[list[datetime.date]]:
+        """Returns a matrix of `datetime.date` objects for the next month,
+        used by the `_get_calendar_dates` method."""
         next_month = self.date.month + 1
         next_month_year = self.date.year
         if next_month > 12:
@@ -358,20 +426,22 @@ class MonthCalendar(Widget):
         return self._calendar.monthdatescalendar(next_month_year, next_month)
 
     def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
+        """Get the coordinate in the calendar grid for a specified date.
+
+        Args:
+            date: The date for which to find the corresponding coordinate.
+
+        Returns:
+            The coordinate in the calendar grid for the specified date.
+
+        Raises:
+            ValueError: If the date is out of range for the current month calendar.
+        """
         for week_index, week in enumerate(self._calendar_dates):
             if date in week:
                 return Coordinate(week_index, week.index(date))
 
-        raise ValueError("Date is out of range for this month calendar.")
-
-    def _format_day(self, date: datetime.date) -> Text:
-        formatted_day = Text(str(date.day), justify="center")
-        if date.month != self.date.month:
-            outside_month_style = self.get_component_rich_style(
-                "month-calendar--outside-month", partial=True
-            )
-            formatted_day.stylize(outside_month_style)
-        return formatted_day
+        raise ValueError("Date is out of range for the current month calendar.")
 
     def validate_first_weekday(self, first_weekday: int) -> int:
         if not 0 <= first_weekday <= 6:
