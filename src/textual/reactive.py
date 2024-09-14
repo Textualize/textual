@@ -267,8 +267,7 @@ class Reactive(Generic[ReactiveType]):
             raise ReactiveError(
                 f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before getting reactives."
             )
-        internal_name = self.internal_name
-        if not hasattr(obj, internal_name):
+        if not hasattr(obj, internal_name := self.internal_name):
             self._initialize_reactive(obj, self.name)
 
         if hasattr(obj, self.compute_name):
