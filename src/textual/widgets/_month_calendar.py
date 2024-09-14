@@ -483,29 +483,38 @@ class MonthCalendar(Widget):
         self._update_calendar_grid(update_week_header=False)
 
     def action_select_date(self) -> None:
+        """Select the date under the cursor."""
         calendar_grid = self.query_one(CalendarGrid)
         calendar_grid.action_select_cursor()
 
     def action_previous_day(self) -> None:
+        """Move to the previous day."""
         self.date -= datetime.timedelta(days=1)
 
     def action_next_day(self) -> None:
+        """Move to the next day."""
         self.date += datetime.timedelta(days=1)
 
     def action_previous_week(self) -> None:
+        """Move to the previous week."""
         self.date -= datetime.timedelta(weeks=1)
 
     def action_next_week(self) -> None:
+        """Move to the next week."""
         self.date += datetime.timedelta(weeks=1)
 
     def action_previous_month(self) -> None:
+        """Move to the previous month."""
         self.previous_month()
 
     def action_next_month(self) -> None:
+        """Move to the next month."""
         self.next_month()
 
     def action_previous_year(self) -> None:
+        """Move to the previous year."""
         self.previous_year()
 
     def action_next_year(self) -> None:
+        """Move to the next year."""
         self.next_year()
