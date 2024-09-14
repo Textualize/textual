@@ -324,10 +324,10 @@ class TabbedContent(Widget):
         Args:
             *titles: Positional argument will be used as title.
             initial: The id of the initial tab, or empty string to select the first tab.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
-            disabled: Whether the button is disabled or not.
+            name: The name of the tabbed content.
+            id: The ID of the tabbed content in the DOM.
+            classes: The CSS classes of the tabbed content.
+            disabled: Whether the tabbed content is disabled or not.
         """
         self.titles = [self.render_str(title) for title in titles]
         self._tab_content: list[Widget] = []
