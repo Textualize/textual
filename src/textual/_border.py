@@ -271,6 +271,7 @@ def get_box(
 
     inner = inner_style + style
     outer = outer_style + style
+
     styles = (
         inner,
         outer,

@@ -3228,7 +3228,7 @@ class Widget(DOMNode):
 
         if app.is_inline:
             yield "inline"
-        if not app.force_truecolor:
+        if app.ansi_color:
             yield "ansi"
 
     def get_pseudo_class_state(self) -> PseudoClasses:

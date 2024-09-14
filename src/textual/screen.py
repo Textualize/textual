@@ -159,8 +159,8 @@ class Screen(Generic[ScreenResultType], Widget):
         }
 
         &:ansi {
-            background: default;
-            color: default;
+            background: ansi_default;
+            color: ansi_default;
         }
     }
     """

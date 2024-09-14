@@ -209,7 +209,7 @@ class Color(NamedTuple):
     @property
     def is_transparent(self) -> bool:
         """Is the color transparent (i.e. has 0 alpha)?"""
-        return self.a == 0
+        return self.a == 0 and self.ansi is not None
 
     @property
     def clamped(self) -> Color:
@@ -221,6 +221,7 @@ class Color(NamedTuple):
             _clamp(g, 0, 255),
             _clamp(b, 0, 255),
             _clamp(a, 0.0, 1.0),
+            self.ansi,
         )
         return color
 
@@ -285,7 +286,9 @@ class Color(NamedTuple):
 
         For example, `"#46b3de"` for an RGB color, or `"#3342457f"` for a color with alpha.
         """
-        r, g, b, a, _ = self.clamped
+        r, g, b, a, ansi = self.clamped
+        if ansi is not None:
+            return "ansi_default" if ansi == -1 else f"ansi_{ANSI_COLORS[ansi]}"
         return (
             f"#{r:02X}{g:02X}{b:02X}"
             if a == 1
@@ -307,7 +310,9 @@ class Color(NamedTuple):
 
         For example, `"rgb(10,20,30)"` for an RGB color, or `"rgb(50,70,80,0.5)"` for an RGBA color.
         """
-        r, g, b, a, _ = self
+        r, g, b, a, ansi = self
+        if ansi is not None:
+            return "ansi_default" if ansi == -1 else f"ansi_{ANSI_COLORS[ansi]}"
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
 
     @property
@@ -442,7 +447,7 @@ class Color(NamedTuple):
         """
         if isinstance(color_text, Color):
             return color_text
-        if color_text == "default":
+        if color_text == "ansi_default":
             return cls(0, 0, 0, ansi=-1)
         if color_text.startswith("ansi_"):
             try:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
+import rich.repr
 from rich.console import group
 from rich.padding import Padding
 from rich.table import Table
@@ -20,6 +21,7 @@ DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
 
 
+@rich.repr.auto
 class ColorSystem:
     """Defines a standard set of colors and variations for building a UI.
 
@@ -50,6 +52,7 @@ class ColorSystem:
         error: str | None = None,
         success: str | None = None,
         accent: str | None = None,
+        foreground: str | None = None,
         background: str | None = None,
         surface: str | None = None,
         panel: str | None = None,
@@ -69,13 +72,14 @@ class ColorSystem:
         self.error = parse(error)
         self.success = parse(success)
         self.accent = parse(accent)
+        self.foreground = parse(foreground)
         self.background = parse(background)
         self.surface = parse(surface)
         self.panel = parse(panel)
         self.boost = parse(boost)
-        self._dark = dark
-        self._luminosity_spread = luminosity_spread
-        self._text_alpha = text_alpha
+        self.dark = dark
+        self.luminosity_spread = luminosity_spread
+        self.text_alpha = text_alpha
 
     @property
     def shades(self) -> Iterable[str]:
@@ -103,8 +107,8 @@ class ColorSystem:
         success = self.success or secondary
         accent = self.accent or primary
 
-        dark = self._dark
-        luminosity_spread = self._luminosity_spread
+        dark = self.dark
+        luminosity_spread = self.luminosity_spread
 
         if dark:
             background = self.background or Color.parse(DEFAULT_DARK_BACKGROUND)
@@ -113,8 +117,7 @@ class ColorSystem:
             background = self.background or Color.parse(DEFAULT_LIGHT_BACKGROUND)
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
 
-        foreground = background.inverse
-
+        foreground = self.foreground or (background.inverse)
         boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.04)
 
         if self.panel is None:
@@ -166,7 +169,9 @@ class ColorSystem:
             is_dark_shade = dark and name in DARK_SHADES
             spread = luminosity_spread
             for shade_name, luminosity_delta in luminosity_range(spread):
-                if is_dark_shade:
+                if color.ansi is not None:
+                    colors[f"{name}{shade_name}"] = color.hex
+                elif is_dark_shade:
                     dark_background = background.blend(color, 0.15, alpha=1.0)
                     shade_color = dark_background.blend(
                         WHITE, spread + luminosity_delta, alpha=1.0
@@ -176,9 +181,14 @@ class ColorSystem:
                     shade_color = color.lighten(luminosity_delta)
                     colors[f"{name}{shade_name}"] = shade_color.hex
 
-        colors["text"] = "auto 87%"
-        colors["text-muted"] = "auto 60%"
-        colors["text-disabled"] = "auto 38%"
+        if foreground.ansi is None:
+            colors["text"] = "auto 87%"
+            colors["text-muted"] = "auto 60%"
+            colors["text-disabled"] = "auto 38%"
+        else:
+            colors["text"] = "ansi_default"
+            colors["text-muted"] = "ansi_default"
+            colors["text-disabled"] = "ansi_default"
 
         return colors
 

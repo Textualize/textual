@@ -29,7 +29,7 @@ class MyApp(App):
 
 
 async def test_hover_update_styles():
-    app = MyApp(force_truecolor=True)
+    app = MyApp(ansi_color=False)
     async with app.run_test() as pilot:
         button = app.query_one(Button)
         assert button.pseudo_classes == {
