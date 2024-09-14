@@ -59,7 +59,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
 
-from . import (
+from textual import (
     Logger,
     LogGroup,
     LogVerbosity,
@@ -70,73 +70,77 @@ from . import (
     messages,
     on,
 )
-from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
-from ._ansi_sequences import SYNC_END, SYNC_START
-from ._ansi_theme import ALABASTER, MONOKAI
-from ._callback import invoke
-from ._compose import compose
-from ._compositor import CompositorUpdate
-from ._context import active_app, active_message_pump
-from ._context import message_hook as message_hook_context_var
-from ._dispatch_key import dispatch_key
-from ._event_broker import NoHandler, extract_handler_actions
-from ._files import generate_datetime_filename
-from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._types import AnimationLevel
-from ._wait import wait_for_idle
-from .actions import ActionParseResult, SkipAction
-from .await_complete import AwaitComplete
-from .await_remove import AwaitRemove
-from .binding import Binding, BindingsMap, BindingType
-from .command import CommandPalette, Provider
-from .css.errors import StylesheetError
-from .css.query import NoMatches
-from .css.stylesheet import RulesMap, Stylesheet
-from .design import ColorSystem
-from .dom import DOMNode, NoScreen
-from .driver import Driver
-from .errors import NoWidget
-from .features import FeatureFlag, parse_features
-from .file_monitor import FileMonitor
-from .filter import ANSIToTruecolor, DimFilter, Monochrome
-from .geometry import Offset, Region, Size
-from .keys import (
+from textual._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
+from textual._ansi_sequences import SYNC_END, SYNC_START
+from textual._ansi_theme import ALABASTER, MONOKAI
+from textual._callback import invoke
+from textual._compose import compose
+from textual._compositor import CompositorUpdate
+from textual._context import active_app, active_message_pump
+from textual._context import message_hook as message_hook_context_var
+from textual._dispatch_key import dispatch_key
+from textual._event_broker import NoHandler, extract_handler_actions
+from textual._files import generate_datetime_filename
+from textual._path import (
+    CSSPathType,
+    _css_path_type_as_list,
+    _make_path_object_relative,
+)
+from textual._types import AnimationLevel
+from textual._wait import wait_for_idle
+from textual.actions import ActionParseResult, SkipAction
+from textual.await_complete import AwaitComplete
+from textual.await_remove import AwaitRemove
+from textual.binding import Binding, BindingsMap, BindingType
+from textual.command import CommandPalette, Provider
+from textual.css.errors import StylesheetError
+from textual.css.query import NoMatches
+from textual.css.stylesheet import RulesMap, Stylesheet
+from textual.design import ColorSystem
+from textual.dom import DOMNode, NoScreen
+from textual.driver import Driver
+from textual.errors import NoWidget
+from textual.features import FeatureFlag, parse_features
+from textual.file_monitor import FileMonitor
+from textual.filter import ANSIToTruecolor, DimFilter, Monochrome
+from textual.geometry import Offset, Region, Size
+from textual.keys import (
     REPLACED_KEYS,
     _character_to_key,
     _get_unicode_name_from_key,
     format_key,
 )
-from .messages import CallbackType, Prune
-from .notifications import Notification, Notifications, Notify, SeverityLevel
-from .reactive import Reactive
-from .renderables.blank import Blank
-from .screen import (
+from textual.messages import CallbackType, Prune
+from textual.notifications import Notification, Notifications, Notify, SeverityLevel
+from textual.reactive import Reactive
+from textual.renderables.blank import Blank
+from textual.screen import (
     ActiveBinding,
     Screen,
     ScreenResultCallbackType,
     ScreenResultType,
     SystemModalScreen,
 )
-from .signal import Signal
-from .timer import Timer
-from .widget import AwaitMount, Widget
-from .widgets._toast import ToastRack
-from .worker import NoActiveWorker, get_current_worker
-from .worker_manager import WorkerManager
+from textual.signal import Signal
+from textual.timer import Timer
+from textual.widget import AwaitMount, Widget
+from textual.widgets._toast import ToastRack
+from textual.worker import NoActiveWorker, get_current_worker
+from textual.worker_manager import WorkerManager
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
-    from ._types import MessageTarget
+    from textual._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .css.query import WrongType  # type: ignore  # noqa: F401
-    from .filter import LineFilter
-    from .message import Message
-    from .pilot import Pilot
-    from .system_commands import SystemCommandsProvider
-    from .widget import MountError  # type: ignore  # noqa: F401
+    from textual.css.query import WrongType  # type: ignore  # noqa: F401
+    from textual.filter import LineFilter
+    from textual.message import Message
+    from textual.pilot import Pilot
+    from textual.system_commands import SystemCommandsProvider
+    from textual.widget import MountError  # type: ignore  # noqa: F401
 
 WINDOWS = sys.platform == "win32"
 
@@ -201,7 +205,7 @@ def get_system_commands_provider() -> type[SystemCommandsProvider]:
     Returns:
         System commands class.
     """
-    from .system_commands import SystemCommandsProvider
+    from textual.system_commands import SystemCommandsProvider
 
     return SystemCommandsProvider
 
@@ -312,6 +316,8 @@ class App(Generic[ReturnType], DOMNode):
     App {
         background: $background;
         color: $text;
+
+        /* When a widget is maximized */
         Screen.-maximized-view {                    
             layout: vertical !important;
             hatch: right $panel;
@@ -320,6 +326,10 @@ class App(Generic[ReturnType], DOMNode):
             .-maximized {
                 dock: initial !important;
             }
+        }
+        /* Fade the header title when app is blurred */
+        &:blur HeaderTitle {           
+            text-opacity: 50%;           
         }
     }
     *:disabled:can-focus {
@@ -820,6 +830,17 @@ class App(Generic[ReturnType], DOMNode):
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
 
+    def get_pseudo_classes(self) -> Iterable[str]:
+        """Pseudo classes for a widget.
+
+        Returns:
+            Names of the pseudo classes.
+        """
+        yield "focus" if self.app_focus else "blur"
+        yield "dark" if self.dark else "light"
+        if self.is_inline:
+            yield "inline"
+
     def animate(
         self,
         attribute: str,
@@ -1084,17 +1105,17 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
-        self.call_later(self.refresh_css)
+        self.call_next(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.dark:
             self._refresh_truecolor_filter(theme)
-            self.call_later(self.refresh_css)
+            self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         if not self.dark:
             self._refresh_truecolor_filter(theme)
-            self.call_later(self.refresh_css)
+            self.call_next(self.refresh_css)
 
     @property
     def ansi_theme(self) -> TerminalTheme:
@@ -1145,11 +1166,11 @@ class App(Generic[ReturnType], DOMNode):
             return driver_class
 
         if WINDOWS:
-            from .drivers.windows_driver import WindowsDriver
+            from textual.drivers.windows_driver import WindowsDriver
 
             driver_class = WindowsDriver
         else:
-            from .drivers.linux_driver import LinuxDriver
+            from textual.drivers.linux_driver import LinuxDriver
 
             driver_class = LinuxDriver
         return driver_class
@@ -1298,7 +1319,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A widget to display a loading state.
         """
-        from .widgets import LoadingIndicator
+        from textual.widgets import LoadingIndicator
 
         return LoadingIndicator()
 
@@ -1662,7 +1683,7 @@ class App(Generic[ReturnType], DOMNode):
             message_hook: An optional callback that will be called each time any message arrives at any
                 message pump in the app.
         """
-        from .pilot import Pilot
+        from textual.pilot import Pilot
 
         app = self
         app._disable_tooltips = not tooltips
@@ -1738,7 +1759,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             App return value.
         """
-        from .pilot import Pilot
+        from textual.pilot import Pilot
 
         app = self
 
@@ -2674,11 +2695,11 @@ class App(Generic[ReturnType], DOMNode):
         driver: Driver
         driver_class: type[Driver]
         if headless:
-            from .drivers.headless_driver import HeadlessDriver
+            from textual.drivers.headless_driver import HeadlessDriver
 
             driver_class = HeadlessDriver
         elif inline and not WINDOWS:
-            from .drivers.linux_inline_driver import LinuxInlineDriver
+            from textual.drivers.linux_inline_driver import LinuxInlineDriver
 
             driver_class = LinuxInlineDriver
         else:
@@ -3130,7 +3151,10 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.screen._refresh_layout(self.size)
+        try:
+            self.screen._refresh_layout(self.size)
+        except ScreenError:
+            pass
         # The other screens in the stack will need to know about some style
         # changes, as a final pass let's check in on every screen that isn't
         # the current one and update them too.
@@ -3614,6 +3638,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
+        self.screen._update_styles()
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
             # and if the screen is still the current screen and if nothing
@@ -3750,7 +3775,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def action_show_help_panel(self) -> None:
         """Show the keys panel."""
-        from .widgets import HelpPanel
+        from textual.widgets import HelpPanel
 
         try:
             self.query_one(HelpPanel)

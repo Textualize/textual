@@ -13,13 +13,13 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import events
-from .._xterm_parser import XTermParser
-from ..driver import Driver
-from ..geometry import Size
+from textual import events
+from textual._xterm_parser import XTermParser
+from textual.driver import Driver
+from textual.geometry import Size
 
 if TYPE_CHECKING:
-    from ..app import App
+    from textual.app import App
 
 
 @rich.repr.auto(angular=True)

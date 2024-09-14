@@ -4,7 +4,7 @@ from typing import Mapping, Tuple
 
 from typing_extensions import Final
 
-from .keys import Keys
+from textual.keys import Keys
 
 
 class IgnoredSequence:

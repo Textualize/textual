@@ -11,15 +11,15 @@ from rich.segment import Segment
 from rich.text import Text
 from typing_extensions import Literal
 
-from .. import events
-from .._segment_tools import line_crop
+from textual import events
+from textual._segment_tools import line_crop
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
 
-from ..reactive import var
-from ..validation import ValidationResult, Validator
-from ._input import Input
+from textual.reactive import var
+from textual.validation import ValidationResult, Validator
+from textual.widgets._input import Input
 
 InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""

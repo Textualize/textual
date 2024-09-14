@@ -7,17 +7,17 @@ from typing import TYPE_CHECKING, Iterable
 
 import rich.repr
 
-from ._help_renderables import HelpText
-from .styles import Styles
-from .tokenize import Token
-from .types import Specificity3
+from textual.css._help_renderables import HelpText
+from textual.css.styles import Styles
+from textual.css.tokenize import Token
+from textual.css.types import Specificity3
 
 if TYPE_CHECKING:
     from typing import Callable
 
     from typing_extensions import Self
 
-    from ..dom import DOMNode
+    from textual.dom import DOMNode
 
 
 class SelectorType(Enum):

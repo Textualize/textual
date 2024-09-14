@@ -1,4 +1,4 @@
-from ._markdown import (
+from textual.widgets._markdown import (
     Markdown,
     MarkdownBlock,
     MarkdownTableOfContents,

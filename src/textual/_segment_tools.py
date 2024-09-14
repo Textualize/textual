@@ -10,9 +10,9 @@ from typing import Iterable
 from rich.segment import Segment
 from rich.style import Style
 
-from ._cells import cell_len
-from .css.types import AlignHorizontal, AlignVertical
-from .geometry import Size
+from textual._cells import cell_len
+from textual.css.types import AlignHorizontal, AlignVertical
+from textual.geometry import Size
 
 
 class NoCellPositionForIndex(Exception):

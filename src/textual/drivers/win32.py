@@ -9,13 +9,13 @@ from ctypes import Structure, Union, byref, wintypes
 from ctypes.wintypes import BOOL, CHAR, DWORD, HANDLE, SHORT, UINT, WCHAR, WORD
 from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
-from .. import constants
-from .._xterm_parser import XTermParser
-from ..events import Event, Resize
-from ..geometry import Size
+from textual import constants
+from textual._xterm_parser import XTermParser
+from textual.events import Event, Resize
+from textual.geometry import Size
 
 if TYPE_CHECKING:
-    from ..app import App
+    from textual.app import App
 
 KERNEL32 = ctypes.WinDLL("kernel32", use_last_error=True)  # type: ignore
 

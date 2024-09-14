@@ -43,32 +43,32 @@ from rich.text import Text
 from typing_extensions import Self
 
 if TYPE_CHECKING:
-    from .app import RenderResult
+    from textual.app import RenderResult
 
-from . import constants, errors, events, messages
-from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
-from ._arrange import DockArrangeResult, arrange
-from ._compose import compose
-from ._context import NoActiveAppError
-from ._debug import get_caller_file_and_line
-from ._dispatch_key import dispatch_key
-from ._easing import DEFAULT_SCROLL_EASING
-from ._layout import Layout
-from ._segment_tools import align_lines
-from ._styles_cache import StylesCache
-from ._types import AnimationLevel
-from .actions import SkipAction
-from .await_complete import AwaitComplete
-from .await_remove import AwaitRemove
-from .box_model import BoxModel
-from .cache import FIFOCache
-from .color import Color
-from .css.match import match
-from .css.parse import parse_selectors
-from .css.query import NoMatches, WrongType
-from .css.scalar import ScalarOffset
-from .dom import DOMNode, NoScreen
-from .geometry import (
+from textual import constants, errors, events, messages
+from textual._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
+from textual._arrange import DockArrangeResult, arrange
+from textual._compose import compose
+from textual._context import NoActiveAppError
+from textual._debug import get_caller_file_and_line
+from textual._dispatch_key import dispatch_key
+from textual._easing import DEFAULT_SCROLL_EASING
+from textual._layout import Layout
+from textual._segment_tools import align_lines
+from textual._styles_cache import StylesCache
+from textual._types import AnimationLevel
+from textual.actions import SkipAction
+from textual.await_complete import AwaitComplete
+from textual.await_remove import AwaitRemove
+from textual.box_model import BoxModel
+from textual.cache import FIFOCache
+from textual.color import Color
+from textual.css.match import match
+from textual.css.parse import parse_selectors
+from textual.css.query import NoMatches, WrongType
+from textual.css.scalar import ScalarOffset
+from textual.dom import DOMNode, NoScreen
+from textual.geometry import (
     NULL_REGION,
     NULL_SIZE,
     NULL_SPACING,
@@ -78,21 +78,21 @@ from .geometry import (
     Spacing,
     clamp,
 )
-from .layouts.vertical import VerticalLayout
-from .message import Message
-from .messages import CallbackType, Prune
-from .notifications import SeverityLevel
-from .reactive import Reactive
-from .render import measure
-from .renderables.blank import Blank
-from .rlock import RLock
-from .strip import Strip
+from textual.layouts.vertical import VerticalLayout
+from textual.message import Message
+from textual.messages import CallbackType, Prune
+from textual.notifications import SeverityLevel
+from textual.reactive import Reactive
+from textual.render import measure
+from textual.renderables.blank import Blank
+from textual.rlock import RLock
+from textual.strip import Strip
 
 if TYPE_CHECKING:
-    from .app import App, ComposeResult
-    from .css.query import QueryType
-    from .message_pump import MessagePump
-    from .scrollbar import (
+    from textual.app import App, ComposeResult
+    from textual.css.query import QueryType
+    from textual.message_pump import MessagePump
+    from textual.scrollbar import (
         ScrollBar,
         ScrollBarCorner,
         ScrollDown,
@@ -1516,7 +1516,7 @@ class Widget(DOMNode):
         Returns:
             ScrollBarCorner Widget.
         """
-        from .scrollbar import ScrollBarCorner
+        from textual.scrollbar import ScrollBarCorner
 
         if self._scrollbar_corner is not None:
             return self._scrollbar_corner
@@ -1534,7 +1534,7 @@ class Widget(DOMNode):
         Returns:
             ScrollBar Widget.
         """
-        from .scrollbar import ScrollBar
+        from textual.scrollbar import ScrollBar
 
         if self._vertical_scrollbar is not None:
             return self._vertical_scrollbar
@@ -1556,7 +1556,7 @@ class Widget(DOMNode):
             ScrollBar Widget.
         """
 
-        from .scrollbar import ScrollBar
+        from textual.scrollbar import ScrollBar
 
         if self._horizontal_scrollbar is not None:
             return self._horizontal_scrollbar
@@ -2817,7 +2817,7 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-            if widget.styles.dock:
+            if widget.styles.dock != "none":
                 scroll_offset = Offset(0, 0)
             else:
                 scroll_offset = container.scroll_to_region(
@@ -3298,7 +3298,7 @@ class Widget(DOMNode):
 
     def watch_disabled(self, disabled: bool) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
-        from .app import ScreenStackError
+        from textual.app import ScreenStackError
 
         if disabled and self.mouse_hover and self.app.mouse_over is not None:
             # Ensure widget gets a Leave if it is disabled while hovered

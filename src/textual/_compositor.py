@@ -29,20 +29,20 @@ from rich.control import Control
 from rich.segment import Segment
 from rich.style import Style
 
-from . import errors
-from ._cells import cell_len
-from ._context import visible_screen_stack
-from ._loop import loop_last
-from .geometry import NULL_OFFSET, NULL_SPACING, Offset, Region, Size, Spacing
-from .map_geometry import MapGeometry
-from .strip import Strip, StripRenderable
+from textual import errors
+from textual._cells import cell_len
+from textual._context import visible_screen_stack
+from textual._loop import loop_last
+from textual.geometry import NULL_OFFSET, NULL_SPACING, Offset, Region, Size, Spacing
+from textual.map_geometry import MapGeometry
+from textual.strip import Strip, StripRenderable
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    from .css.styles import RenderStyles
-    from .screen import Screen
-    from .widget import Widget
+    from textual.css.styles import RenderStyles
+    from textual.screen import Screen
+    from textual.widget import Widget
 
 
 class ReflowResult(NamedTuple):

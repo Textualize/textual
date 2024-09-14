@@ -4,10 +4,9 @@ from typing import Tuple
 
 from typing_extensions import Literal
 
-from ..color import Color
+from textual.color import Color
 
-Edge = Literal["top", "right", "bottom", "left"]
-DockEdge = Literal["top", "right", "bottom", "left", ""]
+DockEdge = Literal["none", "top", "right", "bottom", "left"]
 EdgeType = Literal[
     "",
     "ascii",

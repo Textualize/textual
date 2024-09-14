@@ -20,18 +20,18 @@ from typing import TYPE_CHECKING, Type, TypeVar
 import rich.repr
 from rich.style import Style
 
-from ._types import CallbackType
-from .geometry import Offset, Size
-from .keys import _get_key_aliases
-from .message import Message
+from textual._types import CallbackType
+from textual.geometry import Offset, Size
+from textual.keys import _get_key_aliases
+from textual.message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
-    from .timer import Timer as TimerClass
-    from .timer import TimerCallback
-    from .widget import Widget
+    from textual.dom import DOMNode
+    from textual.timer import Timer as TimerClass
+    from textual.timer import TimerCallback
+    from textual.widget import Widget
 
 
 @rich.repr.auto

@@ -1,3 +1,3 @@
-from ._tabs import Tab
+from textual.widgets._tabs import Tab
 
 __all__ = ["Tab"]

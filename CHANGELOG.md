@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `MaskedInput` widget https://github.com/Textualize/textual/pull/4783
 - Input validation for floats and integers accept embedded underscores, e.g., "1_234_567" is valid. https://github.com/Textualize/textual/pull/4784
+- Support for `"none"` value added to `dock`, `hatch` and `split` styles https://github.com/Textualize/textual/pull/4982
+- Support for `"none"` added to box and border style properties (e.g `widget.style.border = "none"`) https://github.com/Textualize/textual/pull/4982
+- Docstrings added to most style properties https://github.com/Textualize/textual/pull/4982
 
 ### Changed
 
 - Input validation for integers no longer accepts scientific notation like '1.5e2'; must be castable to int. https://github.com/Textualize/textual/pull/4784
+- Default `scrollbar-size-vertical` changed to `2` in inline styles to match Widget default CSS (unlikely to affect users) https://github.com/Textualize/textual/pull/4982
 - Removed border-right from `Toast` https://github.com/Textualize/textual/pull/4984
 - Some fixes in `RichLog` result in slightly different semantics, see docstrings for details https://github.com/Textualize/textual/pull/4978
 
@@ -25,6 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `RichLog.write` not respecting `width` parameter https://github.com/Textualize/textual/pull/4978
 - Fixed `RichLog` writing at wrong width when `write` occurs before width is known (e.g. in `compose` or `on_mount`) https://github.com/Textualize/textual/pull/4978
 - Fixed `RichLog.write` incorrectly shrinking width to `RichLog.min_width` when `shrink=True` (now shrinks to fit content area instead) https://github.com/Textualize/textual/pull/4978
+- Fixed flicker when setting `dark` reactive on startup https://github.com/Textualize/textual/pull/4989
+- Fixed `DataTable` cached height issue on re-populating the table when using auto-height rows https://github.com/Textualize/textual/pull/4992
 
 ## [0.79.1] - 2024-08-31
 

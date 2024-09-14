@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, cast
 from rich.align import Align, AlignMethod
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
-from ..geometry import Size
-from ..renderables.digits import Digits as DigitsRenderable
-from ..widget import Widget
+    from textual.app import RenderResult
+from textual.geometry import Size
+from textual.renderables.digits import Digits as DigitsRenderable
+from textual.widget import Widget
 
 
 class Digits(Widget):

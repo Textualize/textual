@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .app import App
-    from .widget import Widget
+    from textual.app import App
+    from textual.widget import Widget
 
 
 def compose(node: App | Widget) -> list[Widget]:
@@ -17,7 +17,7 @@ def compose(node: App | Widget) -> list[Widget]:
         A list of widgets.
     """
     _rich_traceback_omit = True
-    from .widget import MountError, Widget
+    from textual.widget import MountError, Widget
 
     app = node.app
     nodes: list[Widget] = []

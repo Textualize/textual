@@ -9,7 +9,7 @@ from typing import get_args
 
 from typing_extensions import Final, TypeGuard
 
-from ._types import AnimationLevel
+from textual._types import AnimationLevel
 
 get_environ = os.environ.get
 

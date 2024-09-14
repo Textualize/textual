@@ -26,7 +26,7 @@ VALID_BORDER: Final = {
     "vkey",
     "wide",
 }
-VALID_EDGE: Final = {"top", "right", "bottom", "left"}
+VALID_EDGE: Final = {"top", "right", "bottom", "left", "none"}
 VALID_LAYOUT: Final = {"vertical", "horizontal", "grid"}
 
 VALID_BOX_SIZING: Final = {"border-box", "content-box"}

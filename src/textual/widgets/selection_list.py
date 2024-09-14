@@ -1,4 +1,4 @@
-from ._selection_list import (
+from textual.widgets._selection_list import (
     MessageSelectionType,
     Selection,
     SelectionError,

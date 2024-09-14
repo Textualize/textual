@@ -13,7 +13,7 @@ import rich.repr
 from rich.style import Style
 from rich.text import Text
 
-from .cache import LRUCache
+from textual.cache import LRUCache
 
 
 @rich.repr.auto

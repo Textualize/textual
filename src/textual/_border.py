@@ -8,8 +8,8 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 
-from .color import Color
-from .css.types import AlignHorizontal, EdgeStyle, EdgeType
+from textual.color import Color
+from textual.css.types import AlignHorizontal, EdgeStyle, EdgeType
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias

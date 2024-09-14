@@ -6,7 +6,7 @@ import contextlib
 from time import perf_counter
 from typing import Generator
 
-from . import log
+from textual import log
 
 
 @contextlib.contextmanager

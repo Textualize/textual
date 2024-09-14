@@ -22,14 +22,14 @@ from pathlib import Path
 from threading import Event, Thread
 from typing import Any, BinaryIO, Literal, TextIO, cast
 
-from .. import events, log, messages
-from .._binary_encode import dump as binary_dump
-from .._xterm_parser import XTermParser
-from ..app import App
-from ..driver import Driver
-from ..geometry import Size
-from ._byte_stream import ByteStream
-from ._input_reader import InputReader
+from textual import events, log, messages
+from textual._binary_encode import dump as binary_dump
+from textual._xterm_parser import XTermParser
+from textual.app import App
+from textual.driver import Driver
+from textual.drivers._byte_stream import ByteStream
+from textual.drivers._input_reader import InputReader
+from textual.geometry import Size
 
 WINDOWS = sys.platform == "win32"
 

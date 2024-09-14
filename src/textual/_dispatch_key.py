@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Callable
 
-from . import events
-from ._callback import invoke
-from .dom import DOMNode
-from .errors import DuplicateKeyHandlers
-from .message_pump import MessagePump
+from textual import events
+from textual._callback import invoke
+from textual.dom import DOMNode
+from textual.errors import DuplicateKeyHandlers
+from textual.message_pump import MessagePump
 
 
 async def dispatch_key(node: DOMNode, event: events.Key) -> bool:

@@ -5,7 +5,7 @@ from typing_extensions import Protocol
 if TYPE_CHECKING:
     from rich.segment import Segment
 
-    from .message import Message
+    from textual.message import Message
 
 
 class MessageTarget(Protocol):

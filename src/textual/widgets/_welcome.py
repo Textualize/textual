@@ -2,10 +2,10 @@
 
 from rich.markdown import Markdown
 
-from ..app import ComposeResult
-from ..containers import Container
-from ._button import Button
-from ._static import Static
+from textual.app import ComposeResult
+from textual.containers import Container
+from textual.widgets._button import Button
+from textual.widgets._static import Static
 
 WELCOME_MD = """\
 # Welcome!

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Callable, TypeVar
 
-from .css.model import SelectorSet
-from .css.parse import parse_selectors
-from .css.tokenizer import TokenError
-from .message import Message
+from textual.css.model import SelectorSet
+from textual.css.parse import parse_selectors
+from textual.css.tokenizer import TokenError
+from textual.message import Message
 
 DecoratedType = TypeVar("DecoratedType")
 

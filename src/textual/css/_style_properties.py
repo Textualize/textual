@@ -9,19 +9,27 @@ when setting and getting.
 from __future__ import annotations
 
 from operator import attrgetter
-from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, Sequence, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    Iterable,
+    Literal,
+    NamedTuple,
+    Sequence,
+    TypeVar,
+    cast,
+)
 
 import rich.errors
 import rich.repr
 from rich.style import Style
 from typing_extensions import TypeAlias
 
-from .._border import normalize_border_value
-from .._cells import cell_len
-from ..color import TRANSPARENT, Color, ColorParseError
-from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
-from ._error_tools import friendly_list
-from ._help_text import (
+from textual._border import normalize_border_value
+from textual._cells import cell_len
+from textual.color import TRANSPARENT, Color, ColorParseError
+from textual.css._error_tools import friendly_list
+from textual.css._help_text import (
     border_property_help_text,
     color_property_help_text,
     fractional_property_help_text,
@@ -32,9 +40,9 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import HATCHES, VALID_STYLE_FLAGS
-from .errors import StyleTypeError, StyleValueError
-from .scalar import (
+from textual.css.constants import HATCHES, VALID_STYLE_FLAGS
+from textual.css.errors import StyleTypeError, StyleValueError
+from textual.css.scalar import (
     NULL_SCALAR,
     UNIT_SYMBOL,
     Scalar,
@@ -44,18 +52,18 @@ from .scalar import (
     get_symbols,
     percentage_string_to_float,
 )
-from .transition import Transition
+from textual.css.transition import Transition
+from textual.geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
-    from ..canvas import CanvasLineType
-    from .._layout import Layout
-    from ..widget import Widget
-    from .styles import StylesBase
+    from textual.canvas import CanvasLineType
+    from textual._layout import Layout
+    from textual.css.styles import StylesBase
 
-from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
+from textual.css.types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
 BorderDefinition: TypeAlias = (
-    "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
+    "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color] | Literal['none']"
 )
 
 PropertyGetType = TypeVar("PropertyGetType")
@@ -294,7 +302,11 @@ class BoxProperty:
         """
         return obj.get_rule(self.name) or ("", self._default_color)  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, border: tuple[EdgeType, str | Color] | None):
+    def __set__(
+        self,
+        obj: StylesBase,
+        border: tuple[EdgeType, str | Color] | Literal["none"] | None,
+    ):
         """Set the box property.
 
         Args:
@@ -304,13 +316,14 @@ class BoxProperty:
                 ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
 
         Raises:
-            StyleSyntaxError: If the string supplied for the color has invalid syntax.
+            StyleValueError: If the string supplied for the color is not a valid color.
         """
-        _rich_traceback_omit = True
 
         if border is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
+        elif border == "none":
+            obj.set_rule(self.name, ("", obj.get_rule(self.name)[1]))
         else:
             _type, color = border
             if _type in ("none", "hidden"):
@@ -453,6 +466,16 @@ class BorderProperty:
             clear_rule(left)
             check_refresh()
             return
+        elif border == "none":
+            set_rule = obj.set_rule
+            get_rule = obj.get_rule
+            set_rule(top, ("", get_rule(top)[1]))
+            set_rule(right, ("", get_rule(right)[1]))
+            set_rule(bottom, ("", get_rule(bottom)[1]))
+            set_rule(left, ("", get_rule(left)[1]))
+            check_refresh()
+            return
+
         if isinstance(border, tuple) and len(border) == 2:
             _border = normalize_border_value(border)  # type: ignore
             setattr(obj, top, _border)
@@ -583,11 +606,11 @@ class DockProperty:
             objtype: The ``Styles`` class.
 
         Returns:
-            The dock name as a string, or "" if the rule is not set.
+            The edge name as a string. Returns "none" if unset or if "none" has been explicitly set.
         """
-        return obj.get_rule("dock", "")  # type: ignore[return-value]
+        return obj.get_rule("dock", "none")  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, dock_name: str | None):
+    def __set__(self, obj: StylesBase, dock_name: str):
         """Set the Dock property.
 
         Args:
@@ -600,25 +623,25 @@ class DockProperty:
 
 
 class SplitProperty:
-    """Descriptor for getting and setting the split property. The split property
-    allows you to specify which edge you want to split.
+    """Descriptor for getting and setting the split property.
+    The split property allows you to specify which edge you want to split.
     """
 
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> DockEdge:
-        """Get the Dock property.
+        """Get the Split property.
 
         Args:
             obj: The ``Styles`` object.
             objtype: The ``Styles`` class.
 
         Returns:
-            The dock name as a string, or "" if the rule is not set.
+            The edge name as a string. Returns "none" if unset or if "none" has been explicitly set.
         """
-        return obj.get_rule("split", "")  # type: ignore[return-value]
+        return obj.get_rule("split", "none")  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, dock_name: str | None):
+    def __set__(self, obj: StylesBase, dock_name: str):
         """Set the Dock property.
 
         Args:
@@ -656,8 +679,8 @@ class LayoutProperty:
                 or a ``Layout`` object.
         """
 
-        from ..layouts.factory import Layout  # Prevents circular import
-        from ..layouts.factory import MissingLayout, get_layout
+        from textual.layouts.factory import Layout  # Prevents circular import
+        from textual.layouts.factory import MissingLayout, get_layout
 
         _rich_traceback_omit = True
         if layout is None:
@@ -835,7 +858,7 @@ class OverflowProperty(StringEnumProperty):
     """Descriptor for overflow styles that forces widgets to refresh scrollbars."""
 
     def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
-        from ..widget import Widget  # Avoid circular import
+        from textual.widget import Widget  # Avoid circular import
 
         if isinstance(obj.node, Widget):
             obj.node._refresh_scrollbars()
@@ -982,7 +1005,7 @@ class ScrollbarColorProperty(ColorProperty):
         if obj.node is None:
             return
 
-        from ..widget import Widget
+        from textual.widget import Widget
 
         if isinstance(obj.node, Widget):
             widget = obj.node
@@ -1170,25 +1193,35 @@ class AlignProperty:
 class HatchProperty:
     """Property to expose hatch style."""
 
-    def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
-        return obj.get_rule("hatch", (" ", TRANSPARENT))  # type: ignore[return-value]
+    def __get__(
+        self, obj: StylesBase, type: type[StylesBase]
+    ) -> tuple[str, Color] | Literal["none"]:
+        return obj.get_rule("hatch")  # type: ignore[return-value]
 
-    def __set__(self, obj: StylesBase, value: tuple[str, Color | str] | None) -> None:
+    def __set__(
+        self, obj: StylesBase, value: tuple[str, Color | str] | Literal["none"] | None
+    ) -> None:
         _rich_traceback_omit = True
         if value is None:
-            obj.clear_rule("hatch")
+            if obj.clear_rule("hatch"):
+                obj.refresh(children=True)
             return
-        character, color = value
-        if len(character) != 1:
-            try:
-                character = HATCHES[character]
-            except KeyError:
-                raise ValueError(
-                    f"Expected a character or hatch value here; found {character!r}"
-                ) from None
-        if cell_len(character) != 1:
-            raise ValueError("Hatch character must have a cell length of 1")
-        if isinstance(color, str):
-            color = Color.parse(color)
-        hatch = (character, color)
+
+        if value == "none":
+            hatch = "none"
+        else:
+            character, color = value
+            if len(character) != 1:
+                try:
+                    character = HATCHES[character]
+                except KeyError:
+                    raise ValueError(
+                        f"Expected a character or hatch value here; found {character!r}"
+                    ) from None
+            if cell_len(character) != 1:
+                raise ValueError("Hatch character must have a cell length of 1")
+            if isinstance(color, str):
+                color = Color.parse(color)
+            hatch = (character, color)
+
         obj.set_rule("hatch", hatch)

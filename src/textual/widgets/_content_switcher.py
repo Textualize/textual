@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import Optional
 
-from ..await_complete import AwaitComplete
-from ..containers import Container
-from ..css.query import NoMatches
-from ..events import Mount
-from ..reactive import reactive
-from ..widget import Widget
+from textual.await_complete import AwaitComplete
+from textual.containers import Container
+from textual.css.query import NoMatches
+from textual.events import Mount
+from textual.reactive import reactive
+from textual.widget import Widget
 
 
 class ContentSwitcher(Container):

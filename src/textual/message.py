@@ -10,13 +10,13 @@ from typing import TYPE_CHECKING, ClassVar
 import rich.repr
 from typing_extensions import Self
 
-from . import _time
-from ._context import active_message_pump
-from .case import camel_to_snake
+from textual import _time
+from textual._context import active_message_pump
+from textual.case import camel_to_snake
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
-    from .message_pump import MessagePump
+    from textual.dom import DOMNode
+    from textual.message_pump import MessagePump
 
 
 @rich.repr.auto

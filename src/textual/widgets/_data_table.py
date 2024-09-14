@@ -15,22 +15,22 @@ from rich.style import Style
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self, TypeAlias
 
-from .. import events
-from .._segment_tools import line_crop
-from .._two_way_dict import TwoWayDict
-from .._types import SegmentLines
-from ..binding import Binding, BindingType
-from ..cache import LRUCache
-from ..color import Color
-from ..coordinate import Coordinate
-from ..geometry import Region, Size, Spacing, clamp
-from ..message import Message
-from ..reactive import Reactive
-from ..render import measure
-from ..renderables.styled import Styled
-from ..scroll_view import ScrollView
-from ..strip import Strip
-from ..widget import PseudoClasses
+from textual import events
+from textual._segment_tools import line_crop
+from textual._two_way_dict import TwoWayDict
+from textual._types import SegmentLines
+from textual.binding import Binding, BindingType
+from textual.cache import LRUCache
+from textual.color import Color
+from textual.coordinate import Coordinate
+from textual.geometry import Region, Size, Spacing, clamp
+from textual.message import Message
+from textual.reactive import Reactive
+from textual.render import measure
+from textual.renderables.styled import Styled
+from textual.scroll_view import ScrollView
+from textual.strip import Strip
+from textual.widget import PseudoClasses
 
 CellCacheKey: TypeAlias = (
     "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
@@ -818,6 +818,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for row in self.ordered_rows:
                 y_offsets += [(row.key, y) for y in range(row.height)]
             self._offset_cache[self._update_count] = y_offsets
+
         return y_offsets
 
     @property
@@ -1397,6 +1398,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # If there are rows that need to have their height computed, render them correctly
         # so that we can cache this rendering for later.
         if auto_height_rows:
+            self._offset_cache.clear()
             render_cell = self._render_cell  # This method renders & caches.
             should_highlight = self._should_highlight
             cursor_type = self.cursor_type
@@ -1450,6 +1452,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                                 for _ in range(height - cell_height)
                             ]
                         )
+
+            self._line_cache.clear()
+            self._styles_cache.clear()
 
         data_cells_width = sum(
             column.get_render_width(self) for column in self.columns.values()

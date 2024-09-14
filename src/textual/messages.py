@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 
 import rich.repr
 
-from ._types import CallbackType
-from .geometry import Region
-from .message import Message
+from textual._types import CallbackType
+from textual.geometry import Region
+from textual.message import Message
 
 if TYPE_CHECKING:
-    from .widget import Widget
+    from textual.widget import Widget
 
 
 @rich.repr.auto

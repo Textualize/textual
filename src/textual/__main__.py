@@ -1,4 +1,4 @@
-from .demo import DemoApp
+from textual.demo import DemoApp
 
 if __name__ == "__main__":
     app = DemoApp()
