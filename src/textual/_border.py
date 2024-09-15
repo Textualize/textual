@@ -237,6 +237,8 @@ BoxSegments: TypeAlias = Tuple[
 
 Borders: TypeAlias = Tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle]
 
+REVERSE_STYLE = Style(reverse=True)
+
 
 @lru_cache(maxsize=1024)
 def get_box(
@@ -275,8 +277,8 @@ def get_box(
     styles = (
         inner,
         outer,
-        Style.from_color(outer.bgcolor, inner.color),
-        Style.from_color(inner.bgcolor, outer.color),
+        Style.from_color(inner.color, outer.bgcolor) + REVERSE_STYLE,
+        Style.from_color(outer.color, inner.bgcolor) + REVERSE_STYLE,
     )
 
     return (
@@ -364,9 +366,9 @@ def render_border_label(
     elif label_style_location == 1:
         base_style = outer
     elif label_style_location == 2:
-        base_style = Style.from_color(outer.bgcolor, inner.color)
+        base_style = Style.from_color(inner.color, outer.bgcolor) + REVERSE_STYLE
     elif label_style_location == 3:
-        base_style = Style.from_color(inner.bgcolor, outer.color)
+        base_style = Style.from_color(outer.color, inner.bgcolor) + REVERSE_STYLE
     else:
         assert False
 
