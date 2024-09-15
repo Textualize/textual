@@ -109,7 +109,7 @@ Widgets occupy a rectangular region of the screen, which may be as small as a si
 
 The following styles influence the dimensions of a widget.
 
-- [width](../styles/width.md) and [height](../styles/width.md) define the size of the widget.
+- [width](../styles/width.md) and [height](../styles/height.md) define the size of the widget.
 - [padding](../styles/padding.md) adds optional space around the content area.
 - [border](../styles/border.md) draws an optional rectangular border around the padding and the content area.
 
