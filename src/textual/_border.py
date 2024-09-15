@@ -251,9 +251,9 @@ def get_box(
 
     Args:
         name: Name of the box type.
-        inner_style: The inner style (widget background)
-        outer_style: The outer style (parent background)
-        style: Widget style
+        inner_style: The inner style (widget background).
+        outer_style: The outer style (parent background).
+        style: Widget style.
 
     Returns:
         A tuple of 3 Segment triplets.
