@@ -57,7 +57,7 @@ class Sidebar(Widget):
 
     def compose(self) -> ComposeResult:
         with Vertical():
-            yield Label("Your scrollbar here!")
+            yield Label("Your sidebar here!")
 
 
 class SidebarApp(App):
