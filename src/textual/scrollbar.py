@@ -160,7 +160,12 @@ class ScrollBarRender:
                         (
                             _Style(bgcolor=back, color=bar, meta=foreground_meta)
                             if vertical
-                            else _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                            else _Style(
+                                bgcolor=back,
+                                color=bar,
+                                meta=foreground_meta,
+                                reverse=True,
+                            )
                         ),
                     )
             if end_index < len(segments):
@@ -169,7 +174,12 @@ class ScrollBarRender:
                     segments[end_index] = _Segment(
                         bar_character * width_thickness,
                         (
-                            _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                            _Style(
+                                bgcolor=back,
+                                color=bar,
+                                meta=foreground_meta,
+                                reverse=True,
+                            )
                             if vertical
                             else _Style(bgcolor=back, color=bar, meta=foreground_meta)
                         ),
