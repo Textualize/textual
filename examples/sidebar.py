@@ -38,7 +38,7 @@ class Sidebar(Widget):
         /* Offset x to be -100% to move it out of view by default */
         offset-x: -100%;
 
-        background: $boost;
+        background: $primary;
         border-right: vkey $background;    
 
         /* Enable animation */
