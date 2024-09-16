@@ -1,6 +1,6 @@
 from typing import Mapping
 
-BindingID = str
+BindingIDString = str
 """The ID of a Binding defined somewhere in the application.
 
 Corresponds to the `id` parameter of the `Binding` class.
@@ -30,9 +30,9 @@ class Keymap:
     never be mutated at runtime.
     """
 
-    def __init__(self, mapping: Mapping[BindingID, KeyString]):
+    def __init__(self, mapping: Mapping[BindingIDString, KeyString]):
         self._mapping = mapping
 
     @property
-    def mapping(self) -> Mapping[BindingID, KeyString]:
+    def mapping(self) -> Mapping[BindingIDString, KeyString]:
         return self._mapping

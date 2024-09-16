@@ -53,6 +53,15 @@ class Binding:
     tooltip: str = ""
     """Optional tooltip to show in footer."""
 
+    id: str | None = None
+    """ID of the binding. Intended to be globally unique, but uniqueness is not enforced.
+
+    If specified in a keymap returned from App.load_keymap() then
+    Textual will use this ID to lookup the binding, and substitute 
+    the `key` property of the Binding with the key specified in the
+    keymap.
+    """
+
     def parse_key(self) -> tuple[list[str], str]:
         """Parse a key in to a list of modifiers, and the actual key.
 
