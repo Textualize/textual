@@ -560,7 +560,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 color: green;
             }
             & > .tree--guides-hover {
-                color: transparent;
+                color: ansi_blue;
             
             }
             & > .tree--guides-selected {

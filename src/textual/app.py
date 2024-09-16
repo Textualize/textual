@@ -461,6 +461,9 @@ class App(Generic[ReturnType], DOMNode):
     This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
     """
 
+    INLINE_PADDING: ClassVar[int] = 1
+    """Number of blank lines above an inline app."""
+
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
