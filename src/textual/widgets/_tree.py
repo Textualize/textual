@@ -9,17 +9,17 @@ import rich.repr
 from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
-from .. import events, on
-from .._immutable_sequence_view import ImmutableSequenceView
-from .._loop import loop_last
-from .._segment_tools import line_pad
-from ..binding import Binding, BindingType
-from ..cache import LRUCache
-from ..geometry import Region, Size, clamp
-from ..message import Message
-from ..reactive import reactive, var
-from ..scroll_view import ScrollView
-from ..strip import Strip
+from textual import events, on
+from textual._immutable_sequence_view import ImmutableSequenceView
+from textual._loop import loop_last
+from textual._segment_tools import line_pad
+from textual.binding import Binding, BindingType
+from textual.cache import LRUCache
+from textual.geometry import Region, Size, clamp
+from textual.message import Message
+from textual.reactive import reactive, var
+from textual.scroll_view import ScrollView
+from textual.strip import Strip
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias

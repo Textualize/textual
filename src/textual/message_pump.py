@@ -11,7 +11,6 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
-import os
 import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
@@ -30,26 +29,26 @@ from typing import (
 )
 from weakref import WeakSet
 
-from . import Logger, events, log, messages
-from ._callback import invoke
-from ._context import NoActiveAppError, active_app, active_message_pump
-from ._context import message_hook as message_hook_context_var
-from ._context import prevent_message_types_stack
-from ._on import OnNoWidget
-from ._time import time
-from .constants import SLOW_THRESHOLD
-from .css.match import match
-from .events import Event
-from .message import Message
-from .reactive import Reactive, TooManyComputesError
-from .signal import Signal
-from .timer import Timer, TimerCallback
+from textual import Logger, events, log, messages
+from textual._callback import invoke
+from textual._context import NoActiveAppError, active_app, active_message_pump
+from textual._context import message_hook as message_hook_context_var
+from textual._context import prevent_message_types_stack
+from textual._on import OnNoWidget
+from textual._time import time
+from textual.constants import SLOW_THRESHOLD
+from textual.css.match import match
+from textual.events import Event
+from textual.message import Message
+from textual.reactive import Reactive, TooManyComputesError
+from textual.signal import Signal
+from textual.timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    from .app import App
-    from .css.model import SelectorSet
+    from textual.app import App
+    from textual.css.model import SelectorSet
 
 
 Callback: TypeAlias = "Callable[..., Any] | Callable[..., Awaitable[Any]]"
@@ -225,7 +224,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         try:
             return active_app.get()
         except LookupError:
-            from .app import App
+            from textual.app import App
 
             node: MessagePump | None = self
             while not isinstance(node, App):
@@ -693,7 +692,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             method_name: Handler method name.
             message: Message object.
         """
-        from .widget import Widget
+        from textual.widget import Widget
 
         methods_dispatched: set[Callable] = set()
         message_mro = [

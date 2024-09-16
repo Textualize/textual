@@ -7,13 +7,13 @@ from typing import ClassVar, Optional
 import rich.repr
 from rich.console import RenderableType
 
-from .. import _widget_navigation
-from ..binding import Binding, BindingType
-from ..containers import Container
-from ..events import Click, Mount
-from ..message import Message
-from ..reactive import var
-from ._radio_button import RadioButton
+from textual import _widget_navigation
+from textual.binding import Binding, BindingType
+from textual.containers import Container
+from textual.events import Click, Mount
+from textual.message import Message
+from textual.reactive import var
+from textual.widgets._radio_button import RadioButton
 
 
 class RadioSet(Container, can_focus=True, can_focus_children=False):

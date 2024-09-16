@@ -4,15 +4,15 @@ from typing import ClassVar, Iterable, Optional
 
 from typing_extensions import TypeGuard
 
-from .. import _widget_navigation
-from ..await_remove import AwaitRemove
-from ..binding import Binding, BindingType
-from ..containers import VerticalScroll
-from ..events import Mount
-from ..message import Message
-from ..reactive import reactive
-from ..widget import AwaitMount
-from ..widgets._list_item import ListItem
+from textual import _widget_navigation
+from textual.await_remove import AwaitRemove
+from textual.binding import Binding, BindingType
+from textual.containers import VerticalScroll
+from textual.events import Mount
+from textual.message import Message
+from textual.reactive import reactive
+from textual.widget import AwaitMount
+from textual.widgets._list_item import ListItem
 
 
 class ListView(VerticalScroll, can_focus=True, can_focus_children=False):

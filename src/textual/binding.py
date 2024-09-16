@@ -12,12 +12,12 @@ from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 import rich.repr
 
-from .keys import _character_to_key
+from textual.keys import _character_to_key
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    from .dom import DOMNode
+    from textual.dom import DOMNode
 
 BindingType: TypeAlias = "Binding | tuple[str, str] | tuple[str, str, str]"
 

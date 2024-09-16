@@ -17,8 +17,8 @@ import rich.repr
 from textual import log
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
-    from .message_pump import MessagePump
+    from textual.dom import DOMNode
+    from textual.message_pump import MessagePump
 SignalT = TypeVar("SignalT")
 
 SignalCallbackType = Union[

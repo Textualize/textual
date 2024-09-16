@@ -11,13 +11,13 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
-from ..app import RenderResult
-from ..binding import Binding, BindingType
-from ..events import Click
-from ..geometry import Size
-from ..message import Message
-from ..reactive import reactive
-from ._static import Static
+from textual.app import RenderResult
+from textual.binding import Binding, BindingType
+from textual.events import Click
+from textual.geometry import Size
+from textual.message import Message
+from textual.reactive import reactive
+from textual.widgets._static import Static
 
 if TYPE_CHECKING:
     from typing_extensions import Self

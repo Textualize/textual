@@ -6,7 +6,7 @@ from typing import Any
 
 from rich.pretty import Pretty as PrettyRenderable
 
-from ..widget import Widget
+from textual.widget import Widget
 
 
 class Pretty(Widget):

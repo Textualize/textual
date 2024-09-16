@@ -17,11 +17,11 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-from ._segment_tools import index_to_cell_position
-from .cache import FIFOCache
-from .color import Color
-from .constants import DEBUG
-from .filter import LineFilter
+from textual._segment_tools import index_to_cell_position
+from textual.cache import FIFOCache
+from textual.color import Color
+from textual.constants import DEBUG
+from textual.filter import LineFilter
 
 
 def get_line_length(segments: Iterable[Segment]) -> int:

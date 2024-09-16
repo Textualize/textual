@@ -42,11 +42,11 @@ from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
 from typing_extensions import Final
 
-from ._color_constants import COLOR_NAME_TO_RGB
-from .css.scalar import percentage_string_to_float
-from .css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
-from .geometry import clamp
-from .suggestions import get_suggestion
+from textual._color_constants import COLOR_NAME_TO_RGB
+from textual.css.scalar import percentage_string_to_float
+from textual.css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
+from textual.geometry import clamp
+from textual.suggestions import get_suggestion
 
 _TRUECOLOR = ColorType.TRUECOLOR
 

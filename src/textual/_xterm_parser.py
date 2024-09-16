@@ -5,12 +5,12 @@ from typing import Any, Generator, Iterable
 
 from typing_extensions import Final
 
-from . import constants, events, messages
-from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
-from ._keyboard_protocol import FUNCTIONAL_KEYS
-from ._parser import Parser, ParseTimeout, Peek1, Read1, TokenCallback
-from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
-from .message import Message
+from textual import constants, events, messages
+from textual._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
+from textual._keyboard_protocol import FUNCTIONAL_KEYS
+from textual._parser import Parser, ParseTimeout, Peek1, Read1, TokenCallback
+from textual.keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
+from textual.message import Message
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search

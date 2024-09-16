@@ -12,11 +12,11 @@ from typing import TYPE_CHECKING, Callable
 
 import rich.repr
 
-from . import constants
-from ._context import active_app
-from ._log import LogGroup, LogVerbosity
-from ._on import on
-from ._work_decorator import work
+from textual import constants
+from textual._context import active_app
+from textual._log import LogGroup, LogVerbosity
+from textual._on import on
+from textual._work_decorator import work
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias

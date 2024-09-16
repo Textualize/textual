@@ -6,7 +6,7 @@ from typing import Generic, Iterable, TypeVar
 
 from typing_extensions import TypeAlias
 
-from .geometry import Region
+from textual.geometry import Region
 
 ValueType = TypeVar("ValueType")
 GridCoordinate: TypeAlias = "tuple[int, int]"

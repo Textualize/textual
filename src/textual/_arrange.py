@@ -5,12 +5,12 @@ from fractions import Fraction
 from operator import attrgetter
 from typing import TYPE_CHECKING, Iterable, Mapping, Sequence
 
-from ._layout import DockArrangeResult, WidgetPlacement
-from ._partition import partition
-from .geometry import Region, Size, Spacing
+from textual._layout import DockArrangeResult, WidgetPlacement
+from textual._partition import partition
+from textual.geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
-    from .widget import Widget
+    from textual.widget import Widget
 
 # TODO: This is a bit of a fudge, need to ensure it is impossible for layouts to generate this value
 TOP_Z = 2**31 - 1

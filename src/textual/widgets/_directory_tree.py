@@ -8,12 +8,12 @@ from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
 from rich.style import Style
 from rich.text import Text, TextType
 
-from .. import work
-from ..await_complete import AwaitComplete
-from ..message import Message
-from ..reactive import var
-from ..worker import Worker, WorkerCancelled, WorkerFailed, get_current_worker
-from ._tree import TOGGLE_STYLE, Tree, TreeNode
+from textual import work
+from textual.await_complete import AwaitComplete
+from textual.message import Message
+from textual.reactive import var
+from textual.widgets._tree import TOGGLE_STYLE, Tree, TreeNode
+from textual.worker import Worker, WorkerCancelled, WorkerFailed, get_current_worker
 
 if TYPE_CHECKING:
     from typing_extensions import Self

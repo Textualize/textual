@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from textwrap import dedent
 
-from ..app import ComposeResult
-from ..css.query import NoMatches
-from ..widget import Widget
-from ..widgets import KeyPanel, Label, Markdown
+from textual.app import ComposeResult
+from textual.css.query import NoMatches
+from textual.widget import Widget
+from textual.widgets import KeyPanel, Label, Markdown
 
 
 class HelpPanel(Widget):

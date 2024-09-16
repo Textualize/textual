@@ -5,9 +5,9 @@ from typing import Iterable
 
 from rich.cells import get_character_cell_size
 
-from ._cells import cell_len
-from ._loop import loop_last
-from .expand_tabs import get_tab_widths
+from textual._cells import cell_len
+from textual._loop import loop_last
+from textual.expand_tabs import get_tab_widths
 
 re_chunk = re.compile(r"\S+\s*|\s+")
 

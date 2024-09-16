@@ -10,9 +10,9 @@ from typing import Generator
 
 import rich.repr
 
-from ._callback import invoke
-from ._debug import get_caller_file_and_line
-from ._types import CallbackType
+from textual._callback import invoke
+from textual._debug import get_caller_file_and_line
+from textual._types import CallbackType
 
 
 @rich.repr.auto

@@ -3,10 +3,10 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Iterable
 
-from .tokenizer import Expect, Token, Tokenizer
+from textual.css.tokenizer import Expect, Token, Tokenizer
 
 if TYPE_CHECKING:
-    from .types import CSSLocation
+    from textual.css.types import CSSLocation
 
 PERCENT = r"-?\d+\.?\d*%"
 DECIMAL = r"-?\d+\.?\d*"

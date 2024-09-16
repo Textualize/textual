@@ -7,11 +7,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal, TextIO
 
-from . import events, log
-from .events import MouseUp
+from textual import events, log
+from textual.events import MouseUp
 
 if TYPE_CHECKING:
-    from .app import App
+    from textual.app import App
 
 
 class Driver(ABC):

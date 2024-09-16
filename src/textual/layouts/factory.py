@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from .._layout import Layout
-from .grid import GridLayout
-from .horizontal import HorizontalLayout
-from .vertical import VerticalLayout
+from textual._layout import Layout
+from textual.layouts.grid import GridLayout
+from textual.layouts.horizontal import HorizontalLayout
+from textual.layouts.vertical import VerticalLayout
 
 LAYOUT_MAP: dict[str, type[Layout]] = {
     "horizontal": HorizontalLayout,

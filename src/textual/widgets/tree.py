@@ -1,6 +1,6 @@
 """Make non-widget Tree support classes available."""
 
-from ._tree import (
+from textual.widgets._tree import (
     AddNodeError,
     EventTreeDataType,
     NodeID,

@@ -8,7 +8,7 @@ from typing import Iterable, NamedTuple
 
 import rich.repr
 
-from ..geometry import Offset, Size, clamp
+from textual.geometry import Offset, Size, clamp
 
 
 class ScalarError(Exception):

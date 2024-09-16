@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from typing_extensions import Protocol, runtime_checkable
 
-from . import _time
-from ._callback import invoke
-from ._easing import DEFAULT_EASING, EASING
-from ._types import AnimationLevel, CallbackType
-from .timer import Timer
+from textual import _time
+from textual._callback import invoke
+from textual._easing import DEFAULT_EASING, EASING
+from textual._types import AnimationLevel, CallbackType
+from textual.timer import Timer
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -530,7 +530,7 @@ class Animator:
         Note:
             If there is no animation scheduled or running, this is a no-op.
         """
-        from .css.scalar_animation import ScalarAnimation
+        from textual.css.scalar_animation import ScalarAnimation
 
         animation_key = (id(obj), attribute)
         try:

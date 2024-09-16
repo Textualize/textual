@@ -29,40 +29,43 @@ import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
+from textual import constants, errors, events, messages
+from textual._arrange import arrange
+from textual._callback import invoke
+from textual._compositor import Compositor, MapGeometry
+from textual._context import active_message_pump, visible_screen_stack
+from textual._layout import DockArrangeResult
+from textual._path import (
+    CSSPathType,
+    _css_path_type_as_list,
+    _make_path_object_relative,
+)
+from textual._types import CallbackType
+from textual.await_complete import AwaitComplete
+from textual.binding import ActiveBinding, Binding, BindingsMap
+from textual.css.match import match
+from textual.css.parse import parse_selectors
+from textual.css.query import NoMatches, QueryType
+from textual.dom import DOMNode
+from textual.errors import NoWidget
+from textual.geometry import Offset, Region, Size
 from textual.keys import key_to_character
-
-from . import constants, errors, events, messages
-from ._arrange import arrange
-from ._callback import invoke
-from ._compositor import Compositor, MapGeometry
-from ._context import active_message_pump, visible_screen_stack
-from ._layout import DockArrangeResult
-from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._types import CallbackType
-from .await_complete import AwaitComplete
-from .binding import ActiveBinding, Binding, BindingsMap
-from .css.match import match
-from .css.parse import parse_selectors
-from .css.query import NoMatches, QueryType
-from .dom import DOMNode
-from .errors import NoWidget
-from .geometry import Offset, Region, Size
-from .reactive import Reactive
-from .renderables.background_screen import BackgroundScreen
-from .renderables.blank import Blank
-from .signal import Signal
-from .timer import Timer
-from .widget import Widget
-from .widgets import Tooltip
-from .widgets._toast import ToastRack
+from textual.reactive import Reactive
+from textual.renderables.background_screen import BackgroundScreen
+from textual.renderables.blank import Blank
+from textual.signal import Signal
+from textual.timer import Timer
+from textual.widget import Widget
+from textual.widgets import Tooltip
+from textual.widgets._toast import ToastRack
 
 if TYPE_CHECKING:
     from typing_extensions import Final
 
-    from .command import Provider
+    from textual.command import Provider
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .message_pump import MessagePump
+    from textual.message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
 UPDATE_PERIOD: Final[float] = 1 / constants.MAX_FPS
@@ -258,7 +261,7 @@ class Screen(Generic[ScreenResultType], Widget):
     @property
     def is_current(self) -> bool:
         """Is the screen current (i.e. visible to user)?"""
-        from .app import ScreenStackError
+        from textual.app import ScreenStackError
 
         try:
             return self.app.screen is self or self in self.app._background_screens

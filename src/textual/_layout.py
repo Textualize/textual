@@ -4,15 +4,15 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
-from ._spatial_map import SpatialMap
-from .canvas import Canvas, Rectangle
-from .geometry import Offset, Region, Size, Spacing
-from .strip import StripRenderable
+from textual._spatial_map import SpatialMap
+from textual.canvas import Canvas, Rectangle
+from textual.geometry import Offset, Region, Size, Spacing
+from textual.strip import StripRenderable
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    from .widget import Widget
+    from textual.widget import Widget
 
 ArrangeResult: TypeAlias = "list[WidgetPlacement]"
 

@@ -6,7 +6,7 @@ from typing import Callable, Iterable, Sequence
 
 import rich.repr
 
-from ._callback import invoke
+from textual._callback import invoke
 
 
 @rich.repr.auto

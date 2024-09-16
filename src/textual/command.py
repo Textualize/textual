@@ -30,23 +30,23 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
 
-from . import on, work
-from .binding import Binding, BindingType
-from .containers import Horizontal, Vertical
-from .events import Click, Mount
-from .fuzzy import Matcher
-from .message import Message
-from .reactive import var
-from .screen import Screen, SystemModalScreen
-from .timer import Timer
-from .types import IgnoreReturnCallbackType
-from .widget import Widget
-from .widgets import Button, Input, LoadingIndicator, OptionList, Static
-from .widgets.option_list import Option
-from .worker import get_current_worker
+from textual import on, work
+from textual.binding import Binding, BindingType
+from textual.containers import Horizontal, Vertical
+from textual.events import Click, Mount
+from textual.fuzzy import Matcher
+from textual.message import Message
+from textual.reactive import var
+from textual.screen import Screen, SystemModalScreen
+from textual.timer import Timer
+from textual.types import IgnoreReturnCallbackType
+from textual.widget import Widget
+from textual.widgets import Button, Input, LoadingIndicator, OptionList, Static
+from textual.widgets.option_list import Option
+from textual.worker import get_current_worker
 
 if TYPE_CHECKING:
-    from .app import App, ComposeResult
+    from textual.app import App, ComposeResult
 
 __all__ = [
     "CommandPalette",

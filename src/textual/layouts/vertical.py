@@ -3,13 +3,13 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING
 
-from .._layout import ArrangeResult, Layout, WidgetPlacement
-from .._resolve import resolve_box_models
-from ..geometry import Region, Size
+from textual._layout import ArrangeResult, Layout, WidgetPlacement
+from textual._resolve import resolve_box_models
+from textual.geometry import Region, Size
 
 if TYPE_CHECKING:
-    from ..geometry import Spacing
-    from ..widget import Widget
+    from textual.geometry import Spacing
+    from textual.widget import Widget
 
 
 class VerticalLayout(Layout):

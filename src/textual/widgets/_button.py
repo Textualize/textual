@@ -9,18 +9,18 @@ from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
-from .. import events
+from textual import events
 
 if TYPE_CHECKING:
-    from ..app import RenderResult
+    from textual.app import RenderResult
 
-from ..binding import Binding
-from ..css._error_tools import friendly_list
-from ..geometry import Size
-from ..message import Message
-from ..pad import HorizontalPad
-from ..reactive import reactive
-from ..widget import Widget
+from textual.binding import Binding
+from textual.css._error_tools import friendly_list
+from textual.geometry import Size
+from textual.message import Message
+from textual.pad import HorizontalPad
+from textual.reactive import reactive
+from textual.widget import Widget
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 """The names of the valid button variants.

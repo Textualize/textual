@@ -8,19 +8,19 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
-from .. import events
-from ..app import ComposeResult, RenderResult
-from ..await_complete import AwaitComplete
-from ..binding import Binding, BindingType
-from ..containers import Container, Horizontal, Vertical
-from ..css.query import NoMatches
-from ..events import Mount
-from ..geometry import Offset
-from ..message import Message
-from ..reactive import reactive
-from ..renderables.bar import Bar
-from ..widget import Widget
-from ..widgets import Static
+from textual import events
+from textual.app import ComposeResult, RenderResult
+from textual.await_complete import AwaitComplete
+from textual.binding import Binding, BindingType
+from textual.containers import Container, Horizontal, Vertical
+from textual.css.query import NoMatches
+from textual.events import Mount
+from textual.geometry import Offset
+from textual.message import Message
+from textual.reactive import reactive
+from textual.renderables.bar import Bar
+from textual.widget import Widget
+from textual.widgets import Static
 
 
 class Underline(Widget):
