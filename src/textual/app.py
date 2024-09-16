@@ -1049,18 +1049,19 @@ class App(Generic[ReturnType], DOMNode):
         Yields:
             [SystemCommand][textual.app.SystemCommand] instances.
         """
-        if self.dark:
-            yield SystemCommand(
-                "Light mode",
-                "Switch to a light background",
-                self.action_toggle_dark,
-            )
-        else:
-            yield SystemCommand(
-                "Dark mode",
-                "Switch to a dark background",
-                self.action_toggle_dark,
-            )
+        if not self.ansi_color:
+            if self.dark:
+                yield SystemCommand(
+                    "Light mode",
+                    "Switch to a light background",
+                    self.action_toggle_dark,
+                )
+            else:
+                yield SystemCommand(
+                    "Dark mode",
+                    "Switch to a dark background",
+                    self.action_toggle_dark,
+                )
 
         yield SystemCommand(
             "Quit the application",
@@ -1126,9 +1127,8 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A mapping of variable name to value.
         """
-        if self.ansi_color:
-            design = self.design["ansi"]
-        elif self.dark:
+
+        if self.dark:
             design = self.design["dark"]
         else:
             design = self.design["light"]

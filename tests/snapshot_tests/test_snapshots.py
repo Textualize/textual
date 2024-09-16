@@ -1901,3 +1901,23 @@ def test_app_focus_style(snap_compare):
         await pilot.pause()
 
     assert snap_compare(FocusApp(), run_before=run_before)
+
+
+def test_ansi(snap_compare):
+    """Test ANSI colors."""
+    # It is actually impossible to tell from the SVG that ANSI colors were actually used
+    # This snapshot test exists as a canary to check if ansi_colors have broken
+
+    class ANSIApp(App):
+        CSS = """
+        Label {
+            background: ansi_blue;
+            border: solid ansi_white;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("[red]Red[/] [magenta]Magenta[/]")
+
+    app = ANSIApp(ansi_color=True)
+    assert snap_compare(app)

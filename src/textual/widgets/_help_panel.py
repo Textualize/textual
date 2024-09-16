@@ -26,6 +26,18 @@ class HelpPanel(Widget):
         padding-right: 1;
         layout: vertical;
         height: 100%;
+
+        &:ansi {
+            background: ansi_default;
+            border-left: vkey ansi_black;
+
+            Markdown, KeyPanel {
+                background: ansi_default;
+            }
+            .bindings-table--divide {
+                color: transparent;
+            }
+        }
       
         #title {
             width: 1fr;
@@ -45,6 +57,10 @@ class HelpPanel(Widget):
             margin-top: 1;
             display: none;
             background: $panel;
+
+            &:ansi {
+                background: ansi_default;
+            }
 
             MarkdownBlock {
                 padding-left: 2;
