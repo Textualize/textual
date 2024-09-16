@@ -565,12 +565,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             }
             & > .tree--guides-selected {
                 color: ansi_bright_blue;
-                text-style: bold;
+             
             }
             & > .tree--cursor {
                 background: ansi_bright_blue;
                 color: ansi_default;
-                text-style: bold;
+                text-style: none;
+               
             }
             &:focus > .tree--cursor {
                 background: ansi_bright_blue;
