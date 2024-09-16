@@ -104,6 +104,7 @@ from textual.features import FeatureFlag, parse_features
 from textual.file_monitor import FileMonitor
 from textual.filter import ANSIToTruecolor, DimFilter, Monochrome
 from textual.geometry import Offset, Region, Size
+from textual.keymap import Keymap
 from textual.keys import (
     REPLACED_KEYS,
     _character_to_key,
@@ -4204,3 +4205,15 @@ class App(Generic[ReturnType], DOMNode):
             self.notify(
                 "Failed to save screenshot", title="Screenshot", severity="error"
             )
+
+    def get_keymap(self) -> Keymap:
+        """Gets the keymap used to override default keyboard shortcuts.
+
+        This may be overridden by subclasses to change the keyboard
+        shortcuts used by the application on startup (e.g. by loading
+        from a config/keymap file).
+
+        Returns:
+            The Keymap to apply.
+        """
+        return Keymap(mapping={})

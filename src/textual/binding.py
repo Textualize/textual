@@ -56,7 +56,7 @@ class Binding:
     id: str | None = None
     """ID of the binding. Intended to be globally unique, but uniqueness is not enforced.
 
-    If specified in a keymap returned from App.load_keymap() then
+    If specified in a keymap returned from App.get_keymap() then
     Textual will use this ID to lookup the binding, and substitute 
     the `key` property of the Binding with the key specified in the
     keymap.

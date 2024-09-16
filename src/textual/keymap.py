@@ -18,7 +18,7 @@ class Keymap:
 
     Used by Textual on startup to override default key bindings.
 
-    Override App.load_keymap() in an App subclass to have Textual
+    Override App.get_keymap() in an App subclass to have Textual
     replace bindings defined across that App with the overrides defined
     in the keymap.
 
