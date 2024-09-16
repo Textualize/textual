@@ -366,15 +366,50 @@ class Screen(Generic[ScreenResultType], Widget):
             A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
         bindings_map: dict[str, ActiveBinding] = {}
+        app = self.app
+        keymap = app.get_keymap()
         for namespace, bindings in self._modal_binding_chain:
+            # Replace any bindings which are overridden by the keymap
+            print("namespace", namespace)
+            print("bindings", bindings)
+            if keymap:
+                binding_overrides: dict[str, list[Binding]] = {}
+                keys_to_unbind: set[str] = set()
+                for key, binding in bindings:
+                    binding_id = binding.id
+                    if binding_id is None:
+                        continue
+
+                    if override_key_string := keymap.get(binding_id):
+                        # An override binding exists in the app keymap, so take
+                        # note of the old key to remove from the map and the new
+                        # binding to associate with the new key.
+                        keys_to_unbind.add(key)
+                        override_keys = override_key_string.split(",")
+                        # Create a binding for each of the comma separated
+                        for override_key in override_keys:
+                            binding_overrides.setdefault(override_key, []).append(
+                                binding.with_key(override_key)
+                            )
+
+                # If we've replaced bindings using the keymap, then we need to
+                # update the bindings map with the new bindings.
+                if binding_overrides:
+                    override_bindings_map = BindingsMap.from_keys(binding_overrides)
+                    print("override_bindings_map", override_bindings_map)
+                    bindings.override(override_bindings_map)
+
+                    print("Bindings overridden", bindings)
+
             for key, binding in bindings:
                 # This will call the nodes `check_action` method.
-                action_state = self.app._check_action_state(binding.action, namespace)
+                action_state = app._check_action_state(binding.action, namespace)
                 if action_state is False:
                     # An action_state of False indicates the action is disabled and not shown
                     # Note that None has a different meaning, which is why there is an `is False`
                     # rather than a truthy check.
                     continue
+
                 enabled = bool(action_state)
                 if existing_key_and_binding := bindings_map.get(key):
                     # This key has already been bound

@@ -1,4 +1,6 @@
-from typing import Mapping
+from __future__ import annotations
+
+from typing import Iterator, Mapping
 
 BindingIDString = str
 """The ID of a Binding defined somewhere in the application.
@@ -36,3 +38,15 @@ class Keymap:
     @property
     def mapping(self) -> Mapping[BindingIDString, KeyString]:
         return self._mapping
+
+    def get(self, binding_id: BindingIDString) -> KeyString | None:
+        return self._mapping.get(binding_id)
+
+    def __iter__(self) -> Iterator[tuple[BindingIDString, KeyString]]:
+        return iter(self._mapping.items())
+
+    def __len__(self) -> int:
+        return len(self._mapping)
+
+    def __bool__(self) -> bool:
+        return bool(self._mapping)

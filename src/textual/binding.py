@@ -7,11 +7,13 @@ See [bindings](/guide/input#bindings) in the guide for details.
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 import rich.repr
 
+from textual.keymap import BindingIDString
 from textual.keys import _character_to_key
 
 if TYPE_CHECKING:
@@ -71,6 +73,57 @@ class Binding:
         *modifiers, key = self.key.split("+")
         return modifiers, key
 
+    def with_key(self, key: str) -> Binding:
+        """Return a new binding with the key set to the specified value.
+
+        Args:
+            key: The new key to set.
+
+        Returns:
+            A new binding with the key set to the specified value.
+        """
+        return dataclasses.replace(self, key=key)
+
+    @classmethod
+    def make_bindings(cls, bindings: Iterable[BindingType]) -> Iterable[Binding]:
+        """Convert a list of BindingType (the types that can be specified in BINDINGS)
+        into an Iterable[Binding].
+
+        Compound bindings like "j,down" will be expanded into 2 Binding instances.
+
+        Args:
+            bindings: An iterable of BindingType.
+
+        Returns:
+            An iterable of Binding.
+        """
+        bindings = list(bindings)
+        for binding in bindings:
+            # If it's a tuple of length 3, convert into a Binding first
+            if isinstance(binding, tuple):
+                if len(binding) not in (2, 3):
+                    raise BindingError(
+                        f"BINDINGS must contain a tuple of two or three strings, not {binding!r}"
+                    )
+                # `binding` is a tuple of 2 or 3 values at this point
+                binding = Binding(*binding)  # type: ignore[reportArgumentType]
+
+            # At this point we have a Binding instance, but the key may
+            # be a list of keys, so now we unroll that single Binding
+            # into a (potential) collection of Binding instances.
+            for key in binding.key.split(","):
+                key = key.strip()
+                if not key:
+                    raise InvalidBinding(
+                        f"Can not bind empty string in {binding.key!r}"
+                    )
+                if len(key) == 1:
+                    key = _character_to_key(key)
+
+                yield dataclasses.replace(
+                    binding, show=bool(binding.description and binding.show)
+                )
+
 
 class ActiveBinding(NamedTuple):
     """Information about an active binding (returned from [active_bindings][textual.screen.Screen.active_bindings])."""
@@ -104,42 +157,17 @@ class BindingsMap:
             properties of a `Binding`.
         """
 
-        def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
-            bindings = list(bindings)
-            for binding in bindings:
-                # If it's a tuple of length 3, convert into a Binding first
-                if isinstance(binding, tuple):
-                    if len(binding) not in (2, 3):
-                        raise BindingError(
-                            f"BINDINGS must contain a tuple of two or three strings, not {binding!r}"
-                        )
-                    # `binding` is a tuple of 2 or 3 values at this point
-                    binding = Binding(*binding)  # type: ignore[reportArgumentType]
-
-                # At this point we have a Binding instance, but the key may
-                # be a list of keys, so now we unroll that single Binding
-                # into a (potential) collection of Binding instances.
-                for key in binding.key.split(","):
-                    key = key.strip()
-                    if not key:
-                        raise InvalidBinding(
-                            f"Can not bind empty string in {binding.key!r}"
-                        )
-                    if len(key) == 1:
-                        key = _character_to_key(key)
-                    yield Binding(
-                        key=key,
-                        action=binding.action,
-                        description=binding.description,
-                        show=bool(binding.description and binding.show),
-                        key_display=binding.key_display,
-                        priority=binding.priority,
-                        tooltip=binding.tooltip,
-                    )
-
         self.key_to_bindings: dict[str, list[Binding]] = {}
-        for binding in make_bindings(bindings or {}):
+        """Mapping of key (e.g. "ctrl+a") to list of bindings for that key."""
+
+        self._id_to_binding: dict[BindingIDString, list[Binding]] = {}
+        """Cache of bindings by ID for faster on-demand lookup later."""
+
+        for binding in Binding.make_bindings(bindings or {}):
             self.key_to_bindings.setdefault(binding.key, []).append(binding)
+            binding_id = binding.id
+            if binding_id is not None:
+                self._id_to_binding.setdefault(binding_id, []).append(binding)
 
     def _add_binding(self, binding: Binding) -> None:
         """Add a new binding.
@@ -201,6 +229,16 @@ class BindingsMap:
             for key, key_bindings in _bindings.key_to_bindings.items():
                 keys.setdefault(key, []).extend(key_bindings)
         return BindingsMap.from_keys(keys)
+
+    def override(self, keymap: BindingsMap) -> None:
+        """Replace bindings for keys that are present in `keymap`.
+
+        Preserves existing bindings for keys that are not in `keymap`.
+
+        Args:
+            keymap: A keymap to overlay.
+        """
+        self.key_to_bindings.update(keymap.key_to_bindings)
 
     @property
     def shown_keys(self) -> list[Binding]:
