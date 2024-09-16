@@ -137,6 +137,16 @@ class DiscoveryHit:
         """The prompt to use when displaying the discovery hit in the command palette."""
         return self.display
 
+    @property
+    def score(self) -> float:
+        """A discovery hit always has a score of 0.
+
+        The order in which discovery hits are displayed is determined by the order
+        in which they are yielded by the Provider. It's up to the developer to yield
+        DiscoveryHits in the .
+        """
+        return 0.0
+
     def __lt__(self, other: object) -> bool:
         if isinstance(other, DiscoveryHit):
             assert self.text is not None
@@ -893,10 +903,7 @@ class CommandPalette(SystemModalScreen):
         )
 
         def sort_key(command: Command) -> float:
-            # Only sort by score if it exists, otherwise do no sorting.
-            # This ensures we only sort Hits, and not DiscoveryHits.
-            score = getattr(command.hit, "score", 0)
-            return -score
+            return -command.hit.score
 
         sorted_commands = sorted(commands, key=sort_key)
         command_list.clear_options().add_options(sorted_commands)
