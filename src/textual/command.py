@@ -137,6 +137,16 @@ class DiscoveryHit:
         """The prompt to use when displaying the discovery hit in the command palette."""
         return self.display
 
+    @property
+    def score(self) -> float:
+        """A discovery hit always has a score of 0.
+
+        The order in which discovery hits are displayed is determined by the order
+        in which they are yielded by the Provider. It's up to the developer to yield
+        DiscoveryHits in the .
+        """
+        return 0.0
+
     def __lt__(self, other: object) -> bool:
         if isinstance(other, DiscoveryHit):
             assert self.text is not None
@@ -312,12 +322,12 @@ class Provider(ABC):
 @rich.repr.auto
 @total_ordering
 class Command(Option):
-    """Class that holds a command in the [`CommandList`][textual.command.CommandList]."""
+    """Class that holds a hit in the [`CommandList`][textual.command.CommandList]."""
 
     def __init__(
         self,
         prompt: RenderableType,
-        command: DiscoveryHit | Hit,
+        hit: DiscoveryHit | Hit,
         id: str | None = None,
         disabled: bool = False,
     ) -> None:
@@ -325,22 +335,22 @@ class Command(Option):
 
         Args:
             prompt: The prompt for the option.
-            command: The details of the command associated with the option.
+            hit: The details of the hit associated with the option.
             id: The optional ID for the option.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         super().__init__(prompt, id, disabled)
-        self.command = command
-        """The details of the command associated with the option."""
+        self.hit = hit
+        """The details of the hit associated with the option."""
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, Command):
-            return self.command < other.command
+            return self.hit < other.hit
         return NotImplemented
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Command):
-            return self.command == other.command
+            return self.hit == other.hit
         return NotImplemented
 
 
@@ -891,7 +901,12 @@ class CommandPalette(SystemModalScreen):
             if command_list.highlighted is not None and not clear_current
             else None
         )
-        command_list.clear_options().add_options(commands)
+
+        def sort_key(command: Command) -> float:
+            return -command.hit.score
+
+        sorted_commands = sorted(commands, key=sort_key)
+        command_list.clear_options().add_options(sorted_commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
 
@@ -1061,8 +1076,9 @@ class CommandPalette(SystemModalScreen):
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
-            input.value = str(event.option.command.text)
-            self._selected_command = event.option.command
+            hit = event.option.hit
+            input.value = str(hit.text)
+            self._selected_command = hit
         input.action_end()
         self._list_visible = False
         self.query_one(CommandList).clear_options()
