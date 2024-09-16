@@ -328,10 +328,10 @@ class Tabs(Widget, can_focus=True):
         Args:
             *tabs: Positional argument should be explicit Tab objects, or a str or Text.
             active: ID of the tab which should be active on start.
-            name: Optional name for the input widget.
+            name: Optional name for the tabs widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
-            disabled: Whether the input is disabled or not.
+            disabled: Whether the widget is disabled or not.
         """
         self._tabs_counter = 0
 
