@@ -333,6 +333,15 @@ class App(Generic[ReturnType], DOMNode):
         &:ansi {
             background: ansi_default;
             color: ansi_default;
+
+            .-ansi-scrollbar {
+                scrollbar-background: ansi_default;
+                scrollbar-background-hover: ansi_default;
+                scrollbar-background-active: ansi_default;
+                scrollbar-color: ansi_blue;
+                scrollbar-color-active: ansi_bright_blue;
+                scrollbar-color-hover: ansi_bright_blue;               
+            }
         }
 
         /* When a widget is maximized */

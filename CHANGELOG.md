@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Docstrings added to most style properties https://github.com/Textualize/textual/pull/4982
 - Added `ansi_color` switch to App to permit ANSI (themed) colors
 - Added `:ansi` pseudo class
+- Added `-ansi-scrollbar` style to widgets
 
 ### Changed
 
