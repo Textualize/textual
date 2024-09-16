@@ -7,7 +7,7 @@ import threading
 import pytest
 
 from textual import work
-from textual.app import App, ComposeResult, ScreenStackError
+from textual.app import App, ComposeResult, ScreenError, ScreenStackError
 from textual.events import MouseMove
 from textual.geometry import Offset
 from textual.screen import Screen
@@ -624,3 +624,20 @@ async def test_worker_cancellation():
         # Press enter to activate button to dismiss them
         await pilot.press("enter")
         await pilot.press("enter")
+
+
+async def test_self_pop_screen():
+    """Regression test for https://github.com/Textualize/textual/issues/5008"""
+
+    class MyScreen(Screen):
+        def on_mount(self):
+            self.app.pop_screen()
+
+    class PopApp(App):
+        def on_mount(self) -> None:
+            self.push_screen(MyScreen())
+
+    app = PopApp()
+    with pytest.raises(ScreenError):
+        async with app.run_test() as pilot:
+            pass

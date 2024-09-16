@@ -2514,11 +2514,16 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The screen that was replaced.
         """
-
+        _rich_traceback_omit = True
         screen_stack = self._screen_stack
         if len(screen_stack) <= 1:
             raise ScreenStackError(
                 "Can't pop screen; there must be at least one screen on the stack"
+            )
+
+        if active_message_pump.get() is self.screen:
+            raise ScreenError(
+                f"Can't pop screen {self.screen} from it's own message loop; Consider using the @work decorator."
             )
 
         previous_screen = screen_stack.pop()
