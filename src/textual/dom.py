@@ -173,7 +173,7 @@ class DOMNode(MessagePump):
     # Generated list of bindings
     _merged_bindings: ClassVar[BindingsMap | None] = None
 
-    _reactives: ClassVar[dict[str, Reactive]]
+    _reactives: ClassVar[dict[str, Reactive[Any]]]
 
     _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
@@ -218,7 +218,7 @@ class DOMNode(MessagePump):
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
         self._reactive_connect: (
-            dict[str, tuple[MessagePump, Reactive | object]] | None
+            dict[str, tuple[MessagePump, Reactive[Any] | object]] | None
         ) = None
         self._pruning = False
         self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
@@ -625,7 +625,7 @@ class DOMNode(MessagePump):
             for key, key_bindings in bindings_.key_to_bindings.items():
                 keys[key] = key_bindings
 
-        new_bindings = BindingsMap().from_keys(keys)
+        new_bindings = BindingsMap.from_keys(keys)
         return new_bindings
 
     def _post_register(self, app: App) -> None:

@@ -320,8 +320,8 @@ class Screen(Generic[ScreenResultType], Widget):
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
-        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
         if focused is None:
             namespace_bindings = [
                 (self, self._bindings.copy()),
@@ -334,12 +334,21 @@ class Screen(Generic[ScreenResultType], Widget):
 
         # Filter out bindings that could be captures by widgets (such as Input, TextArea)
         filter_namespaces: list[DOMNode] = []
+        keymap = self.app.get_keymap()
         for namespace, bindings_map in namespace_bindings:
+            print(namespace, bindings_map.key_to_bindings)
             for filter_namespace in filter_namespaces:
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
                     if check_consume_key(key, key_to_character(key)):
+                        # If the widget consumes the key (e.g. like an Input widget),
+                        # then remove the key from the bindings map.
                         del bindings_map.key_to_bindings[key]
+
+                if keymap:
+                    print(bindings_map.key_to_bindings)
+                    bindings_map.apply_keymap(keymap)
+
             filter_namespaces.append(namespace)
 
         return namespace_bindings
@@ -367,40 +376,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         bindings_map: dict[str, ActiveBinding] = {}
         app = self.app
-        keymap = app.get_keymap()
         for namespace, bindings in self._modal_binding_chain:
-            # Replace any bindings which are overridden by the keymap
-            print("namespace", namespace)
-            print("bindings", bindings)
-            if keymap:
-                binding_overrides: dict[str, list[Binding]] = {}
-                keys_to_unbind: set[str] = set()
-                for key, binding in bindings:
-                    binding_id = binding.id
-                    if binding_id is None:
-                        continue
-
-                    if override_key_string := keymap.get(binding_id):
-                        # An override binding exists in the app keymap, so take
-                        # note of the old key to remove from the map and the new
-                        # binding to associate with the new key.
-                        keys_to_unbind.add(key)
-                        override_keys = override_key_string.split(",")
-                        # Create a binding for each of the comma separated
-                        for override_key in override_keys:
-                            binding_overrides.setdefault(override_key, []).append(
-                                binding.with_key(override_key)
-                            )
-
-                # If we've replaced bindings using the keymap, then we need to
-                # update the bindings map with the new bindings.
-                if binding_overrides:
-                    override_bindings_map = BindingsMap.from_keys(binding_overrides)
-                    print("override_bindings_map", override_bindings_map)
-                    bindings.override(override_bindings_map)
-
-                    print("Bindings overridden", bindings)
-
             for key, binding in bindings:
                 # This will call the nodes `check_action` method.
                 action_state = app._check_action_state(binding.action, namespace)

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 import rich.repr
 
-from textual.keymap import BindingIDString
+from textual.keymap import Keymap
 from textual.keys import _character_to_key
 
 if TYPE_CHECKING:
@@ -160,14 +160,8 @@ class BindingsMap:
         self.key_to_bindings: dict[str, list[Binding]] = {}
         """Mapping of key (e.g. "ctrl+a") to list of bindings for that key."""
 
-        self._id_to_binding: dict[BindingIDString, list[Binding]] = {}
-        """Cache of bindings by ID for faster on-demand lookup later."""
-
         for binding in Binding.make_bindings(bindings or {}):
             self.key_to_bindings.setdefault(binding.key, []).append(binding)
-            binding_id = binding.id
-            if binding_id is not None:
-                self._id_to_binding.setdefault(binding_id, []).append(binding)
 
     def _add_binding(self, binding: Binding) -> None:
         """Add a new binding.
@@ -230,7 +224,7 @@ class BindingsMap:
                 keys.setdefault(key, []).extend(key_bindings)
         return BindingsMap.from_keys(keys)
 
-    def override(self, keymap: BindingsMap) -> None:
+    def apply_keymap(self, keymap: Keymap) -> None:
         """Replace bindings for keys that are present in `keymap`.
 
         Preserves existing bindings for keys that are not in `keymap`.
@@ -238,7 +232,29 @@ class BindingsMap:
         Args:
             keymap: A keymap to overlay.
         """
-        self.key_to_bindings.update(keymap.key_to_bindings)
+        for key_string, bindings in list(self.key_to_bindings.items()):
+            print(key_string, bindings)
+            for binding in bindings:
+                binding_id = binding.id
+                if binding_id is None:
+                    continue
+
+                # Lookup the binding ID in the keymap.
+                if override_key_string := keymap.get(binding_id):
+                    # An override binding exists in the app's keymap.
+                    override_keys = override_key_string.split(",")
+                    overrides_map: dict[str, list[Binding]] = {}
+                    for override_key in override_keys:
+                        # We've found an override for this key, so remove the bindings for
+                        # this key from the map, and take note of the override to be applied
+                        # after this loop.
+                        print(
+                            f"removing {key_string}, setting {override_key} to {binding!r}"
+                        )
+                        del self.key_to_bindings[key_string]
+                        overrides_map.setdefault(override_key, []).append(binding)
+
+                    self.key_to_bindings.update(overrides_map)
 
     @property
     def shown_keys(self) -> list[Binding]:
