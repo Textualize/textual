@@ -480,6 +480,9 @@ class TreeNode(Generic[TreeDataType]):
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """A widget for displaying and navigating data in a tree."""
 
+    ICON_NODE = "▶ "
+    ICON_NODE_EXPANDED = "▼ "
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("space", "toggle_node", "Toggle", show=False),
@@ -520,41 +523,69 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     Tree {
         background: $panel;
         color: $text;
-    }
-    Tree > .tree--label {
 
-    }
-    Tree > .tree--guides {
-        color: $success-darken-3;
+        & > .tree--label {
+
+        }
+        & > .tree--guides {
+            color: $success-darken-3;
+        }
+        & > .tree--guides-hover {
+            color: $success;
+            text-style: bold;
+        }
+        & > .tree--guides-selected {
+            color: $warning;
+            text-style: bold;
+        }
+        & > .tree--cursor {
+            background: $secondary-darken-2;
+            color: $text;
+            text-style: bold;
+        }
+        &:focus > .tree--cursor {
+            background: $secondary;
+        }
+        & > .tree--highlight {
+            text-style: underline;
+        }
+        & > .tree--highlight-line {
+            background: $boost;
+        }
+
+        &.-ansi {
+            background: ansi_default;
+            color: ansi_default;
+            & > .tree--guides {
+                color: green;
+            }
+            & > .tree--guides-hover {
+                color: ansi_blue;
+            
+            }
+            & > .tree--guides-selected {
+                color: ansi_bright_blue;
+             
+            }
+            & > .tree--cursor {
+                background: ansi_bright_blue;
+                color: ansi_default;
+                text-style: none;
+               
+            }
+            &:focus > .tree--cursor {
+                background: ansi_bright_blue;
+            }
+            & > .tree--highlight {
+                text-style: underline;
+            }
+            & > .tree--highlight-line {
+                background: ansi_default;
+            }
+
+        }
     }
 
-    Tree > .tree--guides-hover {
-        color: $success;
-        text-style: bold;
-    }
-
-    Tree > .tree--guides-selected {
-        color: $warning;
-        text-style: bold;
-    }
-
-    Tree > .tree--cursor {
-        background: $secondary-darken-2;
-        color: $text;
-        text-style: bold;
-    }
-
-    Tree:focus > .tree--cursor {
-        background: $secondary;
-    }
-
-    Tree > .tree--highlight {
-        text-style: underline;
-    }
-
-    Tree > .tree--highlight-line {
-        background: $boost;
-    }
     """
 
     show_root = reactive(True)
@@ -751,7 +782,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         if node._allow_expand:
             prefix = (
-                "▼ " if node.is_expanded else "▶ ",
+                self.ICON_NODE if node.is_expanded else self.ICON_NODE_EXPANDED,
                 base_style + TOGGLE_STYLE,
             )
         else:
@@ -763,7 +794,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def get_label_width(self, node: TreeNode[TreeDataType]) -> int:
         """Get the width of the nodes label.
 
-        The default behavior is to call `render_node` and return the cell length. This method may be
+        The default behavior is to call `render_label` and return the cell length. This method may be
         overridden in a sub-class if it can be done more efficiently.
 
         Args:
@@ -1100,7 +1131,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_line = self.cursor_node._line
             if self.cursor_line >= len(lines):
                 self.cursor_line = -1
-        self.refresh()
 
     def render_lines(self, crop: Region) -> list[Strip]:
         self._pseudo_class_state = self.get_pseudo_class_state()
@@ -1139,6 +1169,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if cache_key in self._line_cache:
             strip = self._line_cache[cache_key]
         else:
+            # Allow tree guides to be explicitly disabled by setting color to transparent
+            base_hidden = self.get_component_styles("tree--guides").color.a == 0
+            hover_hidden = self.get_component_styles("tree--guides-hover").color.a == 0
+            selected_hidden = (
+                self.get_component_styles("tree--guides-selected").color.a == 0
+            )
+
             base_guide_style = self.get_component_rich_style(
                 "tree--guides", partial=True
             )
@@ -1152,17 +1189,18 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             hover = line.path[0]._hover
             selected = line.path[0]._selected and self.has_focus
 
-            def get_guides(style: Style) -> tuple[str, str, str, str]:
+            def get_guides(style: Style, hidden: bool) -> tuple[str, str, str, str]:
                 """Get the guide strings for a given style.
 
                 Args:
                     style: A Style object.
+                    hidden: Switch to hide guides (make them invisible).
 
                 Returns:
                     Strings for space, vertical, terminator and cross.
                 """
                 lines: tuple[Iterable[str], Iterable[str], Iterable[str], Iterable[str]]
-                if self.show_guides:
+                if self.show_guides and not hidden:
                     lines = self.LINES["default"]
                     if style.bold:
                         lines = self.LINES["bold"]
@@ -1189,13 +1227,18 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             guides_append = guides.append
 
             guide_style = base_guide_style
+
+            hidden = True
             for node in line.path[1:]:
+                hidden = base_hidden
                 if hover:
                     guide_style = guide_hover_style
+                    hidden = hover_hidden
                 if selected:
                     guide_style = guide_selected_style
+                    hidden = selected_hidden
 
-                space, vertical, _, _ = get_guides(guide_style)
+                space, vertical, _, _ = get_guides(guide_style, hidden)
                 guide = space if node.is_last else vertical
                 if node != line.path[-1]:
                     guides_append(guide, style=guide_style)
@@ -1203,7 +1246,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 selected = (selected or node._selected) and self.has_focus
 
             if len(line.path) > 1:
-                _, _, terminator, cross = get_guides(guide_style)
+                _, _, terminator, cross = get_guides(guide_style, hidden)
                 if line.last:
                     guides.append(terminator, style=guide_style)
                 else:

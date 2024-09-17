@@ -184,7 +184,7 @@ class LinuxInlineDriver(Driver):
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
 
         self._enable_mouse_support()
-        self.write("\n")
+        self.write("\n" * self._app.INLINE_PADDING)
         self.flush()
         try:
             self.attrs_before = termios.tcgetattr(self.fileno)

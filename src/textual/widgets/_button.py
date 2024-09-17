@@ -52,6 +52,7 @@ class Button(Widget, can_focus=True):
         content-align: center middle;
         text-style: bold;
 
+
         &:focus {
             text-style: bold reverse;
         }

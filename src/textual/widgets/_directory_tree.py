@@ -32,6 +32,10 @@ class DirEntry:
 class DirectoryTree(Tree[DirEntry]):
     """A Tree widget that presents files and directories."""
 
+    ICON_NODE_EXPANDED = "📂 "
+    ICON_NODE = "📁 "
+    ICON_FILE = "📄 "
+
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "directory-tree--extension",
         "directory-tree--file",
@@ -50,17 +54,41 @@ class DirectoryTree(Tree[DirEntry]):
     """
 
     DEFAULT_CSS = """
-    DirectoryTree > .directory-tree--folder {
-        text-style: bold;
+    DirectoryTree {
+        
+        & > .directory-tree--folder {
+            text-style: bold;
+        }
+
+        & > .directory-tree--extension {
+            text-style: italic;
+        }
+
+        & > .directory-tree--hidden {
+            color: $text 50%;
+        }
+
+        &:ansi {
+        
+            & > .tree--guides {
+               color: transparent;              
+            }
+        
+            & > .directory-tree--folder {
+                text-style: bold;
+            }
+
+            & > .directory-tree--extension {
+                text-style: italic;
+            }
+
+            & > .directory-tree--hidden {
+                text-style: dim;
+            }
+        }
+
     }
 
-    DirectoryTree > .directory-tree--extension {
-        text-style: italic;
-    }
-
-    DirectoryTree > .directory-tree--hidden {
-        color: $text 50%;
-    }
     """
 
     PATH: Callable[[str | Path], Path] = Path
@@ -373,13 +401,16 @@ class DirectoryTree(Tree[DirEntry]):
             return node_label
 
         if node._allow_expand:
-            prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
+            prefix = (
+                self.ICON_NODE_EXPANDED if node.is_expanded else self.ICON_NODE,
+                base_style + TOGGLE_STYLE,
+            )
             node_label.stylize_before(
                 self.get_component_rich_style("directory-tree--folder", partial=True)
             )
         else:
             prefix = (
-                "📄 ",
+                self.ICON_FILE,
                 base_style,
             )
             node_label.stylize_before(

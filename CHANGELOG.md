@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for `"none"` value added to `dock`, `hatch` and `split` styles https://github.com/Textualize/textual/pull/4982
 - Support for `"none"` added to box and border style properties (e.g `widget.style.border = "none"`) https://github.com/Textualize/textual/pull/4982
 - Docstrings added to most style properties https://github.com/Textualize/textual/pull/4982
+- Added `ansi_color` switch to App to permit ANSI (themed) colors https://github.com/Textualize/textual/pull/5000
+- Added `:ansi` pseudo class https://github.com/Textualize/textual/pull/5000
+- Added `-ansi-scrollbar` style to widgets https://github.com/Textualize/textual/pull/5000
+- Added `App.INLINE_PADDING` to define the number of spaces above inline apps https://github.com/Textualize/textual/pull/5000
 
 ### Changed
 
@@ -21,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Default `scrollbar-size-vertical` changed to `2` in inline styles to match Widget default CSS (unlikely to affect users) https://github.com/Textualize/textual/pull/4982
 - Removed border-right from `Toast` https://github.com/Textualize/textual/pull/4984
 - Some fixes in `RichLog` result in slightly different semantics, see docstrings for details https://github.com/Textualize/textual/pull/4978
+- Changed how scrollbars are rendered (will have no visual effect, but will break snapshot tests) https://github.com/Textualize/textual/pull/5000
+- Added `enabled` switch to filters (mostly used internally) https://github.com/Textualize/textual/pull/5000
 
 ### Fixed
 

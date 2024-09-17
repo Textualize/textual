@@ -213,6 +213,9 @@ class StylesCache:
 
         is_dirty = self._dirty_lines.__contains__
         render_line = self.render_line
+        apply_filters = (
+            [] if filters is None else [filter for filter in filters if filter.enabled]
+        )
         for y in crop.line_range:
             if is_dirty(y) or y not in self._cache:
                 strip = render_line(
@@ -233,9 +236,8 @@ class StylesCache:
             else:
                 strip = self._cache[y]
 
-            if filters:
-                for filter in filters:
-                    strip = strip.apply_filter(filter, background)
+            for filter in apply_filters:
+                strip = strip.apply_filter(filter, background)
 
             if DEBUG:
                 if any([not (segment.control or segment.text) for segment in strip]):

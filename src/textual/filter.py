@@ -27,6 +27,14 @@ from textual.color import Color
 class LineFilter(ABC):
     """Base class for a line filter."""
 
+    def __init__(self, enabled: bool = True) -> None:
+        """
+
+        Args:
+            enabled: If `enabled` is `False` then the filter will not be applied.
+        """
+        self.enabled = enabled
+
     @abstractmethod
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
@@ -182,13 +190,14 @@ class DimFilter(LineFilter):
 class ANSIToTruecolor(LineFilter):
     """Convert ANSI colors to their truecolor equivalents."""
 
-    def __init__(self, terminal_theme: TerminalTheme):
+    def __init__(self, terminal_theme: TerminalTheme, enabled: bool = True):
         """Initialise filter.
 
         Args:
             terminal_theme: A rich terminal theme.
         """
         self._terminal_theme = terminal_theme
+        super().__init__(enabled=enabled)
 
     @lru_cache(1024)
     def truecolor_style(self, style: Style) -> Style:

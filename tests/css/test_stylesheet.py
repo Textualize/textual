@@ -128,8 +128,8 @@ def test_stylesheet_apply_user_css_over_widget_css():
     [
         # Valid values:
         ["transparent", does_not_raise(), Color(0, 0, 0, 0)],
-        ["ansi_red", does_not_raise(), Color(128, 0, 0)],
-        ["ansi_bright_magenta", does_not_raise(), Color(255, 0, 255)],
+        ["ansi_red", does_not_raise(), Color(128, 0, 0, ansi=1)],
+        ["ansi_bright_magenta", does_not_raise(), Color(255, 0, 255, ansi=13)],
         ["red", does_not_raise(), Color(255, 0, 0)],
         ["lime", does_not_raise(), Color(0, 255, 0)],
         ["coral", does_not_raise(), Color(255, 127, 80)],

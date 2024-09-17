@@ -157,6 +157,11 @@ class Screen(Generic[ScreenResultType], Widget):
             border-top: tall $background;
             border-bottom: tall $background;
         }
+
+        &:ansi {
+            background: ansi_default;
+            color: ansi_default;
+        }
     }
     """
 

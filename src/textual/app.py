@@ -172,6 +172,19 @@ DEFAULT_COLORS = {
         accent="#0178D4",
         dark=False,
     ),
+    "ansi": ColorSystem(
+        "ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_yellow",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_bright_blue",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+    ),
 }
 
 ComposeResult = Iterable[Widget]
@@ -317,6 +330,20 @@ class App(Generic[ReturnType], DOMNode):
         background: $background;
         color: $text;
 
+        &:ansi {
+            background: ansi_default;
+            color: ansi_default;
+
+            .-ansi-scrollbar {
+                scrollbar-background: ansi_default;
+                scrollbar-background-hover: ansi_default;
+                scrollbar-background-active: ansi_default;
+                scrollbar-color: ansi_blue;
+                scrollbar-color-active: ansi_bright_blue;
+                scrollbar-color-hover: ansi_bright_blue;               
+            }
+        }
+
         /* When a widget is maximized */
         Screen.-maximized-view {                    
             layout: vertical !important;
@@ -434,6 +461,9 @@ class App(Generic[ReturnType], DOMNode):
     This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
     """
 
+    INLINE_PADDING: ClassVar[int] = 1
+    """Number of blank lines above an inline app."""
+
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -462,11 +492,15 @@ class App(Generic[ReturnType], DOMNode):
     ansi_theme_light = Reactive(ALABASTER, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
 
+    ansi_color = Reactive(False)
+    """Allow ANSI colors in UI?"""
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
+        ansi_color: bool = False,
     ):
         """Create an instance of an app.
 
@@ -478,6 +512,7 @@ class App(Generic[ReturnType], DOMNode):
                 will be loaded in order.
             watch_css: Reload CSS if the files changed. This is set automatically if
                 you are using `textual run` with the `dev` switch.
+            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to to RGB if `False`.
 
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -487,8 +522,10 @@ class App(Generic[ReturnType], DOMNode):
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
-        self._filters: list[LineFilter] = [ANSIToTruecolor(ansi_theme)]
-
+        self.set_reactive(App.ansi_color, ansi_color)
+        self._filters: list[LineFilter] = [
+            ANSIToTruecolor(ansi_theme, enabled=not ansi_color)
+        ]
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
@@ -840,6 +877,14 @@ class App(Generic[ReturnType], DOMNode):
         yield "dark" if self.dark else "light"
         if self.is_inline:
             yield "inline"
+        if self.ansi_color:
+            yield "ansi"
+
+    def _watch_ansi_color(self, ansi_color: bool) -> None:
+        """Enable or disable the truecolor filter when the reactive changes"""
+        for filter in self._filters:
+            if isinstance(filter, ANSIToTruecolor):
+                filter.enabled = not ansi_color
 
     def animate(
         self,
@@ -1016,18 +1061,19 @@ class App(Generic[ReturnType], DOMNode):
         Yields:
             [SystemCommand][textual.app.SystemCommand] instances.
         """
-        if self.dark:
-            yield SystemCommand(
-                "Light mode",
-                "Switch to a light background",
-                self.action_toggle_dark,
-            )
-        else:
-            yield SystemCommand(
-                "Dark mode",
-                "Switch to a dark background",
-                self.action_toggle_dark,
-            )
+        if not self.ansi_color:
+            if self.dark:
+                yield SystemCommand(
+                    "Light mode",
+                    "Switch to a light background",
+                    self.action_toggle_dark,
+                )
+            else:
+                yield SystemCommand(
+                    "Dark mode",
+                    "Switch to a dark background",
+                    self.action_toggle_dark,
+                )
 
         yield SystemCommand(
             "Quit the application",
@@ -1093,7 +1139,13 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A mapping of variable name to value.
         """
-        variables = self.design["dark" if self.dark else "light"].generate()
+
+        if self.dark:
+            design = self.design["dark"]
+        else:
+            design = self.design["light"]
+
+        variables = design.generate()
         return variables
 
     def watch_dark(self, dark: bool) -> None:
@@ -1135,7 +1187,7 @@ class App(Generic[ReturnType], DOMNode):
         filters = self._filters
         for index, filter in enumerate(filters):
             if isinstance(filter, ANSIToTruecolor):
-                filters[index] = ANSIToTruecolor(theme)
+                filters[index] = ANSIToTruecolor(theme, enabled=not self.ansi_color)
                 return
 
     def get_driver_class(self) -> Type[Driver]:
