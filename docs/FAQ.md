@@ -270,7 +270,7 @@ work in different environments you can try them out with `textual keys`.
 <a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
 
-You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particularily when it comes to box characters.
+You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particuarily when it comes to box characters.
 For instance, you may find it displays misaligned blocks and lines like this:
 
 <img width="1042" alt="Screenshot 2023-06-19 at 10 43 02" src="https://github.com/Textualize/textual/assets/554369/e61f3876-3dd1-4ac8-b380-22922c89c7d6">
@@ -321,7 +321,7 @@ There is currently a light and dark version of the design system, but more are p
 
 !!! Changed in 0.80.0
 
-  Textual added a `ansi_colors` boolean to App. If you set this to `True`, then Textual will
+  Textual added an `ansi_color` boolean to App. If you set this to `True`, then Textual will
   not attempt to convert ansi colors. Note that you will lose transparency effects if you enable
   this setting.
 
