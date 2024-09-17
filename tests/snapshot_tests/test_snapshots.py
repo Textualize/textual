@@ -1921,3 +1921,23 @@ def test_ansi(snap_compare):
 
     app = ANSIApp(ansi_color=True)
     assert snap_compare(app)
+
+
+def test_ansi_command_palette(snap_compare):
+    """Test command palette on top of ANSI colors."""
+
+    class CommandPaletteApp(App[None]):
+        CSS = """
+        Label {
+            width: 1fr;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("[red]Red[/] [magenta]Magenta[/] " * 200)
+
+        def on_mount(self) -> None:
+            self.action_command_palette()
+
+    app = CommandPaletteApp(ansi_color=True)
+    assert snap_compare(app)

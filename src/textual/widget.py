@@ -293,6 +293,7 @@ class Widget(DOMNode):
         link-background-hover: $accent;
         link-color-hover: $text;
         link-style-hover: bold not underline;
+        background: transparent;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
