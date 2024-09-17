@@ -166,7 +166,7 @@ class Color(NamedTuple):
     a: float = 1.0
     """Alpha (opacity) component in range 0 to 1."""
     ansi: int | None = None
-    """ANSI color index."""
+    """ANSI color index. `-1` means default color. `None` if not an ANSI color."""
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:

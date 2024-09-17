@@ -28,6 +28,11 @@ class LineFilter(ABC):
     """Base class for a line filter."""
 
     def __init__(self, enabled: bool = True) -> None:
+        """
+
+        Args:
+            enabled: If `enabled` is `False` then the filter will not be applied.
+        """
         self.enabled = enabled
 
     @abstractmethod

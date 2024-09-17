@@ -83,7 +83,7 @@ addopts = "--strict-markers"
 markers = [
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
-asyncio_default_fixture_loop_scope = "module"
+asyncio_default_fixture_loop_scope = "function"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]

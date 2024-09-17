@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Removed border-right from `Toast` https://github.com/Textualize/textual/pull/4984
 - Some fixes in `RichLog` result in slightly different semantics, see docstrings for details https://github.com/Textualize/textual/pull/4978
 - Changed how scrollbars are rendered (will have no visual effect, but will break snapshot tests) https://github.com/Textualize/textual/pull/5000
+- Added `enabled` switch to filters (mostly used internally) https://github.com/Textualize/textual/pull/5000
 
 ### Fixed
 

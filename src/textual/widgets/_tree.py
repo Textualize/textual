@@ -1131,7 +1131,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_line = self.cursor_node._line
             if self.cursor_line >= len(lines):
                 self.cursor_line = -1
-        self.refresh(layout=True)
 
     def render_lines(self, crop: Region) -> list[Strip]:
         self._pseudo_class_state = self.get_pseudo_class_state()
