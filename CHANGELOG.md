@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `ansi_color` switch to App to permit ANSI (themed) colors https://github.com/Textualize/textual/pull/5000
 - Added `:ansi` pseudo class https://github.com/Textualize/textual/pull/5000
 - Added `-ansi-scrollbar` style to widgets https://github.com/Textualize/textual/pull/5000
+- Added `App.INLINE_PADDING` to define the number of spaces above inline apps https://github.com/Textualize/textual/pull/5000
 
 ### Changed
 
