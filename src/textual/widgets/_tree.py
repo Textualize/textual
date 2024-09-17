@@ -1169,6 +1169,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if cache_key in self._line_cache:
             strip = self._line_cache[cache_key]
         else:
+            # Allow tree guides to be explicitly disabled by setting color to transparent
             base_hidden = self.get_component_styles("tree--guides").color.a == 0
             hover_hidden = self.get_component_styles("tree--guides-hover").color.a == 0
             selected_hidden = (
@@ -1193,6 +1194,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
                 Args:
                     style: A Style object.
+                    hidden: Switch to hide guides (make them invisible).
 
                 Returns:
                     Strings for space, vertical, terminator and cross.
