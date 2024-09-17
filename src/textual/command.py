@@ -459,6 +459,10 @@ class CommandPalette(SystemModalScreen):
         #--container {
             display: none;
         }
+
+        &:ansi {
+            background: transparent;
+        }
     }
 
     CommandPalette.-ready {

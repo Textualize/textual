@@ -1449,6 +1449,9 @@ class ModalScreen(Screen[ScreenResultType]):
         layout: vertical;
         overflow-y: auto;
         background: $background 60%;
+        &:ansi {
+            background: transparent;
+        }
     }
     """
 

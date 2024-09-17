@@ -378,7 +378,7 @@ class Color(NamedTuple):
         Returns:
             A new color.
         """
-        if self.ansi is not None:
+        if destination.ansi is not None:
             return destination
         if factor <= 0:
             return self
