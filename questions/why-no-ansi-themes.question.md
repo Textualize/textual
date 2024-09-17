@@ -18,6 +18,6 @@ There is currently a light and dark version of the design system, but more are p
 
 !!! Changed in 0.80.0
 
-  Textual added a `ansi_colors` boolean to App. If you set this to `True`, then Textual will
+  Textual added an `ansi_color` boolean to App. If you set this to `True`, then Textual will
   not attempt to convert ansi colors. Note that you will lose transparency effects if you enable
   this setting.
