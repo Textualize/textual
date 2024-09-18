@@ -173,7 +173,7 @@ class DOMNode(MessagePump):
     # Generated list of bindings
     _merged_bindings: ClassVar[BindingsMap | None] = None
 
-    _reactives: ClassVar[dict[str, Reactive[Any]]]
+    _reactives: ClassVar[dict[str, Reactive]]
 
     _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
@@ -626,6 +626,7 @@ class DOMNode(MessagePump):
                 keys[key] = key_bindings
 
         new_bindings = BindingsMap.from_keys(keys)
+        print(f"merged bindings for {cls.__name__}: {new_bindings}")
         return new_bindings
 
     def _post_register(self, app: App) -> None:

@@ -334,9 +334,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
         # Filter out bindings that could be captures by widgets (such as Input, TextArea)
         filter_namespaces: list[DOMNode] = []
-        keymap = self.app.get_keymap()
         for namespace, bindings_map in namespace_bindings:
-            print(namespace, bindings_map.key_to_bindings)
+            print(namespace.__class__.__name__)
             for filter_namespace in filter_namespaces:
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
@@ -345,11 +344,17 @@ class Screen(Generic[ScreenResultType], Widget):
                         # then remove the key from the bindings map.
                         del bindings_map.key_to_bindings[key]
 
-                if keymap:
-                    print(bindings_map.key_to_bindings)
-                    bindings_map.apply_keymap(keymap)
-
             filter_namespaces.append(namespace)
+
+        print("BINDING CHAIN BEFORE KEYMAP")
+        print(namespace_bindings)
+        keymap = self.app.get_keymap()
+        for namespace, bindings_map in namespace_bindings:
+            if keymap:
+                bindings_map.apply_keymap(keymap)
+
+        print("BINDING CHAIN AFTER KEYMAP")
+        print(namespace_bindings)
 
         return namespace_bindings
 

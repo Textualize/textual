@@ -233,28 +233,16 @@ class BindingsMap:
             keymap: A keymap to overlay.
         """
         for key_string, bindings in list(self.key_to_bindings.items()):
-            print(key_string, bindings)
             for binding in bindings:
                 binding_id = binding.id
                 if binding_id is None:
                     continue
 
+                print(f"binding_id: {binding_id} got keystring {key_string}")
                 # Lookup the binding ID in the keymap.
                 if override_key_string := keymap.get(binding_id):
                     # An override binding exists in the app's keymap.
                     override_keys = override_key_string.split(",")
-                    overrides_map: dict[str, list[Binding]] = {}
-                    for override_key in override_keys:
-                        # We've found an override for this key, so remove the bindings for
-                        # this key from the map, and take note of the override to be applied
-                        # after this loop.
-                        print(
-                            f"removing {key_string}, setting {override_key} to {binding!r}"
-                        )
-                        del self.key_to_bindings[key_string]
-                        overrides_map.setdefault(override_key, []).append(binding)
-
-                    self.key_to_bindings.update(overrides_map)
 
     @property
     def shown_keys(self) -> list[Binding]:
