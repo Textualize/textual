@@ -346,15 +346,10 @@ class Screen(Generic[ScreenResultType], Widget):
 
             filter_namespaces.append(namespace)
 
-        print("BINDING CHAIN BEFORE KEYMAP")
-        print(namespace_bindings)
         keymap = self.app.get_keymap()
         for namespace, bindings_map in namespace_bindings:
             if keymap:
                 bindings_map.apply_keymap(keymap)
-
-        print("BINDING CHAIN AFTER KEYMAP")
-        print(namespace_bindings)
 
         return namespace_bindings
 

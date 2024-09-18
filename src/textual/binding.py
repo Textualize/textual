@@ -120,8 +120,15 @@ class Binding:
                 if len(key) == 1:
                     key = _character_to_key(key)
 
-                yield dataclasses.replace(
-                    binding, show=bool(binding.description and binding.show)
+                yield Binding(
+                    key=key,
+                    action=binding.action,
+                    description=binding.description,
+                    show=bool(binding.description and binding.show),
+                    key_display=binding.key_display,
+                    priority=binding.priority,
+                    tooltip=binding.tooltip,
+                    id=binding.id,
                 )
 
 
@@ -236,13 +243,33 @@ class BindingsMap:
             for binding in bindings:
                 binding_id = binding.id
                 if binding_id is None:
+                    # If there's no binding ID, we're definitely not overriding anything
                     continue
 
-                print(f"binding_id: {binding_id} got keystring {key_string}")
-                # Lookup the binding ID in the keymap.
-                if override_key_string := keymap.get(binding_id):
+                # Look up the binding ID in the keymap.
+                if new_key_string := keymap.get(binding_id):
                     # An override binding exists in the app's keymap.
-                    override_keys = override_key_string.split(",")
+                    new_keys = new_key_string.split(",")
+                    overrides: dict[str, list[Binding]] = {}
+                    for new_key in new_keys:
+                        # If the new key is already bound, unbind it
+                        # and inform the user that the binding has been overridden
+                        # TODO - return something to indicate this.
+                        if new_key in self.key_to_bindings:
+                            del self.key_to_bindings[new_key]
+
+                    # Remove the old key from the map if it exists
+                    # (It may have been deleted by the above loop)
+                    if key_string in self.key_to_bindings:
+                        del self.key_to_bindings[key_string]
+
+                    for new_key in new_keys:
+                        # We've found an override for this key, so remove the bindings for
+                        # this key from the map, and take note of the override to be applied
+                        # after this loop.
+                        overrides.setdefault(new_key, []).append(binding)
+
+                    self.key_to_bindings.update(overrides)
 
     @property
     def shown_keys(self) -> list[Binding]:
