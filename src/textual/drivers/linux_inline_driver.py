@@ -306,7 +306,8 @@ class LinuxInlineDriver(Driver):
         self._disable_bracketed_paste()
         self.disable_input()
 
-        self.write("\x1b[2A\x1b[J")
+        back_lines = self._app.INLINE_PADDING + 1
+        self.write(f"\x1b[{back_lines}A\x1b[J")
 
         if self.attrs_before is not None:
             try:
