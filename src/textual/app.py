@@ -2909,10 +2909,14 @@ class App(Generic[ReturnType], DOMNode):
                             self._driver.write(
                                 Control.move(-cursor_x, -cursor_y + 1).segment.text
                             )
-                            if inline_no_clear and not not self.app._exit_renderables:
+                            if inline_no_clear:
                                 console = Console()
-                                console.print(self.screen._compositor)
-                                console.print()
+                                try:
+                                    console.print(self.screen._compositor)
+                                except ScreenStackError:
+                                    pass
+                                else:
+                                    console.print()
 
                         driver.stop_application_mode()
             except Exception as error:
