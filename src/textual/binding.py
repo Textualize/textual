@@ -78,16 +78,17 @@ class Binding:
         *modifiers, key = self.key.split("+")
         return modifiers, key
 
-    def with_key(self, key: str) -> Binding:
-        """Return a new binding with the key set to the specified value.
+    def with_key(self, key: str, key_display: str | None = None) -> Binding:
+        """Return a new binding with the key and key_display set to the specified values.
 
         Args:
             key: The new key to set.
+            key_display: The new key display to set.
 
         Returns:
             A new binding with the key set to the specified value.
         """
-        return dataclasses.replace(self, key=key)
+        return dataclasses.replace(self, key=key, key_display=key_display)
 
     @classmethod
     def make_bindings(cls, bindings: Iterable[BindingType]) -> Iterable[Binding]:
@@ -272,7 +273,9 @@ class BindingsMap:
                         # We've found an override for this key, so remove the bindings for
                         # this key from the map, and take note of the override to be applied
                         # after this loop.
-                        overrides.setdefault(new_key, []).append(binding)
+                        overrides.setdefault(new_key, []).append(
+                            binding.with_key(key=new_key, key_display=None)
+                        )
 
                     self.key_to_bindings.update(overrides)
 
