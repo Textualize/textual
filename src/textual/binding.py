@@ -49,7 +49,12 @@ class Binding:
     show: bool = True
     """Show the action in Footer, or False to hide."""
     key_display: str | None = None
-    """How the key should be shown in footer."""
+    """How the key should be shown in footer.
+
+    If None, the display of the key will use the result of `App.get_key_display`.
+
+    If overridden in a keymap then this value is ignored.
+    """
     priority: bool = False
     """Enable priority binding for this key."""
     tooltip: str = ""
