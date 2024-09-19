@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed flicker when setting `dark` reactive on startup https://github.com/Textualize/textual/pull/4989
 - Fixed command palette not sorting search results by their match score https://github.com/Textualize/textual/pull/4994
 - Fixed `DataTable` cached height issue on re-populating the table when using auto-height rows https://github.com/Textualize/textual/pull/4992
+- Fixed inline app output being cleared when `inline_no_clear=True` https://github.com/Textualize/textual/issues/5019
 
 ## [0.79.1] - 2024-08-31
 
