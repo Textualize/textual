@@ -191,18 +191,26 @@ class TreeNode(Generic[TreeDataType]):
         return self._parent
 
     @property
-    def next_sibling(self) -> TreeNode[TreeDataType]:
+    def next_sibling(self) -> TreeNode[TreeDataType] | None:
         """The next sibling below the node."""
         siblings = self.siblings
-        index = (siblings.index(self) + 1) % len(siblings)
-        return siblings[index]
+        index = siblings.index(self) + 1
+        try:
+            return siblings[index]
+        except IndexError:
+            return None
 
     @property
-    def previous_sibling(self) -> TreeNode[TreeDataType]:
+    def previous_sibling(self) -> TreeNode[TreeDataType] | None:
         """The previous sibling below the node."""
         siblings = self.siblings
-        index = (siblings.index(self) - 1) % len(siblings)
-        return siblings[index]
+        index = siblings.index(self) - 1
+        if index < 0:
+            return None
+        try:
+            return siblings[index]
+        except IndexError:
+            return None
 
     @property
     def is_expanded(self) -> bool:
@@ -512,6 +520,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("shift+left", "cursor_parent", "Cursor to parent", show=False),
+        Binding("shift+right", "cursor_parent_next_sibling", "Cursor out", show=False),
         Binding(
             "shift+up",
             "cursor_previous_sibling",
@@ -1432,12 +1441,20 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if cursor_node is not None and cursor_node.parent is not None:
             self.move_cursor(cursor_node.parent, animate=True)
 
+    def action_cursor_parent_next_sibling(self) -> None:
+        """Move the cursor to the paren't next sibling."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None and cursor_node.parent is not None:
+            self.move_cursor(cursor_node.parent.next_sibling, animate=True)
+
     def action_cursor_previous_sibling(self) -> None:
         """Select the previous sibling."""
         cursor_node = self.cursor_node
         if cursor_node is not None:
             previous_sibling = cursor_node.previous_sibling
-            if previous_sibling is not None:
+            if previous_sibling is None:
+                self.move_cursor(cursor_node.parent, animate=True)
+            else:
                 self.move_cursor(previous_sibling, animate=True)
 
     def action_cursor_next_sibling(self) -> None:
@@ -1445,7 +1462,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         cursor_node = self.cursor_node
         if cursor_node is not None:
             next_sibling = cursor_node.next_sibling
-            if next_sibling is not None:
+            if next_sibling is None:
+                if cursor_node.parent is not None:
+                    parent_sibling = cursor_node.parent.next_sibling
+                    self.move_cursor(parent_sibling, animate=True)
+            else:
                 self.move_cursor(next_sibling, animate=True)
 
     def action_toggle_expand_all(self) -> None:

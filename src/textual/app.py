@@ -344,7 +344,7 @@ class App(Generic[ReturnType], DOMNode):
             }
 
             .bindings-table--key {
-                color: ansi_cyan;
+                color: ansi_magenta;
             }
             .bindings-table--description {
                 color: ansi_default;
