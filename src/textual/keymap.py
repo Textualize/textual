@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Iterator, Mapping
+from typing import Iterator, Mapping, NamedTuple
+
+from textual.binding import Binding
 
 BindingIDString = str
 """The ID of a Binding defined somewhere in the application.
@@ -50,3 +52,10 @@ class Keymap:
 
     def __bool__(self) -> bool:
         return bool(self._mapping)
+
+
+class KeymapApplyResult(NamedTuple):
+    """The result of applying a keymap to a set of bindings."""
+
+    clashed_bindings: set[Binding]
+    """The binding IDs that clashed with existing bindings in the keymap."""

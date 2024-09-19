@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 import rich.repr
 
-from textual.keymap import Keymap
+from textual.keymap import Keymap, KeymapApplyResult
 from textual.keys import _character_to_key
 
 if TYPE_CHECKING:
@@ -237,7 +237,7 @@ class BindingsMap:
                 keys.setdefault(key, []).extend(key_bindings)
         return BindingsMap.from_keys(keys)
 
-    def apply_keymap(self, keymap: Keymap) -> None:
+    def apply_keymap(self, keymap: Keymap) -> KeymapApplyResult:
         """Replace bindings for keys that are present in `keymap`.
 
         Preserves existing bindings for keys that are not in `keymap`.
@@ -245,6 +245,7 @@ class BindingsMap:
         Args:
             keymap: A keymap to overlay.
         """
+        clashed_bindings: set[Binding] = set()
         for key_string, bindings in list(self.key_to_bindings.items()):
             for binding in bindings:
                 binding_id = binding.id
@@ -257,11 +258,28 @@ class BindingsMap:
                     # An override binding exists in the app's keymap.
                     new_keys = new_key_string.split(",")
                     overrides: dict[str, list[Binding]] = {}
+
                     for new_key in new_keys:
                         # If the new key is already bound, unbind it
                         # and inform the user that the binding has been overridden
                         # TODO - return something to indicate this.
                         if new_key in self.key_to_bindings:
+                            # TODO - we also need to check that this key is not being rebound
+                            #  because that rebind would mean that we're not actually clashing
+                            #  with the previous binding.
+                            existing_bindings_for_new_key = self.key_to_bindings[
+                                new_key
+                            ]
+                            for existing_binding in existing_bindings_for_new_key:
+                                # If the key we're changing to already exists,
+                                # and itself is not being rebound to a different key,
+                                # then we've got a clash.
+                                if not (
+                                    existing_binding.id
+                                    and keymap.get(existing_binding.id)
+                                    != existing_binding.key
+                                ):
+                                    clashed_bindings.add(existing_binding)
                             del self.key_to_bindings[new_key]
 
                     # Remove the old key from the map if it exists
@@ -269,15 +287,15 @@ class BindingsMap:
                     if key_string in self.key_to_bindings:
                         del self.key_to_bindings[key_string]
 
+                    # Re-add the bindings associated with the new key
                     for new_key in new_keys:
-                        # We've found an override for this key, so remove the bindings for
-                        # this key from the map, and take note of the override to be applied
-                        # after this loop.
                         overrides.setdefault(new_key, []).append(
                             binding.with_key(key=new_key, key_display=None)
                         )
 
                     self.key_to_bindings.update(overrides)
+
+        return KeymapApplyResult(clashed_bindings)
 
     @property
     def shown_keys(self) -> list[Binding]:
