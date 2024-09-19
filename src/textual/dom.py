@@ -626,7 +626,6 @@ class DOMNode(MessagePump):
                 keys[key] = key_bindings
 
         new_bindings = BindingsMap.from_keys(keys)
-        print(f"merged bindings for {cls.__name__}: {new_bindings}")
         return new_bindings
 
     def _post_register(self, app: App) -> None:

@@ -335,7 +335,6 @@ class Screen(Generic[ScreenResultType], Widget):
         # Filter out bindings that could be captures by widgets (such as Input, TextArea)
         filter_namespaces: list[DOMNode] = []
         for namespace, bindings_map in namespace_bindings:
-            print(namespace.__class__.__name__)
             for filter_namespace in filter_namespaces:
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
