@@ -1436,19 +1436,19 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self.post_message(Tree.NodeSelected(node))
 
     def action_cursor_parent(self) -> None:
-        """Select the parent of the currently selected node."""
+        """Move the cursor to the parent node."""
         cursor_node = self.cursor_node
         if cursor_node is not None and cursor_node.parent is not None:
             self.move_cursor(cursor_node.parent, animate=True)
 
     def action_cursor_parent_next_sibling(self) -> None:
-        """Move the cursor to the paren't next sibling."""
+        """Move the cursor to the parent's next sibling."""
         cursor_node = self.cursor_node
         if cursor_node is not None and cursor_node.parent is not None:
             self.move_cursor(cursor_node.parent.next_sibling, animate=True)
 
     def action_cursor_previous_sibling(self) -> None:
-        """Select the previous sibling."""
+        """Move the cursor to previous sibling, or to the parent if there are no more siblings."""
         cursor_node = self.cursor_node
         if cursor_node is not None:
             previous_sibling = cursor_node.previous_sibling
@@ -1458,7 +1458,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.move_cursor(previous_sibling, animate=True)
 
     def action_cursor_next_sibling(self) -> None:
-        """Select the next sibling."""
+        """Move the cursor to the next sibling, or to the paren't sibling if there are no more siblings."""
         cursor_node = self.cursor_node
         if cursor_node is not None:
             next_sibling = cursor_node.next_sibling
@@ -1470,15 +1470,20 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.move_cursor(next_sibling, animate=True)
 
     def action_toggle_expand_all(self) -> None:
-        """Expand or collapse all siblings."""
+        """Expand or collapse all siblings.
+
+        If all the siblings are collapsed then they will be expanded.
+        Otherwise they will all be collapsed.
+
+        """
+
         if self.cursor_node is None or self.cursor_node.parent is None:
             return
 
         siblings = self.cursor_node.siblings
-
         cursor_node = self.cursor_node
 
-        # If all siblings are collapse we want to expand them all
+        # If all siblings are collapsed we want to expand them all
         if all(child.is_collapsed for child in siblings):
             for child in siblings:
                 if child.allow_expand:
@@ -1489,4 +1494,4 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 if child.allow_expand:
                     child.collapse()
 
-        self.call_after_refresh(self.move_cursor, cursor_node, animate=True)
+        self.call_after_refresh(self.move_cursor, cursor_node, animate=False)
