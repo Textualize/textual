@@ -69,7 +69,7 @@ class FooterKey(Widget):
             .footer-key--description {
                 padding: 0 0 0 1;
             }
-        }
+        }        
     }
     """
 
@@ -148,6 +148,30 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             dock: right;                        
             padding-right: 1;
             border-left: vkey $foreground 20%;                
+        }
+
+        &.-ansi-colors {
+           
+            background: ansi_default;
+            
+            .footer-key--key {
+                color: ansi_magenta;
+                text-style:  reverse;
+                margin: 0 1;
+            }
+            .footer-key--description {
+                color: ansi_default;
+            }
+
+            FooterKey:hover {
+                text-style: underline;
+                background: ansi_default;
+                color: ansi_default;
+                .footer-key--key {
+                    background: ansi_default;
+                }
+            }
+
         }
     }
     """

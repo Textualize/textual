@@ -148,6 +148,14 @@ class TreeNode(Generic[TreeDataType]):
         return TreeNodes(self._children)
 
     @property
+    def siblings(self) -> TreeNodes[TreeDataType]:
+        """The siblings of this node (includes self)."""
+        if self.parent is None:
+            return TreeNodes([self])
+        else:
+            return self.parent.children
+
+    @property
     def line(self) -> int:
         """The line number for this node, or -1 if it is not displayed."""
         return self._line
@@ -183,9 +191,28 @@ class TreeNode(Generic[TreeDataType]):
         return self._parent
 
     @property
+    def next_sibling(self) -> TreeNode[TreeDataType]:
+        """The next sibling below the node."""
+        siblings = self.siblings
+        index = (siblings.index(self) + 1) % len(siblings)
+        return siblings[index]
+
+    @property
+    def previous_sibling(self) -> TreeNode[TreeDataType]:
+        """The previous sibling below the node."""
+        siblings = self.siblings
+        index = (siblings.index(self) - 1) % len(siblings)
+        return siblings[index]
+
+    @property
     def is_expanded(self) -> bool:
         """Is the node expanded?"""
         return self._expanded
+
+    @property
+    def is_collapsed(self) -> bool:
+        """Is the node collapsed?"""
+        return not self._expanded
 
     @property
     def is_last(self) -> bool:
@@ -484,8 +511,22 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     ICON_NODE_EXPANDED = "▼ "
 
     BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("shift+left", "cursor_parent", "Cursor to parent", show=False),
+        Binding(
+            "shift+up",
+            "cursor_previous_sibling",
+            "Cursor to previous sibling",
+            show=False,
+        ),
+        Binding(
+            "shift+down",
+            "cursor_next_sibling",
+            "Cursor to next sibling",
+            show=False,
+        ),
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("space", "toggle_node", "Toggle", show=False),
+        Binding("x", "toggle_expand_all", "Expand or collapse all", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
@@ -600,6 +641,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """The indent depth of tree nodes."""
     auto_expand = var(True)
     """Auto expand tree nodes when they are selected."""
+    center_scroll = var(False)
+    """Keep selected node in the center of the control."""
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
@@ -849,13 +892,22 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.root.data = data
         return self
 
-    def move_cursor(self, node: TreeNode[TreeDataType] | None) -> None:
+    def move_cursor(
+        self, node: TreeNode[TreeDataType] | None, animate: bool = False
+    ) -> None:
         """Move the cursor to the given node, or reset cursor.
 
         Args:
             node: A tree node, or None to reset cursor.
+            animate: Enable animation
         """
+        previous_cursor_line = self.cursor_line
         self.cursor_line = -1 if node is None else node._line
+        if node is not None and self.cursor_node is not None:
+            self.scroll_to_node(
+                self.cursor_node,
+                animate=animate and abs(self.cursor_line - previous_cursor_line) > 1,
+            )
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node and select it, or reset cursor.
@@ -1030,7 +1082,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         region = self._get_label_region(line)
         if region is not None:
-            self.scroll_to_region(region, animate=animate, force=True)
+            self.scroll_to_region(
+                region, animate=animate, force=True, center=self.center_scroll
+            )
 
     def scroll_to_node(
         self, node: TreeNode[TreeDataType], animate: bool = True
@@ -1371,3 +1425,47 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             node = line.path[-1]
             self.post_message(Tree.NodeSelected(node))
+
+    def action_cursor_parent(self) -> None:
+        """Select the parent of the currently selected node."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None and cursor_node.parent is not None:
+            self.move_cursor(cursor_node.parent, animate=True)
+
+    def action_cursor_previous_sibling(self) -> None:
+        """Select the previous sibling."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None:
+            previous_sibling = cursor_node.previous_sibling
+            if previous_sibling is not None:
+                self.move_cursor(previous_sibling, animate=True)
+
+    def action_cursor_next_sibling(self) -> None:
+        """Select the next sibling."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None:
+            next_sibling = cursor_node.next_sibling
+            if next_sibling is not None:
+                self.move_cursor(next_sibling, animate=True)
+
+    def action_toggle_expand_all(self) -> None:
+        """Expand or collapse all siblings."""
+        if self.cursor_node is None or self.cursor_node.parent is None:
+            return
+
+        siblings = self.cursor_node.siblings
+
+        cursor_node = self.cursor_node
+
+        # If all siblings are collapse we want to expand them all
+        if all(child.is_collapsed for child in siblings):
+            for child in siblings:
+                if child.allow_expand:
+                    child.expand()
+        # Otherwise we want to collapse them all
+        else:
+            for child in siblings:
+                if child.allow_expand:
+                    child.collapse()
+
+        self.call_after_refresh(self.move_cursor, cursor_node, animate=True)

@@ -482,6 +482,7 @@ class DirectoryTree(Tree[DirEntry]):
                 allow_expand=self._safe_is_dir(path),
             )
         node.expand()
+        self.move_cursor(node)
 
     def _directory_content(self, location: Path, worker: Worker) -> Iterator[Path]:
         """Load the content of a given directory.

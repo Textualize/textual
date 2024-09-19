@@ -342,6 +342,22 @@ class App(Generic[ReturnType], DOMNode):
                 scrollbar-color-active: ansi_bright_blue;
                 scrollbar-color-hover: ansi_bright_blue;               
             }
+
+            .bindings-table--key {
+                color: ansi_cyan;
+            }
+            .bindings-table--description {
+                color: ansi_default;
+            }
+
+            .bindings-table--header {
+                color: ansi_default;
+            }
+
+            .bindings-table--divider {
+                color: transparent;
+                text-style: dim;
+            }
         }
 
         /* When a widget is maximized */
@@ -452,8 +468,8 @@ class App(Generic[ReturnType], DOMNode):
     TOOLTIP_DELAY: float = 0.5
     """The time in seconds after which a tooltip gets displayed."""
 
-    BINDING_GROUP_TITLE = "App"
-    """Shown in the key panel."""
+    BINDING_GROUP_TITLE: str | None = None
+    """Set to text to show in the key panel."""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
     """Use escape key to minimize widgets (potentially overriding bindings).
