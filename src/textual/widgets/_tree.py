@@ -642,7 +642,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1, always_update=True)
+    cursor_line = var(-1, always_update=False)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
@@ -928,6 +928,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if node is not None:
             self.post_message(Tree.NodeSelected(node))
 
+    def unselect(self) -> None:
+        """Hide and reset the cursor."""
+        self.set_reactive(Tree.cursor_line, -1)
+        self._invalidate()
+
     @on(NodeSelected)
     def _expand_node_on_select(self, event: NodeSelected[TreeDataType]) -> None:
         """When the node is selected, expand the node if `auto_expand` is True."""
@@ -1019,6 +1024,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         return NodeID(id)
 
     def _get_node(self, line: int) -> TreeNode[TreeDataType] | None:
+        if line == -1:
+            return None
         try:
             tree_line = self._tree_lines[line]
         except IndexError:

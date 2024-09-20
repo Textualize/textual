@@ -482,7 +482,7 @@ class DirectoryTree(Tree[DirEntry]):
                 allow_expand=self._safe_is_dir(path),
             )
         node.expand()
-        self.move_cursor(node)
+        # self.move_cursor(node)
 
     def _directory_content(self, location: Path, worker: Worker) -> Iterator[Path]:
         """Load the content of a given directory.
@@ -513,10 +513,10 @@ class DirectoryTree(Tree[DirEntry]):
             The list of entries within the directory associated with the node.
         """
         assert node.data is not None
+        path = node.data.path
+        path = path.expanduser().resolve()
         return sorted(
-            self.filter_paths(
-                self._directory_content(node.data.path, get_current_worker())
-            ),
+            self.filter_paths(self._directory_content(path, get_current_worker())),
             key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 

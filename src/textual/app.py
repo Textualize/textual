@@ -340,7 +340,8 @@ class App(Generic[ReturnType], DOMNode):
                 scrollbar-background-active: ansi_default;
                 scrollbar-color: ansi_blue;
                 scrollbar-color-active: ansi_bright_blue;
-                scrollbar-color-hover: ansi_bright_blue;               
+                scrollbar-color-hover: ansi_bright_blue;    
+                scrollbar-corner-color: ansi_default;           
             }
 
             .bindings-table--key {
