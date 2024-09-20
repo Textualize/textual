@@ -198,6 +198,9 @@ AutopilotCallbackType: TypeAlias = (
 CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
 """Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
 
+ScreenType = TypeVar("ScreenType", bound=Screen)
+"""Type var for a Screen, used in [`get_screen`][textual.app.App.get_screen]."""
+
 
 class SystemCommand(NamedTuple):
     """Defines a system command used in the command palette (yielded from [`get_system_commands`][textual.app.App.get_system_commands])."""
@@ -2263,11 +2266,30 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return screen in self._installed_screens.values()
 
-    def get_screen(self, screen: Screen | str) -> Screen:
+    @overload
+    def get_screen(self, screen: ScreenType) -> ScreenType: ...
+
+    @overload
+    def get_screen(self, screen: str) -> Screen: ...
+
+    @overload
+    def get_screen(
+        self, screen: str, screen_class: Type[ScreenType] | None = None
+    ) -> ScreenType: ...
+
+    @overload
+    def get_screen(
+        self, screen: ScreenType, screen_class: Type[ScreenType] | None = None
+    ) -> ScreenType: ...
+
+    def get_screen(
+        self, screen: Screen | str, screen_class: Type[Screen] | None = None
+    ) -> Screen:
         """Get an installed screen.
 
         Args:
             screen: Either a Screen object or screen name (the `name` argument when installed).
+            screen_class: Class of expected screen, or `None` for any screen class.
 
         Raises:
             KeyError: If the named screen doesn't exist.
@@ -2285,6 +2307,10 @@ class App(Generic[ReturnType], DOMNode):
                 self._installed_screens[screen] = next_screen
         else:
             next_screen = screen
+        if screen_class is not None and not isinstance(next_screen, screen_class):
+            raise TypeError(
+                "Expected a screen of type {screen_class}, got {type(next_screen)}"
+            )
         return next_screen
 
     def _get_screen(self, screen: Screen | str) -> tuple[Screen, AwaitMount]:
