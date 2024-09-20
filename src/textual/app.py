@@ -2287,6 +2287,11 @@ class App(Generic[ReturnType], DOMNode):
     ) -> Screen:
         """Get an installed screen.
 
+        Example:
+            ```python
+            my_screen = self.get_screen("settings", MyScreen)
+            ```
+
         Args:
             screen: Either a Screen object or screen name (the `name` argument when installed).
             screen_class: Class of expected screen, or `None` for any screen class.
