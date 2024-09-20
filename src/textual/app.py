@@ -2309,7 +2309,7 @@ class App(Generic[ReturnType], DOMNode):
             next_screen = screen
         if screen_class is not None and not isinstance(next_screen, screen_class):
             raise TypeError(
-                "Expected a screen of type {screen_class}, got {type(next_screen)}"
+                f"Expected a screen of type {screen_class}, got {type(next_screen)}"
             )
         return next_screen
 
