@@ -95,7 +95,7 @@ You can serve multiple instances of your application at once!
 There are some additional switches for serving Textual apps. Run the following for a list:
 
 ```
-textual serve -h
+textual serve --help
 ```
 
 ## Live editing
