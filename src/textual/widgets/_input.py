@@ -183,6 +183,7 @@ class Input(Widget, can_focus=True):
             }
             &>.input--placeholder, &>.input--suggestion {
                 text-style: dim;
+                color: ansi_default;
             }
             &.-invalid {
                 border: tall ansi_red;

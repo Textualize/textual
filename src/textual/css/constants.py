@@ -71,6 +71,7 @@ VALID_PSEUDO_CLASSES: Final = {
     "hover",
     "inline",
     "light",
+    "nocolor",
 }
 VALID_OVERLAY: Final = {"none", "screen"}
 VALID_CONSTRAIN: Final = {"x", "y", "both", "inflect", "none"}

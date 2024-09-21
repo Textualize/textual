@@ -547,8 +547,8 @@ class App(Generic[ReturnType], DOMNode):
             ANSIToTruecolor(ansi_theme, enabled=not ansi_color)
         ]
         environ = dict(os.environ)
-        no_color = environ.pop("NO_COLOR", None)
-        if no_color is not None:
+        self.no_color = environ.pop("NO_COLOR", None) is not None
+        if self.no_color:
             self._filters.append(NoColor() if self.ansi_color else Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
@@ -899,6 +899,8 @@ class App(Generic[ReturnType], DOMNode):
             yield "inline"
         if self.ansi_color:
             yield "ansi"
+        if self.no_color:
+            yield "nocolor"
 
     def _watch_ansi_color(self, ansi_color: bool) -> None:
         """Enable or disable the truecolor filter when the reactive changes"""
