@@ -520,7 +520,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("shift+left", "cursor_parent", "Cursor to parent", show=False),
-        Binding("shift+right", "cursor_parent_next_sibling", "Cursor out", show=False),
+        Binding(
+            "shift+right",
+            "cursor_parent_next_sibling",
+            "Cursor to next ancestor",
+            show=False,
+        ),
         Binding(
             "shift+up",
             "cursor_previous_sibling",
@@ -535,7 +540,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         ),
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("space", "toggle_node", "Toggle", show=False),
-        Binding("x", "toggle_expand_all", "Expand or collapse all", show=False),
+        Binding(
+            "shift+space", "toggle_expand_all", "Expand or collapse all", show=False
+        ),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]

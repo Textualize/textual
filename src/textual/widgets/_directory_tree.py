@@ -83,6 +83,7 @@ class DirectoryTree(Tree[DirEntry]):
             }
 
             & > .directory-tree--hidden {
+                color: ansi_default;
                 text-style: dim;
             }
         }
