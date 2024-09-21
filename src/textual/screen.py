@@ -161,6 +161,14 @@ class Screen(Generic[ScreenResultType], Widget):
         &:ansi {
             background: ansi_default;
             color: ansi_default;
+
+            &.-screen-suspended {
+                ScrollBar {
+                    text-style: not dim;
+                }
+                text-style: dim ;
+
+            }
         }
     }
     """
@@ -1161,6 +1169,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
+        self.remove_class("-screen-suspended")
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
@@ -1179,6 +1188,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
+        self.add_class("-screen-suspended")
         self.app._set_mouse_over(None)
         self._clear_tooltip()
         self.stack_updates += 1
@@ -1450,7 +1460,7 @@ class ModalScreen(Screen[ScreenResultType]):
         overflow-y: auto;
         background: $background 60%;
         &:ansi {
-            background: transparent;
+            background: transparent;                   
         }
     }
     """

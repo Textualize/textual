@@ -658,7 +658,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     auto_expand = var(True)
     """Auto expand tree nodes when they are selected."""
     center_scroll = var(False)
-    """Keep selected node in the center of the control."""
+    """Keep selected node in the center of the control, where possible."""
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (

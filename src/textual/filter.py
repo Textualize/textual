@@ -94,6 +94,32 @@ class Monochrome(LineFilter):
         ]
 
 
+class NoColor(LineFilter):
+    """Remove all color information from segments."""
+
+    DEFAULT_COLORS = Style.from_color(
+        RichColor.parse("default"), RichColor.parse("default")
+    )
+
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
+        """Transform a list of segments.
+
+        Args:
+            segments: A list of segments.
+            background: The background color.
+
+        Returns:
+            A new list of segments.
+        """
+
+        _Segment = Segment
+        default_colors = self.DEFAULT_COLORS
+        return [
+            _Segment(text, None if style is None else (style + default_colors), control)
+            for text, style, control in segments
+        ]
+
+
 NO_DIM = Style(dim=False)
 """A Style to set dim to False."""
 

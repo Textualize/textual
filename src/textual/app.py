@@ -102,7 +102,7 @@ from textual.driver import Driver
 from textual.errors import NoWidget
 from textual.features import FeatureFlag, parse_features
 from textual.file_monitor import FileMonitor
-from textual.filter import ANSIToTruecolor, DimFilter, Monochrome
+from textual.filter import ANSIToTruecolor, DimFilter, Monochrome, NoColor
 from textual.geometry import Offset, Region, Size
 from textual.keys import (
     REPLACED_KEYS,
@@ -549,7 +549,7 @@ class App(Generic[ReturnType], DOMNode):
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
-            self._filters.append(Monochrome())
+            self._filters.append(NoColor() if self.ansi_color else Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()

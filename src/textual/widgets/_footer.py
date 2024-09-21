@@ -155,12 +155,15 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             background: ansi_default;
             
             .footer-key--key {
+                background: ansi_default;
                 color: ansi_magenta;
-                text-style:  reverse;
-                margin: 0 1;
+                # text-style: bold reverse;
+                # padding: 0 0;
             }
             .footer-key--description {
+                background: ansi_default;
                 color: ansi_default;
+                # padding: 0 1;
             }
 
             FooterKey:hover {
