@@ -265,6 +265,9 @@ class OptionList(ScrollView, can_focus=True):
         wrap: bool = True,
         tooltip: RenderableType | None = None,
     ):
+        self._content_render_cache: LRUCache[tuple[int, Style, int], list[Strip]]
+        self._content_render_cache = LRUCache(256)
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         self._wrap = wrap
@@ -301,9 +304,6 @@ class OptionList(ScrollView, can_focus=True):
             if option.id is not None
         }
         """A dictionary of option IDs and the option indexes they relate to."""
-
-        self._content_render_cache: LRUCache[tuple[int, Style, int], list[Strip]]
-        self._content_render_cache = LRUCache(256)
 
         self._lines: list[tuple[int, int]] | None = None
         self._spans: list[OptionLineSpan] | None = None

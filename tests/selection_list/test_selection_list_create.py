@@ -123,3 +123,20 @@ async def test_removing_option_updates_indexes() -> None:
 
         selections.remove_option_at_index(0)
         assert selections._values == {n + 1: n for n in range(4)}
+
+
+async def test_disabled_selection_list_no_attribute_error() -> None:
+    """Ensure that initializing the selection list with disabled=True does not
+    raise an AttributeError.
+
+    Regression test for https://github.com/Textualize/textual/issues/5028
+    """
+
+    class DisabledSelectionListApp(App):
+        def compose(self) -> ComposeResult:
+            yield SelectionList(disabled=True)
+
+    async with DisabledSelectionListApp().run_test() as pilot:
+        # If no exception is raised, the test will pass
+        selection_list = pilot.app.query_one(SelectionList)
+        assert selection_list.disabled == True
