@@ -92,14 +92,15 @@ class RichLog(ScrollView, can_focus=True):
             classes: The CSS classes of the text log.
             disabled: Whether the text log is disabled or not.
         """
+        self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
+        self._line_cache = LRUCache(1024)
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.max_lines = max_lines
         """Maximum number of lines in the log or `None` for no maximum."""
         self._start_line: int = 0
         self.lines: list[Strip] = []
         """The lines currently visible in the log."""
-        self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
-        self._line_cache = LRUCache(1024)
         self._deferred_renders: deque[DeferredRender] = deque()
         """Queue of deferred renderables to be rendered."""
         self.min_width = min_width
