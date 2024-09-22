@@ -1460,3 +1460,20 @@ async def test_clicking_border_link_doesnt_crash():
         # Test clicking the link in the border doesn't crash with KeyError: 'row'
         await pilot.click(DataTable, offset=(5, 0))
         assert app.link_clicked is True
+
+
+async def test_disabled_data_table_no_attribute_error() -> None:
+    """Ensure that initializing the data table with disabled=True does not
+    raise an AttributeError.
+
+    Regression test for https://github.com/Textualize/textual/issues/5028
+    """
+
+    class DisabledDataTableApp(App):
+        def compose(self) -> ComposeResult:
+            yield DataTable(disabled=True)
+
+    async with DisabledDataTableApp().run_test() as pilot:
+        # If no exception is raised, the test will pass
+        table = pilot.app.query_one(DataTable)
+        assert table.disabled == True

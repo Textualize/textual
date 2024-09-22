@@ -691,6 +691,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
+        self._row_render_cache: LRUCache[
+            RowCacheKey, tuple[SegmentLines, SegmentLines]
+        ] = LRUCache(1000)
+        """For each row (a row can have a height of multiple lines), we maintain a
+        cache of the fixed and scrollable lines within that row to minimize how often
+        we need to re-render it. """
+        self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
+        """Cache for individual cells."""
+        self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
+        """Cache for lines within rows."""
+        self._offset_cache: LRUCache[int, list[tuple[RowKey, int]]] = LRUCache(1)
+        """Cached y_offset - key is update_count - see y_offsets property for more
+        information """
+        self._ordered_row_cache: LRUCache[tuple[int, int], list[Row]] = LRUCache(1)
+        """Caches row ordering - key is (num_rows, update_count)."""
 
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
@@ -712,22 +727,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Maps row keys to row indices which represent row order."""
         self._column_locations: TwoWayDict[ColumnKey, int] = TwoWayDict({})
         """Maps column keys to column indices which represent column order."""
-
-        self._row_render_cache: LRUCache[
-            RowCacheKey, tuple[SegmentLines, SegmentLines]
-        ] = LRUCache(1000)
-        """For each row (a row can have a height of multiple lines), we maintain a
-        cache of the fixed and scrollable lines within that row to minimize how often
-        we need to re-render it. """
-        self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
-        """Cache for individual cells."""
-        self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
-        """Cache for lines within rows."""
-        self._offset_cache: LRUCache[int, list[tuple[RowKey, int]]] = LRUCache(1)
-        """Cached y_offset - key is update_count - see y_offsets property for more
-        information """
-        self._ordered_row_cache: LRUCache[tuple[int, int], list[Row]] = LRUCache(1)
-        """Caches row ordering - key is (num_rows, update_count)."""
 
         self._pseudo_class_state = PseudoClasses(False, False, False)
         """The pseudo-class state is used as part of cache keys to ensure that, for example,
