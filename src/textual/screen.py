@@ -166,8 +166,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 ScrollBar {
                     text-style: not dim;
                 }
-                text-style: dim ;
-
+                text-style: dim not bold;
             }
         }
     }
@@ -887,6 +886,8 @@ class Screen(Generic[ScreenResultType], Widget):
             self, self._maybe_clear_tooltip, immediate=True
         )
         self.refresh_bindings()
+        # Send this signal so we don't get an initial frame with no bindings in the footer
+        self.bindings_updated_signal.publish(self)
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
@@ -1173,6 +1174,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
+
         self._refresh_layout(size)
         self.refresh()
         # Only auto-focus when the app has focus (textual-web only)
