@@ -61,6 +61,8 @@ class Log(ScrollView, can_focus=True):
             classes: The CSS classes of the text log.
             disabled: Whether the text log is disabled or not.
         """
+        self._render_line_cache: LRUCache[int, Strip] = LRUCache(1024)
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.highlight = highlight
         """Enable highlighting."""
@@ -69,7 +71,6 @@ class Log(ScrollView, can_focus=True):
         self._lines: list[str] = []
         self._width = 0
         self._updates = 0
-        self._render_line_cache: LRUCache[int, Strip] = LRUCache(1024)
         self.highlighter = ReprHighlighter()
         """The Rich Highlighter object to use, if `highlight=True`"""
 
