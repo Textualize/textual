@@ -35,7 +35,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `enabled` switch to filters (mostly used internally) https://github.com/Textualize/textual/pull/5000
 - `BINDING_GROUP_TITLE` now defaults to `None` https://github.com/Textualize/textual/pull/5023
 - Breaking change: Changed how scrollbars are rendered so they work in ansi mode (will break snapshots) https://github.com/Textualize/textual/pull/5023
-- 
 
 ### Fixed
 
