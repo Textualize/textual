@@ -652,7 +652,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1, always_update=False)
+    cursor_line = var(-1)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
