@@ -165,8 +165,7 @@ class CalculatorApp(App):
         if self.value:
             self.right = Decimal(self.value)
         self._do_math()
-        1 / 0
 
 
 if __name__ == "__main__":
-    CalculatorApp().run(inline=True, inline_no_clear=True)
+    CalculatorApp().run(inline=True)
