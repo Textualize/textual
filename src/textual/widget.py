@@ -414,7 +414,6 @@ class Widget(DOMNode):
                 )
         self._pending_children = list(children)
         self.set_reactive(Widget.disabled, disabled)
-        self.disabled = disabled
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
         if self.BORDER_SUBTITLE:
