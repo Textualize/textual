@@ -167,7 +167,32 @@ class Input(Widget, can_focus=True):
         }
         &.-invalid:focus {
             border: tall $error;
-        }       
+        }    
+
+        &.-ansi-colors {
+            background: ansi_default;
+            color: ansi_default;
+            border: tall ansi_default;
+
+            &:focus {
+                border: tall ansi_blue;
+            }
+            &>.input--cursor {     
+                background: ansi_default;           
+                text-style: reverse;
+            }
+            &>.input--placeholder, &>.input--suggestion {
+                text-style: dim;
+                color: ansi_default;
+            }
+            &.-invalid {
+                border: tall ansi_red;
+            }
+            &.-invalid:focus {
+                border: tall ansi_red;
+            }  
+            
+        }
     }
 
     """

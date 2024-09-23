@@ -387,6 +387,10 @@ class CommandList(OptionList, can_focus=False):
         background: $primary;
     }
 
+    CommandList:nocolor > .option-list--option-highlighted {       
+        text-style: reverse;
+    }
+
     CommandList > .option-list--option {
         padding-left: 2;
     }
@@ -482,6 +486,11 @@ class CommandPalette(SystemModalScreen):
     CommandPalette > .command-palette--highlight {
         text-style: bold;
         color: $warning-darken-2;
+
+    }
+
+    CommandPalette:nocolor > .command-palette--highlight {
+        text-style: underline;
     }
 
     CommandPalette > Vertical {

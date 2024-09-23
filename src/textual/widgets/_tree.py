@@ -148,6 +148,14 @@ class TreeNode(Generic[TreeDataType]):
         return TreeNodes(self._children)
 
     @property
+    def siblings(self) -> TreeNodes[TreeDataType]:
+        """The siblings of this node (includes self)."""
+        if self.parent is None:
+            return TreeNodes([self])
+        else:
+            return self.parent.children
+
+    @property
     def line(self) -> int:
         """The line number for this node, or -1 if it is not displayed."""
         return self._line
@@ -183,9 +191,36 @@ class TreeNode(Generic[TreeDataType]):
         return self._parent
 
     @property
+    def next_sibling(self) -> TreeNode[TreeDataType] | None:
+        """The next sibling below the node."""
+        siblings = self.siblings
+        index = siblings.index(self) + 1
+        try:
+            return siblings[index]
+        except IndexError:
+            return None
+
+    @property
+    def previous_sibling(self) -> TreeNode[TreeDataType] | None:
+        """The previous sibling below the node."""
+        siblings = self.siblings
+        index = siblings.index(self) - 1
+        if index < 0:
+            return None
+        try:
+            return siblings[index]
+        except IndexError:
+            return None
+
+    @property
     def is_expanded(self) -> bool:
         """Is the node expanded?"""
         return self._expanded
+
+    @property
+    def is_collapsed(self) -> bool:
+        """Is the node collapsed?"""
+        return not self._expanded
 
     @property
     def is_last(self) -> bool:
@@ -395,6 +430,7 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         self._children.insert(insert_index, node)
         self._tree._invalidate()
+
         return node
 
     def add_leaf(
@@ -484,8 +520,30 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     ICON_NODE_EXPANDED = "▼ "
 
     BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("shift+left", "cursor_parent", "Cursor to parent", show=False),
+        Binding(
+            "shift+right",
+            "cursor_parent_next_sibling",
+            "Cursor to next ancestor",
+            show=False,
+        ),
+        Binding(
+            "shift+up",
+            "cursor_previous_sibling",
+            "Cursor to previous sibling",
+            show=False,
+        ),
+        Binding(
+            "shift+down",
+            "cursor_next_sibling",
+            "Cursor to next sibling",
+            show=False,
+        ),
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("space", "toggle_node", "Toggle", show=False),
+        Binding(
+            "shift+space", "toggle_expand_all", "Expand or collapse all", show=False
+        ),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
@@ -570,8 +628,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             & > .tree--cursor {
                 background: ansi_bright_blue;
                 color: ansi_default;
-                text-style: none;
-               
+                text-style: none;                   
+            }
+            &:nocolor > .tree--cursor{
+                text-style: reverse;
             }
             &:focus > .tree--cursor {
                 background: ansi_bright_blue;
@@ -592,7 +652,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1, always_update=True)
+    cursor_line = var(-1)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
@@ -600,6 +660,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """The indent depth of tree nodes."""
     auto_expand = var(True)
     """Auto expand tree nodes when they are selected."""
+    center_scroll = var(False)
+    """Keep selected node in the center of the control, where possible."""
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
@@ -849,13 +911,22 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.root.data = data
         return self
 
-    def move_cursor(self, node: TreeNode[TreeDataType] | None) -> None:
+    def move_cursor(
+        self, node: TreeNode[TreeDataType] | None, animate: bool = False
+    ) -> None:
         """Move the cursor to the given node, or reset cursor.
 
         Args:
             node: A tree node, or None to reset cursor.
+            animate: Enable animation
         """
+        previous_cursor_line = self.cursor_line
         self.cursor_line = -1 if node is None else node._line
+        if node is not None and self.cursor_node is not None:
+            self.scroll_to_node(
+                self.cursor_node,
+                animate=animate and abs(self.cursor_line - previous_cursor_line) > 1,
+            )
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node and select it, or reset cursor.
@@ -866,6 +937,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.move_cursor(node)
         if node is not None:
             self.post_message(Tree.NodeSelected(node))
+
+    def unselect(self) -> None:
+        """Hide and reset the cursor."""
+        self.set_reactive(Tree.cursor_line, -1)
+        self._invalidate()
 
     @on(NodeSelected)
     def _expand_node_on_select(self, event: NodeSelected[TreeDataType]) -> None:
@@ -958,6 +1034,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         return NodeID(id)
 
     def _get_node(self, line: int) -> TreeNode[TreeDataType] | None:
+        if line == -1:
+            return None
         try:
             tree_line = self._tree_lines[line]
         except IndexError:
@@ -999,12 +1077,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def watch_cursor_line(self, previous_line: int, line: int) -> None:
         previous_node = self._get_node(previous_line)
+        # Refresh previous cursor node
         if previous_node is not None:
             self._refresh_node(previous_node)
             previous_node._selected = False
             self._cursor_node = None
 
         node = self._get_node(line)
+        # Refresh new node
         if node is not None:
             self._refresh_node(node)
             node._selected = True
@@ -1030,7 +1110,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         region = self._get_label_region(line)
         if region is not None:
-            self.scroll_to_region(region, animate=animate, force=True)
+            self.scroll_to_region(
+                region, animate=animate, force=True, center=self.center_scroll
+            )
 
     def scroll_to_node(
         self, node: TreeNode[TreeDataType], animate: bool = True
@@ -1371,3 +1453,64 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             node = line.path[-1]
             self.post_message(Tree.NodeSelected(node))
+
+    def action_cursor_parent(self) -> None:
+        """Move the cursor to the parent node."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None and cursor_node.parent is not None:
+            self.move_cursor(cursor_node.parent, animate=True)
+
+    def action_cursor_parent_next_sibling(self) -> None:
+        """Move the cursor to the parent's next sibling."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None and cursor_node.parent is not None:
+            self.move_cursor(cursor_node.parent.next_sibling, animate=True)
+
+    def action_cursor_previous_sibling(self) -> None:
+        """Move the cursor to previous sibling, or to the parent if there are no more siblings."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None:
+            previous_sibling = cursor_node.previous_sibling
+            if previous_sibling is None:
+                self.move_cursor(cursor_node.parent, animate=True)
+            else:
+                self.move_cursor(previous_sibling, animate=True)
+
+    def action_cursor_next_sibling(self) -> None:
+        """Move the cursor to the next sibling, or to the paren't sibling if there are no more siblings."""
+        cursor_node = self.cursor_node
+        if cursor_node is not None:
+            next_sibling = cursor_node.next_sibling
+            if next_sibling is None:
+                if cursor_node.parent is not None:
+                    parent_sibling = cursor_node.parent.next_sibling
+                    self.move_cursor(parent_sibling, animate=True)
+            else:
+                self.move_cursor(next_sibling, animate=True)
+
+    def action_toggle_expand_all(self) -> None:
+        """Expand or collapse all siblings.
+
+        If all the siblings are collapsed then they will be expanded.
+        Otherwise they will all be collapsed.
+
+        """
+
+        if self.cursor_node is None or self.cursor_node.parent is None:
+            return
+
+        siblings = self.cursor_node.siblings
+        cursor_node = self.cursor_node
+
+        # If all siblings are collapsed we want to expand them all
+        if all(child.is_collapsed for child in siblings):
+            for child in siblings:
+                if child.allow_expand:
+                    child.expand()
+        # Otherwise we want to collapse them all
+        else:
+            for child in siblings:
+                if child.allow_expand:
+                    child.collapse()
+
+        self.call_after_refresh(self.move_cursor, cursor_node, animate=False)

@@ -25,10 +25,12 @@ class TreeApp(App[None]):
 
     def record(
         self,
-        event: Tree.NodeSelected[None]
-        | Tree.NodeExpanded[None]
-        | Tree.NodeCollapsed[None]
-        | Tree.NodeHighlighted[None],
+        event: (
+            Tree.NodeSelected[None]
+            | Tree.NodeExpanded[None]
+            | Tree.NodeCollapsed[None]
+            | Tree.NodeHighlighted[None]
+        ),
     ) -> None:
         self.messages.append(
             (event.__class__.__name__, event.node.tree.id or "Unknown")
@@ -92,12 +94,16 @@ async def test_disabled_tree_node_selected_message() -> None:
         # try clicking on a disabled tree
         await pilot.click("#test-tree")
         await pilot.pause()
-        assert not pilot.app.messages
+        assert pilot.app.messages == [("NodeHighlighted", "test-tree")]
         # make sure messages DO flow after enabling a disabled tree
         tree.disabled = False
         await pilot.click("#test-tree")
         await pilot.pause()
-        assert pilot.app.messages == [("NodeExpanded", "test-tree")]
+        print(pilot.app.messages)
+        assert pilot.app.messages == [
+            ("NodeHighlighted", "test-tree"),
+            ("NodeExpanded", "test-tree"),
+        ]
 
 
 async def test_enabled_tree_node_selected_message() -> None:
@@ -109,7 +115,11 @@ async def test_enabled_tree_node_selected_message() -> None:
         # try clicking on an enabled tree
         await pilot.click("#test-tree")
         await pilot.pause()
-        assert pilot.app.messages == [("NodeExpanded", "test-tree")]
+        print(pilot.app.messages)
+        assert pilot.app.messages == [
+            ("NodeHighlighted", "test-tree"),
+            ("NodeExpanded", "test-tree"),
+        ]
         tree.disabled = True
         # make sure messages DO NOT flow after disabling an enabled tree
         app.messages = []

@@ -624,3 +624,35 @@ async def test_worker_cancellation():
         # Press enter to activate button to dismiss them
         await pilot.press("enter")
         await pilot.press("enter")
+
+
+async def test_get_screen_with_expected_type():
+    """Test get_screen with expected type works"""
+
+    class BadScreen(Screen[None]):
+        pass
+
+    class MyScreen(Screen[None]):
+        def compose(self):
+            yield Label()
+            yield Button()
+
+    class MyApp(App[None]):
+        SCREENS = {"my_screen": MyScreen}
+
+        def on_mount(self):
+            self.push_screen("my_screen")
+
+    app = MyApp()
+    async with app.run_test():
+        screen = app.get_screen("my_screen")
+        # Should be fine
+        assert isinstance(screen, MyScreen)
+
+        screen = app.get_screen("my_screen", MyScreen)
+        # Should be fine
+        assert isinstance(screen, MyScreen)
+
+        # TypeError because my_screen is not a BadScreen
+        with pytest.raises(TypeError):
+            screen = app.get_screen("my_screen", BadScreen)

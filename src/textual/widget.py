@@ -413,7 +413,7 @@ class Widget(DOMNode):
                     f"Widget positional arguments must be Widget subclasses; not {child!r}"
                 )
         self._pending_children = list(children)
-        self.disabled = disabled
+        self.set_reactive(Widget.disabled, disabled)
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
         if self.BORDER_SUBTITLE:
@@ -3231,6 +3231,8 @@ class Widget(DOMNode):
             yield "inline"
         if app.ansi_color:
             yield "ansi"
+        if app.no_color:
+            yield "nocolor"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.
