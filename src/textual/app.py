@@ -91,7 +91,7 @@ from textual._wait import wait_for_idle
 from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
-from textual.binding import Binding, BindingsMap, BindingType
+from textual.binding import Binding, BindingsMap, BindingType, Keymap
 from textual.command import CommandPalette, Provider
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
@@ -104,7 +104,6 @@ from textual.features import FeatureFlag, parse_features
 from textual.file_monitor import FileMonitor
 from textual.filter import ANSIToTruecolor, DimFilter, Monochrome
 from textual.geometry import Offset, Region, Size
-from textual.keymap import Keymap
 from textual.keys import (
     REPLACED_KEYS,
     _character_to_key,

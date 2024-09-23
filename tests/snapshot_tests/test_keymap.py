@@ -1,10 +1,17 @@
 from __future__ import annotations
 from typing import Any
 
+import pytest
+
+from textual import on
 from textual.app import App, ComposeResult
-from textual.binding import Binding
-from textual.keymap import Keymap
+from textual.binding import Binding, Keymap
+from textual.events import BindingsClash
 from textual.widgets import Label
+
+
+class BindingsClashedError(Exception):
+    pass
 
 
 class Counter(App[None]):
@@ -27,6 +34,10 @@ class Counter(App[None]):
     def action_increment(self) -> None:
         self.count += 1
 
+    @on(BindingsClash)
+    def handle_bindings_clash(self, event: BindingsClash) -> None:
+        raise BindingsClashedError(event)
+
 
 async def test_keymap_default_binding_replaces_old_binding():
     app = Counter(Keymap({"app.increment": "right,k"}))
@@ -42,10 +53,9 @@ async def test_keymap_default_binding_replaces_old_binding():
 
 async def test_keymap_binding_clashes_with_existing_binding():
     app = Counter(Keymap({"app.increment": "d"}))
-    async with app.run_test() as pilot:
-        # We've created a binding that clashes with the existing "decrement" binding.
-        pass
-        # TODO - test that the clashed binding is returned
+    with pytest.raises(BindingsClashedError):
+        async with app.run_test() as pilot:
+            await pilot.press("d")
 
 
 # TODO - rebind a key to the same key... no crash?
