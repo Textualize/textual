@@ -250,7 +250,8 @@ class BindingsMap:
         clashed_bindings: set[Binding] = set()
         new_bindings: dict[str, list[Binding]] = {}
 
-        for bindings in list(self.key_to_bindings.values()):
+        key_to_bindings = list(self.key_to_bindings.items())
+        for key, bindings in key_to_bindings:
             for binding in bindings:
                 binding_id = binding.id
                 if binding_id is None:
@@ -260,6 +261,14 @@ class BindingsMap:
                 # If the keymap has an override for this binding ID
                 if keymap_key_string := keymap.get(binding_id):
                     keymap_keys = keymap_key_string.split(",")
+
+                    # Remove the old binding
+                    for key, key_bindings in key_to_bindings:
+                        self.key_to_bindings[key] = [
+                            b for b in key_bindings if b.id != binding_id
+                        ]
+                        if not self.key_to_bindings[key]:
+                            del self.key_to_bindings[key]
 
                     for keymap_key in keymap_keys:
                         if (
@@ -281,11 +290,9 @@ class BindingsMap:
                                 ):
                                     clashed_bindings.add(clashed_binding)
 
-                            # Remove the old key if it exists
                             if keymap_key in self.key_to_bindings:
                                 del self.key_to_bindings[keymap_key]
 
-                    # Add the new bindings to the temporary dictionary
                     for keymap_key in keymap_keys:
                         new_bindings.setdefault(keymap_key, []).append(
                             binding.with_key(key=keymap_key, key_display=None)

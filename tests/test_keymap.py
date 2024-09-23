@@ -1,17 +1,12 @@
 from __future__ import annotations
-from typing import Any
 
-import pytest
+from typing import Any
 
 from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
 from textual.events import BindingsClash
 from textual.widgets import Label
-
-
-class BindingsClashedError(Exception):
-    """Dummy exception used to test that the BindingsClash message is sent."""
 
 
 class Counter(App[None]):
@@ -23,6 +18,7 @@ class Counter(App[None]):
     def __init__(self, keymap: Keymap, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.count = 0
+        self.bindings_clash = None
         self.keymap = keymap
 
     def compose(self) -> ComposeResult:
@@ -34,9 +30,12 @@ class Counter(App[None]):
     def action_increment(self) -> None:
         self.count += 1
 
+    def action_decrement(self) -> None:
+        self.count -= 1
+
     @on(BindingsClash)
     def handle_bindings_clash(self, event: BindingsClash) -> None:
-        raise BindingsClashedError(event)
+        self.bindings_clash = event
 
 
 async def test_keymap_default_binding_replaces_old_binding():
@@ -53,9 +52,27 @@ async def test_keymap_default_binding_replaces_old_binding():
 
 async def test_keymap_sends_message_when_clash():
     app = Counter(Keymap({"app.increment": "d"}))
-    with pytest.raises(BindingsClashedError):
-        async with app.run_test() as pilot:
-            await pilot.press("d")
+    async with app.run_test() as pilot:
+        await pilot.press("d")
+        assert app.bindings_clash is not None
+        assert app.bindings_clash.node == app
+        assert len(app.bindings_clash.bindings) == 1
+
+
+async def test_keymap_with_unknown_id_is_noop():
+    app = Counter(Keymap({"this.is.an.unknown.id": "d"}))
+    async with app.run_test() as pilot:
+        await pilot.press("d")
+        assert app.count == -1
+
+
+# async def test_keymap_set_key_to_none_to_unbind():
+#     app = Counter(Keymap({"app.increment": None}))
+#     async with app.run_test() as pilot:
+#         await pilot.press("i")
+#         assert app.count == 1
+
+# TODO - finish this test
 
 
 # TODO - test that key_display is reset to None (and get_key_display is used) when a binding is overridden

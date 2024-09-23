@@ -1900,3 +1900,17 @@ def test_app_focus_style(snap_compare):
         await pilot.pause()
 
     assert snap_compare(FocusApp(), run_before=run_before)
+
+
+def test_keymap(snap_compare):
+    """Test that keymap works."""
+
+    class Counter(App[None]):
+        BINDINGS = [
+            Binding(key="i,up", action="increment", id="app.increment"),
+            Binding(key="d,down", action="decrement", id="app.decrement"),
+        ]
+
+    @on(BindingsClash)
+    def handle_bindings_clash(self, event: BindingsClash) -> None:
+        raise BindingsClashedError(event)
