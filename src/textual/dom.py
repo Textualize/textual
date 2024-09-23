@@ -133,20 +133,20 @@ class _ClassesDescriptor:
 class DOMNode(MessagePump):
     """The base class for object that can be in the Textual DOM (App and Widget)"""
 
-    # CSS defaults
     DEFAULT_CSS: ClassVar[str] = ""
+    """Default TCSS."""
 
-    # Default classes argument if not supplied
-    DEFAULT_CLASSES: str = ""
+    DEFAULT_CLASSES: ClassVar[str] = ""
+    """Default classes argument if not supplied."""
 
-    # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
+    """Virtual DOM nodes, used to expose styles to line API widgets."""
 
     BINDING_GROUP_TITLE: str | None = None
     """Title of widget used where bindings are displayed (such as in the key panel)."""
 
-    # Mapping of key bindings
     BINDINGS: ClassVar[list[BindingType]] = []
+    """A list of key bindings."""
 
     # Indicates if the CSS should be automatically scoped
     SCOPED_CSS: ClassVar[bool] = True

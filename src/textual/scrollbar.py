@@ -148,7 +148,7 @@ class ScrollBarRender:
             segments[end_index:] = [lower_back_segment] * (size - end_index)
 
             segments[start_index:end_index] = [
-                _Segment(blank, _Style(bgcolor=bar, meta=foreground_meta))
+                _Segment(blank, _Style(color=bar, reverse=True, meta=foreground_meta))
             ] * (end_index - start_index)
 
             # Apply the smaller bar characters to head and tail of scrollbar for more "granularity"
@@ -160,7 +160,12 @@ class ScrollBarRender:
                         (
                             _Style(bgcolor=back, color=bar, meta=foreground_meta)
                             if vertical
-                            else _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                            else _Style(
+                                bgcolor=back,
+                                color=bar,
+                                meta=foreground_meta,
+                                reverse=True,
+                            )
                         ),
                     )
             if end_index < len(segments):
@@ -169,7 +174,12 @@ class ScrollBarRender:
                     segments[end_index] = _Segment(
                         bar_character * width_thickness,
                         (
-                            _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                            _Style(
+                                bgcolor=back,
+                                color=bar,
+                                meta=foreground_meta,
+                                reverse=True,
+                            )
                             if vertical
                             else _Style(bgcolor=back, color=bar, meta=foreground_meta)
                         ),
@@ -273,6 +283,8 @@ class ScrollBar(Widget):
             color = styles.scrollbar_color
         color = background + color
         scrollbar_style = Style.from_color(color.rich_color, background.rich_color)
+        if self.screen.styles.scrollbar_color.a == 0:
+            return self.renderer(vertical=self.vertical, style=scrollbar_style)
         return self._render_bar(scrollbar_style)
 
     def _render_bar(self, scrollbar_style: Style) -> RenderableType:

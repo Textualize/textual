@@ -11,7 +11,18 @@ from textual.binding import Binding, Keymap
 from textual.containers import Vertical
 from textual.pilot import Pilot
 from textual.screen import Screen
-from textual.widgets import Button, Header, DataTable, Input, RichLog, TextArea, Footer
+from textual.widgets import (
+    Button,
+    Header,
+    DataTable,
+    Input,
+    RichLog,
+    TextArea,
+    Footer,
+    Log,
+    OptionList,
+    SelectionList,
+)
 from textual.widgets import Switch
 from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -1900,6 +1911,86 @@ def test_app_focus_style(snap_compare):
         await pilot.pause()
 
     assert snap_compare(FocusApp(), run_before=run_before)
+
+
+def test_ansi(snap_compare):
+    """Test ANSI colors."""
+    # It is actually impossible to tell from the SVG that ANSI colors were actually used
+    # This snapshot test exists as a canary to check if ansi_colors have broken
+
+    class ANSIApp(App):
+        CSS = """
+        Label {
+            background: ansi_blue;
+            border: solid ansi_white;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("[red]Red[/] [magenta]Magenta[/]")
+
+    app = ANSIApp(ansi_color=True)
+    assert snap_compare(app)
+
+
+def test_ansi_command_palette(snap_compare):
+    """Test command palette on top of ANSI colors."""
+
+    class CommandPaletteApp(App[None]):
+        CSS = """
+        Label {
+            width: 1fr;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("[red]Red[/] [magenta]Magenta[/] " * 200)
+
+        def on_mount(self) -> None:
+            self.action_command_palette()
+
+    app = CommandPaletteApp(ansi_color=True)
+    assert snap_compare(app)
+
+
+def test_disabled(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5028"""
+
+    class DisabledApp(App[None]):
+        CSS = """
+        Log {
+            height: 4;
+        }
+        RichLog {
+            height: 4;
+        }
+        DataTable {
+            height: 4;
+        }
+        OptionList {
+            height: 4;
+        }
+        SelectionList {
+            height: 4;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Labels don't have a disabled state", disabled=True)
+            yield Log(disabled=True)
+            yield RichLog(disabled=True)
+            yield DataTable(disabled=True)
+            yield OptionList("you", "can't", "select", "me", disabled=True)
+            yield SelectionList(("Simple SelectionList", "", False), disabled=True)
+
+        def on_mount(self) -> None:
+            self.query_one(Log).write("I am disabled")
+            self.query_one(RichLog).write("I am disabled")
+            self.query_one(DataTable).add_columns("Foo", "Bar")
+            self.query_one(DataTable).add_row("Also", "disabled")
+
+    app = DisabledApp()
+    assert snap_compare(app)
 
 
 def test_keymap_bindings_display_footer_and_help_panel(snap_compare):

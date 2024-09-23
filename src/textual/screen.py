@@ -157,6 +157,18 @@ class Screen(Generic[ScreenResultType], Widget):
             border-top: tall $background;
             border-bottom: tall $background;
         }
+
+        &:ansi {
+            background: ansi_default;
+            color: ansi_default;
+
+            &.-screen-suspended {
+                ScrollBar {
+                    text-style: not dim;
+                }
+                text-style: dim;
+            }
+        }
     }
     """
 
@@ -888,6 +900,8 @@ class Screen(Generic[ScreenResultType], Widget):
             self, self._maybe_clear_tooltip, immediate=True
         )
         self.refresh_bindings()
+        # Send this signal so we don't get an initial frame with no bindings in the footer
+        self.bindings_updated_signal.publish(self)
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
@@ -1170,9 +1184,11 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
+        self.remove_class("-screen-suspended")
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
+
         self._refresh_layout(size)
         self.refresh()
         # Only auto-focus when the app has focus (textual-web only)
@@ -1188,6 +1204,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
+        self.add_class("-screen-suspended")
         self.app._set_mouse_over(None)
         self._clear_tooltip()
         self.stack_updates += 1
@@ -1458,6 +1475,9 @@ class ModalScreen(Screen[ScreenResultType]):
         layout: vertical;
         overflow-y: auto;
         background: $background 60%;
+        &:ansi {
+            background: transparent;                   
+        }
     }
     """
 

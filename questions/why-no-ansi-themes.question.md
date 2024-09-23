@@ -15,3 +15,9 @@ This is an intentional design decision we took for for the following reasons:
 Textual has a design system which guarantees apps will be readable on all platforms and terminals, and produces better results than ANSI colors.
 
 There is currently a light and dark version of the design system, but more are planned. It will also be possible for users to customize the source colors on a per-app or per-system basis. This means that in the future you will be able to modify the core colors to blend in with your chosen terminal theme.
+
+!!! Changed in 0.80.0
+
+  Textual added an `ansi_color` boolean to App. If you set this to `True`, then Textual will
+  not attempt to convert ansi colors. Note that you will lose transparency effects if you enable
+  this setting.

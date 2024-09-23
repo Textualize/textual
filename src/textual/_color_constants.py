@@ -1,5 +1,25 @@
 from __future__ import annotations
 
+ANSI_COLORS = [
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "white",
+    "bright_black",
+    "bright_red",
+    "bright_green",
+    "bright_yellow",
+    "bright_blue",
+    "bright_magenta",
+    "bright_cyan",
+    "bright_white",
+]
+"""The names of ANSI colors (prefixed with ansi_ in CSS)."""
+
 COLOR_NAME_TO_RGB: dict[str, tuple[int, int, int] | tuple[int, int, int, int]] = {
     # Let's start with a specific pseudo-color::
     "transparent": (0, 0, 0, 0),

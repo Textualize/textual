@@ -32,6 +32,10 @@ class DirEntry:
 class DirectoryTree(Tree[DirEntry]):
     """A Tree widget that presents files and directories."""
 
+    ICON_NODE_EXPANDED = "📂 "
+    ICON_NODE = "📁 "
+    ICON_FILE = "📄 "
+
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "directory-tree--extension",
         "directory-tree--file",
@@ -50,17 +54,42 @@ class DirectoryTree(Tree[DirEntry]):
     """
 
     DEFAULT_CSS = """
-    DirectoryTree > .directory-tree--folder {
-        text-style: bold;
+    DirectoryTree {
+        
+        & > .directory-tree--folder {
+            text-style: bold;
+        }
+
+        & > .directory-tree--extension {
+            text-style: italic;
+        }
+
+        & > .directory-tree--hidden {
+            color: $text 50%;
+        }
+
+        &:ansi {
+        
+            & > .tree--guides {
+               color: transparent;              
+            }
+        
+            & > .directory-tree--folder {
+                text-style: bold;
+            }
+
+            & > .directory-tree--extension {
+                text-style: italic;
+            }
+
+            & > .directory-tree--hidden {
+                color: ansi_default;
+                text-style: dim;
+            }
+        }
+
     }
 
-    DirectoryTree > .directory-tree--extension {
-        text-style: italic;
-    }
-
-    DirectoryTree > .directory-tree--hidden {
-        color: $text 50%;
-    }
     """
 
     PATH: Callable[[str | Path], Path] = Path
@@ -334,6 +363,7 @@ class DirectoryTree(Tree[DirEntry]):
         """
         self.reset_node(self.root, str(self.path), DirEntry(self.PATH(self.path)))
         await self.reload()
+        self.move_cursor(self.root, animate=False)
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. May be overridden in a subclass to modify how labels are rendered.
@@ -373,13 +403,16 @@ class DirectoryTree(Tree[DirEntry]):
             return node_label
 
         if node._allow_expand:
-            prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
+            prefix = (
+                self.ICON_NODE_EXPANDED if node.is_expanded else self.ICON_NODE,
+                base_style + TOGGLE_STYLE,
+            )
             node_label.stylize_before(
                 self.get_component_rich_style("directory-tree--folder", partial=True)
             )
         else:
             prefix = (
-                "📄 ",
+                self.ICON_FILE,
                 base_style,
             )
             node_label.stylize_before(
@@ -481,10 +514,10 @@ class DirectoryTree(Tree[DirEntry]):
             The list of entries within the directory associated with the node.
         """
         assert node.data is not None
+        path = node.data.path
+        path = path.expanduser().resolve()
         return sorted(
-            self.filter_paths(
-                self._directory_content(node.data.path, get_current_worker())
-            ),
+            self.filter_paths(self._directory_content(path, get_current_worker())),
             key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 
@@ -498,6 +531,7 @@ class DirectoryTree(Tree[DirEntry]):
             node = await self._load_queue.get()
             content: list[Path] = []
             async with self.lock:
+                cursor_node = self.cursor_node
                 try:
                     # Spin up a short-lived thread that will load the content of
                     # the directory associated with that node.
@@ -515,6 +549,8 @@ class DirectoryTree(Tree[DirEntry]):
                     # the tree.
                     if content:
                         self._populate_node(node, content)
+                        if cursor_node is not None:
+                            self.move_cursor(cursor_node, animate=False)
                 finally:
                     # Mark this iteration as done.
                     self._load_queue.task_done()

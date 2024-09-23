@@ -293,6 +293,7 @@ class Widget(DOMNode):
         link-background-hover: $accent;
         link-color-hover: $text;
         link-style-hover: bold not underline;
+        background: transparent;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -412,7 +413,7 @@ class Widget(DOMNode):
                     f"Widget positional arguments must be Widget subclasses; not {child!r}"
                 )
         self._pending_children = list(children)
-        self.disabled = disabled
+        self.set_reactive(Widget.disabled, disabled)
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
         if self.BORDER_SUBTITLE:
@@ -3195,6 +3196,7 @@ class Widget(DOMNode):
         Returns:
             Names of the pseudo classes.
         """
+        app = self.app
         if self.mouse_hover:
             yield "hover"
         if self.has_focus:
@@ -3216,7 +3218,7 @@ class Widget(DOMNode):
         except NoScreen:
             pass
         else:
-            yield "dark" if self.app.dark else "light"
+            yield "dark" if app.dark else "light"
             if focused:
                 node = focused
                 while node is not None:
@@ -3224,8 +3226,13 @@ class Widget(DOMNode):
                         yield "focus-within"
                         break
                     node = node._parent
-        if self.app.is_inline:
+
+        if app.is_inline:
             yield "inline"
+        if app.ansi_color:
+            yield "ansi"
+        if app.no_color:
+            yield "nocolor"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.
