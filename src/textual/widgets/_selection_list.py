@@ -71,11 +71,17 @@ class Selection(Generic[SelectionType], Option):
 class SelectionList(Generic[SelectionType], OptionList):
     """A vertical selection list that allows making multiple selections."""
 
-    BINDINGS = [Binding("space", "select")]
+    BINDINGS = [
+        Binding("space", "select"),
+        Binding(key="ctrl+down", action="move_select_down", show=False),
+        Binding(key="ctrl+up", action="move_select_up", show=False)
+                ]
     """
     | Key(s) | Description |
     | :- | :- |
     | space | Toggle the state of the highlighted selection. |
+    | ctrl+down | Move current highlighted entry down |
+    | ctrl+up | Move current highlighted entry up |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -248,6 +254,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        swapeable: bool = False
     ):
         """Initialise the selection list.
 
@@ -257,9 +264,12 @@ class SelectionList(Generic[SelectionType], OptionList):
             id: The ID of the selection list in the DOM.
             classes: The CSS classes of the selection list.
             disabled: Whether the selection list is disabled or not.
+            swapeable: Whether entries can be swapped with ctrl+up/down
         """
         self._selected: dict[SelectionType, None] = {}
         """Tracking of which values are selected."""
+        self._swapeable = swapeable
+        """Status whether the entries can be swapped"""
         self._send_messages = False
         """Keep track of when we're ready to start sending messages."""
         options = [self._make_selection(selection) for selection in selections]
@@ -757,3 +767,71 @@ class SelectionList(Generic[SelectionType], OptionList):
         self._selected.clear()
         self._values.clear()
         return super().clear_options()
+
+    def _action_move_select_down(self) -> None:
+        """Moves the currently highlighted entry one down
+
+        Returns:
+            Nothing
+        """
+        if not self._swapeable:
+            return None
+        highlighted = self.highlighted
+        if highlighted is None or self._options[highlighted].disabled or highlighted >= len(self._options):
+            return None
+        numbered_options = {x: value for x, value in enumerate(self._options)}
+        preserve = self.selected
+        self.clear_options()
+        selects = {}
+        for key, value in numbered_options.items():
+            if key < highlighted:
+                selects[key] = value
+            elif key == highlighted:
+                selects[key+1] = value
+            elif key == highlighted+1:
+                selects[key-1] = value
+            elif key > highlighted+1:
+                selects[key] = value
+        selects = dict(sorted(selects.items()))
+        # preserving select state because that one is in the widget, not list
+        for key, each in selects.items():
+            if each.value in preserve:
+                selects[key]._initial_state = True
+            else:
+                selects[key]._initial_state = False
+        self.add_options([value for value in selects.values()])
+        self.highlighted = highlighted+1
+
+    def _action_move_select_up(self) -> None:
+        """Moves the currently highlighted entry one up
+
+        Returns:
+            Nothing
+        """
+        if not self._swapeable:
+            return None
+        highlighted = self.highlighted
+        if highlighted is None or self._options[highlighted].disabled or highlighted <= 0:
+            return None
+        numbered_options = {x: value for x, value in enumerate(self._options)}
+        preserve = self.selected
+        self.clear_options()
+        selects = {}
+        for key, value in numbered_options.items():
+            if key < highlighted - 1:
+                selects[key] = value
+            elif key == highlighted - 1:
+                selects[key + 1] = value
+            elif key == highlighted:
+                selects[key - 1] = value
+            elif key > highlighted:
+                selects[key] = value
+        selects = dict(sorted(selects.items()))
+        # preserving select state because that one is in the widget, not list
+        for key, each in selects.items():
+            if each.value in preserve:
+                selects[key]._initial_state = True
+            else:
+                selects[key]._initial_state = False
+        self.add_options([value for value in selects.values()])
+        self.highlighted = highlighted - 1
