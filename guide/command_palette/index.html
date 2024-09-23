@@ -7388,7 +7388,7 @@ In the example, we use this method to get the Python (.py) files in the current 
 <p>The <a class="autorefs autorefs-internal" href="../../api/command/#textual.command.Provider.search"><code>search</code></a> method is responsible for finding results (or <em>hits</em>) that match the user's input.
 This method should <em>yield</em> <a class="autorefs autorefs-internal" href="../../api/command/#textual.command.Hit"><code>Hit</code></a> objects for any command that matches the <code>query</code> argument.</p>
 <p>Exactly how the matching is implemented is up to the author of the command provider, but we recommend using the builtin fuzzy matcher object, which you can get by calling <a class="autorefs autorefs-internal" href="../../api/command/#textual.command.Provider.matcher"><code>matcher</code></a>.
-This object has a <a class="autorefs autorefs-internal" href="../../api/command/#textual.fuzzy.Matcher.match"><code>match()</code></a> method which compares the user's search term against the potential command and returns a <em>score</em>.
+This object has a <a class="autorefs autorefs-internal" href="../../api/fuzzy_matcher/#textual.fuzzy.Matcher.match"><code>match()</code></a> method which compares the user's search term against the potential command and returns a <em>score</em>.
 A score of zero means <em>no hit</em>, and you can discard the potential command.
 A score of above zero indicates the confidence in the result, where 1 is an exact match, and anything lower indicates a less confident match.</p>
 <p>The <a class="autorefs autorefs-internal" href="../../api/command/#textual.command.Hit"><code>Hit</code></a> contains information about the score (used in ordering) and how the hit should be displayed, and an optional help string.
