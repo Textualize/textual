@@ -447,7 +447,10 @@ class Widget(DOMNode):
     """The scroll position on the Y axis."""
 
     scroll_target_x = Reactive(0.0, repaint=False)
+    """Scroll target destination, X coord."""
+
     scroll_target_y = Reactive(0.0, repaint=False)
+    """Scroll target destination, Y coord."""
 
     show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a vertical scrollbar?"""
