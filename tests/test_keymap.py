@@ -64,16 +64,3 @@ async def test_keymap_with_unknown_id_is_noop():
     async with app.run_test() as pilot:
         await pilot.press("d")
         assert app.count == -1
-
-
-# async def test_keymap_set_key_to_none_to_unbind():
-#     app = Counter(Keymap({"app.increment": None}))
-#     async with app.run_test() as pilot:
-#         await pilot.press("i")
-#         assert app.count == 1
-
-# TODO - finish this test
-
-
-# TODO - test that key_display is reset to None (and get_key_display is used) when a binding is overridden
-# TODO - test that you can unbind a key and have a None binding without a crash

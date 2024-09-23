@@ -264,11 +264,9 @@ class BindingsMap:
 
                     # Remove the old binding
                     for key, key_bindings in key_to_bindings:
-                        self.key_to_bindings[key] = [
-                            b for b in key_bindings if b.id != binding_id
-                        ]
-                        if not self.key_to_bindings[key]:
-                            del self.key_to_bindings[key]
+                        if any(binding.id == binding_id for binding in key_bindings):
+                            if key in self.key_to_bindings:
+                                del self.key_to_bindings[key]
 
                     for keymap_key in keymap_keys:
                         if (

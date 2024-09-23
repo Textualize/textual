@@ -5,9 +5,9 @@ from rich.panel import Panel
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual import events
+from textual import events, on
 from textual.app import App, ComposeResult
-from textual.binding import Binding
+from textual.binding import Binding, Keymap
 from textual.containers import Vertical
 from textual.pilot import Pilot
 from textual.screen import Screen
@@ -1902,15 +1902,41 @@ def test_app_focus_style(snap_compare):
     assert snap_compare(FocusApp(), run_before=run_before)
 
 
-def test_keymap(snap_compare):
-    """Test that keymap works."""
+def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
+    """Bindings overridden by the Keymap are shown as expected in the Footer
+    and help panel. Testing that the keys work as expected is done elsewhere.
+
+    Footer should show bindings `k` to Increment, and `down` to Decrement.
+
+    Key panel should show bindings `k, plus` to increment,
+    and `down, minus, j` to decrement.
+
+    """
 
     class Counter(App[None]):
         BINDINGS = [
-            Binding(key="i,up", action="increment", id="app.increment"),
-            Binding(key="d,down", action="decrement", id="app.decrement"),
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+            ),
+            Binding(
+                key="d,down",
+                action="decrement",
+                description="Decrement",
+                id="app.decrement",
+            ),
         ]
 
-    @on(BindingsClash)
-    def handle_bindings_clash(self, event: BindingsClash) -> None:
-        raise BindingsClashedError(event)
+        def compose(self) -> ComposeResult:
+            yield Label("Counter")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+
+        def get_keymap(self) -> Keymap:
+            return Keymap({"app.increment": "k,plus", "app.decrement": "down,minus,j"})
+
+    assert snap_compare(Counter())
