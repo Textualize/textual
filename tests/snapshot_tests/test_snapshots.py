@@ -12,7 +12,18 @@ from textual.binding import Binding
 from textual.containers import Vertical
 from textual.pilot import Pilot
 from textual.screen import Screen
-from textual.widgets import Button, Header, DataTable, Input, RichLog, TextArea, Footer
+from textual.widgets import (
+    Button,
+    Header,
+    DataTable,
+    Input,
+    RichLog,
+    TextArea,
+    Footer,
+    Log,
+    OptionList,
+    SelectionList,
+)
 from textual.widgets import Switch
 from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -1940,4 +1951,44 @@ def test_ansi_command_palette(snap_compare):
             self.action_command_palette()
 
     app = CommandPaletteApp(ansi_color=True)
+    assert snap_compare(app)
+
+
+def test_disabled(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5028"""
+
+    class DisabledApp(App[None]):
+        CSS = """
+        Log {
+            height: 4;
+        }
+        RichLog {
+            height: 4;
+        }
+        DataTable {
+            height: 4;
+        }
+        OptionList {
+            height: 4;
+        }
+        SelectionList {
+            height: 4;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Labels don't have a disabled state", disabled=True)
+            yield Log(disabled=True)
+            yield RichLog(disabled=True)
+            yield DataTable(disabled=True)
+            yield OptionList("you", "can't", "select", "me", disabled=True)
+            yield SelectionList(("Simple SelectionList", "", False), disabled=True)
+
+        def on_mount(self) -> None:
+            self.query_one(Log).write("I am disabled")
+            self.query_one(RichLog).write("I am disabled")
+            self.query_one(DataTable).add_columns("Foo", "Bar")
+            self.query_one(DataTable).add_row("Also", "disabled")
+
+    app = DisabledApp()
     assert snap_compare(app)
