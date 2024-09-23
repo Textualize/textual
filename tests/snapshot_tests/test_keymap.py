@@ -51,7 +51,7 @@ async def test_keymap_default_binding_replaces_old_binding():
         assert app.count == 2
 
 
-async def test_keymap_binding_clashes_with_existing_binding():
+async def test_keymap_sends_message_when_clash():
     app = Counter(Keymap({"app.increment": "d"}))
     with pytest.raises(BindingsClashedError):
         async with app.run_test() as pilot:
