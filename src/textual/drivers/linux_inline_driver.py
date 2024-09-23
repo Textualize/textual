@@ -310,6 +310,7 @@ class LinuxInlineDriver(Driver):
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
         self.disable_input()
+        self.write("\x1b[<u")  # Disable kitty protocol
         self.write("\x1b[J")
 
         if self.attrs_before is not None:
