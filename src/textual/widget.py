@@ -413,7 +413,7 @@ class Widget(DOMNode):
                     f"Widget positional arguments must be Widget subclasses; not {child!r}"
                 )
         self._pending_children = list(children)
-        self.disabled = disabled
+        self.set_reactive(Widget.disabled, disabled)
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
         if self.BORDER_SUBTITLE:
