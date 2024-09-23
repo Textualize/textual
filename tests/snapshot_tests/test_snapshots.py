@@ -2064,7 +2064,7 @@ def test_keymap_bindings_key_display(snap_compare):
 
         def get_key_display(self, binding: Binding) -> str:
             if binding.id == "app.increment":
-                return "foo"
+                return "correct"
             return super().get_key_display(binding)
 
     assert snap_compare(MyApp())
