@@ -57,6 +57,10 @@ async def test_keymap_sends_message_when_clash():
         assert app.bindings_clash is not None
         assert app.bindings_clash.node == app
         assert len(app.bindings_clash.bindings) == 1
+        clash = app.bindings_clash.bindings.pop()
+        assert clash.key == "d"
+        assert clash.action == "increment"
+        assert clash.id == "app.increment"
 
 
 async def test_keymap_with_unknown_id_is_noop():
