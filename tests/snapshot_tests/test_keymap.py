@@ -29,7 +29,7 @@ class Counter(App[None]):
 
 
 async def test_keymap_default_binding_replaces_old_binding():
-    app = Counter(keymap=Keymap({"app.increment": "right,k"}))
+    app = Counter(Keymap({"app.increment": "right,k"}))
     async with app.run_test() as pilot:
         # The original bindings are removed - action not called.
         await pilot.press("i", "up")
@@ -41,7 +41,7 @@ async def test_keymap_default_binding_replaces_old_binding():
 
 
 async def test_keymap_binding_clashes_with_existing_binding():
-    app = Counter(keymap=Keymap({"app.increment": "d"}))
+    app = Counter(Keymap({"app.increment": "d"}))
     async with app.run_test() as pilot:
         # We've created a binding that clashes with the existing "decrement" binding.
         pass

@@ -244,57 +244,56 @@ class BindingsMap:
 
         Args:
             keymap: A keymap to overlay.
+
+        Returns:
+            KeymapApplyResult: The result of applying the keymap, including any clashed bindings.
         """
         clashed_bindings: set[Binding] = set()
-        for key_string, bindings in list(self.key_to_bindings.items()):
+        new_bindings: dict[str, list[Binding]] = {}
+
+        for bindings in list(self.key_to_bindings.values()):
             for binding in bindings:
                 binding_id = binding.id
                 if binding_id is None:
-                    # If there's no binding ID, we're definitely not overriding anything
+                    # Bindings without an ID are irrelevant when applying a keymap
                     continue
 
-                # Look up the binding ID in the keymap.
-                if new_key_string := keymap.get(binding_id):
-                    # An override binding exists in the app's keymap.
-                    new_keys = new_key_string.split(",")
-                    overrides: dict[str, list[Binding]] = {}
+                # If the keymap has an override for this binding ID
+                if keymap_key_string := keymap.get(binding_id):
+                    keymap_keys = keymap_key_string.split(",")
 
-                    for new_key in new_keys:
-                        # If the new key is already bound, unbind it
-                        # and inform the user that the binding has been overridden
-                        # TODO - return something to indicate this.
-                        if new_key in self.key_to_bindings:
-                            # TODO - we also need to check that this key is not being rebound
-                            #  because that rebind would mean that we're not actually clashing
-                            #  with the previous binding.
-                            existing_bindings_for_new_key = self.key_to_bindings[
-                                new_key
-                            ]
-                            for existing_binding in existing_bindings_for_new_key:
-                                # If the key we're changing to already exists,
-                                # and itself is not being rebound to a different key,
-                                # then we've got a clash.
+                    for keymap_key in keymap_keys:
+                        if (
+                            keymap_key in self.key_to_bindings
+                            or keymap_key in new_bindings
+                        ):
+                            # The key is already mapped either by default or by the keymap,
+                            # so there's a clash unless the existing binding is being rebound
+                            # to a different key.
+                            clashing_bindings = self.key_to_bindings.get(
+                                keymap_key, []
+                            ) + new_bindings.get(keymap_key, [])
+                            for clashed_binding in clashing_bindings:
+                                # If the existing binding is not being rebound, it's a clash
                                 if not (
-                                    existing_binding.id
-                                    and keymap.get(existing_binding.id)
-                                    != existing_binding.key
+                                    clashed_binding.id
+                                    and keymap.get(clashed_binding.id)
+                                    != clashed_binding.key
                                 ):
-                                    clashed_bindings.add(existing_binding)
-                            del self.key_to_bindings[new_key]
+                                    clashed_bindings.add(clashed_binding)
 
-                    # Remove the old key from the map if it exists
-                    # (It may have been deleted by the above loop)
-                    if key_string in self.key_to_bindings:
-                        del self.key_to_bindings[key_string]
+                            # Remove the old key if it exists
+                            if keymap_key in self.key_to_bindings:
+                                del self.key_to_bindings[keymap_key]
 
-                    # Re-add the bindings associated with the new key
-                    for new_key in new_keys:
-                        overrides.setdefault(new_key, []).append(
-                            binding.with_key(key=new_key, key_display=None)
+                    # Add the new bindings to the temporary dictionary
+                    for keymap_key in keymap_keys:
+                        new_bindings.setdefault(keymap_key, []).append(
+                            binding.with_key(key=keymap_key, key_display=None)
                         )
 
-                    self.key_to_bindings.update(overrides)
-
+        # Update the key_to_bindings with the new bindings
+        self.key_to_bindings.update(new_bindings)
         return KeymapApplyResult(clashed_bindings)
 
     @property

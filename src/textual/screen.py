@@ -349,6 +349,10 @@ class Screen(Generic[ScreenResultType], Widget):
         for namespace, bindings_map in namespace_bindings:
             if keymap:
                 result = bindings_map.apply_keymap(keymap)
+                if result.clashed_bindings:
+                    self.app.post_message(
+                        events.BindingsClash(namespace, result.clashed_bindings)
+                    )
 
         return namespace_bindings
 
