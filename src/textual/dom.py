@@ -218,7 +218,7 @@ class DOMNode(MessagePump):
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
         self._reactive_connect: (
-            dict[str, tuple[MessagePump, Reactive[Any] | object]] | None
+            dict[str, tuple[MessagePump, Reactive[object] | object]] | None
         ) = None
         self._pruning = False
         self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
