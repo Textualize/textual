@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `:ansi` pseudo class https://github.com/Textualize/textual/pull/5000
 - Added `-ansi-scrollbar` style to widgets https://github.com/Textualize/textual/pull/5000
 - Added `App.INLINE_PADDING` to define the number of spaces above inline apps https://github.com/Textualize/textual/pull/5000
+- Added `nocolor` psuedoclass when NO_COLOR env var is set- `BINDING_GROUP_TITLE` now defaults to `None` https://github.com/Textualize/textual/pull/5023
+- Added `TreeNode.siblings`, `TreeNode.next_sibling`, `TreeNode.previous_sibling`, `TreeNode.is_collapsed` https://github.com/Textualize/textual/pull/5023
+- Added additional bindings to Tree widget https://github.com/Textualize/textual/pull/5023
+- Added `Tree.center_scroll` https://github.com/Textualize/textual/pull/5023
+- Added `Tree.unselect` https://github.com/Textualize/textual/pull/5023
+
 
 ### Changed
 
@@ -27,6 +33,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Some fixes in `RichLog` result in slightly different semantics, see docstrings for details https://github.com/Textualize/textual/pull/4978
 - Changed how scrollbars are rendered (will have no visual effect, but will break snapshot tests) https://github.com/Textualize/textual/pull/5000
 - Added `enabled` switch to filters (mostly used internally) https://github.com/Textualize/textual/pull/5000
+- `BINDING_GROUP_TITLE` now defaults to `None` https://github.com/Textualize/textual/pull/5023
+- Breaking change: Changed how scrollbars are rendered so they work in ansi mode (will break snapshots) https://github.com/Textualize/textual/pull/5023
 
 ### Fixed
 

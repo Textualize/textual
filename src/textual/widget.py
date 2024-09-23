@@ -3231,6 +3231,8 @@ class Widget(DOMNode):
             yield "inline"
         if app.ansi_color:
             yield "ansi"
+        if app.no_color:
+            yield "nocolor"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.

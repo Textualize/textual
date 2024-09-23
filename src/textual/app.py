@@ -102,7 +102,7 @@ from textual.driver import Driver
 from textual.errors import NoWidget
 from textual.features import FeatureFlag, parse_features
 from textual.file_monitor import FileMonitor
-from textual.filter import ANSIToTruecolor, DimFilter, Monochrome
+from textual.filter import ANSIToTruecolor, DimFilter, Monochrome, NoColor
 from textual.geometry import Offset, Region, Size
 from textual.keys import (
     REPLACED_KEYS,
@@ -343,7 +343,24 @@ class App(Generic[ReturnType], DOMNode):
                 scrollbar-background-active: ansi_default;
                 scrollbar-color: ansi_blue;
                 scrollbar-color-active: ansi_bright_blue;
-                scrollbar-color-hover: ansi_bright_blue;               
+                scrollbar-color-hover: ansi_bright_blue;    
+                scrollbar-corner-color: ansi_default;           
+            }
+
+            .bindings-table--key {
+                color: ansi_magenta;
+            }
+            .bindings-table--description {
+                color: ansi_default;
+            }
+
+            .bindings-table--header {
+                color: ansi_default;
+            }
+
+            .bindings-table--divider {
+                color: transparent;
+                text-style: dim;
             }
         }
 
@@ -455,8 +472,8 @@ class App(Generic[ReturnType], DOMNode):
     TOOLTIP_DELAY: float = 0.5
     """The time in seconds after which a tooltip gets displayed."""
 
-    BINDING_GROUP_TITLE = "App"
-    """Shown in the key panel."""
+    BINDING_GROUP_TITLE: str | None = None
+    """Set to text to show in the key panel."""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
     """Use escape key to minimize widgets (potentially overriding bindings).
@@ -530,9 +547,9 @@ class App(Generic[ReturnType], DOMNode):
             ANSIToTruecolor(ansi_theme, enabled=not ansi_color)
         ]
         environ = dict(os.environ)
-        no_color = environ.pop("NO_COLOR", None)
-        if no_color is not None:
-            self._filters.append(Monochrome())
+        self.no_color = environ.pop("NO_COLOR", None) is not None
+        if self.no_color:
+            self._filters.append(NoColor() if self.ansi_color else Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
@@ -882,6 +899,8 @@ class App(Generic[ReturnType], DOMNode):
             yield "inline"
         if self.ansi_color:
             yield "ansi"
+        if self.no_color:
+            yield "nocolor"
 
     def _watch_ansi_color(self, ansi_color: bool) -> None:
         """Enable or disable the truecolor filter when the reactive changes"""
