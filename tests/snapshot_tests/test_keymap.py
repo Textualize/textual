@@ -11,7 +11,7 @@ from textual.widgets import Label
 
 
 class BindingsClashedError(Exception):
-    pass
+    """Dummy exception used to test that the BindingsClash message is sent."""
 
 
 class Counter(App[None]):
@@ -58,6 +58,5 @@ async def test_keymap_sends_message_when_clash():
             await pilot.press("d")
 
 
-# TODO - rebind a key to the same key... no crash?
 # TODO - test that key_display is reset to None (and get_key_display is used) when a binding is overridden
 # TODO - test that you can unbind a key and have a None binding without a crash
