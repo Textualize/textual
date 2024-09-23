@@ -363,6 +363,7 @@ class DirectoryTree(Tree[DirEntry]):
         """
         self.reset_node(self.root, str(self.path), DirEntry(self.PATH(self.path)))
         await self.reload()
+        self.move_cursor(self.root, animate=False)
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. May be overridden in a subclass to modify how labels are rendered.
@@ -483,7 +484,6 @@ class DirectoryTree(Tree[DirEntry]):
                 allow_expand=self._safe_is_dir(path),
             )
         node.expand()
-        # self.move_cursor(node)
 
     def _directory_content(self, location: Path, worker: Worker) -> Iterator[Path]:
         """Load the content of a given directory.
@@ -531,6 +531,7 @@ class DirectoryTree(Tree[DirEntry]):
             node = await self._load_queue.get()
             content: list[Path] = []
             async with self.lock:
+                cursor_node = self.cursor_node
                 try:
                     # Spin up a short-lived thread that will load the content of
                     # the directory associated with that node.
@@ -548,6 +549,8 @@ class DirectoryTree(Tree[DirEntry]):
                     # the tree.
                     if content:
                         self._populate_node(node, content)
+                        if cursor_node is not None:
+                            self.move_cursor(cursor_node, animate=False)
                 finally:
                     # Mark this iteration as done.
                     self._load_queue.task_done()

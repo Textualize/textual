@@ -166,7 +166,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 ScrollBar {
                     text-style: not dim;
                 }
-                text-style: dim not bold;
+                text-style: dim;
             }
         }
     }

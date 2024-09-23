@@ -430,6 +430,7 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         self._children.insert(insert_index, node)
         self._tree._invalidate()
+
         return node
 
     def add_leaf(
@@ -1076,12 +1077,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def watch_cursor_line(self, previous_line: int, line: int) -> None:
         previous_node = self._get_node(previous_line)
+        # Refresh previous cursor node
         if previous_node is not None:
             self._refresh_node(previous_node)
             previous_node._selected = False
             self._cursor_node = None
 
         node = self._get_node(line)
+        # Refresh new node
         if node is not None:
             self._refresh_node(node)
             node._selected = True
