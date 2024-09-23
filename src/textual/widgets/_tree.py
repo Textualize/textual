@@ -517,7 +517,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """A widget for displaying and navigating data in a tree."""
 
     ICON_NODE = "▶ "
+    """Unicode 'icon' to use for an expandable node."""
     ICON_NODE_EXPANDED = "▼ "
+    """Unicode 'icon' to use for an expanded node."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("shift+left", "cursor_parent", "Cursor to parent", show=False),
