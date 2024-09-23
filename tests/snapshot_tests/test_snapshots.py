@@ -2031,3 +2031,40 @@ def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
             return Keymap({"app.increment": "k,plus", "app.decrement": "down,minus,j"})
 
     assert snap_compare(Counter())
+
+
+def test_keymap_bindings_key_display(snap_compare):
+    """If a default binding in `BINDINGS` has a key_display, it should be reset
+    when that binding is overridden by a Keymap.
+
+    The key_display should be taken from `App.get_key_display`, so in this case
+    it should be "THIS IS CORRECT" in the Footer and help panel, not "INCORRECT".
+    """
+
+    class MyApp(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+                key_display="INCORRECT",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Check the footer and help panel")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+
+        def get_keymap(self) -> Keymap:
+            return Keymap({"app.increment": "k,plus,j,l"})
+
+        def get_key_display(self, binding: Binding) -> str:
+            if binding.id == "app.increment":
+                return "foo"
+            return super().get_key_display(binding)
+
+    assert snap_compare(MyApp())
