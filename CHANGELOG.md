@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.80.0] - 2024-09-23
 
 ### Added
 
@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed flicker when setting `dark` reactive on startup https://github.com/Textualize/textual/pull/4989
 - Fixed command palette not sorting search results by their match score https://github.com/Textualize/textual/pull/4994
 - Fixed `DataTable` cached height issue on re-populating the table when using auto-height rows https://github.com/Textualize/textual/pull/4992
+- Fixed inline app output being cleared when `inline_no_clear=True` https://github.com/Textualize/textual/issues/5019
 
 ## [0.79.1] - 2024-08-31
 
@@ -2380,6 +2381,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.80.0]: https://github.com/Textualize/textual/compare/v0.79.0...v0.80.0
 [0.79.0]: https://github.com/Textualize/textual/compare/v0.78.0...v0.79.0
 [0.78.0]: https://github.com/Textualize/textual/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/Textualize/textual/compare/v0.76.0...v0.77.0
