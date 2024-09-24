@@ -35,6 +35,7 @@ class DirectoryTree(Tree[DirEntry]):
     ICON_NODE_EXPANDED = "📂 "
     ICON_NODE = "📁 "
     ICON_FILE = "📄 "
+    """Unicode 'icon' to represent a file."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "directory-tree--extension",
