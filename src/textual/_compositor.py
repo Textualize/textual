@@ -487,6 +487,7 @@ class Compositor:
         if self._full_map_invalidated:
             self._full_map_invalidated = False
             map, _widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            # Update any widgets which became visible in the interim
             self._new_widgets.update(map.keys() - self._full_map.keys())
             self._full_map = map
             self._visible_widgets = None
