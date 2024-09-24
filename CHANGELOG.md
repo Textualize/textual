@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.80.1] - 2024-09-24
+
+### Fixed
+
+- Fixed crash when exiting the app prematurely https://github.com/Textualize/textual/pull/5039
+- Fixed exception constructing TextArea outside of App https://github.com/Textualize/textual/pull/5045
+
+## [0.80.0] - 2024-09-23
 
 ### Added
 
@@ -14,6 +21,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for `"none"` value added to `dock`, `hatch` and `split` styles https://github.com/Textualize/textual/pull/4982
 - Support for `"none"` added to box and border style properties (e.g `widget.style.border = "none"`) https://github.com/Textualize/textual/pull/4982
 - Docstrings added to most style properties https://github.com/Textualize/textual/pull/4982
+- Added `ansi_color` switch to App to permit ANSI (themed) colors https://github.com/Textualize/textual/pull/5000
+- Added `:ansi` pseudo class https://github.com/Textualize/textual/pull/5000
+- Added `-ansi-scrollbar` style to widgets https://github.com/Textualize/textual/pull/5000
+- Added `App.INLINE_PADDING` to define the number of spaces above inline apps https://github.com/Textualize/textual/pull/5000
+- Added `nocolor` psuedoclass when NO_COLOR env var is set- `BINDING_GROUP_TITLE` now defaults to `None` https://github.com/Textualize/textual/pull/5023
+- Added `TreeNode.siblings`, `TreeNode.next_sibling`, `TreeNode.previous_sibling`, `TreeNode.is_collapsed` https://github.com/Textualize/textual/pull/5023
+- Added additional bindings to Tree widget https://github.com/Textualize/textual/pull/5023
+- Added `Tree.center_scroll` https://github.com/Textualize/textual/pull/5023
+- Added `Tree.unselect` https://github.com/Textualize/textual/pull/5023
+
 
 ### Changed
 
@@ -21,6 +38,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Default `scrollbar-size-vertical` changed to `2` in inline styles to match Widget default CSS (unlikely to affect users) https://github.com/Textualize/textual/pull/4982
 - Removed border-right from `Toast` https://github.com/Textualize/textual/pull/4984
 - Some fixes in `RichLog` result in slightly different semantics, see docstrings for details https://github.com/Textualize/textual/pull/4978
+- Changed how scrollbars are rendered (will have no visual effect, but will break snapshot tests) https://github.com/Textualize/textual/pull/5000
+- Added `enabled` switch to filters (mostly used internally) https://github.com/Textualize/textual/pull/5000
+- `BINDING_GROUP_TITLE` now defaults to `None` https://github.com/Textualize/textual/pull/5023
+- Breaking change: Changed how scrollbars are rendered so they work in ansi mode (will break snapshots) https://github.com/Textualize/textual/pull/5023
 
 ### Fixed
 
@@ -30,7 +51,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `RichLog` writing at wrong width when `write` occurs before width is known (e.g. in `compose` or `on_mount`) https://github.com/Textualize/textual/pull/4978
 - Fixed `RichLog.write` incorrectly shrinking width to `RichLog.min_width` when `shrink=True` (now shrinks to fit content area instead) https://github.com/Textualize/textual/pull/4978
 - Fixed flicker when setting `dark` reactive on startup https://github.com/Textualize/textual/pull/4989
+- Fixed command palette not sorting search results by their match score https://github.com/Textualize/textual/pull/4994
 - Fixed `DataTable` cached height issue on re-populating the table when using auto-height rows https://github.com/Textualize/textual/pull/4992
+- Fixed inline app output being cleared when `inline_no_clear=True` https://github.com/Textualize/textual/issues/5019
 
 ## [0.79.1] - 2024-08-31
 
@@ -2365,6 +2388,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.80.1]: https://github.com/Textualize/textual/compare/v0.80.0...v0.80.1
+[0.80.0]: https://github.com/Textualize/textual/compare/v0.79.0...v0.80.0
 [0.79.0]: https://github.com/Textualize/textual/compare/v0.78.0...v0.79.0
 [0.78.0]: https://github.com/Textualize/textual/compare/v0.77.0...v0.78.0
 [0.77.0]: https://github.com/Textualize/textual/compare/v0.76.0...v0.77.0

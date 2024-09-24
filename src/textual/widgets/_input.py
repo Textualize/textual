@@ -150,24 +150,51 @@ class Input(Widget, can_focus=True):
         border: tall $background;
         width: 100%;
         height: 3;
+
+        &:focus {
+            border: tall $accent;
+        }
+        &>.input--cursor {
+            background: $surface;
+            color: $text;
+            text-style: reverse;
+        }
+        &>.input--placeholder, &>.input--suggestion {
+            color: $text-disabled;
+        }
+        &.-invalid {
+            border: tall $error 60%;
+        }
+        &.-invalid:focus {
+            border: tall $error;
+        }    
+
+        &.-ansi-colors {
+            background: ansi_default;
+            color: ansi_default;
+            border: tall ansi_default;
+
+            &:focus {
+                border: tall ansi_blue;
+            }
+            &>.input--cursor {     
+                background: ansi_default;           
+                text-style: reverse;
+            }
+            &>.input--placeholder, &>.input--suggestion {
+                text-style: dim;
+                color: ansi_default;
+            }
+            &.-invalid {
+                border: tall ansi_red;
+            }
+            &.-invalid:focus {
+                border: tall ansi_red;
+            }  
+            
+        }
     }
-    Input:focus {
-        border: tall $accent;
-    }
-    Input>.input--cursor {
-        background: $surface;
-        color: $text;
-        text-style: reverse;
-    }
-    Input>.input--placeholder, Input>.input--suggestion {
-        color: $text-disabled;
-    }
-    Input.-invalid {
-        border: tall $error 60%;
-    }
-    Input.-invalid:focus {
-        border: tall $error;
-    }
+
     """
 
     cursor_blink = reactive(True, init=False)

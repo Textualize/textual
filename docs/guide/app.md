@@ -51,6 +51,18 @@ To run an app in inline mode set the `inline` parameter to `True` when you call 
 
     Inline mode is not currently supported on Windows.
 
+
+#### ANSI colors
+
+!!! tip "Added in version 0.80.0"
+
+Terminals support 16 theme-able *ANSI* colors, which you can personalize from your terminal settings.
+By default, Textual will replace these colors with its own color choices (see the [FAQ for details](../FAQ.md#why-doesnt-textual-support-ansi-themes)).
+
+You can disable this behavior by setting `ansi_color=True` in the [App constructor][textual.app.App].
+
+We recommend the default behavior for full-screen apps, but you may want to preserve ANSI colors in [inline](#run-inline) apps.
+
 ## Events
 
 Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with `on_` followed by the name of the event.

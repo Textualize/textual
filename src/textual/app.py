@@ -102,7 +102,7 @@ from textual.driver import Driver
 from textual.errors import NoWidget
 from textual.features import FeatureFlag, parse_features
 from textual.file_monitor import FileMonitor
-from textual.filter import ANSIToTruecolor, DimFilter, Monochrome
+from textual.filter import ANSIToTruecolor, DimFilter, Monochrome, NoColor
 from textual.geometry import Offset, Region, Size
 from textual.keys import (
     REPLACED_KEYS,
@@ -172,6 +172,19 @@ DEFAULT_COLORS = {
         accent="#0178D4",
         dark=False,
     ),
+    "ansi": ColorSystem(
+        "ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_yellow",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_bright_blue",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+    ),
 }
 
 ComposeResult = Iterable[Widget]
@@ -184,6 +197,9 @@ AutopilotCallbackType: TypeAlias = (
 
 CommandCallback: TypeAlias = "Callable[[], Awaitable[Any]] | Callable[[], Any]"
 """Signature for callbacks used in [`get_system_commands`][textual.app.App.get_system_commands]"""
+
+ScreenType = TypeVar("ScreenType", bound=Screen)
+"""Type var for a Screen, used in [`get_screen`][textual.app.App.get_screen]."""
 
 
 class SystemCommand(NamedTuple):
@@ -317,6 +333,37 @@ class App(Generic[ReturnType], DOMNode):
         background: $background;
         color: $text;
 
+        &:ansi {
+            background: ansi_default;
+            color: ansi_default;
+
+            .-ansi-scrollbar {
+                scrollbar-background: ansi_default;
+                scrollbar-background-hover: ansi_default;
+                scrollbar-background-active: ansi_default;
+                scrollbar-color: ansi_blue;
+                scrollbar-color-active: ansi_bright_blue;
+                scrollbar-color-hover: ansi_bright_blue;    
+                scrollbar-corner-color: ansi_default;           
+            }
+
+            .bindings-table--key {
+                color: ansi_magenta;
+            }
+            .bindings-table--description {
+                color: ansi_default;
+            }
+
+            .bindings-table--header {
+                color: ansi_default;
+            }
+
+            .bindings-table--divider {
+                color: transparent;
+                text-style: dim;
+            }
+        }
+
         /* When a widget is maximized */
         Screen.-maximized-view {                    
             layout: vertical !important;
@@ -425,14 +472,17 @@ class App(Generic[ReturnType], DOMNode):
     TOOLTIP_DELAY: float = 0.5
     """The time in seconds after which a tooltip gets displayed."""
 
-    BINDING_GROUP_TITLE = "App"
-    """Shown in the key panel."""
+    BINDING_GROUP_TITLE: str | None = None
+    """Set to text to show in the key panel."""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
     """Use escape key to minimize widgets (potentially overriding bindings).
     
     This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
     """
+
+    INLINE_PADDING: ClassVar[int] = 1
+    """Number of blank lines above an inline app."""
 
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
@@ -462,11 +512,15 @@ class App(Generic[ReturnType], DOMNode):
     ansi_theme_light = Reactive(ALABASTER, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
 
+    ansi_color = Reactive(False)
+    """Allow ANSI colors in UI?"""
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
+        ansi_color: bool = False,
     ):
         """Create an instance of an app.
 
@@ -478,6 +532,7 @@ class App(Generic[ReturnType], DOMNode):
                 will be loaded in order.
             watch_css: Reload CSS if the files changed. This is set automatically if
                 you are using `textual run` with the `dev` switch.
+            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to to RGB if `False`.
 
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -487,12 +542,14 @@ class App(Generic[ReturnType], DOMNode):
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
-        self._filters: list[LineFilter] = [ANSIToTruecolor(ansi_theme)]
-
+        self.set_reactive(App.ansi_color, ansi_color)
+        self._filters: list[LineFilter] = [
+            ANSIToTruecolor(ansi_theme, enabled=not ansi_color)
+        ]
         environ = dict(os.environ)
-        no_color = environ.pop("NO_COLOR", None)
-        if no_color is not None:
-            self._filters.append(Monochrome())
+        self.no_color = environ.pop("NO_COLOR", None) is not None
+        if self.no_color:
+            self._filters.append(NoColor() if self.ansi_color else Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
@@ -840,6 +897,16 @@ class App(Generic[ReturnType], DOMNode):
         yield "dark" if self.dark else "light"
         if self.is_inline:
             yield "inline"
+        if self.ansi_color:
+            yield "ansi"
+        if self.no_color:
+            yield "nocolor"
+
+    def _watch_ansi_color(self, ansi_color: bool) -> None:
+        """Enable or disable the truecolor filter when the reactive changes"""
+        for filter in self._filters:
+            if isinstance(filter, ANSIToTruecolor):
+                filter.enabled = not ansi_color
 
     def animate(
         self,
@@ -1016,18 +1083,19 @@ class App(Generic[ReturnType], DOMNode):
         Yields:
             [SystemCommand][textual.app.SystemCommand] instances.
         """
-        if self.dark:
-            yield SystemCommand(
-                "Light mode",
-                "Switch to a light background",
-                self.action_toggle_dark,
-            )
-        else:
-            yield SystemCommand(
-                "Dark mode",
-                "Switch to a dark background",
-                self.action_toggle_dark,
-            )
+        if not self.ansi_color:
+            if self.dark:
+                yield SystemCommand(
+                    "Light mode",
+                    "Switch to a light background",
+                    self.action_toggle_dark,
+                )
+            else:
+                yield SystemCommand(
+                    "Dark mode",
+                    "Switch to a dark background",
+                    self.action_toggle_dark,
+                )
 
         yield SystemCommand(
             "Quit the application",
@@ -1093,7 +1161,13 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A mapping of variable name to value.
         """
-        variables = self.design["dark" if self.dark else "light"].generate()
+
+        if self.dark:
+            design = self.design["dark"]
+        else:
+            design = self.design["light"]
+
+        variables = design.generate()
         return variables
 
     def watch_dark(self, dark: bool) -> None:
@@ -1135,7 +1209,7 @@ class App(Generic[ReturnType], DOMNode):
         filters = self._filters
         for index, filter in enumerate(filters):
             if isinstance(filter, ANSIToTruecolor):
-                filters[index] = ANSIToTruecolor(theme)
+                filters[index] = ANSIToTruecolor(theme, enabled=not self.ansi_color)
                 return
 
     def get_driver_class(self) -> Type[Driver]:
@@ -2211,11 +2285,35 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return screen in self._installed_screens.values()
 
-    def get_screen(self, screen: Screen | str) -> Screen:
+    @overload
+    def get_screen(self, screen: ScreenType) -> ScreenType: ...
+
+    @overload
+    def get_screen(self, screen: str) -> Screen: ...
+
+    @overload
+    def get_screen(
+        self, screen: str, screen_class: Type[ScreenType] | None = None
+    ) -> ScreenType: ...
+
+    @overload
+    def get_screen(
+        self, screen: ScreenType, screen_class: Type[ScreenType] | None = None
+    ) -> ScreenType: ...
+
+    def get_screen(
+        self, screen: Screen | str, screen_class: Type[Screen] | None = None
+    ) -> Screen:
         """Get an installed screen.
+
+        Example:
+            ```python
+            my_screen = self.get_screen("settings", MyScreen)
+            ```
 
         Args:
             screen: Either a Screen object or screen name (the `name` argument when installed).
+            screen_class: Class of expected screen, or `None` for any screen class.
 
         Raises:
             KeyError: If the named screen doesn't exist.
@@ -2233,6 +2331,10 @@ class App(Generic[ReturnType], DOMNode):
                 self._installed_screens[screen] = next_screen
         else:
             next_screen = screen
+        if screen_class is not None and not isinstance(next_screen, screen_class):
+            raise TypeError(
+                f"Expected a screen of type {screen_class}, got {type(next_screen)}"
+            )
         return next_screen
 
     def _get_screen(self, screen: Screen | str) -> tuple[Screen, AwaitMount]:
@@ -2857,10 +2959,18 @@ class App(Generic[ReturnType], DOMNode):
                             self._driver.write(
                                 Control.move(-cursor_x, -cursor_y + 1).segment.text
                             )
-                            if inline_no_clear and not not self.app._exit_renderables:
+                            if inline_no_clear and not self.app._exit_renderables:
                                 console = Console()
-                                console.print(self.screen._compositor)
-                                console.print()
+                                try:
+                                    console.print(self.screen._compositor)
+                                except ScreenStackError:
+                                    console.print()
+                            else:
+                                self._driver.write(
+                                    Control.move(
+                                        -cursor_x, -self.INLINE_PADDING - 1
+                                    ).segment.text
+                                )
 
                         driver.stop_application_mode()
             except Exception as error:

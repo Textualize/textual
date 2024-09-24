@@ -45,11 +45,13 @@ class BindingsTable(Static):
         bindings = self.screen.active_bindings.values()
 
         key_style = self.get_component_rich_style("bindings-table--key")
-
+        divider_transparent = (
+            self.get_component_styles("bindings-table--divider").color.a == 0
+        )
         table = Table(
             padding=(0, 0),
             show_header=False,
-            box=box.HORIZONTALS,
+            box=box.SIMPLE if divider_transparent else box.HORIZONTALS,
             border_style=self.get_component_rich_style("bindings-table--divider"),
         )
         table.add_column("", justify="right")
@@ -61,10 +63,10 @@ class BindingsTable(Static):
             if not table_bindings:
                 continue
 
-            name = namespace.BINDING_GROUP_TITLE or namespace.__class__.__name__
-            title = Text(name, end="")
-            title.stylize(header_style)
-            table.add_row("", title)
+            if namespace.BINDING_GROUP_TITLE:
+                title = Text(namespace.BINDING_GROUP_TITLE, end="")
+                title.stylize(header_style)
+                table.add_row("", title)
 
             action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
             action_to_bindings = defaultdict(list)
@@ -160,6 +162,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
             if self.is_attached and screen is self.screen:
                 self.refresh(recompose=True)
 
+        self.set_class(self.app.ansi_color, "-ansi-scrollbar")
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
     def on_unmount(self) -> None:

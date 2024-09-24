@@ -2278,12 +2278,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
         remaining_space = max(0, widget_width - table_width)
         background_color = self.background_colors[1]
-        faded_color = Color.from_rich_color(row_style.bgcolor).blend(
-            background_color, factor=0.25
-        )
-        faded_style = Style.from_color(
-            color=row_style.color, bgcolor=faded_color.rich_color
-        )
+        if row_style.bgcolor is not None:
+            # TODO: This should really be in a component class
+            faded_color = Color.from_rich_color(row_style.bgcolor).blend(
+                background_color, factor=0.25
+            )
+            faded_style = Style.from_color(
+                color=row_style.color, bgcolor=faded_color.rich_color
+            )
+        else:
+            faded_style = Style.from_color(row_style.color, row_style.bgcolor)
         scrollable_row.append([Segment(" " * remaining_space, faded_style)])
 
         row_pair = (fixed_row, scrollable_row)

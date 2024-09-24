@@ -8,6 +8,7 @@ from rich.console import RenderableType
 from rich.text import Text
 
 from textual import events, on
+from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.css.query import NoMatches
 from textual.message import Message
@@ -198,7 +199,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     BLANK = BLANK
     """Constant to flag that the widget has no selection."""
 
-    BINDINGS = [("enter,down,space,up", "show_overlay")]
+    BINDINGS = [
+        Binding("enter,down,space,up", "show_overlay", show=False),
+    ]
     """
     | Key(s) | Description |
     | :- | :- |
