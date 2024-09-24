@@ -309,6 +309,9 @@ class Compositor:
         # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
 
+        # New widgets added between updates
+        self._new_widgets: set[Widget] = set()
+
     def clear(self) -> None:
         """Remove all references to widgets (used when the screen closes)."""
         self._full_map.clear()
@@ -387,7 +390,9 @@ class Compositor:
         new_widgets = map.keys()
 
         # Newly visible widgets
-        shown_widgets = new_widgets - old_widgets
+        shown_widgets = (new_widgets - old_widgets) | self._new_widgets
+        self._new_widgets.clear()
+
         # Newly hidden widgets
         hidden_widgets = self.widgets - widgets
 
@@ -419,7 +424,6 @@ class Compositor:
             for widget, (region, *_) in changes
             if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
         }
-
         return ReflowResult(
             hidden=hidden_widgets,
             shown=shown_widgets,
@@ -482,7 +486,9 @@ class Compositor:
             return {}
         if self._full_map_invalidated:
             self._full_map_invalidated = False
-            map, _widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            old = self._full_map.keys()
+            map, widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            self._new_widgets.update(map.keys() - old)
             self._full_map = map
             self._visible_widgets = None
             self._visible_map = None
