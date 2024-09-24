@@ -315,7 +315,6 @@ class LinuxInlineDriver(Driver):
         self.disable_input()
         self.write("\x1b[<u")  # Disable kitty protocol
         self.write("\x1b[J")
-        self.flush()
 
         if self.attrs_before is not None:
             try:

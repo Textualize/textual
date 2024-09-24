@@ -3,7 +3,7 @@ import contextlib
 from rich.terminal_theme import DIMMED_MONOKAI, MONOKAI, NIGHT_OWLISH
 
 from textual.app import App, ComposeResult
-from textual.widgets import Button, Input
+from textual.widgets import Button, Input, Static
 
 
 def test_batch_update():
@@ -140,3 +140,36 @@ async def test_ansi_theme():
 
         app.dark = True
         assert app.ansi_theme == DIMMED_MONOKAI
+
+
+async def test_early_exit():
+    """Test exiting early doesn't cause issues."""
+    from textual.app import App
+
+    class AppExit(App):
+        def compose(self):
+            yield Static("Hello")
+
+        def on_mount(self) -> None:
+            # Exit after creating app
+            self.exit()
+
+    app = AppExit()
+    async with app.run_test():
+        pass
+
+
+def test_early_exit_inline():
+    """Test exiting early in inline mode doesn't break."""
+    from textual.app import App
+
+    class AppExit(App):
+        def compose(self):
+            yield Static("Hello")
+
+        def on_mount(self) -> None:
+            # Exit after creating app
+            self.exit()
+
+    app = AppExit()
+    app.run(inline=True, inline_no_clear=True)
