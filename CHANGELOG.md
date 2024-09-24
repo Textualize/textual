@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Tree will no longer scroll the X axis when moving the cursor https://github.com/Textualize/textual/pull/5047
 
+### Fixed
+
+- Fixed widgets occasionally not getting Resize events https://github.com/Textualize/textual/pull/5048
+
 ## [0.80.1] - 2024-09-24
 
 ### Fixed
