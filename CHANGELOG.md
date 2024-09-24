@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Add
+### Added
 
 - Added `x_axis` and `y_axis` parameters to `Widget.scroll_to_region` https://github.com/Textualize/textual/pull/5047
 
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed widgets occasionally not getting Resize events https://github.com/Textualize/textual/pull/5048
+- Fixed `Tree` expanded node styles https://github.com/Textualize/textual/issues/5050
 
 ## [0.80.1] - 2024-09-24
 
