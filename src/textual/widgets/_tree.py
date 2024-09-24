@@ -1113,7 +1113,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         region = self._get_label_region(line)
         if region is not None:
             self.scroll_to_region(
-                region, animate=animate, force=True, center=self.center_scroll
+                region,
+                animate=animate,
+                force=True,
+                center=self.center_scroll,
+                origin_visible=False,
+                x_axis=False,  # Scrolling the X axis is quite jarring, and rarely necessary
             )
 
     def scroll_to_node(

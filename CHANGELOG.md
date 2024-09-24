@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Add
+
+- Added `x_axis` and `y_axis` parameters to `Widget.scroll_to_region` https://github.com/Textualize/textual/pull/5047
+
+### Changed
+
+- Tree will no longer scroll the X axis when moving the cursor https://github.com/Textualize/textual/pull/5047
+
 ## [0.80.1] - 2024-09-24
 
 ### Fixed
