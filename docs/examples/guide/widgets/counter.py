@@ -21,8 +21,8 @@ class Counter(Static, can_focus=True):
         self.count += amount
 
 
-class CalculatorApp(App[None]):
-    CSS_PATH = "calculator.tcss"
+class CounterApp(App[None]):
+    CSS_PATH = "counter.tcss"
 
     def compose(self) -> ComposeResult:
         yield Counter()
@@ -31,5 +31,5 @@ class CalculatorApp(App[None]):
 
 
 if __name__ == "__main__":
-    app = CalculatorApp()
+    app = CounterApp()
     app.run()
