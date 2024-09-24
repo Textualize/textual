@@ -486,9 +486,9 @@ class Compositor:
             return {}
         if self._full_map_invalidated:
             self._full_map_invalidated = False
-            old = self._full_map.keys()
+            old_widgets = self._full_map.keys()
             map, widgets = self._arrange_root(self.root, self.size, visible_only=False)
-            self._new_widgets.update(map.keys() - old)
+            self._new_widgets.update(map.keys() - old_widgets)
             self._full_map = map
             self._visible_widgets = None
             self._visible_map = None
