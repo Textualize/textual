@@ -846,7 +846,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         if node._allow_expand:
             prefix = (
-                self.ICON_NODE if node.is_expanded else self.ICON_NODE_EXPANDED,
+                self.ICON_NODE_EXPANDED if node.is_expanded else self.ICON_NODE,
                 base_style + TOGGLE_STYLE,
             )
         else:
