@@ -6,6 +6,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
 from textual.events import BindingsClash
+from textual.widget import Widget
 from textual.widgets import Label
 
 
@@ -68,3 +69,59 @@ async def test_keymap_with_unknown_id_is_noop():
     async with app.run_test() as pilot:
         await pilot.press("d")
         assert app.count == -1
+
+
+async def test_keymap_inherited_bindings_same_id():
+    parent_counter = 0
+    child_counter = 0
+
+    class Parent(Widget, can_focus=True):
+        BINDINGS = [
+            Binding(key="x", action="increment", id="increment"),
+        ]
+
+        def action_increment(self) -> None:
+            nonlocal parent_counter
+            parent_counter += 1
+
+    class Child(Parent):
+        BINDINGS = [
+            Binding(key="x", action="increment", id="increment"),
+        ]
+
+        def action_increment(self) -> None:
+            nonlocal child_counter
+            child_counter += 1
+
+    class MyApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Parent()
+            yield Child()
+
+        def get_keymap(self) -> Keymap:
+            return Keymap({"increment": "i"})
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        # Default binding is unbound due to keymap.
+        await pilot.press("x")
+        assert parent_counter == 0
+        assert child_counter == 0
+
+        # New binding is active, parent is focused - action called.
+        await pilot.press("i")
+        assert parent_counter == 1
+        assert child_counter == 0
+
+        # Tab to focus the child.
+        await pilot.press("tab")
+
+        # Default binding results in no change.
+        await pilot.press("x")
+        assert parent_counter == 1
+        assert child_counter == 0
+
+        # New binding is active, child is focused - action called.
+        await pilot.press("i")
+        assert parent_counter == 1
+        assert child_counter == 1
