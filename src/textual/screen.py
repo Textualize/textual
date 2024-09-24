@@ -465,7 +465,7 @@ class Screen(Generic[ScreenResultType], Widget):
         background = self.styles.background
         try:
             base_screen = visible_screen_stack.get().pop()
-        except IndexError:
+        except LookupError:
             base_screen = None
 
         if base_screen is not None and background.a < 1:
