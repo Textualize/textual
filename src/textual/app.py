@@ -4325,4 +4325,4 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The Keymap to apply.
         """
-        return Keymap(mapping={})
+        return Keymap({})
