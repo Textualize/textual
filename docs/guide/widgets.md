@@ -51,19 +51,6 @@ The addition of the CSS has completely transformed our custom widget.
 ```{.textual path="docs/examples/guide/widgets/hello02.py"}
 ```
 
-### Responding to key presses
-
-Widgets can have a list of associated key [bindings](../guide/input.md#bindings),
-which enable a it to call [actions](../guide/actions.md) in response to key presses.
-
-A widget's bindings will only be checked if it or one of its descendants has focus.
-
-Let's look at Textual's builtin [Button](../widgets/button.md) widget to see an example of how widget bindings work.
-The `Button` widget has a single binding for the `enter` key.
-When a button is focused, and the user presses ++enter++, the `action_press` method inside `Button` is called.
-
-
-
 ## Static widget
 
 While you can extend the Widget class, a subclass will typically be a better starting point. The [Static][textual.widgets.Static] class is a widget subclass which caches the result of render, and provides an [update()][textual.widgets.Static.update] method to update the content area.
@@ -202,6 +189,41 @@ If the supplied text is too long to fit within the widget, it will be cropped (a
 
 There are a number of styles that influence how titles are displayed (color and alignment).
 See the [style reference](../styles/index.md) for details.
+
+## Interacting with widgets
+
+Widgets can have a list of associated key [bindings](../guide/input.md#bindings),
+which let them call [actions](../guide/actions.md) in response to key presses.
+
+A widget is only be able to handle key presses if it or one of its descendants has [focus](./guide/input.md#input-focus).
+
+Let's design a simple interactive `Counter` widget.
+We'll set `can_focus=True` to allow the widget to receive focus, and give it some simple to highlight it when it has focus:
+
+=== "counter01.py"
+
+    ```python title="counter01.py" hl_lines="6"
+    --8<-- "docs/examples/guide/widgets/counter01.py"
+    ```
+
+=== "counter.tcss"
+
+    ```css title="counter.tcss"
+    --8<-- "docs/examples/guide/widgets/counter.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/counter01.py"}
+    ```
+
+Textual will automatically focus the first counter, and you'll notice that it's been highlighted with a blue background thanks to the CSS we applied using the `:focus` pseudo-selector! ++tab++ and ++shift+tab++ moves focus between the two counters.
+
+Now that we have a focusable widget, let's add some key bindings to it for incrementing and decrementing the counter.
+To do this, we'll add a `BINDINGS` class variable to the `Counter`.
+
+
+
 
 ## Rich renderables
 

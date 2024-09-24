@@ -1,5 +1,4 @@
 from textual.app import App, ComposeResult
-from textual.binding import Binding
 from textual.reactive import reactive
 from textual.widgets import Footer, Static
 
@@ -8,8 +7,8 @@ class Counter(Static, can_focus=True):
     """A counter that can be incremented and decremented by pressing keys."""
 
     BINDINGS = [
-        Binding("up,k", "change_count(1)", "Increment"),
-        Binding("down,j", "change_count(-1)", "Decrement"),
+        ("up,k", "change_count(1)", "Increment"),
+        ("down,j", "change_count(-1)", "Decrement"),
     ]
 
     count = reactive(0)
@@ -17,7 +16,7 @@ class Counter(Static, can_focus=True):
     def render(self) -> str:
         return f"Count: {self.count}"
 
-    def action_change_count(self, amount: int) -> None:
+    def action_change_count(self, amount: int):
         self.count += amount
 
 
