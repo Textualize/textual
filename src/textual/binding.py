@@ -385,8 +385,8 @@ class Keymap:
     in the keymap.
 
     Textual will look for bindings with the same ID as the
-    the keys in this mapping, and replacing the key strings in the
-    default binding with the key strings in this mapping.
+    the keys in this mapping, and replace the key strings in the
+    default binding with the key strings from this mapping.
 
     The mapping is immutable - it's created once and then should
     never be mutated at runtime.

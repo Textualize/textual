@@ -4319,7 +4319,7 @@ class App(Generic[ReturnType], DOMNode):
         """Gets the keymap used to override default keyboard shortcuts.
 
         This may be overridden by subclasses to change the keyboard
-        shortcuts used by the application on startup (e.g. by loading
+        shortcuts used by the application (e.g. by loading
         from a config/keymap file).
 
         Returns:
