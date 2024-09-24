@@ -393,6 +393,11 @@ class Keymap:
     """
 
     def __init__(self, mapping: Mapping[BindingIDString, KeyString]):
+        """Construct a keymap from a mapping of binding IDs to key strings.
+
+        Args:
+            mapping: A mapping of binding IDs to key strings.
+        """
         self._mapping = mapping
 
     @property
