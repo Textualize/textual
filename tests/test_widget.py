@@ -43,7 +43,7 @@ async def test_widget_construct():
             self.input = Input()
             self.label = Label()
             self.loading_indicator = LoadingIndicator()
-            self.log = Log()
+            self.log_ = Log()
             self.option_list = OptionList()
             self.rich_log = RichLog()
             self.switch = Switch()
