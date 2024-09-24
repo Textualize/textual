@@ -400,10 +400,6 @@ class Keymap:
         """
         self._mapping = mapping
 
-    @property
-    def mapping(self) -> Mapping[BindingIDString, KeyString]:
-        return self._mapping
-
     def get(self, binding_id: BindingIDString) -> KeyString | None:
         return self._mapping.get(binding_id)
 
