@@ -362,13 +362,13 @@ class BindingsMap:
             raise NoBinding(f"No binding for {key}") from None
 
 
-BindingIDString = str
+BindingIDString: TypeAlias = str
 """The ID of a Binding defined somewhere in the application.
 
 Corresponds to the `id` parameter of the `Binding` class.
 """
 
-KeyString = str
+KeyString: TypeAlias = str
 """A string that represents a key binding.
 
 For example, "x", "ctrl+i", "ctrl+shift+a", "ctrl+j,space,x", etc.
