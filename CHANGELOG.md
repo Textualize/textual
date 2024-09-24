@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed crash when exiting the app prematurely https://github.com/Textualize/textual/pull/5039
+- Fixed exception constructing TextArea outside of App
 
 ## [0.80.0] - 2024-09-23
 

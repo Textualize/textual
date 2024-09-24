@@ -12,7 +12,46 @@ from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
 from textual.widget import BadWidgetName, MountError, PseudoClasses, Widget
-from textual.widgets import Label, LoadingIndicator
+from textual.widgets import (
+    Button,
+    DataTable,
+    Footer,
+    Header,
+    Input,
+    Label,
+    LoadingIndicator,
+    Log,
+    OptionList,
+    RichLog,
+    Switch,
+    TextArea,
+)
+
+
+async def test_widget_construct():
+    """Regression test for https://github.com/Textualize/textual/issues/5042"""
+
+    # Check that constructing the widget outside of the app, doesn't invoke code that
+    # expects an active app.
+    class MyApp(App):
+        def __init__(self) -> None:
+            super().__init__()
+            self.button = Button()
+            self.data_table = DataTable()
+            self.footer = Footer()
+            self.header = Header()
+            self.input = Input()
+            self.label = Label()
+            self.loading_indicator = LoadingIndicator()
+            self.log = Log()
+            self.option_list = OptionList()
+            self.rich_log = RichLog()
+            self.switch = Switch()
+            self.text_area = TextArea(language="python")
+
+    app = MyApp()
+    async with app.run_test():
+        pass
 
 
 @pytest.mark.parametrize(
