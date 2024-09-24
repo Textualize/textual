@@ -2874,6 +2874,8 @@ class Widget(DOMNode):
         force: bool = False,
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "basic",
+        x_axis: bool = True,
+        y_axis: bool = True,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -2892,6 +2894,8 @@ class Widget(DOMNode):
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
             level: Minimum level required for the animation to take place (inclusive).
+            x_axis: Allow scrolling on X axis?
+            y_axis: Allow scrolling on Y axis?
 
         Returns:
             The distance that was scrolled.
@@ -2938,11 +2942,13 @@ class Widget(DOMNode):
             delta = Offset(delta.x, 0)
 
         if delta:
+            delta_x = delta.x if x_axis else 0
+            delta_y = delta.y if y_axis else 0
             if speed is None and duration is None:
                 duration = 0.2
             self.scroll_relative(
-                delta.x or None,
-                delta.y or None,
+                delta_x or None,
+                delta_y or None,
                 animate=animate,
                 speed=speed,
                 duration=duration,
