@@ -945,7 +945,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         try:
             node = self._tree_lines[line].node
         except IndexError:
-            raise IndexError("No line no. {line} in the tree")
+            raise IndexError(f"No line no. {line} in the tree")
         self.move_cursor(node, animate=animate)
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
