@@ -3829,7 +3829,7 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_switch_mode(self, mode: str) -> None:
-        """An [action](/guide/actions) that switches to the given mode.."""
+        """An [action](/guide/actions) that switches to the given mode."""
         self.switch_mode(mode)
 
     async def action_back(self) -> None:
