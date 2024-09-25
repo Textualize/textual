@@ -244,6 +244,9 @@ With our bindings in place, we can now change the count of the _currently focuse
     --8<-- "docs/examples/guide/widgets/counter.tcss"
     ```
 
+    1. These styles are applied only when the widget has focus.
+
+
 === "Output"
 
     ```{.textual path="docs/examples/guide/widgets/counter02.py" press="up,tab,down,down"}
