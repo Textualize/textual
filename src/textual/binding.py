@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import dataclasses
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
+from typing import TYPE_CHECKING, Iterable, Iterator, Mapping, NamedTuple
 
 import rich.repr
 
@@ -21,6 +21,22 @@ if TYPE_CHECKING:
     from textual.dom import DOMNode
 
 BindingType: TypeAlias = "Binding | tuple[str, str] | tuple[str, str, str]"
+"""The possible types of a binding found in the `BINDINGS` class variable."""
+
+BindingIDString: TypeAlias = str
+"""The ID of a Binding defined somewhere in the application.
+
+Corresponds to the `id` parameter of the `Binding` class.
+"""
+
+KeyString: TypeAlias = str
+"""A string that represents a key binding.
+
+For example, "x", "ctrl+i", "ctrl+shift+a", "ctrl+j,space,x", etc.
+"""
+
+Keymap = Mapping[BindingIDString, KeyString]
+"""A mapping of binding IDs to key strings, used for overriding default key bindings."""
 
 
 class BindingError(Exception):
@@ -362,14 +378,8 @@ class BindingsMap:
             raise NoBinding(f"No binding for {key}") from None
 
 
-BindingIDString: TypeAlias = str
-"""The ID of a Binding defined somewhere in the application.
+class KeymapApplyResult(NamedTuple):
+    """The result of applying a keymap."""
 
-Corresponds to the `id` parameter of the `Binding` class.
-"""
-
-KeyString: TypeAlias = str
-"""A string that represents a key binding.
-
-For example, "x", "ctrl+i", "ctrl+shift+a", "ctrl+j,space,x", etc.
-"""
+    clashed_bindings: set[Binding]
+    """A list of bindings that were clashed and replaced by the keymap."""

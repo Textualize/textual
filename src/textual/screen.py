@@ -357,7 +357,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
             filter_namespaces.append(namespace)
 
-        keymap = self.app.get_keymap()
+        keymap = self.app._keymap
         for namespace, bindings_map in namespace_bindings:
             if keymap:
                 result = bindings_map.apply_keymap(keymap)

@@ -91,7 +91,7 @@ from textual._wait import wait_for_idle
 from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
-from textual.binding import Binding, BindingsMap, BindingType
+from textual.binding import Binding, BindingsMap, BindingType, Keymap
 from textual.command import CommandPalette, Provider
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
@@ -659,6 +659,8 @@ class App(Generic[ReturnType], DOMNode):
 
         self._registry: WeakSet[DOMNode] = WeakSet()
 
+        self._keymap: Keymap = {}
+
         # Sensitivity on X is double the sensitivity on Y to account for
         # cells being twice as tall as wide
         self.scroll_sensitivity_x: float = 4.0
@@ -754,8 +756,8 @@ class App(Generic[ReturnType], DOMNode):
         happens.
         """
 
-        # Size of previous inline update
         self._previous_inline_height: int | None = None
+        """Size of previous inline update."""
 
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
@@ -3421,6 +3423,31 @@ class App(Generic[ReturnType], DOMNode):
                     if await self.run_action(binding.action, namespace):
                         return True
         return False
+
+    def set_keymap(self, keymap: Keymap) -> None:
+        """Set the keymap, a mapping of binding IDs to key strings.
+
+        Bindings in the keymap are used to override default key bindings,
+        i.e. those defined in `BINDINGS` class variables.
+
+        Bindings with IDs that are present in the keymap will have
+        their key string replaced with the value from the keymap.
+
+        Args:
+            keymap: A mapping of binding IDs to key strings.
+        """
+        self._keymap = keymap
+
+    def update_keymap(self, keymap: Keymap) -> None:
+        """Update the App's keymap, merging with `keymap`.
+
+        If a Binding ID exists in both the App's keymap and the `keymap`
+        argument, the `keymap` argument takes precedence.
+
+        Args:
+            keymap: A mapping of binding IDs to key strings.
+        """
+        self._keymap = {**self._keymap, **keymap}
 
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
