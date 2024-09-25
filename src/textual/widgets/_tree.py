@@ -935,7 +935,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Args:
             line: The line number (negative indexes are offsets from the last line).
-            animate: Enable animation.
+            animate: Enable scrolling animation.
 
         Raises:
             IndexError: If the line doesn't exist.
