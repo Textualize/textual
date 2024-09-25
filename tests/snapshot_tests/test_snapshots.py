@@ -2026,9 +2026,12 @@ def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
 
         def on_mount(self) -> None:
             self.action_show_help_panel()
-
-        def get_keymap(self) -> Keymap:
-            return Keymap({"app.increment": "k,plus", "app.decrement": "down,minus,j"})
+            self.set_keymap(
+                {
+                    "app.increment": "k,plus",
+                    "app.decrement": "down,minus,j",
+                }
+            )
 
     assert snap_compare(Counter())
 
@@ -2058,9 +2061,7 @@ def test_keymap_bindings_key_display(snap_compare):
 
         def on_mount(self) -> None:
             self.action_show_help_panel()
-
-        def get_keymap(self) -> Keymap:
-            return Keymap({"app.increment": "k,plus,j,l"})
+            self.set_keymap({"app.increment": "k,plus,j,l"})
 
         def get_key_display(self, binding: Binding) -> str:
             if binding.id == "app.increment":

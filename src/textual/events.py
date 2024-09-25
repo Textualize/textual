@@ -21,7 +21,6 @@ import rich.repr
 from rich.style import Style
 
 from textual._types import CallbackType
-from textual.binding import Binding
 from textual.geometry import Offset, Size
 from textual.keys import _get_key_aliases
 from textual.message import Message
@@ -767,18 +766,3 @@ class DeliveryFailed(Event, bubble=False):
 
     name: str | None = None
     """Optional name returned to the app to identify the download."""
-
-
-@dataclass
-class BindingsClash(Event, bubble=False):
-    """Sent to App when a keymap clashes with existing bindings.
-
-    - [ ] Bubbles
-    - [ ] Verbose
-    """
-
-    node: DOMNode
-    """The node that has a clash."""
-
-    bindings: set[Binding]
-    """The bindings that are clashing."""

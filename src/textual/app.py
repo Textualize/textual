@@ -3449,6 +3449,26 @@ class App(Generic[ReturnType], DOMNode):
         """
         self._keymap = {**self._keymap, **keymap}
 
+    def handle_bindings_clash(
+        self, clashed_bindings: set[Binding], node: DOMNode
+    ) -> None:
+        """Handle a clash between bindings.
+
+        Bindings clashes are likely due to users setting conflicting
+        keys via their keymap.
+
+        This method is intended to be overridden by subclasses.
+
+        Textual will call this each time a clash is encountered -
+        which may be on each keypress if a clashing widget is focused
+        or is in the bindings chain.
+
+        Args:
+            clashed_bindings: The bindings that are clashing.
+            node: The node that has the clashing bindings.
+        """
+        pass
+
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App

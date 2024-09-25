@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from textual import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
-from textual.events import BindingsClash
+from textual.dom import DOMNode
 from textual.widget import Widget
 from textual.widgets import Label
 
@@ -19,14 +18,15 @@ class Counter(App[None]):
     def __init__(self, keymap: Keymap, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.count = 0
-        self.bindings_clash = None
+        self.clashed_bindings: set[Binding] | None = None
+        self.clashed_node: DOMNode | None = None
         self.keymap = keymap
 
     def compose(self) -> ComposeResult:
         yield Label("foo")
 
-    def get_keymap(self) -> Keymap:
-        return self.keymap
+    def on_mount(self) -> None:
+        self.set_keymap(self.keymap)
 
     def action_increment(self) -> None:
         self.count += 1
@@ -34,13 +34,15 @@ class Counter(App[None]):
     def action_decrement(self) -> None:
         self.count -= 1
 
-    @on(BindingsClash)
-    def handle_bindings_clash(self, event: BindingsClash) -> None:
-        self.bindings_clash = event
+    def handle_bindings_clash(
+        self, clashed_bindings: set[Binding], node: DOMNode
+    ) -> None:
+        self.clashed_bindings = clashed_bindings
+        self.clashed_node = node
 
 
 async def test_keymap_default_binding_replaces_old_binding():
-    app = Counter(Keymap({"app.increment": "right,k"}))
+    app = Counter({"app.increment": "right,k"})
     async with app.run_test() as pilot:
         # The original bindings are removed - action not called.
         await pilot.press("i", "up")
@@ -52,20 +54,20 @@ async def test_keymap_default_binding_replaces_old_binding():
 
 
 async def test_keymap_sends_message_when_clash():
-    app = Counter(Keymap({"app.increment": "d"}))
+    app = Counter({"app.increment": "d"})
     async with app.run_test() as pilot:
         await pilot.press("d")
-        assert app.bindings_clash is not None
-        assert app.bindings_clash.node == app
-        assert len(app.bindings_clash.bindings) == 1
-        clash = app.bindings_clash.bindings.pop()
+        assert app.clashed_bindings is not None
+        assert len(app.clashed_bindings) == 1
+        clash = app.clashed_bindings.pop()
+        assert app.clashed_node is app
         assert clash.key == "d"
         assert clash.action == "increment"
         assert clash.id == "app.increment"
 
 
 async def test_keymap_with_unknown_id_is_noop():
-    app = Counter(Keymap({"this.is.an.unknown.id": "d"}))
+    app = Counter({"this.is.an.unknown.id": "d"})
     async with app.run_test() as pilot:
         await pilot.press("d")
         assert app.count == -1
@@ -103,8 +105,8 @@ async def test_keymap_inherited_bindings_same_id():
             yield Parent()
             yield Child()
 
-        def get_keymap(self) -> Keymap:
-            return Keymap({"increment": "i"})
+        def on_mount(self) -> None:
+            self.set_keymap({"increment": "i"})
 
     app = MyApp()
     async with app.run_test() as pilot:
@@ -162,12 +164,8 @@ async def test_keymap_child_with_different_id_overridden():
             yield Parent()
             yield Child()
 
-        def get_keymap(self) -> Keymap:
-            return Keymap(
-                {
-                    "parent.increment": "i",
-                }
-            )
+        def on_mount(self) -> None:
+            self.set_keymap({"parent.increment": "i"})
 
     app = MyApp()
     async with app.run_test() as pilot:
