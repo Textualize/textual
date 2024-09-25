@@ -1,4 +1,4 @@
-from textual.app import App, ComposeResult
+from textual.app import App, ComposeResult, RenderResult
 from textual.reactive import reactive
 from textual.widgets import Footer, Static
 
@@ -8,7 +8,7 @@ class Counter(Static, can_focus=True):  # (1)!
 
     count = reactive(0)
 
-    def render(self) -> str:
+    def render(self) -> RenderResult:
         return f"Count: {self.count}"
 
 

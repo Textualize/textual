@@ -200,7 +200,7 @@ A widget is only be able to handle key presses if it or one of its descendants h
 To demonstrate, let's design a simple interactive counter widget which can be incremented and decremented using the keyboard.
 
 In the following example, we define a simple `Counter` widget with `can_focus=True`, and some CSS to make it stand out when focused.
-Our app contains three `Counter` widgets, which we can move focus between using ++tab++ and ++shift+tab++.
+Our app contains three `Counter` widgets, which we can focus by clicking or using ++tab++ and ++shift+tab++.
 
 === "counter01.py"
 
@@ -222,12 +222,6 @@ Our app contains three `Counter` widgets, which we can move focus between using 
 
     ```{.textual path="docs/examples/guide/widgets/counter01.py"}
     ```
-
-Notice that Textual automatically focused the first widget, and that pressing ++tab++ and ++shift+tab++ will move focus between widgets.
-
-!!! note
-
-    You can also move focus to a widget by clicking on it.
 
 Now that our counter is focusable, let's make it interactive by adding some key bindings and actions to it.
 To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for ++up++ and ++down++.
