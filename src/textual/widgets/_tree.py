@@ -931,6 +931,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             )
 
     def move_cursor_to_line(self, line: int, animate=False) -> None:
+        """Move the cursor to the given line.
+
+        Args:
+            line: The line number (negative indexes are offsets from the last line).
+            animate: Enable animation.
+
+        Raises:
+            IndexError: If the line doesn't exist.
+        """
         if line < 0:
             line = len(self._tree_lines) + line
         try:
