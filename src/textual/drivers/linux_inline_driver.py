@@ -161,11 +161,11 @@ class LinuxInlineDriver(Driver):
                     self.cursor_origin = (event.x, event.y)
                 else:
                     self.process_event(event)
-                self.process_event(event)
 
         try:
             while not self.exit_event.is_set():
                 process_selector_events(selector.select(0.1))
+            selector.unregister(self.fileno)
             process_selector_events(selector.select(0.1), final=True)
 
         finally:
@@ -296,7 +296,10 @@ class LinuxInlineDriver(Driver):
                 if self._key_thread is not None:
                     self._key_thread.join()
                 self.exit_event.clear()
-                termios.tcflush(self.fileno, termios.TCIFLUSH)
+                try:
+                    termios.tcflush(self.fileno, termios.TCIFLUSH)
+                except termios.error:
+                    pass
 
         except Exception as error:
             # TODO: log this

@@ -464,9 +464,6 @@ TextArea {
 
         self.tab_behavior = tab_behavior
 
-        # When `app.dark` is toggled, reset the theme (since it caches values).
-        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
-
         if tooltip is not None:
             self.tooltip = tooltip
 
@@ -610,6 +607,10 @@ TextArea {
     ) -> None:
         """When the cursor moves, scroll it into view."""
         # Find the visual offset of the cursor in the document
+
+        if not self.is_mounted:
+            return
+
         cursor_location = selection.end
 
         self.scroll_cursor_visible()
@@ -1519,6 +1520,9 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
+        # When `app.dark` is toggled, reset the theme (since it caches values).
+        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+
         self.blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor_blink_visible,

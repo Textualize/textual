@@ -9,7 +9,7 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Vertical
+from textual.containers import Vertical, VerticalScroll
 from textual.pilot import Pilot
 from textual.screen import Screen
 from textual.widgets import (
@@ -24,8 +24,7 @@ from textual.widgets import (
     OptionList,
     SelectionList,
 )
-from textual.widgets import Switch
-from textual.widgets import Label
+from textual.widgets import ProgressBar, Label, Switch
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -502,7 +501,7 @@ def test_directory_tree_reloading(snap_compare, tmp_path):
     async def run_before(pilot):
         await pilot.app.setup(tmp_path)
         await pilot.press(
-            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+            "down", "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
         )
 
     assert snap_compare(
@@ -1992,3 +1991,31 @@ def test_disabled(snap_compare):
 
     app = DisabledApp()
     assert snap_compare(app)
+
+
+def test_missing_new_widgets(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5024"""
+
+    class MRE(App):
+        BINDINGS = [("z", "toggle_console", "Console")]
+        CSS = """
+        RichLog { border-top: dashed blue; height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            yield VerticalScroll()
+            yield ProgressBar(
+                classes="hidden"
+            )  # removing or displaying this widget prevents the bug
+            yield Footer()  # clicking "Console" in the footer prevents the bug
+            yield RichLog(classes="hidden")
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_console(self) -> None:
+            self.query_one(RichLog).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["space", "space", "z"])
