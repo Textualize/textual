@@ -3,7 +3,7 @@ from textual.reactive import reactive
 from textual.widgets import Footer, Static
 
 
-class Counter(Static, can_focus=True):
+class Counter(Static, can_focus=True):  # (1)!
     """A counter that can be incremented and decremented by pressing keys."""
 
     count = reactive(0)

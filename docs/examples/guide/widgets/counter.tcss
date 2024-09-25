@@ -3,7 +3,7 @@ Counter {
     padding: 1 2;
     color: $text-muted;
 
-    &:focus {
+    &:focus {  /* (1)! */
         background: $primary;
         color: $text;
         text-style: bold;

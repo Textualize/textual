@@ -200,6 +200,7 @@ A widget is only be able to handle key presses if it or one of its descendants h
 To demonstrate, let's design a simple interactive counter widget which can be incremented and decremented using the keyboard.
 
 In the following example, we define a simple `Counter` widget with `can_focus=True`, and some CSS to make it stand out when focused.
+Our app contains three `Counter` widgets, which we can move focus between using ++tab++ and ++shift+tab++.
 
 === "counter01.py"
 
@@ -207,11 +208,15 @@ In the following example, we define a simple `Counter` widget with `can_focus=Tr
     --8<-- "docs/examples/guide/widgets/counter01.py"
     ```
 
+    1. Allow the widget to receive input focus.
+
 === "counter.tcss"
 
     ```css title="counter.tcss" hl_lines="6-11"
     --8<-- "docs/examples/guide/widgets/counter.tcss"
     ```
+
+    1. These styles are applied only when the widget has focus.
 
 === "Output"
 
@@ -220,9 +225,15 @@ In the following example, we define a simple `Counter` widget with `can_focus=Tr
 
 Notice that Textual automatically focused the first widget, and that pressing ++tab++ and ++shift+tab++ will move focus between widgets.
 
-Now that our counter is focusable, let's add some keybindings for incrementing and decrementing the counter.
-To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for incrementing and decrementing the counter using ++up++ and ++down++ respectively.
+!!! note
+
+    You can also move focus to a widget by clicking on it.
+
+Now that our counter is focusable, let's make it interactive by adding some key bindings and actions to it.
+To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for ++up++ and ++down++.
 These new bindings are linked to the `change_count` action, which updates the `count` reactive attribute.
+
+With our bindings in place, we can now change the count of the _currently focused counter_ using ++up++ and ++down++.
 
 === "counter02.py"
 
@@ -238,11 +249,8 @@ These new bindings are linked to the `change_count` action, which updates the `c
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/widgets/counter02.py"}
+    ```{.textual path="docs/examples/guide/widgets/counter02.py" press="up,tab,down,down"}
     ```
-
-With our bindings in place, we can now change the count of the _currently focused counter_ using ++up++ and ++down++.
-
 
 ## Rich renderables
 
