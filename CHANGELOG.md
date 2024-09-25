@@ -10,14 +10,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Add
 
 - Added `x_axis` and `y_axis` parameters to `Widget.scroll_to_region` https://github.com/Textualize/textual/pull/5047
+- Added `Tree.move_cursor_to_line` https://github.com/Textualize/textual/pull/5052
 
 ### Changed
 
 - Tree will no longer scroll the X axis when moving the cursor https://github.com/Textualize/textual/pull/5047
+- DirectoryTree will no longer select the first node https://github.com/Textualize/textual/pull/5052
 
 ### Fixed
 
 - Fixed widgets occasionally not getting Resize events https://github.com/Textualize/textual/pull/5048
+- Fixed tree regression https://github.com/Textualize/textual/pull/5052
 
 ## [0.80.1] - 2024-09-24
 

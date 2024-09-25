@@ -654,7 +654,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1)
+    cursor_line = var(-1, always_update=True)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
@@ -846,7 +846,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         if node._allow_expand:
             prefix = (
-                self.ICON_NODE if node.is_expanded else self.ICON_NODE_EXPANDED,
+                self.ICON_NODE_EXPANDED if node.is_expanded else self.ICON_NODE,
                 base_style + TOGGLE_STYLE,
             )
         else:
@@ -929,6 +929,24 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_node,
                 animate=animate and abs(self.cursor_line - previous_cursor_line) > 1,
             )
+
+    def move_cursor_to_line(self, line: int, animate=False) -> None:
+        """Move the cursor to the given line.
+
+        Args:
+            line: The line number (negative indexes are offsets from the last line).
+            animate: Enable scrolling animation.
+
+        Raises:
+            IndexError: If the line doesn't exist.
+        """
+        if self.cursor_line == line:
+            return
+        try:
+            node = self._tree_lines[line].node
+        except IndexError:
+            raise IndexError(f"No line no. {line} in the tree")
+        self.move_cursor(node, animate=animate)
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node and select it, or reset cursor.
@@ -1079,22 +1097,33 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def watch_cursor_line(self, previous_line: int, line: int) -> None:
         previous_node = self._get_node(previous_line)
+        node = self._get_node(line)
+
+        if self.cursor_node is not None:
+            self.cursor_node._selected = False
+
+        if previous_node is not None:
+            previous_node._selected = False
+
+        if node is not None:
+            node._selected = True
+            self._cursor_node = node
+        else:
+            self._cursor_node = None
+
+        if previous_line == line:
+            # No change, so no need for refresh
+            return
+
         # Refresh previous cursor node
         if previous_node is not None:
             self._refresh_node(previous_node)
-            previous_node._selected = False
-            self._cursor_node = None
 
-        node = self._get_node(line)
         # Refresh new node
         if node is not None:
             self._refresh_node(node)
-            node._selected = True
-            self._cursor_node = node
             if previous_node != node:
                 self.post_message(self.NodeHighlighted(node))
-        else:
-            self._cursor_node = None
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()

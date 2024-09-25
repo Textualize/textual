@@ -501,7 +501,7 @@ def test_directory_tree_reloading(snap_compare, tmp_path):
     async def run_before(pilot):
         await pilot.app.setup(tmp_path)
         await pilot.press(
-            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+            "down", "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
         )
 
     assert snap_compare(

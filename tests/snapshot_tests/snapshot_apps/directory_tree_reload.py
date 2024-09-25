@@ -56,7 +56,3 @@ class DirectoryTreeReloadApp(App[None]):
             elif file.is_dir():
                 self.rmdir(file)
         path.rmdir()
-
-
-if __name__ == "__main__":
-    DirectoryTreeReloadApp(Path("playground")).run()
