@@ -149,7 +149,9 @@ class InlineUpdate(CompositorUpdate):
             if not last:
                 append("\n")
         if self.clear:
-            append("\n\x1b[J")  # Clear down
+            if len(self.strips) > 1:
+                append("\n")
+            append("\x1b[J")  # Clear down
         if len(self.strips) > 1:
             back_lines = len(self.strips) if self.clear else len(self.strips) - 1
             append(f"\x1b[{back_lines}A\r")  # Move cursor back to original position
