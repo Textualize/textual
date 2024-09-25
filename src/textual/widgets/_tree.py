@@ -930,6 +930,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 animate=animate and abs(self.cursor_line - previous_cursor_line) > 1,
             )
 
+    def move_cursor_to_line(self, line: int, animate=False) -> None:
+        if line < 0:
+            line = len(self._tree_lines) + line
+        try:
+            node = self._tree_lines[line].node
+        except IndexError:
+            raise IndexError("No line no. {line} in the tree")
+        self.move_cursor(node, animate=animate)
+
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node and select it, or reset cursor.
 

@@ -577,3 +577,6 @@ class DirectoryTree(Tree[DirEntry]):
             self.post_message(self.DirectorySelected(event.node, dir_entry.path))
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
+
+    def _on_mount(self):
+        self.move_cursor_to_line(0)
