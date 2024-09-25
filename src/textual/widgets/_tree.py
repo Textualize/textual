@@ -940,6 +940,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Raises:
             IndexError: If the line doesn't exist.
         """
+        if self.cursor_line == line:
+            return
         try:
             node = self._tree_lines[line].node
         except IndexError:
