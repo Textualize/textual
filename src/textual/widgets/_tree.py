@@ -1099,6 +1099,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         previous_node = self._get_node(previous_line)
         node = self._get_node(line)
 
+        if self.cursor_node is not None:
+            self.cursor_node._selected = False
+
         if previous_node is not None:
             previous_node._selected = False
 
