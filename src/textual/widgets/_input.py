@@ -202,7 +202,7 @@ class Input(Widget, can_focus=True):
     input_scroll_offset = reactive(0)
     cursor_position: Reactive[int] = reactive(0)
     view_position = reactive(0)
-    placeholder = reactive("")
+    placeholder = reactive("", init=False)
     complete = reactive("")
     width = reactive(1)
     _cursor_visible = reactive(True)
@@ -436,6 +436,9 @@ class Input(Widget, can_focus=True):
             else:
                 self._pause_blink_cycle()
                 self._cursor_visible = True
+
+    def _watch_placeholder(self) -> None:
+        self.refresh()
 
     @property
     def cursor_screen_offset(self) -> Offset:
