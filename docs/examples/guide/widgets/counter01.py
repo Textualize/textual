@@ -18,6 +18,7 @@ class CounterApp(App[None]):
     def compose(self) -> ComposeResult:
         yield Counter()
         yield Counter()
+        yield Counter()
         yield Footer()
 
 

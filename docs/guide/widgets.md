@@ -197,13 +197,37 @@ which let them call [actions](../guide/actions.md) in response to key presses.
 
 A widget is only be able to handle key presses if it or one of its descendants has [focus](./guide/input.md#input-focus).
 
-Let's design a simple interactive `Counter` widget.
-We'll set `can_focus=True` to allow the widget to receive focus, and give it some simple to highlight it when it has focus:
+To demonstrate, let's design a simple interactive counter widget which can be incremented and decremented using the keyboard.
+
+In the following example, we define a simple `Counter` widget with `can_focus=True`, and some CSS to make it stand out when focused.
 
 === "counter01.py"
 
     ```python title="counter01.py" hl_lines="6"
     --8<-- "docs/examples/guide/widgets/counter01.py"
+    ```
+
+=== "counter.tcss"
+
+    ```css title="counter.tcss" hl_lines="6-11"
+    --8<-- "docs/examples/guide/widgets/counter.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/counter01.py"}
+    ```
+
+Notice that Textual automatically focused the first widget, and that pressing ++tab++ and ++shift+tab++ will move focus between widgets.
+
+Now that our counter is focusable, let's add some keybindings for incrementing and decrementing the counter.
+To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for incrementing and decrementing the counter using ++up++ and ++down++ respectively.
+These new bindings are linked to the `change_count` action, which updates the `count` reactive attribute.
+
+=== "counter02.py"
+
+    ```python title="counter02.py" hl_lines="9-12 19-20"
+    --8<-- "docs/examples/guide/widgets/counter02.py"
     ```
 
 === "counter.tcss"
@@ -214,15 +238,10 @@ We'll set `can_focus=True` to allow the widget to receive focus, and give it som
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/widgets/counter01.py"}
+    ```{.textual path="docs/examples/guide/widgets/counter02.py"}
     ```
 
-Textual will automatically focus the first counter, and you'll notice that it's been highlighted with a blue background thanks to the CSS we applied using the `:focus` pseudo-selector! ++tab++ and ++shift+tab++ moves focus between the two counters.
-
-Now that we have a focusable widget, let's add some key bindings to it for incrementing and decrementing the counter.
-To do this, we'll add a `BINDINGS` class variable to the `Counter`.
-
-
+With our bindings in place, we can now change the count of the _currently focused counter_ using ++up++ and ++down++.
 
 
 ## Rich renderables
