@@ -190,7 +190,7 @@ If the supplied text is too long to fit within the widget, it will be cropped (a
 There are a number of styles that influence how titles are displayed (color and alignment).
 See the [style reference](../styles/index.md) for details.
 
-## Interacting with widgets
+## Focus & keybindings
 
 Widgets can have a list of associated key [bindings](../guide/input.md#bindings),
 which let them call [actions](../guide/actions.md) in response to key presses.
@@ -227,13 +227,16 @@ Now that our counter is focusable, let's make it interactive by adding some key 
 To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for ++up++ and ++down++.
 These new bindings are linked to the `change_count` action, which updates the `count` reactive attribute.
 
-With our bindings in place, we can now change the count of the _currently focused counter_ using ++up++ and ++down++.
+With our bindings in place, we can now change the count of the _currently focused_ counter using ++up++ and ++down++.
 
 === "counter02.py"
 
     ```python title="counter02.py" hl_lines="9-12 19-20"
     --8<-- "docs/examples/guide/widgets/counter02.py"
     ```
+
+    1. Associates presses of ++up++ or ++k++ with the `change_count` action, passing `1` as the argument to increment the count. The final argument ("Increment") is a user-facing label displayed in the footer when this binding is active.
+    2. Called when the binding is triggered. Take care to add the `action_` prefix to the method name.
 
 === "counter.tcss"
 

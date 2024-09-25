@@ -7,7 +7,7 @@ class Counter(Static, can_focus=True):
     """A counter that can be incremented and decremented by pressing keys."""
 
     BINDINGS = [
-        ("up,k", "change_count(1)", "Increment"),
+        ("up,k", "change_count(1)", "Increment"),  # (1)!
         ("down,j", "change_count(-1)", "Decrement"),
     ]
 
@@ -16,7 +16,7 @@ class Counter(Static, can_focus=True):
     def render(self) -> RenderResult:
         return f"Count: {self.count}"
 
-    def action_change_count(self, amount: int):
+    def action_change_count(self, amount: int) -> None:  # (2)!
         self.count += amount
 
 
