@@ -362,9 +362,12 @@ class DirectoryTree(Tree[DirEntry]):
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
+        has_cursor = self.cursor_node is not None
         self.reset_node(self.root, str(self.path), DirEntry(self.PATH(self.path)))
         await self.reload()
-        self.move_cursor(self.root, animate=False)
+        if has_cursor:
+            self.cursor_line = 0
+        self.scroll_to(0, 0, animate=False)
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. May be overridden in a subclass to modify how labels are rendered.

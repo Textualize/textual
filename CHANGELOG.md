@@ -11,6 +11,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added support for keymaps (user configurable key bindings) https://github.com/Textualize/textual/pull/5038
 
+## [0.81.0] - 2024-09-25
+
+### Added
+
+- Added `x_axis` and `y_axis` parameters to `Widget.scroll_to_region` https://github.com/Textualize/textual/pull/5047
+- Added `Tree.move_cursor_to_line` https://github.com/Textualize/textual/pull/5052
+
+### Changed
+
+- Tree will no longer scroll the X axis when moving the cursor https://github.com/Textualize/textual/pull/5047
+- DirectoryTree will no longer select the first node https://github.com/Textualize/textual/pull/5052
+
+### Fixed
+
+- Fixed widgets occasionally not getting Resize events https://github.com/Textualize/textual/pull/5048
+- Fixed tree regression https://github.com/Textualize/textual/pull/5052
+- Fixed glitch with single line inline widget https://github.com/Textualize/textual/pull/5054
+
 ## [0.80.1] - 2024-09-24
 
 ### Fixed
@@ -2394,6 +2412,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.81.0]: https://github.com/Textualize/textual/compare/v0.80.1...v0.81.0
 [0.80.1]: https://github.com/Textualize/textual/compare/v0.80.0...v0.80.1
 [0.80.0]: https://github.com/Textualize/textual/compare/v0.79.0...v0.80.0
 [0.79.0]: https://github.com/Textualize/textual/compare/v0.78.0...v0.79.0
