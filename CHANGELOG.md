@@ -14,10 +14,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Tree will no longer scroll the X axis when moving the cursor https://github.com/Textualize/textual/pull/5047
+- DirectoryTree will no longer select the first node https://github.com/Textualize/textual/pull/5052
 
 ### Fixed
 
 - Fixed widgets occasionally not getting Resize events https://github.com/Textualize/textual/pull/5048
+- Fixed tree regression https://github.com/Textualize/textual/pull/5052
 
 ## [0.80.1] - 2024-09-24
 
