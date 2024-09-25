@@ -149,6 +149,8 @@ class InlineUpdate(CompositorUpdate):
             if not last:
                 append("\n")
         if self.clear:
+            if len(self.strips) > 1:
+                append("\n")
             append("\x1b[J")  # Clear down
         if len(self.strips) > 1:
             back_lines = len(self.strips) if self.clear else len(self.strips) - 1
