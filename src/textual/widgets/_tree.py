@@ -935,17 +935,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Args:
             line: The line number (negative indexes are offsets from the last line).
-            animate: Enable animation.
+            animate: Enable scrolling animation.
 
         Raises:
             IndexError: If the line doesn't exist.
         """
-        if line < 0:
-            line = len(self._tree_lines) + line
+        if self.cursor_line == line:
+            return
         try:
             node = self._tree_lines[line].node
         except IndexError:
-            raise IndexError("No line no. {line} in the tree")
+            raise IndexError(f"No line no. {line} in the tree")
         self.move_cursor(node, animate=animate)
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
