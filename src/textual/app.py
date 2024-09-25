@@ -91,7 +91,7 @@ from textual._wait import wait_for_idle
 from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
-from textual.binding import Binding, BindingsMap, BindingType, Keymap
+from textual.binding import Binding, BindingsMap, BindingType
 from textual.command import CommandPalette, Provider
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
@@ -4314,15 +4314,3 @@ class App(Generic[ReturnType], DOMNode):
             self.notify(
                 "Failed to save screenshot", title="Screenshot", severity="error"
             )
-
-    def get_keymap(self) -> Keymap:
-        """Gets the keymap used to override default keyboard shortcuts.
-
-        This may be overridden by subclasses to change the keyboard
-        shortcuts used by the application (e.g. by loading
-        from a config/keymap file).
-
-        Returns:
-            The Keymap to apply.
-        """
-        return Keymap({})
