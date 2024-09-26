@@ -489,6 +489,11 @@ class DOMNode(MessagePump):
         """Is the node a modal?"""
         return False
 
+    @property
+    def is_on_screen(self) -> bool:
+        """Check if the node was displayed in the last screen update."""
+        return False
+
     def automatic_refresh(self) -> None:
         """Perform an automatic refresh.
 
@@ -497,8 +502,7 @@ class DOMNode(MessagePump):
         during an automatic refresh.
 
         """
-        if self.display and self.visible:
-            self.refresh()
+        self.refresh()
 
     def __init_subclass__(
         cls,

@@ -311,9 +311,6 @@ class Compositor:
         # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
 
-        # New widgets added between updates
-        self._new_widgets: set[Widget] = set()
-
     def clear(self) -> None:
         """Remove all references to widgets (used when the screen closes)."""
         self._full_map.clear()
@@ -392,8 +389,7 @@ class Compositor:
         new_widgets = map.keys()
 
         # Newly visible widgets
-        shown_widgets = (new_widgets - old_widgets) | self._new_widgets
-        self._new_widgets.clear()
+        shown_widgets = new_widgets - old_widgets
 
         # Newly hidden widgets
         hidden_widgets = self.widgets - widgets
@@ -490,7 +486,6 @@ class Compositor:
             self._full_map_invalidated = False
             map, _widgets = self._arrange_root(self.root, self.size, visible_only=False)
             # Update any widgets which became visible in the interim
-            self._new_widgets.update(map.keys() - self._full_map.keys())
             self._full_map = map
             self._visible_widgets = None
             self._visible_map = None
