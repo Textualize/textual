@@ -21,7 +21,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `x_axis` and `y_axis` parameters to `Widget.scroll_to_region` https://github.com/Textualize/textual/pull/5047
 - Added `Tree.move_cursor_to_line` https://github.com/Textualize/textual/pull/5052
-- Added `DOMNode.is_on_screen` property
 
 ### Changed
 
