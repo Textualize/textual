@@ -537,13 +537,23 @@ class CommandPalette(SystemModalScreen):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+end, shift+end", "command_list('last')", show=False),
-        Binding("ctrl+home, shift+home", "command_list('first')", show=False),
-        Binding("down", "cursor_down", show=False),
+        Binding(
+            "ctrl+end, shift+end",
+            "command_list('last')",
+            "Go to bottom",
+            show=False,
+        ),
+        Binding(
+            "ctrl+home, shift+home",
+            "command_list('first')",
+            "Go to top",
+            show=False,
+        ),
+        Binding("down", "cursor_down", "Next command", show=False),
         Binding("escape", "escape", "Exit the command palette"),
-        Binding("pagedown", "command_list('page_down')", show=False),
-        Binding("pageup", "command_list('page_up')", show=False),
-        Binding("up", "command_list('cursor_up')", show=False),
+        Binding("pagedown", "command_list('page_down')", "Next page", show=False),
+        Binding("pageup", "command_list('page_up')", "Previous page", show=False),
+        Binding("up", "command_list('cursor_up')", "Previous command", show=False),
     ]
     """
     | Key(s) | Description |
