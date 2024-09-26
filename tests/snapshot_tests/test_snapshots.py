@@ -22,6 +22,7 @@ from textual.widgets import (
     Footer,
     Log,
     OptionList,
+    Placeholder,
     SelectionList,
 )
 from textual.widgets import ProgressBar, Label, Switch
@@ -2019,3 +2020,35 @@ def test_missing_new_widgets(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
+
+
+def test_updates_with_auto_refresh(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5056"""
+
+    class MRE(App):
+        BINDINGS = [
+            ("z", "toggle_widget('RichLog')", "Console"),
+            ("x", "toggle_widget('ProgressBar')", "Progress bar"),
+        ]
+        CSS = """
+        Placeholder { height: 15; }
+        RichLog { border-top: dashed blue; height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            with VerticalScroll():
+                for i in range(10):
+                    yield Placeholder()
+            yield ProgressBar(classes="hidden")
+            yield RichLog(classes="hidden")
+            yield Footer()
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_widget(self, widget_type: str) -> None:
+            self.query_one(widget_type).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["z", "z"])
