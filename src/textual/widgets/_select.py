@@ -43,7 +43,7 @@ class EmptySelectError(Exception):
 class SelectOverlay(OptionList):
     """The 'pop-up' overlay for the Select control."""
 
-    BINDINGS = [("escape", "dismiss")]
+    BINDINGS = [("escape", "dismiss", "Dismiss menu")]
 
     DEFAULT_CSS = """
     SelectOverlay {
