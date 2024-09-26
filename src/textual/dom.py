@@ -502,7 +502,8 @@ class DOMNode(MessagePump):
         during an automatic refresh.
 
         """
-        self.refresh()
+        if self.is_on_screen:
+            self.refresh()
 
     def __init_subclass__(
         cls,
