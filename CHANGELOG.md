@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed widgets occasionally not getting Resize events https://github.com/Textualize/textual/pull/5048
 - Fixed tree regression https://github.com/Textualize/textual/pull/5052
 - Fixed glitch with single line inline widget https://github.com/Textualize/textual/pull/5054
+- Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
 
 ## [0.80.1] - 2024-09-24
 
