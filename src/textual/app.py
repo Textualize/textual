@@ -2641,7 +2641,7 @@ class App(Generic[ReturnType], DOMNode):
             screen: desired active screen
 
         Raises:
-            ValueError: If the screen doesn't exist in the stack.
+            ScreenError: If the screen doesn't exist in the stack.
         """
         screens_to_pop: list[Screen] = []
         for pop_screen in reversed(self.screen_stack):
