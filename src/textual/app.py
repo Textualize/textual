@@ -2650,7 +2650,7 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 break
         else:
-            raise ScreenError("Screen {screen!r} not in screen stack")
+            raise ScreenError(f"Screen {screen!r} not in screen stack")
 
         async def pop_screens() -> None:
             """Pop any screens in `screens_to_pop`."""
