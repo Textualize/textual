@@ -45,15 +45,15 @@ class CalendarGrid(DataTable, inherit_bindings=False):
 
 class MonthCalendar(Widget):
     BINDINGS = [
-        Binding("enter", "select_date", "Select Date", show=False),
-        Binding("up", "previous_week", "Previous Week", show=False),
-        Binding("down", "next_week", "Next Week", show=False),
-        Binding("right", "next_day", "Next Day", show=False),
-        Binding("left", "previous_day", "Previous Day", show=False),
-        Binding("pageup", "previous_month", "Previous Month", show=False),
-        Binding("pagedown", "next_month", "Next Month", show=False),
-        Binding("ctrl+pageup", "previous_year", "Previous Year", show=False),
-        Binding("ctrl+pagedown", "next_year", "Next Year", show=False),
+        Binding("enter", "select_date", "Select date", show=False),
+        Binding("up", "previous_week", "Previous week", show=False),
+        Binding("down", "next_week", "Next week", show=False),
+        Binding("right", "next_day", "Next day", show=False),
+        Binding("left", "previous_day", "Previous day", show=False),
+        Binding("pageup", "previous_month", "Previous month", show=False),
+        Binding("pagedown", "next_month", "Next month", show=False),
+        Binding("ctrl+pageup", "previous_year", "Previous year", show=False),
+        Binding("ctrl+pagedown", "next_year", "Next year", show=False),
     ]
     """
     | Key(s) | Description |
