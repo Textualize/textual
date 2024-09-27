@@ -1413,7 +1413,21 @@ class Screen(Generic[ScreenResultType], Widget):
         return await_pop
 
     def pop_until_active(self) -> None:
-        self.app.pop_to_screen(self)
+        """Pop any screens on top of this one, until this screen is active.
+
+        Raises:
+            ScreenError: If this screen is not in the current mode.
+
+        """
+        from textual.app import ScreenError
+
+        try:
+            self.app._pop_to_screen(self)
+        except ScreenError:
+            # More specific error message
+            raise ScreenError(
+                f"Can't make {self} active as it is not in the current stack."
+            ) from None
 
     async def action_dismiss(self, result: ScreenResultType | None = None) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
