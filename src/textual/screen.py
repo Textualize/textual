@@ -1412,6 +1412,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         return await_pop
 
+    def pop_until_active(self) -> None:
+        self.app.pop_to_screen(self)
+
     async def action_dismiss(self, result: ScreenResultType | None = None) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
 

@@ -2634,6 +2634,17 @@ class App(Generic[ReturnType], DOMNode):
 
         return AwaitComplete(do_pop()).call_next(self)
 
+    def pop_to_screen(self, screen: Screen) -> None:
+        if screen not in self.screen_stack:
+            raise ValueError("Screen {screen!r} not in screen stack")
+
+        async def pop_to(screen: Screen) -> None:
+            with self.batch_update():
+                while self.screen is not screen:
+                    await self.pop_screen()
+
+        self.call_later(pop_to, screen)
+
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
