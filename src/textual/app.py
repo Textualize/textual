@@ -2653,11 +2653,13 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenError("Screen {screen!r} not in screen stack")
 
         async def pop_screens() -> None:
+            """Pop any screens in `screens_to_pop`."""
             with self.batch_update():
                 for screen in screens_to_pop:
                     await screen.dismiss()
 
-        self.call_later(pop_screens)
+        if screens_to_pop:
+            self.call_later(pop_screens)
 
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
