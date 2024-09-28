@@ -1125,8 +1125,7 @@ class Screen(Generic[ScreenResultType], Widget):
         widget = message.widget
         assert isinstance(widget, Widget)
 
-        compositor = self._compositor
-        if widget in compositor.widgets or widget in compositor.full_map:
+        if self in self._compositor:
             self._dirty_widgets.add(widget)
             self.check_idle()
 

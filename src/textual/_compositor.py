@@ -798,6 +798,21 @@ class Compositor:
             self._layers_visible = layers_visible
         return self._layers_visible
 
+    def __contains__(self, widget: Widget) -> bool:
+        """Check if the widget was included in the last update.
+
+        Args:
+            widget: A widget.
+
+        Returns:
+            `True` if the widget was in the last refresh, or `False` if it wasn't.
+        """
+        return (
+            widget in self.widgets
+            or (self._visible_map is not None and widget in self._visible_map)
+            or widget in self.full_map
+        )
+
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget.
 
