@@ -807,6 +807,7 @@ class Compositor:
         Returns:
             `True` if the widget was in the last refresh, or `False` if it wasn't.
         """
+        # Try to avoid a recalculation of full_map if possible.
         return (
             widget in self.widgets
             or (self._visible_map is not None and widget in self._visible_map)
