@@ -50,11 +50,11 @@ def walk_depth_first(
 
     Args:
         root: The root note (starting point).
-        filter_type: Optional DOMNode subclass to filter by, or ``None`` for no filter.
+        filter_type: Optional DOMNode subclass to filter by, or `None` for no filter.
         with_root: Include the root in the walk.
 
     Returns:
-        An iterable of DOMNodes, or the type specified in ``filter_type``.
+        An iterable of DOMNodes, or the type specified in `filter_type`.
     """
     stack: list[Iterator[DOMNode]] = [iter(root.children)]
     pop = stack.pop
@@ -116,11 +116,11 @@ def walk_breadth_first(
 
     Args:
         root: The root note (starting point).
-        filter_type: Optional DOMNode subclass to filter by, or ``None`` for no filter.
+        filter_type: Optional DOMNode subclass to filter by, or `None` for no filter.
         with_root: Include the root in the walk.
 
     Returns:
-        An iterable of DOMNodes, or the type specified in ``filter_type``.
+        An iterable of DOMNodes, or the type specified in `filter_type`.
     """
     from textual.dom import DOMNode
 
