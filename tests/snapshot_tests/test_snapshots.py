@@ -2019,3 +2019,20 @@ def test_missing_new_widgets(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
+
+def test_help_panel_key_display_not_duplicated(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5037"""
+
+    class HelpPanelApp(App):
+        BINDINGS = [
+            Binding("b,e,l", "bell", "Ring the bell", key_display="foo"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Footer()
+
+    async def run_before(pilot: Pilot):
+        pilot.app.action_show_help_panel()
+
+    app = HelpPanelApp()
+    assert snap_compare(app, run_before=run_before)

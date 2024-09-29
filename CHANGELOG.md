@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
+
 ## [0.81.0] - 2024-09-25
 
 ### Added
