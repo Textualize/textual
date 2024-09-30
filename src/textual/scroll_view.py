@@ -1,5 +1,5 @@
 """
-`ScrollView` is a base class for [line api](/guide/widgets#line-api) widgets.
+`ScrollView` is a base class for [Line API](/guide/widgets#line-api) widgets.
 """
 
 from __future__ import annotations
