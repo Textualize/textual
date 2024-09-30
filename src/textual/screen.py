@@ -332,8 +332,8 @@ class Screen(Generic[ScreenResultType], Widget):
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
-        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
         if focused is None:
             namespace_bindings = [
                 (self, self._bindings.copy()),
@@ -351,8 +351,18 @@ class Screen(Generic[ScreenResultType], Widget):
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
                     if check_consume_key(key, key_to_character(key)):
+                        # If the widget consumes the key (e.g. like an Input widget),
+                        # then remove the key from the bindings map.
                         del bindings_map.key_to_bindings[key]
+
             filter_namespaces.append(namespace)
+
+        keymap = self.app._keymap
+        for namespace, bindings_map in namespace_bindings:
+            if keymap:
+                result = bindings_map.apply_keymap(keymap)
+                if result.clashed_bindings:
+                    self.app.handle_bindings_clash(result.clashed_bindings, namespace)
 
         return namespace_bindings
 
@@ -378,15 +388,17 @@ class Screen(Generic[ScreenResultType], Widget):
             A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
         bindings_map: dict[str, ActiveBinding] = {}
+        app = self.app
         for namespace, bindings in self._modal_binding_chain:
             for key, binding in bindings:
                 # This will call the nodes `check_action` method.
-                action_state = self.app._check_action_state(binding.action, namespace)
+                action_state = app._check_action_state(binding.action, namespace)
                 if action_state is False:
                     # An action_state of False indicates the action is disabled and not shown
                     # Note that None has a different meaning, which is why there is an `is False`
                     # rather than a truthy check.
                     continue
+
                 enabled = bool(action_state)
                 if existing_key_and_binding := bindings_map.get(key):
                     # This key has already been bound
