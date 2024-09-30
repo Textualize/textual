@@ -2125,7 +2125,6 @@ def test_updates_with_auto_refresh(snap_compare):
                     yield Placeholder()
             yield ProgressBar(classes="hidden")
             yield RichLog(classes="hidden")
-            yield Footer()
 
         def on_ready(self) -> None:
             self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
