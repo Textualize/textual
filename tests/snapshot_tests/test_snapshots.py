@@ -23,6 +23,7 @@ from textual.widgets import (
     Footer,
     Log,
     OptionList,
+    Placeholder,
     SelectionList,
 )
 from textual.widgets import ProgressBar, Label, Switch
@@ -2098,3 +2099,38 @@ def test_missing_new_widgets(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
+
+
+def test_updates_with_auto_refresh(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5056
+    
+    After hiding and unhiding the RichLog, you should be able to see 1.5 fully rendered placeholder widgets.
+    Prior to this fix, the bottom portion of the screen did not 
+    refresh after the RichLog was hidden/unhidden while in the presence of the auto-refreshing ProgressBar widget.
+    """
+
+    class MRE(App):
+        BINDINGS = [
+            ("z", "toggle_widget('RichLog')", "Console"),
+        ]
+        CSS = """
+        Placeholder { height: 15; }
+        RichLog { height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            with VerticalScroll():
+                for i in range(10):
+                    yield Placeholder()
+            yield ProgressBar(classes="hidden")
+            yield RichLog(classes="hidden")
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_widget(self, widget_type: str) -> None:
+            self.query_one(widget_type).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["z", "z"])

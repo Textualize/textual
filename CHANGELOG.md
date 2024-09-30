@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed issue with screen not updating when auto_refresh was enabled https://github.com/Textualize/textual/pull/5063
+
 ### Added
 
+- Added `DOMNode.is_on_screen` property https://github.com/Textualize/textual/pull/5063
 - Added support for keymaps (user configurable key bindings) https://github.com/Textualize/textual/pull/5038
 - Added descriptions to bindings for all internal widgets, and updated casing to be consistent https://github.com/Textualize/textual/pull/5062
 

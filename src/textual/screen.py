@@ -147,6 +147,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     DEFAULT_CSS = """
     Screen {
+    
         layout: vertical;
         overflow-y: auto;
         background: $surface;        
@@ -162,11 +163,11 @@ class Screen(Generic[ScreenResultType], Widget):
             background: ansi_default;
             color: ansi_default;
 
-            &.-screen-suspended {
+            &.-screen-suspended {                                            
+                text-style: dim;
                 ScrollBar {
                     text-style: not dim;
                 }
-                text-style: dim;
             }
         }
     }
@@ -1136,8 +1137,9 @@ class Screen(Generic[ScreenResultType], Widget):
         widget = message.widget
         assert isinstance(widget, Widget)
 
-        self._dirty_widgets.add(widget)
-        self.check_idle()
+        if self in self._compositor:
+            self._dirty_widgets.add(widget)
+            self.check_idle()
 
     async def _on_layout(self, message: messages.Layout) -> None:
         message.stop()
