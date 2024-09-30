@@ -2116,7 +2116,7 @@ def test_updates_with_auto_refresh(snap_compare):
         ]
         CSS = """
         Placeholder { height: 15; }
-        RichLog { border-top: dashed blue; height: 6; }
+        RichLog { height: 6; }
         .hidden { display: none; }
         """
 
