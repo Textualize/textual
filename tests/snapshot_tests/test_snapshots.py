@@ -2102,7 +2102,12 @@ def test_missing_new_widgets(snap_compare):
 
 
 def test_updates_with_auto_refresh(snap_compare):
-    """Regression test for https://github.com/Textualize/textual/issues/5056"""
+    """Regression test for https://github.com/Textualize/textual/issues/5056
+    
+    After hiding and unhiding the RichLog, you should be able to see 1.5 fully rendered placeholder widgets.
+    Prior to this fix, the bottom portion of the screen did not 
+    refresh after the RichLog was hidden/unhidden while in the presence of the auto-refreshing ProgressBar widget.
+    """
 
     class MRE(App):
         BINDINGS = [
