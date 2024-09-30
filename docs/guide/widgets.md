@@ -198,8 +198,8 @@ which let them call [actions](../guide/actions.md) in response to key presses.
 A widget is only able to handle key presses if it or one of its descendants has [focus](../guide/input.md#input-focus).
 
 Widgets aren't focusable by default.
-In order to allow a widget to be focused, we need to set `can_focus=True` when defining a widget subclass.
-Let's look at an example of defining a `Counter` widget which can be focused.
+To allow a widget to be focused, we need to set `can_focus=True` when defining a widget subclass.
+Here's an example of a simple focusable widget:
 
 === "counter01.py"
 
@@ -223,9 +223,9 @@ Let's look at an example of defining a `Counter` widget which can be focused.
     ```
 
 
-Our app contains three `Counter` widgets, which we can focus by clicking or using ++tab++ and ++shift+tab++.
+The app above contains three `Counter` widgets, which we can focus by clicking or using ++tab++ and ++shift+tab++.
 
-Now that our counter is focusable, let's make it interactive by adding some key bindings and actions to it.
+Now that our counter is focusable, let's add some keybindings to it to allow us to change the count using the keyboard.
 To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for ++up++ and ++down++.
 These new bindings are linked to the `change_count` action, which updates the `count` reactive attribute.
 
