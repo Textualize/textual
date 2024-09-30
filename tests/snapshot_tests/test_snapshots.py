@@ -2022,6 +2022,8 @@ def test_missing_new_widgets(snap_compare):
 
 
 def test_pop_until_active(snap_compare):
+    """End result should be screen showing 'BASE'"""
+
     class BaseScreen(Screen):
         def compose(self) -> ComposeResult:
             yield Label("BASE")
