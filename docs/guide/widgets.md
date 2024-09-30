@@ -195,7 +195,7 @@ See the [style reference](../styles/index.md) for details.
 Widgets can have a list of associated key [bindings](../guide/input.md#bindings),
 which let them call [actions](../guide/actions.md) in response to key presses.
 
-A widget is only able to handle key presses if it or one of its descendants has [focus](../guide/input.md#input-focus).
+A widget is able to handle key presses if it or one of its descendants has [focus](../guide/input.md#input-focus).
 
 Widgets aren't focusable by default.
 To allow a widget to be focused, we need to set `can_focus=True` when defining a widget subclass.
