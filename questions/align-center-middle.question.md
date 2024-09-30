@@ -12,7 +12,7 @@ alt_titles:
 !!! tip
 
     See [*How To Center Things*](https://textual.textualize.io/how-to/center-things/) in the
-    Textual documentation for a more comprensive answer to this question.
+    Textual documentation for a more comprehensive answer to this question.
 
 To center a widget within a container use
 [`align`](https://textual.textualize.io/styles/align/). But remember that
@@ -74,7 +74,7 @@ If you want them more like this:
 +---------------+
 ```
 
-the best approach is to wrap each widget in a [`Center`
+The best approach is to wrap each widget in a [`Center`
 container](https://textual.textualize.io/api/containers/#textual.containers.Center)
 that individually centers it. For example:
 

@@ -2,12 +2,13 @@ from pathlib import Path
 
 import pytest
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual import events
+from textual import events, on
 from textual.app import App, ComposeResult
+from textual.binding import Binding, Keymap
+from textual.containers import Vertical
 from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll
 from textual.pilot import Pilot
@@ -1992,6 +1993,84 @@ def test_disabled(snap_compare):
 
     app = DisabledApp()
     assert snap_compare(app)
+
+
+def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
+    """Bindings overridden by the Keymap are shown as expected in the Footer
+    and help panel. Testing that the keys work as expected is done elsewhere.
+
+    Footer should show bindings `k` to Increment, and `down` to Decrement.
+
+    Key panel should show bindings `k, plus` to increment,
+    and `down, minus, j` to decrement.
+
+    """
+
+    class Counter(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+            ),
+            Binding(
+                key="d,down",
+                action="decrement",
+                description="Decrement",
+                id="app.decrement",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Counter")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap(
+                {
+                    "app.increment": "k,plus",
+                    "app.decrement": "down,minus,j",
+                }
+            )
+
+    assert snap_compare(Counter())
+
+
+def test_keymap_bindings_key_display(snap_compare):
+    """If a default binding in `BINDINGS` has a key_display, it should be reset
+    when that binding is overridden by a Keymap.
+
+    The key_display should be taken from `App.get_key_display`, so in this case
+    it should be "THIS IS CORRECT" in the Footer and help panel, not "INCORRECT".
+    """
+
+    class MyApp(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+                key_display="INCORRECT",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Check the footer and help panel")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap({"app.increment": "k,plus,j,l"})
+
+        def get_key_display(self, binding: Binding) -> str:
+            if binding.id == "app.increment":
+                return "correct"
+            return super().get_key_display(binding)
+
+    assert snap_compare(MyApp())
 
 
 def test_missing_new_widgets(snap_compare):

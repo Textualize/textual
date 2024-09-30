@@ -2,7 +2,7 @@
 This module contains the `Strip` class and related objects.
 
 A `Strip` contains the result of rendering a widget.
-See [line API](/guide/widgets#line-api) for how to use Strips.
+See [Line API](/guide/widgets#line-api) for how to use Strips.
 """
 
 from __future__ import annotations

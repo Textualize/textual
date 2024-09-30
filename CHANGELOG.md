@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `DOMNode.is_on_screen` property https://github.com/Textualize/textual/pull/5063
+- Added support for keymaps (user configurable key bindings) https://github.com/Textualize/textual/pull/5038
 
 ## [0.81.0] - 2024-09-25
 
