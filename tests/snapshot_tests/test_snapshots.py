@@ -2112,7 +2112,6 @@ def test_updates_with_auto_refresh(snap_compare):
     class MRE(App):
         BINDINGS = [
             ("z", "toggle_widget('RichLog')", "Console"),
-            ("x", "toggle_widget('ProgressBar')", "Progress bar"),
         ]
         CSS = """
         Placeholder { height: 15; }
