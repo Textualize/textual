@@ -218,7 +218,7 @@ class DOMNode(MessagePump):
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
         self._reactive_connect: (
-            dict[str, tuple[MessagePump, Reactive | object]] | None
+            dict[str, tuple[MessagePump, Reactive[object] | object]] | None
         ) = None
         self._pruning = False
         self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
@@ -620,12 +620,13 @@ class DOMNode(MessagePump):
                         base.__dict__.get("BINDINGS", []),
                     )
                 )
+
         keys: dict[str, list[Binding]] = {}
         for bindings_ in bindings:
             for key, key_bindings in bindings_.key_to_bindings.items():
                 keys[key] = key_bindings
 
-        new_bindings = BindingsMap().from_keys(keys)
+        new_bindings = BindingsMap.from_keys(keys)
         return new_bindings
 
     def _post_register(self, app: App) -> None:
