@@ -2138,9 +2138,9 @@ def test_updates_with_auto_refresh(snap_compare):
 
 
 def test_push_screen_on_mount(snap_compare):
-    """Test pushing screen immediately on mount, which was not refreshing the base screen.
+    """Test pushing (modal) screen immediately on mount, which was not refreshing the base screen.
 
-    Should show a panel over Hello World text
+    Should show a panel partially obscuring Hello World text
 
     """
 
