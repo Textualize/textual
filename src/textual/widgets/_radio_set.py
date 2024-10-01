@@ -62,9 +62,9 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("down,right", "next_button", "", show=False),
+        Binding("down,right", "next_button", "Next option", show=False),
         Binding("enter,space", "toggle_button", "Toggle", show=False),
-        Binding("up,left", "previous_button", "", show=False),
+        Binding("up,left", "previous_button", "Previous option", show=False),
     ]
     """
     | Key(s) | Description |

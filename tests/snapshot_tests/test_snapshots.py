@@ -2,12 +2,13 @@ from pathlib import Path
 
 import pytest
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual import events
+from textual import events, on
 from textual.app import App, ComposeResult
+from textual.binding import Binding, Keymap
+from textual.containers import Vertical
 from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll
 from textual.pilot import Pilot
@@ -22,6 +23,7 @@ from textual.widgets import (
     Footer,
     Log,
     OptionList,
+    Placeholder,
     SelectionList,
 )
 from textual.widgets import ProgressBar, Label, Switch
@@ -1993,6 +1995,84 @@ def test_disabled(snap_compare):
     assert snap_compare(app)
 
 
+def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
+    """Bindings overridden by the Keymap are shown as expected in the Footer
+    and help panel. Testing that the keys work as expected is done elsewhere.
+
+    Footer should show bindings `k` to Increment, and `down` to Decrement.
+
+    Key panel should show bindings `k, plus` to increment,
+    and `down, minus, j` to decrement.
+
+    """
+
+    class Counter(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+            ),
+            Binding(
+                key="d,down",
+                action="decrement",
+                description="Decrement",
+                id="app.decrement",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Counter")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap(
+                {
+                    "app.increment": "k,plus",
+                    "app.decrement": "down,minus,j",
+                }
+            )
+
+    assert snap_compare(Counter())
+
+
+def test_keymap_bindings_key_display(snap_compare):
+    """If a default binding in `BINDINGS` has a key_display, it should be reset
+    when that binding is overridden by a Keymap.
+
+    The key_display should be taken from `App.get_key_display`, so in this case
+    it should be "THIS IS CORRECT" in the Footer and help panel, not "INCORRECT".
+    """
+
+    class MyApp(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+                key_display="INCORRECT",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Check the footer and help panel")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap({"app.increment": "k,plus,j,l"})
+
+        def get_key_display(self, binding: Binding) -> str:
+            if binding.id == "app.increment":
+                return "correct"
+            return super().get_key_display(binding)
+
+    assert snap_compare(MyApp())
+
+
 def test_missing_new_widgets(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5024"""
 
@@ -2019,7 +2099,6 @@ def test_missing_new_widgets(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
-
 
 def test_pop_until_active(snap_compare):
     """End result should be screen showing 'BASE'"""
@@ -2056,3 +2135,38 @@ def test_pop_until_active(snap_compare):
     # Pressing "b" will call pop_until_active, and pop two screens
     # End result should be screen showing "BASE"
     assert snap_compare(app, press=["b"])
+
+def test_updates_with_auto_refresh(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5056
+    
+    After hiding and unhiding the RichLog, you should be able to see 1.5 fully rendered placeholder widgets.
+    Prior to this fix, the bottom portion of the screen did not 
+    refresh after the RichLog was hidden/unhidden while in the presence of the auto-refreshing ProgressBar widget.
+    """
+
+    class MRE(App):
+        BINDINGS = [
+            ("z", "toggle_widget('RichLog')", "Console"),
+        ]
+        CSS = """
+        Placeholder { height: 15; }
+        RichLog { height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            with VerticalScroll():
+                for i in range(10):
+                    yield Placeholder()
+            yield ProgressBar(classes="hidden")
+            yield RichLog(classes="hidden")
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_widget(self, widget_type: str) -> None:
+            self.query_one(widget_type).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["z", "z"])
+

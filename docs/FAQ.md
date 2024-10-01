@@ -58,7 +58,7 @@ Some terminal emulators have a translucent background feature which allows the d
 This feature is unlikely to work with Textual, as the translucency effect requires the use of ANSI background colors, which Textual doesn't use.
 Textual uses 16.7 million colors where available which enables consistent colors across all platforms and additional effects which aren't possible with ANSI colors.
 
-For more information on ANSI colors in Textual, see [Why no Ansi Themes?](#why-doesnt-textual-support-ansi-themes).
+For more information on ANSI colors in Textual, see [Why no ANSI Themes?](#why-doesnt-textual-support-ansi-themes).
 
 ---
 
@@ -68,7 +68,7 @@ For more information on ANSI colors in Textual, see [Why no Ansi Themes?](#why-d
 !!! tip
 
     See [*How To Center Things*](https://textual.textualize.io/how-to/center-things/) in the
-    Textual documentation for a more comprensive answer to this question.
+    Textual documentation for a more comprehensive answer to this question.
 
 To center a widget within a container use
 [`align`](https://textual.textualize.io/styles/align/). But remember that
@@ -130,7 +130,7 @@ If you want them more like this:
 +---------------+
 ```
 
-the best approach is to wrap each widget in a [`Center`
+The best approach is to wrap each widget in a [`Center`
 container](https://textual.textualize.io/api/containers/#textual.containers.Center)
 that individually centers it. For example:
 
@@ -267,10 +267,10 @@ work in different environments you can try them out with `textual keys`.
 
 ---
 
-<a name="why-doesn't-textual-look-good-on-macos"></a>
+<a name="why-doesnt-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
 
-You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particuarily when it comes to box characters.
+You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particularly when it comes to box characters.
 For instance, you may find it displays misaligned blocks and lines like this:
 
 <img width="1042" alt="Screenshot 2023-06-19 at 10 43 02" src="https://github.com/Textualize/textual/assets/554369/e61f3876-3dd1-4ac8-b380-22922c89c7d6">
@@ -305,7 +305,7 @@ We recommend any of the following terminals:
 
 ---
 
-<a name="why-doesn't-textual-support-ansi-themes"></a>
+<a name="why-doesnt-textual-support-ansi-themes"></a>
 ## Why doesn't Textual support ANSI themes?
 
 Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
@@ -319,22 +319,22 @@ Textual has a design system which guarantees apps will be readable on all platfo
 
 There is currently a light and dark version of the design system, but more are planned. It will also be possible for users to customize the source colors on a per-app or per-system basis. This means that in the future you will be able to modify the core colors to blend in with your chosen terminal theme.
 
-!!! Changed in 0.80.0
+!!! tip "Changed in version 0.80.0"
 
-  Textual added an `ansi_color` boolean to App. If you set this to `True`, then Textual will
-  not attempt to convert ansi colors. Note that you will lose transparency effects if you enable
-  this setting.
+    Textual added an `ansi_color` boolean to App. If you set this to `True`, then Textual will not attempt to convert ANSI colors. Note that you will lose transparency effects if you enable this setting.
 
 ---
 
-<a name="why-doesn't-the-`datatable`-scroll-programmatically"></a>
+<a name="why-doesnt-the-datatable-scroll-programmatically"></a>
 ## Why doesn't the `DataTable` scroll programmatically?
 
 If scrolling in your `DataTable` is _apparently_ broken, it may be because your `DataTable` is using the default value of `height: auto`.
 This means that the table will be sized to fit its rows without scrolling, which may cause the *container* (typically the screen) to scroll.
 If you would like the table itself to scroll, set the height to something other than `auto`, like `100%`.
 
-**NOTE:** As of Textual v0.31.0 the `max-height` of a `DataTable` is set to `100%`, this will mean that the above is no longer the default experience.
+!!! note
+
+    As of Textual v0.31.0 the `max-height` of a `DataTable` is set to `100%`, this will mean that the above is no longer the default experience.
 
 ---
 

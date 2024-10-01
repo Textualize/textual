@@ -348,7 +348,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         name: str | None = None,
         pause: bool = False,
     ) -> Timer:
-        """call a function after a delay.
+        """Call a function after a delay.
 
         Example:
             ```python

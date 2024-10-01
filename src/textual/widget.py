@@ -1927,6 +1927,15 @@ class Widget(DOMNode):
                 return True
         return False
 
+    @property
+    def is_on_screen(self) -> bool:
+        """Check if the node was displayed in the last screen update."""
+        try:
+            self.screen.find_widget(self)
+        except (NoScreen, errors.NoWidget):
+            return False
+        return True
+
     def animate(
         self,
         attribute: str,
@@ -3753,7 +3762,7 @@ class Widget(DOMNode):
     def blur(self) -> Self:
         """Blur (un-focus) the widget.
 
-        Focus will be moved to the next available widget in the focus chain..
+        Focus will be moved to the next available widget in the focus chain.
 
         Returns:
             The `Widget` instance.

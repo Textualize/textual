@@ -43,7 +43,7 @@ class EmptySelectError(Exception):
 class SelectOverlay(OptionList):
     """The 'pop-up' overlay for the Select control."""
 
-    BINDINGS = [("escape", "dismiss")]
+    BINDINGS = [("escape", "dismiss", "Dismiss menu")]
 
     DEFAULT_CSS = """
     SelectOverlay {
@@ -200,7 +200,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """Constant to flag that the widget has no selection."""
 
     BINDINGS = [
-        Binding("enter,down,space,up", "show_overlay", show=False),
+        Binding("enter,down,space,up", "show_overlay", "Show menu", show=False),
     ]
     """
     | Key(s) | Description |
