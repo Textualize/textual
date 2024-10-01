@@ -2892,6 +2892,7 @@ class App(Generic[ReturnType], DOMNode):
                         await ready_result
 
             with self.batch_update():
+                self.stylesheet.apply(self)
                 try:
                     try:
                         await self._dispatch_message(events.Compose())
@@ -2904,7 +2905,6 @@ class App(Generic[ReturnType], DOMNode):
 
                     Reactive._initialize_object(self)
 
-                    self.stylesheet.apply(self)
                     if self.screen is not default_screen:
                         self.stylesheet.apply(default_screen)
 
