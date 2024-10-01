@@ -8,11 +8,11 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
-from textual.containers import Vertical
+from textual.containers import Center, Grid, Middle, Vertical
 from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll
 from textual.pilot import Pilot
-from textual.screen import Screen
+from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
     Header,
@@ -27,6 +27,7 @@ from textual.widgets import (
     SelectionList,
 )
 from textual.widgets import ProgressBar, Label, Switch
+from textual.widgets import Static
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -2138,9 +2139,9 @@ def test_pop_until_active(snap_compare):
 
 def test_updates_with_auto_refresh(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5056
-    
+
     After hiding and unhiding the RichLog, you should be able to see 1.5 fully rendered placeholder widgets.
-    Prior to this fix, the bottom portion of the screen did not 
+    Prior to this fix, the bottom portion of the screen did not
     refresh after the RichLog was hidden/unhidden while in the presence of the auto-refreshing ProgressBar widget.
     """
 
@@ -2169,4 +2170,59 @@ def test_updates_with_auto_refresh(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["z", "z"])
+
+def test_push_screen_on_mount(snap_compare):
+    """Test pushing (modal) screen immediately on mount, which was not refreshing the base screen.
+
+    Should show a panel partially obscuring Hello World text
+
+    """
+
+    class QuitScreen(ModalScreen[None]):
+        """Screen with a dialog to quit."""
+
+        DEFAULT_CSS = """
+        QuitScreen {
+            align: center middle;
+        }
+
+        #dialog {
+            grid-size: 2;
+            grid-gutter: 1 2;
+            grid-rows: 1fr 3;
+            padding: 0 1;
+            width: 60;
+            height: 11;
+            border: thick $primary 80%;
+            background: $surface;
+        }
+
+        #question {
+            column-span: 2;
+            height: 1fr;
+            width: 1fr;
+            content-align: center middle;
+        }
+
+        Button {
+            width: 100%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Grid(
+                Label("Are you sure you want to quit?", id="question"), id="dialog"
+            )
+
+    class MyApp(App[None]):
+        def compose(self) -> ComposeResult:
+            s = "Hello World Foo Bar Baz"
+            yield Middle(Center(Static(s)))
+
+        def on_mount(self) -> None:
+            self.push_screen(QuitScreen())
+
+    app = MyApp()
+
+    assert snap_compare(app)
 

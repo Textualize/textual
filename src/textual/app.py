@@ -2923,6 +2923,7 @@ class App(Generic[ReturnType], DOMNode):
                     try:
                         await self._dispatch_message(events.Compose())
                         default_screen = self.screen
+                        self.stylesheet.apply(self)
                         await self._dispatch_message(events.Mount())
                         self.check_idle()
                     finally:
@@ -2931,7 +2932,6 @@ class App(Generic[ReturnType], DOMNode):
 
                     Reactive._initialize_object(self)
 
-                    self.stylesheet.apply(self)
                     if self.screen is not default_screen:
                         self.stylesheet.apply(default_screen)
 
