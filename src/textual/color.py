@@ -209,7 +209,7 @@ class Color(NamedTuple):
     @property
     def is_transparent(self) -> bool:
         """Is the color transparent (i.e. has 0 alpha)?"""
-        return self.a == 0 and self.ansi is not None
+        return self.a == 0 and self.ansi is None
 
     @property
     def clamped(self) -> Color:
