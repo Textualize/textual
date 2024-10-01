@@ -2892,11 +2892,11 @@ class App(Generic[ReturnType], DOMNode):
                         await ready_result
 
             with self.batch_update():
-                self.stylesheet.apply(self)
                 try:
                     try:
                         await self._dispatch_message(events.Compose())
                         default_screen = self.screen
+                        self.stylesheet.apply(self)
                         await self._dispatch_message(events.Mount())
                         self.check_idle()
                     finally:
