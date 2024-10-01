@@ -2101,6 +2101,41 @@ def test_missing_new_widgets(snap_compare):
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
 
+def test_pop_until_active(snap_compare):
+    """End result should be screen showing 'BASE'"""
+
+    class BaseScreen(Screen):
+        def compose(self) -> ComposeResult:
+            yield Label("BASE")
+
+    class FooScreen(Screen):
+        def compose(self) -> ComposeResult:
+            yield Label("Foo")
+
+    class BarScreen(Screen):
+        BINDINGS = [("b", "app.make_base_active")]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Bar")
+
+    class PopApp(App):
+        SCREENS = {"base": BaseScreen}
+
+        async def on_mount(self) -> None:
+            # Push base
+            await self.push_screen("base")
+            # Push two screens
+            await self.push_screen(FooScreen())
+            await self.push_screen(BarScreen())
+
+        def action_make_base_active(self) -> None:
+            self.get_screen("base").pop_until_active()
+
+    app = PopApp()
+    # App will push three screens
+    # Pressing "b" will call pop_until_active, and pop two screens
+    # End result should be screen showing "BASE"
+    assert snap_compare(app, press=["b"])
 
 def test_updates_with_auto_refresh(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5056
@@ -2135,7 +2170,6 @@ def test_updates_with_auto_refresh(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["z", "z"])
-
 
 def test_push_screen_on_mount(snap_compare):
     """Test pushing (modal) screen immediately on mount, which was not refreshing the base screen.
@@ -2191,3 +2225,4 @@ def test_push_screen_on_mount(snap_compare):
     app = MyApp()
 
     assert snap_compare(app)
+

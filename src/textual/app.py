@@ -2636,6 +2636,33 @@ class App(Generic[ReturnType], DOMNode):
 
         return AwaitComplete(do_pop()).call_next(self)
 
+    def _pop_to_screen(self, screen: Screen) -> None:
+        """Pop screens until the given screen is active.
+
+        Args:
+            screen: desired active screen
+
+        Raises:
+            ScreenError: If the screen doesn't exist in the stack.
+        """
+        screens_to_pop: list[Screen] = []
+        for pop_screen in reversed(self.screen_stack):
+            if pop_screen is not screen:
+                screens_to_pop.append(pop_screen)
+            else:
+                break
+        else:
+            raise ScreenError(f"Screen {screen!r} not in screen stack")
+
+        async def pop_screens() -> None:
+            """Pop any screens in `screens_to_pop`."""
+            with self.batch_update():
+                for screen in screens_to_pop:
+                    await screen.dismiss()
+
+        if screens_to_pop:
+            self.call_later(pop_screens)
+
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
