@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added support for keymaps (user configurable key bindings) https://github.com/Textualize/textual/pull/5038
 - Added descriptions to bindings for all internal widgets, and updated casing to be consistent https://github.com/Textualize/textual/pull/5062
 
+### Changed
+
+- Breaking change: `Widget.set_loading` no longer return an awaitable https://github.com/Textualize/textual/pull/5079
+
 ## [0.81.0] - 2024-09-25
 
 ### Added
