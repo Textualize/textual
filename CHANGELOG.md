@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue with screen not updating when auto_refresh was enabled https://github.com/Textualize/textual/pull/5063
+- Fixed issues regarding loading indicator https://github.com/Textualize/textual/issues/3935
 
 ### Added
 
