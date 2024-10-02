@@ -18,8 +18,8 @@ class LoadingIndicator(Widget):
 
     DEFAULT_CSS = """
     LoadingIndicator {
-        # width: 100%;
-        # height: 100%;
+        width: 100%;
+        height: 100%;
         min-height: 1;
         content-align: center middle;
         color: $accent;
