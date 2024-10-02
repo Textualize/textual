@@ -589,6 +589,8 @@ class Widget(DOMNode):
 
     @property
     def _render_widget(self) -> Widget:
+        """The widget the compositor should render."""
+        # Will return the "cover widget" if one is set, otherwise self.
         return self._cover_widget if self._cover_widget is not None else self
 
     def _cover(self, widget: Widget) -> None:
