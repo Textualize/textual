@@ -664,7 +664,7 @@ class Compositor:
 
                     get_layer_index = layers_to_index.get
 
-                    if widget._cover_widget:
+                    if widget._cover_widget is not None:
                         map[widget._cover_widget] = _MapGeometry(
                             region.shrink(widget.styles.gutter),
                             order,
