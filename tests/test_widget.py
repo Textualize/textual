@@ -586,7 +586,7 @@ def test_lazy_loading() -> None:
     """
 
     with pytest.raises(ImportError):
-        pass
+        from textual.widgets import Foo  # nopycln: import
 
     from textual import widgets
     from textual.widgets import Label
