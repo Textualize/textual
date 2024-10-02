@@ -725,7 +725,7 @@ class Compositor:
                             )
 
                     map[widget] = _MapGeometry(
-                        (region + layout_offset),
+                        region + layout_offset,
                         order,
                         clip,
                         total_region.size,
