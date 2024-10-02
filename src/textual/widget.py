@@ -14,7 +14,6 @@ from types import TracebackType
 from typing import (
     TYPE_CHECKING,
     AsyncGenerator,
-    Awaitable,
     ClassVar,
     Collection,
     Generator,
@@ -58,7 +57,6 @@ from textual._segment_tools import align_lines
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
 from textual.actions import SkipAction
-from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
@@ -333,6 +331,38 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
+    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
+    """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
+
+    has_focus: Reactive[bool] = Reactive(False, repaint=False)
+    """Does this widget have focus? Read only."""
+
+    mouse_hover: Reactive[bool] = Reactive(False, repaint=False)
+    """Is the mouse over this widget? Read only."""
+
+    scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
+    """The scroll position on the X axis."""
+
+    scroll_y: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
+    """The scroll position on the Y axis."""
+
+    scroll_target_x = Reactive(0.0, repaint=False)
+    """Scroll target destination, X coord."""
+
+    scroll_target_y = Reactive(0.0, repaint=False)
+    """Scroll target destination, Y coord."""
+
+    show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
+    """Show a vertical scrollbar?"""
+
+    show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
+    """Show a horizontal scrollbar?"""
+
+    border_title: str | Text | None = _BorderTitle()  # type: ignore
+    """A title to show in the top border (if there is one)."""
+    border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
+    """A title to show in the bottom border (if there is one)."""
+
     # Default sort order, incremented by constructor
     _sort_order: ClassVar[int] = 0
 
@@ -430,38 +460,8 @@ class Widget(DOMNode):
         """An anchored child widget, or `None` if no child is anchored."""
         self._anchor_animate: bool = False
         """Flag to enable animation when scrolling anchored widgets."""
-
-    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
-    """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
-
-    has_focus: Reactive[bool] = Reactive(False, repaint=False)
-    """Does this widget have focus? Read only."""
-
-    mouse_hover: Reactive[bool] = Reactive(False, repaint=False)
-    """Is the mouse over this widget? Read only."""
-
-    scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
-    """The scroll position on the X axis."""
-
-    scroll_y: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
-    """The scroll position on the Y axis."""
-
-    scroll_target_x = Reactive(0.0, repaint=False)
-    """Scroll target destination, X coord."""
-
-    scroll_target_y = Reactive(0.0, repaint=False)
-    """Scroll target destination, Y coord."""
-
-    show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """Show a vertical scrollbar?"""
-
-    show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """Show a horizontal scrollbar?"""
-
-    border_title: str | Text | None = _BorderTitle()  # type: ignore
-    """A title to show in the top border (if there is one)."""
-    border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
-    """A title to show in the bottom border (if there is one)."""
+        self._cover_widget: Widget | None = None
+        """Widget to render over this widget (used by loading indicator)."""
 
     @property
     def is_mounted(self) -> bool:
@@ -586,6 +586,33 @@ class Widget(DOMNode):
             return self.screen.maximized is self
         except NoScreen:
             return False
+
+    @property
+    def _render_widget(self) -> Widget:
+        """The widget the compositor should render."""
+        # Will return the "cover widget" if one is set, otherwise self.
+        return self._cover_widget if self._cover_widget is not None else self
+
+    def _cover(self, widget: Widget) -> None:
+        """Set a widget used to replace the visuals of this widget (used for loading indicator).
+
+        Args:
+            widget: A newly constructed, but unmounted widget.
+        """
+        self._uncover()
+        self._cover_widget = widget
+        widget._parent = self
+        widget._start_messages()
+        widget._post_register(self.app)
+        self.app.stylesheet.apply(widget)
+        self.refresh(layout=True)
+
+    def _uncover(self) -> None:
+        """Remove any widget, previously set via [`_cover`][textual.widget.Widget._cover]."""
+        if self._cover_widget is not None:
+            self._cover_widget.remove()
+            self._cover_widget = None
+            self.refresh(layout=True)
 
     def anchor(self, *, animate: bool = False) -> None:
         """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
@@ -716,7 +743,7 @@ class Widget(DOMNode):
         loading_widget = self.app.get_loading_widget()
         return loading_widget
 
-    def set_loading(self, loading: bool) -> Awaitable:
+    def set_loading(self, loading: bool) -> None:
         """Set or reset the loading state of this widget.
 
         A widget in a loading state will display a LoadingIndicator that obscures the widget.
@@ -728,19 +755,16 @@ class Widget(DOMNode):
             An optional awaitable.
         """
         LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
-        LOADING_INDICATOR_QUERY = f".{LOADING_INDICATOR_CLASS}"
-        remove_indicator = self.query_children(LOADING_INDICATOR_QUERY).remove()
         if loading:
             loading_indicator = self.get_loading_widget()
             loading_indicator.add_class(LOADING_INDICATOR_CLASS)
-            await_mount = self.mount(loading_indicator)
-            return AwaitComplete(remove_indicator, await_mount).call_next(self)
+            self._cover(loading_indicator)
         else:
-            return remove_indicator
+            self._uncover()
 
-    async def _watch_loading(self, loading: bool) -> None:
+    def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
-        await self.set_loading(loading)
+        self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -3993,6 +4017,7 @@ class Widget(DOMNode):
         self.scroll_to_region(message.region, animate=True)
 
     def _on_unmount(self) -> None:
+        self._uncover()
         self.workers.cancel_node(self)
 
     def action_scroll_home(self) -> None:
