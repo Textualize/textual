@@ -256,3 +256,12 @@ def test_gradient():
     assert gradient.get_color(1.2) == Color(0, 255, 0)
     assert gradient.get_color(0.5) == Color(0, 0, 255)
     assert gradient.get_color(0.7) == Color(0, 101, 153)
+
+
+def test_is_transparent():
+    """Check is_transparent is reporting correctly."""
+    assert Color(0, 0, 0, 0).is_transparent
+    assert Color(20, 20, 30, 0).is_transparent
+    assert not Color(20, 20, 30, a=0.01).is_transparent
+    assert not Color(20, 20, 30, a=1).is_transparent
+    assert not Color(20, 20, 30, 0, ansi=1).is_transparent
