@@ -104,7 +104,7 @@ def __getattr__(widget_class: str) -> type[Widget]:
         pass
 
     if widget_class not in __all__:
-        raise ImportError(f"Package 'textual.widgets' has no class '{widget_class}'")
+        raise AttributeError(f"Package 'textual.widgets' has no class '{widget_class}'")
 
     widget_module_path = f"._{camel_to_snake(widget_class)}"
     module = import_module(widget_module_path, package="textual.widgets")

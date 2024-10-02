@@ -576,3 +576,21 @@ def test_bad_widget_name_raised() -> None:
 
         class lowercaseWidget(Widget):
             pass
+
+
+def test_lazy_loading() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/5077
+
+    Check that the lazy loading magic doesn't break attribute access.
+
+    """
+
+    with pytest.raises(ImportError):
+        from textual.widgets import Foo  # nopycln: import
+
+    from textual import widgets
+    from textual.widgets import Label
+
+    assert not hasattr(widgets, "foo")
+    assert not hasattr(widgets, "bar")
+    assert hasattr(widgets, "Label")
