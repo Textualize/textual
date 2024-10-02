@@ -425,23 +425,23 @@ async def test_loading():
         app = pilot.app
         label = app.query_one(Label)
         assert label.loading == False
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
         label.loading = True
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 1
+        assert label._cover_widget is not None
 
         label.loading = True  # Setting to same value is a null-op
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 1
+        assert label._cover_widget is not None
 
         label.loading = False
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
         label.loading = False  # Setting to same value is a null-op
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
 
 async def test_is_mounted_property():
