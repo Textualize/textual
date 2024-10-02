@@ -576,3 +576,11 @@ def test_bad_widget_name_raised() -> None:
 
         class lowercaseWidget(Widget):
             pass
+
+
+def test_lazy_loading() -> None:
+    from textual import widgets
+
+    assert not hasattr(widgets, "foo")
+    assert not hasattr(widgets, "bar")
+    assert hasattr(widgets, "Label")
