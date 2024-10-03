@@ -49,7 +49,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
 
 === "screen02.py"
 
-    ```python title="screen02.py" hl_lines="31-32"
+    ```python title="screen02.py" hl_lines="31"
     --8<-- "docs/examples/guide/screens/screen02.py"
     ```
 
