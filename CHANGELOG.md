@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed issue with screen not updating when auto_refresh was enabled https://github.com/Textualize/textual/pull/5063
 - Fixed issues regarding loading indicator https://github.com/Textualize/textual/pull/5079
+- Fixed issues with inspecting the lazy loaded widgets module https://github.com/Textualize/textual/pull/5080
 
 ### Added
 
