@@ -2281,11 +2281,13 @@ def test_maximize_allow(snap_compare):
 
         def compose(self) -> ComposeResult:
             yield Label(
-                "Allowed in Maximize because I have class `-textual-system`",
-                classes="-textual-system",
-            )
+                "Above", classes="-textual-system"
+            )  # Allowed because it has class -textual-system
             yield Header()  # Visible because it matches ALLOW_IN_MAXIMIZED_VIEW
             yield Button("Hello")  # Visible because it is the maximized widget
+            yield Label(
+                "Below", classes="-textual-system"
+            )  # Allowed because it has class -textual-system
             yield Button("World")  # Not visible
             yield Footer()  # Not visible
 

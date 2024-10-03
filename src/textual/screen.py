@@ -41,7 +41,6 @@ from textual._path import (
     _make_path_object_relative,
 )
 from textual._types import CallbackType
-from textual._unique import unique_ordered
 from textual.await_complete import AwaitComplete
 from textual.binding import ActiveBinding, Binding, BindingsMap
 from textual.css.match import match
@@ -441,14 +440,34 @@ class Screen(Generic[ScreenResultType], Widget):
             if self.ALLOW_IN_MAXIMIZED_VIEW is None
             else self.ALLOW_IN_MAXIMIZED_VIEW
         )
+
+        def get_maximize_widgets(maximized: Widget) -> list[Widget]:
+            """Get widgets to display in maximized view.
+
+            Returns:
+                A list of widgets.
+
+            """
+            # De-duplicate with a set
+            widgets = {
+                *self.query_children(allow_in_maximized_view),
+                *self.query_children(".-textual-system"),
+            }
+            # Restore order of widgets.
+            maximize_widgets = [
+                widget
+                for widget in self.children
+                if widget in widgets or widget is maximized
+            ]
+            # Add the maximized widget, if its not already included
+            if maximized not in maximize_widgets:
+                maximize_widgets.insert(0, maximized)
+            return maximize_widgets
+
         arrangement = self._arrangement_cache[cache_key] = arrange(
             self,
             (
-                unique_ordered(
-                    self.query_children(allow_in_maximized_view),
-                    self.query_children(".-textual-system"),
-                    [self.maximized],
-                )
+                get_maximize_widgets(self.maximized)
                 if self.maximized is not None
                 else self._nodes
             ),
