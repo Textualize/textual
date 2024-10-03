@@ -1059,6 +1059,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#focusable-widgets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Focusable widgets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#controlling-focus" class="md-nav__link">
     <span class="md-ellipsis">
       Controlling focus
@@ -6699,6 +6708,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#focusable-widgets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Focusable widgets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#controlling-focus" class="md-nav__link">
     <span class="md-ellipsis">
       Controlling focus
@@ -7312,8 +7330,13 @@ window.onload = async (event) => {
 <p>the <code>:focus</code> CSS pseudo-selector can be used to apply a style to the focused widget.</p>
 </div>
 <p>You can move focus by pressing the <span class="keys"><kbd class="key-tab">Tab</kbd></span> key to focus the next widget. Pressing <span class="keys"><kbd class="key-shift">Shift</kbd><span>+</span><kbd class="key-tab">Tab</kbd></span> moves the focus in the opposite direction.</p>
+<h3 id="focusable-widgets">Focusable widgets<a class="headerlink" href="#focusable-widgets" title="Permanent link">&para;</a></h3>
+<p>Each widget has a boolean <code>can_focus</code> attribute which determines if it is capable of receiving focus.
+Note that <code>can_focus=True</code> does not mean the widget will <em>always</em> be focusable.
+For example, a disabled widget cannot receive focus even if <code>can_focus</code> is <code>True</code>.</p>
 <h3 id="controlling-focus">Controlling focus<a class="headerlink" href="#controlling-focus" title="Permanent link">&para;</a></h3>
-<p>Textual will handle keyboard focus automatically, but you can tell Textual to focus a widget by calling the widget's <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.focus">focus()</a> method.</p>
+<p>Textual will handle keyboard focus automatically, but you can tell Textual to focus a widget by calling the widget's <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.focus">focus()</a> method.
+By default, Textual will focus the first focusable widget when the app starts.</p>
 <h3 id="focus-events">Focus events<a class="headerlink" href="#focus-events" title="Permanent link">&para;</a></h3>
 <p>When a widget receives focus, it is sent a <a href="../../events/focus/">Focus</a> event. When a widget loses focus it is sent a <a href="../../events/blur/">Blur</a> event.</p>
 <h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
@@ -7536,6 +7559,8 @@ The first value is the key, the second is the action, the third value is a short
 <p>Multiple keys can be bound to a single action by comma-separating them.
 For example, <code>("r,t", "add_bar('red')", "Add Red")</code> means both <span class="keys"><kbd class="key-r">R</kbd></span> and <span class="keys"><kbd class="key-t">T</kbd></span> are bound to <code>add_bar('red')</code>.</p>
 </div>
+<p>When you press a key, Textual will first check for a matching binding in the <code>BINDINGS</code> list of the currently focused widget.
+If no match is found, it will search upwards through the DOM all the way up to the <code>App</code> looking for a match.</p>
 <h3 id="binding-class">Binding class<a class="headerlink" href="#binding-class" title="Permanent link">&para;</a></h3>
 <p>The tuple of three strings may be enough for simple bindings, but you can also replace the tuple with a <a class="autorefs autorefs-internal" href="../../api/binding/#textual.binding.Binding">Binding</a> instance which exposes a few more options.</p>
 <h3 id="priority-bindings">Priority bindings<a class="headerlink" href="#priority-bindings" title="Permanent link">&para;</a></h3>
@@ -7675,7 +7700,7 @@ You can check the initial widget these events were sent to by comparing the <cod
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">July 29, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 11, 2024</span>
   </span>
 
     

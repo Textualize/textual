@@ -6702,14 +6702,14 @@ may expect from the command line. The exact modifier key depends on the terminal
 <p>Some terminal emulators have a translucent background feature which allows the desktop underneath to be partially visible.</p>
 <p>This feature is unlikely to work with Textual, as the translucency effect requires the use of ANSI background colors, which Textual doesn't use.
 Textual uses 16.7 million colors where available which enables consistent colors across all platforms and additional effects which aren't possible with ANSI colors.</p>
-<p>For more information on ANSI colors in Textual, see <a href="#why-doesnt-textual-support-ansi-themes">Why no Ansi Themes?</a>.</p>
+<p>For more information on ANSI colors in Textual, see <a href="#why-doesnt-textual-support-ansi-themes">Why no ANSI Themes?</a>.</p>
 <hr />
 <p><a name="how-do-i-center-a-widget-in-a-screen"></a></p>
 <h2 id="how-do-i-center-a-widget-in-a-screen">How do I center a widget in a screen?<a class="headerlink" href="#how-do-i-center-a-widget-in-a-screen" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>See <a href="https://textual.textualize.io/how-to/center-things/"><em>How To Center Things</em></a> in the
-Textual documentation for a more comprensive answer to this question.</p>
+Textual documentation for a more comprehensive answer to this question.</p>
 </div>
 <p>To center a widget within a container use
 <a href="https://textual.textualize.io/styles/align/"><code>align</code></a>. But remember that
@@ -6761,7 +6761,7 @@ on the child you want centered.</p>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>|               |
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>+---------------+
 </code></pre></div>
-<p>the best approach is to wrap each widget in a <a href="https://textual.textualize.io/api/containers/#textual.containers.Center"><code>Center</code>
+<p>The best approach is to wrap each widget in a <a href="https://textual.textualize.io/api/containers/#textual.containers.Center"><code>Center</code>
 container</a>
 that individually centers it. For example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -6864,9 +6864,9 @@ on macOS, and the Windows key on Windows.</p>
 combinations</a>
 work in different environments you can try them out with <code>textual keys</code>.</p>
 <hr />
-<p><a name="why-doesn't-textual-look-good-on-macos"></a></p>
+<p><a name="why-doesnt-textual-look-good-on-macos"></a></p>
 <h2 id="why-doesnt-textual-look-good-on-macos">Why doesn't Textual look good on macOS?<a class="headerlink" href="#why-doesnt-textual-look-good-on-macos" title="Permanent link">&para;</a></h2>
-<p>You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particuarily when it comes to box characters.
+<p>You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particularly when it comes to box characters.
 For instance, you may find it displays misaligned blocks and lines like this:</p>
 <p><img width="1042" alt="Screenshot 2023-06-19 at 10 43 02" src="https://github.com/Textualize/textual/assets/554369/e61f3876-3dd1-4ac8-b380-22922c89c7d6"></p>
 <p>You can (mostly) fix this by opening settings -&gt; profiles &gt; Text tab, and changing the font settings.
@@ -6889,7 +6889,7 @@ Fortunately there are a number of free terminal emulators for macOS which produc
 <h3 id="iterm2-colors">iTerm2 colors<a class="headerlink" href="#iterm2-colors" title="Permanent link">&para;</a></h3>
 <p><img width="1002" alt="Screenshot 2023-06-19 at 11 00 25" src="https://github.com/Textualize/textual/assets/554369/9a8cde57-5121-49a7-a2e0-5f6fc871b7a6"></p>
 <hr />
-<p><a name="why-doesn't-textual-support-ansi-themes"></a></p>
+<p><a name="why-doesnt-textual-support-ansi-themes"></a></p>
 <h2 id="why-doesnt-textual-support-ansi-themes">Why doesn't Textual support ANSI themes?<a class="headerlink" href="#why-doesnt-textual-support-ansi-themes" title="Permanent link">&para;</a></h2>
 <p>Textual will not generate escape sequences for the 16 themeable <em>ANSI</em> colors.</p>
 <p>This is an intentional design decision we took for for the following reasons:</p>
@@ -6899,17 +6899,20 @@ Fortunately there are a number of free terminal emulators for macOS which produc
 </ul>
 <p>Textual has a design system which guarantees apps will be readable on all platforms and terminals, and produces better results than ANSI colors.</p>
 <p>There is currently a light and dark version of the design system, but more are planned. It will also be possible for users to customize the source colors on a per-app or per-system basis. This means that in the future you will be able to modify the core colors to blend in with your chosen terminal theme.</p>
-<p>!!! Changed in 0.80.0</p>
-<p>Textual added an <code>ansi_color</code> boolean to App. If you set this to <code>True</code>, then Textual will
-  not attempt to convert ansi colors. Note that you will lose transparency effects if you enable
-  this setting.</p>
+<div class="admonition tip">
+<p class="admonition-title">Changed in version 0.80.0</p>
+<p>Textual added an <code>ansi_color</code> boolean to App. If you set this to <code>True</code>, then Textual will not attempt to convert ANSI colors. Note that you will lose transparency effects if you enable this setting.</p>
+</div>
 <hr />
-<p><a name="why-doesn't-the-<code>datatable</code>-scroll-programmatically"></a></p>
+<p><a name="why-doesnt-the-datatable-scroll-programmatically"></a></p>
 <h2 id="why-doesnt-the-datatable-scroll-programmatically">Why doesn't the <code>DataTable</code> scroll programmatically?<a class="headerlink" href="#why-doesnt-the-datatable-scroll-programmatically" title="Permanent link">&para;</a></h2>
 <p>If scrolling in your <code>DataTable</code> is <em>apparently</em> broken, it may be because your <code>DataTable</code> is using the default value of <code>height: auto</code>.
 This means that the table will be sized to fit its rows without scrolling, which may cause the <em>container</em> (typically the screen) to scroll.
 If you would like the table itself to scroll, set the height to something other than <code>auto</code>, like <code>100%</code>.</p>
-<p><strong>NOTE:</strong> As of Textual v0.31.0 the <code>max-height</code> of a <code>DataTable</code> is set to <code>100%</code>, this will mean that the above is no longer the default experience.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of Textual v0.31.0 the <code>max-height</code> of a <code>DataTable</code> is set to <code>100%</code>, this will mean that the above is no longer the default experience.</p>
+</div>
 <hr />
 <p>Generated by <a href="https://github.com/willmcgugan/faqtory">FAQtory</a></p>
 
@@ -6932,7 +6935,7 @@ If you would like the table itself to scroll, set the height to something other 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 17, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 25, 2024</span>
   </span>
 
     

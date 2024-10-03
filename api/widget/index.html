@@ -6171,6 +6171,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.is_on_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_on_screen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.is_scrollable" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_scrollable
@@ -8686,6 +8695,24 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.scroll_to_region(level)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;level
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scroll_to_region(x_axis)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;x_axis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scroll_to_region(y_axis)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;y_axis
     </span>
   </a>
   
@@ -10125,6 +10152,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.is_on_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_on_screen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.is_scrollable" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_scrollable
@@ -12640,6 +12676,24 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.scroll_to_region(level)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;level
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scroll_to_region(x_axis)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;x_axis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scroll_to_region(y_axis)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;y_axis
     </span>
   </a>
   
@@ -14398,6 +14452,29 @@ cache-key.</p>
 <p>Note this will be <code>True</code> if the mouse pointer is within the widget's region, even if
 the mouse pointer is not directly over the widget (there could be another widget between
 the mouse pointer and self).</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widget.Widget.is_on_screen" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">is_on_screen</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.is_on_screen" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_on_screen</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Check if the node was displayed in the last screen update.</p>
     </div>
 
 </div>
@@ -16360,7 +16437,7 @@ batch app updates at the same time.</p>
     <div class="doc doc-contents ">
 
         <p>Blur (un-focus) the widget.</p>
-<p>Focus will be moved to the next available widget in the focus chain..</p>
+<p>Focus will be moved to the next available widget in the focus chain.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -20977,8 +21054,10 @@ do this automatically.</p>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(origin_visible)">origin_visible</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(force)">force</a></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(on_complete)">on_complete</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(level)">level</a></span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">)</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(level)">level</a></span><span class="o">=</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(x_axis)">x_axis</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.widget.Widget.scroll_to_region(y_axis)">y_axis</a></span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -21173,6 +21252,38 @@ the scrollable area.</p>
             </td>
             <td>
                   <code>&#39;basic&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.widget.Widget.scroll_to_region(x_axis)" class="doc doc-heading doc-heading-parameter">                  <code>x_axis</code>
+<a href="#textual.widget.Widget.scroll_to_region(x_axis)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Allow scrolling on X axis?</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.widget.Widget.scroll_to_region(y_axis)" class="doc doc-heading doc-heading-parameter">                  <code>y_axis</code>
+<a href="#textual.widget.Widget.scroll_to_region(y_axis)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Allow scrolling on Y axis?</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
             </td>
           </tr>
       </tbody>
@@ -21821,7 +21932,7 @@ the scrollable area.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Awaitable" href="https://docs.python.org/3/library/typing.html#typing.Awaitable">Awaitable</a></code>
+                  <code>None</code>
             </td>
             <td>
               <div class="doc-md-description">
