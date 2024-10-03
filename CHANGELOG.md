@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `Screen.ALLOW_IN_MAXIMIZED_VIEW` will now default to `App.ALLOW_IN_MAXIMIZED_VIEW`
+- Widgets matching `.-textual-system` will now be included in the maximize view by default
 
 
 ## [0.82.0] - 2024-10-03
