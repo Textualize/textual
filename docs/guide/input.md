@@ -113,9 +113,16 @@ The app splits the screen in to quarters, with a `RichLog` widget in each quarte
 
 You can move focus by pressing the ++tab++ key to focus the next widget. Pressing ++shift+tab++ moves the focus in the opposite direction.
 
+### Focusable widgets
+
+Each widget has a boolean `can_focus` attribute which determines if it is capable of receiving focus.
+Note that `can_focus=True` does not mean the widget will _always_ be focusable.
+For example, a disabled widget cannot receive focus even if `can_focus` is `True`.
+
 ### Controlling focus
 
 Textual will handle keyboard focus automatically, but you can tell Textual to focus a widget by calling the widget's [focus()][textual.widget.Widget.focus] method.
+By default, Textual will focus the first focusable widget when the app starts.
 
 ### Focus events
 
@@ -153,6 +160,9 @@ Note how the footer displays bindings and makes them clickable.
 
     Multiple keys can be bound to a single action by comma-separating them.
     For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar('red')`.
+
+When you press a key, Textual will first check for a matching binding in the `BINDINGS` list of the currently focused widget.
+If no match is found, it will search upwards through the DOM all the way up to the `App` looking for a match.
 
 ### Binding class
 

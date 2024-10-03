@@ -425,23 +425,23 @@ async def test_loading():
         app = pilot.app
         label = app.query_one(Label)
         assert label.loading == False
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
         label.loading = True
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 1
+        assert label._cover_widget is not None
 
         label.loading = True  # Setting to same value is a null-op
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 1
+        assert label._cover_widget is not None
 
         label.loading = False
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
         label.loading = False  # Setting to same value is a null-op
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
 
 async def test_is_mounted_property():
@@ -576,3 +576,21 @@ def test_bad_widget_name_raised() -> None:
 
         class lowercaseWidget(Widget):
             pass
+
+
+def test_lazy_loading() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/5077
+
+    Check that the lazy loading magic doesn't break attribute access.
+
+    """
+
+    with pytest.raises(ImportError):
+        from textual.widgets import Foo  # nopycln: import
+
+    from textual import widgets
+    from textual.widgets import Label
+
+    assert not hasattr(widgets, "foo")
+    assert not hasattr(widgets, "bar")
+    assert hasattr(widgets, "Label")

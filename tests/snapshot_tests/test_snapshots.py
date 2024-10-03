@@ -12,6 +12,7 @@ from textual.containers import Center, Grid, Middle, Vertical
 from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll
 from textual.pilot import Pilot
+from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
@@ -2228,3 +2229,40 @@ def test_push_screen_on_mount(snap_compare):
     app = MyApp()
 
     assert snap_compare(app)
+
+
+def test_transparent_background(snap_compare):
+    """Check that a transparent background defers to render().
+
+    This should display a colorful gradient, filling the screen.
+    """
+
+    COLORS = [
+        "#881177",
+        "#aa3355",
+        "#cc6666",
+        "#ee9944",
+        "#eedd00",
+        "#99dd55",
+        "#44dd88",
+        "#22ccbb",
+        "#00bbcc",
+        "#0099cc",
+        "#3366bb",
+        "#663399",
+    ]
+
+    class TransparentApp(App):
+        CSS = """
+        Screen {
+            background: transparent;
+        }
+        """
+
+        def render(self) -> LinearGradient:
+            """Renders a gradient, when the background is transparent."""
+            stops = [(i / (len(COLORS) - 1), c) for i, c in enumerate(COLORS)]
+            return LinearGradient(30.0, stops)
+
+    app = TransparentApp()
+    snap_compare(app)
