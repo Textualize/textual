@@ -19,5 +19,5 @@ def unique_ordered(*values: Iterable[T]) -> list[T]:
         A list of values, where each value appears exactly once, in the order they were given.
 
     """
-    unique_objects = list(dict.fromkeys(chain(*values)))
+    unique_objects = list(dict.fromkeys(chain.from_iterable(values)))
     return unique_objects
