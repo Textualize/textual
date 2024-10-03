@@ -450,15 +450,12 @@ class Screen(Generic[ScreenResultType], Widget):
             """
             # De-duplicate with a set
             widgets = {
+                maximized,
                 *self.query_children(allow_in_maximized_view),
                 *self.query_children(".-textual-system"),
             }
             # Restore order of widgets.
-            maximize_widgets = [
-                widget
-                for widget in self.children
-                if widget in widgets or widget is maximized
-            ]
+            maximize_widgets = [widget for widget in self.children if widget in widgets]
             # Add the maximized widget, if its not already included
             if maximized not in maximize_widgets:
                 maximize_widgets.insert(0, maximized)
