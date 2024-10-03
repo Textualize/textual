@@ -506,6 +506,9 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
+    theme: Reactive[str] = Reactive("textual-dark")
+    """The name of the currently active theme."""
+
     ansi_theme_dark = Reactive(MONOKAI, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
 
