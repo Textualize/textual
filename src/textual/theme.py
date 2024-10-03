@@ -55,3 +55,27 @@ class Theme:
             luminosity_spread=self.luminosity_spread,
             text_alpha=self.text_alpha,
         )
+
+
+_BUILT_IN_THEMES: dict[str, Theme] = {
+    "textual-dark": Theme(
+        name="textual-dark",
+        primary="#004578",
+        secondary="#ffa62b",
+        warning="#ffa62b",
+        error="#ba3c5b",
+        success="#4EBF71",
+        accent="#0178D4",
+        dark=True,
+    ),
+    "textual-light": Theme(
+        name="textual-light",
+        primary="#004578",
+        secondary="#ffa62b",
+        warning="#ffa62b",
+        error="#ba3c5b",
+        success="#4EBF71",
+        accent="#0178D4",
+        dark=False,
+    ),
+}
