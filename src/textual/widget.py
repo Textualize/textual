@@ -3236,7 +3236,8 @@ class Widget(DOMNode):
         except NoScreen:
             pass
         else:
-            yield "dark" if app.dark else "light"
+            app_theme = app.get_theme(app.theme)
+            yield "dark" if app_theme.dark else "light"
             if focused:
                 node = focused
                 while node is not None:

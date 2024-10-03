@@ -4,24 +4,26 @@ from rich.panel import Panel
 
 
 class LabelWrap(App):
-    CSS = """Screen {
-              align: center middle;
-          }
+    CSS = """
+    Screen {
+        align: center middle;
+    }
 
-          #l_data {
-              border: blank;
-              background: lightgray;
-          }
+    #l_data {
+        border: blank;
+        background: lightgray;
+    }
 
-          #s_data {
-              border: blank;
-              background: lightgreen;
-          }
+    #s_data {
+        border: blank;
+        background: lightgreen;
+    }
 
-          #p_data {
-              border: blank;
-              background: lightgray;
-          }"""
+    #p_data {
+        border: blank;
+        background: lightgray;
+    }
+    """
 
     def __init__(self):
         super().__init__()
@@ -37,7 +39,7 @@ class LabelWrap(App):
         yield Label(Panel(self.data), id="p_data")
 
     def on_mount(self):
-        self.dark = False
+        self.theme = "textual-light"
 
 
 if __name__ == "__main__":

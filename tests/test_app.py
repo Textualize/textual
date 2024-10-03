@@ -127,7 +127,7 @@ async def test_ansi_theme():
         app.ansi_theme_dark = NIGHT_OWLISH
         assert app.ansi_theme == NIGHT_OWLISH
 
-        app.dark = False
+        app.theme = "textual-light"
         assert app.ansi_theme != NIGHT_OWLISH
 
         app.ansi_theme_light = MONOKAI
@@ -138,7 +138,7 @@ async def test_ansi_theme():
         app.ansi_theme_dark = DIMMED_MONOKAI
         assert app.ansi_theme == MONOKAI
 
-        app.dark = True
+        app.theme = "textual-dark"
         assert app.ansi_theme == DIMMED_MONOKAI
 
 

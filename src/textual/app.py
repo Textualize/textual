@@ -122,6 +122,7 @@ from textual.screen import (
     SystemModalScreen,
 )
 from textual.signal import Signal
+from textual.theme import BUILTIN_THEMES, Theme
 from textual.timer import Timer
 from textual.widget import AwaitMount, Widget
 from textual.widgets._toast import ToastRack
@@ -186,6 +187,7 @@ DEFAULT_COLORS = {
         boost="ansi_default",
     ),
 }
+
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
@@ -544,6 +546,11 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
+        self._registered_themes: dict[str, Theme] = {}
+        """Themes that have been registered with the App using `App.register_theme`.
+        
+        This excludes the built-in themes."""
+
         ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
         self.set_reactive(App.ansi_color, ansi_color)
         self._filters: list[LineFilter] = [
@@ -646,9 +653,10 @@ class App(Generic[ReturnType], DOMNode):
 
         self._refresh_required = False
 
-        self.design = DEFAULT_COLORS
-
         self._css_has_errors = False
+
+        # Note that the theme must be set *before* self.get_css_variables() is called
+        # to ensure that the variables are retrieved from the currently active theme.
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
 
         css_path = css_path or self.CSS_PATH
@@ -898,8 +906,9 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Names of the pseudo classes.
         """
+        app_theme = self.get_theme(self.theme)
         yield "focus" if self.app_focus else "blur"
-        yield "dark" if self.dark else "light"
+        yield "dark" if app_theme.dark else "light"
         if self.is_inline:
             yield "inline"
         if self.ansi_color:
@@ -1166,14 +1175,47 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A mapping of variable name to value.
         """
-
-        if self.dark:
-            design = self.design["dark"]
-        else:
-            design = self.design["light"]
-
-        variables = design.generate()
+        theme = self.get_theme(self.theme)
+        variables = theme.to_color_system().generate()
         return variables
+
+    def get_theme(self, theme_name: str) -> Theme:
+        """Get a theme by name.
+
+        Args:
+            theme_name: The name of the theme to get.
+
+        Returns:
+            A Theme instance.
+        """
+        return self.available_themes[theme_name]
+
+    def register_theme(self, theme: Theme) -> None:
+        """Register a theme with the app.
+
+        A theme must be registered before it is set as the `App.theme`.
+
+        Args:
+            theme: The theme to register.
+        """
+        self._registered_themes[theme.name] = theme
+
+    @property
+    def available_themes(self) -> dict[str, Theme]:
+        """All available themes (all built-in themes plus any that have been registered)."""
+        return {**BUILTIN_THEMES, **self._registered_themes}
+
+    def watch_theme(self, theme_name: str) -> None:
+        """Apply a theme to the application.
+
+        This method is called when the theme reactive attribute is set.
+        """
+        theme = self.get_theme(theme_name)
+        dark = theme.dark
+        self.set_class(dark, "-dark-mode", update=False)
+        self.set_class(not dark, "-light-mode", update=False)
+        self._refresh_truecolor_filter(self.ansi_theme)
+        self.call_next(self.refresh_css)
 
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool.
@@ -1187,12 +1229,14 @@ class App(Generic[ReturnType], DOMNode):
         self.call_next(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
-        if self.dark:
+        app_theme = self.get_theme(self.theme)
+        if app_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
-        if not self.dark:
+        app_theme = self.get_theme(self.theme)
+        if not app_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
@@ -1203,7 +1247,8 @@ class App(Generic[ReturnType], DOMNode):
         Defines how colors defined as ANSI (e.g. `magenta`) inside Rich renderables
         are mapped to hex codes.
         """
-        return self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        app_theme = self.get_theme(self.theme)
+        return self.ansi_theme_dark if app_theme.dark else self.ansi_theme_light
 
     def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
         """Update the ANSI to Truecolor filter, if available, with a new theme mapping.

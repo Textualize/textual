@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING
 
 from rich.style import Style
 
-from textual.app import DEFAULT_COLORS
 from textual.color import Color
-from textual.design import DEFAULT_DARK_SURFACE
 
 if TYPE_CHECKING:
     from textual.widgets import TextArea
@@ -92,9 +90,12 @@ class TextAreaTheme:
         if self.base_style.color is None:
             self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
 
+        app = text_area.app
+        app_theme = app.get_theme(app.theme)
+
         if self.base_style.bgcolor is None:
             self.base_style = Style(
-                color=self.base_style.color, bgcolor=DEFAULT_DARK_SURFACE
+                color=self.base_style.color, bgcolor=app_theme.surface
             )
 
         configured = self._theme_configured_attributes.__contains__
@@ -148,7 +149,7 @@ class TextAreaTheme:
                 self.selection_style = selection_style
             else:
                 selection_background_color = background_color.blend(
-                    DEFAULT_COLORS["dark"].primary, factor=0.75
+                    app_theme.primary, factor=0.75
                 )
                 self.selection_style = Style.from_color(
                     bgcolor=selection_background_color.rich_color

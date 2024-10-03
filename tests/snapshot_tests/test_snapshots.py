@@ -1336,12 +1336,12 @@ def test_recompose(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
 
 
-@pytest.mark.parametrize("dark", [True, False])
-def test_ansi_color_mapping(snap_compare, dark):
+@pytest.mark.parametrize("theme", ["textual-dark", "textual-light"])
+def test_ansi_color_mapping(snap_compare, theme):
     """Test how ANSI colors in Rich renderables are mapped to hex colors."""
 
     def setup(pilot):
-        pilot.app.dark = dark
+        pilot.app.theme = theme
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
 
@@ -2101,6 +2101,7 @@ def test_missing_new_widgets(snap_compare):
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
 
+
 def test_pop_until_active(snap_compare):
     """End result should be screen showing 'BASE'"""
 
@@ -2137,6 +2138,7 @@ def test_pop_until_active(snap_compare):
     # End result should be screen showing "BASE"
     assert snap_compare(app, press=["b"])
 
+
 def test_updates_with_auto_refresh(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5056
 
@@ -2170,6 +2172,7 @@ def test_updates_with_auto_refresh(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["z", "z"])
+
 
 def test_push_screen_on_mount(snap_compare):
     """Test pushing (modal) screen immediately on mount, which was not refreshing the base screen.
@@ -2225,4 +2228,3 @@ def test_push_screen_on_mount(snap_compare):
     app = MyApp()
 
     assert snap_compare(app)
-
