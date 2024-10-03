@@ -2271,7 +2271,7 @@ def test_transparent_background(snap_compare):
 def test_maximize_allow(snap_compare):
     """Check that App.ALLOW_IN_MAXIMIZED_VIEW is the default.
 
-    If working this should show a header, some text, and a focused button.
+    If working this should show a header, some text, a focused button, and more text.
 
     """
 
@@ -2282,13 +2282,13 @@ def test_maximize_allow(snap_compare):
         def compose(self) -> ComposeResult:
             yield Label(
                 "Above", classes="-textual-system"
-            )  # Allowed because it has class -textual-system
-            yield Header()  # Visible because it matches ALLOW_IN_MAXIMIZED_VIEW
-            yield Button("Hello")  # Visible because it is the maximized widget
+            )  # Allowed in maximize view because it has class -textual-system
+            yield Header()  # Allowed because it matches ALLOW_IN_MAXIMIZED_VIEW
+            yield Button("Hello")  # Allowed because it is the maximized widget
             yield Label(
                 "Below", classes="-textual-system"
             )  # Allowed because it has class -textual-system
-            yield Button("World")  # Not visible
-            yield Footer()  # Not visible
+            yield Button("World")  # Not allowed
+            yield Footer()  # Not allowed
 
     assert snap_compare(MaximizeApp(), press=["m"])
