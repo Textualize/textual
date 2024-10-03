@@ -445,9 +445,9 @@ class Screen(Generic[ScreenResultType], Widget):
             self,
             (
                 unique_ordered(
-                    [self.maximized],
                     self.query_children(allow_in_maximized_view),
                     self.query_children(".-textual-system"),
+                    [self.maximized],
                 )
                 if self.maximized is not None
                 else self._nodes
