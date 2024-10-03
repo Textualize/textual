@@ -41,6 +41,7 @@ from textual._path import (
     _make_path_object_relative,
 )
 from textual._types import CallbackType
+from textual._unique import unique_ordered
 from textual.await_complete import AwaitComplete
 from textual.binding import ActiveBinding, Binding, BindingsMap
 from textual.css.match import match
@@ -204,8 +205,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
-    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
-    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str | None] = None
+    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget). Or
+    `None` to default to [App.ALLOW_IN_MAXIMIZED_VIEW][textual.app.App.ALLOW_IN_MAXIMIZED_VIEW]"""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
     """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
@@ -434,10 +436,19 @@ class Screen(Generic[ScreenResultType], Widget):
         if cached_result is not None:
             return cached_result
 
+        allow_in_maximized_view = (
+            self.app.ALLOW_IN_MAXIMIZED_VIEW
+            if self.ALLOW_IN_MAXIMIZED_VIEW is None
+            else self.ALLOW_IN_MAXIMIZED_VIEW
+        )
         arrangement = self._arrangement_cache[cache_key] = arrange(
             self,
             (
-                [self.maximized, *self.query_children(self.ALLOW_IN_MAXIMIZED_VIEW)]
+                unique_ordered(
+                    [self.maximized],
+                    self.query_children(allow_in_maximized_view),
+                    self.query_children(".-textual-system"),
+                )
                 if self.maximized is not None
                 else self._nodes
             ),
