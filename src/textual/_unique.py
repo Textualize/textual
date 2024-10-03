@@ -8,8 +8,16 @@ from typing import Iterable, TypeVar
 T = TypeVar("T")
 
 
-def unique_ordered(*widgets: Iterable[T]) -> list[T]:
+def unique_ordered(*values: Iterable[T]) -> list[T]:
     """Converts a number of iterables of an object in to a list
-    where each value appears only once, while preserving order."""
-    unique_objects = list(dict.fromkeys(chain(*widgets)))
+    where each value appears only once, while preserving order.
+
+    Args:
+        *values: A number of iterables of values to make unique.
+
+    Returns:
+        A list of values, where each value appears exactly once, in the order they were given.
+
+    """
+    unique_objects = list(dict.fromkeys(chain(*values)))
     return unique_objects
