@@ -20,7 +20,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
 
 === "screen01.py"
 
-    ```python title="screen01.py" hl_lines="18-24 29"
+    ```python title="screen01.py" hl_lines="17-23 29"
     --8<-- "docs/examples/guide/screens/screen01.py"
     ```
 
