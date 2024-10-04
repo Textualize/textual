@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- `Screen.ALLOW_IN_MAXIMIZED_VIEW` will now default to `App.ALLOW_IN_MAXIMIZED_VIEW`
-- Widgets matching `.-textual-system` will now be included in the maximize view by default
+- `Screen.ALLOW_IN_MAXIMIZED_VIEW` will now default to `App.ALLOW_IN_MAXIMIZED_VIEW` https://github.com/Textualize/textual/pull/5088
+- Widgets matching `.-textual-system` will now be included in the maximize view by default https://github.com/Textualize/textual/pull/5088
 
 
 ## [0.82.0] - 2024-10-03
