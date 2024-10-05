@@ -291,8 +291,8 @@ class Pilot(Generic[ReturnType]):
         functions that the pilot exposes.
 
         Args:
-            widget: A widget or selector to specify the widget that used as the reference
-                for the events offset. If this is not specified, the offset is interpreted
+            widget: A widget or selector used as the origin
+                for the event's offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
                 another widget, the events may not land on the widget you specified.
