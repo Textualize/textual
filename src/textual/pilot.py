@@ -155,12 +155,12 @@ class Pilot(Generic[ReturnType]):
         the offset specified and it must be within the visible area of the screen.
 
         Args:
-            widget: A widget or selector to be used as the reference
+            widget: A widget or selector used as an origin
                 for the event offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
                 another widget, the event may not land on the widget you specified.
-            offset: The offset for the event. The offset is relative to the selector
+            offset: The offset for the event. The offset is relative to the widget / selector
                 provided or to the screen, if no selector is provided.
             shift: Simulate the event with the shift key held down.
             meta: Simulate the event with the meta key held down.
@@ -207,12 +207,12 @@ class Pilot(Generic[ReturnType]):
             ```
 
         Args:
-            widget: A widget or selector to specify the widget used as the reference
+            widget: A widget or selector used as an origin
                 for the click offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to click on a
                 specific widget. However, if the widget is currently hidden or obscured by
                 another widget, the click may not land on the widget you specified.
-            offset: The offset to click. The offset is relative to the selector provided
+            offset: The offset to click. The offset is relative to the widget / selector provided
                 or to the screen, if no selector is provided.
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
@@ -249,12 +249,12 @@ class Pilot(Generic[ReturnType]):
         the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: A selector to specify a widget that should be used as the reference
+            selector: A widget or selector used as an origin
                 for the hover offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to hover a
                 specific widget. However, if the widget is currently hidden or obscured by
                 another widget, the hover may not land on the widget you specified.
-            offset: The offset to hover. The offset is relative to the selector provided
+            offset: The offset to hover. The offset is relative to the widget / selector provided
                 or to the screen, if no selector is provided.
 
         Raises:
@@ -296,7 +296,7 @@ class Pilot(Generic[ReturnType]):
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
                 another widget, the events may not land on the widget you specified.
-            offset: The offset for the events. The offset is relative to the selector
+            offset: The offset for the events. The offset is relative to the widget / selector
                 provided or to the screen, if no selector is provided.
             shift: Simulate the events with the shift key held down.
             meta: Simulate the events with the meta key held down.
@@ -311,6 +311,7 @@ class Pilot(Generic[ReturnType]):
         """
         app = self.app
         screen = app.screen
+        target_widget: Widget
         if widget is None:
             target_widget = screen
         elif isinstance(widget, Widget):
