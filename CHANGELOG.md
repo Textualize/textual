@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unrelease
+## Unreleased
 
 ### Added
 
-- Added support for A-F to Digits widget
+- Added support for A-F to Digits widget https://github.com/Textualize/textual/pull/5094
+
+### Changed
+
+- Digits are now thin by default, style with text-style: bold to get bold digits https://github.com/Textualize/textual/pull/5094
 
 ## [0.82.0] - 2024-10-03
 
