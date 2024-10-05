@@ -110,12 +110,12 @@ class Pilot(Generic[ReturnType]):
         the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: A widget or selector that should be used as the reference
+            selector: A widget or selector used as an origin
                 for the event offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
                 another widget, the event may not land on the widget you specified.
-            offset: The offset for the event. The offset is relative to the selector
+            offset: The offset for the event. The offset is relative to the selector / widget
                 provided or to the screen, if no selector is provided.
             shift: Simulate the event with the shift key held down.
             meta: Simulate the event with the meta key held down.
