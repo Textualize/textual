@@ -249,7 +249,7 @@ class Pilot(Generic[ReturnType]):
         the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: A widget or selector used as an origin
+            widget: A widget or selector used as an origin
                 for the hover offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to hover a
                 specific widget. However, if the widget is currently hidden or obscured by
