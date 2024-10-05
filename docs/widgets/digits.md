@@ -4,7 +4,7 @@
 
 A widget to display numerical values in tall multi-line characters.
 
-The digits 0-9 are supported, in addition to the following characters `+`, `-`, `^`, `:`, and `×`.
+The digits 0-9 and characters A-F are supported, in addition to `+`, `-`, `^`, `:`, and `×`.
 Other characters will be displayed in a regular size font.
 
 You can set the text to be displayed in the constructor, or call [`update()`][textual.widgets.Digits.update] to change the text after the widget has been mounted.
