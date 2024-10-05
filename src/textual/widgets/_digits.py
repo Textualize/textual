@@ -18,8 +18,7 @@ class Digits(Widget):
     Digits {
         width: 1fr;
         height: auto;
-        text-align: left;
-        text-style: bold;
+        text-align: left;        
         box-sizing: border-box;
     }
     """

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unrelease
+
+### Added
+
+- Added support for A-F to Digits widget
+
 ## [0.82.0] - 2024-10-03
 
 ### Fixed
