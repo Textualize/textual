@@ -5,7 +5,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-DIGITS = " 0123456789+-^x:ABCDEF"
+DIGITS = " 0123456789+-^x:ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 DIGITS3X3_BOLD = """\
 
 
@@ -73,7 +73,6 @@ DIGITS3X3_BOLD = """\
 ╭─╴
 ├─
 ╵
-
 """.splitlines()
 
 
@@ -82,7 +81,7 @@ DIGITS3X3 = """\
 
 
 ╭─╮
-│ │
+│╱│
 ╰─╯
 ╶╮
  │
@@ -144,7 +143,66 @@ DIGITS3X3 = """\
 ╭─╴
 ├─
 ╵
-
+╭─╮
+│ ┬
+╰─╯
+╷ ╷
+├─┤
+╵ ╵
+╶┬╴
+ │
+╶┴╴
+  ╷
+  │
+╰─╯
+╷ ╭
+├─┤
+╵ ╰
+╷
+│
+└─╴
+╭┬╮
+│││
+╵ ╵
+╭╮╷
+│││
+╵╰╯
+╭─╮
+│ │
+╰─╯
+╭─╮
+├─╯
+╵ 
+╭─╮
+│ │
+╰─╲
+╭─╮
+├┬╯
+╵╰╴
+╭─╮
+╰─╮
+╰─╯
+─┬─
+ │
+ ╵ 
+╷ ╷
+│ │
+╰─╯
+╷ ╷
+│ │
+╰┬╯
+╷ ╷
+│││
+╰┴╯
+╲ ╱
+ ╳
+╱ ╲
+╷ ╷
+╰┬╯
+ ╵
+╶─╴
+ ╱
+╶─╴
 """.splitlines()
 
 
@@ -182,9 +240,11 @@ class Digits:
         row3 = digit_pieces[2].append
 
         if style.bold:
-            digits = DIGITS3X3_BOLD
+            digits = DIGITS3X3_BOLD + DIGITS3X3[len(DIGITS3X3_BOLD) :]
         else:
             digits = DIGITS3X3
+
+        print(digits)
 
         for character in self._text:
             try:
