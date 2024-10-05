@@ -98,7 +98,7 @@ class Pilot(Generic[ReturnType]):
 
     async def mouse_down(
         self,
-        selector: type[Widget] | str | None = None,
+        widget: Widget | type[Widget] | str | None = None,
         offset: tuple[int, int] = (0, 0),
         shift: bool = False,
         meta: bool = False,
@@ -110,7 +110,7 @@ class Pilot(Generic[ReturnType]):
         the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: A selector to specify a widget that should be used as the reference
+            selector: A widget or selector that should be used as the reference
                 for the event offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
@@ -131,7 +131,7 @@ class Pilot(Generic[ReturnType]):
         try:
             return await self._post_mouse_events(
                 [MouseDown],
-                selector=selector,
+                widget=widget,
                 offset=offset,
                 button=1,
                 shift=shift,
@@ -143,7 +143,7 @@ class Pilot(Generic[ReturnType]):
 
     async def mouse_up(
         self,
-        selector: type[Widget] | str | None = None,
+        widget: Widget | type[Widget] | str | None = None,
         offset: tuple[int, int] = (0, 0),
         shift: bool = False,
         meta: bool = False,
@@ -155,7 +155,7 @@ class Pilot(Generic[ReturnType]):
         the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: A selector to specify a widget that should be used as the reference
+            widget: A widget or selector to be used as the reference
                 for the event offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
@@ -176,7 +176,7 @@ class Pilot(Generic[ReturnType]):
         try:
             return await self._post_mouse_events(
                 [MouseUp],
-                selector=selector,
+                widget=widget,
                 offset=offset,
                 button=1,
                 shift=shift,
@@ -188,7 +188,7 @@ class Pilot(Generic[ReturnType]):
 
     async def click(
         self,
-        selector: type[Widget] | str | None = None,
+        widget: Widget | type[Widget] | str | None = None,
         offset: tuple[int, int] = (0, 0),
         shift: bool = False,
         meta: bool = False,
@@ -207,7 +207,7 @@ class Pilot(Generic[ReturnType]):
             ```
 
         Args:
-            selector: A selector to specify a widget that should be used as the reference
+            widget: A widget or selector to specify the widget used as the reference
                 for the click offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to click on a
                 specific widget. However, if the widget is currently hidden or obscured by
@@ -228,7 +228,7 @@ class Pilot(Generic[ReturnType]):
         try:
             return await self._post_mouse_events(
                 [MouseDown, MouseUp, Click],
-                selector=selector,
+                widget=widget,
                 offset=offset,
                 button=1,
                 shift=shift,
@@ -240,7 +240,7 @@ class Pilot(Generic[ReturnType]):
 
     async def hover(
         self,
-        selector: type[Widget] | str | None | None = None,
+        widget: Widget | type[Widget] | str | None | None = None,
         offset: tuple[int, int] = (0, 0),
     ) -> bool:
         """Simulate hovering with the mouse cursor at a specified position.
@@ -268,16 +268,14 @@ class Pilot(Generic[ReturnType]):
         # "settle" before moving it to the new hover position.
         await self.pause()
         try:
-            return await self._post_mouse_events(
-                [MouseMove], selector, offset, button=0
-            )
+            return await self._post_mouse_events([MouseMove], widget, offset, button=0)
         except OutOfBounds as error:
             raise error from None
 
     async def _post_mouse_events(
         self,
         events: list[type[MouseEvent]],
-        selector: type[Widget] | str | None | None = None,
+        widget: Widget | type[Widget] | str | None | None = None,
         offset: tuple[int, int] = (0, 0),
         button: int = 0,
         shift: bool = False,
@@ -293,7 +291,7 @@ class Pilot(Generic[ReturnType]):
         functions that the pilot exposes.
 
         Args:
-            selector: A selector to specify a widget that should be used as the reference
+            widget: A widget or selector to specify the widget that used as the reference
                 for the events offset. If this is not specified, the offset is interpreted
                 relative to the screen. You can use this parameter to try to target a
                 specific widget. However, if the widget is currently hidden or obscured by
@@ -313,10 +311,12 @@ class Pilot(Generic[ReturnType]):
         """
         app = self.app
         screen = app.screen
-        if selector is not None:
-            target_widget = app.query_one(selector)
-        else:
+        if widget is None:
             target_widget = screen
+        elif isinstance(widget, Widget):
+            target_widget = widget
+        else:
+            target_widget = app.query_one(widget)
 
         message_arguments = _get_mouse_message_arguments(
             target_widget,
@@ -351,7 +351,7 @@ class Pilot(Generic[ReturnType]):
             app.screen._forward_event(event)
             await self.pause()
 
-        return selector is None or widget_at is target_widget
+        return widget is None or widget_at is target_widget
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
         """Wait for the current screen and its children to have processed all pending events.

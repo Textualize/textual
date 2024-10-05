@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Digits are now thin by default, style with text-style: bold to get bold digits https://github.com/Textualize/textual/pull/5094
+- `Pilot.click` and friends will now accept a widget, in addition to a selector
 
 ## [0.82.0] - 2024-10-03
 
