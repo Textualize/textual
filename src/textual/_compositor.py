@@ -535,23 +535,32 @@ class Compositor:
         Returns:
             New region.
         """
-        constrain = styles.constrain
-        if constrain == "inflect":
-            inflect_margin = styles.margin
-            margin_region = region.grow(inflect_margin)
-            region = region.inflect(
-                (-1 if margin_region.right > constrain_region.right else 0),
-                (-1 if margin_region.bottom > constrain_region.bottom else 0),
-                inflect_margin,
-            )
-            region = region.translate_inside(constrain_region, True, True)
-        elif constrain != "none":
-            # Constrain to avoid clipping
-            region = region.translate_inside(
-                constrain_region,
-                constrain in ("x", "both"),
-                constrain in ("y", "both"),
-            )
+        constrain_x = styles.constrain_x
+        constrain_y = styles.constrain_y
+
+        inflect_margin = styles.margin
+        margin_region = region.grow(inflect_margin)
+
+        region = region.inflect(
+            (
+                (-1 if margin_region.right > constrain_region.right else 0)
+                if constrain_x == "inflect"
+                else 0
+            ),
+            (
+                (-1 if margin_region.bottom > constrain_region.bottom else 0)
+                if constrain_y == "inflect"
+                else 0
+            ),
+            inflect_margin,
+        )
+
+        region = region.translate_inside(
+            constrain_region.shrink(styles.margin),
+            constrain_x == "limit",
+            constrain_y == "limit",
+        )
+
         return region
 
     def _arrange_root(
@@ -688,7 +697,10 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        if overlay and sub_widget.styles.constrain != "none":
+                        if overlay and (
+                            sub_widget.styles.constrain_x != "none"
+                            or sub_widget.styles.constrain_y != "none"
+                        ):
                             widget_region = self._constrain(
                                 sub_widget.styles, widget_region, no_clip
                             )
@@ -740,11 +752,15 @@ class Compositor:
                 widget_region = region + layout_offset
 
                 if widget._absolute_offset is not None:
+                    margin = styles.margin
                     widget_region = widget_region.reset_offset.translate(
-                        widget._absolute_offset + widget.styles.margin.top_left
+                        widget._absolute_offset + margin.top_left
+                    )
+                    widget_region = widget_region.translate(
+                        styles.offset.resolve(widget_region.grow(margin).size, size)
                     )
 
-                if styles.constrain != "none":
+                if styles.constrain_x != "none" or styles.constrain_y != "none":
                     widget_region = self._constrain(styles, widget_region, no_clip)
 
                 map[widget._render_widget] = _MapGeometry(

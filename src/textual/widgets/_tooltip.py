@@ -8,13 +8,15 @@ class Tooltip(Static, inherit_css=False):
     Tooltip {
         layer: _tooltips;
         margin: 1 2;
+
         padding: 1 2;
         background: $background;
         width: auto;
         height: auto;
-        constrain: inflect;
+        constrain: limit inflect;
         max-width: 40;
         display: none;
+        offset-x: -50%;
     }
     """
     DEFAULT_CLASSES = "-textual-system"
