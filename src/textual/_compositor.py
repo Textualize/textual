@@ -557,8 +557,8 @@ class Compositor:
 
         region = region.translate_inside(
             constrain_region.shrink(styles.margin),
-            constrain_x == "limit",
-            constrain_y == "limit",
+            constrain_x == "inside",
+            constrain_y == "inside",
         )
 
         return region
@@ -704,6 +704,7 @@ class Compositor:
                             widget_region = self._constrain(
                                 sub_widget.styles, widget_region, no_clip
                             )
+
                         if widget._cover_widget is None:
                             add_widget(
                                 sub_widget,

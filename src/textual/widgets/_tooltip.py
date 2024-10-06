@@ -13,7 +13,7 @@ class Tooltip(Static, inherit_css=False):
         background: $background;
         width: auto;
         height: auto;
-        constrain: limit inflect;
+        constrain: inside inflect;
         max-width: 40;
         display: none;
         offset-x: -50%;
