@@ -8,7 +8,6 @@ class Tooltip(Static, inherit_css=False):
     Tooltip {
         layer: _tooltips;
         margin: 1 2;
-
         padding: 1 2;
         background: $background;
         width: auto;

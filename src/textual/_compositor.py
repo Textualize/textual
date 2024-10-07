@@ -557,8 +557,8 @@ class Compositor:
 
         region = region.translate_inside(
             constrain_region.shrink(styles.margin),
-            constrain_x == "inside",
-            constrain_y == "inside",
+            constrain_x != "none",
+            constrain_y != "none",
         )
 
         return region
@@ -697,13 +697,12 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        if overlay and (
-                            sub_widget.styles.constrain_x != "none"
-                            or sub_widget.styles.constrain_y != "none"
-                        ):
-                            widget_region = self._constrain(
-                                sub_widget.styles, widget_region, no_clip
-                            )
+                        if overlay:
+                            has_rule = sub_widget.styles.has_rule
+                            if has_rule("constrain_x") or has_rule("constrain_y"):
+                                widget_region = self._constrain(
+                                    sub_widget.styles, widget_region, no_clip
+                                )
 
                         if widget._cover_widget is None:
                             add_widget(
@@ -752,16 +751,16 @@ class Compositor:
 
                 widget_region = region + layout_offset
 
-                if widget._absolute_offset is not None:
+                if widget.absolute_offset is not None:
                     margin = styles.margin
                     widget_region = widget_region.reset_offset.translate(
-                        widget._absolute_offset + margin.top_left
+                        widget.absolute_offset + margin.top_left
                     )
                     widget_region = widget_region.translate(
                         styles.offset.resolve(widget_region.grow(margin).size, size)
                     )
-
-                if styles.constrain_x != "none" or styles.constrain_y != "none":
+                has_rule = styles.has_rule
+                if has_rule("constrain_x") or has_rule("constrain_y"):
                     widget_region = self._constrain(styles, widget_region, no_clip)
 
                 map[widget._render_widget] = _MapGeometry(

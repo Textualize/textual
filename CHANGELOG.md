@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Digits are now thin by default, style with text-style: bold to get bold digits https://github.com/Textualize/textual/pull/5094
+- Made `Widget.absolute_offset` public https://github.com/Textualize/textual/pull/5097
 
 ## [0.82.0] - 2024-10-03
 

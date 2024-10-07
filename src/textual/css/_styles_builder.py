@@ -1066,7 +1066,7 @@ class StylesBuilder:
             self.styles._rules["constrain_x"] = constrain_x  # type: ignore
             self.styles._rules["constrain_y"] = constrain_y  # type: ignore
         else:
-            self.error(name, tokens[0], "one or two values here")
+            self.error(name, tokens[0], "one or two values expected here")
 
     def process_constrain_x(self, name: str, tokens: list[Token]) -> None:
         try:
