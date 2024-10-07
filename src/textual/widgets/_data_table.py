@@ -342,12 +342,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
 
     DataTable > .datatable--cursor {
-        background: $secondary;
+        background: $cursor;
         color: $text;
     }
 
     DataTable > .datatable--fixed-cursor {
-        background: $secondary 92%;
+        background: $cursor 92%;
         color: $text;
     }
 
@@ -365,7 +365,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
 
     DataTable > .datatable--hover {
-        background: $secondary 20%;
+        background: $hover;
     }
     """
 

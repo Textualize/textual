@@ -139,7 +139,6 @@ class OptionList(ScrollView, can_focus=True):
     OptionList {
         height: auto;
         max-height: 100%;
-        background: $boost;
         color: $text;
         overflow-x: hidden;
         border: tall transparent;
@@ -147,8 +146,7 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList:focus {
-        border: tall $accent;
-
+        border: tall $border;
     }
 
     OptionList > .option-list--separator {
@@ -161,7 +159,7 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList:focus > .option-list--option-highlighted {
-        background: $accent;
+        background: $cursor;
     }
 
     OptionList > .option-list--option-disabled {
@@ -169,7 +167,7 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-hover {
-        background: $boost;
+        background: $hover;
     }
 
     OptionList > .option-list--option-hover-highlighted {
