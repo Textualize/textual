@@ -183,7 +183,7 @@ class DiscoveryHit:
 Hits: TypeAlias = AsyncIterator["DiscoveryHit | Hit"]
 """Return type for the command provider's `search` method."""
 
-ProviderSource: TypeAlias = Iterable[type["Provider"] | Callable[[], type["Provider"]]]
+ProviderSource: TypeAlias = "Iterable[type[Provider] | Callable[[], type[Provider]]]"
 """The type used to declare the providers for a CommandPalette."""
 
 
