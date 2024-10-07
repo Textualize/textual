@@ -461,6 +461,9 @@ class App(Generic[ReturnType], DOMNode):
     COMMAND_PALETTE_DISPLAY: ClassVar[str | None] = None
     """How the command palette key should be displayed in the footer (or `None` for default)."""
 
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = "Footer"
+    """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
     ]
