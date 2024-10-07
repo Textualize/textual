@@ -1111,7 +1111,7 @@ class App(Generic[ReturnType], DOMNode):
             #         self.action_toggle_dark,
             #     )
             yield SystemCommand(
-                "Theme",
+                "Change theme",
                 "Change the current theme",
                 self.action_change_theme,
             )
