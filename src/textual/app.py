@@ -1098,19 +1098,23 @@ class App(Generic[ReturnType], DOMNode):
             [SystemCommand][textual.app.SystemCommand] instances.
         """
         if not self.ansi_color:
-            if self.dark:
-                yield SystemCommand(
-                    "Light mode",
-                    "Switch to a light background",
-                    self.action_toggle_dark,
-                )
-            else:
-                yield SystemCommand(
-                    "Dark mode",
-                    "Switch to a dark background",
-                    self.action_toggle_dark,
-                )
-
+            # if self.dark:
+            #     yield SystemCommand(
+            #         "Light mode",
+            #         "Switch to a light background",
+            #         self.action_toggle_dark,
+            #     )
+            # else:
+            #     yield SystemCommand(
+            #         "Dark mode",
+            #         "Switch to a dark background",
+            #         self.action_toggle_dark,
+            #     )
+            yield SystemCommand(
+                "Theme",
+                "Change the current theme",
+                self.action_change_theme,
+            )
         yield SystemCommand(
             "Quit the application",
             "Quit the application as soon as possible",
@@ -1520,6 +1524,10 @@ class App(Generic[ReturnType], DOMNode):
     def action_toggle_dark(self) -> None:
         """An [action](/guide/actions) to toggle dark mode."""
         self.dark = not self.dark
+
+    def action_change_theme(self) -> None:
+        """An [action](/guide/actions) to change the current theme."""
+        self.push_screen(CommandPalette())
 
     def action_screenshot(
         self, filename: str | None = None, path: str | None = None
