@@ -10,11 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added support for A-F to Digits widget https://github.com/Textualize/textual/pull/5094
+- Added `Region.constrain` https://github.com/Textualize/textual/pull/5097
 
 ### Changed
 
 - Digits are now thin by default, style with text-style: bold to get bold digits https://github.com/Textualize/textual/pull/5094
 - Made `Widget.absolute_offset` public https://github.com/Textualize/textual/pull/5097
+- Tooltips are now displayed directly below the mouse cursor https://github.com/Textualize/textual/pull/5097
+- `Region.inflect` will now assume that margins overlap https://github.com/Textualize/textual/pull/5097
 
 ## [0.82.0] - 2024-10-03
 

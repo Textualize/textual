@@ -7,7 +7,7 @@ class Tooltip(Static, inherit_css=False):
     DEFAULT_CSS = """
     Tooltip {
         layer: _tooltips;
-        margin: 1 2;
+        margin: 1 0;
         padding: 1 2;
         background: $background;
         width: auto;

@@ -451,8 +451,12 @@ class StylesBase:
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
     )
-    constrain_x = StringEnumProperty(VALID_CONSTRAIN, "none")
-    constrain_y = StringEnumProperty(VALID_CONSTRAIN, "none")
+    constrain_x: StringEnumProperty[Constrain] = StringEnumProperty(
+        VALID_CONSTRAIN, "none"
+    )
+    constrain_y: StringEnumProperty[Constrain] = StringEnumProperty(
+        VALID_CONSTRAIN, "none"
+    )
 
     def __textual_animation__(
         self,
