@@ -204,8 +204,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
-    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
-    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str | None] = None
+    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget). Or
+    `None` to default to [App.ALLOW_IN_MAXIMIZED_VIEW][textual.app.App.ALLOW_IN_MAXIMIZED_VIEW]"""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
     """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
@@ -434,10 +435,36 @@ class Screen(Generic[ScreenResultType], Widget):
         if cached_result is not None:
             return cached_result
 
+        allow_in_maximized_view = (
+            self.app.ALLOW_IN_MAXIMIZED_VIEW
+            if self.ALLOW_IN_MAXIMIZED_VIEW is None
+            else self.ALLOW_IN_MAXIMIZED_VIEW
+        )
+
+        def get_maximize_widgets(maximized: Widget) -> list[Widget]:
+            """Get widgets to display in maximized view.
+
+            Returns:
+                A list of widgets.
+
+            """
+            # De-duplicate with a set
+            widgets = {
+                maximized,
+                *self.query_children(allow_in_maximized_view),
+                *self.query_children(".-textual-system"),
+            }
+            # Restore order of widgets.
+            maximize_widgets = [widget for widget in self.children if widget in widgets]
+            # Add the maximized widget, if its not already included
+            if maximized not in maximize_widgets:
+                maximize_widgets.insert(0, maximized)
+            return maximize_widgets
+
         arrangement = self._arrangement_cache[cache_key] = arrange(
             self,
             (
-                [self.maximized, *self.query_children(self.ALLOW_IN_MAXIMIZED_VIEW)]
+                get_maximize_widgets(self.maximized)
                 if self.maximized is not None
                 else self._nodes
             ),
