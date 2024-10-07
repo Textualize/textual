@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Screen.ALLOW_IN_MAXIMIZED_VIEW` will now default to `App.ALLOW_IN_MAXIMIZED_VIEW` https://github.com/Textualize/textual/pull/5088
 - Widgets matching `.-textual-system` will now be included in the maximize view by default https://github.com/Textualize/textual/pull/5088
 - Digits are now thin by default, style with text-style: bold to get bold digits https://github.com/Textualize/textual/pull/5094
+- `Pilot.click` and friends will now accept a widget, in addition to a selector https://github.com/Textualize/textual/pull/5095
 
 ### Added
 
