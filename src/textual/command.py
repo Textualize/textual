@@ -597,9 +597,6 @@ class CommandPalette(SystemModalScreen):
     _calling_screen: var[Screen[Any] | None] = var(None)
     """A record of the screen that was active when we were called."""
 
-    _PALETTE_ID: Final[str] = "--command-palette"
-    """The internal ID for the command palette."""
-
     @dataclass
     class OptionHighlighted(Message):
         """Posted to App when an option is highlighted in the command palette."""
@@ -618,14 +615,29 @@ class CommandPalette(SystemModalScreen):
         option_selected: bool
         """True if an option was selected, False if the palette was closed without selecting an option."""
 
-    def __init__(self, providers: ProviderSource | None = None) -> None:
+    def __init__(
+        self,
+        providers: ProviderSource | None = None,
+        *,
+        placeholder: str = "Search for commands…",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
         """Initialise the command palette.
 
         Args:
             providers: An optional list of providers to use. If None, the providers supplied
                 in the App or Screen will be used.
+            placeholder: The placeholder text for the command palette.
         """
-        super().__init__(id=self._PALETTE_ID)
+        super().__init__(
+            id=id,
+            classes=classes,
+            name=name,
+        )
+        self.add_class("--textual-command-palette")
+
         self._selected_command: DiscoveryHit | Hit | None = None
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
@@ -637,18 +649,19 @@ class CommandPalette(SystemModalScreen):
         """List of Provider instances involved in searches."""
         self._hit_count: int = 0
         """Number of hits displayed."""
+        self._placeholder = placeholder
 
     @staticmethod
     def is_open(app: App[object]) -> bool:
-        """Is the command palette current open?
+        """Is a command palette current open?
 
         Args:
             app: The app to test.
 
         Returns:
-            `True` if the command palette is currently open, `False` if not.
+            `True` if a command palette is currently open, `False` if not.
         """
-        return app.screen.id == CommandPalette._PALETTE_ID
+        return app.screen.has_class("--textual-command-palette")
 
     @property
     def _provider_classes(self) -> set[type[Provider]]:
@@ -697,7 +710,7 @@ class CommandPalette(SystemModalScreen):
         with Vertical(id="--container"):
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Search for commands…")
+                yield CommandInput(placeholder=self._placeholder)
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):

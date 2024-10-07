@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
+from typing import Callable
 
+from textual.command import DiscoveryHit, Hit, Hits, Provider
 from textual.design import ColorSystem
 
 
@@ -366,3 +369,34 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#2A2A2A",  # Dark Gray
     ),
 }
+
+
+class ThemeProvider(Provider):
+    """A provider for themes."""
+
+    @property
+    def commands(self) -> list[tuple[str, Callable[[], None]]]:
+        themes = self.app.available_themes
+
+        def set_app_theme(name: str) -> None:
+            self.app.theme = name
+
+        return [
+            (theme.name, partial(set_app_theme, theme.name))
+            for theme in themes.values()
+        ]
+
+    async def discover(self) -> Hits:
+        for command in self.commands:
+            yield DiscoveryHit(*command)
+
+    async def search(self, query: str) -> Hits:
+        matcher = self.matcher(query)
+
+        for name, callback in self.commands:
+            if (match := matcher.match(name)) > 0:
+                yield Hit(
+                    match,
+                    matcher.highlight(name),
+                    callback,
+                )

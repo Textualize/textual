@@ -122,7 +122,7 @@ from textual.screen import (
     SystemModalScreen,
 )
 from textual.signal import Signal
-from textual.theme import BUILTIN_THEMES, Theme
+from textual.theme import BUILTIN_THEMES, Theme, ThemeProvider
 from textual.timer import Timer
 from textual.widget import AwaitMount, Widget
 from textual.widgets._toast import ToastRack
@@ -1527,7 +1527,12 @@ class App(Generic[ReturnType], DOMNode):
 
     def action_change_theme(self) -> None:
         """An [action](/guide/actions) to change the current theme."""
-        self.push_screen(CommandPalette())
+        self.app.push_screen(
+            CommandPalette(
+                [ThemeProvider],
+                placeholder="Search for themes…",
+            ),
+        )
 
     def action_screenshot(
         self, filename: str | None = None, path: str | None = None
@@ -4138,7 +4143,7 @@ class App(Generic[ReturnType], DOMNode):
     def action_command_palette(self) -> None:
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
-            self.push_screen(CommandPalette())
+            self.push_screen(CommandPalette(id="--command-palette"))
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""
