@@ -79,7 +79,7 @@ pytest-textual-snapshot = "^1.0.0"
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-addopts = "--strict-markers"
+addopts = "--strict-markers -vv"
 markers = [
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]

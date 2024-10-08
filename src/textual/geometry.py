@@ -11,6 +11,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Collection,
+    Literal,
     NamedTuple,
     Tuple,
     TypeVar,
@@ -986,6 +987,11 @@ class Region(NamedTuple):
         A positive value will move the region right or down, a negative value will move
         the region left or up. A value of `0` will leave that axis unmodified.
 
+        If a margin is provided, it will add space between the resulting region.
+
+        Note that if margin is specified it *overlaps*, so the space will be the maximum
+        of two edges, and not the total.
+
         ```
         ╔══════════╗    │
         ║          ║
@@ -993,13 +999,11 @@ class Region(NamedTuple):
         ║          ║
         ╚══════════╝    │
 
-        ─ ─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─ ─ ─ ─ ─
-
-                        │    ┌──────────┐
-                             │          │
-                        │    │  Result  │
-                             │          │
-                        │    └──────────┘
+        ─ ─ ─ ─ ─ ─ ─ ─ ┌──────────┐
+                        │          │
+                        │  Result  │
+                        │          │
+                        └──────────┘
         ```
 
         Args:
@@ -1013,10 +1017,88 @@ class Region(NamedTuple):
         inflect_margin = NULL_SPACING if margin is None else margin
         x, y, width, height = self
         if x_axis:
-            x += (width + inflect_margin.width) * x_axis
+            x += (width + inflect_margin.max_width) * x_axis
         if y_axis:
-            y += (height + inflect_margin.height) * y_axis
+            y += (height + inflect_margin.max_height) * y_axis
         return Region(x, y, width, height)
+
+    def constrain(
+        self,
+        constrain_x: Literal["none", "inside", "inflect"],
+        constrain_y: Literal["none", "inside", "inflect"],
+        margin: Spacing,
+        container: Region,
+    ) -> Region:
+        """Constrain a region to fit within a container, using different methods per axis.
+
+        Args:
+            constrain_x: Constrain method for the X-axis.
+            constrain_y: Constrain method for the Y-axis.
+            margin: Margin to maintain around region.
+            container: Container to constrain to.
+
+        Returns:
+            New widget, that fits inside the container (if possible).
+        """
+        margin_region = self.grow(margin)
+        region = self
+
+        def compare_span(
+            span_start: int, span_end: int, container_start: int, container_end: int
+        ) -> int:
+            """Compare a span with a container
+
+            Args:
+                span_start: Start of the span.
+                span_end: end of the span.
+                container_start: Start of the container.
+                container_end: End of the container.
+
+            Returns:
+                0 if the span fits, -1 if it is less that the container, otherwise +1
+            """
+            if span_start >= container_start and span_end <= container_end:
+                return 0
+            if span_start < container_start:
+                return -1
+            return +1
+
+        # Apply any inflected constraints
+        if constrain_x == "inflect" or constrain_y == "inflect":
+            region = region.inflect(
+                (
+                    -compare_span(
+                        margin_region.x,
+                        margin_region.right,
+                        container.x,
+                        container.right,
+                    )
+                    if constrain_x == "inflect"
+                    else 0
+                ),
+                (
+                    -compare_span(
+                        margin_region.y,
+                        margin_region.bottom,
+                        container.y,
+                        container.bottom,
+                    )
+                    if constrain_y == "inflect"
+                    else 0
+                ),
+                margin,
+            )
+
+        # Apply translate inside constrains
+        # Note this is also applied, if a previous inflect constrained has been applied
+        # This is so that the origin is always inside the container
+        region = region.translate_inside(
+            container.shrink(margin),
+            constrain_x != "none",
+            constrain_y != "none",
+        )
+
+        return region
 
 
 class Spacing(NamedTuple):
@@ -1071,6 +1153,18 @@ class Spacing(NamedTuple):
     def height(self) -> int:
         """Total space in the y axis."""
         return self.top + self.bottom
+
+    @property
+    def max_width(self) -> int:
+        """The space between regions in the X direction if margins overlap, i.e. `max(self.left, self.right)`."""
+        _top, right, _bottom, left = self
+        return left if left > right else right
+
+    @property
+    def max_height(self) -> int:
+        """The space between regions in the Y direction if margins overlap, i.e. `max(self.top, self.bottom)`."""
+        top, _right, bottom, _left = self
+        return top if top > bottom else bottom
 
     @property
     def top_left(self) -> tuple[int, int]:

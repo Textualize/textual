@@ -422,7 +422,7 @@ class Widget(DOMNode):
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
-        self._absolute_offset: Offset | None = None
+        self.absolute_offset: Offset | None = None
         """Force an absolute offset for the widget (used by tooltips)."""
 
         self._scrollbar_changes: set[tuple[bool, bool]] = set()

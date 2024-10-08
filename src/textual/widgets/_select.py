@@ -218,7 +218,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             height: auto;
             max-height: 12;
             overlay: screen;
-            constrain: y;
+            constrain: none inside;
         }
 
         &:focus > SelectCurrent {
