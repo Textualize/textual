@@ -143,6 +143,7 @@ class OptionList(ScrollView, can_focus=True):
         overflow-x: hidden;
         border: tall transparent;
         padding: 0 1;
+        background: $surface    ;
     }
 
     OptionList:focus {
@@ -155,7 +156,7 @@ class OptionList(ScrollView, can_focus=True):
 
     OptionList > .option-list--option-highlighted {
         color: $text;
-        text-style: bold;
+        background: $cursor-blurred;
     }
 
     OptionList:focus > .option-list--option-highlighted {
@@ -173,13 +174,11 @@ class OptionList(ScrollView, can_focus=True):
     OptionList > .option-list--option-hover-highlighted {
         background: $accent 60%;
         color: $text;
-        text-style: bold;
     }
 
     OptionList:focus > .option-list--option-hover-highlighted {
         background: $accent;
         color: $text;
-        text-style: bold;
     }
     """
 

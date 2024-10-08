@@ -93,7 +93,7 @@ TextArea {
     height: 1fr;
     border: tall $background;
     padding: 0 1;
-
+    background: $surface;
     & .text-area--gutter {
         color: $text 40%;
     }

@@ -16,29 +16,22 @@ class ListItem(Widget, can_focus=False):
     documentation for more details on use.
     """
 
-    SCOPED_CSS = False
-
     DEFAULT_CSS = """
     ListItem {
         color: $text;
         height: auto;
-        background: $background;
         overflow: hidden hidden;
-    }
-    ListItem > :disabled {
-        background: $background;
-    }
-    ListItem > Widget :hover {
-        background: $hover;
-    }
-    ListView > ListItem.--highlight {
-        background: $cursor-blurred;
-    }
-    ListView:focus > ListItem.--highlight {
-        background: $cursor;
-    }
-    ListItem > Widget {
-        height: auto;
+        background: $surface;
+
+        & > :disabled {
+            background: $background;
+        }
+        & > Widget {
+            height: auto;
+            & :hover {
+                background: $hover;
+            }
+        }
     }
     """
 

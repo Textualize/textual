@@ -13,9 +13,14 @@ from textual.color import WHITE, Color
 NUMBER_OF_SHADES = 3
 
 # Where no content exists
-DEFAULT_DARK_BACKGROUND = "#121212"
+DEFAULT_DARK_BACKGROUND = "#1e1e1e"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#1e1e1e"
+DEFAULT_DARK_SURFACE = "#232323"
+# TODO - update this
+# # Where no content exists
+# DEFAULT_DARK_BACKGROUND = "#121212"
+# # What text usually goes on top off
+# DEFAULT_DARK_SURFACE = "#1e1e1e"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
@@ -193,7 +198,7 @@ class ColorSystem:
         # The cursor color for widgets such as OptionList, DataTable, etc.
         colors["cursor"] = accent.hex
         # The cursor should dim when the widget is blurred.
-        colors["cursor-blurred"] = accent.with_alpha(0.4).hex
+        colors["cursor-blurred"] = accent.with_alpha(0.3).hex
 
         # The border color for focused widgets which have a border.
         colors["border"] = accent.hex

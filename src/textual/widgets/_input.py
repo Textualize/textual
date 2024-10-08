@@ -146,7 +146,7 @@ class Input(Widget, can_focus=True):
 
     DEFAULT_CSS = """
     Input {
-        background: $boost;
+        background: $surface;
         color: $text;
         padding: 0 2;
         border: tall $border-blurred;

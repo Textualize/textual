@@ -314,17 +314,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """
 
     DEFAULT_CSS = """
-    DataTable:dark {
-        background: initial;
-    }
     DataTable {
-        background: $surface ;
+        background: $surface;
         color: $text;
         height: auto;
         max-height: 100%;
 
         &:dark {
-            background: initial;
+            background: $surface;
             & > .datatable--even-row {
                 background: $primary 15%;
             }
