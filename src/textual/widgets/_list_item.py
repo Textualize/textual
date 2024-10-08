@@ -29,13 +29,13 @@ class ListItem(Widget, can_focus=False):
         background: $panel-darken-1;
     }
     ListItem > Widget :hover {
-        background: $boost;
+        background: $hover;
     }
     ListView > ListItem.--highlight {
-        background: $accent 50%;
+        background: $cursor-blurred;
     }
     ListView:focus > ListItem.--highlight {
-        background: $accent;
+        background: $cursor;
     }
     ListItem > Widget {
         height: auto;

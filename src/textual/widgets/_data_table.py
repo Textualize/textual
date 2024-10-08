@@ -322,50 +322,60 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         color: $text;
         height: auto;
         max-height: 100%;
-    }
-    DataTable > .datatable--header {
-        text-style: bold;
-        background: $primary;
-        color: $text;
-    }
-    DataTable > .datatable--fixed {
-        background: $primary 50%;
-        color: $text;
-    }
 
-    DataTable > .datatable--odd-row {
+        &:dark {
+            background: initial;
+            & > .datatable--even-row {
+                background: $primary 15%;
+            }
+        }
 
-    }
+        & > .datatable--header {
+            text-style: bold;
+            background: $primary;
+            color: $text;
+        }
 
-    DataTable > .datatable--even-row {
-        background: $primary 10%;
-    }
+        & > .datatable--fixed {
+            background: $primary 50%;
+            color: $text;
+        }
 
-    DataTable > .datatable--cursor {
-        background: $cursor;
-        color: $text;
-    }
+        & > .datatable--odd-row {
 
-    DataTable > .datatable--fixed-cursor {
-        background: $cursor 92%;
-        color: $text;
-    }
+        }
 
-    DataTable > .datatable--header-cursor {
-        background: $secondary-darken-1;
-        color: $text;
-    }
+        & > .datatable--even-row {
+            background: $primary 10%;
+        }
 
-    DataTable > .datatable--header-hover {
-        background: $secondary 30%;
-    }
+        & > .datatable--cursor {
+            background: $cursor-blurred;
+            color: $text;
+        }
 
-    DataTable:dark > .datatable--even-row {
-        background: $primary 15%;
-    }
+        &:focus > .datatable--cursor {
+            background: $cursor;
+            color: $text;
+        }
 
-    DataTable > .datatable--hover {
-        background: $hover;
+        & > .datatable--fixed-cursor {
+            background: $cursor 92%;
+            color: $text;
+        }
+
+        & > .datatable--header-cursor {
+            background: $secondary-darken-1;
+            color: $text;
+        }
+
+        & > .datatable--header-hover {
+            background: $secondary 30%;
+        }
+
+        & > .datatable--hover {
+            background: $hover;
+        }
     }
     """
 

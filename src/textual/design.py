@@ -192,8 +192,8 @@ class ColorSystem:
 
         # The cursor color for widgets such as OptionList, DataTable, etc.
         colors["cursor"] = accent.hex
-        # The blurred equivalent of the above.
-        colors["cursor-blurred"] = accent.with_alpha(0.5).hex
+        # The cursor should dim when the widget is blurred.
+        colors["cursor-blurred"] = accent.with_alpha(0.4).hex
 
         # The border color for focused widgets which have a border.
         colors["border"] = accent.hex
