@@ -22,11 +22,11 @@ class ListItem(Widget, can_focus=False):
     ListItem {
         color: $text;
         height: auto;
-        background: $panel-lighten-1;
+        background: $background;
         overflow: hidden hidden;
     }
     ListItem > :disabled {
-        background: $panel-darken-1;
+        background: $background;
     }
     ListItem > Widget :hover {
         background: $hover;

@@ -203,7 +203,7 @@ class ColorSystem:
         # Widgets such as OptionList, DataTable, etc. have a "hover cursor"
         # which gives a subtle highlight behind the option under the mouse
         # cursor is under.
-        colors["hover"] = boost.hex
+        colors["hover"] = boost.with_alpha(0.06).hex
 
         return colors
 
