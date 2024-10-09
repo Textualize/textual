@@ -196,9 +196,9 @@ class ColorSystem:
             colors["text-disabled"] = "ansi_default"
 
         # The cursor color for widgets such as OptionList, DataTable, etc.
-        colors["cursor"] = accent.hex
+        colors["highlight-cursor"] = accent.hex
         # The cursor should dim when the widget is blurred.
-        colors["cursor-blurred"] = accent.with_alpha(0.3).hex
+        colors["highlight-cursor-blurred"] = accent.with_alpha(0.3).hex
 
         # The border color for focused widgets which have a border.
         colors["border"] = accent.hex
@@ -208,7 +208,7 @@ class ColorSystem:
         # Widgets such as OptionList, DataTable, etc. have a "hover cursor"
         # which gives a subtle highlight behind the option under the mouse
         # cursor is under.
-        colors["hover"] = boost.with_alpha(0.06).hex
+        colors["highlight-hover"] = boost.with_alpha(0.06).hex
 
         return colors
 

@@ -156,11 +156,11 @@ class OptionList(ScrollView, can_focus=True):
 
     OptionList > .option-list--option-highlighted {
         color: $text;
-        background: $cursor-blurred;
+        background: $highlight-cursor-blurred;
     }
 
     OptionList:focus > .option-list--option-highlighted {
-        background: $cursor;
+        background: $highlight-cursor;
     }
 
     OptionList > .option-list--option-disabled {
@@ -168,7 +168,7 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-hover {
-        background: $hover;
+        background: $highlight-hover;
     }
 
     OptionList > .option-list--option-hover-highlighted {

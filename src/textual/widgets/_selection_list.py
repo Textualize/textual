@@ -121,15 +121,15 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         &:light {
             & > .selection-list--button-selected-highlighted {
-                color: $primary;
+                color: $success;
             }
 
             &:focus {
                 & > .selection-list--button-selected {
-                    color: $primary;
+                    color: $success-darken-1;
                 }
                 & > .selection-list--button-selected-highlighted {
-                    color: $primary;
+                    color: $success-darken-1;
                 }
             }
         }

@@ -29,10 +29,10 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     ListView {
         background: transparent;
         & > ListItem.--highlight {
-            background: $cursor-blurred;
+            background: $highlight-cursor-blurred;
         }
         &:focus > ListItem.--highlight {
-            background: $cursor;
+            background: $highlight-cursor;
         }
     }
     """

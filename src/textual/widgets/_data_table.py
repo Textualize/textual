@@ -347,17 +347,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--cursor {
-            background: $cursor-blurred;
+            background: $highlight-cursor-blurred;
             color: $text;
         }
 
         &:focus > .datatable--cursor {
-            background: $cursor;
+            background: $highlight-cursor;
             color: $text;
         }
 
         & > .datatable--fixed-cursor {
-            background: $cursor 92%;
+            background: $highlight-cursor 92%;
             color: $text;
         }
 
@@ -371,7 +371,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--hover {
-            background: $hover;
+            background: $highlight-hover;
         }
     }
     """

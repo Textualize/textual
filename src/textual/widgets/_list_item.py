@@ -29,7 +29,7 @@ class ListItem(Widget, can_focus=False):
         & > Widget {
             height: auto;
             & :hover {
-                background: $hover;
+                background: $highlight-hover;
             }
         }
     }
