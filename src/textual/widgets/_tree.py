@@ -581,36 +581,42 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     Tree {
-        background: $panel;
+        background: $surface;
         color: $text;
 
         & > .tree--label {
 
         }
         & > .tree--guides {
-            color: $success-darken-3;
+            text-style: bold;
+            color: $surface-lighten-1;
         }
         & > .tree--guides-hover {
-            color: $success;
-            text-style: bold;
+            color: $surface-lighten-1;
         }
         & > .tree--guides-selected {
-            color: $warning;
-            text-style: bold;
+            color: $surface-lighten-1;
         }
         & > .tree--cursor {
-            background: $secondary-darken-2;
+            background: $highlight-cursor-blurred;
             color: $text;
-            text-style: bold;
-        }
-        &:focus > .tree--cursor {
-            background: $secondary;
         }
         & > .tree--highlight {
-            text-style: underline;
         }
         & > .tree--highlight-line {
             background: $boost;
+        }
+
+        &:focus {
+            & > .tree--cursor {
+                background: $highlight-cursor;
+            }
+            & > .tree--guides-hover {
+                color: $surface-lighten-2;
+            }
+            & > .tree--guides-selected {
+                color: $surface-lighten-2;
+            }
         }
 
         &.-ansi {
