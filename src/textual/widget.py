@@ -665,6 +665,24 @@ class Widget(DOMNode):
         except NoScreen:
             pass
 
+    def with_tooltip(self, tooltip: RenderableType | None) -> Self:
+        """Chainable method to set a tooltip.
+
+        Example:
+            ```python
+            def compose(self) -> ComposeResult:
+                yield Label("Hello").with_tooltip("A greeting")
+            ```
+
+        Args:
+            tooltip: New tooltip, or `None` to clear the tooltip.
+
+        Returns:
+            Self.
+        """
+        self.tooltip = tooltip
+        return self
+
     def allow_focus(self) -> bool:
         """Check if the widget is permitted to focus.
 
