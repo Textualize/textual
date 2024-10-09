@@ -619,6 +619,19 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             }
         }
 
+        &:light {
+            /* In light mode the guides are darker*/
+            & > .tree--guides {
+                color: $surface-darken-1;
+            }
+            & > .tree--guides-hover {
+                color: $surface-darken-2;
+            }
+            & > .tree--guides-selected {
+                color: $surface-darken-2;
+            }
+        }
+
         &.-ansi {
             background: ansi_default;
             color: ansi_default;
