@@ -96,62 +96,68 @@ class SelectionList(Generic[SelectionType], OptionList):
     DEFAULT_CSS = """
     SelectionList {
         height: auto;
-    }
+        
+        & > .selection-list--button {
+            text-style: bold;
+            background: $foreground 15%;
+        }
 
-    SelectionList:light:focus > .selection-list--button-selected {
-        color: $primary;
-    }
+        & > .selection-list--button-highlighted {
+            text-style: bold;
+            background: $foreground 15%;
+        }
 
-    SelectionList:light > .selection-list--button-selected-highlighted {
-        color: $primary;
-    }
+        & > .selection-list--button-selected {
+            text-style: bold;
+            color: $success;
+            background: $foreground 15%;
+        }
 
-    SelectionList:light:focus > .selection-list--button-selected-highlighted {
-        color: $primary;
-    }
+        & > .selection-list--button-selected-highlighted {
+            text-style: bold;
+            color: $success;
+            background: $foreground 15%;
+        }
 
-    SelectionList > .selection-list--button {
-        text-style: bold;
-        background: $foreground 15%;
-    }
+        &:light {
+            & > .selection-list--button-selected-highlighted {
+                color: $primary;
+            }
 
-    SelectionList:focus > .selection-list--button {
-        text-style: bold;
-        background: $foreground 25%;
-    }
+            &:focus {
+                & > .selection-list--button-selected {
+                    color: $primary;
+                }
+                & > .selection-list--button-selected-highlighted {
+                    color: $primary;
+                }
+            }
+        }
 
-    SelectionList > .selection-list--button-highlighted {
-        text-style: bold;
-        background: $foreground 15%;
-    }
+        &:focus {
+            & > .selection-list--button {
+                text-style: bold;
+                background: $foreground 25%;
+            }
 
-    SelectionList:focus > .selection-list--button-highlighted {
-        text-style: bold;
-        background: $foreground 25%;
-    }
+            & > .selection-list--button-highlighted {
+                text-style: bold;
+                background: $foreground 25%;
+            }
 
-    SelectionList > .selection-list--button-selected {
-        text-style: bold;
-        color: $success;
-        background: $foreground 15%;
-    }
+            & > .selection-list--button-selected {
+                text-style: bold;
+                color: $success;
+                background: $foreground 25%;
+            }
 
-    SelectionList:focus > .selection-list--button-selected {
-        text-style: bold;
-        color: $success;
-        background: $foreground 25%;
-    }
+            & > .selection-list--button-selected-highlighted {
+                text-style: bold;
+                color: $success;
+                background: $foreground 25%;
+            }
+        }
 
-    SelectionList > .selection-list--button-selected-highlighted {
-        text-style: bold;
-        color: $success;
-        background: $foreground 15%;
-    }
-
-    SelectionList:focus > .selection-list--button-selected-highlighted {
-        text-style: bold;
-        color: $success;
-        background: $foreground 25%;
     }
     """
 

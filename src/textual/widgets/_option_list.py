@@ -143,7 +143,7 @@ class OptionList(ScrollView, can_focus=True):
         overflow-x: hidden;
         border: tall transparent;
         padding: 0 1;
-        background: $surface    ;
+        background: $surface;
     }
 
     OptionList:focus {

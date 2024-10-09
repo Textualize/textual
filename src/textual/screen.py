@@ -147,7 +147,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
     DEFAULT_CSS = """
     Screen {
-    
         layout: vertical;
         overflow-y: auto;
         background: $background;        
