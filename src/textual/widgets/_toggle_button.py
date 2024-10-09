@@ -57,26 +57,25 @@ class ToggleButton(Static, can_focus=True):
         width: auto;
         border: tall transparent;
         padding: 0 1;
-        background: $boost;
+        background: $surface;
     }
 
     ToggleButton:focus {
-        border: tall $accent;
+        border: tall $border;
     }
 
     ToggleButton:hover {
-        text-style: bold;
-        background: $boost;
+        background: $highlight-hover;
     }
 
     ToggleButton:focus > .toggle--label {
-        text-style: underline;
+        color: $text;
+        background: $highlight-cursor;
     }
 
     /* Base button colors (including in dark mode). */
 
     ToggleButton > .toggle--button {
-        color: $background;
         text-style: bold;
         background: $foreground 15%;
     }
@@ -94,18 +93,21 @@ class ToggleButton(Static, can_focus=True):
     }
 
     /* Light mode overrides. */
-
-    ToggleButton:light > .toggle--button {
-        color: $background;
-        background: $foreground 10%;
-    }
-
-    ToggleButton:light:focus > .toggle--button {
-        background: $foreground 25%;
-    }
-
-    ToggleButton:light.-on > .toggle--button {
-        color: $primary;
+    ToggleButton:light {
+        color: $text;
+        & > .toggle--button {
+            color: $background;
+            background: $foreground 10%;
+        }
+        &:focus > .toggle--button {
+            background: $foreground 25%;
+        }
+        &.-on > .toggle--button {
+            color: $success;
+        }
+        &.-on:focus > .toggle--button {
+            color: $success-darken-1;
+        }
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
@@ -217,9 +219,7 @@ class ToggleButton(Static, can_focus=True):
         """
         button = self._button
         label = self._label.copy()
-        label.stylize_before(
-            self.get_component_rich_style("toggle--label", partial=True)
-        )
+        label.stylize_before(self.get_component_rich_style("toggle--label"))
         spacer = " " if label else ""
         return Text.assemble(
             *(
