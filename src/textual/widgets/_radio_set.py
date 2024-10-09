@@ -27,15 +27,15 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
     DEFAULT_CSS = """
     RadioSet {
-        border: tall transparent;
-        background: $boost;
+        border: tall $border-blurred;
+        background: $surface;
         padding: 0 1 0 0;
         height: auto;
         width: auto;
     }
 
     RadioSet:focus {
-        border: tall $accent;
+        border: tall $border;
     }
 
     /* The following rules/styles mimic similar ToggleButton:focus rules in
@@ -48,8 +48,12 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         padding: 0 1;
     }
 
+    RadioSet > RadioButton.-selected {
+        background: $highlight-cursor;
+    }
+
     RadioSet:focus > RadioButton.-selected > .toggle--label {
-        text-style: underline;
+        background: $highlight-cursor;
     }
 
     RadioSet:focus ToggleButton.-selected > .toggle--button {
