@@ -12,7 +12,7 @@ class RadioButton(ToggleButton):
         A `RadioButton` is best used within a [RadioSet][textual.widgets.RadioSet].
     """
 
-    BUTTON_INNER = "\u25CF"
+    BUTTON_INNER = "\u25cf"
     """The character used for the inside of the button."""
 
     class Changed(ToggleButton.Changed):

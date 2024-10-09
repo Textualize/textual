@@ -68,6 +68,7 @@ BorderDefinition: TypeAlias = (
 
 PropertyGetType = TypeVar("PropertyGetType")
 PropertySetType = TypeVar("PropertySetType")
+EnumType = TypeVar("EnumType", covariant=True)
 
 
 class GenericProperty(Generic[PropertyGetType, PropertySetType]):
@@ -773,7 +774,7 @@ class OffsetProperty:
                 obj.refresh(layout=True)
 
 
-class StringEnumProperty:
+class StringEnumProperty(Generic[EnumType]):
     """Descriptor for getting and setting string properties and ensuring that the set
     value belongs in the set of valid values.
 
@@ -787,7 +788,7 @@ class StringEnumProperty:
     def __init__(
         self,
         valid_values: set[str],
-        default: str,
+        default: EnumType,
         layout: bool = False,
         refresh_children: bool = False,
         refresh_parent: bool = False,
@@ -801,7 +802,9 @@ class StringEnumProperty:
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: StylesBase, objtype: type[StylesBase] | None = None) -> str:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> EnumType:
         """Get the string property, or the default value if it's not set.
 
         Args:
@@ -816,7 +819,7 @@ class StringEnumProperty:
     def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
         """Do any housekeeping before asking for a layout refresh after a value change."""
 
-    def __set__(self, obj: StylesBase, value: str | None = None):
+    def __set__(self, obj: StylesBase, value: EnumType | None = None):
         """Set the string property and ensure it is in the set of allowed values.
 
         Args:

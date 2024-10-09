@@ -190,7 +190,8 @@ class RulesMap(TypedDict, total=False):
     hatch: tuple[str, Color] | Literal["none"]
 
     overlay: Overlay
-    constrain: Constrain
+    constrain_x: Constrain
+    constrain_y: Constrain
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -450,7 +451,12 @@ class StylesBase:
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
     )
-    constrain = StringEnumProperty(VALID_CONSTRAIN, "none")
+    constrain_x: StringEnumProperty[Constrain] = StringEnumProperty(
+        VALID_CONSTRAIN, "none"
+    )
+    constrain_y: StringEnumProperty[Constrain] = StringEnumProperty(
+        VALID_CONSTRAIN, "none"
+    )
 
     def __textual_animation__(
         self,
@@ -1172,8 +1178,18 @@ class Styles(StylesBase):
             append_declaration("subtitle-text-style", str(self.border_subtitle_style))
         if "overlay" in rules:
             append_declaration("overlay", str(self.overlay))
-        if "constrain" in rules:
-            append_declaration("constrain", str(self.constrain))
+        if "constrain_x" in rules and "constrain_y" in rules:
+            if self.constrain_x == self.constrain_y:
+                append_declaration("constrain", self.constrain_x)
+            else:
+                append_declaration(
+                    "constrain", f"{self.constrain_x} {self.constrain_y}"
+                )
+        elif "constrain_x" in rules:
+            append_declaration("constrain-x", self.constrain_x)
+        elif "constrain_y" in rules:
+            append_declaration("constrain-y", self.constrain_y)
+
         if "keyline" in rules:
             keyline_type, keyline_color = self.keyline
             if keyline_type != "none":
