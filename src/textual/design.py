@@ -15,7 +15,7 @@ NUMBER_OF_SHADES = 3
 # Where no content exists
 DEFAULT_DARK_BACKGROUND = "#1e1e1e"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#232323"
+DEFAULT_DARK_SURFACE = "#272727"
 # TODO - update this
 # # Where no content exists
 # DEFAULT_DARK_BACKGROUND = "#121212"
@@ -203,12 +203,14 @@ class ColorSystem:
         # The border color for focused widgets which have a border.
         colors["border"] = accent.hex
         # The blurred equivalent of the above.
-        colors["border-blurred"] = background.hex
+        # By default when the widget is blurred, the border matches the surface
+        # of the widget (and so isn't visible until the widget is focused)
+        colors["border-blurred"] = surface.hex
 
         # Widgets such as OptionList, DataTable, etc. have a "hover cursor"
         # which gives a subtle highlight behind the option under the mouse
         # cursor is under.
-        colors["highlight-hover"] = boost.with_alpha(0.06).hex
+        colors["highlight-hover"] = boost.with_alpha(0.05).hex
 
         return colors
 
