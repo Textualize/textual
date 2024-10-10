@@ -372,6 +372,7 @@ class App(Generic[ReturnType], DOMNode):
             align: center middle;
             .-maximized {
                 dock: initial !important;
+                margin: 2 4;
             }
         }
         /* Fade the header title when app is blurred */
@@ -413,6 +414,9 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
+    DEFAULT_MODE: ClassVar[str] = "_default"
+    """Name of the default mode."""
+
     SCREENS: ClassVar[dict[str, Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
@@ -574,9 +578,9 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, highlight=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
+        self._screen_stacks: dict[str, list[Screen[Any]]] = {self.DEFAULT_MODE: []}
         """A stack of screens per mode."""
-        self._current_mode: str = "_default"
+        self._current_mode: str = self.DEFAULT_MODE
         """The current mode the app is in."""
         self._sync_available = False
 

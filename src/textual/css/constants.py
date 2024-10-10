@@ -69,6 +69,7 @@ VALID_PSEUDO_CLASSES: Final = {
     "focus-within",
     "focus",
     "hover",
+    "hover-within",
     "inline",
     "light",
     "nocolor",

@@ -340,6 +340,9 @@ class Widget(DOMNode):
     mouse_hover: Reactive[bool] = Reactive(False, repaint=False)
     """Is the mouse over this widget? Read only."""
 
+    mouse_hover_within: Reactive[bool] = Reactive(False, repaint=False)
+    """Is the mouse over this widget or a descendant? Read only."""
+
     scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
     """The scroll position on the X axis."""
 
@@ -3259,6 +3262,8 @@ class Widget(DOMNode):
         app = self.app
         if self.mouse_hover:
             yield "hover"
+        if self.mouse_hover_within:
+            yield "hover-within"
         if self.has_focus:
             yield "focus"
         else:
@@ -3356,6 +3361,9 @@ class Widget(DOMNode):
 
     def watch_mouse_hover(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
+        for node in self.ancestors_with_self:
+            if isinstance(node, Widget):
+                node.mouse_hover_within = value
         if self._has_hover_style:
             self._update_styles()
 

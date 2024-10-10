@@ -5,9 +5,9 @@ import httpx
 from textual import work
 from textual.app import ComposeResult
 from textual.containers import Center, Horizontal, Vertical
-from textual.demo2.page import Page
+from textual.demo2.page import PageScreen
 from textual.reactive import reactive
-from textual.widgets import Digits, Label, Markdown
+from textual.widgets import Digits, Footer, Label, Markdown
 
 WHAT_IS_TEXTUAL = """\
 ### Turbo charge your developers!
@@ -29,18 +29,12 @@ class StarCount(Vertical):
         border-bottom: hkey $background;
         border-top: hkey $background;
         layout: horizontal;
-        Layout {
-            margin-top: 1;
-        }
+        Layout { margin-top: 1; }
         background: $boost;
         padding: 0 1;
         color: $warning;
-        Label {
-            text-style: bold;
-        }
-        LoadingIndicator {
-            background: transparent !important;
-        }
+        Label { text-style: bold; }
+        LoadingIndicator { background: transparent !important; }
     }
     """
     stars = reactive(25251, recompose=True)
@@ -66,7 +60,6 @@ class StarCount(Vertical):
 
     def on_mount(self) -> None:
         self.loading = True
-        self.get_stars()
 
     def compose(self) -> ComposeResult:
         def thousands(number: int) -> str:
@@ -81,11 +74,20 @@ class StarCount(Vertical):
             )
             yield Label("Forks ")
             yield Digits(str(self.forks)).with_tooltip(f"{self.forks} Forks")
+        self.call_later(self.get_stars)
+
+    def on_click(self) -> None:
+        self.loading = True
+        self.refresh(recompose=True)
+        self.notify(
+            "Refreshing GitHub stats from API",
+            title="GitHub stats",
+        )
 
 
-class WelcomePage(Page):
+class WelcomeScreen(PageScreen):
     DEFAULT_CSS = """
-    WelcomePage {
+    WelcomeScreen {
         align: center middle;
         Digits {
             width: auto;
@@ -113,3 +115,4 @@ class WelcomePage(Page):
             yield Label("The [i]lean application[/i] framework")
         with Center():
             yield Markdown(WHAT_IS_TEXTUAL)
+        yield Footer()
