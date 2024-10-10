@@ -904,8 +904,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             line = self._tree_lines[node.line]
 
             guide_width = line._get_guide_width(self.guide_depth, self.show_root)
+
+            right_margin = 1
+            if self.show_vertical_scrollbar:
+                right_margin += 2
+
             space_width = (
-                total_width - text.cell_len - node_detail.cell_len - guide_width - 3
+                total_width
+                - text.cell_len
+                - node_detail.cell_len
+                - guide_width
+                - right_margin
             )
             space_width = max(1, space_width)
             space_text = Text(" " * space_width)
