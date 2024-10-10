@@ -59,7 +59,6 @@ class Switch(Widget, can_focus=True):
             color: $surface-lighten-2;
         }
         &:hover {
-            border: tall $background;
             & > .switch--slider {
                 color: $surface-lighten-3;
             }

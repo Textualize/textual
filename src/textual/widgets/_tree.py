@@ -588,14 +588,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         }
         & > .tree--guides {
-            text-style: bold;
             color: $surface-lighten-1;
         }
         & > .tree--guides-hover {
             color: $surface-lighten-1;
         }
         & > .tree--guides-selected {
-            color: $surface-lighten-1;
+            color: $primary;
         }
         & > .tree--cursor {
             background: $highlight-cursor-blurred;

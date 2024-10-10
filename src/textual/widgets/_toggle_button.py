@@ -55,7 +55,7 @@ class ToggleButton(Static, can_focus=True):
     DEFAULT_CSS = """
     ToggleButton {
         width: auto;
-        border: tall transparent;
+        border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
     }
