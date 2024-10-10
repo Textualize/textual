@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added support for A-F to Digits widget https://github.com/Textualize/textual/pull/5094
 - Added `Region.constrain` https://github.com/Textualize/textual/pull/5097
-- Added support for A-F to Digits widget https://github.com/Textualize/textual/pull/5094
 
 ### Changed
 
