@@ -99,11 +99,13 @@ class SelectionList(Generic[SelectionType], OptionList):
         
         & > .selection-list--button {
             text-style: bold;
+            color: $surface;
             background: $foreground 15%;
         }
 
         & > .selection-list--button-highlighted {
             text-style: bold;
+            color: $highlight-cursor-blurred;
             background: $foreground 15%;
         }
 
@@ -142,6 +144,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
             & > .selection-list--button-highlighted {
                 text-style: bold;
+                color: $highlight-cursor;
                 background: $foreground 25%;
             }
 
@@ -579,13 +582,6 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         # Get the style for the button.
         button_style = self.get_component_rich_style(component_style)
-
-        # If the button is in the unselected state, we're going to do a bit
-        # of a switcharound to make it look like it's a "cutout".
-        if selection.value not in self._selected:
-            button_style += Style.from_color(
-                self.background_colors[1].rich_color, button_style.bgcolor
-            )
 
         # Build the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
