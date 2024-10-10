@@ -619,9 +619,10 @@ class MarkdownFence(MarkdownBlock):
         super().__init__(markdown)
         self.code = code
         self.lexer = lexer
+        app_theme = self.app.get_theme(self.app.theme)
         self.theme = (
             self._markdown.code_dark_theme
-            if self.app.dark
+            if app_theme.dark
             else self._markdown.code_light_theme
         )
 
@@ -637,13 +638,14 @@ class MarkdownFence(MarkdownBlock):
 
     def _on_mount(self, _: Mount) -> None:
         """Watch app theme switching."""
-        self.watch(self.app, "dark", self._retheme)
+        self.watch(self.app, "theme", self._retheme)
 
     def _retheme(self) -> None:
         """Rerender when the theme changes."""
+        app_theme = self.app.get_theme(self.app.theme)
         self.theme = (
             self._markdown.code_dark_theme
-            if self.app.dark
+            if app_theme.dark
             else self._markdown.code_light_theme
         )
         self.get_child_by_type(Static).update(self._block())
@@ -700,17 +702,17 @@ class Markdown(Widget):
     | :- | :- |
     | `code_inline` | Target text that is styled as inline code. |
     | `em` | Target text that is emphasized inline. |
-    | `s` | Target text that is styled inline with strykethrough. |
+    | `s` | Target text that is styled inline with strikethrough. |
     | `strong` | Target text that is styled inline with strong. |
     """
 
     BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
 
     code_dark_theme: reactive[str] = reactive("material")
-    """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
+    """The theme to use for code blocks when the App theme is dark."""
 
     code_light_theme: reactive[str] = reactive("material-light")
-    """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
+    """The theme to use for code blocks when the App theme is light."""
 
     def __init__(
         self,

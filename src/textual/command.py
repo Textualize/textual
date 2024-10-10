@@ -21,7 +21,15 @@ from dataclasses import dataclass
 from functools import total_ordering
 from inspect import isclass
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncGenerator,
+    AsyncIterator,
+    Callable,
+    ClassVar,
+    Iterable,
+)
 
 import rich.repr
 from rich.align import Align
@@ -174,6 +182,9 @@ class DiscoveryHit:
 
 Hits: TypeAlias = AsyncIterator["DiscoveryHit | Hit"]
 """Return type for the command provider's `search` method."""
+
+ProviderSource: TypeAlias = "Iterable[type[Provider] | Callable[[], type[Provider]]]"
+"""The type used to declare the providers for a CommandPalette."""
 
 
 class Provider(ABC):
@@ -586,9 +597,6 @@ class CommandPalette(SystemModalScreen):
     _calling_screen: var[Screen[Any] | None] = var(None)
     """A record of the screen that was active when we were called."""
 
-    _PALETTE_ID: Final[str] = "--command-palette"
-    """The internal ID for the command palette."""
-
     @dataclass
     class OptionHighlighted(Message):
         """Posted to App when an option is highlighted in the command palette."""
@@ -607,31 +615,53 @@ class CommandPalette(SystemModalScreen):
         option_selected: bool
         """True if an option was selected, False if the palette was closed without selecting an option."""
 
-    def __init__(self) -> None:
-        """Initialise the command palette."""
-        super().__init__(id=self._PALETTE_ID)
+    def __init__(
+        self,
+        providers: ProviderSource | None = None,
+        *,
+        placeholder: str = "Search for commands…",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
+        """Initialise the command palette.
+
+        Args:
+            providers: An optional list of providers to use. If None, the providers supplied
+                in the App or Screen will be used.
+            placeholder: The placeholder text for the command palette.
+        """
+        super().__init__(
+            id=id,
+            classes=classes,
+            name=name,
+        )
+        self.add_class("--textual-command-palette")
+
         self._selected_command: DiscoveryHit | Hit | None = None
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
         self._no_matches_timer: Timer | None = None
         """Keeps track of if there are 'No matches found' message waiting to be displayed."""
+        self._supplied_providers: ProviderSource | None = providers
         self._providers: list[Provider] = []
         """List of Provider instances involved in searches."""
         self._hit_count: int = 0
         """Number of hits displayed."""
+        self._placeholder = placeholder
 
     @staticmethod
-    def is_open(app: App) -> bool:
-        """Is the command palette current open?
+    def is_open(app: App[object]) -> bool:
+        """Is a command palette current open?
 
         Args:
             app: The app to test.
 
         Returns:
-            `True` if the command palette is currently open, `False` if not.
+            `True` if a command palette is currently open, `False` if not.
         """
-        return app.screen.id == CommandPalette._PALETTE_ID
+        return app.screen.has_class("--textual-command-palette")
 
     @property
     def _provider_classes(self) -> set[type[Provider]]:
@@ -642,27 +672,34 @@ class CommandPalette(SystemModalScreen):
         the current screen][textual.screen.Screen.COMMANDS].
         """
 
-        def get_providers(root: App | Screen) -> Iterable[type[Provider]]:
-            """Get providers from app or screen.
+        def get_providers(
+            provider_source: ProviderSource,
+        ) -> Iterable[type[Provider]]:
+            """Load the providers from a source (typically from the COMMANDS class variable)
+            at the App or Screen level.
 
             Args:
-                root: The app or screen.
+                provider_source: The source of providers.
 
             Returns:
                 An iterable of providers.
             """
-            for provider in root.COMMANDS:
+            for provider in provider_source:
                 if isclass(provider) and issubclass(provider, Provider):
                     yield provider
                 else:
                     # Lazy loaded providers
                     yield provider()  # type: ignore
 
-        return (
-            set()
-            if self._calling_screen is None
-            else {*get_providers(self.app), *get_providers(self._calling_screen)}
-        )
+        if self._calling_screen is None:
+            return set()
+        elif self._supplied_providers is None:
+            return {
+                *get_providers(self.app.COMMANDS),
+                *get_providers(self._calling_screen.COMMANDS),
+            }
+        else:
+            return {*get_providers(self._supplied_providers)}
 
     def compose(self) -> ComposeResult:
         """Compose the command palette.
@@ -673,7 +710,7 @@ class CommandPalette(SystemModalScreen):
         with Vertical(id="--container"):
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Search for commands…")
+                yield CommandInput(placeholder=self._placeholder)
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):

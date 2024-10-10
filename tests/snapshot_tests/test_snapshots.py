@@ -1337,12 +1337,12 @@ def test_recompose(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
 
 
-@pytest.mark.parametrize("dark", [True, False])
-def test_ansi_color_mapping(snap_compare, dark):
+@pytest.mark.parametrize("theme", ["textual-dark", "textual-light"])
+def test_ansi_color_mapping(snap_compare, theme):
     """Test how ANSI colors in Rich renderables are mapped to hex colors."""
 
     def setup(pilot):
-        pilot.app.dark = dark
+        pilot.app.theme = theme
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
 

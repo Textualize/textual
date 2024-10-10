@@ -13,9 +13,14 @@ from textual.color import WHITE, Color
 NUMBER_OF_SHADES = 3
 
 # Where no content exists
-DEFAULT_DARK_BACKGROUND = "#121212"
+DEFAULT_DARK_BACKGROUND = "#1e1e1e"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#1e1e1e"
+DEFAULT_DARK_SURFACE = "#272727"
+# TODO - update this
+# # Where no content exists
+# DEFAULT_DARK_BACKGROUND = "#121212"
+# # What text usually goes on top off
+# DEFAULT_DARK_SURFACE = "#1e1e1e"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
@@ -189,6 +194,23 @@ class ColorSystem:
             colors["text"] = "ansi_default"
             colors["text-muted"] = "ansi_default"
             colors["text-disabled"] = "ansi_default"
+
+        # The cursor color for widgets such as OptionList, DataTable, etc.
+        colors["highlight-cursor"] = accent.hex
+        # The cursor should dim when the widget is blurred.
+        colors["highlight-cursor-blurred"] = accent.with_alpha(0.3).hex
+
+        # The border color for focused widgets which have a border.
+        colors["border"] = accent.hex
+        # The blurred equivalent of the above.
+        # By default when the widget is blurred, the border matches the surface
+        # of the widget (and so isn't visible until the widget is focused)
+        colors["border-blurred"] = surface.hex
+
+        # Widgets such as OptionList, DataTable, etc. have a "hover cursor"
+        # which gives a subtle highlight behind the option under the mouse
+        # cursor is under.
+        colors["highlight-hover"] = boost.with_alpha(0.05).hex
 
         return colors
 

@@ -91,9 +91,9 @@ class TextArea(ScrollView):
 TextArea {
     width: 1fr;
     height: 1fr;
-    border: tall $background;
+    border: tall $border-blurred;
     padding: 0 1;
-
+    background: $surface;
     & .text-area--gutter {
         color: $text 40%;
     }

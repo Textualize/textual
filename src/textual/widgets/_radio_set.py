@@ -27,38 +27,65 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
     DEFAULT_CSS = """
     RadioSet {
-        border: tall transparent;
-        background: $boost;
-        padding: 0 1 0 0;
+        border: tall $border-blurred;
+        background: $surface;
+        padding: 0 1;
         height: auto;
         width: auto;
+
+        & > RadioButton.-selected {
+            color: $text;
+            background: $highlight-cursor-blurred;
+        }
+
+        & > * {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        & .toggle--button {
+            color: $surface;
+            background: $foreground 15%;
+        }
+
+        & > RadioButton.-on .toggle--button {
+            color: $success;
+        }
+
+        &:focus {
+            /* The following rules/styles mimic similar ToggleButton:focus rules in
+            * ToggleButton. If those styles ever get updated, these should be too.
+            */
+            border: tall $border;
+
+            & .toggle--button {
+                color: $surface;
+                background: $panel-lighten-1;
+            }
+
+            & > RadioButton.-selected {
+                color: $text;
+                background: $highlight-cursor;
+
+                & > .toggle--label {
+                    background: $highlight-cursor;
+                }
+
+                &.-on > .toggle--button {
+                    color: $success;
+                    background: $panel-lighten-1;
+                }
+            }
+
+            & ToggleButton.-selected > .toggle--button {
+                color: $surface;
+                background: $panel-lighten-1;
+            }
+        }
     }
 
-    RadioSet:focus {
-        border: tall $accent;
-    }
 
-    /* The following rules/styles mimic similar ToggleButton:focus rules in
-     * ToggleButton. If those styles ever get updated, these should be too.
-     */
-
-    RadioSet > * {
-        background: transparent;
-        border: none;
-        padding: 0 1;
-    }
-
-    RadioSet:focus > RadioButton.-selected > .toggle--label {
-        text-style: underline;
-    }
-
-    RadioSet:focus ToggleButton.-selected > .toggle--button {
-        background: $foreground 25%;
-    }
-
-    RadioSet:focus > RadioButton.-on.-selected > .toggle--button {
-        background: $foreground 25%;
-    }
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [

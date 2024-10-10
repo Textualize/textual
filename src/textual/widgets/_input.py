@@ -146,15 +146,15 @@ class Input(Widget, can_focus=True):
 
     DEFAULT_CSS = """
     Input {
-        background: $boost;
+        background: $surface;
         color: $text;
         padding: 0 2;
-        border: tall $background;
+        border: tall $border-blurred;
         width: 100%;
         height: 3;
 
         &:focus {
-            border: tall $accent;
+            border: tall $border;
         }
         &>.input--cursor {
             background: $surface;
