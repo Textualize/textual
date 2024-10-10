@@ -5,8 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-
+## [0.83.0] - 2024-10-10
 
 ### Added
 
@@ -2443,6 +2442,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.83.0]: https://github.com/Textualize/textual/compare/v0.82.0...v0.83.0
 [0.82.0]: https://github.com/Textualize/textual/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/Textualize/textual/compare/v0.80.1...v0.81.0
 [0.80.1]: https://github.com/Textualize/textual/compare/v0.80.0...v0.80.1
