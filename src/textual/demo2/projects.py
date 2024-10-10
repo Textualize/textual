@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from textual import events, on
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.containers import Grid, Horizontal, VerticalScroll
 from textual.demo2.page import PageScreen
 from textual.widgets import Footer, Label, Static
@@ -74,7 +75,14 @@ class Project(VerticalScroll, can_focus=True):
     }
     """
 
-    BINDINGS = [("enter", "open_repository", "open repo")]
+    BINDINGS = [
+        Binding(
+            "enter",
+            "open_repository",
+            "open repo",
+            tooltip="Open the GitHub repository in your browser",
+        )
+    ]
 
     def __init__(self, project_info: ProjectInfo) -> None:
         self.project_info = project_info

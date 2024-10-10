@@ -9,7 +9,7 @@ from textual.demo2.page import PageScreen
 from textual.reactive import reactive
 from textual.widgets import Digits, Footer, Label, Markdown
 
-WHAT_IS_TEXTUAL = """\
+WHAT_IS_TEXTUAL_MD = """\
 ### Turbo charge your developers!
 
 * Build sophisticated applications — fast!
@@ -22,6 +22,8 @@ WHAT_IS_TEXTUAL = """\
 
 
 class StarCount(Vertical):
+    """Widget to get and display GitHub star count."""
+
     DEFAULT_CSS = """
     StarCount {
         dock: top;
@@ -29,12 +31,12 @@ class StarCount(Vertical):
         border-bottom: hkey $background;
         border-top: hkey $background;
         layout: horizontal;
-        Layout { margin-top: 1; }
         background: $boost;
         padding: 0 1;
         color: $warning;
         Label { text-style: bold; }
         LoadingIndicator { background: transparent !important; }
+        Digits { margin-right: 1; }
     }
     """
     stars = reactive(25251, recompose=True)
@@ -42,6 +44,7 @@ class StarCount(Vertical):
 
     @work
     async def get_stars(self):
+        """Worker to get stars from GitHub API."""
         try:
             async with httpx.AsyncClient() as client:
                 repository_json = (
@@ -55,47 +58,33 @@ class StarCount(Vertical):
                 title="GitHub stars",
                 severity="error",
             )
-
         self.loading = False
 
-    def on_mount(self) -> None:
-        self.loading = True
-
     def compose(self) -> ComposeResult:
-        def thousands(number: int) -> str:
-            if number > 2000:
-                return f"{number / 1000:.1f}K "
-            return str(number)
-
         with Horizontal():
             yield Label("GitHub ★ ")
-            yield Digits(thousands(self.stars)).with_tooltip(
+            yield Digits(f"{self.stars / 1000:.1f}K").with_tooltip(
                 f"{self.stars} GitHub stars"
             )
             yield Label("Forks ")
             yield Digits(str(self.forks)).with_tooltip(f"{self.forks} Forks")
+
+    def update_stars(self) -> None:
+        self.loading = True
         self.call_later(self.get_stars)
 
+    def on_mount(self) -> None:
+        self.update_stars()
+
     def on_click(self) -> None:
-        self.loading = True
-        self.refresh(recompose=True)
-        self.notify(
-            "Refreshing GitHub stats from API",
-            title="GitHub stats",
-        )
+        self.update_stars()
 
 
 class WelcomeScreen(PageScreen):
     DEFAULT_CSS = """
     WelcomeScreen {
         align: center middle;
-        Digits {
-            width: auto;
-           
-        }
-        Collapsible {
-            margin: 2 4;
-        }
+        Digits { width: auto; }
         Markdown {
             background: $boost;
             margin: 2 2;
@@ -114,5 +103,5 @@ class WelcomeScreen(PageScreen):
         with Center():
             yield Label("The [i]lean application[/i] framework")
         with Center():
-            yield Markdown(WHAT_IS_TEXTUAL)
+            yield Markdown(WHAT_IS_TEXTUAL_MD)
         yield Footer()
