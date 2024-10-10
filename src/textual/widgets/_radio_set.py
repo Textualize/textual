@@ -49,6 +49,10 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             background: $foreground 15%;
         }
 
+        & > RadioButton.-on .toggle--button {
+            color: $success;
+        }
+
         &:focus {
             /* The following rules/styles mimic similar ToggleButton:focus rules in
             * ToggleButton. If those styles ever get updated, these should be too.
