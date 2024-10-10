@@ -1004,13 +1004,12 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_timer.pause()
         if self.is_current and not self.app._batch_count:
             if self._layout_required:
-                self._refresh_layout()
+                self._refresh_layout(scroll=self._scroll_required)
                 self._layout_required = False
-                self._scroll_required = False
                 self._dirty_widgets.clear()
             elif self._scroll_required:
                 self._refresh_layout(scroll=True)
-                self._scroll_required = False
+            self._scroll_required = False
 
             if self._repaint_required:
                 self._dirty_widgets.clear()
