@@ -2,16 +2,18 @@ from pathlib import Path
 
 import pytest
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual import events
+from textual import events, on
 from textual.app import App, ComposeResult
+from textual.binding import Binding, Keymap
+from textual.containers import Center, Grid, Middle, Vertical
 from textual.binding import Binding
 from textual.containers import Vertical, VerticalScroll
 from textual.pilot import Pilot
-from textual.screen import Screen
+from textual.renderables.gradient import LinearGradient
+from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
     Header,
@@ -22,9 +24,11 @@ from textual.widgets import (
     Footer,
     Log,
     OptionList,
+    Placeholder,
     SelectionList,
 )
 from textual.widgets import ProgressBar, Label, Switch
+from textual.widgets import Static
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -1993,6 +1997,84 @@ def test_disabled(snap_compare):
     assert snap_compare(app)
 
 
+def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
+    """Bindings overridden by the Keymap are shown as expected in the Footer
+    and help panel. Testing that the keys work as expected is done elsewhere.
+
+    Footer should show bindings `k` to Increment, and `down` to Decrement.
+
+    Key panel should show bindings `k, plus` to increment,
+    and `down, minus, j` to decrement.
+
+    """
+
+    class Counter(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+            ),
+            Binding(
+                key="d,down",
+                action="decrement",
+                description="Decrement",
+                id="app.decrement",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Counter")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap(
+                {
+                    "app.increment": "k,plus",
+                    "app.decrement": "down,minus,j",
+                }
+            )
+
+    assert snap_compare(Counter())
+
+
+def test_keymap_bindings_key_display(snap_compare):
+    """If a default binding in `BINDINGS` has a key_display, it should be reset
+    when that binding is overridden by a Keymap.
+
+    The key_display should be taken from `App.get_key_display`, so in this case
+    it should be "THIS IS CORRECT" in the Footer and help panel, not "INCORRECT".
+    """
+
+    class MyApp(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+                key_display="INCORRECT",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Check the footer and help panel")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap({"app.increment": "k,plus,j,l"})
+
+        def get_key_display(self, binding: Binding) -> str:
+            if binding.id == "app.increment":
+                return "correct"
+            return super().get_key_display(binding)
+
+    assert snap_compare(MyApp())
+
+
 def test_missing_new_widgets(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5024"""
 
@@ -2019,6 +2101,198 @@ def test_missing_new_widgets(snap_compare):
 
     app = MRE()
     assert snap_compare(app, press=["space", "space", "z"])
+
+
+def test_pop_until_active(snap_compare):
+    """End result should be screen showing 'BASE'"""
+
+    class BaseScreen(Screen):
+        def compose(self) -> ComposeResult:
+            yield Label("BASE")
+
+    class FooScreen(Screen):
+        def compose(self) -> ComposeResult:
+            yield Label("Foo")
+
+    class BarScreen(Screen):
+        BINDINGS = [("b", "app.make_base_active")]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Bar")
+
+    class PopApp(App):
+        SCREENS = {"base": BaseScreen}
+
+        async def on_mount(self) -> None:
+            # Push base
+            await self.push_screen("base")
+            # Push two screens
+            await self.push_screen(FooScreen())
+            await self.push_screen(BarScreen())
+
+        def action_make_base_active(self) -> None:
+            self.get_screen("base").pop_until_active()
+
+    app = PopApp()
+    # App will push three screens
+    # Pressing "b" will call pop_until_active, and pop two screens
+    # End result should be screen showing "BASE"
+    assert snap_compare(app, press=["b"])
+
+
+def test_updates_with_auto_refresh(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5056
+
+    After hiding and unhiding the RichLog, you should be able to see 1.5 fully rendered placeholder widgets.
+    Prior to this fix, the bottom portion of the screen did not
+    refresh after the RichLog was hidden/unhidden while in the presence of the auto-refreshing ProgressBar widget.
+    """
+
+    class MRE(App):
+        BINDINGS = [
+            ("z", "toggle_widget('RichLog')", "Console"),
+        ]
+        CSS = """
+        Placeholder { height: 15; }
+        RichLog { height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            with VerticalScroll():
+                for i in range(10):
+                    yield Placeholder()
+            yield ProgressBar(classes="hidden")
+            yield RichLog(classes="hidden")
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_widget(self, widget_type: str) -> None:
+            self.query_one(widget_type).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["z", "z"])
+
+
+def test_push_screen_on_mount(snap_compare):
+    """Test pushing (modal) screen immediately on mount, which was not refreshing the base screen.
+
+    Should show a panel partially obscuring Hello World text
+
+    """
+
+    class QuitScreen(ModalScreen[None]):
+        """Screen with a dialog to quit."""
+
+        DEFAULT_CSS = """
+        QuitScreen {
+            align: center middle;
+        }
+
+        #dialog {
+            grid-size: 2;
+            grid-gutter: 1 2;
+            grid-rows: 1fr 3;
+            padding: 0 1;
+            width: 60;
+            height: 11;
+            border: thick $primary 80%;
+            background: $surface;
+        }
+
+        #question {
+            column-span: 2;
+            height: 1fr;
+            width: 1fr;
+            content-align: center middle;
+        }
+
+        Button {
+            width: 100%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Grid(
+                Label("Are you sure you want to quit?", id="question"), id="dialog"
+            )
+
+    class MyApp(App[None]):
+        def compose(self) -> ComposeResult:
+            s = "Hello World Foo Bar Baz"
+            yield Middle(Center(Static(s)))
+
+        def on_mount(self) -> None:
+            self.push_screen(QuitScreen())
+
+    app = MyApp()
+
+    assert snap_compare(app)
+
+
+def test_transparent_background(snap_compare):
+    """Check that a transparent background defers to render().
+
+    This should display a colorful gradient, filling the screen.
+    """
+
+    COLORS = [
+        "#881177",
+        "#aa3355",
+        "#cc6666",
+        "#ee9944",
+        "#eedd00",
+        "#99dd55",
+        "#44dd88",
+        "#22ccbb",
+        "#00bbcc",
+        "#0099cc",
+        "#3366bb",
+        "#663399",
+    ]
+
+    class TransparentApp(App):
+        CSS = """
+        Screen {
+            background: transparent;
+        }
+        """
+
+        def render(self) -> LinearGradient:
+            """Renders a gradient, when the background is transparent."""
+            stops = [(i / (len(COLORS) - 1), c) for i, c in enumerate(COLORS)]
+            return LinearGradient(30.0, stops)
+
+    app = TransparentApp()
+    snap_compare(app)
+
+
+def test_maximize_allow(snap_compare):
+    """Check that App.ALLOW_IN_MAXIMIZED_VIEW is the default.
+
+    If working this should show a header, some text, a focused button, and more text.
+
+    """
+
+    class MaximizeApp(App):
+        ALLOW_IN_MAXIMIZED_VIEW = "Header"
+        BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
+
+        def compose(self) -> ComposeResult:
+            yield Label(
+                "Above", classes="-textual-system"
+            )  # Allowed in maximize view because it has class -textual-system
+            yield Header()  # Allowed because it matches ALLOW_IN_MAXIMIZED_VIEW
+            yield Button("Hello")  # Allowed because it is the maximized widget
+            yield Label(
+                "Below", classes="-textual-system"
+            )  # Allowed because it has class -textual-system
+            yield Button("World")  # Not allowed
+            yield Footer()  # Not allowed
+
+    assert snap_compare(MaximizeApp(), press=["m"])
+
 
 def test_help_panel_key_display_not_duplicated(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5037"""

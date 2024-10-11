@@ -91,7 +91,7 @@ from textual._wait import wait_for_idle
 from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
-from textual.binding import Binding, BindingsMap, BindingType
+from textual.binding import Binding, BindingsMap, BindingType, Keymap
 from textual.command import CommandPalette, Provider
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
@@ -461,6 +461,9 @@ class App(Generic[ReturnType], DOMNode):
     COMMAND_PALETTE_DISPLAY: ClassVar[str | None] = None
     """How the command palette key should be displayed in the footer (or `None` for default)."""
 
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = "Footer"
+    """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
     ]
@@ -659,6 +662,8 @@ class App(Generic[ReturnType], DOMNode):
 
         self._registry: WeakSet[DOMNode] = WeakSet()
 
+        self._keymap: Keymap = {}
+
         # Sensitivity on X is double the sensitivity on Y to account for
         # cells being twice as tall as wide
         self.scroll_sensitivity_x: float = 4.0
@@ -754,8 +759,8 @@ class App(Generic[ReturnType], DOMNode):
         happens.
         """
 
-        # Size of previous inline update
         self._previous_inline_height: int | None = None
+        """Size of previous inline update."""
 
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
@@ -2634,6 +2639,33 @@ class App(Generic[ReturnType], DOMNode):
 
         return AwaitComplete(do_pop()).call_next(self)
 
+    def _pop_to_screen(self, screen: Screen) -> None:
+        """Pop screens until the given screen is active.
+
+        Args:
+            screen: desired active screen
+
+        Raises:
+            ScreenError: If the screen doesn't exist in the stack.
+        """
+        screens_to_pop: list[Screen] = []
+        for pop_screen in reversed(self.screen_stack):
+            if pop_screen is not screen:
+                screens_to_pop.append(pop_screen)
+            else:
+                break
+        else:
+            raise ScreenError(f"Screen {screen!r} not in screen stack")
+
+        async def pop_screens() -> None:
+            """Pop any screens in `screens_to_pop`."""
+            with self.batch_update():
+                for screen in screens_to_pop:
+                    await screen.dismiss()
+
+        if screens_to_pop:
+            self.call_later(pop_screens)
+
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
@@ -2894,6 +2926,7 @@ class App(Generic[ReturnType], DOMNode):
                     try:
                         await self._dispatch_message(events.Compose())
                         default_screen = self.screen
+                        self.stylesheet.apply(self)
                         await self._dispatch_message(events.Mount())
                         self.check_idle()
                     finally:
@@ -2902,7 +2935,6 @@ class App(Generic[ReturnType], DOMNode):
 
                     Reactive._initialize_object(self)
 
-                    self.stylesheet.apply(self)
                     if self.screen is not default_screen:
                         self.stylesheet.apply(default_screen)
 
@@ -3422,6 +3454,51 @@ class App(Generic[ReturnType], DOMNode):
                         return True
         return False
 
+    def set_keymap(self, keymap: Keymap) -> None:
+        """Set the keymap, a mapping of binding IDs to key strings.
+
+        Bindings in the keymap are used to override default key bindings,
+        i.e. those defined in `BINDINGS` class variables.
+
+        Bindings with IDs that are present in the keymap will have
+        their key string replaced with the value from the keymap.
+
+        Args:
+            keymap: A mapping of binding IDs to key strings.
+        """
+        self._keymap = keymap
+
+    def update_keymap(self, keymap: Keymap) -> None:
+        """Update the App's keymap, merging with `keymap`.
+
+        If a Binding ID exists in both the App's keymap and the `keymap`
+        argument, the `keymap` argument takes precedence.
+
+        Args:
+            keymap: A mapping of binding IDs to key strings.
+        """
+        self._keymap = {**self._keymap, **keymap}
+
+    def handle_bindings_clash(
+        self, clashed_bindings: set[Binding], node: DOMNode
+    ) -> None:
+        """Handle a clash between bindings.
+
+        Bindings clashes are likely due to users setting conflicting
+        keys via their keymap.
+
+        This method is intended to be overridden by subclasses.
+
+        Textual will call this each time a clash is encountered -
+        which may be on each keypress if a clashing widget is focused
+        or is in the bindings chain.
+
+        Args:
+            clashed_bindings: The bindings that are clashing.
+            node: The node that has the clashing bindings.
+        """
+        pass
+
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
@@ -3829,7 +3906,7 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_switch_mode(self, mode: str) -> None:
-        """An [action](/guide/actions) that switches to the given mode.."""
+        """An [action](/guide/actions) that switches to the given mode."""
         self.switch_mode(mode)
 
     async def action_back(self) -> None:

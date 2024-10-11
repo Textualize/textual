@@ -5,8 +5,8 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-DIGITS = " 0123456789+-^x:"
-DIGITS3X3 = """\
+DIGITS = " 0123456789+-^x:ABCDEF"
+DIGITS3X3_BOLD = """\
 
 
 
@@ -55,6 +55,96 @@ DIGITS3X3 = """\
 
  :
 
+╭─╮
+├─┤
+╵ ╵
+┌─╮
+├─┤
+└─╯
+╭─╮
+│
+╰─╯
+┌─╮
+│ │
+└─╯
+╭─╴
+├─
+╰─╴
+╭─╴
+├─
+╵
+
+""".splitlines()
+
+
+DIGITS3X3 = """\
+
+
+
+╭─╮
+│ │
+╰─╯
+╶╮
+ │
+╶┴╴
+╶─╮
+┌─┘
+╰─╴
+╶─╮
+ ─┤
+╶─╯
+╷ ╷
+╰─┤
+  ╵
+╭─╴
+╰─╮
+╶─╯
+╭─╴
+├─╮
+╰─╯
+╶─┐
+  │
+  ╵
+╭─╮
+├─┤
+╰─╯
+╭─╮
+╰─┤
+╶─╯
+
+╶┼╴
+
+
+╶─╴
+
+ ^
+
+
+
+ ×
+
+
+ :
+
+╭─╮
+├─┤
+╵ ╵
+┌─╮
+├─┤
+└─╯
+╭─╮
+│
+╰─╯
+┌─╮
+│ │
+└─╯
+╭─╴
+├─
+╰─╴
+╭─╴
+├─
+╵
+
 """.splitlines()
 
 
@@ -91,6 +181,11 @@ class Digits:
         row2 = digit_pieces[1].append
         row3 = digit_pieces[2].append
 
+        if style.bold:
+            digits = DIGITS3X3_BOLD
+        else:
+            digits = DIGITS3X3
+
         for character in self._text:
             try:
                 position = DIGITS.index(character) * 3
@@ -99,9 +194,9 @@ class Digits:
                 row2(" ")
                 row3(character)
             else:
-                row1(DIGITS3X3[position].ljust(3))
-                row2(DIGITS3X3[position + 1].ljust(3))
-                row3(DIGITS3X3[position + 2].ljust(3))
+                row1(digits[position].ljust(3))
+                row2(digits[position + 1].ljust(3))
+                row3(digits[position + 2].ljust(3))
 
         new_line = Segment.line()
         for line in digit_pieces:

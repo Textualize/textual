@@ -138,7 +138,7 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 === "stopwatch.tcss"
 
     ```css
-    --8<-- "examples/calculator.tcss"
+    --8<-- "docs/examples/tutorial/stopwatch.tcss"
     ```
 
 

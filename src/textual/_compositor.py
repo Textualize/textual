@@ -40,7 +40,6 @@ from textual.strip import Strip, StripRenderable
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    from textual.css.styles import RenderStyles
     from textual.screen import Screen
     from textual.widget import Widget
 
@@ -311,9 +310,6 @@ class Compositor:
         # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
 
-        # New widgets added between updates
-        self._new_widgets: set[Widget] = set()
-
     def clear(self) -> None:
         """Remove all references to widgets (used when the screen closes)."""
         self._full_map.clear()
@@ -392,8 +388,7 @@ class Compositor:
         new_widgets = map.keys()
 
         # Newly visible widgets
-        shown_widgets = (new_widgets - old_widgets) | self._new_widgets
-        self._new_widgets.clear()
+        shown_widgets = new_widgets - old_widgets
 
         # Newly hidden widgets
         hidden_widgets = self.widgets - widgets
@@ -490,7 +485,6 @@ class Compositor:
             self._full_map_invalidated = False
             map, _widgets = self._arrange_root(self.root, self.size, visible_only=False)
             # Update any widgets which became visible in the interim
-            self._new_widgets.update(map.keys() - self._full_map.keys())
             self._full_map = map
             self._visible_widgets = None
             self._visible_map = None
@@ -526,38 +520,6 @@ class Compositor:
                 widget: (region, clip) for _, widget, region, clip in visible_widgets
             }
         return self._visible_widgets
-
-    def _constrain(
-        self, styles: RenderStyles, region: Region, constrain_region: Region
-    ) -> Region:
-        """Applies constrain logic to a Region.
-
-        Args:
-            styles: The widget's styles.
-            region: The region to constrain.
-            constrain_region: The outer region.
-
-        Returns:
-            New region.
-        """
-        constrain = styles.constrain
-        if constrain == "inflect":
-            inflect_margin = styles.margin
-            margin_region = region.grow(inflect_margin)
-            region = region.inflect(
-                (-1 if margin_region.right > constrain_region.right else 0),
-                (-1 if margin_region.bottom > constrain_region.bottom else 0),
-                inflect_margin,
-            )
-            region = region.translate_inside(constrain_region, True, True)
-        elif constrain != "none":
-            # Constrain to avoid clipping
-            region = region.translate_inside(
-                constrain_region,
-                constrain in ("x", "both"),
-                constrain in ("y", "both"),
-            )
-        return region
 
     def _arrange_root(
         self, root: Widget, size: Size, visible_only: bool = True
@@ -669,6 +631,17 @@ class Compositor:
 
                     get_layer_index = layers_to_index.get
 
+                    if widget._cover_widget is not None:
+                        map[widget._cover_widget] = _MapGeometry(
+                            region.shrink(widget.styles.gutter),
+                            order,
+                            clip,
+                            region.size,
+                            container_size,
+                            virtual_region,
+                            dock_gutter,
+                        )
+
                     # Add all the widgets
                     for sub_region, _, sub_widget, z, fixed, overlay in reversed(
                         placements
@@ -682,22 +655,28 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        if overlay and sub_widget.styles.constrain != "none":
-                            widget_region = self._constrain(
-                                sub_widget.styles, widget_region, no_clip
+                        if overlay:
+                            styles = sub_widget.styles
+                            has_rule = styles.has_rule
+                            if has_rule("constrain_x") or has_rule("constrain_y"):
+                                widget_region = widget_region.constrain(
+                                    styles.constrain_x,
+                                    styles.constrain_y,
+                                    styles.margin,
+                                    no_clip,
+                                )
+
+                        if widget._cover_widget is None:
+                            add_widget(
+                                sub_widget,
+                                sub_region,
+                                widget_region,
+                                ((1, 0, 0),) if overlay else widget_order,
+                                layer_order,
+                                no_clip if overlay else sub_clip,
+                                visible,
+                                arrange_result.scroll_spacing,
                             )
-
-                        add_widget(
-                            sub_widget,
-                            sub_region,
-                            widget_region,
-                            ((1, 0, 0),) if overlay else widget_order,
-                            layer_order,
-                            no_clip if overlay else sub_clip,
-                            visible,
-                            arrange_result.scroll_spacing,
-                        )
-
                         layer_order -= 1
 
                 if visible:
@@ -734,15 +713,24 @@ class Compositor:
 
                 widget_region = region + layout_offset
 
-                if widget._absolute_offset is not None:
-                    widget_region = widget_region.reset_offset.translate(
-                        widget._absolute_offset + widget.styles.margin.top_left
+                if widget.absolute_offset is not None:
+                    margin = styles.margin
+                    widget_region = widget_region.at_offset(
+                        widget.absolute_offset + margin.top_left
+                    )
+                    widget_region = widget_region.translate(
+                        styles.offset.resolve(widget_region.grow(margin).size, size)
+                    )
+                has_rule = styles.has_rule
+                if has_rule("constrain_x") or has_rule("constrain_y"):
+                    widget_region = widget_region.constrain(
+                        styles.constrain_x,
+                        styles.constrain_y,
+                        styles.margin,
+                        size.region,
                     )
 
-                if styles.constrain != "none":
-                    widget_region = self._constrain(styles, widget_region, no_clip)
-
-                map[widget] = _MapGeometry(
+                map[widget._render_widget] = _MapGeometry(
                     widget_region,
                     order,
                     clip,
@@ -802,6 +790,22 @@ class Compositor:
                         layers_visible_appends[y](widget_location)
             self._layers_visible = layers_visible
         return self._layers_visible
+
+    def __contains__(self, widget: Widget) -> bool:
+        """Check if the widget was included in the last update.
+
+        Args:
+            widget: A widget.
+
+        Returns:
+            `True` if the widget was in the last refresh, or `False` if it wasn't.
+        """
+        # Try to avoid a recalculation of full_map if possible.
+        return (
+            widget in self.widgets
+            or (self._visible_map is not None and widget in self._visible_map)
+            or widget in self.full_map
+        )
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget.

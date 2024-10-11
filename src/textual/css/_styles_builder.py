@@ -1047,6 +1047,40 @@ class StylesBuilder:
             self.styles._rules[name] = value  # type: ignore
 
     def process_constrain(self, name: str, tokens: list[Token]) -> None:
+        if len(tokens) == 1:
+            try:
+                value = self._process_enum(name, tokens, VALID_CONSTRAIN)
+            except StyleValueError:
+                self.error(
+                    name,
+                    tokens[0],
+                    string_enum_help_text(name, VALID_CONSTRAIN, context="css"),
+                )
+            else:
+                self.styles._rules["constrain_x"] = value  # type: ignore
+                self.styles._rules["constrain_y"] = value  # type: ignore
+        elif len(tokens) == 2:
+            constrain_x, constrain_y = self._process_enum_multiple(
+                name, tokens, VALID_CONSTRAIN, 2
+            )
+            self.styles._rules["constrain_x"] = constrain_x  # type: ignore
+            self.styles._rules["constrain_y"] = constrain_y  # type: ignore
+        else:
+            self.error(name, tokens[0], "one or two values expected here")
+
+    def process_constrain_x(self, name: str, tokens: list[Token]) -> None:
+        try:
+            value = self._process_enum(name, tokens, VALID_CONSTRAIN)
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_CONSTRAIN, context="css"),
+            )
+        else:
+            self.styles._rules[name] = value  # type: ignore
+
+    def process_constrain_y(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_CONSTRAIN)
         except StyleValueError:

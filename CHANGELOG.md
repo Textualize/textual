@@ -11,12 +11,48 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
 
+## [0.83.0] - 2024-10-10
+
+### Added
+
+- Added support for A-F to Digits widget https://github.com/Textualize/textual/pull/5094
+- Added `Region.constrain` https://github.com/Textualize/textual/pull/5097
+
+### Changed
+
+- `Screen.ALLOW_IN_MAXIMIZED_VIEW` will now default to `App.ALLOW_IN_MAXIMIZED_VIEW` https://github.com/Textualize/textual/pull/5088
+- Widgets matching `.-textual-system` will now be included in the maximize view by default https://github.com/Textualize/textual/pull/5088
+- Digits are now thin by default, style with text-style: bold to get bold digits https://github.com/Textualize/textual/pull/5094
+- Made `Widget.absolute_offset` public https://github.com/Textualize/textual/pull/5097
+- Tooltips are now displayed directly below the mouse cursor https://github.com/Textualize/textual/pull/5097
+- `Region.inflect` will now assume that margins overlap https://github.com/Textualize/textual/pull/5097
+- `Pilot.click` and friends will now accept a widget, in addition to a selector https://github.com/Textualize/textual/pull/5095
+
+## [0.82.0] - 2024-10-03
+
+### Fixed
+
+- Fixed issue with screen not updating when auto_refresh was enabled https://github.com/Textualize/textual/pull/5063
+- Fixed issues regarding loading indicator https://github.com/Textualize/textual/pull/5079
+- Fixed issues with inspecting the lazy loaded widgets module https://github.com/Textualize/textual/pull/5080
+
+### Added
+
+- Added `DOMNode.is_on_screen` property https://github.com/Textualize/textual/pull/5063
+- Added support for keymaps (user configurable key bindings) https://github.com/Textualize/textual/pull/5038
+- Added descriptions to bindings for all internal widgets, and updated casing to be consistent https://github.com/Textualize/textual/pull/5062
+
+### Changed
+
+- Breaking change: `Widget.set_loading` no longer return an awaitable https://github.com/Textualize/textual/pull/5079
+
 ## [0.81.0] - 2024-09-25
 
 ### Added
 
 - Added `x_axis` and `y_axis` parameters to `Widget.scroll_to_region` https://github.com/Textualize/textual/pull/5047
 - Added `Tree.move_cursor_to_line` https://github.com/Textualize/textual/pull/5052
+- Added `Screen.pop_until_active` https://github.com/Textualize/textual/pull/5069
 
 ### Changed
 
@@ -2412,6 +2448,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.83.0]: https://github.com/Textualize/textual/compare/v0.82.0...v0.83.0
+[0.82.0]: https://github.com/Textualize/textual/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/Textualize/textual/compare/v0.80.1...v0.81.0
 [0.80.1]: https://github.com/Textualize/textual/compare/v0.80.0...v0.80.1
 [0.80.0]: https://github.com/Textualize/textual/compare/v0.79.0...v0.80.0

@@ -190,6 +190,69 @@ If the supplied text is too long to fit within the widget, it will be cropped (a
 There are a number of styles that influence how titles are displayed (color and alignment).
 See the [style reference](../styles/index.md) for details.
 
+## Focus & keybindings
+
+Widgets can have a list of associated key [bindings](../guide/input.md#bindings),
+which let them call [actions](../guide/actions.md) in response to key presses.
+
+A widget is able to handle key presses if it or one of its descendants has [focus](../guide/input.md#input-focus).
+
+Widgets aren't focusable by default.
+To allow a widget to be focused, we need to set `can_focus=True` when defining a widget subclass.
+Here's an example of a simple focusable widget:
+
+=== "counter01.py"
+
+    ```python title="counter01.py" hl_lines="6"
+    --8<-- "docs/examples/guide/widgets/counter01.py"
+    ```
+
+    1. Allow the widget to receive input focus.
+
+=== "counter.tcss"
+
+    ```css title="counter.tcss" hl_lines="6-11"
+    --8<-- "docs/examples/guide/widgets/counter.tcss"
+    ```
+
+    1. These styles are applied only when the widget has focus.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/counter01.py"}
+    ```
+
+
+The app above contains three `Counter` widgets, which we can focus by clicking or using ++tab++ and ++shift+tab++.
+
+Now that our counter is focusable, let's add some keybindings to it to allow us to change the count using the keyboard.
+To do this, we add a `BINDINGS` class variable to `Counter`, with bindings for ++up++ and ++down++.
+These new bindings are linked to the `change_count` action, which updates the `count` reactive attribute.
+
+With our bindings in place, we can now change the count of the _currently focused_ counter using ++up++ and ++down++.
+
+=== "counter02.py"
+
+    ```python title="counter02.py" hl_lines="9-12 19-20"
+    --8<-- "docs/examples/guide/widgets/counter02.py"
+    ```
+
+    1. Associates presses of ++up++ or ++k++ with the `change_count` action, passing `1` as the argument to increment the count. The final argument ("Increment") is a user-facing label displayed in the footer when this binding is active.
+    2. Called when the binding is triggered. Take care to add the `action_` prefix to the method name.
+
+=== "counter.tcss"
+
+    ```css title="counter.tcss"
+    --8<-- "docs/examples/guide/widgets/counter.tcss"
+    ```
+
+    1. These styles are applied only when the widget has focus.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/counter02.py" press="up,tab,down,down"}
+    ```
+
 ## Rich renderables
 
 In previous examples we've set strings as content for Widgets. You can also use special objects called [renderables](https://rich.readthedocs.io/en/latest/protocol.html) for advanced visuals. You can use any renderable defined in [Rich](https://github.com/Textualize/rich) or third party libraries.

@@ -74,7 +74,7 @@ VALID_PSEUDO_CLASSES: Final = {
     "nocolor",
 }
 VALID_OVERLAY: Final = {"none", "screen"}
-VALID_CONSTRAIN: Final = {"x", "y", "both", "inflect", "none"}
+VALID_CONSTRAIN: Final = {"inflect", "inside", "none"}
 VALID_KEYLINE: Final = {"none", "thin", "heavy", "double"}
 VALID_HATCH: Final = {"left", "right", "cross", "vertical", "horizontal"}
 HATCHES: Final = {

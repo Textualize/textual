@@ -71,7 +71,7 @@ class Selection(Generic[SelectionType], Option):
 class SelectionList(Generic[SelectionType], OptionList):
     """A vertical selection list that allows making multiple selections."""
 
-    BINDINGS = [Binding("space", "select")]
+    BINDINGS = [Binding("space", "select", "Toggle option", show=False)]
     """
     | Key(s) | Description |
     | :- | :- |
