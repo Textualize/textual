@@ -90,12 +90,12 @@ class BindingsTable(Static):
             get_key_display = self.app.get_key_display
             for multi_bindings in action_to_bindings.values():
                 binding, enabled, tooltip = multi_bindings[0]
-                if binding.key_display:
-                    key_display = binding.key_display
-                else:
-                    key_display = " ".join(
-                        get_key_display(binding) for binding, _, _ in multi_bindings
-                    )
+                unique_keys: list[str] = []
+                for binding, _, _ in multi_bindings:
+                    key_display = get_key_display(binding)
+                    if key_display not in unique_keys:
+                        unique_keys.append(key_display)
+                key_display = " ".join(unique_keys)
                 table.add_row(
                     Text(key_display, style=key_style),
                     render_description(binding),
