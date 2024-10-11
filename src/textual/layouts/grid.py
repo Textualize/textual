@@ -17,9 +17,13 @@ class GridLayout(Layout):
 
     name = "grid"
 
+    def __init__(self) -> None:
+        self.min_column_width: int | None = None
+
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
+        parent.pre_layout()
         styles = parent.styles
         row_scalars = styles.grid_rows or (
             [Scalar.parse("1fr")] if size.height else [Scalar.parse("auto")]
@@ -27,10 +31,21 @@ class GridLayout(Layout):
         column_scalars = styles.grid_columns or [Scalar.parse("1fr")]
         gutter_horizontal = styles.grid_gutter_horizontal
         gutter_vertical = styles.grid_gutter_vertical
+
         table_size_columns = max(1, styles.grid_size_columns)
+        min_column_width = self.min_column_width
+        if min_column_width is not None:
+            container_width = size.width
+            table_size_columns = max(
+                1,
+                (container_width + gutter_horizontal)
+                // (min_column_width + gutter_horizontal),
+            )
+
+        table_size_columns = min(table_size_columns, len(children))
         table_size_rows = styles.grid_size_rows
         viewport = parent.screen.size
-        keyline_style, keyline_color = styles.keyline
+        keyline_style, _keyline_color = styles.keyline
         offset = (0, 0)
         gutter_spacing: Spacing | None
         if keyline_style == "none":
@@ -199,7 +214,13 @@ class GridLayout(Layout):
                         )
                 column_scalars[column] = Scalar.from_number(width)
 
-        columns = resolve(column_scalars, size.width, gutter_vertical, size, viewport)
+        columns = resolve(
+            column_scalars,
+            size.width,
+            gutter_vertical,
+            size,
+            viewport,
+        )
 
         # Handle any auto rows
         for row, scalar in enumerate(row_scalars):

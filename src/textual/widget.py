@@ -1417,7 +1417,7 @@ class Widget(DOMNode):
         """
 
         if self.is_container:
-            width = self._layout.get_content_width(self, container, viewport)
+            width = self.layout.get_content_width(self, container, viewport)
             return width
 
         cache_key = container.width
@@ -1451,8 +1451,8 @@ class Widget(DOMNode):
             The height of the content.
         """
         if self.is_container:
-            assert self._layout is not None
-            height = self._layout.get_content_height(
+            assert self.layout is not None
+            height = self.layout.get_content_height(
                 self,
                 container,
                 viewport,
@@ -2035,7 +2035,7 @@ class Widget(DOMNode):
         await self.app.animator.stop_animation(self, attribute, complete)
 
     @property
-    def _layout(self) -> Layout:
+    def layout(self) -> Layout:
         """Get the layout object if set in styles, or a default layout.
 
         Returns:
@@ -2245,6 +2245,14 @@ class Widget(DOMNode):
                 self.call_after_refresh(on_complete)
 
         return scrolled_x or scrolled_y
+
+    def pre_layout(self) -> None:
+        """This method id called prior to a layout operation.
+
+        Implement this method if you want to make updates that should impact
+        the layout.
+
+        """
 
     def scroll_to(
         self,
@@ -3683,7 +3691,7 @@ class Widget(DOMNode):
 
         if self.is_container:
             if self.styles.layout and self.styles.keyline[0] != "none":
-                return self._layout.render_keyline(self)
+                return self.layout.render_keyline(self)
             else:
                 return Blank(self.background_colors[1])
         return self.css_identifier_styled

@@ -90,7 +90,7 @@ def arrange(
 
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
-            layout_placements = widget._layout.arrange(
+            layout_placements = widget.layout.arrange(
                 widget,
                 layout_widgets,
                 dock_region.size,

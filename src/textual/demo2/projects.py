@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from textual import events, on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Grid, Horizontal, VerticalScroll
+from textual.containers import Grid, Horizontal, Vertical
 from textual.demo2.page import PageScreen
 from textual.widgets import Footer, Label, Static
 
@@ -44,25 +44,26 @@ class Link(Label):
         self.app.open_url(self.url)
 
 
-class Project(VerticalScroll, can_focus=True):
+class Project(Vertical, can_focus=True):
     ALLOW_MAXIMIZE = True
     DEFAULT_CSS = """
     Project {
         width: 1fr;
-        min-height: 8;
+        height: auto;      
         padding: 0 1;
         border: tall transparent;
-        opacity: 0.5;
+        opacity: 0.8;
 
         &:focus-within {
             border: tall $accent;
-            background: $boost;
+            background: $primary 40%;
             opacity: 1.0;
         }
         #title { text-style: bold; }
         .stars {
             color: $secondary;
             text-align: right;
+            text-style: bold;
             width: 1fr;
         }
         .header { height: 1; }
@@ -108,26 +109,28 @@ class Project(VerticalScroll, can_focus=True):
 class ProjectsScreen(PageScreen):
     DEFAULT_CSS = """
     ProjectsScreen {
-        layout: grid;
-        
+               
         margin: 1;
         Grid {
             margin: 1 2;
             padding: 1 2;
             background: $boost;
             width: 1fr;
-            height: 1fr;
+            height: auto;
             grid-size: 2; 
             grid-gutter: 1 1;
-            hatch: right $primary 50%;        
-            keyline:heavy $background;
+            hatch: right $accent 80%;        
+            keyline:heavy $secondary;
           
+        }
+        Placeholder {
+            height: auto;
         }
     }
     """
 
     def compose(self) -> ComposeResult:
-        with Grid():
+        with Grid(min_column_width=40):
             for project in PROJECTS:
                 yield Project(project)
         yield Footer()
