@@ -9,14 +9,14 @@ from rich.console import RenderableType
 
 from textual import _widget_navigation
 from textual.binding import Binding, BindingType
-from textual.containers import Container
+from textual.containers import VerticalScroll
 from textual.events import Click, Mount
 from textual.message import Message
 from textual.reactive import var
 from textual.widgets._radio_button import RadioButton
 
 
-class RadioSet(Container, can_focus=True, can_focus_children=False):
+class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
     """Widget for grouping a collection of radio buttons into a set.
 
     When a collection of [`RadioButton`][textual.widgets.RadioButton]s are
@@ -42,7 +42,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
      * ToggleButton. If those styles ever get updated, these should be too.
      */
 
-    RadioSet > * {
+    RadioSet > RadioButton {
         background: transparent;
         border: none;
         padding: 0 1;
@@ -188,6 +188,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         self.query(RadioButton).remove_class("-selected")
         if self._selected is not None:
             self._nodes[self._selected].add_class("-selected")
+            self._scroll_to_selected()
 
     def _on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
@@ -276,3 +277,9 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             button = self._nodes[self._selected]
             assert isinstance(button, RadioButton)
             button.toggle()
+
+    def _scroll_to_selected(self) -> None:
+        """Ensure that the selected button is in view."""
+        if self._selected is not None:
+            button = self._nodes[self._selected]
+            self.call_after_refresh(self.scroll_to_widget, button, animate=False)
