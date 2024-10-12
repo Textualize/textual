@@ -41,8 +41,8 @@ class GridLayout(Layout):
                 (container_width + gutter_horizontal)
                 // (min_column_width + gutter_horizontal),
             )
+            table_size_columns = min(table_size_columns, len(children))
 
-        table_size_columns = min(table_size_columns, len(children))
         table_size_rows = styles.grid_size_rows
         viewport = parent.screen.size
         keyline_style, _keyline_color = styles.keyline
@@ -272,8 +272,10 @@ class GridLayout(Layout):
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
             )
-            if column_span == 1 and row_span == 1:
-                height = cell_height
+            if len(children) > 1:
+                height = (
+                    height if height > cell_size.height else Fraction(cell_size.height)
+                )
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))
                 .crop_size(cell_size)

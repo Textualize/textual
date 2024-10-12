@@ -11,17 +11,101 @@ from textual.widgets import Footer, Label, Static
 @dataclass
 class ProjectInfo:
     title: str
+    author: str
     url: str
     description: str
+    stars: str
 
 
 PROJECTS = [
     ProjectInfo(
         "Posting",
+        "Darren Burns",
         "https://posting.sh/",
-        "Posting is a beautiful open-source terminal app for developing and testing APIs.",
-    )
-] * 5
+        """A powerful HTTP client that lives in your terminal.
+
+Posting is an HTTP client, not unlike Postman and Insomnia. As a TUI application, it can be used over SSH and enables efficient keyboard-centric workflows. """,
+        "4.7k",
+    ),
+    ProjectInfo(
+        "Memray",
+        "Bloomberg",
+        "https://github.com/bloomberg/memray",
+        """Memray is a memory profiler for Python. It can track memory allocations in Python code, in native extension modules, and in the Python interpreter itself. It can generate several different types of reports to help you analyze the captured memory usage data.""",
+        "13.2k",
+    ),
+    ProjectInfo(
+        "Toolong",
+        "Will McGugan",
+        "https://github.com/Textualize/toolong",
+        """A terminal application to view, tail, merge, and search log files (plus JSONL).""",
+        "3.1k",
+    ),
+    ProjectInfo(
+        "Dolphie",
+        "Charles Thompson",
+        "https://github.com/charles-001/dolphie",
+        "Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL",
+        "608",
+    ),
+    ProjectInfo(
+        "Harlequin",
+        "Ted Conbeer",
+        "https://harlequin.sh/",
+        """Portable, powerful, colorful.
+An easy, fast, and beautiful database client for the terminal.""",
+        "3.7k",
+    ),
+    ProjectInfo(
+        "Elia",
+        "Darren Burns",
+        "https://github.com/darrenburns/elia",
+        """A snappy, keyboard-centric terminal user interface for interacting with large language models.
+Chat with Claude 3, ChatGPT, and local models like Llama 3, Phi 3, Mistral and Gemma.""",
+        "1.8k",
+    ),
+    ProjectInfo(
+        "Trogon",
+        "Textualize",
+        "https://github.com/Textualize/trogon",
+        """Auto-generate friendly terminal user interfaces for command line apps.
+
+Trogon works with the popular Click library for Python, but will support other libraries and languages in the future.""",
+        "2.5k",
+    ),
+    ProjectInfo(
+        "TFTUI - The Terraform textual UI",
+        "Ido Avraham",
+        "https://github.com/idoavrah/terraform-tui",
+        "TFTUI is a powerful textual UI that empowers users to effortlessly view and interact with their Terraform state.",
+        "1k",
+    ),
+    ProjectInfo(
+        "RecoverPy",
+        "Pablo Lecolinet",
+        "https://github.com/PabloLec/RecoverPy",
+        """RecoverPy is a powerful tool that leverages your system capabilities to recover lost files.
+
+Unlike others, you can not only recover deleted files but also overwritten data.""",
+        "1.3k",
+    ),
+    ProjectInfo(
+        "Frogmouth",
+        "Dave Pearson",
+        "https://github.com/Textualize/frogmouth",
+        """Frogmouth is a Markdown viewer / browser for your terminal, built with Textual.
+
+Frogmouth can open *.md files locally or via a URL. There is a familiar browser-like navigation stack, history, bookmarks, and table of contents.""",
+        "2.5k",
+    ),
+    ProjectInfo(
+        "oterm",
+        "Yiorgis Gozadinos",
+        "https://github.com/ggozad/oterm",
+        "The text-based terminal client for Ollama.",
+        "1k",
+    ),
+]
 
 
 class Link(Label):
@@ -53,6 +137,7 @@ class Project(Vertical, can_focus=True):
         padding: 0 1;
         border: tall transparent;
         opacity: 0.8;
+        box-sizing: border-box;
 
         &:focus-within {
             border: tall $accent;
@@ -60,6 +145,7 @@ class Project(Vertical, can_focus=True):
             opacity: 1.0;
         }
         #title { text-style: bold; }
+        #author { text-style: italic; }
         .stars {
             color: $secondary;
             text-align: right;
@@ -92,7 +178,8 @@ class Project(Vertical, can_focus=True):
     def compose(self) -> ComposeResult:
         with Horizontal(classes="header"):
             yield Label(self.project_info.title, id="title")
-            yield Label("★ 23K", classes="stars")
+            yield Label(f"★ {self.project_info.stars}", classes="stars")
+        yield Label(self.project_info.author, id="author")
         yield Link(self.project_info.url)
         yield Static(self.project_info.description, classes="description")
 
@@ -110,15 +197,16 @@ class ProjectsScreen(PageScreen):
     DEFAULT_CSS = """
     ProjectsScreen {
                
-        margin: 1;
+        # margin: 1;
         Grid {
             margin: 1 2;
             padding: 1 2;
             background: $boost;
             width: 1fr;
             height: auto;
-            grid-size: 2; 
+            # grid-size: 2; 
             grid-gutter: 1 1;
+            grid-rows: auto;
             hatch: right $accent 80%;        
             keyline:heavy $secondary;
           

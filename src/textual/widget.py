@@ -3364,9 +3364,6 @@ class Widget(DOMNode):
 
     def watch_mouse_hover(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
-        for node in self.ancestors_with_self:
-            if isinstance(node, Widget):
-                node.mouse_hover_within = value
         if self._has_hover_style:
             self._update_styles()
 

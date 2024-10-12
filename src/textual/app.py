@@ -371,8 +371,7 @@ class App(Generic[ReturnType], DOMNode):
             overflow-y: auto !important;
             align: center middle;
             .-maximized {
-                dock: initial !important;
-                margin: 2 4;
+                dock: initial !important;                
             }
         }
         /* Fade the header title when app is blurred */
