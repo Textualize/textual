@@ -22,16 +22,14 @@ PROJECTS = [
         "Posting",
         "Darren Burns",
         "https://posting.sh/",
-        """A powerful HTTP client that lives in your terminal.
-
-Posting is an HTTP client, not unlike Postman and Insomnia. As a TUI application, it can be used over SSH and enables efficient keyboard-centric workflows. """,
+        """Posting is an HTTP client, not unlike Postman and Insomnia. As a TUI application, it can be used over SSH and enables efficient keyboard-centric workflows. """,
         "4.7k",
     ),
     ProjectInfo(
         "Memray",
         "Bloomberg",
         "https://github.com/bloomberg/memray",
-        """Memray is a memory profiler for Python. It can track memory allocations in Python code, in native extension modules, and in the Python interpreter itself. It can generate several different types of reports to help you analyze the captured memory usage data.""",
+        """Memray is a memory profiler for Python. It can track memory allocations in Python code, in native extension modules, and in the Python interpreter itself.""",
         "13.2k",
     ),
     ProjectInfo(
@@ -52,8 +50,7 @@ Posting is an HTTP client, not unlike Postman and Insomnia. As a TUI application
         "Harlequin",
         "Ted Conbeer",
         "https://harlequin.sh/",
-        """Portable, powerful, colorful.
-An easy, fast, and beautiful database client for the terminal.""",
+        """Portable, powerful, colorful. An easy, fast, and beautiful database client for the terminal.""",
         "3.7k",
     ),
     ProjectInfo(
@@ -68,9 +65,7 @@ Chat with Claude 3, ChatGPT, and local models like Llama 3, Phi 3, Mistral and G
         "Trogon",
         "Textualize",
         "https://github.com/Textualize/trogon",
-        """Auto-generate friendly terminal user interfaces for command line apps.
-
-Trogon works with the popular Click library for Python, but will support other libraries and languages in the future.""",
+        "Auto-generate friendly terminal user interfaces for command line apps.",
         "2.5k",
     ),
     ProjectInfo(
@@ -84,18 +79,14 @@ Trogon works with the popular Click library for Python, but will support other l
         "RecoverPy",
         "Pablo Lecolinet",
         "https://github.com/PabloLec/RecoverPy",
-        """RecoverPy is a powerful tool that leverages your system capabilities to recover lost files.
-
-Unlike others, you can not only recover deleted files but also overwritten data.""",
+        """RecoverPy is a powerful tool that leverages your system capabilities to recover lost files.""",
         "1.3k",
     ),
     ProjectInfo(
         "Frogmouth",
         "Dave Pearson",
         "https://github.com/Textualize/frogmouth",
-        """Frogmouth is a Markdown viewer / browser for your terminal, built with Textual.
-
-Frogmouth can open *.md files locally or via a URL. There is a familiar browser-like navigation stack, history, bookmarks, and table of contents.""",
+        """Frogmouth is a Markdown viewer / browser for your terminal, built with Textual.""",
         "2.5k",
     ),
     ProjectInfo(
@@ -104,6 +95,20 @@ Frogmouth can open *.md files locally or via a URL. There is a familiar browser-
         "https://github.com/ggozad/oterm",
         "The text-based terminal client for Ollama.",
         "1k",
+    ),
+    ProjectInfo(
+        "logmerger",
+        "Paul McGuire",
+        "https://github.com/ptmcg/logmerger",
+        "logmerger is a TUI for viewing a merged display of multiple log files, merged by timestamp.",
+        "162",
+    ),
+    ProjectInfo(
+        "doit",
+        "Murli Tawari",
+        "https://github.com/kraanzu/dooit",
+        "A todo manager that you didn't ask for, but needed!",
+        "2.1k",
     ),
 ]
 
@@ -138,7 +143,6 @@ class Project(Vertical, can_focus=True):
         border: tall transparent;
         opacity: 0.8;
         box-sizing: border-box;
-
         &:focus-within {
             border: tall $accent;
             background: $primary 40%;
@@ -176,12 +180,13 @@ class Project(Vertical, can_focus=True):
         super().__init__()
 
     def compose(self) -> ComposeResult:
+        info = self.project_info
         with Horizontal(classes="header"):
-            yield Label(self.project_info.title, id="title")
-            yield Label(f"★ {self.project_info.stars}", classes="stars")
-        yield Label(self.project_info.author, id="author")
-        yield Link(self.project_info.url)
-        yield Static(self.project_info.description, classes="description")
+            yield Label(info.title, id="title")
+            yield Label(f"★ {info.stars}", classes="stars")
+        yield Label(info.author, id="author")
+        yield Link(info.url)
+        yield Static(info.description, classes="description")
 
     @on(events.Enter)
     @on(events.Leave)
@@ -195,24 +200,17 @@ class Project(Vertical, can_focus=True):
 
 class ProjectsScreen(PageScreen):
     DEFAULT_CSS = """
-    ProjectsScreen {
-               
-        # margin: 1;
+    ProjectsScreen {                       
         Grid {
             margin: 1 2;
             padding: 1 2;
             background: $boost;
             width: 1fr;
-            height: auto;
-            # grid-size: 2; 
+            height: auto;            
             grid-gutter: 1 1;
             grid-rows: auto;
             hatch: right $accent 80%;        
-            keyline:heavy $secondary;
-          
-        }
-        Placeholder {
-            height: auto;
+            keyline:heavy $secondary;        
         }
     }
     """
