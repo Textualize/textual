@@ -340,9 +340,6 @@ class Widget(DOMNode):
     mouse_hover: Reactive[bool] = Reactive(False, repaint=False)
     """Is the mouse over this widget? Read only."""
 
-    mouse_hover_within: Reactive[bool] = Reactive(False, repaint=False)
-    """Is the mouse over this widget or a descendant? Read only."""
-
     scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
     """The scroll position on the X axis."""
 
@@ -3270,8 +3267,6 @@ class Widget(DOMNode):
         app = self.app
         if self.mouse_hover:
             yield "hover"
-        if self.mouse_hover_within:
-            yield "hover-within"
         if self.has_focus:
             yield "focus"
         else:

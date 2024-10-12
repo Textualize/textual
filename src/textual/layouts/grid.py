@@ -272,6 +272,8 @@ class GridLayout(Layout):
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
             )
+            if column_span == 1 and row_span == 1:
+                height = cell_height
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))
                 .crop_size(cell_size)
