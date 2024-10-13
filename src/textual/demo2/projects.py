@@ -3,19 +3,30 @@ from dataclasses import dataclass
 from textual import events, on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Horizontal, ItemGrid, Vertical
+from textual.containers import Center, Horizontal, ItemGrid, Vertical, VerticalScroll
 from textual.demo2.page import PageScreen
-from textual.widgets import Footer, Label, Link, Static
+from textual.widgets import Footer, Label, Link, Markdown, Static
 
 
 @dataclass
 class ProjectInfo:
+    """Dataclass for storing project information."""
+
     title: str
     author: str
     url: str
     description: str
     stars: str
 
+
+PROJECTS_MD = """\
+# Projects
+
+There are many amazing Open Source Textual apps available for download.
+And many more still in development.
+
+See below for a small selection!
+"""
 
 PROJECTS = [
     ProjectInfo(
@@ -179,8 +190,10 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
 
 
 class ProjectsScreen(PageScreen):
+    AUTO_FOCUS = None
     DEFAULT_CSS = """
-    ProjectsScreen {                       
+    ProjectsScreen { 
+        align-horizontal: center;                      
         ItemGrid {
             margin: 1 2;
             padding: 1 2;
@@ -192,11 +205,17 @@ class ProjectsScreen(PageScreen):
             hatch: right $accent 80%;        
             keyline:heavy $secondary;        
         }
+        Markdown {
+            max-width: 80;
+        }
     }
     """
 
     def compose(self) -> ComposeResult:
-        with ItemGrid(min_column_width=40):
-            for project in PROJECTS:
-                yield Project(project)
+        with VerticalScroll():
+            with Center():
+                yield Markdown(PROJECTS_MD)
+            with ItemGrid(min_column_width=40):
+                for project in PROJECTS:
+                    yield Project(project)
         yield Footer()
