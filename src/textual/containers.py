@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 from textual.binding import Binding, BindingType
+from textual.layout import Layout
 from textual.layouts.grid import GridLayout
 from textual.reactive import reactive
 from textual.widget import Widget
@@ -158,6 +159,19 @@ class Grid(Widget, inherit_bindings=False):
     }
     """
 
+
+class ItemGrid(Widget, inherit_bindings=False):
+    """A container with grid layout."""
+
+    DEFAULT_CSS = """
+    ItemGrid {
+        width: 1fr;
+        height: 1fr;
+        layout: grid;
+    }
+    """
+
+    stretch_height: reactive[bool] = reactive(True)
     min_column_width: reactive[int | None] = reactive(None, layout=True)
 
     def __init__(
@@ -168,6 +182,7 @@ class Grid(Widget, inherit_bindings=False):
         classes: str | None = None,
         disabled: bool = False,
         min_column_width: int | None = None,
+        stretch_height: bool = True,
     ) -> None:
         """Initialize a Widget.
 
@@ -181,10 +196,10 @@ class Grid(Widget, inherit_bindings=False):
         super().__init__(
             *children, name=name, id=id, classes=classes, disabled=disabled
         )
-        self.min_column_width = min_column_width
+        self.set_reactive(ItemGrid.stretch_height, stretch_height)
+        self.set_reactive(ItemGrid.min_column_width, min_column_width)
 
-    def pre_layout(self) -> None:
-        if isinstance(self.layout, GridLayout):
-            if self.layout.min_column_width != self.min_column_width:
-                self.layout.min_column_width = self.min_column_width
-                self.refresh(layout=True)
+    def pre_layout(self, layout: Layout) -> None:
+        if isinstance(layout, GridLayout):
+            layout.stretch_height = self.stretch_height
+            layout.min_column_width = self.min_column_width

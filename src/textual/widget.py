@@ -52,7 +52,6 @@ from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
-from textual._layout import Layout
 from textual._segment_tools import align_lines
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
@@ -76,6 +75,7 @@ from textual.geometry import (
     Spacing,
     clamp,
 )
+from textual.layout import Layout
 from textual.layouts.vertical import VerticalLayout
 from textual.message import Message
 from textual.messages import CallbackType, Prune
@@ -2243,11 +2243,14 @@ class Widget(DOMNode):
 
         return scrolled_x or scrolled_y
 
-    def pre_layout(self) -> None:
+    def pre_layout(self, layout: Layout) -> None:
         """This method id called prior to a layout operation.
 
         Implement this method if you want to make updates that should impact
         the layout.
+
+        Args:
+            layout: The [Layout][textual.layout.Layout] instance that will be used to arrange this widget's children.
 
         """
 

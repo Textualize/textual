@@ -3,10 +3,10 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING, Iterable
 
-from textual._layout import ArrangeResult, Layout, WidgetPlacement
 from textual._resolve import resolve
 from textual.css.scalar import Scalar
 from textual.geometry import Region, Size, Spacing
+from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from textual.widget import Widget
@@ -19,11 +19,12 @@ class GridLayout(Layout):
 
     def __init__(self) -> None:
         self.min_column_width: int | None = None
+        self.stretch_height: bool = False
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
-        parent.pre_layout()
+        parent.pre_layout(self)
         styles = parent.styles
         row_scalars = styles.grid_rows or (
             [Scalar.parse("1fr")] if size.height else [Scalar.parse("auto")]
@@ -272,9 +273,11 @@ class GridLayout(Layout):
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
             )
-            if len(children) > 1:
+            if self.stretch_height and len(children) > 1:
                 height = (
-                    height if height > cell_size.height else Fraction(cell_size.height)
+                    height
+                    if (height > cell_size.height)
+                    else Fraction(cell_size.height)
                 )
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))

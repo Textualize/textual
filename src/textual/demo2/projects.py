@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from textual import events, on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Grid, Horizontal, Vertical
+from textual.containers import Horizontal, ItemGrid, Vertical
 from textual.demo2.page import PageScreen
-from textual.widgets import Footer, Label, Static
+from textual.widgets import Footer, Label, Link, Static
 
 
 @dataclass
@@ -113,27 +113,7 @@ Chat with Claude 3, ChatGPT, and local models like Llama 3, Phi 3, Mistral and G
 ]
 
 
-class Link(Label):
-    """The link in the Project widget."""
-
-    DEFAULT_CSS = """
-    Link {
-        color: $accent;
-        text-style: underline;
-        &:hover { text-style: reverse;}
-    }
-    """
-
-    def __init__(self, url: str) -> None:
-        super().__init__(url)
-        self.url = url
-        self.tooltip = "Click to open Repository URL"
-
-    def on_click(self) -> None:
-        self.app.open_url(self.url)
-
-
-class Project(Vertical, can_focus=True):
+class Project(Vertical, can_focus=True, can_focus_children=False):
     ALLOW_MAXIMIZE = True
     DEFAULT_CSS = """
     Project {
@@ -143,7 +123,7 @@ class Project(Vertical, can_focus=True):
         border: tall transparent;
         opacity: 0.8;
         box-sizing: border-box;
-        &:focus-within {
+        &:focus {
             border: tall $accent;
             background: $primary 40%;
             opacity: 1.0;
@@ -185,7 +165,7 @@ class Project(Vertical, can_focus=True):
             yield Label(info.title, id="title")
             yield Label(f"★ {info.stars}", classes="stars")
         yield Label(info.author, id="author")
-        yield Link(info.url)
+        yield Link(info.url, tooltip="Click to open project repository")
         yield Static(info.description, classes="description")
 
     @on(events.Enter)
@@ -201,7 +181,7 @@ class Project(Vertical, can_focus=True):
 class ProjectsScreen(PageScreen):
     DEFAULT_CSS = """
     ProjectsScreen {                       
-        Grid {
+        ItemGrid {
             margin: 1 2;
             padding: 1 2;
             background: $boost;
@@ -216,7 +196,7 @@ class ProjectsScreen(PageScreen):
     """
 
     def compose(self) -> ComposeResult:
-        with Grid(min_column_width=40):
+        with ItemGrid(min_column_width=40):
             for project in PROJECTS:
                 yield Project(project)
         yield Footer()

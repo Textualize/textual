@@ -34,7 +34,6 @@ from textual._arrange import arrange
 from textual._callback import invoke
 from textual._compositor import Compositor, MapGeometry
 from textual._context import active_message_pump, visible_screen_stack
-from textual._layout import DockArrangeResult
 from textual._path import (
     CSSPathType,
     _css_path_type_as_list,
@@ -50,6 +49,7 @@ from textual.dom import DOMNode
 from textual.errors import NoWidget
 from textual.geometry import Offset, Region, Size
 from textual.keys import key_to_character
+from textual.layout import DockArrangeResult
 from textual.reactive import Reactive
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
@@ -1205,8 +1205,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
+        self._compositor_refresh()
         self._refresh_layout(size)
-        self.refresh()
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""

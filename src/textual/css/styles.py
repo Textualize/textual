@@ -69,9 +69,9 @@ from textual.css.types import (
 from textual.geometry import Offset, Spacing
 
 if TYPE_CHECKING:
-    from textual._layout import Layout
     from textual.css.types import CSSLocation
     from textual.dom import DOMNode
+    from textual.layout import Layout
 
 
 class RulesMap(TypedDict, total=False):

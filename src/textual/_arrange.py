@@ -5,9 +5,9 @@ from fractions import Fraction
 from operator import attrgetter
 from typing import TYPE_CHECKING, Iterable, Mapping, Sequence
 
-from textual._layout import DockArrangeResult, WidgetPlacement
 from textual._partition import partition
 from textual.geometry import Region, Size, Spacing
+from textual.layout import DockArrangeResult, WidgetPlacement
 
 if TYPE_CHECKING:
     from textual.widget import Widget
