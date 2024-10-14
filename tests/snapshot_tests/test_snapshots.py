@@ -2339,6 +2339,10 @@ def test_background_tint(snap_compare):
 
 
 def test_fr_and_margin(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5116"""
+
+    # Check margins can be independently applied to widgets with fr unites
+
     class FRApp(App):
         CSS = """
         #first-container {            
