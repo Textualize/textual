@@ -41,7 +41,7 @@ This example shows background tint applied with alpha from 0 to 100%.
 
 === "background.tcss"
 
-    ```css hl_lines="9 13 17"
+    ```css hl_lines="5-9"
     --8<-- "docs/examples/styles/background_tint.tcss"
     ```
 
