@@ -2311,3 +2311,28 @@ def test_maximize_allow(snap_compare):
             yield Footer()  # Not allowed
 
     assert snap_compare(MaximizeApp(), press=["m"])
+
+
+def test_background_tint(snap_compare):
+    class BackgroundTintApp(App):
+        CSS = """
+        Vertical {
+            background: $panel;
+        }
+        #tint1 { background-tint: $foreground 0%; }
+        #tint2 { background-tint: $foreground 33%; }
+        #tint3 { background-tint: $foreground 66%; }
+        #tint4 { background-tint: $foreground 100% }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="tint1"):
+                yield Label("0%")
+            with Vertical(id="tint2"):
+                yield Label("33%")
+            with Vertical(id="tint3"):
+                yield Label("66%")
+            with Vertical(id="tint4"):
+                yield Label("100%")
+
+    assert snap_compare(BackgroundTintApp())
