@@ -58,6 +58,10 @@ class ToggleButton(Static, can_focus=True):
         border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
+
+        & > .toggle--button {
+            color: $surface;
+        }
     }
 
     ToggleButton:focus {
