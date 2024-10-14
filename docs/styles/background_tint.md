@@ -64,7 +64,7 @@ You can use the same syntax as CSS, or explicitly set a `Color` object for finer
 
 ```python
 # Set 20% blue background tint
-widget.styles.background = "blue 20%"
+widget.styles.background_tint = "blue 20%"
 
 from textual.color import Color
 # Set with a color object
