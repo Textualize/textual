@@ -63,6 +63,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             * ToggleButton. If those styles ever get updated, these should be too.
             */
             border: tall $border;
+            background-tint: $foreground 5%;
 
             & > RadioButton.-selected {
                 color: $text;

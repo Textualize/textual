@@ -628,10 +628,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 color: $surface-darken-1;
             }
             & > .tree--guides-hover {
-                color: $surface-darken-2;
+                color: $highlight-cursor;
             }
             & > .tree--guides-selected {
-                color: $surface-darken-2;
+                color: $highlight-cursor;
             }
         }
 
