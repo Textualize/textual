@@ -134,7 +134,7 @@ class ColorSystem:
 
         colors: dict[str, str] = {}
 
-        def luminosity_range(spread) -> Iterable[tuple[str, float]]:
+        def luminosity_range(spread: float) -> Iterable[tuple[str, float]]:
             """Get the range of shades from darken2 to lighten2.
 
             Returns:
@@ -211,6 +211,11 @@ class ColorSystem:
         # which gives a subtle highlight behind the option under the mouse
         # cursor is under.
         colors["highlight-hover"] = boost.with_alpha(0.05).hex
+
+        # The surface color for builtin focused widgets
+        # Use half the luminosity spread in order to land half-way between
+        # surface and the surface-lighten-1 shade.
+        colors["surface-active"] = surface.lighten(self.luminosity_spread / 3.5).hex
 
         return colors
 
