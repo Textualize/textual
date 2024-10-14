@@ -191,13 +191,6 @@ class ToggleButton(Static, can_focus=True):
         # Grab the button style.
         button_style = self.get_component_rich_style("toggle--button")
 
-        # If the button is off, we're going to do a bit of a switcharound to
-        # make it look like it's a "cutout".
-        if not self.value:
-            button_style += Style.from_color(
-                self.background_colors[1].rich_color, button_style.bgcolor
-            )
-
         # Building the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
         # BUTTON_LEFT and BUTTON_RIGHT.
