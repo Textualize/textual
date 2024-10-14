@@ -75,7 +75,7 @@ class ToggleButton(Static, can_focus=True):
             }
         }
 
-        ToggleButton:hover {
+        &:hover {
             background: $highlight-hover;
         }
     }
