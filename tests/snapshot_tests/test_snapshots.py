@@ -2359,6 +2359,7 @@ def test_fr_and_margin(snap_compare):
         #third-container {
             margin: 4;
             background: blue;
+            height: auto;
         }
         """
 
@@ -2369,7 +2370,7 @@ def test_fr_and_margin(snap_compare):
             with Container(id="second-container"):
                 yield Label("A margin of 2, should be 2 cells around the text")
 
-            with Center(id="third-container"):
+            with Container(id="third-container"):
                 yield Label("A margin of 4, should be 4 cells around the text")
 
     assert snap_compare(FRApp())
