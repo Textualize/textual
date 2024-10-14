@@ -205,22 +205,27 @@ class Tabs(Widget, can_focus=True):
     Tabs {
         width: 100%;
         height: 3;
-    }
-    Tabs > #tabs-scroll {
-        overflow: hidden;
-    }
-    Tabs #tabs-list {
-       width: auto;
-       min-height: 2;
-    }
-    Tabs #tabs-list-bar, Tabs #tabs-list {
-        width: auto;
-        height: auto;
-        min-width: 100%;
-        overflow: hidden hidden;
-    }
-    Tabs:focus .underline--bar {
-        background: $foreground 20%;
+
+        &:focus {
+            .underline--bar {
+                background: $foreground 20%;
+            }
+        }
+
+        & > #tabs-scroll {
+            overflow: hidden;
+        }
+
+        #tabs-list {
+            width: auto;
+            min-height: 2;            
+        }
+        #tabs-list-bar, #tabs-list {
+            width: auto;
+            height: auto;
+            min-width: 100%;
+            overflow: hidden hidden;
+        }
     }
     """
 
