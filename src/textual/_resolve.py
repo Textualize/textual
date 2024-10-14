@@ -203,6 +203,8 @@ def resolve_box_models(
     fraction_zero = Fraction(0)
     margin_size = size - margin
 
+    margins = [widget.styles.margin.totals for widget in widgets]
+
     # Fixed box models
     box_models: list[BoxModel | None] = [
         (
@@ -211,11 +213,13 @@ def resolve_box_models(
             else widget._get_box_model(
                 size,
                 viewport_size,
-                max(fraction_zero, fraction_width - widget.styles.margin.width),
-                max(fraction_zero, fraction_height - widget.styles.margin.height),
+                max(fraction_zero, fraction_width - margin_width),
+                max(fraction_zero, fraction_height - margin_height),
             )
         )
-        for (_dimension, widget) in zip(dimensions, widgets)
+        for (_dimension, widget, (margin_width, margin_height)) in zip(
+            dimensions, widgets, margins
+        )
     ]
 
     if None not in box_models:
