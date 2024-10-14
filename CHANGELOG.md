@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `RadioSet` not being scrollable https://github.com/Textualize/textual/issues/5100
 
+### Added
+
+- Added `background-tint` CSS rule
+
 ## [0.83.0] - 2024-10-10
 
 ### Added
