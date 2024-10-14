@@ -8,27 +8,28 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
-from textual.containers import Center, Grid, Middle, Vertical
-from textual.binding import Binding
-from textual.containers import Vertical, VerticalScroll
+from textual.containers import Center, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
-    Header,
     DataTable,
-    Input,
-    RichLog,
-    TextArea,
     Footer,
+    Header,
+    Input,
+    Label,
     Log,
     OptionList,
     Placeholder,
+    ProgressBar,
+    RadioSet,
+    RichLog,
     SelectionList,
+    Static,
+    Switch,
+    TextArea,
 )
-from textual.widgets import ProgressBar, Label, Switch
-from textual.widgets import Static
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -329,6 +330,23 @@ def test_radio_button_example(snap_compare):
 
 def test_radio_set_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "radio_set.py")
+
+
+def test_radio_set_is_scrollable(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5100"""
+
+    class RadioSetApp(App):
+        CSS = """
+        RadioSet {
+            height: 5;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield RadioSet(*[(f"This is option #{n}") for n in range(10)])
+
+    app = RadioSetApp()
+    assert snap_compare(app, press=["up"])
 
 
 def test_content_switcher_example_initial(snap_compare):
@@ -652,7 +670,8 @@ def test_richlog_width(snap_compare):
 def test_richlog_min_width(snap_compare):
     """The available space of this RichLog is less than the minimum width, so written
     content should be rendered at `min_width`. This snapshot should show the renderable
-    clipping at the right edge, as there's not enough space to satisfy the minimum width."""
+    clipping at the right edge, as there's not enough space to satisfy the minimum width.
+    """
 
     class RichLogMinWidth20(App[None]):
         def compose(self) -> ComposeResult:
