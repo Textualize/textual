@@ -228,7 +228,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         & > SelectOverlay {
             width: 1fr;
-            background: $panel;
             display: none;
             height: auto;
             max-height: 12;

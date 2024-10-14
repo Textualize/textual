@@ -62,30 +62,32 @@ class ToggleButton(Static, can_focus=True):
         & > .toggle--button {
             color: $surface;
         }
+
+        &:focus {
+            border: tall $border;
+            background-tint: $foreground 5%;
+            & > .toggle--label {
+                color: $text;
+                background: $highlight-cursor;
+            }
+            & > .toggle--button {
+                background: $foreground 25%;
+            }
+        }
+
+        ToggleButton:hover {
+            background: $highlight-hover;
+        }
     }
 
-    ToggleButton:focus {
-        border: tall $border;
-    }
 
-    ToggleButton:hover {
-        background: $highlight-hover;
-    }
 
-    ToggleButton:focus > .toggle--label {
-        color: $text;
-        background: $highlight-cursor;
-    }
 
     /* Base button colors (including in dark mode). */
 
     ToggleButton > .toggle--button {
         text-style: bold;
         background: $foreground 15%;
-    }
-
-    ToggleButton:focus > .toggle--button {
-        background: $foreground 25%;
     }
 
     ToggleButton.-on > .toggle--button {
