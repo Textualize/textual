@@ -32,7 +32,7 @@ class Underline(Widget):
         height: 1;
         & > .underline--bar {
             background: $foreground 10%;
-            color: $accent;
+            color: $highlight-cursor-blurred;
         }
     }
     """
@@ -94,10 +94,10 @@ class Tab(Static):
         height: 2;
         padding: 1 1 0 2;
         text-align: center;
-        color: $text-disabled;
+        color: $text-muted 50%;
 
         &:hover {
-            text-style: bold;
+            color: $text;
         }
         &:disabled {
             color: $text-disabled;
@@ -106,8 +106,6 @@ class Tab(Static):
 
         &.-active {
             color: $text;
-            text-style: bold;
-
             &:hover {
                 color: $text;
             }
@@ -208,7 +206,8 @@ class Tabs(Widget, can_focus=True):
 
         &:focus {
             .underline--bar {
-                background: $foreground 20%;
+                color: $highlight-cursor;
+                background: $foreground 30%;
             }
         }
 
