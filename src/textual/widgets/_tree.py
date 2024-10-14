@@ -607,7 +607,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         }
 
         &:focus {
-            background: $surface-active;
+            background-tint: $foreground 5%;
             & > .tree--cursor {
                 background: $highlight-cursor;
             }

@@ -70,6 +70,7 @@ class Switch(Widget, can_focus=True):
         }
         &:focus {
             border: tall $border;
+            background-tint: $foreground 5%;
         }
         &:light {
             & > .switch--slider {

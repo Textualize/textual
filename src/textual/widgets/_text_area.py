@@ -118,6 +118,7 @@ TextArea {
 
     &:focus {
         border: tall $accent;
+        background-tint: $foreground 5%;
     }
 
     &:dark {

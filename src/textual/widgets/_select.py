@@ -47,14 +47,14 @@ class SelectOverlay(OptionList):
 
     DEFAULT_CSS = """
     SelectOverlay {
-        border: tall $background;
-        background: $panel;
+        border: tall $border-blurred;
+        background: $surface;
         color: $text;
         width: 100%;
         padding: 0 1;
     }
     SelectOverlay:focus {
-        border: tall $background;
+        background-tint: $foreground 5%;
     }
     SelectOverlay > .option-list--option {
         padding: 0 1;
@@ -222,7 +222,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         }
 
         &:focus {
-            background: $surface-active;
+            background-tint: $foreground 5%;
             border: tall $border;
         }
 
@@ -237,7 +237,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
             &:focus {
                 border: tall $border;
-                background: $surface-active;
+                background-tint: $foreground 5%;
             }
         }
 

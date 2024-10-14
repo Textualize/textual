@@ -320,6 +320,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         height: auto;
         max-height: 100%;
 
+        &:focus {
+            background-tint: $foreground 5%;
+            & > .datatable--cursor {
+                background: $highlight-cursor;
+                color: $text;
+            }
+        }
+
         &:dark {
             background: $surface;
             & > .datatable--even-row {
@@ -348,11 +356,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         & > .datatable--cursor {
             background: $highlight-cursor-blurred;
-            color: $text;
-        }
-
-        &:focus > .datatable--cursor {
-            background: $highlight-cursor;
             color: $text;
         }
 

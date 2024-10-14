@@ -155,6 +155,7 @@ class Input(Widget, can_focus=True):
 
         &:focus {
             border: tall $border;
+            background-tint: $foreground 5%;
         }
         &>.input--cursor {
             background: $surface;

@@ -144,41 +144,36 @@ class OptionList(ScrollView, can_focus=True):
         border: tall transparent;
         padding: 0 1;
         background: $surface;
-    }
+        
+        &:focus {
+            border: tall $border;
+            background-tint: $foreground 5%;
+            & > .option-list--option-highlighted {
+                background: $highlight-cursor;
+            }
+        }
 
-    OptionList:focus {
-        border: tall $border;
-    }
-
-    OptionList > .option-list--separator {
-        color: $foreground 15%;
-    }
-
-    OptionList > .option-list--option-highlighted {
-        color: $text;
-        background: $highlight-cursor-blurred;
-    }
-
-    OptionList:focus > .option-list--option-highlighted {
-        background: $highlight-cursor;
-    }
-
-    OptionList > .option-list--option-disabled {
-        color: $text-disabled;
-    }
-
-    OptionList > .option-list--option-hover {
-        background: $highlight-hover;
-    }
-
-    OptionList > .option-list--option-hover-highlighted {
-        background: $accent 60%;
-        color: $text;
-    }
-
-    OptionList:focus > .option-list--option-hover-highlighted {
-        background: $accent;
-        color: $text;
+        & > .option-list--option-hover-highlighted {
+            background: $accent;
+            color: $text;
+        }
+        & > .option-list--separator {
+            color: $foreground 15%;
+        }
+        & > .option-list--option-highlighted {
+            color: $text;
+            background: $highlight-cursor-blurred;
+        }
+        & > .option-list--option-disabled {
+            color: $text-disabled;
+        }
+        & > .option-list--option-hover {
+            background: $highlight-hover;
+        }
+        & > .option-list--option-hover-highlighted {
+            background: $accent 60%;
+            color: $text;
+        }
     }
     """
 
