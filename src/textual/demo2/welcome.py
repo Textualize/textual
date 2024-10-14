@@ -53,6 +53,7 @@ class StarCount(Vertical):
     @work
     async def get_stars(self):
         """Worker to get stars from GitHub API."""
+        self.loading = True
         try:
             async with httpx.AsyncClient() as client:
                 repository_json = (
@@ -74,23 +75,18 @@ class StarCount(Vertical):
             yield Digits(version("textual"))
         with Horizontal(id="stars"):
             yield Label("GitHub ★")
-            yield Digits(f"{self.stars / 1000:.1f}K").with_tooltip(
-                f"{self.stars} GitHub stars"
-            )
+            stars = f"{self.stars / 1000:.1f}K"
+            yield Digits(stars).with_tooltip(f"{self.stars} GitHub stars")
         with Horizontal(id="forks"):
             yield Label("Forks")
             yield Digits(str(self.forks)).with_tooltip(f"{self.forks} Forks")
 
-    def update_stars(self) -> None:
-        self.loading = True
-        self.get_stars()
-
     def on_mount(self) -> None:
         self.tooltip = "Click to refresh"
-        self.update_stars()
+        self.get_stars()
 
     def on_click(self) -> None:
-        self.update_stars()
+        self.get_stars()
 
 
 class WelcomeScreen(PageScreen):
@@ -109,7 +105,6 @@ class WelcomeScreen(PageScreen):
 
     def compose(self) -> ComposeResult:
         yield StarCount()
-
         with Center():
             yield Markdown(WHAT_IS_TEXTUAL_MD)
         yield Footer()
