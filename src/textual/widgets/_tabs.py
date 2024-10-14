@@ -95,23 +95,26 @@ class Tab(Static):
         padding: 1 1 0 2;
         text-align: center;
         color: $text-disabled;
-    }
-    Tab.-active {
-        text-style: bold;
-        color: $text;
-    }
-    Tab:hover {
-        text-style: bold;
-    }
-    Tab.-active:hover {
-        color: $text;
-    }
-    Tab:disabled {
-        color: $text-disabled;
-        text-opacity: 50%;
-    }
-    Tab.-hidden {
-        display: none;
+
+        &:hover {
+            text-style: bold;
+        }
+        &:disabled {
+            color: $text-disabled;
+            text-opacity: 50%;
+        }
+
+        &.-active {
+            color: $text;
+            text-style: bold;
+
+            &:hover {
+                color: $text;
+            }
+        }
+        &.-hidden {
+            display: none;
+        }
     }
     """
 
