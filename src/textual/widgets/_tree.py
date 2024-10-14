@@ -639,7 +639,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             background: ansi_default;
             color: ansi_default;
             & > .tree--guides {
-                color: green;
+                color: ansi_green;
             }
             & > .tree--guides-hover {
                 color: ansi_blue;
@@ -652,7 +652,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             & > .tree--cursor {
                 background: ansi_bright_blue;
                 color: ansi_default;
-                text-style: none;                   
+                text-style: none;
             }
             &:nocolor > .tree--cursor{
                 text-style: reverse;
