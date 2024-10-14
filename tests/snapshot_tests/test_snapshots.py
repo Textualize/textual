@@ -8,7 +8,7 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
-from textual.containers import Center, Grid, Middle, Vertical, VerticalScroll
+from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
@@ -2336,3 +2336,36 @@ def test_background_tint(snap_compare):
                 yield Label("100%")
 
     assert snap_compare(BackgroundTintApp())
+
+
+def test_fr_and_margin(snap_compare):
+    class FRApp(App):
+        CSS = """
+        #first-container {            
+            background: green;
+            height: auto;
+        }
+
+        #second-container {
+            margin: 2;
+            background: red;
+            height: auto;        
+        }
+
+        #third-container {
+            margin: 4;
+            background: blue;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container(id="first-container"):
+                yield Label("No margin - should extend to left and right")
+
+            with Container(id="second-container"):
+                yield Label("A margin of 2, should be 2 cells around the text")
+
+            with Center(id="third-container"):
+                yield Label("A margin of 4, should be 4 cells around the text")
+
+    assert snap_compare(FRApp())
