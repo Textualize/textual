@@ -137,7 +137,7 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         &:focus {
             border: tall $accent;
             background: $primary 40%;
-            opacity: 1.0;
+            opacity: 1.0;            
         }
         #title { text-style: bold; }
         #author { text-style: italic; }
@@ -195,19 +195,16 @@ class ProjectsScreen(PageScreen):
     ProjectsScreen { 
         align-horizontal: center;                      
         ItemGrid {
-            margin: 1 2;
+            margin: 2 4;
             padding: 1 2;
             background: $boost;
             width: 1fr;
             height: auto;            
             grid-gutter: 1 1;
-            grid-rows: auto;
-            hatch: right $accent 80%;        
-            keyline:heavy $secondary;        
+            grid-rows: auto;           
+            keyline:thin $foreground 50%;        
         }
-        Markdown {
-            max-width: 80;
-        }
+        Markdown { max-width: 80; }
     }
     """
 

@@ -214,6 +214,8 @@ class Layout(ABC):
         canvas = Canvas(width, height)
 
         line_style, keyline_color = container.styles.keyline
+        if keyline_color:
+            keyline_color = container.background_colors[0] + keyline_color
 
         container_offset = container.content_region.offset
 

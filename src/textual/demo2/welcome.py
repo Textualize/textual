@@ -10,13 +10,18 @@ from textual.reactive import reactive
 from textual.widgets import Digits, Footer, Label, Markdown
 
 WHAT_IS_TEXTUAL_MD = """\
-### Turbo charge your developers!
+# What is Textual?
+
+**The fastest way to build sophisticated data applications that run *anywhere*.**
+
+Textual apps can run on virtually anything from a $5 single-board computer upwards.
+Deploy as a terminal application, over SSH, or serve as a web application [web application](https://github.com/Textualize/textual-web).
+
+
 
 * Build sophisticated applications — fast!
 * No front-end skills required.
 * Elegant Python API from the developer of [Rich](https://github.com/Textualize/rich).
-
-
 * Deploy Textual as a terminal application, over SSH, *or* a [web application](https://github.com/Textualize/textual-web)!
 """
 
@@ -37,6 +42,9 @@ class StarCount(Vertical):
         Label { text-style: bold; }
         LoadingIndicator { background: transparent !important; }
         Digits { margin-right: 1; }
+        Label { margin-right: 1; }
+        #stars { align: center middle; }
+        #forks { align: right middle; }
     }
     """
     stars = reactive(25251, recompose=True)
@@ -61,19 +69,24 @@ class StarCount(Vertical):
         self.loading = False
 
     def compose(self) -> ComposeResult:
-        with Horizontal():
-            yield Label("GitHub ★ ")
+        with Horizontal(id="version"):
+            yield Label("Version")
+            yield Digits(version("textual"))
+        with Horizontal(id="stars"):
+            yield Label("GitHub ★")
             yield Digits(f"{self.stars / 1000:.1f}K").with_tooltip(
                 f"{self.stars} GitHub stars"
             )
-            yield Label("Forks ")
+        with Horizontal(id="forks"):
+            yield Label("Forks")
             yield Digits(str(self.forks)).with_tooltip(f"{self.forks} Forks")
 
     def update_stars(self) -> None:
         self.loading = True
-        self.call_later(self.get_stars)
+        self.get_stars()
 
     def on_mount(self) -> None:
+        self.tooltip = "Click to refresh"
         self.update_stars()
 
     def on_click(self) -> None:
@@ -86,7 +99,7 @@ class WelcomeScreen(PageScreen):
         align: center middle;
         Digits { width: auto; }
         Markdown {
-            background: $boost;
+            # background: $boost;
             margin: 2 2;
             padding: 1 2 0 2;
             max-width: 80;
@@ -96,12 +109,7 @@ class WelcomeScreen(PageScreen):
 
     def compose(self) -> ComposeResult:
         yield StarCount()
-        with Center():
-            yield Label("Textual")
-        with Center():
-            yield Digits(version("textual"))
-        with Center():
-            yield Label("The [i]lean application[/i] framework")
+
         with Center():
             yield Markdown(WHAT_IS_TEXTUAL_MD)
         yield Footer()

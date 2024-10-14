@@ -136,6 +136,18 @@ class Center(Widget, inherit_bindings=False):
     """
 
 
+class Right(Widget, inherit_bindings=False):
+    """A container which aligns children on the X axis."""
+
+    DEFAULT_CSS = """
+    Right {
+        align-horizontal: right;
+        width: 1fr;
+        height: auto;
+    }
+    """
+
+
 class Middle(Widget, inherit_bindings=False):
     """A container which aligns children on the Y axis."""
 
