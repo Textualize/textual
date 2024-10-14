@@ -16,7 +16,7 @@ The example below shows a masked input to ease entering a credit card number.
     ```{.textual path="docs/examples/widgets/masked_input.py"}
     ```
 
-=== "checkbox.py"
+=== "masked_input.py"
 
     ```python
     --8<-- "docs/examples/widgets/masked_input.py"
