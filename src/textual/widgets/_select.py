@@ -115,6 +115,11 @@ class SelectCurrent(Horizontal):
         height: auto;
         padding: 0 2;
 
+        &:ansi {
+            color: ansi_default;
+            background: ansi_default;
+        }
+
         Static#label {
             width: 1fr;
             height: auto;
@@ -211,6 +216,15 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         height: auto;
         background: $surface;
         border: tall $border-blurred;
+        
+        .up-arrow {
+            display: none;
+        }
+
+        &:focus {
+            background: $surface-active;
+            border: tall $border;
+        }
 
         & > SelectOverlay {
             width: 1fr;
@@ -227,26 +241,20 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             }
         }
 
-        &:focus {
-            background: $surface-active;
-            border: tall $border;
+        &.-expanded {
+            .down-arrow {
+                display: none;
+            }
+
+            .up-arrow {
+                display: block;
+            }
+
+            & > SelectOverlay {
+                display: block;
+            }
         }
 
-        .up-arrow {
-            display: none;
-        }
-
-        &.-expanded .down-arrow {
-            display: none;
-        }
-
-        &.-expanded .up-arrow {
-            display: block;
-        }
-
-        &.-expanded > SelectOverlay {
-            display: block;
-        }
     }
 
     """
