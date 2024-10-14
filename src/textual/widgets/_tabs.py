@@ -30,10 +30,10 @@ class Underline(Widget):
     Underline {
         width: 1fr;
         height: 1;
-    }
-    Underline > .underline--bar {
-        background: $foreground 10%;
-        color: $accent;
+        & > .underline--bar {
+            background: $foreground 10%;
+            color: $accent;
+        }
     }
     """
 
