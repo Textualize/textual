@@ -91,6 +91,8 @@ class RulesMap(TypedDict, total=False):
     background: Color
     text_style: Style
 
+    background_tint: Color
+
     opacity: float
     text_opacity: float
 
@@ -215,6 +217,7 @@ class StylesBase:
         "auto_color",
         "color",
         "background",
+        "background_tint",
         "opacity",
         "text_opacity",
         "tint",
@@ -284,6 +287,11 @@ class StylesBase:
     """Set the background color of the widget.
     Supports `Color` objects but also strings e.g. "red" or "#ff0000"
     You can also specify an opacity after a color e.g. "blue 10%"
+    """
+    background_tint = ColorProperty(Color(0, 0, 0, 0))
+    """Set a color to tint (blend) with the background.
+    Supports `Color` objects but also strings e.g. "red" or "#ff0000"
+    You can also specify an opacity after a color e.g. "blue 10%"   
     """
     text_style = StyleFlagsProperty()
     """Set the text style of the widget using Rich StyleFlags.
@@ -1011,6 +1019,8 @@ class Styles(StylesBase):
             append_declaration("color", self.color.hex)
         if "background" in rules:
             append_declaration("background", self.background.hex)
+        if "background_tint" in rules:
+            append_declaration("background-tint", self.background_tint.hex)
         if "text_style" in rules:
             append_declaration("text-style", str(get_rule("text_style")))
         if "tint" in rules:

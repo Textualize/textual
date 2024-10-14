@@ -90,4 +90,5 @@ widget.styles.background = Color(120, 60, 100)
 
 ## See also
 
+ - [`background-tint`](./background_tint.md) to blend a color with the background.
  - [`color`](./color.md) to set the color of text in a widget.
