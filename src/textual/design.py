@@ -215,7 +215,7 @@ class ColorSystem:
         # The surface color for builtin focused widgets
         # Use half the luminosity spread in order to land half-way between
         # surface and the surface-lighten-1 shade.
-        colors["surface-active"] = surface.lighten(self.luminosity_spread / 3.5).hex
+        colors["surface-active"] = surface.lighten(self.luminosity_spread / 2.5).hex
 
         return colors
 

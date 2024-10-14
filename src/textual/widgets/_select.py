@@ -110,10 +110,8 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
-        border: tall transparent;
-        background: $boost;
         color: $text;
-        width: 100%;
+        width: 1fr;
         height: auto;
         padding: 0 2;
 
@@ -211,18 +209,27 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     DEFAULT_CSS = """
     Select {
         height: auto;
+        background: $surface;
+        border: tall $border-blurred;
 
         & > SelectOverlay {
             width: 1fr;
+            background: $panel;
             display: none;
             height: auto;
             max-height: 12;
             overlay: screen;
             constrain: none inside;
+
+            &:focus {
+                border: tall $border;
+                background: $surface-active;
+            }
         }
 
-        &:focus > SelectCurrent {
-            border: tall $accent;
+        &:focus {
+            background: $surface-active;
+            border: tall $border;
         }
 
         .up-arrow {
@@ -239,10 +246,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         &.-expanded > SelectOverlay {
             display: block;
-        }
-
-        &.-expanded > SelectCurrent {
-            border: tall $accent;
         }
     }
 
