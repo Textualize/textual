@@ -54,7 +54,7 @@ background-tint: blue 10%;
 
 
 /* 20% RGB color */
-background: rgb(100, 120, 200, 0.2);
+background-tint: rgb(100, 120, 200, 0.2);
 
 ```
 
