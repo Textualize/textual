@@ -740,6 +740,12 @@ class App(Generic[ReturnType], DOMNode):
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
 
+        self.theme_changed_signal: Signal[Theme] = Signal(self, "theme-changed")
+        """Signal that is published when the App's theme is changed.
+        
+        Subscribers will receive the new theme object as an argument to the callback.
+        """
+
         self.app_suspend_signal: Signal[App] = Signal(self, "app-suspend")
         """The signal that is published when the app is suspended.
 
@@ -1207,9 +1213,21 @@ class App(Generic[ReturnType], DOMNode):
         """
         self._registered_themes[theme.name] = theme
 
+    def unregister_theme(self, theme_name: str) -> None:
+        """Unregister a theme with the app.
+
+        Args:
+            theme_name: The name of the theme to unregister.
+        """
+        if theme_name in self._registered_themes:
+            del self._registered_themes[theme_name]
+
     @property
     def available_themes(self) -> dict[str, Theme]:
-        """All available themes (all built-in themes plus any that have been registered)."""
+        """All available themes (all built-in themes plus any that have been registered).
+
+        A dictionary mapping theme names to Theme instances.
+        """
         return {**BUILTIN_THEMES, **self._registered_themes}
 
     def _validate_theme(self, theme_name: str) -> str:
@@ -1234,6 +1252,7 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
         self.call_next(self.refresh_css)
+        self.call_next(self.theme_changed_signal.publish, theme)
 
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool.
