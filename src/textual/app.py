@@ -1176,6 +1176,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         theme = self.get_theme(self.theme)
         if theme is None:
+            # This should never happen thanks to the `App.theme` validator.
             return {}
 
         variables = theme.to_color_system().generate()
