@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `RadioSet` not being scrollable https://github.com/Textualize/textual/issues/5100
 - Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
+
+### Added
+
+- Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
 
 ## [0.83.0] - 2024-10-10
 
