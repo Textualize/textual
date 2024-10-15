@@ -1212,13 +1212,14 @@ class App(Generic[ReturnType], DOMNode):
         """All available themes (all built-in themes plus any that have been registered)."""
         return {**BUILTIN_THEMES, **self._registered_themes}
 
-    def watch_theme(self, theme_name: str) -> None:
+    def _watch_theme(self, theme_name: str) -> None:
         """Apply a theme to the application.
 
         This method is called when the theme reactive attribute is set.
         """
         theme = self.get_theme(theme_name)
         dark = theme.dark
+        self.ansi_color = theme_name == "textual-ansi"
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
