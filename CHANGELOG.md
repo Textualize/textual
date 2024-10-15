@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
+- Added `App.is_web` property to indicate if the app is running via a web browser
 
 ## [0.83.0] - 2024-10-10
 

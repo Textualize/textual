@@ -994,6 +994,11 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_inline
 
     @property
+    def is_web(self) -> bool:
+        """Is the app running in 'web' mode via a browser?"""
+        return False if self._driver is None else self._driver.is_web
+
+    @property
     def screen_stack(self) -> list[Screen[Any]]:
         """A snapshot of the current screen stack.
 
