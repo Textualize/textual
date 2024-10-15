@@ -18,6 +18,20 @@ Textual apps run on virtually any device from a $5 single-board computer upwards
 Deploy as a terminal application, over SSH, or serve as a [web application](https://github.com/Textualize/textual-web).
 """
 
+WELCOME_MD = """\
+## Welcome keyboard warriors!
+
+This is a Textual app. Here's what you need to know:
+
+* **enter** toggles this collapsible widget
+* **tab** to focus the next widget
+* **shift+tab** to focus the previous widget
+
+👇 Familiarize yourself with the footer below.
+
+`Or… click away with the mouse (no judgement).`
+
+"""
 
 ABOUT_MD = """\
 The retro look is not just an aesthetic choice! Textual apps have some unique properties that make them preferable for many tasks.
@@ -107,7 +121,7 @@ class StarCount(Vertical):
     DEFAULT_CSS = """
     StarCount {
         dock: top;
-        height: 5;
+        height: 6;
         border-bottom: hkey $background;
         border-top: hkey $background;
         layout: horizontal;
@@ -148,14 +162,14 @@ class StarCount(Vertical):
 
     def compose(self) -> ComposeResult:
         with Horizontal():
-            with Horizontal(id="version"):
+            with Vertical(id="version"):
                 yield Label("Version")
                 yield Digits(version("textual"))
-            with Horizontal(id="stars"):
+            with Vertical(id="stars"):
                 yield Label("GitHub ★")
                 stars = f"{self.stars / 1000:.1f}K"
                 yield Digits(stars).with_tooltip(f"{self.stars} GitHub stars")
-            with Horizontal(id="forks"):
+            with Vertical(id="forks"):
                 yield Label("Forks")
                 yield Digits(str(self.forks)).with_tooltip(f"{self.forks} Forks")
 
@@ -200,6 +214,8 @@ class WelcomeScreen(PageScreen):
         yield StarCount()
         with Content():
             yield Markdown(WHAT_IS_TEXTUAL_MD)
+            with Collapsible(title="Welcome", collapsed=False):
+                yield Markdown(WELCOME_MD)
             with Collapsible(title="Textual Interfaces"):
                 yield Markdown(ABOUT_MD)
             with Collapsible(title="Textual API"):

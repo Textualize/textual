@@ -45,7 +45,7 @@ class CodeScreen(ModalScreen):
         code_widget.border_subtitle = "Escape to close"
 
 
-class PageScreen(Screen, inherit_bindings=True):
+class PageScreen(Screen):
     DEFAULT_CSS = """
     Page {
         width: 100%;
@@ -59,9 +59,7 @@ class PageScreen(Screen, inherit_bindings=True):
             "show_code",
             "show code",
             tooltip="Show the code used to generate this screen",
-        ),
-        Binding("tab", "app.focus_next", "focus next"),
-        Binding("shift+tab", "app.focus_previous", "focus previous"),
+        )
     ]
 
     @work(thread=True)
