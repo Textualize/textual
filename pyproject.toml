@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
 include = [
@@ -86,5 +87,5 @@ markers = [
 asyncio_default_fixture_loop_scope = "function"
 
 [build-system]
-requires = ["poetry-core>=1.2.0"]
+requires = ["poetry-core>=1.9.1"]
 build-backend = "poetry.core.masonry.api"
