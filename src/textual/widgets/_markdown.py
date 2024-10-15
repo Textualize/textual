@@ -421,7 +421,7 @@ class MarkdownOrderedList(MarkdownList):
 
     MarkdownOrderedList Vertical {
         height: auto;
-        width: 1fr;
+        width: 1fr;        
     }
     """
 
@@ -606,8 +606,6 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
-
-
     }
 
     MarkdownFence > * {
