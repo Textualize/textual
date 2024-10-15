@@ -1,19 +1,23 @@
 from textual.app import App
 from textual.binding import Binding
+from textual.demo2.home import HomeScreen
 from textual.demo2.projects import ProjectsScreen
-from textual.demo2.welcome import WelcomeScreen
 
 
 class DemoApp(App):
-    MODES = {"welcome": WelcomeScreen, "projects": ProjectsScreen}
-    # DEFAULT_MODE = "welcome"
+    """The demo app defines the modes and sets a few bindings."""
 
+    MODES = {
+        "home": HomeScreen,
+        "projects": ProjectsScreen,
+    }
+    DEFAULT_MODE = "home"
     BINDINGS = [
         Binding(
-            "w",
-            "app.switch_mode('welcome')",
-            "welcome",
-            tooltip="Show the welcome screen",
+            "h",
+            "app.switch_mode('home')",
+            "home",
+            tooltip="Show the home screen",
         ),
         Binding(
             "p",
@@ -22,6 +26,3 @@ class DemoApp(App):
             tooltip="A selection of Textual projects",
         ),
     ]
-
-    def on_mount(self) -> None:
-        self.switch_mode("welcome")

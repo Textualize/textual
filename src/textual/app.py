@@ -2176,8 +2176,12 @@ class App(Generic[ReturnType], DOMNode):
 
         stack = self._screen_stacks.get(mode, [])
         if stack:
-            await_mount = AwaitMount(stack[0], [])
-        else:
+            # Mode already exists
+            # Return an dummy await
+            return AwaitMount(stack[0], [])
+
+        if mode in self._modes:
+            # Mode is defined in MODES
             _screen = self._modes[mode]
             if isinstance(_screen, Screen):
                 raise TypeError(
@@ -2188,6 +2192,17 @@ class App(Generic[ReturnType], DOMNode):
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
+            self.refresh_css()
+            screen.post_message(events.ScreenResume())
+        else:
+            # Mode is not defined
+            screen = self.get_default_screen()
+            stack.append(screen)
+            self._register(self, screen)
+            screen.post_message(events.ScreenResume())
+            await_mount = AwaitMount(stack[0], [])
+
+        screen._screen_resized(self.size)
 
         self._screen_stacks[mode] = stack
         return await_mount
@@ -2204,7 +2219,12 @@ class App(Generic[ReturnType], DOMNode):
 
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
+
         """
+
+        if mode == self._current_mode:
+            return AwaitMount(self.screen, [])
+
         if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
@@ -3506,10 +3526,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen: Screen[Any] = self.get_default_screen()
-            self._register(self, screen)
-            self._screen_stack.append(screen)
-            screen.post_message(events.ScreenResume())
+            await self._init_mode(self._current_mode)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added Link widget
 - Added `open_links` to `Markdown` and `MarkdownViewer` widgets
+- Added `App.DEFAULT_MODE`
 
 ## [0.83.0] - 2024-10-10
 

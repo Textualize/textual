@@ -26,8 +26,9 @@ This is a Textual app. Here's what you need to know:
 * **enter** toggles this collapsible widget
 * **tab** to focus the next widget
 * **shift+tab** to focus the previous widget
+* **ctrl+p** to summon the command palette
 
-👇 Familiarize yourself with the footer below.
+👇 Also see the footer below.
 
 `Or… click away with the mouse (no judgement).`
 
@@ -154,7 +155,7 @@ class StarCount(Vertical):
             self.forks = repository_json["forks"]
         except Exception:
             self.notify(
-                "Unable to get star count (maybe rate-limited)",
+                "Unable to update star count (maybe rate-limited)",
                 title="GitHub stars",
                 severity="error",
             )
@@ -185,9 +186,9 @@ class Content(VerticalScroll, can_focus=False):
     """Non focusable vertical scroll."""
 
 
-class WelcomeScreen(PageScreen):
+class HomeScreen(PageScreen):
     DEFAULT_CSS = """
-    WelcomeScreen {
+    HomeScreen {
         align-horizontal: center;
         Content {        
             max-width: 100;
