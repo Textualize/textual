@@ -915,7 +915,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         app_theme = self.get_theme(self.theme)
         yield "focus" if self.app_focus else "blur"
-        yield "dark" if app_theme.dark else "light"
+        yield "dark" if app_theme and app_theme.dark else "light"
         if self.is_inline:
             yield "inline"
         if self.ansi_color:
@@ -1248,12 +1248,14 @@ class App(Generic[ReturnType], DOMNode):
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         app_theme = self.get_theme(self.theme)
+        assert app_theme is not None  # validated by _validate_theme
         if app_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         app_theme = self.get_theme(self.theme)
+        assert app_theme is not None  # validated by _validate_theme
         if not app_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
@@ -1266,6 +1268,7 @@ class App(Generic[ReturnType], DOMNode):
         are mapped to hex codes.
         """
         app_theme = self.get_theme(self.theme)
+        assert app_theme is not None  # validated by _validate_theme
         return self.ansi_theme_dark if app_theme.dark else self.ansi_theme_light
 
     def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
