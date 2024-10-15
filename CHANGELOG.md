@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Grid will now size children to the maximum height of a row
-
+- Markdown links will be opened with `App.open_url` automatically
 
 ### Added
 
 - Added Link widget
+- Added `open_links` to `Markdown` and `MarkdownViewer` widgets
 
 ## [0.83.0] - 2024-10-10
 
