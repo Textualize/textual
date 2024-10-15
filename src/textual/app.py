@@ -268,6 +268,10 @@ class SuspendNotSupported(Exception):
     """
 
 
+class InvalidThemeError(Exception):
+    """Raised when an invalid theme is set."""
+
+
 ReturnType = TypeVar("ReturnType")
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
@@ -1101,18 +1105,6 @@ class App(Generic[ReturnType], DOMNode):
             [SystemCommand][textual.app.SystemCommand] instances.
         """
         if not self.ansi_color:
-            # if self.dark:
-            #     yield SystemCommand(
-            #         "Light mode",
-            #         "Switch to a light background",
-            #         self.action_toggle_dark,
-            #     )
-            # else:
-            #     yield SystemCommand(
-            #         "Dark mode",
-            #         "Switch to a dark background",
-            #         self.action_toggle_dark,
-            #     )
             yield SystemCommand(
                 "Change theme",
                 "Change the current theme",
@@ -1183,24 +1175,31 @@ class App(Generic[ReturnType], DOMNode):
             A mapping of variable name to value.
         """
         theme = self.get_theme(self.theme)
+        if theme is None:
+            return {}
+
         variables = theme.to_color_system().generate()
         return variables
 
-    def get_theme(self, theme_name: str) -> Theme:
+    def get_theme(self, theme_name: str) -> Theme | None:
         """Get a theme by name.
 
         Args:
             theme_name: The name of the theme to get.
 
         Returns:
-            A Theme instance.
+            A Theme instance and None if the theme doesn't exist.
         """
         return self.available_themes[theme_name]
 
     def register_theme(self, theme: Theme) -> None:
         """Register a theme with the app.
 
-        A theme must be registered before it is set as the `App.theme`.
+        If the theme already exists, it will be overridden.
+
+        After registering a theme, you can activate it by setting the
+        `App.theme` attribute. To retrieve a registered theme, use the
+        `App.get_theme` method.
 
         Args:
             theme: The theme to register.
@@ -1212,12 +1211,22 @@ class App(Generic[ReturnType], DOMNode):
         """All available themes (all built-in themes plus any that have been registered)."""
         return {**BUILTIN_THEMES, **self._registered_themes}
 
+    def _validate_theme(self, theme_name: str) -> str:
+        if theme_name not in self.available_themes:
+            message = (
+                f"Theme {theme_name!r} has not been registered. "
+                "Call 'App.register_theme' before setting the 'App.theme' attribute."
+            )
+            raise InvalidThemeError(message)
+        return theme_name
+
     def _watch_theme(self, theme_name: str) -> None:
         """Apply a theme to the application.
 
         This method is called when the theme reactive attribute is set.
         """
         theme = self.get_theme(theme_name)
+        assert theme is not None  # validated by _validate_theme
         dark = theme.dark
         self.ansi_color = theme_name == "textual-ansi"
         self.set_class(dark, "-dark-mode", update=False)
