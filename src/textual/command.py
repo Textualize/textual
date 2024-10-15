@@ -29,6 +29,7 @@ from typing import (
     Callable,
     ClassVar,
     Iterable,
+    NamedTuple,
 )
 
 import rich.repr
@@ -226,6 +227,7 @@ class Provider(ABC):
     @property
     def match_style(self) -> Style | None:
         """The preferred style to use when highlighting matching portions of the [`match_display`][textual.command.Hit.match_display]."""
+        print("inside property match_style", self.__match_style)
         return self.__match_style
 
     def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
@@ -328,6 +330,79 @@ class Provider(ABC):
         Use this method to perform an cleanup, if required.
 
         """
+
+
+class SimpleCommand(NamedTuple):
+    """A simple command."""
+
+    name: str
+    """The name of the command."""
+    callback: IgnoreReturnCallbackType
+    """The callback to invoke when the command is selected."""
+    help_text: str | None = None
+    """The description of the command."""
+
+
+CommandListItem: TypeAlias = (
+    "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
+)
+
+
+class SimpleProvider(Provider):
+    """A simple provider which the caller can pass commands to."""
+
+    def __init__(
+        self,
+        screen: Screen[Any],
+        commands: list[CommandListItem],
+    ) -> None:
+        # Convert all commands to SimpleCommand instances
+        super().__init__(screen, None)
+        print("setting commands")
+        self._commands: list[SimpleCommand] = []
+        for command in commands:
+            if isinstance(command, SimpleCommand):
+                self._commands.append(command)
+            elif len(command) == 2:
+                self._commands.append(SimpleCommand(*command, None))
+            elif len(command) == 3:
+                self._commands.append(SimpleCommand(*command))
+            else:
+                raise ValueError(f"Invalid command: {command}")
+
+    def __call__(
+        self, screen: Screen[Any], match_style: Style | None = None
+    ) -> SimpleProvider:
+        self.__match_style = match_style
+        return self
+
+    @property
+    def match_style(self) -> Style | None:
+        return self.__match_style
+
+    async def search(self, query: str) -> Hits:
+        matcher = self.matcher(query)
+        for name, callback, help_text in self._commands:
+            if (match := matcher.match(name)) > 0:
+                yield Hit(
+                    match,
+                    matcher.highlight(name),
+                    callback,
+                    help=help_text,
+                )
+
+    async def discover(self) -> Hits:
+        """Handle a request for the discovery commands for this provider.
+
+        Yields:
+            Commands that can be discovered.
+        """
+        for name, callback, help_text in self._commands:
+            yield DiscoveryHit(
+                name,
+                callback,
+                help=help_text,
+            )
 
 
 @rich.repr.auto
@@ -445,7 +520,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(SystemModalScreen):
+class CommandPalette(SystemModalScreen[None]):
     """The Textual command palette."""
 
     AUTO_FOCUS = "CommandInput"
@@ -685,7 +760,9 @@ class CommandPalette(SystemModalScreen):
                 An iterable of providers.
             """
             for provider in provider_source:
-                if isclass(provider) and issubclass(provider, Provider):
+                if isinstance(provider, SimpleProvider):
+                    yield provider
+                elif isclass(provider) and issubclass(provider, Provider):
                     yield provider
                 else:
                     # Lazy loaded providers

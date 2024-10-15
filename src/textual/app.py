@@ -92,7 +92,7 @@ from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingsMap, BindingType, Keymap
-from textual.command import CommandPalette, Provider
+from textual.command import CommandListItem, CommandPalette, Provider, SimpleProvider
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
 from textual.css.stylesheet import RulesMap, Stylesheet
@@ -1678,6 +1678,26 @@ class App(Generic[ReturnType], DOMNode):
             open_method="browser",
             mime_type="image/svg+xml",
             name="screenshot",
+        )
+
+    def search(
+        self,
+        commands: list[CommandListItem],
+        placeholder: str = "Search for commands…",
+    ) -> AwaitMount:
+        """Show a list of commands in the app.
+
+        Args:
+            commands: A list of SimpleCommand instances.
+
+        Returns:
+            AwaitMount: An awaitable that resolves when the commands are shown.
+        """
+        return self.push_screen(
+            CommandPalette(
+                providers=[SimpleProvider(self.screen, commands)],
+                placeholder=placeholder,
+            )
         )
 
     def bind(
