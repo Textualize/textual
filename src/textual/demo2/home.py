@@ -23,10 +23,11 @@ WELCOME_MD = """\
 
 This is a Textual app. Here's what you need to know:
 
-* **enter** toggles this collapsible widget
-* **tab** to focus the next widget
-* **shift+tab** to focus the previous widget
-* **ctrl+p** to summon the command palette
+* **enter** `toggle this collapsible widget`
+* **tab** `focus the next widget`
+* **shift+tab** `focus the previous widget`
+* **ctrl+p** `summon the command palette`
+
 
 👇 Also see the footer below.
 
