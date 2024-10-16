@@ -13,9 +13,9 @@ from textual.color import WHITE, Color
 NUMBER_OF_SHADES = 3
 
 # Where no content exists
-DEFAULT_DARK_BACKGROUND = "#1e1e1e"
+DEFAULT_DARK_BACKGROUND = "#121212"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#272727"
+DEFAULT_DARK_SURFACE = "#1e1e1e"
 # TODO - update this
 # # Where no content exists
 # DEFAULT_DARK_BACKGROUND = "#121212"
@@ -186,6 +186,8 @@ class ColorSystem:
                     shade_color = color.lighten(luminosity_delta)
                     colors[f"{name}{shade_name}"] = shade_color.hex
 
+                print(f"{name}{shade_name}: {colors[f'{name}{shade_name}']}")
+
         if foreground.ansi is None:
             colors["text"] = "auto 87%"
             colors["text-muted"] = "auto 60%"
@@ -196,16 +198,16 @@ class ColorSystem:
             colors["text-disabled"] = "ansi_default"
 
         # The cursor color for widgets such as OptionList, DataTable, etc.
-        colors["highlight-cursor"] = accent.hex
+        colors["highlight-cursor"] = secondary.hex
         # The cursor should dim when the widget is blurred.
-        colors["highlight-cursor-blurred"] = accent.with_alpha(0.3).hex
+        colors["highlight-cursor-blurred"] = secondary.with_alpha(0.3).hex
 
         # The border color for focused widgets which have a border.
-        colors["border"] = accent.hex
+        colors["border"] = secondary.hex
         # The blurred equivalent of the above.
         # By default when the widget is blurred, the border matches the surface
         # of the widget (and so isn't visible until the widget is focused)
-        colors["border-blurred"] = surface.hex
+        colors["border-blurred"] = surface.darken(0.025).hex
 
         # Widgets such as OptionList, DataTable, etc. have a "hover cursor"
         # which gives a subtle highlight behind the option under the mouse

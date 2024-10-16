@@ -154,7 +154,7 @@ class OptionList(ScrollView, can_focus=True):
         }
 
         & > .option-list--option-hover-highlighted {
-            background: $accent;
+            background: $secondary;
             color: $text;
         }
         & > .option-list--separator {
@@ -171,7 +171,7 @@ class OptionList(ScrollView, can_focus=True):
             background: $highlight-hover;
         }
         & > .option-list--option-hover-highlighted {
-            background: $accent 60%;
+            background: $secondary 60%;
             color: $text;
         }
     }

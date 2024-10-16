@@ -30,7 +30,7 @@ class FooterKey(Widget):
         background: $panel;
         color: $text-muted;
         .footer-key--key {
-            color: $secondary;
+            color: $accent;
             background: $panel;
             text-style: bold;
             padding: 0 1;

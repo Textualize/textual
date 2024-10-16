@@ -29,7 +29,7 @@ class CollapsibleTitle(Static, can_focus=True):
     }
 
     CollapsibleTitle:focus {
-        background: $accent;
+        background: $secondary;
         color: $text;
     }
     """

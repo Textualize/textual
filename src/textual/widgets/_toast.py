@@ -51,7 +51,7 @@ class Toast(Static, inherit_css=False):
         link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-background-hover: $accent;
+        link-background-hover: $secondary;
         link-color-hover: $text;
         link-style-hover: bold not underline;
     }

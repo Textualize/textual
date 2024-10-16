@@ -280,7 +280,7 @@ class Widget(DOMNode):
         scrollbar-background-hover: $panel-darken-2;
         scrollbar-background-active: $panel-darken-3;
         scrollbar-color: $primary-lighten-1;
-        scrollbar-color-active: $secondary;
+        scrollbar-color-active: $accent;
         scrollbar-color-hover: $primary-lighten-2;
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
@@ -288,7 +288,7 @@ class Widget(DOMNode):
         link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-background-hover: $accent;
+        link-background-hover: $secondary;
         link-color-hover: $text;
         link-style-hover: bold not underline;
         background: transparent;

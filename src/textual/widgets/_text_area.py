@@ -93,13 +93,14 @@ TextArea {
     height: 1fr;
     border: tall $border-blurred;
     padding: 0 1;
+    color: $foreground;
     background: $surface;
     & .text-area--gutter {
-        color: $text 40%;
+        color: $foreground 40%;
     }
 
     & .text-area--cursor-gutter {
-        color: $text 60%;
+        color: $foreground 60%;
         background: $boost;
         text-style: bold;
     }
@@ -109,7 +110,7 @@ TextArea {
     }
 
     & .text-area--selection {
-        background: $accent-lighten-1 40%;
+        background: $secondary-lighten-1 40%;
     }
 
     & .text-area--matching-bracket {
@@ -117,7 +118,7 @@ TextArea {
     }
 
     &:focus {
-        border: tall $accent;
+        border: tall $secondary;
     }
 
     &:dark {

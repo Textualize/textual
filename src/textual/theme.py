@@ -61,6 +61,41 @@ class Theme:
 
 
 BUILTIN_THEMES: dict[str, Theme] = {
+    "textual-dark": Theme(
+        name="textual-dark",
+        primary="#004578",
+        secondary="#0178D4",
+        accent="#ffa62b",
+        warning="#ffa62b",
+        error="#ba3c5b",
+        success="#4EBF71",
+        dark=True,
+    ),
+    "textual-light": Theme(
+        name="textual-light",
+        primary="#004578",
+        secondary="#0178D4",
+        accent="#ffa62b",
+        warning="#ffa62b",
+        error="#ba3c5b",
+        success="#4EBF71",
+        dark=False,
+    ),
+    "textual-ansi": Theme(
+        name="textual-ansi",
+        primary="ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_yellow",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_bright_blue",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+        dark=False,
+    ),
     "dracula": Theme(
         name="dracula",
         primary="#BD93F9",  # Purple
@@ -72,19 +107,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#282A36",  # Background
         surface="#44475A",  # Current Line
         panel="#44475A",  # Current Line
-        dark=True,
-    ),
-    "nord": Theme(
-        name="nord",
-        primary="#88C0D0",  # Nord8
-        secondary="#81A1C1",  # Nord9
-        warning="#EBCB8B",  # Nord13
-        error="#BF616A",  # Nord11
-        success="#A3BE8C",  # Nord14
-        accent="#B48EAD",  # Nord15
-        background="#2E3440",  # Nord0
-        surface="#3B4252",  # Nord1
-        panel="#434C5E",  # Nord2
         dark=True,
     ),
     "solarized-dark": Theme(
@@ -100,19 +122,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#586e75",  # Base01
         dark=True,
     ),
-    "one-dark": Theme(
-        name="one-dark",
-        primary="#61afef",  # Blue
-        secondary="#56b6c2",  # Cyan
-        warning="#e5c07b",  # Yellow
-        error="#e06c75",  # Red
-        success="#98c379",  # Green
-        accent="#c678dd",  # Purple
-        background="#282c34",  # Black
-        surface="#3e4451",  # Gray
-        panel="#4b5263",  # Light Gray
-        dark=True,
-    ),
     "github-dark": Theme(
         name="github-dark",
         primary="#58a6ff",  # Blue
@@ -126,69 +135,18 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#21262d",  # Gray
         dark=True,
     ),
-    "material-palenight": Theme(
-        name="material-palenight",
-        primary="#82aaff",  # Blue
-        secondary="#89ddff",  # Cyan
-        warning="#ffcb6b",  # Yellow
-        error="#ff5370",  # Red
-        success="#c3e88d",  # Green
-        accent="#c792ea",  # Purple
-        background="#292d3e",  # Background
-        surface="#34324a",  # Surface
-        panel="#3a3f58",  # Panel
-        dark=True,
-    ),
-    "ayu-dark": Theme(
-        name="ayu-dark",
-        primary="#39bae6",  # Blue
-        secondary="#95e6cb",  # Cyan
-        warning="#ffb454",  # Yellow
-        error="#ff3333",  # Red
-        success="#c2d94c",  # Green
-        accent="#f29668",  # Orange
-        background="#0a0e14",  # Background
-        surface="#1c1f26",  # Surface
-        panel="#272d38",  # Panel
-        dark=True,
-    ),
-    "synthwave": Theme(
-        name="synthwave",
-        primary="#f97e72",  # Coral
-        secondary="#36f9f6",  # Cyan
-        warning="#fede5d",  # Yellow
-        error="#fe4450",  # Red
-        success="#72f1b8",  # Green
-        accent="#ff7edb",  # Pink
-        background="#262335",  # Background
-        surface="#34294f",  # Surface
-        panel="#483c6c",  # Panel
-        dark=True,
-    ),
-    "cyberpunk": Theme(
-        name="cyberpunk",
-        primary="#00ffff",  # Cyan
-        secondary="#ff00ff",  # Magenta
-        warning="#ffff00",  # Yellow
-        error="#ff0000",  # Red
-        success="#00ff00",  # Green
-        accent="#ff00aa",  # Hot Pink
-        background="#000000",  # Black
-        surface="#1a1a1a",  # Dark Gray
-        panel="#333333",  # Gray
-        dark=True,
-    ),
     "gruvbox": Theme(
         name="gruvbox",
-        primary="#458588",  # Blue
-        secondary="#689D6A",  # Aqua
-        warning="#D79921",  # Yellow
-        error="#CC241D",  # Red
-        success="#98971A",  # Green
-        accent="#B16286",  # Purple
-        background="#282828",  # Dark0
-        surface="#3C3836",  # Dark1
-        panel="#504945",  # Dark2
+        primary="#A89A85",
+        secondary="#85A598",
+        warning="#fabd2f",
+        error="#fb4934",
+        success="#b8bb26",
+        accent="#fabd2f",
+        foreground="#EBDAB4",
+        background="#282828",
+        surface="#3D3836",
+        panel="#504946",
         dark=True,
     ),
     "tokyo-night": Theme(
@@ -207,62 +165,27 @@ BUILTIN_THEMES: dict[str, Theme] = {
     "catppuccin": Theme(
         name="catppuccin",
         primary="#89DCEB",  # Sky
-        secondary="#F5C2E7",  # Pink
-        warning="#FAE3B0",  # Yellow
-        error="#F28FAD",  # Red
-        success="#ABE9B3",  # Green
-        accent="#DDB6F2",  # Mauve
-        background="#1E1E2E",  # Base
-        surface="#302D41",  # Surface0
-        panel="#575268",  # Surface1
+        secondary="#F5C2E7",
+        warning="#FAE3B0",
+        error="#F28FAD",
+        success="#ABE9B3",
+        accent="#DDB6F2",
+        background="#1E1E2E",
+        surface="#302D41",
+        panel="#575268",
         dark=True,
-    ),
-    "textual-dark": Theme(
-        name="textual-dark",
-        primary="#004578",
-        secondary="#ffa62b",
-        warning="#ffa62b",
-        error="#ba3c5b",
-        success="#4EBF71",
-        accent="#0178D4",
-        dark=True,
-    ),
-    "textual-light": Theme(
-        name="textual-light",
-        primary="#004578",
-        secondary="#ffa62b",
-        warning="#ffa62b",
-        error="#ba3c5b",
-        success="#4EBF71",
-        accent="#0178D4",
-        dark=False,
-    ),
-    "textual-ansi": Theme(
-        name="textual-ansi",
-        primary="ansi_blue",
-        secondary="ansi_cyan",
-        warning="ansi_yellow",
-        error="ansi_red",
-        success="ansi_green",
-        accent="ansi_bright_blue",
-        foreground="ansi_default",
-        background="ansi_default",
-        surface="ansi_default",
-        panel="ansi_default",
-        boost="ansi_default",
-        dark=False,
     ),
     "monokai": Theme(
         name="monokai",
-        primary="#F92672",  # Pink
-        secondary="#66D9EF",  # Light Blue
-        warning="#FD971F",  # Orange
-        error="#F92672",  # Pink (same as primary for consistency)
-        success="#A6E22E",  # Green
-        accent="#AE81FF",  # Purple
-        background="#272822",  # Dark gray-green
-        surface="#3E3D32",  # Slightly lighter gray-green
-        panel="#3E3D32",  # Same as surface for consistency
+        primary="#F92672",
+        secondary="#AE81FF",
+        accent="#66D9EF",
+        warning="#FD971F",
+        error="#F92672",
+        success="#A6E22E",
+        background="#272822",
+        surface="#3E3D32",
+        panel="#3E3D32",
         dark=True,
     ),
     "solarized-light": Theme(
@@ -276,45 +199,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#fdf6e3",
         surface="#eee8d5",
         panel="#eee8d5",
-    ),
-    "nautilus": Theme(
-        name="nautilus",
-        primary="#0077BE",  # Ocean Blue
-        secondary="#20B2AA",  # Light Sea Green
-        warning="#FFD700",  # Gold (like sunlight on water)
-        error="#FF6347",  # Tomato (like a warning buoy)
-        success="#32CD32",  # Lime Green (like seaweed)
-        accent="#FF8C00",  # Dark Orange (like a sunset over water)
-        dark=True,
-        background="#001F3F",  # Dark Blue (deep ocean)
-        surface="#003366",  # Navy Blue (shallower water)
-        panel="#005A8C",  # Steel Blue (water surface)
-    ),
-    "galaxy": Theme(
-        name="galaxy",
-        primary="#8A2BE2",  # Improved Deep Magenta (Blueviolet)
-        secondary="#a684e8",
-        warning="#FFD700",  # Gold, more visible than orange
-        error="#FF4500",  # OrangeRed, vibrant but less harsh than pure red
-        success="#00FA9A",  # Medium Spring Green, kept for vibrancy
-        accent="#FF69B4",  # Hot Pink, for a pop of color
-        dark=True,
-        background="#0F0F1F",  # Very Dark Blue, almost black
-        surface="#1E1E3F",  # Dark Blue-Purple
-        panel="#2D2B55",  # Slightly Lighter Blue-Purple
-    ),
-    "nebula": Theme(
-        name="nebula",
-        primary="#4169E1",  # Royal Blue, more vibrant than Midnight Blue
-        secondary="#9400D3",  # Dark Violet, more vibrant than Indigo Dye
-        warning="#FFD700",  # Kept Gold for warnings
-        error="#FF1493",  # Deep Pink, more nebula-like than Crimson
-        success="#00FF7F",  # Spring Green, slightly more vibrant
-        accent="#FF00FF",  # Magenta, for a true neon accent
-        dark=True,
-        background="#0A0A23",  # Dark Navy, closer to a night sky
-        surface="#1C1C3C",  # Dark Blue-Purple
-        panel="#2E2E5E",  # Slightly Lighter Blue-Purple
     ),
     "alpine": Theme(
         name="alpine",
@@ -341,32 +225,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#27343B",  # Dark Lead
         panel="#2D3E46",  # Storm Gray
         background="#1F262A",  # Charcoal
-    ),
-    "twilight": Theme(
-        name="twilight",
-        primary="#367588",
-        secondary="#5F9EA0",
-        warning="#FFD700",
-        error="#FF6347",
-        success="#00FA9A",
-        accent="#FF7F50",
-        dark=True,
-        background="#191970",
-        surface="#3B3B6D",
-        panel="#4C516D",
-    ),
-    "hacker": Theme(
-        name="hacker",
-        primary="#00FF00",  # Bright Green (Lime)
-        secondary="#32CD32",  # Lime Green
-        warning="#ADFF2F",  # Green Yellow
-        error="#FF4500",  # Orange Red (for contrast)
-        success="#00FA9A",  # Medium Spring Green
-        accent="#39FF14",  # Neon Green
-        dark=True,
-        background="#0D0D0D",  # Almost Black
-        surface="#1A1A1A",  # Very Dark Gray
-        panel="#2A2A2A",  # Dark Gray
     ),
 }
 

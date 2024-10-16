@@ -316,7 +316,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     DEFAULT_CSS = """
     DataTable {
         background: $surface;
-        color: $text;
+        color: $foreground;
         height: auto;
         max-height: 100%;
 
@@ -365,12 +365,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--header-cursor {
-            background: $secondary-darken-1;
+            background: $accent-darken-1;
             color: $text;
         }
 
         & > .datatable--header-hover {
-            background: $secondary 30%;
+            background: $accent 30%;
         }
 
         & > .datatable--hover {

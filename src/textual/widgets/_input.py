@@ -147,7 +147,7 @@ class Input(Widget, can_focus=True):
     DEFAULT_CSS = """
     Input {
         background: $surface;
-        color: $text;
+        color: $foreground;
         padding: 0 2;
         border: tall $border-blurred;
         width: 100%;
@@ -159,7 +159,7 @@ class Input(Widget, can_focus=True):
         }
         &>.input--cursor {
             background: $surface;
-            color: $text;
+            color: $foreground;
             text-style: reverse;
         }
         &>.input--placeholder, &>.input--suggestion {

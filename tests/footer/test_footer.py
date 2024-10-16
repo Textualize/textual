@@ -20,7 +20,7 @@ async def test_footer_bindings() -> None:
             content-align: center middle;
 
             &:focus {
-                border: tall $accent;
+                border: tall $secondary;
             }
         }
         """
