@@ -291,6 +291,7 @@ class Widget(DOMNode):
         link-background-hover: $secondary;
         link-color-hover: $text;
         link-style-hover: bold not underline;
+        color: $foreground;
         background: transparent;
     }
     """

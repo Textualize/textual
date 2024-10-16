@@ -186,8 +186,6 @@ class ColorSystem:
                     shade_color = color.lighten(luminosity_delta)
                     colors[f"{name}{shade_name}"] = shade_color.hex
 
-                print(f"{name}{shade_name}: {colors[f'{name}{shade_name}']}")
-
         if foreground.ansi is None:
             colors["text"] = "auto 87%"
             colors["text-muted"] = "auto 60%"

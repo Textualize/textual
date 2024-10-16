@@ -98,15 +98,16 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "dracula": Theme(
         name="dracula",
-        primary="#BD93F9",  # Purple
-        secondary="#6272A4",  # Comment
-        warning="#FFB86C",  # Orange
-        error="#FF5555",  # Red
-        success="#50FA7B",  # Green
-        accent="#FF79C6",  # Pink
-        background="#282A36",  # Background
-        surface="#44475A",  # Current Line
-        panel="#44475A",  # Current Line
+        primary="#BD93F9",
+        secondary="#6272A4",
+        warning="#FFB86C",
+        error="#FF5555",
+        success="#50FA7B",
+        accent="#FF79C6",
+        background="#282A36",
+        surface="#44475A",
+        panel="#44475A",
+        foreground="#F8F8F2",
         dark=True,
     ),
     "solarized-dark": Theme(
@@ -143,10 +144,10 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#fb4934",
         success="#b8bb26",
         accent="#fabd2f",
-        foreground="#EBDAB4",
+        foreground="#fbf1c7",
         background="#282828",
-        surface="#3D3836",
-        panel="#504946",
+        surface="#3c3836",
+        panel="#504945",
         dark=True,
     ),
     "tokyo-night": Theme(
