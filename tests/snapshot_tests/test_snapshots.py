@@ -2321,7 +2321,7 @@ def test_background_tint(snap_compare):
     # With no background tint, the verticals will be a light blue
     # With a 100% tint, the vertical should be 20% red plus the blue (i.e. purple)
 
-    # tl;dr you should see 4 bars, blue at the top, purple at the bottom, and two shades in betweenm
+    # tl;dr you should see 4 bars, blue at the top, purple at the bottom, and two shades in between
 
     class BackgroundTintApp(App):
         CSS = """
