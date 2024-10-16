@@ -2314,15 +2314,27 @@ def test_maximize_allow(snap_compare):
 
 
 def test_background_tint(snap_compare):
+    """Test background tint with alpha."""
+
+    # The screen background is dark blue
+    # The vertical is 20% white
+    # With no background tint, the verticals will be a light blue
+    # With a 100% tint, the vertical should be 20% red plus the blue (i.e. purple)
+
+    # tl;dr you should see 4 bars, blue at the top, purple at the bottom, and two shades in betweenm
+
     class BackgroundTintApp(App):
         CSS = """
-        Vertical {
-            background: $panel;
+        Screen {
+            background: rgb(0,0,100)
         }
-        #tint1 { background-tint: $foreground 0%; }
-        #tint2 { background-tint: $foreground 33%; }
-        #tint3 { background-tint: $foreground 66%; }
-        #tint4 { background-tint: $foreground 100% }
+        Vertical {
+            background: rgba(255,255,255,0.2);
+        }
+        #tint1 { background-tint: rgb(255,0,0) 0%; }
+        #tint2 { background-tint: rgb(255,0,0) 33%; }
+        #tint3 { background-tint: rgb(255,0,0) 66%; }
+        #tint4 { background-tint: rgb(255,0,0) 100% }
         """
 
         def compose(self) -> ComposeResult:
