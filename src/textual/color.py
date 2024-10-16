@@ -413,10 +413,10 @@ class Color(NamedTuple):
         """
         r2, g2, b2, a2, ansi2 = color
         if ansi2 is not None:
-            return color
+            return self
         r1, g1, b1, a1, ansi1 = self
         if ansi1 is not None:
-            return color
+            return self
         return Color(
             int(r1 + (r2 - r1) * a2),
             int(g1 + (g2 - g1) * a2),
