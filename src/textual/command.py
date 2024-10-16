@@ -514,8 +514,9 @@ class CommandInput(Input):
     CommandInput, CommandInput:focus {
         border: blank;
         width: 1fr;
-        background: transparent;
         padding-left: 0;
+        background: transparent;
+        background-tint: 0%;
     }
     """
 
@@ -583,7 +584,7 @@ class CommandPalette(SystemModalScreen[None]):
         margin-top: 3; 
         height: 100%;
         visibility: hidden;
-        background: $primary 20%;      
+        background: $panel-darken-1;
     }
 
     CommandPalette #--input {
