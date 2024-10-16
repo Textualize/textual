@@ -104,23 +104,24 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#FF5555",
         success="#50FA7B",
         accent="#FF79C6",
-        background="#282A36",
-        surface="#44475A",
-        panel="#44475A",
-        foreground="#F8F8F2",
+        background="#21222c",
+        surface="#272a36",
+        panel="#282a36",
+        foreground="#F8F8F3",
         dark=True,
     ),
     "solarized-dark": Theme(
         name="solarized-dark",
-        primary="#268bd2",  # Blue
-        secondary="#2aa198",  # Cyan
-        warning="#b58900",  # Yellow
-        error="#dc322f",  # Red
-        success="#859900",  # Green
-        accent="#6c71c4",  # Violet
-        background="#002b36",  # Base03
-        surface="#073642",  # Base02
-        panel="#586e75",  # Base01
+        primary="#268bd2",
+        secondary="#2aa198",
+        accent="#6c71c4",
+        foreground="#93a1a1",
+        background="#001e26",
+        surface="#002b36",
+        panel="#586e75",
+        warning="#b58900",
+        error="#dc322f",
+        success="#859900",
         dark=True,
     ),
     "github-dark": Theme(
