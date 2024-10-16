@@ -399,6 +399,31 @@ class Color(NamedTuple):
             new_alpha,
         )
 
+    @lru_cache(maxsize=1024)
+    def tint(self, color: Color) -> Color:
+        """Apply a tint to a color.
+
+        Similar to blend, but combines color and alpha.
+
+        Args:
+            color: A color with alpha component.
+
+        Returns:
+            New color
+        """
+        r2, g2, b2, a2, ansi2 = color
+        if ansi2 is not None:
+            return color
+        r1, g1, b1, a1, ansi1 = self
+        if ansi1 is not None:
+            return color
+        return Color(
+            int(r1 + (r2 - r1) * a2),
+            int(g1 + (g2 - g1) * a2),
+            int(b1 + (b2 - b1) * a2),
+            a1,
+        )
+
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
             return self.blend(other, other.a, 1.0)
