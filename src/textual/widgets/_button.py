@@ -43,11 +43,11 @@ class Button(Widget, can_focus=True):
         width: auto;
         min-width: 16;
         height: auto;
-        background: $panel;
+        background: $surface;
         color: $text;
         border: none;
-        border-top: tall $panel-lighten-2;
-        border-bottom: tall $panel-darken-3;
+        border-top: tall $surface-lighten-2;
+        border-bottom: tall $surface-darken-3;
         text-align: center;
         content-align: center middle;
         text-style: bold;
@@ -57,14 +57,14 @@ class Button(Widget, can_focus=True):
             text-style: bold reverse;
         }
         &:hover {
-            border-top: tall $panel;
-            background: $panel-darken-2;
+            border-top: tall $surface;
+            background: $surface-darken-2;
             color: $text;
         }
         &.-active {
-            background: $panel;
-            border-bottom: tall $panel-lighten-2;
-            border-top: tall $panel-darken-2;
+            background: $surface;
+            border-bottom: tall $surface-lighten-2;
+            border-top: tall $surface-darken-2;
             tint: $background 30%;
         }
 

@@ -500,7 +500,7 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        background: $panel;
+        background: $surface;
     }
     """
 
@@ -1040,7 +1040,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     DEFAULT_CSS = """
     MarkdownTableOfContents {
         width: auto;
-        background: $panel;
+        background: $surface;
         border-right: wide $background;
     }
     MarkdownTableOfContents > Tree {
