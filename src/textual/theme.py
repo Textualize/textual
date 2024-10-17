@@ -81,6 +81,20 @@ BUILTIN_THEMES: dict[str, Theme] = {
         success="#4EBF71",
         dark=False,
     ),
+    "nord": Theme(
+        name="nord",
+        primary="#88C0D0",  # Nord8 - Frost
+        secondary="#81A1C1",  # Nord9 - Frost
+        warning="#EBCB8B",  # Nord13 - Aurora (yellow)
+        error="#BF616A",  # Nord11 - Aurora (red)
+        success="#A3BE8C",  # Nord14 - Aurora (green)
+        accent="#B48EAD",  # Nord15 - Aurora (purple)
+        background="#2E3440",  # Nord0 - Polar Night
+        surface="#3B4252",  # Nord1 - Polar Night
+        panel="#434C5E",  # Nord2 - Polar Night
+        foreground="#D8DEE9",  # Nord4 - Snow Storm
+        dark=True,
+    ),
     "gruvbox": Theme(
         name="gruvbox",
         primary="#A89A85",
@@ -201,19 +215,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#fdf6e3",
         surface="#eee8d5",
         panel="#eee8d5",
-    ),
-    "alpine": Theme(
-        name="alpine",
-        primary="#4A90E2",  # Clear Sky Blue
-        secondary="#81A1C1",  # Misty Blue
-        warning="#EBCB8B",  # Soft Sunlight
-        error="#BF616A",  # Muted Red
-        success="#A3BE8C",  # Alpine Meadow Green
-        accent="#5E81AC",  # Mountain Lake Blue
-        dark=True,
-        background="#2E3440",  # Dark Slate Grey
-        surface="#3B4252",  # Darker Blue-Grey
-        panel="#434C5E",  # Lighter Blue-Grey
     ),
     "cobalt": Theme(
         name="cobalt",
