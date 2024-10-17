@@ -49,7 +49,7 @@ class SelectOverlay(OptionList):
     SelectOverlay {
         border: tall $border-blurred;
         background: $surface;
-        color: $text;
+        color: $foreground;
         width: 100%;
         padding: 0 1;
     }
@@ -110,7 +110,7 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
-        color: $text;
+        color: $foreground;
         width: 1fr;
         height: auto;
         padding: 0 2;
@@ -123,12 +123,12 @@ class SelectCurrent(Horizontal):
         Static#label {
             width: 1fr;
             height: auto;
-            color: $text-disabled;
+            color: $foreground 50%;
             background: transparent;
         }
 
         &.-has-value Static#label {
-            color: $text;
+            color: $foreground;
         }
 
         .arrow {
@@ -136,7 +136,7 @@ class SelectCurrent(Horizontal):
             width: 1;
             height: 1;
             padding: 0 0 0 1;
-            color: $text-muted;
+            color: $foreground 50%;
             background: transparent;
         }
     }
@@ -214,6 +214,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     DEFAULT_CSS = """
     Select {
         height: auto;
+        color: $foreground;
         background: $surface;
         border: tall $border-blurred;
         
@@ -233,6 +234,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             max-height: 12;
             overlay: screen;
             constrain: none inside;
+            color: $foreground;
 
             &:focus {
                 border: tall $border;

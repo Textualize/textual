@@ -207,6 +207,14 @@ class ColorSystem:
             colors["text-muted"] = "ansi_default"
             colors["text-disabled"] = "ansi_default"
 
+        # Foreground colors
+        colors["foreground-muted"] = get(
+            "foreground-muted", foreground.with_alpha(0.6).hex
+        )
+        colors["foreground-disabled"] = get(
+            "foreground-disabled", foreground.with_alpha(0.38).hex
+        )
+
         # The cursor color for widgets such as OptionList, DataTable, etc.
         colors["block-cursor-foreground"] = get(
             "block-cursor-foreground", colors["text"]
