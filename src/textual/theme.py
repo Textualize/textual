@@ -34,6 +34,7 @@ class Theme:
     dark: bool = False
     luminosity_spread: float = 0.15
     text_alpha: float = 0.95
+    variables: dict[str, str] | None = None
 
     def to_color_system(self) -> ColorSystem:
         """
@@ -57,6 +58,7 @@ class Theme:
             dark=self.dark,
             luminosity_spread=self.luminosity_spread,
             text_alpha=self.text_alpha,
+            variables=self.variables,
         )
 
 
@@ -94,6 +96,11 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#434C5E",  # Nord2 - Polar Night
         foreground="#D8DEE9",  # Nord4 - Snow Storm
         dark=True,
+        variables={
+            "block-cursor-background": "#88C0D0",
+            "block-cursor-foreground": "#2E3440",
+            "block-cursor-text-style": "bold",
+        },
     ),
     "gruvbox": Theme(
         name="gruvbox",

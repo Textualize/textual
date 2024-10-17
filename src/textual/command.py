@@ -227,7 +227,6 @@ class Provider(ABC):
     @property
     def match_style(self) -> Style | None:
         """The preferred style to use when highlighting matching portions of the [`match_display`][textual.command.Hit.match_display]."""
-        print("inside property match_style", self.__match_style)
         return self.__match_style
 
     def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
