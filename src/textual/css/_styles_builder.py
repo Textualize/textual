@@ -680,6 +680,7 @@ class StylesBuilder:
 
     process_tint = process_color
     process_background = process_color
+    process_background_tint = process_color
     process_scrollbar_color = process_color
     process_scrollbar_color_hover = process_color
     process_scrollbar_color_active = process_color

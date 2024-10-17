@@ -75,6 +75,7 @@ nav:
           - "styles/index.md"
           - "styles/align.md"
           - "styles/background.md"
+          - "styles/background_tint.md"
           - "styles/border.md"
           - "styles/border_subtitle_align.md"
           - "styles/border_subtitle_background.md"

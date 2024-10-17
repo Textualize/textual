@@ -1031,8 +1031,12 @@ class DOMNode(MessagePump):
             has_rule = styles.has_rule
             opacity *= styles.opacity
             if has_rule("background"):
-                text_background = background + styles.background
-                background += styles.background.multiply_alpha(opacity)
+                text_background = (
+                    background + styles.background + styles.background_tint
+                )
+                background += (
+                    styles.background + styles.background_tint
+                ).multiply_alpha(opacity)
             else:
                 text_background = background
             if has_rule("color"):
@@ -1120,7 +1124,7 @@ class DOMNode(MessagePump):
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
             base_background = background
-            background += styles.background
+            background += styles.background + styles.background_tint
         return (base_background, background)
 
     @property
@@ -1136,7 +1140,9 @@ class DOMNode(MessagePump):
             styles = node.styles
             base_background = background
             opacity *= styles.opacity
-            background += styles.background.multiply_alpha(opacity)
+            background += (styles.background + styles.background_tint).multiply_alpha(
+                opacity
+            )
         return (base_background, background)
 
     @property
@@ -1151,7 +1157,7 @@ class DOMNode(MessagePump):
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
             base_background = background
-            background += styles.background
+            background += styles.background + styles.background_tint
             if styles.has_rule("color"):
                 base_color = color
                 if styles.auto_color:
