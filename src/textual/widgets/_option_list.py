@@ -139,7 +139,7 @@ class OptionList(ScrollView, can_focus=True):
     OptionList {
         height: auto;
         max-height: 100%;
-        color: $text;
+        color: $foreground;
         overflow-x: hidden;
         border: tall transparent;
         padding: 0 1;
@@ -150,6 +150,7 @@ class OptionList(ScrollView, can_focus=True):
             background-tint: $foreground 5%;
             & > .option-list--option-highlighted {
                 background: $highlight-cursor;
+                text-style: bold;
             }
         }
 

@@ -325,6 +325,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             & > .datatable--cursor {
                 background: $highlight-cursor;
                 color: $text;
+                text-style: bold;
             }
         }
 

@@ -94,20 +94,19 @@ class Tab(Static):
         height: 2;
         padding: 1 1 0 2;
         text-align: center;
-        color: $text-muted 50%;
+        color: $foreground 50%;
 
         &:hover {
-            color: $text;
+            color: $foreground;
         }
         &:disabled {
-            color: $text-disabled;
-            text-opacity: 50%;
+            color: $foreground 25%;
         }
 
         &.-active {
-            color: $text;
+            color: $foreground;
             &:hover {
-                color: $text;
+                color: $foreground;
             }
         }
         &.-hidden {
@@ -208,6 +207,9 @@ class Tabs(Widget, can_focus=True):
             .underline--bar {
                 color: $highlight-cursor;
                 background: $foreground 30%;
+            }
+            & .-active {
+                text-style: bold;
             }
         }
 

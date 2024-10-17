@@ -69,6 +69,7 @@ class ToggleButton(Static, can_focus=True):
             & > .toggle--label {
                 color: $text;
                 background: $highlight-cursor;
+                text-style: bold;
             }
             & > .toggle--button {
                 background: $foreground 25%;

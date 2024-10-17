@@ -36,6 +36,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         }
         &:focus > ListItem.--highlight {
             background: $highlight-cursor;
+            text-style: bold;
         }
     }
     """

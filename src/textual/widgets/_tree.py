@@ -582,7 +582,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     DEFAULT_CSS = """
     Tree {
         background: $surface;
-        color: $text;
+        color: $foreground;
 
         & > .tree--label {
 
@@ -598,7 +598,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         }
         & > .tree--cursor {
             background: $highlight-cursor-blurred;
-            color: $text;
         }
         & > .tree--highlight {
         }
@@ -609,7 +608,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         &:focus {
             background-tint: $foreground 5%;
             & > .tree--cursor {
+                color: $text;
                 background: $highlight-cursor;
+                text-style: bold;
             }
             & > .tree--guides {
                 color: $surface-lighten-3;
