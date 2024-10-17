@@ -581,43 +581,66 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     Tree {
-        background: $panel;
-        color: $text;
+        background: $surface;
+        color: $foreground;
 
         & > .tree--label {
 
         }
         & > .tree--guides {
-            color: $success-darken-3;
+            color: $surface-lighten-2;
         }
         & > .tree--guides-hover {
-            color: $success;
-            text-style: bold;
+            color: $surface-lighten-2;
         }
         & > .tree--guides-selected {
-            color: $warning;
-            text-style: bold;
+            color: $block-cursor-blurred-background;
         }
         & > .tree--cursor {
-            background: $secondary-darken-2;
-            color: $text;
-            text-style: bold;
-        }
-        &:focus > .tree--cursor {
-            background: $secondary;
+            background: $block-cursor-blurred-background;
         }
         & > .tree--highlight {
-            text-style: underline;
         }
         & > .tree--highlight-line {
-            background: $boost;
+            background: $block-hover-background;
+        }
+
+        &:focus {
+            background-tint: $foreground 5%;
+            & > .tree--cursor {
+                color: $text;
+                background: $block-cursor-background;
+                text-style: bold;
+            }
+            & > .tree--guides {
+                color: $surface-lighten-3;
+            }
+            & > .tree--guides-hover {
+                color: $surface-lighten-3;
+            }
+            & > .tree--guides-selected {
+                color: $block-cursor-background;
+            }
+        }
+
+        &:light {
+            /* In light mode the guides are darker*/
+            & > .tree--guides {
+                color: $surface-darken-1;
+            }
+            & > .tree--guides-hover {
+                color: $block-cursor-background;
+            }
+            & > .tree--guides-selected {
+                color: $block-cursor-background;
+            }
         }
 
         &.-ansi {
             background: ansi_default;
             color: ansi_default;
             & > .tree--guides {
-                color: green;
+                color: ansi_green;
             }
             & > .tree--guides-hover {
                 color: ansi_blue;
@@ -630,7 +653,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             & > .tree--cursor {
                 background: ansi_bright_blue;
                 color: ansi_default;
-                text-style: none;                   
+                text-style: none;
             }
             &:nocolor > .tree--cursor{
                 text-style: reverse;

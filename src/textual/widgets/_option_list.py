@@ -139,49 +139,42 @@ class OptionList(ScrollView, can_focus=True):
     OptionList {
         height: auto;
         max-height: 100%;
-        background: $boost;
-        color: $text;
+        color: $foreground;
         overflow-x: hidden;
         border: tall transparent;
         padding: 0 1;
-    }
+        background: $surface;
+        
+        &:focus {
+            border: tall $border;
+            background-tint: $foreground 5%;
+            & > .option-list--option-highlighted {
+                background: $block-cursor-background;
+                text-style: bold;
+            }
+        }
 
-    OptionList:focus {
-        border: tall $accent;
-
-    }
-
-    OptionList > .option-list--separator {
-        color: $foreground 15%;
-    }
-
-    OptionList > .option-list--option-highlighted {
-        color: $text;
-        text-style: bold;
-    }
-
-    OptionList:focus > .option-list--option-highlighted {
-        background: $accent;
-    }
-
-    OptionList > .option-list--option-disabled {
-        color: $text-disabled;
-    }
-
-    OptionList > .option-list--option-hover {
-        background: $boost;
-    }
-
-    OptionList > .option-list--option-hover-highlighted {
-        background: $accent 60%;
-        color: $text;
-        text-style: bold;
-    }
-
-    OptionList:focus > .option-list--option-hover-highlighted {
-        background: $accent;
-        color: $text;
-        text-style: bold;
+        & > .option-list--option-hover-highlighted {
+            background: $secondary;
+            color: $text;
+        }
+        & > .option-list--separator {
+            color: $foreground 15%;
+        }
+        & > .option-list--option-highlighted {
+            color: $text;
+            background: $block-cursor-blurred-background;
+        }
+        & > .option-list--option-disabled {
+            color: $text-disabled;
+        }
+        & > .option-list--option-hover {
+            background: $block-hover-background;
+        }
+        & > .option-list--option-hover-highlighted {
+            background: $secondary 60%;
+            color: $text;
+        }
     }
     """
 

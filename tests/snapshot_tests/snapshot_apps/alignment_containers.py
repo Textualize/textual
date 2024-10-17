@@ -13,7 +13,7 @@ class AlignContainersApp(App[None]):
         tint: $primary 10%;
     }
     Middle {
-        tint: $secondary 10%;
+        tint: $accent 10%;
     }
     """
 

@@ -31,6 +31,9 @@ class Log(ScrollView, can_focus=True):
         background: $surface;
         color: $text;
         overflow: scroll;
+        &:focus {
+            background-tint: $foreground 5%;
+        }
     }
     """
 

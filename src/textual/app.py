@@ -92,7 +92,7 @@ from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingsMap, BindingType, Keymap
-from textual.command import CommandPalette, Provider
+from textual.command import CommandListItem, CommandPalette, Provider, SimpleProvider
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
 from textual.css.stylesheet import RulesMap, Stylesheet
@@ -122,6 +122,7 @@ from textual.screen import (
     SystemModalScreen,
 )
 from textual.signal import Signal
+from textual.theme import BUILTIN_THEMES, Theme, ThemeProvider
 from textual.timer import Timer
 from textual.widget import AwaitMount, Widget
 from textual.widgets._toast import ToastRack
@@ -186,6 +187,7 @@ DEFAULT_COLORS = {
         boost="ansi_default",
     ),
 }
+
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
@@ -264,6 +266,10 @@ class SuspendNotSupported(Exception):
     This exception is raised if [`App.suspend`][textual.app.App.suspend] is called while
     the application is running in an environment where this isn't supported.
     """
+
+
+class InvalidThemeError(Exception):
+    """Raised when an invalid theme is set."""
 
 
 ReturnType = TypeVar("ReturnType")
@@ -509,6 +515,9 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
+    theme: Reactive[str] = Reactive("textual-dark")
+    """The name of the currently active theme."""
+
     ansi_theme_dark = Reactive(MONOKAI, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
 
@@ -543,6 +552,11 @@ class App(Generic[ReturnType], DOMNode):
         self._start_time = perf_counter()
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+
+        self._registered_themes: dict[str, Theme] = {}
+        """Themes that have been registered with the App using `App.register_theme`.
+        
+        This excludes the built-in themes."""
 
         ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
         self.set_reactive(App.ansi_color, ansi_color)
@@ -646,9 +660,10 @@ class App(Generic[ReturnType], DOMNode):
 
         self._refresh_required = False
 
-        self.design = DEFAULT_COLORS
-
         self._css_has_errors = False
+
+        # Note that the theme must be set *before* self.get_css_variables() is called
+        # to ensure that the variables are retrieved from the currently active theme.
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
 
         css_path = css_path or self.CSS_PATH
@@ -724,6 +739,12 @@ class App(Generic[ReturnType], DOMNode):
         """The original stdout stream (before redirection etc)."""
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
+
+        self.theme_changed_signal: Signal[Theme] = Signal(self, "theme-changed")
+        """Signal that is published when the App's theme is changed.
+        
+        Subscribers will receive the new theme object as an argument to the callback.
+        """
 
         self.app_suspend_signal: Signal[App] = Signal(self, "app-suspend")
         """The signal that is published when the app is suspended.
@@ -898,8 +919,9 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Names of the pseudo classes.
         """
+        app_theme = self.get_theme(self.theme)
         yield "focus" if self.app_focus else "blur"
-        yield "dark" if self.dark else "light"
+        yield "dark" if app_theme and app_theme.dark else "light"
         if self.is_inline:
             yield "inline"
         if self.ansi_color:
@@ -1089,19 +1111,11 @@ class App(Generic[ReturnType], DOMNode):
             [SystemCommand][textual.app.SystemCommand] instances.
         """
         if not self.ansi_color:
-            if self.dark:
-                yield SystemCommand(
-                    "Light mode",
-                    "Switch to a light background",
-                    self.action_toggle_dark,
-                )
-            else:
-                yield SystemCommand(
-                    "Dark mode",
-                    "Switch to a dark background",
-                    self.action_toggle_dark,
-                )
-
+            yield SystemCommand(
+                "Change theme",
+                "Change the current theme",
+                self.action_change_theme,
+            )
         yield SystemCommand(
             "Quit the application",
             "Quit the application as soon as possible",
@@ -1166,14 +1180,82 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A mapping of variable name to value.
         """
+        theme = self.get_theme(self.theme)
+        if theme is None:
+            # This should never happen thanks to the `App.theme` validator.
+            return {}
 
-        if self.dark:
-            design = self.design["dark"]
-        else:
-            design = self.design["light"]
+        # Build the Textual color system from the theme.
+        # This will contain $primary, $secondary, $background, etc.
+        variables = theme.to_color_system().generate()
 
-        variables = design.generate()
         return variables
+
+    def get_theme(self, theme_name: str) -> Theme | None:
+        """Get a theme by name.
+
+        Args:
+            theme_name: The name of the theme to get.
+
+        Returns:
+            A Theme instance and None if the theme doesn't exist.
+        """
+        return self.available_themes[theme_name]
+
+    def register_theme(self, theme: Theme) -> None:
+        """Register a theme with the app.
+
+        If the theme already exists, it will be overridden.
+
+        After registering a theme, you can activate it by setting the
+        `App.theme` attribute. To retrieve a registered theme, use the
+        `App.get_theme` method.
+
+        Args:
+            theme: The theme to register.
+        """
+        self._registered_themes[theme.name] = theme
+
+    def unregister_theme(self, theme_name: str) -> None:
+        """Unregister a theme with the app.
+
+        Args:
+            theme_name: The name of the theme to unregister.
+        """
+        if theme_name in self._registered_themes:
+            del self._registered_themes[theme_name]
+
+    @property
+    def available_themes(self) -> dict[str, Theme]:
+        """All available themes (all built-in themes plus any that have been registered).
+
+        A dictionary mapping theme names to Theme instances.
+        """
+        return {**BUILTIN_THEMES, **self._registered_themes}
+
+    def _validate_theme(self, theme_name: str) -> str:
+        if theme_name not in self.available_themes:
+            message = (
+                f"Theme {theme_name!r} has not been registered. "
+                "Call 'App.register_theme' before setting the 'App.theme' attribute."
+            )
+            raise InvalidThemeError(message)
+        return theme_name
+
+    def _watch_theme(self, theme_name: str) -> None:
+        """Apply a theme to the application.
+
+        This method is called when the theme reactive attribute is set.
+        """
+        theme = self.get_theme(theme_name)
+        assert theme is not None  # validated by _validate_theme
+        dark = theme.dark
+        self.ansi_color = theme_name == "textual-ansi"
+        self.set_class(dark, "-dark-mode", update=False)
+        self.set_class(not dark, "-light-mode", update=False)
+        self._refresh_truecolor_filter(self.ansi_theme)
+        self.call_next(self.refresh_css)
+        self.call_next(self.theme_changed_signal.publish, theme)
 
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool.
@@ -1187,12 +1269,16 @@ class App(Generic[ReturnType], DOMNode):
         self.call_next(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
-        if self.dark:
+        app_theme = self.get_theme(self.theme)
+        assert app_theme is not None  # validated by _validate_theme
+        if app_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
-        if not self.dark:
+        app_theme = self.get_theme(self.theme)
+        assert app_theme is not None  # validated by _validate_theme
+        if not app_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
@@ -1203,7 +1289,9 @@ class App(Generic[ReturnType], DOMNode):
         Defines how colors defined as ANSI (e.g. `magenta`) inside Rich renderables
         are mapped to hex codes.
         """
-        return self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        app_theme = self.get_theme(self.theme)
+        assert app_theme is not None  # validated by _validate_theme
+        return self.ansi_theme_dark if app_theme.dark else self.ansi_theme_light
 
     def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
         """Update the ANSI to Truecolor filter, if available, with a new theme mapping.
@@ -1476,6 +1564,15 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to toggle dark mode."""
         self.dark = not self.dark
 
+    def action_change_theme(self) -> None:
+        """An [action](/guide/actions) to change the current theme."""
+        self.app.push_screen(
+            CommandPalette(
+                [ThemeProvider],
+                placeholder="Search for themes…",
+            ),
+        )
+
     def action_screenshot(
         self, filename: str | None = None, path: str | None = None
     ) -> None:
@@ -1584,6 +1681,26 @@ class App(Generic[ReturnType], DOMNode):
             open_method="browser",
             mime_type="image/svg+xml",
             name="screenshot",
+        )
+
+    def search(
+        self,
+        commands: list[CommandListItem],
+        placeholder: str = "Search for commands…",
+    ) -> AwaitMount:
+        """Show a list of commands in the app.
+
+        Args:
+            commands: A list of SimpleCommand instances.
+
+        Returns:
+            AwaitMount: An awaitable that resolves when the commands are shown.
+        """
+        return self.push_screen(
+            CommandPalette(
+                providers=[SimpleProvider(self.screen, commands)],
+                placeholder=placeholder,
+            )
         )
 
     def bind(
@@ -4085,7 +4202,7 @@ class App(Generic[ReturnType], DOMNode):
     def action_command_palette(self) -> None:
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
-            self.push_screen(CommandPalette())
+            self.push_screen(CommandPalette(id="--command-palette"))
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""

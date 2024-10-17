@@ -15,7 +15,7 @@ class FooApp(App):
         #root {
             width: 60;
             height: 20;
-            border: solid $accent;
+            border: solid $secondary;
         }
         .info-container {
             grid-rows: auto;

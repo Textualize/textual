@@ -16,6 +16,11 @@ NUMBER_OF_SHADES = 3
 DEFAULT_DARK_BACKGROUND = "#121212"
 # What text usually goes on top off
 DEFAULT_DARK_SURFACE = "#1e1e1e"
+# TODO - update this
+# # Where no content exists
+# DEFAULT_DARK_BACKGROUND = "#121212"
+# # What text usually goes on top off
+# DEFAULT_DARK_SURFACE = "#1e1e1e"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
@@ -60,6 +65,7 @@ class ColorSystem:
         dark: bool = False,
         luminosity_spread: float = 0.15,
         text_alpha: float = 0.95,
+        variables: dict[str, str] | None = None,
     ):
         def parse(color: str | None) -> Color | None:
             if color is None:
@@ -80,6 +86,8 @@ class ColorSystem:
         self.dark = dark
         self.luminosity_spread = luminosity_spread
         self.text_alpha = text_alpha
+        self.variables = variables or {}
+        """Overrides for specific variables."""
 
     @property
     def shades(self) -> Iterable[str]:
@@ -92,6 +100,10 @@ class ColorSystem:
                     yield f"{color}-lighten-{shade_number}"
                 else:
                     yield color
+
+    def get_or_default(self, name: str, default: str) -> str:
+        """Get the value of a color variable, or the default value if not set."""
+        return self.variables.get(name, default)
 
     def generate(self) -> dict[str, str]:
         """Generate a mapping of color name on to a CSS color.
@@ -129,7 +141,7 @@ class ColorSystem:
 
         colors: dict[str, str] = {}
 
-        def luminosity_range(spread) -> Iterable[tuple[str, float]]:
+        def luminosity_range(spread: float) -> Iterable[tuple[str, float]]:
             """Get the range of shades from darken2 to lighten2.
 
             Returns:
@@ -165,30 +177,98 @@ class ColorSystem:
         # Colors names that have a dark variant
         DARK_SHADES = {"primary-background", "secondary-background"}
 
+        get = self.get_or_default
+
         for name, color in COLORS:
             is_dark_shade = dark and name in DARK_SHADES
             spread = luminosity_spread
             for shade_name, luminosity_delta in luminosity_range(spread):
+                key = f"{name}{shade_name}"
                 if color.ansi is not None:
-                    colors[f"{name}{shade_name}"] = color.hex
+                    colors[key] = color.hex
                 elif is_dark_shade:
                     dark_background = background.blend(color, 0.15, alpha=1.0)
-                    shade_color = dark_background.blend(
-                        WHITE, spread + luminosity_delta, alpha=1.0
-                    ).clamped
-                    colors[f"{name}{shade_name}"] = shade_color.hex
+                    if key not in self.variables:
+                        shade_color = dark_background.blend(
+                            WHITE, spread + luminosity_delta, alpha=1.0
+                        ).clamped
+                        colors[key] = shade_color.hex
+                    else:
+                        colors[key] = self.variables[key]
                 else:
-                    shade_color = color.lighten(luminosity_delta)
-                    colors[f"{name}{shade_name}"] = shade_color.hex
+                    colors[key] = get(key, color.lighten(luminosity_delta).hex)
 
         if foreground.ansi is None:
-            colors["text"] = "auto 87%"
-            colors["text-muted"] = "auto 60%"
-            colors["text-disabled"] = "auto 38%"
+            colors["text"] = get("text", "auto 87%")
+            colors["text-muted"] = get("text-muted", "auto 60%")
+            colors["text-disabled"] = get("text-disabled", "auto 38%")
         else:
             colors["text"] = "ansi_default"
             colors["text-muted"] = "ansi_default"
             colors["text-disabled"] = "ansi_default"
+
+        # Foreground colors
+        colors["foreground-muted"] = get(
+            "foreground-muted", foreground.with_alpha(0.6).hex
+        )
+        colors["foreground-disabled"] = get(
+            "foreground-disabled", foreground.with_alpha(0.38).hex
+        )
+
+        # The cursor color for widgets such as OptionList, DataTable, etc.
+        colors["block-cursor-foreground"] = get(
+            "block-cursor-foreground", colors["text"]
+        )
+        colors["block-cursor-background"] = get(
+            "block-cursor-background", secondary.hex
+        )
+        colors["block-cursor-text-style"] = get("block-cursor-text-style", "bold")
+        colors["block-cursor-blurred-foreground"] = get(
+            "block-cursor-blurred-foreground", colors["text"]
+        )
+        colors["block-cursor-blurred-background"] = get(
+            "block-cursor-blurred-background", secondary.with_alpha(0.3).hex
+        )
+        colors["block-cursor-blurred-text-style"] = get(
+            "block-cursor-blurred-text-style", "none"
+        )
+        colors["block-hover-background"] = get(
+            "block-hover-background", boost.with_alpha(0.05).hex
+        )
+
+        # The border color for focused widgets which have a border.
+        colors["border"] = get("border", secondary.hex)
+        colors["border-blurred"] = get("border-blurred", surface.darken(0.025).hex)
+
+        # The surface color for builtin focused widgets
+        colors["surface-active"] = get(
+            "surface-active", surface.lighten(self.luminosity_spread / 2.5).hex
+        )
+
+        # The scrollbar colors
+        colors["scrollbar"] = get("scrollbar", panel.hex)
+        colors["scrollbar-hover"] = get("scrollbar-hover", colors["panel-lighten-1"])
+        colors["scrollbar-active"] = get("scrollbar-active", colors["panel-lighten-2"])
+        colors["scrollbar-background"] = get(
+            "scrollbar-background", colors["background-darken-1"]
+        )
+        colors["scrollbar-corner-color"] = get(
+            "scrollbar-corner-color", colors["background"]
+        )
+        colors["scrollbar-background-hover"] = get(
+            "scrollbar-background-hover", colors["scrollbar-background"]
+        )
+        colors["scrollbar-background-active"] = get(
+            "scrollbar-background-active", colors["scrollbar-background"]
+        )
+
+        # Links
+        colors["link-background"] = get("link-background", "initial")
+        colors["link-background-hover"] = get("link-background-hover", secondary.hex)
+        colors["link-color"] = get("link-color", colors["text"])
+        colors["link-style"] = get("link-style", "underline")
+        colors["link-color-hover"] = get("link-color-hover", colors["text"])
+        colors["link-style-hover"] = get("link-style-hover", "bold not underline")
 
         return colors
 

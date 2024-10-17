@@ -52,6 +52,9 @@ class RichLog(ScrollView, can_focus=True):
         background: $surface;
         color: $text;
         overflow-y: scroll;
+        &:focus {
+            background-tint: $foreground 5%;
+        }
     }
     """
 

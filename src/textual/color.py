@@ -559,6 +559,33 @@ class Color(NamedTuple):
         return self.darken(-amount, alpha)
 
     @lru_cache(maxsize=1024)
+    def tint(self, color: Color) -> Color:
+        """Apply a tint to a color.
+
+        Similar to blend, but preserves the alpha of the original.
+
+        Args:
+            color: A color with alpha component.
+
+        Returns:
+            New color
+        """
+        if color.ansi is not None:
+            return color
+        r2, g2, b2, a2, _ = color
+        if a2 <= 0:
+            return self
+        if a2 >= 1:
+            return color
+        r1, g1, b1, a1, _ = self
+        return Color(
+            int(r1 * a1 + (r2 - r1) * a2),
+            int(g1 * a1 + (g2 - g1) * a2),
+            int(b1 * a1 + (b2 - b1) * a2),
+            max(1.0, a1 + a2),
+        )
+
+    @lru_cache(maxsize=1024)
     def get_contrast_text(self, alpha: float = 0.95) -> Color:
         """Get a light or dark color that best contrasts this color, for use with text.
 

@@ -25,6 +25,23 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         index: The index in the list that's currently highlighted.
     """
 
+    DEFAULT_CSS = """
+    ListView {
+        background: transparent;
+        & > ListItem.--highlight {
+            color: $text;
+            background: $block-cursor-blurred-background;
+        }
+        &:focus-within {
+            background-tint: $foreground 5%;
+        }
+        &:focus > ListItem.--highlight {
+            background: $block-cursor-background;
+            text-style: bold;
+        }
+    }
+    """
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor up", show=False),
