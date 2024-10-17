@@ -196,24 +196,37 @@ class ColorSystem:
             colors["text-disabled"] = "ansi_default"
 
         # The cursor color for widgets such as OptionList, DataTable, etc.
-        colors["highlight-cursor"] = secondary.hex
-        # The cursor should dim when the widget is blurred.
-        colors["highlight-cursor-blurred"] = secondary.with_alpha(0.3).hex
+        colors["block-cursor-foreground"] = colors["text"]
+        colors["block-cursor-background"] = secondary.hex
+        colors["block-cursor-text-style"] = "bold"
+        colors["block-cursor-blurred-foreground"] = colors["text"]
+        colors["block-cursor-blurred-background"] = secondary.with_alpha(0.3).hex
+        colors["block-cursor-blurred-text-style"] = ""
+        colors["block-hover-background"] = boost.with_alpha(0.05).hex
 
         # The border color for focused widgets which have a border.
         colors["border"] = secondary.hex
-        # The blurred equivalent of the above.
-        # By default when the widget is blurred, the border matches the surface
-        # of the widget (and so isn't visible until the widget is focused)
         colors["border-blurred"] = surface.darken(0.025).hex
-
-        # Widgets such as OptionList, DataTable, etc. have a "hover cursor"
-        # which gives a subtle highlight behind the option under the mouse
-        # cursor is under.
-        colors["highlight-hover"] = boost.with_alpha(0.05).hex
 
         # The surface color for builtin focused widgets
         colors["surface-active"] = surface.lighten(self.luminosity_spread / 2.5).hex
+
+        # The scrollbar colors
+        colors["scrollbar"] = panel.hex
+        colors["scrollbar-hover"] = colors["panel-lighten-1"]
+        colors["scrollbar-active"] = colors["panel-lighten-2"]
+        colors["scrollbar-background"] = colors["background-darken-1"]
+        colors["scrollbar-corner-color"] = colors["background"]
+        colors["scrollbar-background-hover"] = colors["scrollbar-background"]
+        colors["scrollbar-background-active"] = colors["scrollbar-background"]
+
+        # Links
+        colors["link-background"] = "initial"
+        colors["link-background-hover"] = colors["secondary"]
+        colors["link-color"] = colors["text"]
+        colors["link-style"] = "underline"
+        colors["link-color-hover"] = colors["text"]
+        colors["link-style-hover"] = "bold not underline"
 
         return colors
 

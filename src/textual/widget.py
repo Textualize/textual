@@ -276,21 +276,21 @@ class Widget(DOMNode):
 
     DEFAULT_CSS = """
     Widget{
-        scrollbar-background: $panel-darken-1;
-        scrollbar-background-hover: $panel-darken-2;
-        scrollbar-background-active: $panel-darken-3;
-        scrollbar-color: $primary-lighten-1;
-        scrollbar-color-active: $accent;
-        scrollbar-color-hover: $primary-lighten-2;
-        scrollbar-corner-color: $panel-darken-1;
+        scrollbar-background: $scrollbar-background;
+        scrollbar-background-hover: $scrollbar-background-hover;
+        scrollbar-background-active: $scrollbar-background-active;
+        scrollbar-color: $scrollbar;
+        scrollbar-color-active: $scrollbar-active;
+        scrollbar-color-hover: $scrollbar-hover;
+        scrollbar-corner-color: $scrollbar-corner-color;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background: initial;
-        link-color: $text;
-        link-style: underline;
-        link-background-hover: $secondary;
-        link-color-hover: $text;
-        link-style-hover: bold not underline;
+        link-background: $link-background;
+        link-color: $link-color;
+        link-style: $link-style;
+        link-background-hover: $link-background-hover;
+        link-color-hover: $link-color-hover;
+        link-style-hover: $link-style-hover;
         color: $foreground;
         background: transparent;
     }

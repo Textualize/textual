@@ -32,7 +32,7 @@ class Underline(Widget):
         height: 1;
         & > .underline--bar {
             background: $foreground 10%;
-            color: $highlight-cursor-blurred;
+            color: $block-cursor-blurred-background;
         }
     }
     """
@@ -205,7 +205,7 @@ class Tabs(Widget, can_focus=True):
 
         &:focus {
             .underline--bar {
-                color: $highlight-cursor;
+                color: $block-cursor-background;
                 background: $foreground 30%;
             }
             & .-active {

@@ -30,13 +30,13 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         background: transparent;
         & > ListItem.--highlight {
             color: $text;
-            background: $highlight-cursor-blurred;
+            background: $block-cursor-blurred-background;
         }
         &:focus-within {
             background-tint: $foreground 5%;
         }
         &:focus > ListItem.--highlight {
-            background: $highlight-cursor;
+            background: $block-cursor-background;
             text-style: bold;
         }
     }

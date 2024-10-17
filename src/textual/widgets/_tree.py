@@ -594,22 +594,22 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             color: $surface-lighten-2;
         }
         & > .tree--guides-selected {
-            color: $highlight-cursor-blurred;
+            color: $block-cursor-blurred-background;
         }
         & > .tree--cursor {
-            background: $highlight-cursor-blurred;
+            background: $block-cursor-blurred-background;
         }
         & > .tree--highlight {
         }
         & > .tree--highlight-line {
-            background: $highlight-hover;
+            background: $block-hover-background;
         }
 
         &:focus {
             background-tint: $foreground 5%;
             & > .tree--cursor {
                 color: $text;
-                background: $highlight-cursor;
+                background: $block-cursor-background;
                 text-style: bold;
             }
             & > .tree--guides {
@@ -619,7 +619,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 color: $surface-lighten-3;
             }
             & > .tree--guides-selected {
-                color: $highlight-cursor;
+                color: $block-cursor-background;
             }
         }
 
@@ -629,10 +629,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 color: $surface-darken-1;
             }
             & > .tree--guides-hover {
-                color: $highlight-cursor;
+                color: $block-cursor-background;
             }
             & > .tree--guides-selected {
-                color: $highlight-cursor;
+                color: $block-cursor-background;
             }
         }
 

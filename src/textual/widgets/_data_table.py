@@ -323,9 +323,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         &:focus {
             background-tint: $foreground 5%;
             & > .datatable--cursor {
-                background: $highlight-cursor;
-                color: $text;
-                text-style: bold;
+                background: $block-cursor-background;
+                color: $block-cursor-foreground;
+                text-style: $block-cursor-text-style;
             }
         }
 
@@ -356,12 +356,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--cursor {
-            background: $highlight-cursor-blurred;
-            color: $text;
+            background: $block-cursor-blurred-background;
+            color: $block-cursor-blurred-foreground;
+            text-style: $block-cursor-blurred-text-style;
         }
 
         & > .datatable--fixed-cursor {
-            background: $highlight-cursor 92%;
+            background: $block-cursor-background;
             color: $text;
         }
 
@@ -375,7 +376,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--hover {
-            background: $highlight-hover;
+            background: $block-hover-background;
         }
     }
     """
