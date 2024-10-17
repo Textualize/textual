@@ -55,6 +55,11 @@ class Driver(ABC):
         return False
 
     @property
+    def is_web(self) -> bool:
+        """Is the driver 'web' (running via a browser)?"""
+        return False
+
+    @property
     def can_suspend(self) -> bool:
         """Can this driver be suspended?"""
         return False

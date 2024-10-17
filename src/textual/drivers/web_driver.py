@@ -69,6 +69,10 @@ class WebDriver(Driver):
         """Maps delivery keys to file-like objects, used
         for delivering files to the browser."""
 
+    @property
+    def is_web(self) -> bool:
+        return True
+
     def write(self, data: str) -> None:
         """Write string data to the output device, which may be piped to
         the parent process (i.e. textual-web/textual-serve).
