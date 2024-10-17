@@ -247,16 +247,15 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             raise IndexError("pop from empty list")
 
         index = index if index is not None else -1
-        if index < 0:
-            index += len(self)
         item_to_remove = self.query("ListItem")[index]
+        normalized_index = index if index >= 0 else index + len(self)
 
         async def do_pop():
             await item_to_remove.remove()
             if self.index is not None:
-                if index == self.index:
+                if normalized_index == self.index:
                     self.index = self.index
-                elif index < self.index:
+                elif normalized_index < self.index:
                     self.index = self.index - 1
 
         return AwaitComplete(do_pop())
