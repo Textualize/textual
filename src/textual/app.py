@@ -1185,7 +1185,10 @@ class App(Generic[ReturnType], DOMNode):
             # This should never happen thanks to the `App.theme` validator.
             return {}
 
+        # Build the Textual color system from the theme.
+        # This will contain $primary, $secondary, $background, etc.
         variables = theme.to_color_system().generate()
+
         return variables
 
     def get_theme(self, theme_name: str) -> Theme | None:
