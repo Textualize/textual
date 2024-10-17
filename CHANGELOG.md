@@ -7,13 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
+### Changed
+
+- Grid will now size children to the maximum height of a row
+- Markdown links will be opened with `App.open_url` automatically
+
+### Added
+
+- Added Link widget
+- Added `open_links` to `Markdown` and `MarkdownViewer` widgets
+- Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
+- Added `App.DEFAULT_MODE`
+- Added `Containers.HorizontalGroup` and `Containers.VerticalGroup`
+
 ### Fixed
 
 - Fixed `RadioSet` not being scrollable https://github.com/Textualize/textual/issues/5100
 
-### Added
-
-- Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
 
 ## [0.83.0] - 2024-10-10
 

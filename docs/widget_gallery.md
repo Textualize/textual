@@ -121,6 +121,13 @@ A simple text label.
 [Label reference](./widgets/label.md){ .md-button .md-button--primary }
 
 
+## Link
+
+A clickable link that opens a URL.
+
+[Link reference](./widgets/link.md){ .md-button .md-button--primary }
+
+
 ## ListView
 
 Display a list of items (items may be other widgets).

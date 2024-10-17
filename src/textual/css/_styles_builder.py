@@ -540,10 +540,11 @@ class StylesBuilder:
     def process_keyline(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
-        if len(tokens) > 2:
+        if len(tokens) > 3:
             self.error(name, tokens[0], keyline_help_text())
         keyline_style = "none"
         keyline_color = Color.parse("green")
+        keyline_alpha = 1.0
         for token in tokens:
             if token.name == "color":
                 try:
@@ -562,7 +563,16 @@ class StylesBuilder:
                     if keyline_style not in VALID_KEYLINE:
                         self.error(name, token, keyline_help_text())
 
-        self.styles._rules["keyline"] = (keyline_style, keyline_color)
+            elif token.name == "scalar":
+                alpha_scalar = Scalar.parse(token.value)
+                if alpha_scalar.unit != Unit.PERCENT:
+                    self.error(name, token, "alpha must be given as a percentage.")
+                keyline_alpha = alpha_scalar.value / 100.0
+
+        self.styles._rules["keyline"] = (
+            keyline_style,
+            keyline_color.multiply_alpha(keyline_alpha),
+        )
 
     def process_offset(self, name: str, tokens: list[Token]) -> None:
         def offset_error(name: str, token: Token) -> None:
