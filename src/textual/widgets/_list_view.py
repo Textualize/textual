@@ -5,6 +5,7 @@ from typing import ClassVar, Iterable, Optional
 from typing_extensions import TypeGuard
 
 from textual import _widget_navigation
+from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
 from textual.containers import VerticalScroll
@@ -231,7 +232,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         await_mount = self.mount(*items, before=index)
         return await_mount
 
-    def pop(self, index: Optional[int] = None) -> AwaitRemove:
+    def pop(self, index: Optional[int] = None) -> AwaitComplete:
         """Remove last ListItem from ListView or
            Remove ListItem from ListView by index
 
@@ -242,11 +243,23 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             An awaitable that yields control to the event loop until
                 the DOM has been updated to reflect item being removed.
         """
-        if index is None:
-            await_remove = self.query("ListItem").last().remove()
-        else:
-            await_remove = self.query("ListItem")[index].remove()
-        return await_remove
+        if len(self) == 0:
+            raise IndexError("pop from empty list")
+
+        index = index if index is not None else -1
+        if index < 0:
+            index += len(self)
+        item_to_remove = self.query("ListItem")[index]
+
+        async def do_pop():
+            await item_to_remove.remove()
+            if self.index is not None:
+                if index == self.index:
+                    self.index = self.index
+                elif index < self.index:
+                    self.index = self.index - 1
+
+        return AwaitComplete(do_pop())
 
     def remove_items(self, indices: Iterable[int]) -> AwaitRemove:
         """Remove ListItems from ListView by indices
