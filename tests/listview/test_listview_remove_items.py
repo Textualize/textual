@@ -83,6 +83,34 @@ async def test_listview_pop_updates_index_and_highlighting(
         assert app.highlighted == expected_highlighted
 
 
+@pytest.mark.parametrize(
+    "initial_index, remove_indices, expected_new_index, expected_highlighted",
+    [
+        (2, [2], 2, ["2", "3"]),  # Remove highlighted item
+        (0, [0], 0, ["0", "1"]),  # Remove first item when highlighted
+        (8, [-1], 7, ["8", "7"]),  # Remove last item when highlighted
+        (4, [2, 1], 2, ["4", "4"]),  # Remove items before the highlighted index
+        (4, [-2, 5], 4, ["4"]),  # Remove items after the highlighted index
+        (4, range(0, 9), None, ["4", None]),  # Remove all items
+    ],
+)
+async def test_listview_remove_items_updates_index_and_highlighting(
+    initial_index, remove_indices, expected_new_index, expected_highlighted
+) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/5114"""
+    app = ListViewApp(initial_index)
+    async with app.run_test() as pilot:
+        listview = pilot.app.query_one(ListView)
+
+        await listview.remove_items(remove_indices)
+        await pilot.pause()
+
+        assert listview.index == expected_new_index
+        if expected_new_index is not None:
+            assert listview._nodes[expected_new_index].highlighted is True
+        assert app.highlighted == expected_highlighted
+
+
 if __name__ == "__main__":
     app = ListViewApp()
     app.run()

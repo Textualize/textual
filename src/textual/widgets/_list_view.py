@@ -260,7 +260,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
         return AwaitComplete(do_pop())
 
-    def remove_items(self, indices: Iterable[int]) -> AwaitRemove:
+    def remove_items(self, indices: Iterable[int]) -> AwaitComplete:
         """Remove ListItems from ListView by indices
 
         Args:
@@ -271,8 +271,22 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         """
         items = self.query("ListItem")
         items_to_remove = [items[index] for index in indices]
-        await_remove = self.remove_children(items_to_remove)
-        return await_remove
+        normalized_indices = set(
+            index if index >= 0 else index + len(self) for index in indices
+        )
+
+        async def do_remove_items():
+            await self.remove_children(items_to_remove)
+            if self.index is not None:
+                removed_before_highlighted = sum(
+                    1 for index in normalized_indices if index < self.index
+                )
+                if removed_before_highlighted:
+                    self.index -= removed_before_highlighted
+                elif self.index in normalized_indices:
+                    self.index = self.index
+
+        return AwaitComplete(do_remove_items())
 
     def action_select_cursor(self) -> None:
         """Select the current item in the list."""
