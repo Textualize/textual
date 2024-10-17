@@ -20,6 +20,7 @@ class GridLayout(Layout):
     def __init__(self) -> None:
         self.min_column_width: int | None = None
         self.stretch_height: bool = False
+        self.regular = False
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
@@ -35,6 +36,7 @@ class GridLayout(Layout):
 
         table_size_columns = max(1, styles.grid_size_columns)
         min_column_width = self.min_column_width
+
         if min_column_width is not None:
             container_width = size.width
             table_size_columns = max(
@@ -43,6 +45,9 @@ class GridLayout(Layout):
                 // (min_column_width + gutter_horizontal),
             )
             table_size_columns = min(table_size_columns, len(children))
+            if self.regular:
+                while len(children) % table_size_columns and table_size_columns > 1:
+                    table_size_columns -= 1
 
         table_size_rows = styles.grid_size_rows
         viewport = parent.screen.size

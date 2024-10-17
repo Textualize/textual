@@ -1,3 +1,4 @@
+import asyncio
 from importlib.metadata import version
 
 import httpx
@@ -148,6 +149,7 @@ class StarCount(Vertical):
         """Worker to get stars from GitHub API."""
         self.loading = True
         try:
+            await asyncio.sleep(1)  # Time to admire the loading indicator
             async with httpx.AsyncClient() as client:
                 repository_json = (
                     await client.get("https://api.github.com/repos/textualize/textual")

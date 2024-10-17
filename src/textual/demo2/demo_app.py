@@ -8,6 +8,13 @@ from textual.demo2.widgets import WidgetsScreen
 class DemoApp(App):
     """The demo app defines the modes and sets a few bindings."""
 
+    CSS = """
+    .column {          
+            align: center top;
+            &>*{ max-width: 100; }        
+    }
+    """
+
     MODES = {
         "home": HomeScreen,
         "projects": ProjectsScreen,

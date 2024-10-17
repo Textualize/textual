@@ -125,6 +125,8 @@ Chat with Claude 3, ChatGPT, and local models like Llama 3, Phi 3, Mistral and G
 
 
 class Project(Vertical, can_focus=True, can_focus_children=False):
+    """Display project information and open repo links."""
+
     ALLOW_MAXIMIZE = True
     DEFAULT_CSS = """
     Project {
@@ -191,7 +193,7 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
 
 class ProjectsScreen(PageScreen):
     AUTO_FOCUS = None
-    DEFAULT_CSS = """
+    CSS = """
     ProjectsScreen {        
         align-horizontal: center;                      
         ItemGrid {
@@ -203,9 +205,8 @@ class ProjectsScreen(PageScreen):
             grid-gutter: 1 1;
             grid-rows: auto;           
             keyline:thin $foreground 50%;        
-        }      
-        Center { background: green; }  
-        Markdown { max-width: 100;}
+        }              
+        Markdown { margin: 0; padding: 0 2; max-width: 100;}
     }
     """
 

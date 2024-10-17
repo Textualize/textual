@@ -211,6 +211,7 @@ class ItemGrid(Widget, inherit_bindings=False):
 
     stretch_height: reactive[bool] = reactive(True)
     min_column_width: reactive[int | None] = reactive(None, layout=True)
+    regular: reactive[bool] = reactive(False)
 
     def __init__(
         self,
@@ -221,6 +222,7 @@ class ItemGrid(Widget, inherit_bindings=False):
         disabled: bool = False,
         min_column_width: int | None = None,
         stretch_height: bool = True,
+        regular: bool = False,
     ) -> None:
         """Initialize a Widget.
 
@@ -230,14 +232,19 @@ class ItemGrid(Widget, inherit_bindings=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
+            stretch_height: Expand the height of widgets to the row height.
+            min_column_width: The smallest permitted column width.
+            regular: All rows should have the same number of items.
         """
         super().__init__(
             *children, name=name, id=id, classes=classes, disabled=disabled
         )
         self.set_reactive(ItemGrid.stretch_height, stretch_height)
         self.set_reactive(ItemGrid.min_column_width, min_column_width)
+        self.set_reactive(ItemGrid.regular, regular)
 
     def pre_layout(self, layout: Layout) -> None:
         if isinstance(layout, GridLayout):
             layout.stretch_height = self.stretch_height
             layout.min_column_width = self.min_column_width
+            layout.regular = self.regular
