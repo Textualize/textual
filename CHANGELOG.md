@@ -10,10 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `RadioSet` not being scrollable https://github.com/Textualize/textual/issues/5100
+- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
 
 ### Added
 
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
+
+### Changed
+
+- `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
+- `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 
 ## [0.83.0] - 2024-10-10
 
