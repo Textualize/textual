@@ -75,12 +75,25 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
 
 
 class Vertical(Widget, inherit_bindings=False):
-    """A container with vertical layout and no scrollbars."""
+    """An expanding container with vertical layout and no scrollbars."""
 
     DEFAULT_CSS = """
     Vertical {
         width: 1fr;
         height: 1fr;
+        layout: vertical;
+        overflow: hidden hidden;
+    }
+    """
+
+
+class VerticalGroup(Widget, inherit_bindings=False):
+    """A non-expanding container with vertical layout and no scrollbars."""
+
+    DEFAULT_CSS = """
+    VerticalGroup {
+        width: 1fr;
+        height: auto;
         layout: vertical;
         overflow: hidden hidden;
     }
@@ -100,12 +113,25 @@ class VerticalScroll(ScrollableContainer):
 
 
 class Horizontal(Widget, inherit_bindings=False):
-    """A container with horizontal layout and no scrollbars."""
+    """An expanding container with horizontal layout and no scrollbars."""
 
     DEFAULT_CSS = """
     Horizontal {
         width: 1fr;
         height: 1fr;
+        layout: horizontal;
+        overflow: hidden hidden;
+    }
+    """
+
+
+class HorizontalGroup(Widget, inherit_bindings=False):
+    """A non-expanding container with horizontal layout and no scrollbars."""
+
+    DEFAULT_CSS = """
+    HorizontalGroup {
+        width: 1fr;
+        height: auto;
         layout: horizontal;
         overflow: hidden hidden;
     }
@@ -178,7 +204,7 @@ class ItemGrid(Widget, inherit_bindings=False):
     DEFAULT_CSS = """
     ItemGrid {
         width: 1fr;
-        height: 1fr;
+        height: auto;
         layout: grid;
     }
     """

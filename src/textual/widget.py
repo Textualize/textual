@@ -4145,3 +4145,8 @@ class Widget(DOMNode):
                 severity=severity,
                 timeout=timeout,
             )
+
+    def action_notify(
+        self, message: str, title: str = "", severity: str = "information"
+    ) -> None:
+        self.notify(message, title=title, severity=severity)

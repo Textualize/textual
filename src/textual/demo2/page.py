@@ -47,10 +47,10 @@ class CodeScreen(ModalScreen):
 
 class PageScreen(Screen):
     DEFAULT_CSS = """
-    Page {
+    PageScreen {
         width: 100%;
         height: 1fr;
-        overflow-y: auto;
+        overflow-y: auto;        
     }
     """
     BINDINGS = [

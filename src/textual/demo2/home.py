@@ -12,10 +12,10 @@ from textual.widgets import Collapsible, Digits, Footer, Label, Markdown
 WHAT_IS_TEXTUAL_MD = """\
 # What is Textual?
 
-**The fastest way to build applications that run *anywhere*.**
+Snappy, keyboard-centric, applications that run in the terminal and [the web](https://github.com/Textualize/textual-web).
 
-Textual apps run on virtually any device from a $5 single-board computer upwards.
-Deploy as a terminal application, over SSH, or serve as a [web application](https://github.com/Textualize/textual-web).
+🐍 All you need is Python!
+
 """
 
 WELCOME_MD = """\
@@ -191,7 +191,8 @@ class HomeScreen(PageScreen):
     DEFAULT_CSS = """
     HomeScreen {
         align-horizontal: center;
-        Content {        
+        Content {      
+            margin: 0 1;
             max-width: 100;
             overflow-y: auto;
             height: 1fr;

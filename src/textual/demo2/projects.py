@@ -192,7 +192,7 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
 class ProjectsScreen(PageScreen):
     AUTO_FOCUS = None
     DEFAULT_CSS = """
-    ProjectsScreen { 
+    ProjectsScreen {        
         align-horizontal: center;                      
         ItemGrid {
             margin: 2 4;
@@ -203,8 +203,9 @@ class ProjectsScreen(PageScreen):
             grid-gutter: 1 1;
             grid-rows: auto;           
             keyline:thin $foreground 50%;        
-        }
-        Markdown { max-width: 80; }
+        }      
+        Center { background: green; }  
+        Markdown { max-width: 100;}
     }
     """
 
