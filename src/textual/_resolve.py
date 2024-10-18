@@ -21,6 +21,7 @@ def resolve(
     gutter: int,
     size: Size,
     viewport: Size,
+    min_size: int | None = None,
 ) -> list[tuple[int, int]]:
     """Resolve a list of dimensions.
 
@@ -61,6 +62,11 @@ def resolve(
         resolved_fractions = cast(
             "list[Fraction]", [fraction for _, fraction in resolved]
         )
+
+    if min_size is not None:
+        resolved_fractions = [
+            max(Fraction(min_size), fraction) for fraction in resolved_fractions
+        ]
 
     fraction_gutter = Fraction(gutter)
     offsets = [0] + [

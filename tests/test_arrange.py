@@ -1,9 +1,9 @@
 import pytest
 
 from textual._arrange import TOP_Z, arrange
-from textual._layout import WidgetPlacement
 from textual.app import App
 from textual.geometry import Region, Size, Spacing
+from textual.layout import WidgetPlacement
 from textual.widget import Widget
 
 
