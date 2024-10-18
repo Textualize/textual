@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
-- Added first-of-type, last-of-type, odd, and even pseudo classes https://github.com/Textualize/textual/pull/5139
+- Added `:first-of-type`, `:last-of-type`, `:odd`, and `:even` pseudo classes https://github.com/Textualize/textual/pull/5139
 
 ## [0.83.0] - 2024-10-10
 
