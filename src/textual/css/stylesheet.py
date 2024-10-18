@@ -432,6 +432,16 @@ class Stylesheet:
             if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
+    # pseudo classes which iterate over many nodes
+    # these have the potential to be slow, and shouldn't be used in a cache key
+    EXPENSIVE_PSEUDO_CLASSES = {
+        "first-of-type",
+        "last-of_type",
+        "odd",
+        "even",
+        "focus-within",
+    }
+
     def apply(
         self,
         node: DOMNode,
@@ -468,13 +478,18 @@ class Stylesheet:
         }
         rules = list(filter(limit_rules.__contains__, reversed(self.rules)))
 
-        node._has_hover_style = any("hover" in rule.pseudo_classes for rule in rules)
-        node._has_focus_within = any(
-            "focus-within" in rule.pseudo_classes for rule in rules
-        )
+        all_pseudo_classes = set()
+        for rule in rules:
+            all_pseudo_classes |= rule.pseudo_classes
 
-        cache_key: tuple | None
-        if cache is not None:
+        node._has_hover_style = "hover" in all_pseudo_classes
+        node._has_focus_within = "focus-within" in all_pseudo_classes
+
+        cache_key: tuple | None = None
+
+        if cache is not None and all_pseudo_classes.isdisjoint(
+            self.EXPENSIVE_PSEUDO_CLASSES
+        ):
             cache_key = (
                 node._parent,
                 (
@@ -483,7 +498,7 @@ class Stylesheet:
                     else (node._id if f"#{node._id}" in rules_map else None)
                 ),
                 node.classes,
-                node.pseudo_classes,
+                node._pseudo_classes_cache_key,
                 node._css_type_name,
             )
             cached_result: RulesMap | None = cache.get(cache_key)
@@ -491,8 +506,6 @@ class Stylesheet:
                 self.replace_rules(node, cached_result, animate=animate)
                 self._process_component_classes(node)
                 return
-        else:
-            cache_key = None
 
         _check_rule = self._check_rule
         css_path_nodes = node.css_path_nodes
@@ -561,8 +574,7 @@ class Stylesheet:
                         rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
                     node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
 
-            if cache is not None:
-                assert cache_key is not None
+            if cache_key is not None:
                 cache[cache_key] = node_rules
             self.replace_rules(node, node_rules, animate=animate)
         self._process_component_classes(node)

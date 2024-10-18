@@ -3357,6 +3357,15 @@ class Widget(DOMNode):
         )
         return pseudo_classes
 
+    @property
+    def _pseudo_classes_cache_key(self) -> tuple[int, ...]:
+        """A cache key that changes when the pseudo-classes change."""
+        return (
+            self.mouse_hover,
+            self.has_focus,
+            self.is_disabled,
+        )
+
     def _get_rich_justify(self) -> JustifyMethod | None:
         """Get the justify method that may be passed to a Rich renderable."""
         text_justify: JustifyMethod | None = None
