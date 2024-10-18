@@ -29,6 +29,7 @@ if typing.TYPE_CHECKING:
     from textual.widgets._log import Log
     from textual.widgets._markdown import Markdown, MarkdownViewer
     from textual.widgets._masked_input import MaskedInput
+    from textual.widgets._month_calendar import MonthCalendar
     from textual.widgets._option_list import OptionList
     from textual.widgets._placeholder import Placeholder
     from textual.widgets._pretty import Pretty
@@ -70,6 +71,7 @@ __all__ = [
     "Markdown",
     "MarkdownViewer",
     "MaskedInput",
+    "MonthCalendar",
     "OptionList",
     "Placeholder",
     "Pretty",
