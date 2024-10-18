@@ -14,6 +14,7 @@ from types import TracebackType
 from typing import (
     TYPE_CHECKING,
     AsyncGenerator,
+    Callable,
     ClassVar,
     Collection,
     Generator,
@@ -366,6 +367,25 @@ class Widget(DOMNode):
     # Default sort order, incremented by constructor
     _sort_order: ClassVar[int] = 0
 
+    PSEUDO_CLASSES: ClassVar[dict[str, Callable[[Widget], bool]]] = {
+        "hover": lambda widget: widget.mouse_hover,
+        "focus": lambda widget: widget.has_focus,
+        "blur": lambda widget: not widget.has_focus,
+        "can-focus": lambda widget: widget.can_focus,
+        "disabled": lambda widget: widget.is_disabled,
+        "enabled": lambda widget: not widget.is_disabled,
+        "dark": lambda widget: widget.app.dark,
+        "light": lambda widget: not widget.app.dark,
+        "focus-within": lambda widget: widget.has_focus_within,
+        "inline": lambda widget: widget.app.is_inline,
+        "ansi": lambda widget: widget.app.ansi_color,
+        "nocolor": lambda widget: widget.app.no_color,
+        "first-of-type": lambda widget: widget.first_of_type,
+        "last-of-type": lambda widget: widget.last_of_type,
+        "odd": lambda widget: widget.is_odd,
+        "even": lambda widget: widget.is_even,
+    }  # type: ignore[assignment]
+
     def __init__(
         self,
         *children: Widget,
@@ -699,6 +719,70 @@ class Widget(DOMNode):
         """
         _rich_traceback_omit = True
         self._pending_children.append(widget)
+
+    @property
+    def is_disabled(self) -> bool:
+        """Is the widget disabled either because `disabled=True` or an ancestor has `disabled=True`."""
+        node: MessagePump | None = self
+        while isinstance(node, Widget):
+            if node.disabled:
+                return True
+            node = node._parent
+        return False
+
+    @property
+    def has_focus_within(self) -> bool:
+        """Are any descendants focused?"""
+        try:
+            focused = self.screen.focused
+        except NoScreen:
+            return False
+        node = focused
+        while node is not None:
+            if node is self:
+                return True
+            node = node._parent
+        return False
+
+    @property
+    def first_of_type(self) -> bool:
+        """Is this the first widget of its type in its siblings?"""
+        if self.parent is None:
+            return False
+        try:
+            return self.parent.query_children(self._css_type_name).first() is self
+        except NoMatches:
+            return False
+
+    @property
+    def last_of_type(self) -> bool:
+        """Is this the last widget of its type in its siblings?"""
+        if self.parent is None:
+            return False
+        try:
+            return self.parent.query_children(self._css_type_name).last() is self
+        except NoMatches:
+            return False
+
+    @property
+    def is_odd(self) -> bool:
+        """Is this widget at an oddly numbered position within its siblings?"""
+        if self.parent is None:
+            return False
+        try:
+            return self.parent.children.index(self) % 2 == 0
+        except ValueError:
+            return False
+
+    @property
+    def is_even(self) -> bool:
+        """Is this widget at an evenly numbered position within its siblings?"""
+        if self.parent is None:
+            return False
+        try:
+            return self.parent.children.index(self) % 2 == 1
+        except ValueError:
+            return False
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -3231,50 +3315,6 @@ class Widget(DOMNode):
                 scrollbar.window_virtual_size = self.virtual_size.width
                 scrollbar.window_size = window_region.width
                 yield scrollbar, scrollbar_region
-
-    def get_pseudo_classes(self) -> Iterable[str]:
-        """Pseudo classes for a widget.
-
-        Returns:
-            Names of the pseudo classes.
-        """
-        app = self.app
-        if self.mouse_hover:
-            yield "hover"
-        if self.has_focus:
-            yield "focus"
-        else:
-            yield "blur"
-        if self.can_focus:
-            yield "can-focus"
-        node: MessagePump | None = self
-        while isinstance(node, Widget):
-            if node.disabled:
-                yield "disabled"
-                break
-            node = node._parent
-        else:
-            yield "enabled"
-        try:
-            focused = self.screen.focused
-        except NoScreen:
-            pass
-        else:
-            yield "dark" if app.dark else "light"
-            if focused:
-                node = focused
-                while node is not None:
-                    if node is self:
-                        yield "focus-within"
-                        break
-                    node = node._parent
-
-        if app.is_inline:
-            yield "inline"
-        if app.ansi_color:
-            yield "ansi"
-        if app.no_color:
-            yield "nocolor"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.

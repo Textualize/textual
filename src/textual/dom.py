@@ -180,6 +180,8 @@ class DOMNode(MessagePump):
     # Names of potential computed reactives
     _computes: ClassVar[frozenset[str]]
 
+    PSEUDO_CLASSES: ClassVar[dict[str, Callable[[object], bool]]] = {}
+
     def __init__(
         self,
         *,
@@ -1228,13 +1230,18 @@ class DOMNode(MessagePump):
         """
         _watch(self, obj, attribute_name, callback, init=init)
 
-    def get_pseudo_classes(self) -> Iterable[str]:
-        """Get any pseudo classes applicable to this Node, e.g. hover, focus.
+    def get_pseudo_classes(self) -> set[str]:
+        """Pseudo classes for a widget.
 
         Returns:
-            Iterable of strings, such as a generator.
+            Names of the pseudo classes.
         """
-        return ()
+
+        return {
+            name
+            for name, check_class in self.PSEUDO_CLASSES.items()
+            if check_class(self)
+        }
 
     def reset_styles(self) -> None:
         """Reset styles back to their initial state."""
@@ -1658,7 +1665,9 @@ class DOMNode(MessagePump):
         Returns:
             `True` if the DOM node has the pseudo class, `False` if not.
         """
-        return class_name in self.get_pseudo_classes()
+        return class_name in self.PSEUDO_CLASSES and self.PSEUDO_CLASSES[class_name](
+            self
+        )
 
     def has_pseudo_classes(self, class_names: set[str]) -> bool:
         """Check the node has all the given pseudo classes.
@@ -1669,7 +1678,11 @@ class DOMNode(MessagePump):
         Returns:
             `True` if all pseudo class names are present.
         """
-        return class_names.issubset(self.get_pseudo_classes())
+        PSEUDO_CLASSES = self.PSEUDO_CLASSES
+        return all(
+            (name in PSEUDO_CLASSES and PSEUDO_CLASSES[name](self))
+            for name in class_names
+        )
 
     def refresh(
         self, *, repaint: bool = True, layout: bool = False, recompose: bool = False

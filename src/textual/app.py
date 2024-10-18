@@ -487,6 +487,16 @@ class App(Generic[ReturnType], DOMNode):
     INLINE_PADDING: ClassVar[int] = 1
     """Number of blank lines above an inline app."""
 
+    PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
+        "focus": lambda app: app.app_focus,
+        "blur": lambda app: not app.app_focus,
+        "dark": lambda app: app.dark,
+        "light": lambda app: not app.dark,
+        "inline": lambda app: app.is_inline,
+        "ansi": lambda app: app.ansi_color,
+        "nocolor": lambda app: app.no_color,
+    }  # type: ignore[assignment]
+
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -891,21 +901,6 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
-
-    def get_pseudo_classes(self) -> Iterable[str]:
-        """Pseudo classes for a widget.
-
-        Returns:
-            Names of the pseudo classes.
-        """
-        yield "focus" if self.app_focus else "blur"
-        yield "dark" if self.dark else "light"
-        if self.is_inline:
-            yield "inline"
-        if self.ansi_color:
-            yield "ansi"
-        if self.no_color:
-            yield "nocolor"
 
     def _watch_ansi_color(self, ansi_color: bool) -> None:
         """Enable or disable the truecolor filter when the reactive changes"""

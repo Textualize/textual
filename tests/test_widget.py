@@ -594,3 +594,38 @@ def test_lazy_loading() -> None:
     assert not hasattr(widgets, "foo")
     assert not hasattr(widgets, "bar")
     assert hasattr(widgets, "Label")
+
+
+async def test_of_type() -> None:
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            for ordinal in range(5):
+                yield Label(f"Item {ordinal}")
+
+    app = MyApp()
+    async with app.run_test():
+        labels = list(app.query(Label))
+        assert labels[0].first_of_type
+        assert not labels[0].last_of_type
+        assert labels[0].is_odd
+        assert not labels[0].is_even
+
+        assert not labels[1].first_of_type
+        assert not labels[1].last_of_type
+        assert not labels[1].is_odd
+        assert labels[1].is_even
+
+        assert not labels[2].first_of_type
+        assert not labels[2].last_of_type
+        assert labels[2].is_odd
+        assert not labels[2].is_even
+
+        assert not labels[3].first_of_type
+        assert not labels[3].last_of_type
+        assert not labels[3].is_odd
+        assert labels[3].is_even
+
+        assert not labels[4].first_of_type
+        assert labels[4].last_of_type
+        assert labels[4].is_odd
+        assert not labels[4].is_even
