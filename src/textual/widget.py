@@ -483,6 +483,13 @@ class Widget(DOMNode):
         self._cover_widget: Widget | None = None
         """Widget to render over this widget (used by loading indicator)."""
 
+        self._first_of_type: tuple[int, bool] = (-1, False)
+        """Used to cache :first-of-type pseudoclass state."""
+        self._last_of_type: tuple[int, bool] = (-1, False)
+        """Used to cache :last-of-type pseudoclass state."""
+        self._odd: tuple[int, bool] = (-1, False)
+        """Used to cache :odd pseudoclass state."""
+
     @property
     def is_mounted(self) -> bool:
         """Check if this widget is mounted."""
@@ -747,42 +754,55 @@ class Widget(DOMNode):
     @property
     def first_of_type(self) -> bool:
         """Is this the first widget of its type in its siblings?"""
-        if self.parent is None:
-            return False
-        try:
-            return self.parent.query_children(self._css_type_name).first() is self
-        except NoMatches:
-            return False
+        parent = self.parent
+        if parent is None:
+            return True
+        # This pseudo classes only changes when the parent's nodes._updates changes
+        if parent._nodes._updates == self._first_of_type[0]:
+            return self._first_of_type[1]
+        widget_type = type(self)
+        for node in parent._nodes:
+            if isinstance(node, widget_type):
+                self._first_of_type = (parent._nodes._updates, node is self)
+                return self._first_of_type[1]
+        return False
 
     @property
     def last_of_type(self) -> bool:
         """Is this the last widget of its type in its siblings?"""
-        if self.parent is None:
-            return False
-        try:
-            return self.parent.query_children(self._css_type_name).last() is self
-        except NoMatches:
-            return False
+        parent = self.parent
+        if parent is None:
+            return True
+        # This pseudo classes only changes when the parent's nodes._updates changes
+        if parent._nodes._updates == self._last_of_type[0]:
+            return self._last_of_type[1]
+        widget_type = type(self)
+        for node in reversed(parent.children):
+            if isinstance(node, widget_type):
+                self._last_of_type = (parent._nodes._updates, node is self)
+                return self._last_of_type[1]
+        return False
 
     @property
     def is_odd(self) -> bool:
         """Is this widget at an oddly numbered position within its siblings?"""
-        if self.parent is None:
-            return False
+        parent = self.parent
+        if parent is None:
+            return True
+        # This pseudo classes only changes when the parent's nodes._updates changes
+        if parent._nodes._updates == self._odd[0]:
+            return self._odd[1]
         try:
-            return self.parent.children.index(self) % 2 == 0
+            is_odd = parent.children.index(self) % 2 == 0
+            self._odd = (parent._nodes._updates, is_odd)
+            return is_odd
         except ValueError:
             return False
 
     @property
     def is_even(self) -> bool:
         """Is this widget at an evenly numbered position within its siblings?"""
-        if self.parent is None:
-            return False
-        try:
-            return self.parent.children.index(self) % 2 == 1
-        except ValueError:
-            return False
+        return not self.is_odd
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
