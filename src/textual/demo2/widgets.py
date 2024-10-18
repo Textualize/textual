@@ -1,7 +1,20 @@
 from textual import containers
 from textual.app import ComposeResult
+from textual.demo2.data import COUNTRIES
 from textual.demo2.page import PageScreen
-from textual.widgets import Button, Checkbox, DataTable, Footer, Markdown, RadioSet
+from textual.suggester import SuggestFromList
+from textual.widgets import (
+    Button,
+    Checkbox,
+    DataTable,
+    Footer,
+    Input,
+    Label,
+    Markdown,
+    MaskedInput,
+    RadioButton,
+    RadioSet,
+)
 
 WIDGETS_MD = """\
 # Widgets
@@ -71,51 +84,39 @@ class Checkboxes(containers.VerticalGroup):
     Checkboxes {
         height: auto;
         Checkbox, RadioButton { width: 1fr; }
-        ItemGrid {
-            margin-bottom: 1;                     
-        }
+        &>HorizontalGroup > * { width: 1fr; }
     }
 
     """
 
     CHECKBOXES_MD = """\
-## Checkboxes
+## Checkboxes, Radio buttons, and Radio sets
 
-A checkbox with two states.
+Checkboxes to toggle booleans.
+Radio buttons for exclusive booleans.
+Radio sets for a managed set of options where only a single option may be selected.
 
     """
 
     def compose(self) -> ComposeResult:
         yield Markdown(self.CHECKBOXES_MD)
-        with containers.ItemGrid(min_column_width=20, regular=True):
-            yield Checkbox("Arrakis")
-            yield Checkbox("Caladan")
-            yield Checkbox("Chusuk")
-            yield Checkbox("Giedi Prime")
-
-
-class RadioSets(containers.VerticalGroup):
-    DEFAULT_CLASSES = "column"
-    RADIOSETS_MD = """\
-## Radiosets
-
-A group of toggles where only once may be active at a time.
-
-"""
-
-    def compose(self) -> ComposeResult:
-        yield Markdown(self.RADIOSETS_MD)
-        yield RadioSet(
-            "Amanda",
-            "Connor MacLeod",
-            "Duncan MacLeod",
-            "Heather MacLeod",
-            "Joe Dawson",
-            "Kurgan, [bold italic red]The[/]",
-            "Methos",
-            "Rachel Ellenstein",
-            "Ramírez",
-        )
+        with containers.HorizontalGroup():
+            with containers.VerticalGroup():
+                yield Checkbox("Arrakis")
+                yield Checkbox("Caladan")
+                yield RadioButton("Chusuk")
+                yield RadioButton("Giedi Prime")
+            yield RadioSet(
+                "Amanda",
+                "Connor MacLeod",
+                "Duncan MacLeod",
+                "Heather MacLeod",
+                "Joe Dawson",
+                "Kurgan, [bold italic red]The[/]",
+                "Methos",
+                "Rachel Ellenstein",
+                "Ramírez",
+            )
 
 
 class Datatables(containers.VerticalGroup):
@@ -123,7 +124,8 @@ class Datatables(containers.VerticalGroup):
     DATATABLES_MD = """\
 ## Datatables
 
-A fully-featured 
+A fully-featured DataTable, with cell, row, and columns cursors.
+Cells may be individually styled, and may include Rich renderables.
 
 """
     ROWS = [
@@ -150,6 +152,59 @@ A fully-featured
         table.add_rows(self.ROWS[1:])
 
 
+class Inputs(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    INPUTS_MD = """\
+## Inputs and MaskedInputs
+
+Text input fields, with placeholder text, validation, and auto-complete.
+Build for intuitive and user-friendly forms.
+ 
+"""
+    DEFAULT_CSS = """
+    Inputs {
+        Grid {
+            background: $boost;
+            padding: 1 2;
+            height: auto;
+            grid-size: 2;
+            grid-gutter: 1;
+            grid-columns: auto 1fr;
+            border: tall blank;
+            &:focus-within {
+                border: tall $accent;
+            }
+            Label {
+                width: 100%;
+                margin: 1;
+                text-align: right;
+            }
+        }
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.INPUTS_MD)
+        with containers.Grid():
+            yield Label("Free")
+            yield Input(placeholder="Type anything here")
+            yield Label("Number")
+            yield Input(
+                type="number", placeholder="Type a number here", valid_empty=True
+            )
+            yield Label("Credit card")
+            yield MaskedInput(
+                "9999-9999-9999-9999;0",
+                tooltip="Obviously not your real credit card!",
+                valid_empty=True,
+            )
+            yield Label("Country")
+            yield Input(
+                suggester=SuggestFromList(COUNTRIES, case_sensitive=False),
+                placeholder="Country",
+            )
+
+
 class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
@@ -157,12 +212,17 @@ class WidgetsScreen(PageScreen):
     }
     """
 
+    BINDINGS = [("escape", "unfocus")]
+
     def compose(self) -> ComposeResult:
         with containers.VerticalScroll():
             with containers.Center(classes="column"):
                 yield Markdown(WIDGETS_MD)
             yield Buttons()
             yield Checkboxes()
-            yield RadioSets()
             yield Datatables()
+            yield Inputs()
         yield Footer()
+
+    def action_unfocus(self) -> None:
+        self.set_focus(None)
