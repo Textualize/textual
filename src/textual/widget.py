@@ -367,7 +367,7 @@ class Widget(DOMNode):
     # Default sort order, incremented by constructor
     _sort_order: ClassVar[int] = 0
 
-    PSEUDO_CLASSES: ClassVar[dict[str, Callable[[Widget], bool]]] = {
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[Widget], bool]]] = {
         "hover": lambda widget: widget.mouse_hover,
         "focus": lambda widget: widget.has_focus,
         "blur": lambda widget: not widget.has_focus,

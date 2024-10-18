@@ -180,7 +180,8 @@ class DOMNode(MessagePump):
     # Names of potential computed reactives
     _computes: ClassVar[frozenset[str]]
 
-    PSEUDO_CLASSES: ClassVar[dict[str, Callable[[object], bool]]] = {}
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[object], bool]]] = {}
+    """Pseudo class checks."""
 
     def __init__(
         self,
@@ -1239,7 +1240,7 @@ class DOMNode(MessagePump):
 
         return {
             name
-            for name, check_class in self.PSEUDO_CLASSES.items()
+            for name, check_class in self._PSEUDO_CLASSES.items()
             if check_class(self)
         }
 
@@ -1665,7 +1666,7 @@ class DOMNode(MessagePump):
         Returns:
             `True` if the DOM node has the pseudo class, `False` if not.
         """
-        return class_name in self.PSEUDO_CLASSES and self.PSEUDO_CLASSES[class_name](
+        return class_name in self._PSEUDO_CLASSES and self._PSEUDO_CLASSES[class_name](
             self
         )
 
@@ -1678,7 +1679,7 @@ class DOMNode(MessagePump):
         Returns:
             `True` if all pseudo class names are present.
         """
-        PSEUDO_CLASSES = self.PSEUDO_CLASSES
+        PSEUDO_CLASSES = self._PSEUDO_CLASSES
         return all(
             (name in PSEUDO_CLASSES and PSEUDO_CLASSES[name](self))
             for name in class_names

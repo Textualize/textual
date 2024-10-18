@@ -487,7 +487,7 @@ class App(Generic[ReturnType], DOMNode):
     INLINE_PADDING: ClassVar[int] = 1
     """Number of blank lines above an inline app."""
 
-    PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
         "dark": lambda app: app.dark,
