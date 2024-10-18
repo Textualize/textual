@@ -793,7 +793,7 @@ class Widget(DOMNode):
         if parent._nodes._updates == self._odd[0]:
             return self._odd[1]
         try:
-            is_odd = parent.children.index(self) % 2 == 0
+            is_odd = parent._nodes.index(self) % 2 == 0
             self._odd = (parent._nodes._updates, is_odd)
             return is_odd
         except ValueError:
