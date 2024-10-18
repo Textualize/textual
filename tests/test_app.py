@@ -39,7 +39,7 @@ async def test_hover_update_styles():
             "enabled",
             "first-of-type",
             "last-of-type",
-            "odd",
+            "even",
         }
 
         # Take note of the initial background colour
@@ -55,7 +55,7 @@ async def test_hover_update_styles():
             "hover",
             "first-of-type",
             "last-of-type",
-            "odd",
+            "even",
         }
         assert button.styles.background != initial_background
 
