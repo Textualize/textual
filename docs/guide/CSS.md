@@ -330,10 +330,14 @@ Here are some other pseudo classes:
 - `:dark` Matches widgets in dark mode (where `App.dark == True`).
 - `:disabled` Matches widgets which are in a disabled state.
 - `:enabled` Matches widgets which are in an enabled state.
+- `:even` Matches a widget at an evenly numbered position within its siblings.
+- `:first-of-type` Matches a widget that is the first of its type amongst its siblings.
 - `:focus-within` Matches widgets with a focused child widget.
 - `:focus` Matches widgets which have input focus.
 - `:inline` Matches widgets when the app is running in inline mode.
+- `:last-of-type` Matches a widget that is the last of its type amongst its siblings.
 - `:light` Matches widgets in dark mode (where `App.dark == False`).
+- `:odd` Matches a widget at an oddly numbered position within its siblings.
 
 ## Combinators
 
