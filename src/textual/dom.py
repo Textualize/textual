@@ -180,6 +180,9 @@ class DOMNode(MessagePump):
     # Names of potential computed reactives
     _computes: ClassVar[frozenset[str]]
 
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[object], bool]]] = {}
+    """Pseudo class checks."""
+
     def __init__(
         self,
         *,
@@ -217,6 +220,8 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
+        self._has_order_style: bool = False
+        """The node has an ordered dependent pseudo-style (`:odd`, `:even`, `:first-of-type`, `:last-of-type`)"""
         self._reactive_connect: (
             dict[str, tuple[MessagePump, Reactive[object] | object]] | None
         ) = None
@@ -1233,13 +1238,18 @@ class DOMNode(MessagePump):
         """
         _watch(self, obj, attribute_name, callback, init=init)
 
-    def get_pseudo_classes(self) -> Iterable[str]:
-        """Get any pseudo classes applicable to this Node, e.g. hover, focus.
+    def get_pseudo_classes(self) -> set[str]:
+        """Pseudo classes for a widget.
 
         Returns:
-            Iterable of strings, such as a generator.
+            Names of the pseudo classes.
         """
-        return ()
+
+        return {
+            name
+            for name, check_class in self._PSEUDO_CLASSES.items()
+            if check_class(self)
+        }
 
     def reset_styles(self) -> None:
         """Reset styles back to their initial state."""
@@ -1663,7 +1673,10 @@ class DOMNode(MessagePump):
         Returns:
             `True` if the DOM node has the pseudo class, `False` if not.
         """
-        return class_name in self.get_pseudo_classes()
+        try:
+            return self._PSEUDO_CLASSES[class_name](self)
+        except KeyError:
+            return False
 
     def has_pseudo_classes(self, class_names: set[str]) -> bool:
         """Check the node has all the given pseudo classes.
@@ -1674,7 +1687,16 @@ class DOMNode(MessagePump):
         Returns:
             `True` if all pseudo class names are present.
         """
-        return class_names.issubset(self.get_pseudo_classes())
+        PSEUDO_CLASSES = self._PSEUDO_CLASSES
+        try:
+            return all(PSEUDO_CLASSES[name](self) for name in class_names)
+        except KeyError:
+            return False
+
+    @property
+    def _pseudo_classes_cache_key(self) -> tuple[int, ...]:
+        """A cache key used when updating a number of nodes from the stylesheet."""
+        return ()
 
     def refresh(
         self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
