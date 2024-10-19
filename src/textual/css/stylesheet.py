@@ -476,11 +476,7 @@ class Stylesheet:
             for rule in rules_map[name]
         }
         rules = list(filter(limit_rules.__contains__, reversed(self.rules)))
-
-        all_pseudo_classes = set()
-        for rule in rules:
-            all_pseudo_classes |= rule.pseudo_classes
-
+        all_pseudo_classes = set().union(*[rule.pseudo_classes for rule in rules])
         node._has_hover_style = "hover" in all_pseudo_classes
         node._has_focus_within = "focus-within" in all_pseudo_classes
         node._has_order_style = not all_pseudo_classes.isdisjoint(
