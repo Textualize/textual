@@ -1687,15 +1687,6 @@ class DOMNode(MessagePump):
             for name in class_names
         )
 
-    _CACHEABLE_PSEUDO_CLASSES = [
-        "hover",
-        "focus",
-        "can-focus",
-        "disabled",
-        "dark",
-        "focus-within",
-    ]
-
     @property
     def _pseudo_classes_cache_key(self) -> tuple[int, ...]:
         """A cache key used when updating a number of nodes from the stylesheet."""
