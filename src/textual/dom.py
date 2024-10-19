@@ -1681,16 +1681,11 @@ class DOMNode(MessagePump):
         Returns:
             `True` if all pseudo class names are present.
         """
-        get_pseudo_class_callable = self._PSEUDO_CLASSES.get
-
-        def missing_pseudo_class(node: DOMNode) -> bool:
-            """Callable when a pseudo class is missing."""
+        PSEUDO_CLASSES = self._PSEUDO_CLASSES
+        try:
+            return all(PSEUDO_CLASSES[name](self) for name in class_names)
+        except KeyError:
             return False
-
-        return all(
-            get_pseudo_class_callable(name, missing_pseudo_class)(self)
-            for name in class_names
-        )
 
     @property
     def _pseudo_classes_cache_key(self) -> tuple[int, ...]:
