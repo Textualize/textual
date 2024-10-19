@@ -3143,7 +3143,7 @@ class App(Generic[ReturnType], DOMNode):
             widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
-        new_widgets: list[DOMNode] = []
+        new_widgets: list[Widget] = []
         add_new_widget = new_widgets.append
         for widget in widget_list:
             widget._closing = False
