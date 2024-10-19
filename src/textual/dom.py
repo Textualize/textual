@@ -1668,9 +1668,10 @@ class DOMNode(MessagePump):
         Returns:
             `True` if the DOM node has the pseudo class, `False` if not.
         """
-        return class_name in self._PSEUDO_CLASSES and self._PSEUDO_CLASSES[class_name](
-            self
-        )
+        try:
+            return self._PSEUDO_CLASSES[class_name](self)
+        except KeyError:
+            return False
 
     def has_pseudo_classes(self, class_names: set[str]) -> bool:
         """Check the node has all the given pseudo classes.
