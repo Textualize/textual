@@ -1681,9 +1681,14 @@ class DOMNode(MessagePump):
         Returns:
             `True` if all pseudo class names are present.
         """
-        PSEUDO_CLASSES = self._PSEUDO_CLASSES
+        get_pseudo_class_callable = self._PSEUDO_CLASSES.get
+
+        def missing_pseudo_class(node: DOMNode) -> bool:
+            """Callable when a pseudo class is missing."""
+            return False
+
         return all(
-            (name in PSEUDO_CLASSES and PSEUDO_CLASSES[name](self))
+            get_pseudo_class_callable(name, missing_pseudo_class)(self)
             for name in class_names
         )
 
