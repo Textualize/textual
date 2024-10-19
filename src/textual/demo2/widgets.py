@@ -208,7 +208,12 @@ Build for intuitive and user-friendly forms.
 class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
-        align-horizontal: center;                                    
+        align-horizontal: center;
+        & > VerticalScroll > * {            
+            &:last-of-type { margin-bottom: 2; } 
+            &:even { background: $boost; }            
+            padding-bottom: 1;                                        
+        }                           
     }
     """
 

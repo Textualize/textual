@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Grid will now size children to the maximum height of a row
 - Markdown links will be opened with `App.open_url` automatically
+- The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc)
 
 ### Added
 
