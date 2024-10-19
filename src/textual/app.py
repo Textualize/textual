@@ -3153,7 +3153,8 @@ class App(Generic[ReturnType], DOMNode):
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
                     self._register(widget, *widget._nodes, cache=cache)
-                apply_stylesheet(widget, cache=cache)
+        for widget in widget_list:
+            apply_stylesheet(widget, cache=cache)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks

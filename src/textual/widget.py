@@ -777,7 +777,7 @@ class Widget(DOMNode):
         if parent._nodes._updates == self._last_of_type[0]:
             return self._last_of_type[1]
         widget_type = type(self)
-        for node in reversed(parent.children):
+        for node in reversed(parent._nodes):
             if isinstance(node, widget_type):
                 self._last_of_type = (parent._nodes._updates, node is self)
                 return self._last_of_type[1]
@@ -1166,8 +1166,16 @@ class Widget(DOMNode):
             parent, *widgets, before=insert_before, after=insert_after
         )
 
+        def update_styles(children: Iterable[DOMNode]) -> None:
+            """Update order related CSS"""
+            for child in children:
+                if child._has_order_style:
+                    child._update_styles()
+
+        self.call_later(update_styles, list(self.children))
         await_mount = AwaitMount(self, mounted)
         self.call_next(await_mount)
+
         return await_mount
 
     def mount_all(

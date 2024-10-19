@@ -220,6 +220,8 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
+        self._has_order_style: bool = False
+        """The node has an ordered dependent pseudo-style (`:odd`, `:even`, `:first-of-type`, `:last-of-type`)"""
         self._reactive_connect: (
             dict[str, tuple[MessagePump, Reactive[object] | object]] | None
         ) = None

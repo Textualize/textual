@@ -72,6 +72,10 @@ VALID_PSEUDO_CLASSES: Final = {
     "inline",
     "light",
     "nocolor",
+    "first-of-type",
+    "last-of-type",
+    "odd",
+    "even",
 }
 VALID_OVERLAY: Final = {"none", "screen"}
 VALID_CONSTRAIN: Final = {"inflect", "inside", "none"}
