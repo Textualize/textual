@@ -3143,6 +3143,8 @@ class App(Generic[ReturnType], DOMNode):
             widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
+        new_widgets: list[DOMNode] = []
+        add_new_widget = new_widgets.append
         for widget in widget_list:
             widget._closing = False
             widget._closed = False
@@ -3150,10 +3152,11 @@ class App(Generic[ReturnType], DOMNode):
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
+                add_new_widget(widget)
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
                     self._register(widget, *widget._nodes, cache=cache)
-        for widget in widget_list:
+        for widget in new_widgets:
             apply_stylesheet(widget, cache=cache)
 
         if not self._running:
