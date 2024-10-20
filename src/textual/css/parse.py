@@ -170,7 +170,6 @@ def parse_rule_set(
 
     while True:
         token = next(tokens)
-
         token_name = token.name
         if token_name in ("whitespace", "declaration_end"):
             continue

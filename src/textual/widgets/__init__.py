@@ -23,6 +23,7 @@ if typing.TYPE_CHECKING:
     from textual.widgets._input import Input
     from textual.widgets._key_panel import KeyPanel
     from textual.widgets._label import Label
+    from textual.widgets._link import Link
     from textual.widgets._list_item import ListItem
     from textual.widgets._list_view import ListView
     from textual.widgets._loading_indicator import LoadingIndicator
@@ -63,6 +64,7 @@ __all__ = [
     "Input",
     "KeyPanel",
     "Label",
+    "Link",
     "ListItem",
     "ListView",
     "LoadingIndicator",

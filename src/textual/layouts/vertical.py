@@ -3,9 +3,9 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING
 
-from textual._layout import ArrangeResult, Layout, WidgetPlacement
 from textual._resolve import resolve_box_models
 from textual.geometry import Region, Size
+from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from textual.geometry import Spacing

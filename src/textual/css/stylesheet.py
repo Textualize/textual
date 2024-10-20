@@ -255,6 +255,7 @@ class Stylesheet:
                     tie_breaker=tie_breaker,
                 )
             )
+
         except TokenError:
             raise
         except Exception as error:

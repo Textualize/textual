@@ -56,7 +56,7 @@ def _check_universal(name: str, node: DOMNode) -> bool:
     Returns:
         `True` if the selector matches.
     """
-    return True
+    return not node.has_class("-textual-system")
 
 
 def _check_type(name: str, node: DOMNode) -> bool:
