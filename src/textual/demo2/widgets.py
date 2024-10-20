@@ -260,8 +260,7 @@ class WidgetsScreen(PageScreen):
 
     def compose(self) -> ComposeResult:
         with containers.VerticalScroll():
-            with containers.Center(classes="column"):
-                yield Markdown(WIDGETS_MD)
+            yield Markdown(WIDGETS_MD, classes="column")
             yield Buttons()
             yield Checkboxes()
             yield Datatables()

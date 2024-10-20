@@ -173,6 +173,8 @@ class Digits:
 
     """
 
+    REPLACEMENTS = str.maketrans({".": "•"})
+
     def __init__(self, text: str, style: StyleType = "") -> None:
         self._text = text
         self._style = style
@@ -202,7 +204,7 @@ class Digits:
         else:
             digits = DIGITS3X3
 
-        for character in self._text:
+        for character in self._text.translate(self.REPLACEMENTS):
             try:
                 position = DIGITS.index(character) * 3
             except ValueError:
