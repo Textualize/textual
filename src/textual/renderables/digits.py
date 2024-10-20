@@ -5,7 +5,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-DIGITS = " 0123456789+-^x:ABCDEF$£"
+DIGITS = " 0123456789+-^x:ABCDEF$£€"
 DIGITS3X3_BOLD = """\
 
 
@@ -77,8 +77,11 @@ DIGITS3X3_BOLD = """\
 ╰╫╮
 ╶╫╯
 ╭─╮
-┼─
-╰─╴
+╪═
+└─╴
+╭─╮
+╪═
+╰─╯
 """.splitlines()
 
 
@@ -153,8 +156,11 @@ DIGITS3X3 = """\
 ╰╫╮
 ╶╫╯
 ╭─╮
-┼─
-╰─╴
+╪═
+└─╴
+╭─╮
+╪═
+╰─╯
 """.splitlines()
 
 

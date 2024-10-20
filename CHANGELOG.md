@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
 - Added `App.DEFAULT_MODE`
 - Added `Containers.HorizontalGroup` and `Containers.VerticalGroup`
-- Added `$` and `£` symbols to Digits
+- Added `$`, `£`, `€` symbols to Digits
 
 ### Fixed
 

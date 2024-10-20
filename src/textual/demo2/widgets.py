@@ -238,8 +238,8 @@ An Option List for a for field to present a list of strings to select from.
         with containers.HorizontalGroup():
             yield ListView(
                 ListItem(Digits("$50.00")),
-                ListItem(Digits("$100.00")),
-                ListItem(Digits("$500.00")),
+                ListItem(Digits("£100.00")),
+                ListItem(Digits("€500.00")),
             )
             yield OptionList(*COUNTRIES)
 
