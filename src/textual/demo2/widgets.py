@@ -7,11 +7,15 @@ from textual.widgets import (
     Button,
     Checkbox,
     DataTable,
+    Digits,
     Footer,
     Input,
     Label,
+    ListItem,
+    ListView,
     Markdown,
     MaskedInput,
+    OptionList,
     RadioButton,
     RadioSet,
 )
@@ -176,7 +180,7 @@ Build for intuitive and user-friendly forms.
             }
             Label {
                 width: 100%;
-                margin: 1;
+                padding: 1;
                 text-align: right;
             }
         }
@@ -205,6 +209,48 @@ Build for intuitive and user-friendly forms.
             )
 
 
+class ListViews(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    LISTS_MD = """\
+## List Views and Option Lists
+
+A List View turns any widget in to a user-navigable and selectable list.
+An Option List for a for field to present a list of strings to select from.
+
+    """
+
+    DEFAULT_CSS = """\
+    ListViews {
+        ListView {
+            width: 1fr;
+            height: auto;
+            margin: 0 2;
+            background: $panel;
+        }
+        OptionList {
+            max-height: 15;
+        }
+
+        Digits {
+            padding: 1 2;
+            width: 1fr;
+            
+        }
+    }
+    
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.LISTS_MD)
+        with containers.HorizontalGroup():
+            yield ListView(
+                ListItem(Digits("$50.00")),
+                ListItem(Digits("$100.00")),
+                ListItem(Digits("$500.00")),
+            )
+            yield OptionList(*COUNTRIES)
+
+
 class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
@@ -227,6 +273,7 @@ class WidgetsScreen(PageScreen):
             yield Checkboxes()
             yield Datatables()
             yield Inputs()
+            yield ListViews()
         yield Footer()
 
     def action_unfocus(self) -> None:

@@ -192,10 +192,13 @@ class Content(VerticalScroll, can_focus=False):
 class HomeScreen(PageScreen):
     DEFAULT_CSS = """
     HomeScreen {
-        align-horizontal: center;
-        Content {      
-            margin: 0 1;
-            max-width: 100;
+        
+        Content {
+            align-horizontal: center;
+            & > * {
+                max-width: 100;
+            }      
+            margin: 0 1;          
             overflow-y: auto;
             height: 1fr;
             scrollbar-gutter: stable;
