@@ -227,15 +227,8 @@ An Option List for a for field to present a list of strings to select from.
             margin: 0 2;
             background: $panel;
         }
-        OptionList {
-            max-height: 15;
-        }
-
-        Digits {
-            padding: 1 2;
-            width: 1fr;
-            
-        }
+        OptionList { max-height: 15; }
+        Digits { padding: 1 2; width: 1fr; }
     }
     
     """
