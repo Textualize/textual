@@ -48,8 +48,10 @@ class FooterKey(Widget):
         &:hover {
             background-tint: $foreground 5%;
             color: $footer-key-foreground;
+            background: $footer-item-background;
             .footer-key--key {
                 background-tint: $foreground 5%;
+                background: $footer-item-background;
             }
         }
 
