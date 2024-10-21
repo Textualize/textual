@@ -99,7 +99,8 @@ BUILTIN_THEMES: dict[str, Theme] = {
         variables={
             "block-cursor-background": "#88C0D0",
             "block-cursor-foreground": "#2E3440",
-            "block-cursor-text-style": "bold",
+            "block-cursor-text-style": "none",
+            "footer-key-foreground": "#88C0D0",
         },
     ),
     "gruvbox": Theme(
@@ -115,6 +116,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#3c3836",
         panel="#504945",
         dark=True,
+        variables={
+            "block-cursor-foreground": "#fbf1c7",
+        },
     ),
     "solarized-dark": Theme(
         name="solarized-dark",

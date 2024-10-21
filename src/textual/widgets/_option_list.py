@@ -144,25 +144,25 @@ class OptionList(ScrollView, can_focus=True):
         border: tall transparent;
         padding: 0 1;
         background: $surface;
-        
         &:focus {
             border: tall $border;
             background-tint: $foreground 5%;
             & > .option-list--option-highlighted {
+                color: $block-cursor-foreground;
                 background: $block-cursor-background;
-                text-style: bold;
+                text-style: $block-cursor-text-style;
             }
         }
 
         & > .option-list--option-hover-highlighted {
-            background: $secondary;
-            color: $text;
+            color: $block-cursor-foreground;
+            background: $block-cursor-background;
         }
         & > .option-list--separator {
             color: $foreground 15%;
         }
         & > .option-list--option-highlighted {
-            color: $text;
+            color: $foreground;
             background: $block-cursor-blurred-background;
         }
         & > .option-list--option-disabled {

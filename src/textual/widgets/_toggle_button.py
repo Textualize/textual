@@ -69,7 +69,7 @@ class ToggleButton(Static, can_focus=True):
             & > .toggle--label {
                 color: $text;
                 background: $block-cursor-background;
-                text-style: bold;
+                text-style: $block-cursor-text-style;
             }
             & > .toggle--button {
                 background: $foreground 25%;
@@ -98,7 +98,7 @@ class ToggleButton(Static, can_focus=True):
     /* Base button colors (including in dark mode). */
 
     ToggleButton > .toggle--button {
-        text-style: bold;
+        text-style: $block-cursor-text-style;
         background: $foreground 15%;
     }
 

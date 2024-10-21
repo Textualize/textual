@@ -29,8 +29,8 @@ class CollapsibleTitle(Static, can_focus=True):
     }
 
     CollapsibleTitle:focus {
-        background: $secondary;
-        color: $text;
+        background: $block-cursor-background;
+        color: $block-cursor-foreground;
     }
     """
 

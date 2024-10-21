@@ -608,9 +608,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         &:focus {
             background-tint: $foreground 5%;
             & > .tree--cursor {
-                color: $text;
+                color: $block-cursor-foreground;
                 background: $block-cursor-background;
-                text-style: bold;
+                text-style: $block-cursor-text-style;
             }
             & > .tree--guides {
                 color: $surface-lighten-3;

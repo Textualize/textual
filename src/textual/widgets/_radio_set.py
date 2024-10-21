@@ -67,7 +67,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
 
             & > RadioButton.-selected {
                 color: $text;
-                text-style: bold;
+                text-style: $block-cursor-text-style;
                 background: $block-cursor-background;
                 & > .toggle--button {
                     color: $surface;
