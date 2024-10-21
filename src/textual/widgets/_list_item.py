@@ -18,7 +18,6 @@ class ListItem(Widget, can_focus=False):
 
     DEFAULT_CSS = """
     ListItem {
-        color: $text;
         height: auto;
         overflow: hidden hidden;
         background: $surface;
