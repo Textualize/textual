@@ -158,9 +158,8 @@ class Input(Widget, can_focus=True):
             background-tint: $foreground 5%;
         }
         &>.input--cursor {
-            background: $surface;
-            color: $foreground;
-            text-style: reverse;
+            background: $input-cursor-background;
+            color: $input-cursor-foreground;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;

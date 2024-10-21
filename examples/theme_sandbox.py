@@ -307,6 +307,7 @@ class ChangingThemeApp(App[None]):
         yield Footer()
 
     def on_mount(self) -> None:
+        self.theme = "nord"
         text_area = self.query_one(TextArea)
         text_area.selection = Selection((0, 0), (1, 10))
 

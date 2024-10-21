@@ -118,13 +118,13 @@ TextArea {
     }
 
     &:focus {
-        border: tall $secondary;
+        border: tall $border;
     }
 
     &:dark {
         .text-area--cursor {
-           color: $text 90%;
-            background: $foreground 90%;
+            color: $input-cursor-foreground;
+            background: $input-cursor-background;
         }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
