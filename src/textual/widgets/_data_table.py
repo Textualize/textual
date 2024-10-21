@@ -338,8 +338,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         & > .datatable--header {
             text-style: bold;
-            background: $primary;
-            color: $text;
+            background: $panel;
+            color: $foreground;
         }
 
         & > .datatable--fixed {
