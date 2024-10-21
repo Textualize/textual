@@ -493,6 +493,16 @@ class App(Generic[ReturnType], DOMNode):
     INLINE_PADDING: ClassVar[int] = 1
     """Number of blank lines above an inline app."""
 
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
+        "focus": lambda app: app.app_focus,
+        "blur": lambda app: not app.app_focus,
+        "dark": lambda app: app.dark,
+        "light": lambda app: not app.dark,
+        "inline": lambda app: app.is_inline,
+        "ansi": lambda app: app.ansi_color,
+        "nocolor": lambda app: app.no_color,
+    }  # type: ignore[assignment]
+
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -912,22 +922,6 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
-
-    def get_pseudo_classes(self) -> Iterable[str]:
-        """Pseudo classes for a widget.
-
-        Returns:
-            Names of the pseudo classes.
-        """
-        app_theme = self.get_theme(self.theme)
-        yield "focus" if self.app_focus else "blur"
-        yield "dark" if app_theme and app_theme.dark else "light"
-        if self.is_inline:
-            yield "inline"
-        if self.ansi_color:
-            yield "ansi"
-        if self.no_color:
-            yield "nocolor"
 
     def _watch_ansi_color(self, ansi_color: bool) -> None:
         """Enable or disable the truecolor filter when the reactive changes"""
@@ -3265,6 +3259,8 @@ class App(Generic[ReturnType], DOMNode):
             widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
+        new_widgets: list[Widget] = []
+        add_new_widget = new_widgets.append
         for widget in widget_list:
             widget._closing = False
             widget._closed = False
@@ -3272,10 +3268,12 @@ class App(Generic[ReturnType], DOMNode):
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
+                add_new_widget(widget)
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
                     self._register(widget, *widget._nodes, cache=cache)
-                apply_stylesheet(widget, cache=cache)
+        for widget in new_widgets:
+            apply_stylesheet(widget, cache=cache)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks

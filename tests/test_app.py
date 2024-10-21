@@ -37,6 +37,9 @@ async def test_hover_update_styles():
             "can-focus",
             "dark",
             "enabled",
+            "first-of-type",
+            "last-of-type",
+            "even",
         }
 
         # Take note of the initial background colour
@@ -50,6 +53,9 @@ async def test_hover_update_styles():
             "dark",
             "enabled",
             "hover",
+            "first-of-type",
+            "last-of-type",
+            "even",
         }
         assert button.styles.background != initial_background
 

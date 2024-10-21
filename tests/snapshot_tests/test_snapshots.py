@@ -8,7 +8,7 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
-from textual.containers import Center, Grid, Middle, Vertical, VerticalScroll
+from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
@@ -2336,3 +2336,72 @@ def test_background_tint(snap_compare):
                 yield Label("100%")
 
     assert snap_compare(BackgroundTintApp())
+
+
+def test_fr_and_margin(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5116"""
+
+    # Check margins can be independently applied to widgets with fr unites
+
+    class FRApp(App):
+        CSS = """
+        #first-container {            
+            background: green;
+            height: auto;
+        }
+
+        #second-container {
+            margin: 2;
+            background: red;
+            height: auto;        
+        }
+
+        #third-container {
+            margin: 4;
+            background: blue;
+            height: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container(id="first-container"):
+                yield Label("No margin - should extend to left and right")
+
+            with Container(id="second-container"):
+                yield Label("A margin of 2, should be 2 cells around the text")
+
+            with Container(id="third-container"):
+                yield Label("A margin of 4, should be 4 cells around the text")
+
+    assert snap_compare(FRApp())
+
+
+def test_pseudo_classes(snap_compare):
+    """Test pseudo classes added in https://github.com/Textualize/textual/pull/5139
+
+    You should see 6 bars, with alternating green and red backgrounds.
+
+    The first bar should have a red border.
+
+    The last bar should have a green border.
+
+    """
+
+    class PSApp(App):
+        CSS = """
+        Label { width: 1fr; height: 1fr; }
+        Label:first-of-type { border:heavy red; }
+        Label:last-of-type { border:heavy green; }
+        Label:odd {background: $success 20%; }
+        Label:even {background: $error 20%; }
+        """
+
+        def compose(self) -> ComposeResult:
+            for item_number in range(5):
+                yield Label(f"Item {item_number+1}")
+
+        def on_mount(self) -> None:
+            # Mounting a new widget should updated previous widgets, as the last of type has changed
+            self.mount(Label("HELLO"))
+
+    assert snap_compare(PSApp())
