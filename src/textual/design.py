@@ -270,6 +270,21 @@ class ColorSystem:
         colors["link-color-hover"] = get("link-color-hover", colors["text"])
         colors["link-style-hover"] = get("link-style-hover", "bold not underline")
 
+        colors["footer-foreground"] = get("footer-foreground", foreground.hex)
+        colors["footer-background"] = get("footer-background", panel.hex)
+
+        colors["footer-key-foreground"] = get("footer-key-foreground", accent.hex)
+        colors["footer-key-background"] = get("footer-key-background", "transparent")
+
+        colors["footer-description-foreground"] = get(
+            "footer-description-foreground", colors["text-muted"]
+        )
+        colors["footer-description-background"] = get(
+            "footer-description-background", "transparent"
+        )
+
+        colors["footer-item-background"] = get("footer-item-background", "transparent")
+
         return colors
 
 

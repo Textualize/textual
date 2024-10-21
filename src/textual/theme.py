@@ -129,6 +129,12 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#dc322f",
         success="#859900",
         dark=True,
+        variables={
+            # "footer-foreground": "#93a1a1",
+            "footer-background": "#002b36",
+            # "footer-key-background": "transparent",
+            # "footer-key-foreground": "#268bd2",
+        },
     ),
     "textual-ansi": Theme(
         name="textual-ansi",

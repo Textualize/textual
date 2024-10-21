@@ -27,17 +27,18 @@ class FooterKey(Widget):
     FooterKey {
         width: auto;
         height: 1;
-        background: $panel;
-        color: $text-muted;
+        background: $footer-item-background;
         .footer-key--key {
-            color: $accent;
-            background: $panel;
+            color: $footer-key-foreground;
+            background: $footer-key-background;
             text-style: bold;
             padding: 0 1;
         }
 
         .footer-key--description {
             padding: 0 1 0 0;
+            color: $footer-description-foreground;
+            background: $footer-description-background;
         }
 
         &:light .footer-key--key {
@@ -45,10 +46,10 @@ class FooterKey(Widget):
         }
 
         &:hover {
-            background: $panel-darken-2;
-            color: $text;
+            background-tint: $foreground 5%;
+            color: $footer-key-foreground;
             .footer-key--key {
-                background: $panel-darken-2;
+                background-tint: $foreground 5%;
             }
         }
 
@@ -136,8 +137,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     Footer {
         layout: grid;
         grid-columns: auto;
-        background: $panel;
-        color: $text;
+        color: $footer-foreground;
+        background: $footer-background;
         dock: bottom;
         height: 1;
         scrollbar-size: 0 0;
