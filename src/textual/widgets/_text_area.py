@@ -91,15 +91,16 @@ class TextArea(ScrollView):
 TextArea {
     width: 1fr;
     height: 1fr;
-    border: tall $background;
+    border: tall $border-blurred;
     padding: 0 1;
-
+    color: $foreground;
+    background: $surface;
     & .text-area--gutter {
-        color: $text 40%;
+        color: $foreground 40%;
     }
 
     & .text-area--cursor-gutter {
-        color: $text 60%;
+        color: $foreground 60%;
         background: $boost;
         text-style: bold;
     }
@@ -109,7 +110,7 @@ TextArea {
     }
 
     & .text-area--selection {
-        background: $accent-lighten-1 40%;
+        background: $input-selection-background;
     }
 
     & .text-area--matching-bracket {
@@ -117,13 +118,13 @@ TextArea {
     }
 
     &:focus {
-        border: tall $accent;
+        border: tall $border;
     }
 
     &:dark {
         .text-area--cursor {
-           color: $text 90%;
-            background: $foreground 90%;
+            color: $input-cursor-foreground;
+            background: $input-cursor-background;
         }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;

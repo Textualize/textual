@@ -29,8 +29,8 @@ class CollapsibleTitle(Static, can_focus=True):
     }
 
     CollapsibleTitle:focus {
-        background: $accent;
-        color: $text;
+        background: $block-cursor-background;
+        color: $block-cursor-foreground;
     }
     """
 
@@ -99,14 +99,18 @@ class Collapsible(Widget):
     Collapsible {
         width: 1fr;
         height: auto;
-        background: $boost;
+        background: $surface;
         border-top: hkey $background;
         padding-bottom: 1;
         padding-left: 1;
-    }
 
-    Collapsible.-collapsed > Contents {
-        display: none;
+        &:focus-within {
+            background-tint: $foreground 5%;
+        }
+
+        &.-collapsed > Contents {
+            display: none;   
+        }
     }
     """
 

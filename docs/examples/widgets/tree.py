@@ -4,7 +4,7 @@ from textual.widgets import Tree
 
 class TreeApp(App):
     def compose(self) -> ComposeResult:
-        tree: Tree[dict] = Tree("Dune")
+        tree: Tree[str] = Tree("Dune")
         tree.root.expand()
         characters = tree.root.add("Characters", expand=True)
         characters.add_leaf("Paul")
