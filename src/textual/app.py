@@ -493,11 +493,11 @@ class App(Generic[ReturnType], DOMNode):
     INLINE_PADDING: ClassVar[int] = 1
     """Number of blank lines above an inline app."""
 
-    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
-        "dark": lambda app: app.dark,
-        "light": lambda app: not app.dark,
+        "dark": lambda app: app.current_theme.dark,
+        "light": lambda app: not app.current_theme.dark,
         "inline": lambda app: app.is_inline,
         "ansi": lambda app: app.ansi_color,
         "nocolor": lambda app: app.no_color,
@@ -1226,6 +1226,12 @@ class App(Generic[ReturnType], DOMNode):
         A dictionary mapping theme names to Theme instances.
         """
         return {**BUILTIN_THEMES, **self._registered_themes}
+
+    @property
+    def current_theme(self) -> Theme:
+        theme = self.get_theme(self.theme)
+        assert theme is not None  # validated by _validate_theme
+        return theme
 
     def _validate_theme(self, theme_name: str) -> str:
         if theme_name not in self.available_themes:
