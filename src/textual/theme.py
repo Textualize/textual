@@ -132,7 +132,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         variables={
             "footer-foreground": "#93a1a1",
             "footer-background": "#002b36",
-            # "footer-key-background": "transparent",
             "footer-key-foreground": "#2aa198",
         },
     ),

@@ -285,6 +285,20 @@ class ColorSystem:
 
         colors["footer-item-background"] = get("footer-item-background", "transparent")
 
+        colors["input-cursor-background"] = get(
+            "input-cursor-background", foreground.hex
+        )
+        colors["input-cursor-foreground"] = get(
+            "input-cursor-foreground", background.hex
+        )
+        colors["input-cursor-text-style"] = get("input-cursor-text-style", "none")
+        colors["input-selection-background"] = get(
+            "input-selection-background", secondary.hex
+        )
+        colors["input-selection-foreground"] = get(
+            "input-selection-foreground", background.hex
+        )
+
         return colors
 
 
