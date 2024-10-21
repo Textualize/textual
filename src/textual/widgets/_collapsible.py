@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from rich.console import RenderableType
+
 from textual import events
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -49,7 +51,7 @@ class CollapsibleTitle(Static, can_focus=True):
     def __init__(
         self,
         *,
-        label: str,
+        label: RenderableType,
         collapsed_symbol: str,
         expanded_symbol: str,
         collapsed: bool,
@@ -74,7 +76,7 @@ class CollapsibleTitle(Static, can_focus=True):
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
-    def _watch_label(self, label: str) -> None:
+    def _watch_label(self, label: RenderableType) -> None:
         self._collapsed_label = f"{self.collapsed_symbol} {label}"
         self._expanded_label = f"{self.expanded_symbol} {label}"
         if self.collapsed:
@@ -158,7 +160,7 @@ class Collapsible(Widget):
     def __init__(
         self,
         *children: Widget,
-        title: str = "Toggle",
+        title: RenderableType = "Toggle",
         collapsed: bool = True,
         collapsed_symbol: str = "▶",
         expanded_symbol: str = "▼",
@@ -227,5 +229,5 @@ class Collapsible(Widget):
         """
         self._contents_list.append(widget)
 
-    def _watch_title(self, title: str) -> None:
+    def _watch_title(self, title: RenderableType) -> None:
         self._title.label = title
