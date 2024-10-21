@@ -277,7 +277,7 @@ class ColorSystem:
         colors["footer-key-background"] = get("footer-key-background", "transparent")
 
         colors["footer-description-foreground"] = get(
-            "footer-description-foreground", colors["text-muted"]
+            "footer-description-foreground", foreground.hex
         )
         colors["footer-description-background"] = get(
             "footer-description-background", "transparent"
