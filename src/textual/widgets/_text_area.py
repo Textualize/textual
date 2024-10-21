@@ -110,7 +110,7 @@ TextArea {
     }
 
     & .text-area--selection {
-        background: $secondary-lighten-1 40%;
+        background: $input-selection-background;
     }
 
     & .text-area--matching-bracket {

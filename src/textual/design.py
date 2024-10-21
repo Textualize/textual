@@ -293,7 +293,8 @@ class ColorSystem:
         )
         colors["input-cursor-text-style"] = get("input-cursor-text-style", "none")
         colors["input-selection-background"] = get(
-            "input-selection-background", secondary.hex
+            "input-selection-background",
+            Color.parse(colors["secondary-lighten-1"]).with_alpha(0.4).hex,
         )
         colors["input-selection-foreground"] = get(
             "input-selection-foreground", background.hex

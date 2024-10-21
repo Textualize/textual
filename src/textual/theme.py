@@ -103,6 +103,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "footer-key-foreground": "#88C0D0",
             "input-cursor-foreground": "#2E3440",
             "input-cursor-background": "#88C0D0",
+            "input-selection-background": "#81a1c1 35%",
         },
     ),
     "gruvbox": Theme(
@@ -120,6 +121,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         dark=True,
         variables={
             "block-cursor-foreground": "#fbf1c7",
+            "input-selection-background": "#689d6a80",
         },
     ),
     "solarized-dark": Theme(
