@@ -253,7 +253,7 @@ class ColorSystem:
             "scrollbar-background", colors["background-darken-1"]
         )
         colors["scrollbar-corner-color"] = get(
-            "scrollbar-corner-color", colors["background"]
+            "scrollbar-corner-color", colors["scrollbar-background"]
         )
         colors["scrollbar-background-hover"] = get(
             "scrollbar-background-hover", colors["scrollbar-background"]

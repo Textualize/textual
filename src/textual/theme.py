@@ -160,15 +160,15 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "dracula": Theme(
         name="dracula",
-        primary="#BD93F9",
-        secondary="#6272A4",
+        primary="#6272A4",
+        secondary="#BD93F9",
         warning="#FFB86C",
         error="#FF5555",
         success="#50FA7B",
         accent="#FF79C6",
         background="#282A36",
-        surface="#282A36",
-        panel="#44475A",
+        surface="#2B2E3B",  # Slightly lighter than background
+        panel="#313442",  # Slightly lighter than surface
         foreground="#F8F8F2",
         dark=True,
     ),
