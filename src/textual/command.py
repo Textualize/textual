@@ -469,7 +469,9 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option-highlighted {
-        background: $primary;
+        color: $block-cursor-foreground;
+        background: $block-cursor-background;
+        text-style: $block-cursor-text-style;
     }
 
     CommandList:nocolor > .option-list--option-highlighted {       
@@ -543,6 +545,7 @@ class CommandPalette(SystemModalScreen[None]):
         min-height: 20;
     }
     CommandPalette {
+        color: $foreground;
         background: $background 60%;
         align-horizontal: center;        
 
@@ -562,7 +565,8 @@ class CommandPalette(SystemModalScreen[None]):
     }
 
     CommandPalette > .command-palette--help-text {           
-        text-style: dim not bold;       
+        color: $foreground;
+        text-style: not bold;       
     }
 
     CommandPalette:dark > .command-palette--highlight {

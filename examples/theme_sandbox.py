@@ -6,7 +6,7 @@ from typing import Any
 from textual._on import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.containers import Grid, Horizontal, VerticalScroll
 from textual.widgets import (
     Button,
     Collapsible,
@@ -129,7 +129,9 @@ class ChangingThemeApp(App[None]):
 
     #palette {
         height: auto;
+        grid-size: 3;
         margin: 1 2;
+        border-bottom: solid $border;
     }
     #widget-list {
         & > OptionList {
@@ -219,7 +221,7 @@ class ChangingThemeApp(App[None]):
         print(theme_name)
 
     def compose(self) -> ComposeResult:
-        with Vertical(id="palette"):
+        with Grid(id="palette"):
             theme = self.get_theme(self.theme)
             for variable, value in vars(theme).items():
                 if variable not in {
