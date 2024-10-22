@@ -130,7 +130,6 @@ class ChangingThemeApp(App[None]):
     #palette {
         height: auto;
         grid-size: 3;
-        margin: 1 2;
         border-bottom: solid $border;
     }
     #widget-list {
