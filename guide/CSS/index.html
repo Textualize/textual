@@ -21,7 +21,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.34">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.35f28582.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -2615,6 +2615,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -2689,6 +2691,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Background
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/background_tint/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Background-tint
   </span>
   
 
@@ -3027,7 +3050,7 @@ window.onload = async (event) => {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_18" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_19" >
         
           
           
@@ -3043,14 +3066,14 @@ window.onload = async (event) => {
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6_4_18" id="__nav_6_4_18_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6_4_19" id="__nav_6_4_19_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_18_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_4_18">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4_19">
             <span class="md-nav__icon md-icon"></span>
             Grid
           </label>
@@ -3353,7 +3376,7 @@ window.onload = async (event) => {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_25" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_26" >
         
           
           
@@ -3369,14 +3392,14 @@ window.onload = async (event) => {
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6_4_25" id="__nav_6_4_25_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6_4_26" id="__nav_6_4_26_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_25_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_4_25">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_26_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4_26">
             <span class="md-nav__icon md-icon"></span>
             Links
           </label>
@@ -3765,7 +3788,7 @@ window.onload = async (event) => {
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_36" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_37" >
         
           
           
@@ -3781,14 +3804,14 @@ window.onload = async (event) => {
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6_4_36" id="__nav_6_4_36_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6_4_37" id="__nav_6_4_37_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_36_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_4_36">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_37_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4_37">
             <span class="md-nav__icon md-icon"></span>
             Scrollbar colors
           </label>
@@ -7834,10 +7857,14 @@ Hence if both rules were in a stylesheet, <code>Alert</code> widgets would have 
 <li><code>:dark</code> Matches widgets in dark mode (where <code>App.dark == True</code>).</li>
 <li><code>:disabled</code> Matches widgets which are in a disabled state.</li>
 <li><code>:enabled</code> Matches widgets which are in an enabled state.</li>
+<li><code>:even</code> Matches a widget at an evenly numbered position within its siblings.</li>
+<li><code>:first-of-type</code> Matches a widget that is the first of its type amongst its siblings.</li>
 <li><code>:focus-within</code> Matches widgets with a focused child widget.</li>
 <li><code>:focus</code> Matches widgets which have input focus.</li>
 <li><code>:inline</code> Matches widgets when the app is running in inline mode.</li>
+<li><code>:last-of-type</code> Matches a widget that is the last of its type amongst its siblings.</li>
 <li><code>:light</code> Matches widgets in dark mode (where <code>App.dark == False</code>).</li>
+<li><code>:odd</code> Matches a widget at an oddly numbered position within its siblings.</li>
 </ul>
 <h2 id="combinators">Combinators<a class="headerlink" href="#combinators" title="Permanent link">&para;</a></h2>
 <p>More sophisticated selectors can be created by combining simple selectors. The logic used to combine selectors is know as a <em>combinator</em>.</p>
@@ -8498,7 +8525,7 @@ If we were to add other selectors for additional screens or widgets, it would be
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">August 6, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 18, 2024</span>
   </span>
 
     
@@ -8617,10 +8644,10 @@ If we were to add other selectors for additional screens or widgets, it would be
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.07f07601.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.56dfad97.min.js"></script>
+      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>
