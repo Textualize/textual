@@ -775,6 +775,11 @@ class App(Generic[ReturnType], DOMNode):
         self._previous_inline_height: int | None = None
         """Size of previous inline update."""
 
+        self._paused_hover_effects: bool = False
+        """Have the hover effects been paused?"""
+
+        self._hover_effects_timer: Timer | None = None
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -2693,12 +2698,28 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.set_focus(widget, scroll_visible)
 
+    def _pause_hover_effects(self):
+        self._paused_hover_effects = True
+
+    def _resume_hover_effects(self):
+        if self._paused_hover_effects:
+            self._paused_hover_effects = False
+            try:
+                widget, _ = self.screen.get_widget_at(*self.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                if widget is not self.mouse_over:
+                    self._set_mouse_over(widget)
+
     def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
 
         Args:
             widget: Widget under mouse, or None for no widgets.
         """
+        if self._paused_hover_effects:
+            return
         if widget is None:
             if self.mouse_over is not None:
                 try:
