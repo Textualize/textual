@@ -479,6 +479,7 @@ class CommandList(OptionList, can_focus=False):
 
     CommandList > .option-list--option {
         padding-left: 2;
+        color: $foreground;
     }
     """
 
@@ -564,7 +565,8 @@ class CommandPalette(SystemModalScreen[None]):
     }
 
     CommandPalette > .command-palette--help-text {           
-        color: $foreground;
+        color: $foreground-muted;
+        background: transparent;
         text-style: not bold;       
     }
 
@@ -817,9 +819,7 @@ class CommandPalette(SystemModalScreen[None]):
         self.app.post_message(CommandPalette.Opened())
         self._calling_screen = self.app.screen_stack[-2]
 
-        match_style = self.get_component_rich_style(
-            "command-palette--highlight", partial=True
-        )
+        match_style = self.get_component_rich_style("command-palette--highlight")
 
         assert self._calling_screen is not None
         self._providers = [
@@ -1072,9 +1072,7 @@ class CommandPalette(SystemModalScreen[None]):
 
         # We'll potentially use the help text style a lot so let's grab it
         # the once for use in the loop further down.
-        help_style = self.get_component_rich_style(
-            "command-palette--help-text", partial=True
-        )
+        help_style = self.get_component_rich_style("command-palette--help-text")
 
         # The list to hold on to the commands we've gathered from the
         # command providers.
@@ -1134,8 +1132,7 @@ class CommandPalette(SystemModalScreen[None]):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                help_text = Text.from_markup(hit.help)
-                help_text.stylize(help_style)
+                help_text = Text(hit.help, style=help_style)
                 prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
 
