@@ -327,6 +327,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 color: $block-cursor-foreground;
                 text-style: $block-cursor-text-style;
             }
+
+            & > .datatable--header {
+                background-tint: $foreground 5%;
+            }
         }
 
         &:dark {
