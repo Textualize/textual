@@ -2420,5 +2420,9 @@ def test_pseudo_classes(snap_compare):
 
 
 def test_split_segments_infinite_loop(snap_compare):
-    """Regression test for https://github.com/Textualize/textual/issues/5151"""
+    """Regression test for https://github.com/Textualize/textual/issues/5151
+
+    Should be a bare-bones text editor containing "x"
+
+    """
     assert snap_compare(SNAPSHOT_APPS_DIR / "split_segments.py")
