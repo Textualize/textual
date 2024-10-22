@@ -235,9 +235,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             overlay: screen;
             constrain: none inside;
             color: $foreground;
+            padding: 1 0;
 
             &:focus {
-                border: tall $border;
+                border: wide $border;
                 background-tint: $foreground 5%;
             }
         }
