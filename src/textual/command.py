@@ -446,14 +446,13 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey $primary;
+        border-bottom: hkey $border;
         border-left: none;
         border-right: none;
         height: auto;
         max-height: 70vh;
         background: transparent;
         padding: 0;
-        text-style: bold;
     }
 
     CommandList:focus {
@@ -593,7 +592,7 @@ class CommandPalette(SystemModalScreen[None]):
     CommandPalette #--input {
         height: auto;
         visibility: visible;
-        border: hkey $primary;
+        border: hkey $border;
     }
 
     CommandPalette #--input.--list-visible {
@@ -618,7 +617,7 @@ class CommandPalette(SystemModalScreen[None]):
     CommandPalette LoadingIndicator {
         height: auto;
         visibility: hidden;
-        border-bottom: hkey $primary;
+        border-bottom: hkey $border;
     }
 
     CommandPalette LoadingIndicator.--visible {

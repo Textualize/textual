@@ -142,7 +142,6 @@ class ChangingThemeApp(App[None]):
         }
     }
     #widget-list {
-        margin: 1 2;
     }
     #widget-list > * {
         margin: 1 2;

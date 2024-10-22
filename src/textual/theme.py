@@ -198,18 +198,29 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#414868",  # Panel
         dark=True,
     ),
-    "catppuccin": Theme(
-        name="catppuccin",
-        primary="#89DCEB",  # Sky
-        secondary="#F5C2E7",
+    "catppuccin-mocha": Theme(
+        name="catppuccin-mocha",
+        primary="#F5C2E7",
+        secondary="#b4befe",
         warning="#FAE3B0",
         error="#F28FAD",
         success="#ABE9B3",
         accent="#DDB6F2",
-        background="#1E1E2E",
-        surface="#302D41",
-        panel="#575268",
+        foreground="#cdd6f4",
+        background="#181825",
+        surface="#313244",
+        panel="#45475a",
         dark=True,
+        variables={
+            "input-cursor-foreground": "#11111b",
+            "input-cursor-background": "#f5e0dc",
+            "input-selection-background": "#9399b2 30%",
+            "border": "#45475a",
+            "border-blurred": "#585b70",
+            "footer-background": "#45475a",
+            "footer-key-foreground": "#89b4fa",
+            "block-cursor-foreground": "#1e1e2e",
+        },
     ),
     "monokai": Theme(
         name="monokai",
