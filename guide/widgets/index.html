@@ -7408,7 +7408,7 @@ window.onload = async (event) => {
 </svg>
 </p>
 <h2 id="static-widget">Static widget<a class="headerlink" href="#static-widget" title="Permanent link">&para;</a></h2>
-<p>While you can extend the Widget class, a subclass will typically be a better starting point. The <a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets.Static">Static</a> class is a widget subclass which caches the result of render, and provides an <a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets._static.Static.update">update()</a> method to update the content area.</p>
+<p>While you can extend the Widget class, a subclass will typically be a better starting point. The <a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets.Static">Static</a> class is a widget subclass which caches the result of render, and provides an <a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets.Static.update">update()</a> method to update the content area.</p>
 <p>Let's use Static to create a widget which cycles through "hello" in various languages.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">hello03.py</label><label for="__tabbed_2_2">hello03.tcss</label><label for="__tabbed_2_3">Output</label></div>
 <div class="tabbed-content">
@@ -12127,7 +12127,7 @@ As a rule of thumb, a widget should handle one piece of data, which is why we ha
 </div>
 </div>
 <ul>
-<li>The <code>BitSwitch</code> widget now has an <code>on_switch_changed</code> method which will handle a <a class="autorefs autorefs-internal" href="../../widgets/switch/#textual.widgets._switch.Switch.Changed"><code>Switch.Changed</code></a> message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, <code>BitSwitch.BitChanged</code>.</li>
+<li>The <code>BitSwitch</code> widget now has an <code>on_switch_changed</code> method which will handle a <a class="autorefs autorefs-internal" href="../../widgets/switch/#textual.widgets.Switch.Changed"><code>Switch.Changed</code></a> message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, <code>BitSwitch.BitChanged</code>.</li>
 <li>The <code>ByteEditor</code> widget handles the <code>BitSwitch.Changed</code> message by calculating the decimal value and setting it on the input.</li>
 </ul>
 <p>The following is a (simplified) DOM diagram to show how the new message is processed:</p>
