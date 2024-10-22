@@ -265,6 +265,25 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-text-style": "none",
         },
     ),
+    "flexoki": Theme(
+        name="flexoki",
+        primary="#205EA6",  # blue
+        secondary="#24837B",  # cyan
+        warning="#AD8301",  # yellow
+        error="#AF3029",  # red
+        success="#66800B",  # green
+        accent="#9B76C8",  # purple light
+        background="#100F0F",  # base.black
+        surface="#1C1B1A",  # base.950
+        panel="#282726",  # base.900
+        foreground="#FFFCF0",  # base.paper
+        dark=True,
+        variables={
+            "input-cursor-foreground": "#5E409D",
+            "input-cursor-background": "#FFFCF0",
+            "input-selection-background": "#6F6E69 35%",  # base.600 with opacity
+        },
+    ),
 }
 
 
