@@ -222,7 +222,13 @@ class ChangingThemeApp(App[None]):
         with Vertical(id="palette"):
             theme = self.get_theme(self.theme)
             for variable, value in vars(theme).items():
-                if variable not in {"name", "dark", "luminosity_spread", "text_alpha"}:
+                if variable not in {
+                    "name",
+                    "dark",
+                    "luminosity_spread",
+                    "text_alpha",
+                    "variables",
+                }:
                     yield ColorSample(f"{variable}", classes=variable)
 
         yield ThemeList(id="theme-list")
