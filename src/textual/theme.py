@@ -148,25 +148,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-text-style": "none",
         },
     ),
-    "solarized-dark": Theme(
-        name="solarized-dark",
-        primary="#268bd2",
-        secondary="#2aa198",
-        accent="#6c71c4",
-        foreground="#93a1a1",
-        background="#001e26",
-        surface="#002b36",
-        panel="#586e75",
-        warning="#b58900",
-        error="#dc322f",
-        success="#859900",
-        dark=True,
-        variables={
-            "footer-foreground": "#93a1a1",
-            "footer-background": "#002b36",
-            "footer-key-foreground": "#2aa198",
-        },
-    ),
     "textual-ansi": Theme(
         name="textual-ansi",
         primary="ansi_blue",
@@ -259,6 +240,30 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#27343B",  # Dark Lead
         panel="#2D3E46",  # Storm Gray
         background="#1F262A",  # Charcoal
+    ),
+    "catppuccin-latte": Theme(
+        name="catppuccin-latte",
+        primary="#DC8A78",  # Rosewater
+        secondary="#8839EF",  # Mauve
+        warning="#DF8E1D",  # Yellow
+        error="#D20F39",  # Red
+        success="#40A02B",  # Green
+        accent="#FE640B",  # Peach
+        foreground="#4C4F69",  # Text
+        background="#EFF1F5",  # Base
+        surface="#E6E9EF",  # Surface0
+        panel="#CCD0DA",  # Surface1
+        dark=False,
+        variables={
+            "input-cursor-foreground": "#EFF1F5",  # Base
+            "input-cursor-background": "#DC8A78",  # Rosewater
+            "input-selection-background": "#ACB0BE 50%",  # Overlay0
+            "border": "#7287FD",  # Blue
+            "border-blurred": "#9CA0B0",  # Overlay2
+            "footer-background": "#CCD0DA",  # Surface1
+            "block-cursor-foreground": "#EFF1F5",  # Base
+            "block-cursor-text-style": "none",
+        },
     ),
 }
 
