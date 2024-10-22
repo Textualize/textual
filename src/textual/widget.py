@@ -2353,6 +2353,9 @@ class Widget(DOMNode):
             if on_complete is not None:
                 self.call_after_refresh(on_complete)
 
+        if scrolled_x or scrolled_y:
+            self.app._pause_hover_effects()
+
         return scrolled_x or scrolled_y
 
     def pre_layout(self, layout: Layout) -> None:

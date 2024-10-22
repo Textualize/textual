@@ -2699,11 +2699,22 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.set_focus(widget, scroll_visible)
 
     def _pause_hover_effects(self):
+        """Pause any hover effects based on Enter and Leave events for 200ms."""
         self._paused_hover_effects = True
+        if self._hover_effects_timer is None:
+            self._hover_effects_timer = self.set_interval(
+                0.2, self._resume_hover_effects
+            )
+        else:
+            self._hover_effects_timer.reset()
+            self._hover_effects_timer.resume()
 
     def _resume_hover_effects(self):
+        """Resume sending Enter and Leave for hover effects."""
         if self._paused_hover_effects:
             self._paused_hover_effects = False
+            if self._hover_effects_timer is not None:
+                self._hover_effects_timer.pause()
             try:
                 widget, _ = self.screen.get_widget_at(*self.mouse_position)
             except NoWidget:
