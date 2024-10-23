@@ -1960,6 +1960,7 @@ def test_ansi_command_palette(snap_compare):
     """Test command palette on top of ANSI colors."""
 
     class CommandPaletteApp(App[None]):
+        SUSPENDED_SCREEN_CLASS = "-screen-suspended"
         CSS = """
         Label {
             width: 1fr;
