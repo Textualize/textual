@@ -487,6 +487,9 @@ class App(Generic[ReturnType], DOMNode):
     INLINE_PADDING: ClassVar[int] = 1
     """Number of blank lines above an inline app."""
 
+    SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
+    """Class to apply to suspended screens, or empty string for no class."""
+
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
