@@ -165,15 +165,15 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "dracula": Theme(
         name="dracula",
-        primary="#6272A4",
-        secondary="#BD93F9",
+        primary="#BD93F9",
+        secondary="#6272A4",
         warning="#FFB86C",
         error="#FF5555",
         success="#50FA7B",
         accent="#FF79C6",
         background="#282A36",
-        surface="#2B2E3B",  # Slightly lighter than background
-        panel="#313442",  # Slightly lighter than surface
+        surface="#2B2E3B",
+        panel="#313442",
         foreground="#F8F8F2",
         dark=True,
     ),
@@ -243,27 +243,18 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "catppuccin-latte": Theme(
         name="catppuccin-latte",
-        primary="#DC8A78",  # Rosewater
-        secondary="#8839EF",  # Mauve
-        warning="#DF8E1D",  # Yellow
-        error="#D20F39",  # Red
-        success="#40A02B",  # Green
-        accent="#FE640B",  # Peach
-        foreground="#4C4F69",  # Text
-        background="#EFF1F5",  # Base
-        surface="#E6E9EF",  # Surface0
-        panel="#CCD0DA",  # Surface1
+        secondary="#DC8A78",
+        primary="#8839EF",
+        warning="#DF8E1D",
+        error="#D20F39",
+        success="#40A02B",
+        accent="#FE640B",
+        foreground="#4C4F69",
+        background="#EFF1F5",
+        surface="#E6E9EF",
+        panel="#CCD0DA",
         dark=False,
-        variables={
-            "input-cursor-foreground": "#EFF1F5",  # Base
-            "input-cursor-background": "#DC8A78",  # Rosewater
-            "input-selection-background": "#ACB0BE 50%",  # Overlay0
-            "border": "#7287FD",  # Blue
-            "border-blurred": "#9CA0B0",  # Overlay2
-            "footer-background": "#CCD0DA",  # Surface1
-            "block-cursor-foreground": "#EFF1F5",  # Base
-            "block-cursor-text-style": "none",
-        },
+        variables={},
     ),
     "solarized-light": Theme(
         name="solarized-light",
