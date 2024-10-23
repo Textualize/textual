@@ -1210,6 +1210,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
+        if self.app.SUSPENDED_SCREEN_CLASS:
+            self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
@@ -1229,6 +1231,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
+        if self.app.SUSPENDED_SCREEN_CLASS:
+            self.add_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.app._set_mouse_over(None)
         self._clear_tooltip()
         self.stack_updates += 1
