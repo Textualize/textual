@@ -41,10 +41,6 @@ class FooterKey(Widget):
             background: $footer-description-background;
         }
 
-        &:light .footer-key--key {
-            color: $secondary;
-        }
-
         &:hover {
             color: $footer-key-foreground;
             background: $block-hover-background;

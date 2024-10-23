@@ -108,8 +108,8 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "gruvbox": Theme(
         name="gruvbox",
-        primary="#A89A85",
-        secondary="#85A598",
+        primary="#85A598",
+        secondary="#A89A85",
         warning="#fabd2f",
         error="#fb4934",
         success="#b8bb26",
@@ -121,7 +121,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         dark=True,
         variables={
             "block-cursor-foreground": "#fbf1c7",
-            "input-selection-background": "#689d6a80",
+            "input-selection-background": "#689d6a40",
         },
     ),
     "catppuccin-mocha": Theme(
@@ -206,6 +206,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         dark=True,
         variables={
             "foreground-muted": "#797979",
+            "input-selection-background": "#575b6190",
         },
     ),
     "cobalt": Theme(
