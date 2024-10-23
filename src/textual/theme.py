@@ -266,6 +266,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#dc322f",
         success="#859900",
         accent="#6c71c4",
+        foreground="#586e75",
         background="#fdf6e3",
         surface="#eee8d5",
         panel="#eee8d5",
