@@ -47,14 +47,14 @@ class SelectOverlay(OptionList):
 
     DEFAULT_CSS = """
     SelectOverlay {
-        border: tall $background;
-        background: $panel;
-        color: $text;
+        border: tall $border-blurred;
+        background: $surface;
+        color: $foreground;
         width: 100%;
         padding: 0 1;
     }
     SelectOverlay:focus {
-        border: tall $background;
+        background-tint: $foreground 5%;
     }
     SelectOverlay > .option-list--option {
         padding: 0 1;
@@ -110,22 +110,25 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
-        border: tall transparent;
-        background: $boost;
-        color: $text;
-        width: 100%;
+        color: $foreground;
+        width: 1fr;
         height: auto;
         padding: 0 2;
+
+        &:ansi {
+            color: ansi_default;
+            background: ansi_default;
+        }
 
         Static#label {
             width: 1fr;
             height: auto;
-            color: $text-disabled;
+            color: $foreground 50%;
             background: transparent;
         }
 
         &.-has-value Static#label {
-            color: $text;
+            color: $foreground;
         }
 
         .arrow {
@@ -133,7 +136,7 @@ class SelectCurrent(Horizontal):
             width: 1;
             height: 1;
             padding: 0 0 0 1;
-            color: $text-muted;
+            color: $foreground 50%;
             background: transparent;
         }
     }
@@ -211,6 +214,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     DEFAULT_CSS = """
     Select {
         height: auto;
+        color: $foreground;
+        background: $surface;
+        border: tall $border-blurred;
+        
+        .up-arrow {
+            display: none;
+        }
+
+        &:focus {
+            background-tint: $foreground 5%;
+            border: tall $border;
+        }
 
         & > SelectOverlay {
             width: 1fr;
@@ -219,31 +234,29 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             max-height: 12;
             overlay: screen;
             constrain: none inside;
+            color: $foreground;
+            padding: 1 0;
+
+            &:focus {
+                border: wide $border;
+                background-tint: $foreground 5%;
+            }
         }
 
-        &:focus > SelectCurrent {
-            border: tall $accent;
+        &.-expanded {
+            .down-arrow {
+                display: none;
+            }
+
+            .up-arrow {
+                display: block;
+            }
+
+            & > SelectOverlay {
+                display: block;
+            }
         }
 
-        .up-arrow {
-            display: none;
-        }
-
-        &.-expanded .down-arrow {
-            display: none;
-        }
-
-        &.-expanded .up-arrow {
-            display: block;
-        }
-
-        &.-expanded > SelectOverlay {
-            display: block;
-        }
-
-        &.-expanded > SelectCurrent {
-            border: tall $accent;
-        }
     }
 
     """

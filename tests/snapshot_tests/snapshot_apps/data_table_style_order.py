@@ -35,7 +35,7 @@ class DataTableCursorStyles(App):
     CSS = """
     DataTable {margin-bottom: 1;}
     DataTable > .datatable--cursor {
-        color: $secondary;
+        color: $accent;
         background: $success;
         text-style: bold italic;
     }

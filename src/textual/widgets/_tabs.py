@@ -30,10 +30,10 @@ class Underline(Widget):
     Underline {
         width: 1fr;
         height: 1;
-    }
-    Underline > .underline--bar {
-        background: $foreground 10%;
-        color: $accent;
+        & > .underline--bar {
+            background: $foreground 10%;
+            color: $block-cursor-blurred-background;
+        }
     }
     """
 
@@ -94,24 +94,24 @@ class Tab(Static):
         height: 2;
         padding: 1 1 0 2;
         text-align: center;
-        color: $text-disabled;
-    }
-    Tab.-active {
-        text-style: bold;
-        color: $text;
-    }
-    Tab:hover {
-        text-style: bold;
-    }
-    Tab.-active:hover {
-        color: $text;
-    }
-    Tab:disabled {
-        color: $text-disabled;
-        text-opacity: 50%;
-    }
-    Tab.-hidden {
-        display: none;
+        color: $foreground 50%;
+
+        &:hover {
+            color: $foreground;
+        }
+        &:disabled {
+            color: $foreground 25%;
+        }
+
+        &.-active {
+            color: $foreground;
+            &:hover {
+                color: $foreground;
+            }
+        }
+        &.-hidden {
+            display: none;
+        }
     }
     """
 
@@ -202,22 +202,31 @@ class Tabs(Widget, can_focus=True):
     Tabs {
         width: 100%;
         height: 3;
-    }
-    Tabs > #tabs-scroll {
-        overflow: hidden;
-    }
-    Tabs #tabs-list {
-       width: auto;
-       min-height: 2;
-    }
-    Tabs #tabs-list-bar, Tabs #tabs-list {
-        width: auto;
-        height: auto;
-        min-width: 100%;
-        overflow: hidden hidden;
-    }
-    Tabs:focus .underline--bar {
-        background: $foreground 20%;
+
+        &:focus {
+            .underline--bar {
+                color: $block-cursor-background;
+                background: $foreground 30%;
+            }
+            & .-active {
+                text-style: bold;
+            }
+        }
+
+        & > #tabs-scroll {
+            overflow: hidden;
+        }
+
+        #tabs-list {
+            width: auto;
+            min-height: 2;            
+        }
+        #tabs-list-bar, #tabs-list {
+            width: auto;
+            height: auto;
+            min-width: 100%;
+            overflow: hidden hidden;
+        }
     }
     """
 

@@ -249,7 +249,7 @@ class MarkdownH1(MarkdownHeader):
         content-align: center middle;
         text-style: bold;
         color: $success;
-        &:light {color: $primary;}
+        &:light {color: $secondary;}
     }
     """
 
@@ -262,7 +262,7 @@ class MarkdownH2(MarkdownHeader):
     MarkdownH2 {
         text-style: underline;
         color: $success;
-        &:light {color: $primary;}
+        &:light {color: $secondary;}
     }
     """
 
@@ -276,7 +276,7 @@ class MarkdownH3(MarkdownHeader):
         color: $success;
         margin: 1 0;
         width: auto;
-        &:light {color: $primary;}
+        &:light {color: $secondary;}
     }
     """
 
@@ -323,7 +323,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownHorizontalRule {
-        border-bottom: heavy $primary;
+        border-bottom: heavy $secondary;
         height: 1;
         padding-top: 1;
         margin-bottom: 1;
@@ -353,7 +353,7 @@ class MarkdownBlockQuote(MarkdownBlock):
         padding: 0 1;
     }
     MarkdownBlockQuote:light {
-        border-left: outer $primary;
+        border-left: outer $secondary;
     }
     MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
@@ -500,7 +500,7 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        background: $panel;
+        background: $surface;
     }
     """
 
@@ -554,7 +554,7 @@ class MarkdownBullet(Widget):
         color: $success;
         text-style: bold;
         &:light {
-            color: $primary;
+            color: $secondary;
         }
     }
     """
@@ -619,9 +619,10 @@ class MarkdownFence(MarkdownBlock):
         super().__init__(markdown)
         self.code = code
         self.lexer = lexer
+        app_theme = self.app.get_theme(self.app.theme)
         self.theme = (
             self._markdown.code_dark_theme
-            if self.app.dark
+            if app_theme.dark
             else self._markdown.code_light_theme
         )
 
@@ -637,13 +638,14 @@ class MarkdownFence(MarkdownBlock):
 
     def _on_mount(self, _: Mount) -> None:
         """Watch app theme switching."""
-        self.watch(self.app, "dark", self._retheme)
+        self.watch(self.app, "theme", self._retheme)
 
     def _retheme(self) -> None:
         """Rerender when the theme changes."""
+        app_theme = self.app.get_theme(self.app.theme)
         self.theme = (
             self._markdown.code_dark_theme
-            if self.app.dark
+            if app_theme.dark
             else self._markdown.code_light_theme
         )
         self.get_child_by_type(Static).update(self._block())
@@ -700,17 +702,17 @@ class Markdown(Widget):
     | :- | :- |
     | `code_inline` | Target text that is styled as inline code. |
     | `em` | Target text that is emphasized inline. |
-    | `s` | Target text that is styled inline with strykethrough. |
+    | `s` | Target text that is styled inline with strikethrough. |
     | `strong` | Target text that is styled inline with strong. |
     """
 
     BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
 
     code_dark_theme: reactive[str] = reactive("material")
-    """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
+    """The theme to use for code blocks when the App theme is dark."""
 
     code_light_theme: reactive[str] = reactive("material-light")
-    """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
+    """The theme to use for code blocks when the App theme is light."""
 
     def __init__(
         self,
@@ -1038,7 +1040,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     DEFAULT_CSS = """
     MarkdownTableOfContents {
         width: auto;
-        background: $panel;
+        background: $surface;
         border-right: wide $background;
     }
     MarkdownTableOfContents > Tree {

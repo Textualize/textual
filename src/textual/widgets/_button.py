@@ -43,47 +43,46 @@ class Button(Widget, can_focus=True):
         width: auto;
         min-width: 16;
         height: auto;
-        background: $panel;
-        color: $text;
+        background: $surface;
+        color: $foreground;
         border: none;
-        border-top: tall $panel-lighten-2;
-        border-bottom: tall $panel-darken-3;
+        border-top: tall $border-blurred;
+        border-bottom: tall $surface-darken-1;
         text-align: center;
         content-align: center middle;
-        text-style: bold;
-
 
         &:focus {
             text-style: bold reverse;
+            background-tint: $foreground 5%;
         }
         &:hover {
-            border-top: tall $panel;
-            background: $panel-darken-2;
+            border-top: tall $surface;
+            background: $surface-darken-1;
             color: $text;
         }
         &.-active {
-            background: $panel;
-            border-bottom: tall $panel-lighten-2;
-            border-top: tall $panel-darken-2;
+            background: $surface;
+            border-bottom: tall $surface-lighten-1;
+            border-top: tall $surface-darken-1;
             tint: $background 30%;
         }
 
         &.-primary {
-            background: $primary;
+            background: $secondary;
             color: $text;
-            border-top: tall $primary-lighten-3;
-            border-bottom: tall $primary-darken-3;
+            border-top: tall $secondary-lighten-3;
+            border-bottom: tall $secondary-darken-3;
 
             &:hover {
-                background: $primary-darken-2;
+                background: $secondary-darken-2;
                 color: $text;
-                border-top: tall $primary;
+                border-top: tall $secondary;
             }
 
             &.-active {
-                background: $primary;
-                border-bottom: tall $primary-lighten-3;
-                border-top: tall $primary-darken-3;
+                background: $secondary;
+                border-bottom: tall $secondary-lighten-3;
+                border-top: tall $secondary-darken-3;
             }
         }
 
