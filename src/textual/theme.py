@@ -179,8 +179,8 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "tokyo-night": Theme(
         name="tokyo-night",
-        primary="#7AA2F7",  # Blue
-        secondary="#BB9AF7",  # Purple
+        primary="#BB9AF7",
+        secondary="#7AA2F7",
         warning="#E0AF68",  # Yellow
         error="#F7768E",  # Red
         success="#9ECE6A",  # Green
@@ -193,29 +193,33 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "monokai": Theme(
         name="monokai",
-        primary="#F92672",
-        secondary="#AE81FF",
+        primary="#AE81FF",
+        secondary="#F92672",
         accent="#66D9EF",
         warning="#FD971F",
         error="#F92672",
         success="#A6E22E",
+        foreground="#d6d6d6",
         background="#272822",
-        surface="#3E3D32",
+        surface="#2e2e2e",
         panel="#3E3D32",
         dark=True,
+        variables={
+            "foreground-muted": "#797979",
+        },
     ),
     "cobalt": Theme(
         name="cobalt",
-        primary="#334D5C",  # Deep Cobalt Blue
-        secondary="#4878A6",  # Slate Blue
-        warning="#FFAA22",  # Amber, suitable for warnings related to primary
-        error="#E63946",  # Red, universally recognized for errors
-        success="#4CAF50",  # Green, commonly used for success indication
-        accent="#D94E64",  # Candy Apple Red
+        primary="#4878A6",
+        secondary="#334D5C",
+        warning="#FFAA22",
+        error="#E63946",
+        success="#4CAF50",
+        accent="#D94E64",
         dark=True,
-        surface="#27343B",  # Dark Lead
-        panel="#2D3E46",  # Storm Gray
-        background="#1F262A",  # Charcoal
+        surface="#27343B",
+        panel="#2D3E46",
+        background="#1F262A",
         variables={},
     ),
     "flexoki": Theme(
