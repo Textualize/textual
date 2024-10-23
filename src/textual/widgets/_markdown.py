@@ -677,6 +677,7 @@ class Markdown(Widget):
         padding: 0 2 1 2;
         layout: vertical;
         color: $foreground;
+        background: $surface;
         overflow-y: auto;
 
         &:focus {

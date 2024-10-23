@@ -336,7 +336,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         &:dark {
             background: $surface;
             & > .datatable--even-row {
-                background: $secondary 15%;
+                background: $surface-lighten-1 50%;
             }
         }
 
@@ -356,7 +356,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--even-row {
-            background: $secondary 10%;
+            background: $surface-lighten-1 50%;
         }
 
         & > .datatable--cursor {

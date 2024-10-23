@@ -65,12 +65,13 @@ class Theme:
 BUILTIN_THEMES: dict[str, Theme] = {
     "textual-dark": Theme(
         name="textual-dark",
-        primary="#004578",
-        secondary="#0178D4",
+        primary="#0178D4",
+        secondary="#004578",
         accent="#ffa62b",
         warning="#ffa62b",
         error="#ba3c5b",
         success="#4EBF71",
+        foreground="#e0e0e0",
         dark=True,
     ),
     "textual-light": Theme(

@@ -276,7 +276,7 @@ class ChangingThemeApp(App[None]):
             yield MarkdownViewer(EXAMPLE_MARKDOWN)
 
             with Horizontal(id="buttons"):
-                yield Button("Button 1")
+                yield Button("Button 1", variant="primary")
                 yield Button.success("Success 2")
                 yield Button.error("Error 3")
                 yield Button.warning("Warning 4")
@@ -299,6 +299,7 @@ class ChangingThemeApp(App[None]):
             table = DataTable[Any]()
             table.add_columns(*HEADERS)
             table.add_rows(ROWS)
+            table.zebra_stripes = True
             yield table
             yield ListView(
                 ListItem(Label("One")),
