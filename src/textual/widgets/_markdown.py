@@ -670,7 +670,7 @@ HEADINGS = {
 NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
 
-class Markdown(Widget, can_focus=True):
+class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
         height: auto;
@@ -1225,6 +1225,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
 
     def compose(self) -> ComposeResult:
         markdown = Markdown(parser_factory=self._parser_factory)
+        markdown.can_focus = True
         yield markdown
         yield MarkdownTableOfContents(markdown)
 
