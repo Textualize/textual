@@ -172,7 +172,7 @@ class OptionList(ScrollView, can_focus=True):
             background: $block-hover-background;
         }
         & > .option-list--option-hover-highlighted {
-            background: $secondary 60%;
+            background: $primary 60%;
             color: $text;
         }
     }

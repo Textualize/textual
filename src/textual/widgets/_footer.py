@@ -42,7 +42,7 @@ class FooterKey(Widget):
         }
 
         &:light .footer-key--key {
-            color: $primary;
+            color: $secondary;
         }
 
         &:hover {

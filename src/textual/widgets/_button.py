@@ -68,21 +68,21 @@ class Button(Widget, can_focus=True):
         }
 
         &.-primary {
-            background: $primary;
+            background: $secondary;
             color: $text;
-            border-top: tall $primary-lighten-3;
-            border-bottom: tall $primary-darken-3;
+            border-top: tall $secondary-lighten-3;
+            border-bottom: tall $secondary-darken-3;
 
             &:hover {
-                background: $primary-darken-2;
+                background: $secondary-darken-2;
                 color: $text;
-                border-top: tall $primary;
+                border-top: tall $secondary;
             }
 
             &.-active {
-                background: $primary;
-                border-bottom: tall $primary-lighten-3;
-                border-top: tall $primary-darken-3;
+                background: $secondary;
+                border-bottom: tall $secondary-lighten-3;
+                border-top: tall $secondary-darken-3;
             }
         }
 

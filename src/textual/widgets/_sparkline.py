@@ -40,10 +40,10 @@ class Sparkline(Widget):
         height: 1;
     }
     Sparkline > .sparkline--max-color {
-        color: $secondary;
+        color: $primary;
     }
     Sparkline > .sparkline--min-color {
-        color: $secondary 30%;
+        color: $primary 30%;
     }
     """
 

@@ -1180,7 +1180,7 @@ class App(Generic[ReturnType], DOMNode):
             return {}
 
         # Build the Textual color system from the theme.
-        # This will contain $primary, $secondary, $background, etc.
+        # This will contain $secondary, $primary, $background, etc.
         variables = theme.to_color_system().generate()
 
         return variables

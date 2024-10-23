@@ -31,7 +31,7 @@ class Theme:
     surface: str | None = None
     panel: str | None = None
     boost: str | None = None
-    dark: bool = False
+    dark: bool = True
     luminosity_spread: float = 0.15
     text_alpha: float = 0.95
     variables: dict[str, str] | None = None
@@ -177,19 +177,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         foreground="#F8F8F2",
         dark=True,
     ),
-    "github-dark": Theme(
-        name="github-dark",
-        primary="#58a6ff",  # Blue
-        secondary="#56d4dd",  # Cyan
-        warning="#d29922",  # Yellow
-        error="#f85149",  # Red
-        success="#3fb950",  # Green
-        accent="#bc8cff",  # Purple
-        background="#0d1117",  # Black
-        surface="#161b22",  # Dark Gray
-        panel="#21262d",  # Gray
-        dark=True,
-    ),
     "tokyo-night": Theme(
         name="tokyo-night",
         primary="#7AA2F7",  # Blue
@@ -217,18 +204,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#3E3D32",
         dark=True,
     ),
-    "solarized-light": Theme(
-        name="solarized-light",
-        primary="#268bd2",
-        secondary="#2aa198",
-        warning="#cb4b16",
-        error="#dc322f",
-        success="#859900",
-        accent="#6c71c4",
-        background="#fdf6e3",
-        surface="#eee8d5",
-        panel="#eee8d5",
-    ),
     "cobalt": Theme(
         name="cobalt",
         primary="#334D5C",  # Deep Cobalt Blue
@@ -241,6 +216,26 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#27343B",  # Dark Lead
         panel="#2D3E46",  # Storm Gray
         background="#1F262A",  # Charcoal
+        variables={},
+    ),
+    "flexoki": Theme(
+        name="flexoki",
+        primary="#205EA6",  # blue
+        secondary="#24837B",  # cyan
+        warning="#AD8301",  # yellow
+        error="#AF3029",  # red
+        success="#66800B",  # green
+        accent="#9B76C8",  # purple light
+        background="#100F0F",  # base.black
+        surface="#1C1B1A",  # base.950
+        panel="#282726",  # base.900
+        foreground="#FFFCF0",  # base.paper
+        dark=True,
+        variables={
+            "input-cursor-foreground": "#5E409D",
+            "input-cursor-background": "#FFFCF0",
+            "input-selection-background": "#6F6E69 35%",  # base.600 with opacity
+        },
     ),
     "catppuccin-latte": Theme(
         name="catppuccin-latte",
@@ -266,24 +261,18 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-text-style": "none",
         },
     ),
-    "flexoki": Theme(
-        name="flexoki",
-        primary="#205EA6",  # blue
-        secondary="#24837B",  # cyan
-        warning="#AD8301",  # yellow
-        error="#AF3029",  # red
-        success="#66800B",  # green
-        accent="#9B76C8",  # purple light
-        background="#100F0F",  # base.black
-        surface="#1C1B1A",  # base.950
-        panel="#282726",  # base.900
-        foreground="#FFFCF0",  # base.paper
-        dark=True,
-        variables={
-            "input-cursor-foreground": "#5E409D",
-            "input-cursor-background": "#FFFCF0",
-            "input-selection-background": "#6F6E69 35%",  # base.600 with opacity
-        },
+    "solarized-light": Theme(
+        name="solarized-light",
+        primary="#268bd2",
+        secondary="#2aa198",
+        warning="#cb4b16",
+        error="#dc322f",
+        success="#859900",
+        accent="#6c71c4",
+        background="#fdf6e3",
+        surface="#eee8d5",
+        panel="#eee8d5",
+        dark=False,
     ),
 }
 

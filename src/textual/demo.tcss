@@ -44,7 +44,7 @@ Sidebar.-hidden {
 
 Sidebar Title {
     background: $boost;
-    color: $secondary;
+    color: $primary;
     padding: 2 4;
     border-right: vkey $background;
     dock: top;
@@ -70,7 +70,7 @@ Option {
 }
 
 Option:hover {
-    background: $primary 20%;
+    background: $secondary 20%;
     color: $text;
 }
 
@@ -93,7 +93,7 @@ Welcome {
     height: auto;
     max-width: 100;
     min-width: 40;
-    border: wide $primary;
+    border: wide $secondary;
     padding: 1 2;
     margin: 1 2;
     box-sizing: border-box;
@@ -143,7 +143,7 @@ RichLog {
     height: 50vh;
     dock: bottom;
     layer: notes;
-    border-top: hkey $primary;
+    border-top: hkey $secondary;
     offset-y: 0;
     transition: offset 400ms in_out_cubic;
     padding: 0 1 1 1;

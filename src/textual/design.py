@@ -219,15 +219,13 @@ class ColorSystem:
         colors["block-cursor-foreground"] = get(
             "block-cursor-foreground", colors["text"]
         )
-        colors["block-cursor-background"] = get(
-            "block-cursor-background", secondary.hex
-        )
+        colors["block-cursor-background"] = get("block-cursor-background", primary.hex)
         colors["block-cursor-text-style"] = get("block-cursor-text-style", "bold")
         colors["block-cursor-blurred-foreground"] = get(
             "block-cursor-blurred-foreground", colors["text"]
         )
         colors["block-cursor-blurred-background"] = get(
-            "block-cursor-blurred-background", secondary.with_alpha(0.3).hex
+            "block-cursor-blurred-background", primary.with_alpha(0.3).hex
         )
         colors["block-cursor-blurred-text-style"] = get(
             "block-cursor-blurred-text-style", "none"
@@ -237,7 +235,7 @@ class ColorSystem:
         )
 
         # The border color for focused widgets which have a border.
-        colors["border"] = get("border", secondary.hex)
+        colors["border"] = get("border", primary.hex)
         colors["border-blurred"] = get("border-blurred", surface.darken(0.025).hex)
 
         # The surface color for builtin focused widgets
@@ -264,7 +262,7 @@ class ColorSystem:
 
         # Links
         colors["link-background"] = get("link-background", "initial")
-        colors["link-background-hover"] = get("link-background-hover", secondary.hex)
+        colors["link-background-hover"] = get("link-background-hover", primary.hex)
         colors["link-color"] = get("link-color", colors["text"])
         colors["link-style"] = get("link-style", "underline")
         colors["link-color-hover"] = get("link-color-hover", colors["text"])
@@ -294,7 +292,7 @@ class ColorSystem:
         colors["input-cursor-text-style"] = get("input-cursor-text-style", "none")
         colors["input-selection-background"] = get(
             "input-selection-background",
-            Color.parse(colors["secondary-lighten-1"]).with_alpha(0.4).hex,
+            Color.parse(colors["primary-lighten-1"]).with_alpha(0.4).hex,
         )
         colors["input-selection-foreground"] = get(
             "input-selection-foreground", background.hex

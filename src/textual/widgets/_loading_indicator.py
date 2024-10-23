@@ -22,7 +22,7 @@ class LoadingIndicator(Widget):
         height: 100%;
         min-height: 1;
         content-align: center middle;
-        color: $secondary;
+        color: $primary;
         text-style: not reverse;
     }
     LoadingIndicator.-textual-loading-indicator {

@@ -112,7 +112,7 @@ class Rule(Widget, can_focus=False):
 
     DEFAULT_CSS = """
     Rule {
-        color: $primary;
+        color: $secondary;
     }
 
     Rule.-horizontal {
