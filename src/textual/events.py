@@ -572,6 +572,11 @@ class Enter(Event, bubble=True, verbose=True):
         """The node directly under the mouse."""
         super().__init__()
 
+    @property
+    def control(self) -> DOMNode:
+        """Alias for the `node` under the mouse."""
+        return self.node
+
 
 class Leave(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved away from a widget, or if a widget is
@@ -591,6 +596,11 @@ class Leave(Event, bubble=True, verbose=True):
         self.node = node
         """The node that was previously directly under the mouse."""
         super().__init__()
+
+    @property
+    def control(self) -> DOMNode:
+        """Alias for the `node` that was previously under the mouse."""
+        return self.node
 
 
 class Focus(Event, bubble=False):
