@@ -4,7 +4,7 @@ from typing import ClassVar, Iterable, Optional
 
 from typing_extensions import TypeGuard
 
-from textual._loop import loop_from_index_no_wrap
+from textual._loop import loop_from_index
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
 from textual.containers import VerticalScroll
@@ -280,7 +280,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
                 self.index = 0
         else:
             index = self.index
-            for index, item in loop_from_index_no_wrap(self._nodes, self.index):
+            for index, item in loop_from_index(self._nodes, self.index, wrap=False):
                 if not item.disabled:
                     self.index = index
                     break
@@ -291,8 +291,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             if self._nodes:
                 self.index = len(self._nodes) - 1
         else:
-            for index, item in loop_from_index_no_wrap(
-                self._nodes, self.index, direction=-1
+            for index, item in loop_from_index(
+                self._nodes, self.index, direction=-1, wrap=False
             ):
                 if not item.disabled:
                     self.index = index

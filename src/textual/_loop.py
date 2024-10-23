@@ -46,7 +46,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
 
 
 def loop_from_index(
-    values: Sequence[T], index: int, direction: Literal[+1, -1] = +1
+    values: Sequence[T], index: int, direction: Literal[+1, -1] = +1, wrap: bool = True
 ) -> Iterable[tuple[int, T]]:
     """Iterate over values in a sequence from a given starting index, wrapping the index
     if it would go out of bounds.
@@ -55,32 +55,19 @@ def loop_from_index(
         values: A sequence of values.
         index: Starting index.
         direction: Direction to move index (+1 for forward, -1 for backward).
+        bool: Should the index wrap when out of bounds?
 
     Yields:
         A tuple of index and value from the sequence.
     """
     count = len(values)
-    for _ in range(count):
-        index = (index + direction) % count
-        yield (index, values[index])
-
-
-def loop_from_index_no_wrap(
-    values: Sequence[T], index: int, direction: Literal[+1, -1] = +1
-) -> Iterable[tuple[int, T]]:
-    """Iterate over values in a sequence from a given starting index, without wrapping the index.
-
-    Args:
-        values: A sequence of values.
-        index: Starting index.
-        direction: Direction to move index (+1 for forward, -1 for backward).
-
-    Yields:
-        A tuple of index and value from the sequence.
-    """
-    count = len(values)
-    maxima = (-1, count)
-    for _ in range(count):
-        if (index := index + direction) in maxima:
-            break
-        yield (index, values[index])
+    if wrap:
+        maxima = (-1, count)
+        for _ in range(count):
+            if (index := index + direction) in maxima:
+                break
+            yield (index, values[index])
+    else:
+        for _ in range(count):
+            index = (index + direction) % count
+            yield (index, values[index])
