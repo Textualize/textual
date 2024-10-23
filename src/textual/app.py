@@ -493,6 +493,9 @@ class App(Generic[ReturnType], DOMNode):
     SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
     """Class to apply to suspended screens, or empty string for no class."""
 
+    HOVER_EFFECTS_SCROLL_PAUSE: ClassVar[float] = 0.2
+    """Seconds to pause hover effects for when scrolling."""
+
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
@@ -2703,10 +2706,12 @@ class App(Generic[ReturnType], DOMNode):
 
     def _pause_hover_effects(self):
         """Pause any hover effects based on Enter and Leave events for 200ms."""
+        if not self.HOVER_EFFECTS_SCROLL_PAUSE:
+            return
         self._paused_hover_effects = True
         if self._hover_effects_timer is None:
             self._hover_effects_timer = self.set_interval(
-                0.2, self._resume_hover_effects
+                self.HOVER_EFFECTS_SCROLL_PAUSE, self._resume_hover_effects
             )
         else:
             self._hover_effects_timer.reset()
@@ -2714,6 +2719,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def _resume_hover_effects(self):
         """Resume sending Enter and Leave for hover effects."""
+        if not self.HOVER_EFFECTS_SCROLL_PAUSE:
+            return
         if self._paused_hover_effects:
             self._paused_hover_effects = False
             if self._hover_effects_timer is not None:

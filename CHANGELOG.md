@@ -5,23 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.84.0] - 2024-10-22
 
+## Unreleased
 
 ### Changed
 
-- Grid will now size children to the maximum height of a row
-- Markdown links will be opened with `App.open_url` automatically
-- The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc)
+- Grid will now size children to the maximum height of a row https://github.com/Textualize/textual/pull/5113
+- Markdown links will be opened with `App.open_url` automatically https://github.com/Textualize/textual/pull/5113
+- The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc) https://github.com/Textualize/textual/pull/5113
 
 ### Added
 
-- Added Link widget
-- Added `open_links` to `Markdown` and `MarkdownViewer` widgets
-- Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
-- Added `App.DEFAULT_MODE`
-- Added `Containers.HorizontalGroup` and `Containers.VerticalGroup`
-- Added `$`, `£`, `€` symbols to Digits
+- Added Link widget https://github.com/Textualize/textual/pull/5113
+- Added `open_links` to `Markdown` and `MarkdownViewer` widgets https://github.com/Textualize/textual/pull/5113
+- Added `App.DEFAULT_MODE` https://github.com/Textualize/textual/pull/5113
+- Added `Containers.HorizontalGroup` and `Containers.VerticalGroup` https://github.com/Textualize/textual/pull/5113
+- Added `$`, `£`, `€`, `(`, `)` symbols to Digits https://github.com/Textualize/textual/pull/5113
+
+## [0.84.0] - 2024-10-22
 
 ### Fixed
 
