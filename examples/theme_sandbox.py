@@ -16,8 +16,11 @@ from textual.widgets import (
     Label,
     ListItem,
     ListView,
+    LoadingIndicator,
+    MarkdownViewer,
     OptionList,
     RadioSet,
+    RichLog,
     Select,
     SelectionList,
     Switch,
@@ -45,6 +48,23 @@ ROWS = [
 
 LOREM_IPSUM = """\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Sed euismod, nunc sit amet aliquam lacinia, nisl nisl aliquam nisl, nec aliquam nisl nisl sit amet lorem. Sed euismod, nunc sit amet aliquam lacinia, nisl nisl aliquam nisl, nec aliquam nisl nisl sit amet lorem. Sed euismod, nunc sit amet aliquam lacinia, nisl nisl aliquam nisl, nec aliquam nisl nisl sit amet lorem.
+"""
+
+EXAMPLE_MARKDOWN = """\
+# Markdown Viewer
+
+This is an example of Textual's `MarkdownViewer` widget.
+
+
+## Features
+
+Markdown syntax and extensions are supported.
+
+- Typography *emphasis*, **strong**, `inline code` etc.
+- Headers
+- Lists (bullet and ordered)
+- Syntax highlighted code blocks
+- Tables!
 """
 
 
@@ -125,7 +145,15 @@ class ChangingThemeApp(App[None]):
     Tree {
         height: 5;
     }
-
+    MarkdownViewer {
+        height: 8;
+    }
+    LoadingIndicator {
+        height: 3;
+    }
+    RichLog {
+        height: 4;
+    }
 
     #palette {
         height: auto;
@@ -238,6 +266,14 @@ class ChangingThemeApp(App[None]):
 
             with Collapsible(title="An interesting story."):
                 yield Label("Interesting but verbose story.")
+
+            yield LoadingIndicator()
+
+            rich_log = RichLog(highlight=True, markup=True)
+            rich_log.write("Hello, world!")
+            yield rich_log
+
+            yield MarkdownViewer(EXAMPLE_MARKDOWN)
 
             with Horizontal(id="buttons"):
                 yield Button("Button 1")

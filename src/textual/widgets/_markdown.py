@@ -248,8 +248,8 @@ class MarkdownH1(MarkdownHeader):
     MarkdownH1 {
         content-align: center middle;
         text-style: bold;
-        color: $success;
-        &:light {color: $secondary;}
+        color: $primary;
+        &:light {color: $primary;}
     }
     """
 
@@ -261,8 +261,8 @@ class MarkdownH2(MarkdownHeader):
 
     MarkdownH2 {
         text-style: underline;
-        color: $success;
-        &:light {color: $secondary;}
+        color: $primary;
+        &:light {color: $primary;}
     }
     """
 
@@ -273,10 +273,10 @@ class MarkdownH3(MarkdownHeader):
     DEFAULT_CSS = """
     MarkdownH3 {
         text-style: bold;
-        color: $success;
+        color: $primary;
         margin: 1 0;
         width: auto;
-        &:light {color: $secondary;}
+        &:light {color: $primary;}
     }
     """
 
@@ -288,7 +288,7 @@ class MarkdownH4(MarkdownHeader):
     MarkdownH4 {
         text-style: bold underline;
         margin: 1 0;
-        color: $text;
+        color: $foreground;
     }
     """
 
@@ -299,7 +299,7 @@ class MarkdownH5(MarkdownHeader):
     DEFAULT_CSS = """
     MarkdownH5 {
         text-style: bold;
-        color: $text;
+        color: $foreground;
         margin: 1 0;
 
     }
@@ -312,7 +312,7 @@ class MarkdownH6(MarkdownHeader):
     DEFAULT_CSS = """
     MarkdownH6 {
         text-style: bold;
-        color: $text-muted;
+        color: $foreground-muted;
         margin: 1 0;
     }
     """
@@ -670,14 +670,19 @@ HEADINGS = {
 NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
 
-class Markdown(Widget):
+class Markdown(Widget, can_focus=True):
     DEFAULT_CSS = """
     Markdown {
         height: auto;
-        margin: 0 2 1 2;
+        padding: 0 2 1 2;
         layout: vertical;
-        color: $text;
+        color: $foreground;
+        background: $surface;
         overflow-y: auto;
+
+        &:focus {
+            background-tint: $foreground 5%;
+        }
     }
     .em {
         text-style: italic;
@@ -1040,12 +1045,17 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     DEFAULT_CSS = """
     MarkdownTableOfContents {
         width: auto;
-        background: $surface;
-        border-right: wide $background;
+        height: 1fr;
+        background: $panel;
+        &:focus-within {
+            background-tint: $foreground 5%;
+        }
     }
     MarkdownTableOfContents > Tree {
         padding: 1;
         width: auto;
+        height: 1fr;
+        background: $panel;
     }
     """
 
@@ -1115,7 +1125,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
         message.stop()
 
 
-class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
+class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
     """A Markdown viewer widget."""
 
     SCOPED_CSS = False
@@ -1124,14 +1134,11 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     MarkdownViewer {
         height: 1fr;
         scrollbar-gutter: stable;
-    }
-
-    MarkdownTableOfContents {
-        dock:left;
-    }
-
-    MarkdownViewer > MarkdownTableOfContents {
-        display: none;
+        background: $surface;
+        & > MarkdownTableOfContents {
+            display: none;
+            dock:left;
+        }
     }
 
     MarkdownViewer.-show-table-of-contents > MarkdownTableOfContents {
@@ -1218,8 +1225,8 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     def compose(self) -> ComposeResult:
         markdown = Markdown(parser_factory=self._parser_factory)
-        yield MarkdownTableOfContents(markdown)
         yield markdown
+        yield MarkdownTableOfContents(markdown)
 
     def _on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated

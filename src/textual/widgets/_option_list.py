@@ -153,11 +153,6 @@ class OptionList(ScrollView, can_focus=True):
                 text-style: $block-cursor-text-style;
             }
         }
-
-        & > .option-list--option-hover-highlighted {
-            color: $block-cursor-foreground;
-            background: $block-cursor-background;
-        }
         & > .option-list--separator {
             color: $foreground 15%;
         }
@@ -171,10 +166,6 @@ class OptionList(ScrollView, can_focus=True):
         & > .option-list--option-hover {
             background: $block-hover-background;
         }
-        & > .option-list--option-hover-highlighted {
-            background: $primary 60%;
-            color: $text;
-        }
     }
     """
 
@@ -183,7 +174,6 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option-disabled",
         "option-list--option-highlighted",
         "option-list--option-hover",
-        "option-list--option-hover-highlighted",
         "option-list--separator",
     }
     """
@@ -192,7 +182,6 @@ class OptionList(ScrollView, can_focus=True):
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
-    | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
     | `option-list--separator` | Target the separators. |
     """
 
