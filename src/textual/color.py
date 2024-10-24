@@ -332,7 +332,7 @@ class Color(NamedTuple):
         yield g
         yield b
         yield "a", a, 1.0
-        yield "ansi", ansi
+        yield "ansi", ansi, None
 
     def with_alpha(self, alpha: float) -> Color:
         """Create a new color with the given alpha.
