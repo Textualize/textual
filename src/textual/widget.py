@@ -2557,7 +2557,10 @@ class Widget(DOMNode):
                 level=level,
             )
 
-        self.call_after_refresh(_lazily_scroll_end)
+        if immediate:
+            _lazily_scroll_end()
+        else:
+            self.call_after_refresh(_lazily_scroll_end)
 
     def scroll_left(
         self,
@@ -3215,18 +3218,35 @@ class Widget(DOMNode):
         """
         parent = self.parent
         if isinstance(parent, Widget):
-            self.screen.scroll_to_widget(
-                self,
-                animate=animate,
-                speed=speed,
-                duration=duration,
-                top=top,
-                easing=easing,
-                force=force,
-                on_complete=on_complete,
-                level=level,
-                immediate=immediate,
-            )
+            if self.region:
+                self.screen.scroll_to_widget(
+                    self,
+                    animate=animate,
+                    speed=speed,
+                    duration=duration,
+                    top=top,
+                    easing=easing,
+                    force=force,
+                    on_complete=on_complete,
+                    level=level,
+                    immediate=immediate,
+                )
+            else:
+                # self.region is falsey which may indicate the widget hasn't been through a layout operation
+                # We can potentially make it do the right thing by postponing the scroll to after a refresh
+                self.call_after_refresh(
+                    self.screen.scroll_to_widget,
+                    self,
+                    animate=animate,
+                    speed=speed,
+                    duration=duration,
+                    top=top,
+                    easing=easing,
+                    force=force,
+                    on_complete=on_complete,
+                    level=level,
+                    immediate=immediate,
+                )
 
     def scroll_to_center(
         self,
