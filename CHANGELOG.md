@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed glitchy ListView https://github.com/Textualize/textual/issues/5163
+- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
 
 ## [0.84.0] - 2024-10-22
 
@@ -40,6 +41,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
 - Added `:first-of-type`, `:last-of-type`, `:odd`, and `:even` pseudo classes https://github.com/Textualize/textual/pull/5139
+
+### Changed
+
+- `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
+- `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 
 ## [0.83.0] - 2024-10-10
 

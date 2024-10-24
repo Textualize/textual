@@ -5,6 +5,7 @@ from typing import ClassVar, Iterable, Optional
 from typing_extensions import TypeGuard
 
 from textual._loop import loop_from_index
+from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
 from textual.containers import VerticalScroll
@@ -38,7 +39,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     | down | Move the cursor down. |
     """
 
-    index = reactive[Optional[int]](None, init=False)
+    index = reactive[Optional[int]](None, always_update=True, init=False)
     """The index of the currently highlighted item."""
 
     class Highlighted(Message):
@@ -246,7 +247,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         await_mount = self.mount(*items, before=index)
         return await_mount
 
-    def pop(self, index: Optional[int] = None) -> AwaitRemove:
+    def pop(self, index: Optional[int] = None) -> AwaitComplete:
         """Remove last ListItem from ListView or
            Remove ListItem from ListView by index
 
@@ -257,13 +258,24 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             An awaitable that yields control to the event loop until
                 the DOM has been updated to reflect item being removed.
         """
-        if index is None:
-            await_remove = self.query("ListItem").last().remove()
-        else:
-            await_remove = self.query("ListItem")[index].remove()
-        return await_remove
+        if len(self) == 0:
+            raise IndexError("pop from empty list")
 
-    def remove_items(self, indices: Iterable[int]) -> AwaitRemove:
+        index = index if index is not None else -1
+        item_to_remove = self.query("ListItem")[index]
+        normalized_index = index if index >= 0 else index + len(self)
+
+        async def do_pop():
+            await item_to_remove.remove()
+            if self.index is not None:
+                if normalized_index == self.index:
+                    self.index = self.index
+                elif normalized_index < self.index:
+                    self.index = self.index - 1
+
+        return AwaitComplete(do_pop())
+
+    def remove_items(self, indices: Iterable[int]) -> AwaitComplete:
         """Remove ListItems from ListView by indices
 
         Args:
@@ -274,8 +286,22 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         """
         items = self.query("ListItem")
         items_to_remove = [items[index] for index in indices]
-        await_remove = self.remove_children(items_to_remove)
-        return await_remove
+        normalized_indices = set(
+            index if index >= 0 else index + len(self) for index in indices
+        )
+
+        async def do_remove_items():
+            await self.remove_children(items_to_remove)
+            if self.index is not None:
+                removed_before_highlighted = sum(
+                    1 for index in normalized_indices if index < self.index
+                )
+                if removed_before_highlighted:
+                    self.index -= removed_before_highlighted
+                elif self.index in normalized_indices:
+                    self.index = self.index
+
+        return AwaitComplete(do_remove_items())
 
     def action_select_cursor(self) -> None:
         """Select the current item in the list."""
