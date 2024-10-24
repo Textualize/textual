@@ -39,4 +39,4 @@ async def test_listview_initial_index(initial_index, expected_index) -> None:
     app = ListViewDisabledItemsApp()
     async with app.run_test() as pilot:
         list_view = pilot.app.query_one(ListView)
-        assert list_view._index == expected_index
+        assert list_view.index == expected_index

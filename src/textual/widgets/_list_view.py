@@ -121,8 +121,16 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     def _on_mount(self, _: Mount) -> None:
         """Ensure the ListView is fully-settled after mounting."""
-        with self.prevent(self.Highlighted):
-            self.index = self._initial_index
+
+        if self._initial_index is not None and self.children:
+            index = self._initial_index
+            if index >= len(self.children):
+                index = 0
+            if self._nodes[index].disabled:
+                for index, node in loop_from_index(self._nodes, index, wrap=True):
+                    if not node.disabled:
+                        break
+            self.index = index
 
     @property
     def highlighted_child(self) -> ListItem | None:
@@ -162,9 +170,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         """Updates the highlighting when the index changes."""
 
         if new_index is not None:
-            self.scroll_to_widget(
-                self.children[new_index], animate=False, immediate=True
-            )
+            self.scroll_to_widget(self._nodes[new_index], animate=False, immediate=True)
 
         if self._is_valid_index(old_index):
             old_child = self._nodes[old_index]
