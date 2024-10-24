@@ -184,7 +184,7 @@ async def test_link_in_markdown_table_posts_message_when_clicked():
         messages = []
 
         def compose(self) -> ComposeResult:
-            yield Markdown(markdown_table)
+            yield Markdown(markdown_table, open_links=False)
 
         @on(Markdown.LinkClicked)
         def log_markdown_link_clicked(
