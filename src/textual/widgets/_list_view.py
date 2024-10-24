@@ -170,7 +170,14 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         """Updates the highlighting when the index changes."""
 
         if new_index is not None:
-            self.scroll_to_widget(self._nodes[new_index], animate=False, immediate=True)
+            selected_widget = self._nodes[new_index]
+            if selected_widget.region:
+                self.scroll_to_widget(self._nodes[new_index], animate=False)
+            else:
+                # Call after refresh to permit a refresh operation
+                self.call_after_refresh(
+                    self.scroll_to_widget, selected_widget, animate=False
+                )
 
         if self._is_valid_index(old_index):
             old_child = self._nodes[old_index]
@@ -200,8 +207,6 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
                 until the DOM has been updated with the new child items.
         """
         await_mount = self.mount(*items)
-        if len(self) == 1:
-            self.index = 0
         return await_mount
 
     def append(self, item: ListItem) -> AwaitMount:

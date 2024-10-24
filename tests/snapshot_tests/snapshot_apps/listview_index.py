@@ -22,6 +22,7 @@ class ListViewIndexApp(App):
     async def watch_data(self, data: "list[int]") -> None:
         await self._menu.remove_children()
         await self._menu.extend((ListItem(Label(str(value))) for value in data))
+
         new_index = len(self._menu) - 1
         self._menu.index = new_index
 
