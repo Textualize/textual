@@ -1,7 +1,15 @@
+import csv
+import io
+
+from rich.syntax import Syntax
+from rich.table import Table
+from rich.traceback import Traceback
+
 from textual import containers
 from textual.app import ComposeResult
 from textual.demo2.data import COUNTRIES
 from textual.demo2.page import PageScreen
+from textual.reactive import var
 from textual.suggester import SuggestFromList
 from textual.widgets import (
     Button,
@@ -13,11 +21,14 @@ from textual.widgets import (
     Label,
     ListItem,
     ListView,
+    Log,
     Markdown,
     MaskedInput,
     OptionList,
     RadioButton,
     RadioSet,
+    RichLog,
+    TabbedContent,
 )
 
 WIDGETS_MD = """\
@@ -219,7 +230,7 @@ An Option List for a for field to present a list of strings to select from.
 
     """
 
-    DEFAULT_CSS = """\
+    DEFAULT_CSS = """
     ListViews {
         ListView {
             width: 1fr;
@@ -244,6 +255,110 @@ An Option List for a for field to present a list of strings to select from.
             yield OptionList(*COUNTRIES)
 
 
+class Logs(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    LOGS_MD = """\
+## Logs and Rich Logs
+
+A Log widget to efficiently display a scrolling view of text.
+And a RichLog widget to display Rich renderables.
+
+"""
+    DEFAULT_CSS = """
+    Logs {
+        Log, RichLog {
+            width: 1fr;
+            height: 20;           
+            border: blank;
+            padding: 0;
+            overflow-x: auto;
+            &:focus {
+                border: heavy $accent;
+            }
+        }
+        TabPane { padding: 0; }
+    }
+    """
+
+    TEXT = """I must not fear.  
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain.""".splitlines()
+
+    CSV = """lane,swimmer,country,time
+4,Joseph Schooling,Singapore,50.39
+2,Michael Phelps,United States,51.14
+5,Chad le Clos,South Africa,51.14
+6,László Cseh,Hungary,51.14
+3,Li Zhuhao,China,51.26
+8,Mehdy Metella,France,51.58
+7,Tom Shields,United States,51.73
+1,Aleksandr Sadovnikov,Russia,51.84"""
+    CSV_ROWS = list(csv.reader(io.StringIO(CSV)))
+
+    CODE = '''\
+def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
+    """Iterate and generate a tuple with a flag for first and last value."""
+    iter_values = iter(values)
+    try:
+        previous_value = next(iter_values)
+    except StopIteration:
+        return
+    first = True
+    for value in iter_values:
+        yield first, False, previous_value
+        first = False
+        previous_value = value
+    yield first, True, previous_value\
+'''
+    log_count = var(0)
+    rich_log_count = var(0)
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.LOGS_MD)
+        with TabbedContent("Log", "RichLog"):
+            yield Log(max_lines=10_000)
+            yield RichLog(max_lines=10_000)
+
+    def on_mount(self) -> None:
+        log = self.query_one(Log)
+        rich_log = self.query_one(RichLog)
+        log.write("I am a Log Widget")
+        rich_log.write("I am a [b]Rich Log Widget")
+        self.set_interval(0.25, self.update_log)
+        self.set_interval(1, self.update_rich_log)
+
+    def update_log(self) -> None:
+        if not self.screen.can_view(self):
+            return
+        self.log_count += 1
+        self.query_one(Log).write_line(self.TEXT[self.log_count % len(self.TEXT)])
+
+    def update_rich_log(self) -> None:
+        rich_log = self.query_one(RichLog)
+        self.rich_log_count += 1
+        log_option = self.rich_log_count % 3
+        if log_option == 0:
+            rich_log.write("Syntax highlighted code")
+            rich_log.write(Syntax(self.CODE, lexer="python"), animate=True)
+        elif log_option == 1:
+            rich_log.write("A Rich Table")
+            table = Table(*self.CSV_ROWS[0])
+            for row in self.CSV_ROWS[1:]:
+                table.add_row(*row)
+            rich_log.write(table, animate=True)
+        elif log_option == 2:
+            rich_log.write("A Rich Traceback")
+            try:
+                1 / 0
+            except Exception:
+                traceback = Traceback()
+                rich_log.write(traceback, animate=True)
+
+
 class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
@@ -266,6 +381,7 @@ class WidgetsScreen(PageScreen):
             yield Datatables()
             yield Inputs()
             yield ListViews()
+            yield Logs()
         yield Footer()
 
     def action_unfocus(self) -> None:
