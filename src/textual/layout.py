@@ -19,6 +19,8 @@ ArrangeResult: TypeAlias = "list[WidgetPlacement]"
 
 @dataclass
 class DockArrangeResult:
+    """Result of [Layout.arrange][textual.layout.Layout.arrange]."""
+
     placements: list[WidgetPlacement]
     """A `WidgetPlacement` for every widget to describe its location on screen."""
     widgets: set[Widget]
@@ -125,7 +127,7 @@ class WidgetPlacement(NamedTuple):
 
 
 class Layout(ABC):
-    """Responsible for arranging Widgets in a view and rendering them."""
+    """Base class of the object responsible for arranging Widgets within a container."""
 
     name: ClassVar[str] = ""
 
@@ -212,6 +214,8 @@ class Layout(ABC):
         canvas = Canvas(width, height)
 
         line_style, keyline_color = container.styles.keyline
+        if keyline_color:
+            keyline_color = container.background_colors[0] + keyline_color
 
         container_offset = container.content_region.offset
 

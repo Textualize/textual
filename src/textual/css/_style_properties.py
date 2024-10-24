@@ -57,7 +57,7 @@ from textual.geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
     from textual.canvas import CanvasLineType
-    from textual._layout import Layout
+    from textual.layout import Layout
     from textual.css.styles import StylesBase
 
 from textual.css.types import AlignHorizontal, AlignVertical, DockEdge, EdgeType

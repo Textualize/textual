@@ -53,7 +53,6 @@ from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
-from textual._layout import Layout
 from textual._segment_tools import align_lines
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
@@ -77,6 +76,7 @@ from textual.geometry import (
     Spacing,
     clamp,
 )
+from textual.layout import Layout
 from textual.layouts.vertical import VerticalLayout
 from textual.message import Message
 from textual.messages import CallbackType, Prune
@@ -691,6 +691,24 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def with_tooltip(self, tooltip: RenderableType | None) -> Self:
+        """Chainable method to set a tooltip.
+
+        Example:
+            ```python
+            def compose(self) -> ComposeResult:
+                yield Label("Hello").with_tooltip("A greeting")
+            ```
+
+        Args:
+            tooltip: New tooltip, or `None` to clear the tooltip.
+
+        Returns:
+            Self.
+        """
+        self.tooltip = tooltip
+        return self
 
     def allow_focus(self) -> bool:
         """Check if the widget is permitted to focus.
@@ -1508,7 +1526,7 @@ class Widget(DOMNode):
         """
 
         if self.is_container:
-            width = self._layout.get_content_width(self, container, viewport)
+            width = self.layout.get_content_width(self, container, viewport)
             return width
 
         cache_key = container.width
@@ -1542,8 +1560,8 @@ class Widget(DOMNode):
             The height of the content.
         """
         if self.is_container:
-            assert self._layout is not None
-            height = self._layout.get_content_height(
+            assert self.layout is not None
+            height = self.layout.get_content_height(
                 self,
                 container,
                 viewport,
@@ -2126,7 +2144,7 @@ class Widget(DOMNode):
         await self.app.animator.stop_animation(self, attribute, complete)
 
     @property
-    def _layout(self) -> Layout:
+    def layout(self) -> Layout:
         """Get the layout object if set in styles, or a default layout.
 
         Returns:
@@ -2335,7 +2353,21 @@ class Widget(DOMNode):
             if on_complete is not None:
                 self.call_after_refresh(on_complete)
 
+        if scrolled_x or scrolled_y:
+            self.app._pause_hover_effects()
+
         return scrolled_x or scrolled_y
+
+    def pre_layout(self, layout: Layout) -> None:
+        """This method id called prior to a layout operation.
+
+        Implement this method if you want to make updates that should impact
+        the layout.
+
+        Args:
+            layout: The [Layout][textual.layout.Layout] instance that will be used to arrange this widget's children.
+
+        """
 
     def scroll_to(
         self,
@@ -3791,7 +3823,7 @@ class Widget(DOMNode):
 
         if self.is_container:
             if self.styles.layout and self.styles.keyline[0] != "none":
-                return self._layout.render_keyline(self)
+                return self.layout.render_keyline(self)
             else:
                 return Blank(self.background_colors[1])
         return self.css_identifier_styled
@@ -4250,3 +4282,8 @@ class Widget(DOMNode):
                 severity=severity,
                 timeout=timeout,
             )
+
+    def action_notify(
+        self, message: str, title: str = "", severity: str = "information"
+    ) -> None:
+        self.notify(message, title=title, severity=severity)
