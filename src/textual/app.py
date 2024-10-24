@@ -1166,6 +1166,25 @@ class App(Generic[ReturnType], DOMNode):
         """
         yield from ()
 
+    def get_theme_variable_defaults(self) -> dict[str, str]:
+        """Get the default values for the `variables` used in a theme.
+
+        If the currently specified theme doesn't define a value for a variable,
+        the value specified here will be used as a fallback.
+
+        If a variable is referenced in CSS but does not appear either here
+        or in the theme, the CSS will fail to parse on startup.
+
+        This method allows applications to define their own variables, beyond
+        those offered by Textual, which can then be overridden by a Theme.
+
+        Returns:
+            A mapping of variable name (e.g. "my-button-background-color") to value.
+            Values can be any valid CSS value, e.g. "red 50%", "auto 90%",
+            "#ff0000", "rgb(255, 0, 0)", etc.
+        """
+        return {}
+
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
 
@@ -1182,8 +1201,7 @@ class App(Generic[ReturnType], DOMNode):
         # Build the Textual color system from the theme.
         # This will contain $secondary, $primary, $background, etc.
         variables = theme.to_color_system().generate()
-
-        return variables
+        return {**self.get_theme_variable_defaults(), **variables}
 
     def get_theme(self, theme_name: str) -> Theme | None:
         """Get a theme by name.
