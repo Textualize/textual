@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `immediate` parameter to scroll methods https://github.com/Textualize/textual/pull/5164
 - Added `textual._loop.loop_from_index` https://github.com/Textualize/textual/pull/5164
 
+### Fixed
+
+- Fixed glitchy ListView https://github.com/Textualize/textual/issues/5163
+
 ## [0.84.0] - 2024-10-22
 
 ### Fixed
