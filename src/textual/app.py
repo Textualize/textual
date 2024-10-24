@@ -519,10 +519,10 @@ class App(Generic[ReturnType], DOMNode):
     """The name of the currently active theme."""
 
     ansi_theme_dark = Reactive(MONOKAI, init=False)
-    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while using a dark theme."""
 
     ansi_theme_light = Reactive(ALABASTER, init=False)
-    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while using a light theme."""
 
     ansi_color = Reactive(False)
     """Allow ANSI colors in UI?"""
@@ -4055,6 +4055,15 @@ class App(Generic[ReturnType], DOMNode):
             class_name: The class to toggle on the selected widget.
         """
         self.screen.query(selector).toggle_class(class_name)
+
+    def action_toggle_dark(self) -> None:
+        """An [action](/guide/actions) to toggle the theme between textual-light
+        and textual-dark. This is offered as a convenience to simplify backwards
+        compatibility with previous versions of Textual which only had light mode
+        and dark mode."""
+        self.theme = (
+            "textual-dark" if self.theme == "textual-light" else "textual-light"
+        )
 
     def action_focus_next(self) -> None:
         """An [action](/guide/actions) to focus the next widget."""

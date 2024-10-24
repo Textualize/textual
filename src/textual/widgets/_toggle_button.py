@@ -95,7 +95,7 @@ class ToggleButton(Static, can_focus=True):
 
 
 
-    /* Base button colors (including in dark mode). */
+    /* Base button colors (including in dark themes). */
 
     ToggleButton > .toggle--button {
         text-style: $block-cursor-text-style;
@@ -110,7 +110,7 @@ class ToggleButton(Static, can_focus=True):
         background: $foreground 25%;
     }
 
-    /* Light mode overrides. */
+    /* Light theme overrides. */
     ToggleButton:light {
         color: $text;
         & > .toggle--button {

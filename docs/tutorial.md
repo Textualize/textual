@@ -117,7 +117,7 @@ If you run this code, you should see something like the following:
 ```{.textual path="docs/examples/tutorial/stopwatch01.py" title="stopwatch01.py"}
 ```
 
-Hit the ++d++ key to toggle between light and dark mode.
+Hit the ++d++ key to toggle between light and dark themes.
 
 ```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="stopwatch01.py"}
 ```
