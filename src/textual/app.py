@@ -371,7 +371,7 @@ class App(Generic[ReturnType], DOMNode):
             overflow-y: auto !important;
             align: center middle;
             .-maximized {
-                dock: initial !important;
+                dock: initial !important;                
             }
         }
         /* Fade the header title when app is blurred */
@@ -413,6 +413,9 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
+    DEFAULT_MODE: ClassVar[str] = "_default"
+    """Name of the default mode."""
+
     SCREENS: ClassVar[dict[str, Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
@@ -486,6 +489,22 @@ class App(Generic[ReturnType], DOMNode):
 
     INLINE_PADDING: ClassVar[int] = 1
     """Number of blank lines above an inline app."""
+
+    SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
+    """Class to apply to suspended screens, or empty string for no class."""
+
+    HOVER_EFFECTS_SCROLL_PAUSE: ClassVar[float] = 0.2
+    """Seconds to pause hover effects for when scrolling."""
+
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App], bool]]] = {
+        "focus": lambda app: app.app_focus,
+        "blur": lambda app: not app.app_focus,
+        "dark": lambda app: app.dark,
+        "light": lambda app: not app.dark,
+        "inline": lambda app: app.is_inline,
+        "ansi": lambda app: app.ansi_color,
+        "nocolor": lambda app: app.no_color,
+    }  # type: ignore[assignment]
 
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
@@ -574,9 +593,9 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, highlight=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
+        self._screen_stacks: dict[str, list[Screen[Any]]] = {self.DEFAULT_MODE: []}
         """A stack of screens per mode."""
-        self._current_mode: str = "_default"
+        self._current_mode: str = self.DEFAULT_MODE
         """The current mode the app is in."""
         self._sync_available = False
 
@@ -762,6 +781,11 @@ class App(Generic[ReturnType], DOMNode):
         self._previous_inline_height: int | None = None
         """Size of previous inline update."""
 
+        self._paused_hover_effects: bool = False
+        """Have the hover effects been paused?"""
+
+        self._hover_effects_timer: Timer | None = None
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -891,21 +915,6 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
-
-    def get_pseudo_classes(self) -> Iterable[str]:
-        """Pseudo classes for a widget.
-
-        Returns:
-            Names of the pseudo classes.
-        """
-        yield "focus" if self.app_focus else "blur"
-        yield "dark" if self.dark else "light"
-        if self.is_inline:
-            yield "inline"
-        if self.ansi_color:
-            yield "ansi"
-        if self.no_color:
-            yield "nocolor"
 
     def _watch_ansi_color(self, ansi_color: bool) -> None:
         """Enable or disable the truecolor filter when the reactive changes"""
@@ -2173,8 +2182,12 @@ class App(Generic[ReturnType], DOMNode):
 
         stack = self._screen_stacks.get(mode, [])
         if stack:
-            await_mount = AwaitMount(stack[0], [])
-        else:
+            # Mode already exists
+            # Return an dummy await
+            return AwaitMount(stack[0], [])
+
+        if mode in self._modes:
+            # Mode is defined in MODES
             _screen = self._modes[mode]
             if isinstance(_screen, Screen):
                 raise TypeError(
@@ -2185,6 +2198,17 @@ class App(Generic[ReturnType], DOMNode):
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
+            self.refresh_css()
+            screen.post_message(events.ScreenResume())
+        else:
+            # Mode is not defined
+            screen = self.get_default_screen()
+            stack.append(screen)
+            self._register(self, screen)
+            screen.post_message(events.ScreenResume())
+            await_mount = AwaitMount(stack[0], [])
+
+        screen._screen_resized(self.size)
 
         self._screen_stacks[mode] = stack
         return await_mount
@@ -2201,7 +2225,12 @@ class App(Generic[ReturnType], DOMNode):
 
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
+
         """
+
+        if mode == self._current_mode:
+            return AwaitMount(self.screen, [])
+
         if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
@@ -2675,12 +2704,43 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.set_focus(widget, scroll_visible)
 
+    def _pause_hover_effects(self):
+        """Pause any hover effects based on Enter and Leave events for 200ms."""
+        if not self.HOVER_EFFECTS_SCROLL_PAUSE or self.is_headless:
+            return
+        self._paused_hover_effects = True
+        if self._hover_effects_timer is None:
+            self._hover_effects_timer = self.set_interval(
+                self.HOVER_EFFECTS_SCROLL_PAUSE, self._resume_hover_effects
+            )
+        else:
+            self._hover_effects_timer.reset()
+            self._hover_effects_timer.resume()
+
+    def _resume_hover_effects(self):
+        """Resume sending Enter and Leave for hover effects."""
+        if not self.HOVER_EFFECTS_SCROLL_PAUSE or self.is_headless:
+            return
+        if self._paused_hover_effects:
+            self._paused_hover_effects = False
+            if self._hover_effects_timer is not None:
+                self._hover_effects_timer.pause()
+            try:
+                widget, _ = self.screen.get_widget_at(*self.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                if widget is not self.mouse_over:
+                    self._set_mouse_over(widget)
+
     def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
 
         Args:
             widget: Widget under mouse, or None for no widgets.
         """
+        if self._paused_hover_effects:
+            return
         if widget is None:
             if self.mouse_over is not None:
                 try:
@@ -3148,6 +3208,8 @@ class App(Generic[ReturnType], DOMNode):
             widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
+        new_widgets: list[Widget] = []
+        add_new_widget = new_widgets.append
         for widget in widget_list:
             widget._closing = False
             widget._closed = False
@@ -3155,10 +3217,12 @@ class App(Generic[ReturnType], DOMNode):
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
+                add_new_widget(widget)
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
                     self._register(widget, *widget._nodes, cache=cache)
-                apply_stylesheet(widget, cache=cache)
+        for widget in new_widgets:
+            apply_stylesheet(widget, cache=cache)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks
@@ -3503,10 +3567,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen: Screen[Any] = self.get_default_screen()
-            self._register(self, screen)
-            self._screen_stack.append(screen)
-            screen.post_message(events.ScreenResume())
+            await self._init_mode(self._current_mode)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:

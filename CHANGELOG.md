@@ -5,16 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
+
+### Changed
+
+- Grid will now size children to the maximum height of a row https://github.com/Textualize/textual/pull/5113
+- Markdown links will be opened with `App.open_url` automatically https://github.com/Textualize/textual/pull/5113
+- The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc) https://github.com/Textualize/textual/pull/5113
+
+### Added
+
+- Added Link widget https://github.com/Textualize/textual/pull/5113
+- Added `open_links` to `Markdown` and `MarkdownViewer` widgets https://github.com/Textualize/textual/pull/5113
+- Added `App.DEFAULT_MODE` https://github.com/Textualize/textual/pull/5113
+- Added `Containers.HorizontalGroup` and `Containers.VerticalGroup` https://github.com/Textualize/textual/pull/5113
+- Added `$`, `£`, `€`, `(`, `)` symbols to Digits https://github.com/Textualize/textual/pull/5113
+- Added `Button.action` parameter to invoke action when clicked https://github.com/Textualize/textual/pull/5113
+- Added `immediate` parameter to scroll methods https://github.com/Textualize/textual/pull/5164
+- Added `textual._loop.loop_from_index` https://github.com/Textualize/textual/pull/5164
+
+### Fixed
+
+- Fixed glitchy ListView https://github.com/Textualize/textual/issues/5163
+- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
+
+## [0.84.0] - 2024-10-22
 
 ### Fixed
 
 - Fixed `RadioSet` not being scrollable https://github.com/Textualize/textual/issues/5100
-- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
+- Fixed infinite loop in TextArea https://github.com/Textualize/textual/pull/5154
 
 ### Added
 
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
+- Added `:first-of-type`, `:last-of-type`, `:odd`, and `:even` pseudo classes https://github.com/Textualize/textual/pull/5139
 
 ### Changed
 
@@ -2458,6 +2484,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.84.0]: https://github.com/Textualize/textual/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/Textualize/textual/compare/v0.82.0...v0.83.0
 [0.82.0]: https://github.com/Textualize/textual/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/Textualize/textual/compare/v0.80.1...v0.81.0

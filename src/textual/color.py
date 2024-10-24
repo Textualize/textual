@@ -332,7 +332,7 @@ class Color(NamedTuple):
         yield g
         yield b
         yield "a", a, 1.0
-        yield "ansi", ansi
+        yield "ansi", ansi, None
 
     def with_alpha(self, alpha: float) -> Color:
         """Create a new color with the given alpha.
@@ -397,6 +397,32 @@ class Color(NamedTuple):
             int(g1 + (g2 - g1) * factor),
             int(b1 + (b2 - b1) * factor),
             new_alpha,
+        )
+
+    @lru_cache(maxsize=1024)
+    def tint(self, color: Color) -> Color:
+        """Apply a tint to a color.
+
+        Similar to blend, but combines color and alpha.
+
+        Args:
+            color: A color with alpha component.
+
+        Returns:
+            New color
+        """
+
+        r1, g1, b1, a1, ansi1 = self
+        if ansi1 is not None:
+            return self
+        r2, g2, b2, a2, ansi2 = color
+        if ansi2 is not None:
+            return self
+        return Color(
+            int(r1 + (r2 - r1) * a2),
+            int(g1 + (g2 - g1) * a2),
+            int(b1 + (b2 - b1) * a2),
+            a1,
         )
 
     def __add__(self, other: object) -> Color:

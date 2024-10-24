@@ -937,7 +937,6 @@ def test_dock_scroll_off_by_one(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
         terminal_size=(80, 25),
-        press=["_"],
     )
 
 
@@ -962,9 +961,7 @@ def test_dock_none(snap_compare):
 
 def test_scroll_to(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25), press=["_"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
 
 
 def test_auto_fr(snap_compare):
@@ -1960,6 +1957,7 @@ def test_ansi_command_palette(snap_compare):
     """Test command palette on top of ANSI colors."""
 
     class CommandPaletteApp(App[None]):
+        SUSPENDED_SCREEN_CLASS = "-screen-suspended"
         CSS = """
         Label {
             width: 1fr;
@@ -2314,15 +2312,27 @@ def test_maximize_allow(snap_compare):
 
 
 def test_background_tint(snap_compare):
+    """Test background tint with alpha."""
+
+    # The screen background is dark blue
+    # The vertical is 20% white
+    # With no background tint, the verticals will be a light blue
+    # With a 100% tint, the vertical should be 20% red plus the blue (i.e. purple)
+
+    # tl;dr you should see 4 bars, blue at the top, purple at the bottom, and two shades in between
+
     class BackgroundTintApp(App):
         CSS = """
-        Vertical {
-            background: $panel;
+        Screen {
+            background: rgb(0,0,100)
         }
-        #tint1 { background-tint: $foreground 0%; }
-        #tint2 { background-tint: $foreground 33%; }
-        #tint3 { background-tint: $foreground 66%; }
-        #tint4 { background-tint: $foreground 100% }
+        Vertical {
+            background: rgba(255,255,255,0.2);
+        }
+        #tint1 { background-tint: rgb(255,0,0) 0%; }
+        #tint2 { background-tint: rgb(255,0,0) 33%; }
+        #tint3 { background-tint: rgb(255,0,0) 66%; }
+        #tint4 { background-tint: rgb(255,0,0) 100% }
         """
 
         def compose(self) -> ComposeResult:
@@ -2374,3 +2384,43 @@ def test_fr_and_margin(snap_compare):
                 yield Label("A margin of 4, should be 4 cells around the text")
 
     assert snap_compare(FRApp())
+
+
+def test_pseudo_classes(snap_compare):
+    """Test pseudo classes added in https://github.com/Textualize/textual/pull/5139
+
+    You should see 6 bars, with alternating green and red backgrounds.
+
+    The first bar should have a red border.
+
+    The last bar should have a green border.
+
+    """
+
+    class PSApp(App):
+        CSS = """
+        Label { width: 1fr; height: 1fr; }
+        Label:first-of-type { border:heavy red; }
+        Label:last-of-type { border:heavy green; }
+        Label:odd {background: $success 20%; }
+        Label:even {background: $error 20%; }
+        """
+
+        def compose(self) -> ComposeResult:
+            for item_number in range(5):
+                yield Label(f"Item {item_number+1}")
+
+        def on_mount(self) -> None:
+            # Mounting a new widget should updated previous widgets, as the last of type has changed
+            self.mount(Label("HELLO"))
+
+    assert snap_compare(PSApp())
+
+
+def test_split_segments_infinite_loop(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5151
+
+    Should be a bare-bones text editor containing "x"
+
+    """
+    assert snap_compare(SNAPSHOT_APPS_DIR / "split_segments.py")
