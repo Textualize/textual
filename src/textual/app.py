@@ -2706,7 +2706,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _pause_hover_effects(self):
         """Pause any hover effects based on Enter and Leave events for 200ms."""
-        if not self.HOVER_EFFECTS_SCROLL_PAUSE:
+        if not self.HOVER_EFFECTS_SCROLL_PAUSE or self.is_headless:
             return
         self._paused_hover_effects = True
         if self._hover_effects_timer is None:
@@ -2719,7 +2719,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _resume_hover_effects(self):
         """Resume sending Enter and Leave for hover effects."""
-        if not self.HOVER_EFFECTS_SCROLL_PAUSE:
+        if not self.HOVER_EFFECTS_SCROLL_PAUSE or self.is_headless:
             return
         if self._paused_hover_effects:
             self._paused_hover_effects = False
