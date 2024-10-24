@@ -106,7 +106,6 @@ def find_next_enabled(
     candidates: Sequence[Disableable],
     anchor: int | None,
     direction: Direction,
-    with_anchor: bool = False,
 ) -> int | None:
     """Find the next enabled object if we're currently at the given anchor.
 
@@ -119,8 +118,6 @@ def find_next_enabled(
             enabled object.
         direction: The direction in which to traverse the candidates when looking for
             the next enabled candidate.
-        with_anchor: Consider the anchor position as the first valid position instead of
-            the last one.
 
     Returns:
         The next enabled object. If none are available, return the anchor.
