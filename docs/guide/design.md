@@ -20,8 +20,6 @@ Theme(
     panel="#434C5E",
     dark=True,
     variables={
-        "block-cursor-background": "#88C0D0",
-        "block-cursor-foreground": "#2E3440",
         "block-cursor-text-style": "none",
         "footer-key-foreground": "#88C0D0",
         "input-selection-background": "#81a1c1 35%",
@@ -42,10 +40,6 @@ MyWidget {
     color: $foreground;
 }
 ```
-
-The base colors are also used as the default values for other variables, such as `$border`.
-`$border` defines the border color of focused widgets and is set to `$primary` by default.
-These variables can also be overridden by passing a `variables` argument to the `Theme` constructor.
 
 ## Base colors
 
@@ -101,6 +95,78 @@ The theme system defines three CSS variables which you can use to ensure that te
 - `$text` is set to a slightly transparent black or white, depending on which has better contrast against the background the text is on.
 - `$text-muted` sets a slightly faded text color. Use this for text which has lower importance. For instance a sub-title or supplementary information.
 - `$text-disabled` sets faded out text which indicates it has been disabled. For instance, menu items which are not applicable and can't be clicked.
+
+## Additional variables
+
+Textual uses the base colors as default values for additional variables used throughout the framework.
+These variables can be overridden by passing a `variables` argument to the `Theme` constructor.
+
+Here's a comprehensive list of these variables, their purposes, and default values:
+
+### Border
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$border` | The border color for focused widgets with a border | `$primary` |
+| `$border-blurred` | The border color for unfocused widgets | Slightly darkened `$surface` |
+
+### Cursor
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$block-cursor-foreground` | Text color for block cursor (e.g., in OptionList) | `$text` |
+| `$block-cursor-background` | Background color for block cursor | `$primary` |
+| `$block-cursor-text-style` | Text style for block cursor | `"bold"` |
+| `$block-cursor-blurred-foreground` | Text color for unfocused block cursor | `$text` |
+| `$block-cursor-blurred-background` | Background color for unfocused block cursor | `$primary` with 30% opacity |
+| `$block-cursor-blurred-text-style` | Text style for unfocused block cursor | `"none"` |
+| `$block-hover-background` | Background color when hovering over a block | `$boost` with 5% opacity |
+
+### Input
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$input-cursor-background` | Background color of the input cursor | `$foreground` |
+| `$input-cursor-foreground` | Text color of the input cursor | `$background` |
+| `$input-cursor-text-style` | Text style of the input cursor | `"none"` |
+| `$input-selection-background` | Background color of selected text | `$primary-lighten-1` with 40% opacity |
+| `$input-selection-foreground` | Text color of selected text | `$background` |
+
+### Scrollbar
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$scrollbar` | Color of the scrollbar | `$panel` |
+| `$scrollbar-hover` | Color of the scrollbar when hovered | `$panel-lighten-1` |
+| `$scrollbar-active` | Color of the scrollbar when active (being dragged) | `$panel-lighten-2` |
+| `$scrollbar-background` | Background color behind the scrollbar | `$background-darken-1` |
+| `$scrollbar-corner-color` | Color of the scrollbar corner | Same as `$scrollbar-background` |
+| `$scrollbar-background-hover` | Background color when hovering over the scrollbar area | Same as `$scrollbar-background` |
+| `$scrollbar-background-active` | Background color when the scrollbar is active | Same as `$scrollbar-background` |
+
+### Links
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$link-background` | Background color of links | `"initial"` |
+| `$link-background-hover` | Background color of links when hovered | `$primary` |
+| `$link-color` | Text color of links | `$text` |
+| `$link-style` | Text style of links | `"underline"` |
+| `$link-color-hover` | Text color of links when hovered | `$text` |
+| `$link-style-hover` | Text style of links when hovered | `"bold not underline"` |
+
+### Footer
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$footer-foreground` | Text color in the footer | `$foreground` |
+| `$footer-background` | Background color of the footer | `$panel` |
+| `$footer-key-foreground` | Text color for key bindings in the footer | `$accent` |
+| `$footer-key-background` | Background color for key bindings in the footer | `"transparent"` |
+| `$footer-description-foreground` | Text color for descriptions in the footer | `$foreground` |
+| `$footer-description-background` | Background color for descriptions in the footer | `"transparent"` |
+| `$footer-item-background` | Background color for items in the footer | `"transparent"` |
+
 
 ## Previewing colors
 
