@@ -1,7 +1,7 @@
 # Themes
 
-Textual comes with several built-in themes.
-You can also easily create your own themes.
+Textual comes with several built-in themes, and it's easy to create your own.
+
 A theme is a simple Python object which maps variable names to colors.
 Here's an example:
 
@@ -29,19 +29,10 @@ Theme(
 )
 ```
 
-## Theme Variables
+## Theme variables
 
 Themes consist of up to 11 *base colors*, (`primary`, `secondary`, `accent`, etc.), which Textual uses to generate a broad range of CSS variables.
-
-Sampling from a limited base palette makes it easier to create visually consistent themes,
-without needing to manually define a large number of variables.
-
 For example, the `textual-dark` theme defines the *primary* base color as `#004578`.
-Textual then generates a number of variations from this base color, such as `$primary`, `$primary-lighten-1` and `$primary-darken-1`.
-
-!!! tip
-
-    If `textual-dev` (the Textual devtools) is installed, you can view the variables generated from a theme by running `textual colors`.
 
 Here's an example of CSS which uses these variables:
 
@@ -56,7 +47,10 @@ The base colors are also used as the default values for other variables, such as
 `$border` defines the border color of focused widgets and is set to `$primary` by default.
 These variables can also be overridden by passing a `variables` argument to the `Theme` constructor.
 
-## Base Colors
+## Base colors
+
+When defining a theme, only the `primary` color is required.
+Textual can generate the other base colors if they're not supplied.
 
 The following table lists each of 11 base colors (as used in CSS) and a description of where they are used by default.
 
@@ -72,28 +66,9 @@ The following table lists each of 11 base colors (as used in CSS) and a descript
 | `$warning`              | Indicates a warning. Text or background.                                                                                                            |
 | `$error`                | Indicates an error.  Text or background.                                                                                                            |
 | `$success`              | Used to indicate success.  Text or background.                                                                                                      |
-| `$accent`               | Used sparingly to draw attention to a part of the UI (typically borders around focused widgets).                                                    |
+| `$accent`               | Used sparingly to draw attention. Typically contrasts with $primary and $secondary.                                                                 |
 
-
-## Designing with Colors
-
-Textual pre-defines a number of colors as [CSS variables](../guide/CSS.md#css-variables). For instance, the CSS variable `$primary` is set to `#004578` (the blue used in headers). You can use `$primary` in place of the color in the [background](../styles/background.md) and [color](../styles/color.md) rules, or other any other rule that accepts a color.
-
-Here's an example of CSS that uses color variables:
-
-```css
-MyWidget {
-    background: $primary;
-    color: $text;
-}
-```
-
-Using variables rather than explicit colors allows Textual to apply color themes. Textual supplies a default light and dark theme, but in the future many more themes will be available.
-
-
-
-
-### Shades
+## Shades
 
 For every color, Textual generates 3 dark shades and 3 light shades.
 
@@ -102,33 +77,32 @@ For every color, Textual generates 3 dark shades and 3 light shades.
 
 For example, `$secondary-darken-1` is a slightly darkened `$secondary`, and `$error-lighten-3` is a very light version of the `$error` color.
 
-### Dark mode
+## Light and dark themes
 
-There are two color themes in Textual, a light mode and dark mode. You can switch between them by toggling the `dark` attribute on the App class.
+Themes can be either "light" or "dark".
+This setting is specified in the `Theme` constructor via the `dark` argument, and is used by Textual to determine how to generate shades from base colors.
 
-In dark mode `$background` and `$surface` are off-black. Dark mode also set `$primary-background` and `$secondary-background` to dark versions of `$primary` and `$secondary`.
+## Text color
 
+The default color of text in a theme is `$foreground`.
+This color should be legible on `$background`, `$surface`, and `$panel` backgrounds.
 
-### Text color
+There is also `$foreground-muted` for text which has lower importance.
+`$foreground-disabled` can be used for text which is disabled, for example a menu item which can't be selected.
 
-The design system defines three CSS variables you should use for text color.
+You can set the text color via the [color](../styles/color.md) CSS property.
 
-- `$text` sets the color of text in your app. Most text in your app should have this color.
+### Ensuring text legibility
+
+In some cases, the background color of a widget is unpredictable, meaning we cannot know in advance which text colors will be legible against it.
+
+The theme system defines three CSS variables which you can use to ensure that text is legible on any background.
+
+- `$text` is set to a slightly transparent black or white, depending on which has better contrast against the background the text is on.
 - `$text-muted` sets a slightly faded text color. Use this for text which has lower importance. For instance a sub-title or supplementary information.
 - `$text-disabled` sets faded out text which indicates it has been disabled. For instance, menu items which are not applicable and can't be clicked.
 
-You can set these colors via the [color](../styles/color.md) property. The design system uses `auto` colors for text, which means that Textual will pick either white or black (whichever has better contrast).
-
-!!! information
-
-    These text colors all have some alpha applied, so that even `$text` isn't pure white or pure black. This is done because blending in a little of the background color produces text that is not so harsh on the eyes.
-
-### Theming
-
-In a future version of Textual you will be able to modify theme colors directly, and allow users to configure preferred themes.
-
-
-## Color Preview
+## Previewing colors
 
 Run the following from the command line to preview the colors defined in the color system:
 
@@ -136,9 +110,12 @@ Run the following from the command line to preview the colors defined in the col
 textual colors
 ```
 
-## Theme Reference
+Inside the preview you can change the theme via the Command Palette (++ctrl+p++), and view the base variables and shades generated from the theme.
 
-Here's a list of the colors defined in the default light and dark themes.
+## Theme reference
+
+Here's a list of the CSS variables generated from themes.
+The colors below are from the `textual-light` and `textual-dark` themes.
 
 !!! note
 
