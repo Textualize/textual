@@ -74,8 +74,13 @@ def loop_from_index(
             index = (index + direction) % count
             yield (index, values[index])
     else:
-        maxima = (-1, count)
-        for _ in range(count):
-            if (index := index + direction) in maxima:
-                break
-            yield (index, values[index])
+        if direction == +1:
+            for _ in range(count):
+                if (index := index + 1) >= count:
+                    break
+                yield (index, values[index])
+        else:
+            for _ in range(count):
+                if (index := index - 1) < 0:
+                    break
+                yield (index, values[index])
