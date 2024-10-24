@@ -142,16 +142,10 @@ def test_find_next_enabled_no_wrap(candidates, anchor, direction, result):
 @pytest.mark.parametrize(
     ["function", "start", "direction"],
     [
-        (find_next_enabled, 0, 1),
-        (find_next_enabled, 0, -1),
         (find_next_enabled_no_wrap, 0, 1),
         (find_next_enabled_no_wrap, 0, -1),
-        (find_next_enabled, 1, 1),
-        (find_next_enabled, 1, -1),
         (find_next_enabled_no_wrap, 1, 1),
         (find_next_enabled_no_wrap, 1, -1),
-        (find_next_enabled, 2, 1),
-        (find_next_enabled, 2, -1),
         (find_next_enabled_no_wrap, 2, 1),
         (find_next_enabled_no_wrap, 2, -1),
     ],

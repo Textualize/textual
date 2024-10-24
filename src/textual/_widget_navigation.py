@@ -140,7 +140,7 @@ def find_next_enabled(
     for index, candidate in loop_from_index(candidates, anchor, direction, wrap=True):
         if not candidate.disabled:
             return index
-    return None
+    return anchor
 
 
 def find_next_enabled_no_wrap(
