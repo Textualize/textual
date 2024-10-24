@@ -508,16 +508,6 @@ class App(Generic[ReturnType], DOMNode):
     sub_title: Reactive[str] = Reactive("", compute=False)
     """The app's sub-title, combined with [`title`][textual.app.App.title] in the header."""
 
-    dark: Reactive[bool] = Reactive(True, compute=False)
-    """Use a dark theme if `True`, otherwise use a light theme.
-
-    Modify this attribute to switch between light and dark themes.
-
-    Example:
-        ```python
-        self.app.dark = not self.app.dark  # Toggle dark mode
-        ```
-    """
     app_focus = Reactive(True, compute=False)
     """Indicates if the app has focus.
 
@@ -1577,10 +1567,6 @@ class App(Generic[ReturnType], DOMNode):
         )
         result = future.result()
         return result
-
-    def action_toggle_dark(self) -> None:
-        """An [action](/guide/actions) to toggle dark mode."""
-        self.dark = not self.dark
 
     def action_change_theme(self) -> None:
         """An [action](/guide/actions) to change the current theme."""
