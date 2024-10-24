@@ -248,7 +248,7 @@ class ChangingThemeApp(App[None]):
 
     def compose(self) -> ComposeResult:
         with Grid(id="palette"):
-            theme = self.get_theme(self.theme)
+            theme = self.current_theme
             for variable, value in vars(theme).items():
                 if variable not in {
                     "name",

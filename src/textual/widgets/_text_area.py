@@ -745,7 +745,7 @@ TextArea {
         if padding is applied, the colors match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self) -> None:
+    def _app_theme_changed(self) -> None:
         self._set_theme(self._theme.name)
 
     def _set_theme(self, theme: str) -> None:
@@ -1521,8 +1521,8 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
-        # When `app.dark` is toggled, reset the theme (since it caches values).
-        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+        # When `app.theme` reactive is changed, reset the theme to clear cached styles.
+        self.watch(self.app, "theme", self._app_theme_changed, init=False)
 
         self.blink_timer = self.set_interval(
             0.5,

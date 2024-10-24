@@ -558,7 +558,9 @@ class App(Generic[ReturnType], DOMNode):
         
         This excludes the built-in themes."""
 
-        ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        ansi_theme = (
+            self.ansi_theme_dark if self.current_theme.dark else self.ansi_theme_light
+        )
         self.set_reactive(App.ansi_color, ansi_color)
         self._filters: list[LineFilter] = [
             ANSIToTruecolor(ansi_theme, enabled=not ansi_color)
@@ -764,8 +766,8 @@ class App(Generic[ReturnType], DOMNode):
         perform work after the app has resumed.
         """
 
-        self.set_class(self.dark, "-dark-mode")
-        self.set_class(not self.dark, "-light-mode")
+        self.set_class(self.current_theme.dark, "-dark-mode")
+        self.set_class(not self.current_theme.dark, "-light-mode")
 
         self.animation_level: AnimationLevel = constants.TEXTUAL_ANIMATIONS
         """Determines what type of animations the app will display.
@@ -1183,11 +1185,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A mapping of variable name to value.
         """
-        theme = self.get_theme(self.theme)
-        if theme is None:
-            # This should never happen thanks to the `App.theme` validator.
-            return {}
-
+        theme = self.current_theme
         # Build the Textual color system from the theme.
         # This will contain $secondary, $primary, $background, etc.
         variables = theme.to_color_system().generate()
@@ -1265,28 +1263,13 @@ class App(Generic[ReturnType], DOMNode):
         self.call_next(self.refresh_css)
         self.call_next(self.theme_changed_signal.publish, theme)
 
-    def watch_dark(self, dark: bool) -> None:
-        """Watches the dark bool.
-
-        This method handles the transition between light and dark mode when you
-        change the [dark][textual.app.App.dark] attribute.
-        """
-        self.set_class(dark, "-dark-mode", update=False)
-        self.set_class(not dark, "-light-mode", update=False)
-        self._refresh_truecolor_filter(self.ansi_theme)
-        self.call_next(self.refresh_css)
-
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
-        app_theme = self.get_theme(self.theme)
-        assert app_theme is not None  # validated by _validate_theme
-        if app_theme.dark:
+        if self.current_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
-        app_theme = self.get_theme(self.theme)
-        assert app_theme is not None  # validated by _validate_theme
-        if not app_theme.dark:
+        if not self.current_theme.dark:
             self._refresh_truecolor_filter(theme)
             self.call_next(self.refresh_css)
 
@@ -1297,9 +1280,9 @@ class App(Generic[ReturnType], DOMNode):
         Defines how colors defined as ANSI (e.g. `magenta`) inside Rich renderables
         are mapped to hex codes.
         """
-        app_theme = self.get_theme(self.theme)
-        assert app_theme is not None  # validated by _validate_theme
-        return self.ansi_theme_dark if app_theme.dark else self.ansi_theme_light
+        return (
+            self.ansi_theme_dark if self.current_theme.dark else self.ansi_theme_light
+        )
 
     def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
         """Update the ANSI to Truecolor filter, if available, with a new theme mapping.

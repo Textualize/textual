@@ -619,10 +619,9 @@ class MarkdownFence(MarkdownBlock):
         super().__init__(markdown)
         self.code = code
         self.lexer = lexer
-        app_theme = self.app.get_theme(self.app.theme)
         self.theme = (
             self._markdown.code_dark_theme
-            if app_theme.dark
+            if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
 
@@ -642,10 +641,9 @@ class MarkdownFence(MarkdownBlock):
 
     def _retheme(self) -> None:
         """Rerender when the theme changes."""
-        app_theme = self.app.get_theme(self.app.theme)
         self.theme = (
             self._markdown.code_dark_theme
-            if app_theme.dark
+            if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
         self.get_child_by_type(Static).update(self._block())
@@ -807,13 +805,13 @@ class Markdown(Widget):
 
     def _watch_code_dark_theme(self) -> None:
         """React to the dark theme being changed."""
-        if self.app.dark:
+        if self.app.current_theme.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()
 
     def _watch_code_light_theme(self) -> None:
         """React to the light theme being changed."""
-        if not self.app.dark:
+        if not self.app.current_theme.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()
 

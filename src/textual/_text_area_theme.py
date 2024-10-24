@@ -90,8 +90,7 @@ class TextAreaTheme:
         if self.base_style.color is None:
             self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
 
-        app = text_area.app
-        app_theme = app.get_theme(app.theme)
+        app_theme = text_area.app.current_theme
 
         if self.base_style.bgcolor is None:
             self.base_style = Style(
