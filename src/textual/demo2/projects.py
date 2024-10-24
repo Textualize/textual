@@ -141,13 +141,13 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
             background: $primary 40%;
             opacity: 1.0;            
         }
-        #title { text-style: bold; }
+        #title { text-style: bold; width: 1fr; }
         #author { text-style: italic; }
         .stars {
             color: $secondary;
             text-align: right;
             text-style: bold;
-            width: 1fr;
+            width: auto;
         }
         .header { height: 1; }
         .link {
