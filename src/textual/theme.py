@@ -86,16 +86,16 @@ BUILTIN_THEMES: dict[str, Theme] = {
     ),
     "nord": Theme(
         name="nord",
-        primary="#88C0D0",  # Nord8 - Frost
-        secondary="#81A1C1",  # Nord9 - Frost
-        warning="#EBCB8B",  # Nord13 - Aurora (yellow)
-        error="#BF616A",  # Nord11 - Aurora (red)
-        success="#A3BE8C",  # Nord14 - Aurora (green)
-        accent="#B48EAD",  # Nord15 - Aurora (purple)
-        background="#2E3440",  # Nord0 - Polar Night
-        surface="#3B4252",  # Nord1 - Polar Night
-        panel="#434C5E",  # Nord2 - Polar Night
-        foreground="#D8DEE9",  # Nord4 - Snow Storm
+        primary="#88C0D0",
+        secondary="#81A1C1",
+        accent="#B48EAD",
+        foreground="#D8DEE9",
+        background="#2E3440",
+        success="#A3BE8C",
+        warning="#EBCB8B",
+        error="#BF616A",
+        surface="#3B4252",
+        panel="#434C5E",
         dark=True,
         variables={
             "block-cursor-background": "#88C0D0",

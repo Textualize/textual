@@ -1,13 +1,78 @@
-# Design System
+# Themes
 
-Textual's design system consists of a number of predefined colors and guidelines for how to use them in your app.
+Textual comes with several built-in themes.
+You can also easily create your own themes.
+A theme is a simple Python object which maps variable names to colors.
+Here's an example:
 
-You don't have to follow these guidelines, but if you do, you will be able to mix builtin widgets with third party widgets and your own creations, without worrying about clashing colors.
+```python
+Theme(
+    name="nord",
+    primary="#88C0D0",
+    secondary="#81A1C1",
+    accent="#B48EAD",
+    foreground="#D8DEE9",
+    background="#2E3440",
+    success="#A3BE8C",
+    warning="#EBCB8B",
+    error="#BF616A",
+    surface="#3B4252",
+    panel="#434C5E",
+    dark=True,
+    variables={
+        "block-cursor-background": "#88C0D0",
+        "block-cursor-foreground": "#2E3440",
+        "block-cursor-text-style": "none",
+        "footer-key-foreground": "#88C0D0",
+        "input-selection-background": "#81a1c1 35%",
+    },
+)
+```
 
+## Theme Variables
 
-!!! information
+Themes consist of up to 11 *base colors*, (`primary`, `secondary`, `accent`, etc.), which Textual uses to generate a broad range of CSS variables.
 
-    Textual's color system is based on Google's Material design system, modified to suit the terminal.
+Sampling from a limited base palette makes it easier to create visually consistent themes,
+without needing to manually define a large number of variables.
+
+For example, the `textual-dark` theme defines the *primary* base color as `#004578`.
+Textual then generates a number of variations from this base color, such as `$primary`, `$primary-lighten-1` and `$primary-darken-1`.
+
+!!! tip
+
+    If `textual-dev` (the Textual devtools) is installed, you can view the variables generated from a theme by running `textual colors`.
+
+Here's an example of CSS which uses these variables:
+
+```css
+MyWidget {
+    background: $primary;
+    color: $foreground;
+}
+```
+
+The base colors are also used as the default values for other variables, such as `$border`.
+`$border` defines the border color of focused widgets and is set to `$primary` by default.
+These variables can also be overridden by passing a `variables` argument to the `Theme` constructor.
+
+## Base Colors
+
+The following table lists each of 11 base colors (as used in CSS) and a description of where they are used by default.
+
+| Color                   | Description                                                                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$primary`              | The primary color, can be considered the *branding* color. Typically used for titles, and backgrounds for strong emphasis.                          |
+| `$secondary`            | An alternative branding color, used for similar purposes as `$primary`, where an app needs to differentiate something from the primary color.       |
+| `$foreground`           | The default text color, which should be legible on `$background`, `$surface`, and `$panel`.                                                         |
+| `$background`           | A color used for the background, where there is no content. Used as the default background color for screens.                                       |
+| `$surface`              | The default background color of widgets, typically sitting on top of `$background`.                                                                 |
+| `$panel`                | A color used to differentiate a part of the UI form the main content. Used sparingly in Textual itself.                                             |
+| `$boost`                | A color with alpha that can be used to create *layers* on a background.                                                                             |
+| `$warning`              | Indicates a warning. Text or background.                                                                                                            |
+| `$error`                | Indicates an error.  Text or background.                                                                                                            |
+| `$success`              | Used to indicate success.  Text or background.                                                                                                      |
+| `$accent`               | Used sparingly to draw attention to a part of the UI (typically borders around focused widgets).                                                    |
 
 
 ## Designing with Colors
@@ -26,24 +91,6 @@ MyWidget {
 Using variables rather than explicit colors allows Textual to apply color themes. Textual supplies a default light and dark theme, but in the future many more themes will be available.
 
 
-### Base Colors
-
-There are 12 *base* colors defined in the color scheme. The following table lists each of the color names (as used in CSS) and a description of where to use them.
-
-| Color                   | Description                                                                                                                                         |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$primary`              | The primary color, can be considered the *branding* color. Typically used for titles, and backgrounds for strong emphasis.                          |
-| `$secondary`            | An alternative branding color, used for similar purposes as `$primary`, where an app needs to differentiate something from the primary color.       |
-| `$primary-background`   | The primary color applied to a background. On light mode this is the same as `$primary`. In dark mode this is a dimmed version of `$primary`.       |
-| `$secondary-background` | The secondary color applied to a background. On light mode this is the same as `$secondary`. In dark mode this is a dimmed version of `$secondary`. |
-| `$background`           | A color used for the background, where there is no content.                                                                                         |
-| `$surface`              | The color underneath text.                                                                                                                          |
-| `$panel`                | A color used to differentiate a part of the UI form the main content. Typically used for dialogs or sidebars.                                       |
-| `$boost`                | A color with alpha that can be used to create *layers* on a background.                                                                             |
-| `$warning`              | Indicates a warning. Text or background.                                                                                                            |
-| `$error`                | Indicates an error.  Text or background.                                                                                                            |
-| `$success`              | Used to indicate success.  Text or background.                                                                                                      |
-| `$accent`               | Used sparingly to draw attention to a part of the UI (typically borders around focused widgets).                                                    |
 
 
 ### Shades
