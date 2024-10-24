@@ -46,10 +46,16 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
 
 
 def loop_from_index(
-    values: Sequence[T], index: int, direction: Literal[+1, -1] = +1, wrap: bool = True
+    values: Sequence[T],
+    index: int,
+    direction: Literal[-1, +1] = +1,
+    wrap: bool = True,
 ) -> Iterable[tuple[int, T]]:
     """Iterate over values in a sequence from a given starting index, potentially wrapping the index
     if it would go out of bounds.
+
+    Note that the first value to be yielded is a step from `index`, and `index` will be yielded *last*.
+
 
     Args:
         values: A sequence of values.
@@ -60,6 +66,8 @@ def loop_from_index(
     Yields:
         A tuple of index and value from the sequence.
     """
+    # Sanity check for devs who miss the typing errors
+    assert direction in (-1, +1), "direction must be -1 or +1"
     count = len(values)
     if wrap:
         for _ in range(count):
