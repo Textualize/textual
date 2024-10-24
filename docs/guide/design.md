@@ -139,10 +139,10 @@ Here's a comprehensive list of these variables, their purposes, and default valu
 | `$scrollbar` | Color of the scrollbar | `$panel` |
 | `$scrollbar-hover` | Color of the scrollbar when hovered | `$panel-lighten-1` |
 | `$scrollbar-active` | Color of the scrollbar when active (being dragged) | `$panel-lighten-2` |
-| `$scrollbar-background` | Background color behind the scrollbar | `$background-darken-1` |
+| `$scrollbar-background` | Color of the scrollbar track | `$background-darken-1` |
 | `$scrollbar-corner-color` | Color of the scrollbar corner | Same as `$scrollbar-background` |
-| `$scrollbar-background-hover` | Background color when hovering over the scrollbar area | Same as `$scrollbar-background` |
-| `$scrollbar-background-active` | Background color when the scrollbar is active | Same as `$scrollbar-background` |
+| `$scrollbar-background-hover` | Color of the scrollbar track when hovering over the scrollbar area | Same as `$scrollbar-background` |
+| `$scrollbar-background-active` | Color of the scrollbar track when the scrollbar is active | Same as `$scrollbar-background` |
 
 ### Links
 
