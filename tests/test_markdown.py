@@ -205,7 +205,7 @@ async def test_markdown_quoting():
 
     class MyApp(App):
         def compose(self) -> ComposeResult:
-            self.md = Markdown(markdown="[tété](tété)")
+            self.md = Markdown(markdown="[tété](tété)", open_links=False)
             yield self.md
 
         def on_markdown_link_clicked(self, message: Markdown.LinkClicked):
