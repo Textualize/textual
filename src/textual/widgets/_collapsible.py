@@ -203,7 +203,7 @@ class Collapsible(Widget):
             self.post_message(self.Collapsed(self))
         else:
             self.post_message(self.Expanded(self))
-            self.call_later(self.scroll_visible)
+            self.call_after_refresh(self.scroll_visible)
 
     def _update_collapsed(self, collapsed: bool) -> None:
         """Update children to match collapsed state."""

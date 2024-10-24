@@ -3,6 +3,7 @@ from textual.widgets import Checkbox, Footer
 
 
 class ScrollOffByOne(App):
+    AUTO_FOCUS = None
     HOVER_EFFECTS_SCROLL_PAUSE = 0.0
 
     def compose(self) -> ComposeResult:
