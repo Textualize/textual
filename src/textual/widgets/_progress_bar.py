@@ -44,16 +44,16 @@ class Bar(Widget, can_focus=False):
         height: 1;
 
         &> .bar--bar {
-            color: $warning;
-            background: $foreground 10%;
+            color: $primary;
+            background: $surface;
         }
         &> .bar--indeterminate {
             color: $error;
-            background: $foreground 10%;
+            background: $surface;
         }
         &> .bar--complete {
             color: $success;
-            background: $foreground 10%;
+            background: $surface;
         }
     }
     """

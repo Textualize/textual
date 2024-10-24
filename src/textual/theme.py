@@ -102,8 +102,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-foreground": "#2E3440",
             "block-cursor-text-style": "none",
             "footer-key-foreground": "#88C0D0",
-            "input-cursor-foreground": "#2E3440",
-            "input-cursor-background": "#88C0D0",
             "input-selection-background": "#81a1c1 35%",
         },
     ),

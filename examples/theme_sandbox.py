@@ -16,9 +16,9 @@ from textual.widgets import (
     Label,
     ListItem,
     ListView,
-    LoadingIndicator,
     MarkdownViewer,
     OptionList,
+    ProgressBar,
     RadioSet,
     RichLog,
     Select,
@@ -267,7 +267,9 @@ class ChangingThemeApp(App[None]):
             with Collapsible(title="An interesting story."):
                 yield Label("Interesting but verbose story.")
 
-            yield LoadingIndicator()
+            progress = ProgressBar(total=100)
+            progress.advance(70)
+            yield progress
 
             rich_log = RichLog(highlight=True, markup=True)
             rich_log.write("Hello, world!")
