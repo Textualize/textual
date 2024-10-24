@@ -101,6 +101,8 @@ def find_last_enabled(candidates: Sequence[Disableable]) -> int | None:
     )
 
 
+# TODO: This method is quiet inefficient if an "anchor" is supplied
+# I think we could optimize this, but its not clear if we need it at all
 def find_next_enabled(
     candidates: Sequence[Disableable],
     anchor: int | None,
