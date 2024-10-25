@@ -27,7 +27,7 @@ def _get_environ_bool(name: str) -> bool:
     return has_environ
 
 
-def _get_environ_int(name: str, default: int) -> int:
+def _get_environ_int(name: str, default: int, *, min_value: Optional[int] = None, max_value: Optional[int] = None) -> int:
     """Retrieves an integer environment variable.
 
     Args:
@@ -35,12 +35,21 @@ def _get_environ_int(name: str, default: int) -> int:
         default: The value to use if the value is not set, or set to something other
             than a valid integer.
 
+    Keyword args:
+        min_value (optional): The minimum value that should be returned by this function.
+        max_value (optional): The maximum value that should be returned by this function.
+
     Returns:
         The integer associated with the environment variable if it's set to a valid int
             or the default value otherwise.
     """
     try:
-        return int(os.environ[name])
+        value = int(os.environ[name])
+        if min_value is not None and value < min_value:
+            return min_value
+        if max_value is not None and value > max_value:
+            return max_value
+        return value
     except KeyError:
         return default
     except ValueError:
@@ -107,7 +116,7 @@ PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
 SHOW_RETURN: Final[bool] = _get_environ_bool("TEXTUAL_SHOW_RETURN")
 """Write the return value on exit."""
 
-MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
+MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60, min_value=0)
 """Maximum frames per second for updates."""
 
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
