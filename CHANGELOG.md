@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
 
 ### Changed
@@ -29,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added new demo `python -m textual`, not *quite* finished but better than the old one https://github.com/Textualize/textual/pull/5174
 - Added `Screen.can_view_partial` and `Widget.can_view_partial` https://github.com/Textualize/textual/pull/5174
 - Added `App.is_web` property to indicate if the app is running via a web browser https://github.com/Textualize/textual/pull/5128
+- `Enter` and `Leave` events can now be used with the `on` decorator https://github.com/Textualize/textual/pull/5159
 
 ### Fixed
 
