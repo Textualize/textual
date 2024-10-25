@@ -1647,12 +1647,12 @@ class Widget(DOMNode):
     @property
     def is_vertical_scroll_end(self) -> bool:
         """Is the vertical scroll position at the maximum?"""
-        return self.scroll_offset.y == self.max_scroll_y
+        return self.scroll_offset.y == self.max_scroll_y or not self.size
 
     @property
     def is_horizontal_scroll_end(self) -> bool:
         """Is the horizontal scroll position at the maximum?"""
-        return self.scroll_offset.x == self.max_scroll_x
+        return self.scroll_offset.x == self.max_scroll_x or not self.size
 
     @property
     def is_vertical_scrollbar_grabbed(self) -> bool:

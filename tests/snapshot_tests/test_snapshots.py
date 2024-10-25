@@ -599,14 +599,6 @@ def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
 
-def test_demo(snap_compare):
-    """Test the demo app (python -m textual)"""
-    assert snap_compare(
-        Path("../../src/textual/demo.py"),
-        terminal_size=(100, 30),
-    )
-
-
 def test_label_widths(snap_compare):
     """Test renderable widths are calculate correctly."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")

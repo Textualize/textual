@@ -361,16 +361,16 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         self.rich_log_count += 1
         log_option = self.rich_log_count % 3
         if log_option == 0:
-            rich_log.write("Syntax highlighted code")
+            rich_log.write("Syntax highlighted code", animate=True)
             rich_log.write(Syntax(self.CODE, lexer="python"), animate=True)
         elif log_option == 1:
-            rich_log.write("A Rich Table")
+            rich_log.write("A Rich Table", animate=True)
             table = Table(*self.CSV_ROWS[0])
             for row in self.CSV_ROWS[1:]:
                 table.add_row(*row)
             rich_log.write(table, animate=True)
         elif log_option == 2:
-            rich_log.write("A Rich Traceback")
+            rich_log.write("A Rich Traceback", animate=True)
             try:
                 1 / 0
             except Exception:
@@ -414,7 +414,7 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
             Sparklines.data,
         )
         yield Sparkline([], summary_function=max, id="second").data_bind(
-            Sparklines.data
+            Sparklines.data,
         )
         yield Sparkline([], summary_function=max, id="third").data_bind(
             Sparklines.data,

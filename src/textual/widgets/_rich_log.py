@@ -274,7 +274,7 @@ class RichLog(ScrollView, can_focus=True):
             and not self.is_vertical_scrollbar_grabbed
             and is_vertical_scroll_end
         ):
-            self.scroll_end(animate=animate, immediate=True, x_axis=False)
+            self.scroll_end(animate=animate, immediate=False, x_axis=False)
 
         return self
 
