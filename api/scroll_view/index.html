@@ -3971,6 +3971,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -4234,6 +4236,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/link/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link
   </span>
   
 
@@ -4882,6 +4905,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -5253,6 +5278,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     textual.geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    textual.layout
   </span>
   
 
@@ -5799,6 +5845,15 @@ window.onload = async (event) => {
   <a href="#textual.scroll_view.ScrollView.scroll_to(level)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;level
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.scroll_view.ScrollView.scroll_to(immediate)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;immediate
     </span>
   </a>
   
@@ -6854,6 +6909,15 @@ window.onload = async (event) => {
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#textual.scroll_view.ScrollView.scroll_to(immediate)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;immediate
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -7207,8 +7271,9 @@ on the compositor to render children).</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.scroll_view.ScrollView.scroll_to(easing)">easing</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.scroll_view.ScrollView.scroll_to(force)">force</a></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.scroll_view.ScrollView.scroll_to(on_complete)">on_complete</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.scroll_view.ScrollView.scroll_to(level)">level</a></span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">)</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.scroll_view.ScrollView.scroll_to(level)">level</a></span><span class="o">=</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.scroll_view.ScrollView.scroll_to(immediate)">immediate</a></span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7369,6 +7434,23 @@ on the compositor to render children).</p>
             </td>
             <td>
                   <code>&#39;basic&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.scroll_view.ScrollView.scroll_to(immediate)" class="doc doc-heading doc-heading-parameter">                  <code>immediate</code>
+<a href="#textual.scroll_view.ScrollView.scroll_to(immediate)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>False</code> the scroll will be deferred until after a screen refresh,
+set to <code>True</code> to scroll immediately.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
             </td>
           </tr>
       </tbody>

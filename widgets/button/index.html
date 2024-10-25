@@ -3978,6 +3978,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -4190,6 +4192,15 @@ window.onload = async (event) => {
   <a href="#textual.widgets.Button(tooltip)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;tooltip
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Button(action)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;action
     </span>
   </a>
   
@@ -4725,6 +4736,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../link/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link
   </span>
   
 
@@ -5371,6 +5403,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -5739,6 +5773,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     textual.geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/layout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    textual.layout
   </span>
   
 
@@ -6981,6 +7036,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Button(action)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;action
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Button.active_effect_duration" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;active_effect_duration
@@ -7625,6 +7689,8 @@ Clicking any of the non-disabled buttons in the example app below will result in
 
 
         <p>A simple clickable button.</p>
+<p>Clicking the button will send a <a class="autorefs autorefs-internal" href="#textual.widgets.Button.Pressed">Button.Pressed</a> message,
+unless the <code>action</code> parameter is provided.</p>
 
 
 
@@ -7751,6 +7817,22 @@ Clicking any of the non-disabled buttons in the example app below will result in
                   <code>None</code>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.widgets.Button(action)" class="doc doc-heading doc-heading-parameter">                  <code>action</code>
+<a href="#textual.widgets.Button(action)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional action to run when clicked.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -7860,7 +7942,7 @@ Clicking any of the non-disabled buttons in the example app below will result in
 
 
 
-        <p>Event sent when a <code>Button</code> is pressed.</p>
+        <p>Event sent when a <code>Button</code> is pressed and there is no Button action.</p>
 <p>Can be handled using <code>on_button_pressed</code> in a subclass of
 <a class="autorefs autorefs-internal" href="#textual.widgets.Button"><code>Button</code></a> or in a parent widget in the DOM.</p>
 
