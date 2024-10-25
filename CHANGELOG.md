@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `min_color` and `max_color` to Sparklines constructor, which take precedence over CSS https://github.com/Textualize/textual/pull/5174
 - Added new demo `python -m textual`, not *quite* finished but better than the old one https://github.com/Textualize/textual/pull/5174
 - Added `Screen.can_view_partial` and `Widget.can_view_partial` https://github.com/Textualize/textual/pull/5174
+- Added `App.is_web` property to indicate if the app is running via a web browser https://github.com/Textualize/textual/pull/5128
 
 ### Fixed
 
