@@ -92,6 +92,7 @@ class CollapsibleTitle(Static, can_focus=True):
 class Collapsible(Widget):
     """A collapsible container."""
 
+    ALLOW_MAXIMIZE = True
     collapsed = reactive(True, init=False)
     title = reactive("Toggle")
 
@@ -202,6 +203,7 @@ class Collapsible(Widget):
             self.post_message(self.Collapsed(self))
         else:
             self.post_message(self.Expanded(self))
+            self.call_after_refresh(self.scroll_visible)
 
     def _update_collapsed(self, collapsed: bool) -> None:
         """Update children to match collapsed state."""

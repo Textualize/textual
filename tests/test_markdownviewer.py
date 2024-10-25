@@ -29,7 +29,7 @@ class MarkdownFileViewerApp(App[None]):
         markdown_file.write_text(TEST_MARKDOWN.replace("{{file}}", markdown_file.name))
 
     def compose(self) -> ComposeResult:
-        yield MarkdownViewer()
+        yield MarkdownViewer(open_links=False)
 
     async def on_mount(self) -> None:
         self.query_one(MarkdownViewer).show_table_of_contents = False
@@ -52,7 +52,7 @@ class MarkdownStringViewerApp(App[None]):
         super().__init__()
 
     def compose(self) -> ComposeResult:
-        yield MarkdownViewer(self.markdown_string)
+        yield MarkdownViewer(self.markdown_string, open_links=False)
 
     async def on_mount(self) -> None:
         self.query_one(MarkdownViewer).show_table_of_contents = False

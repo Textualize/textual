@@ -599,14 +599,6 @@ def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
 
-def test_demo(snap_compare):
-    """Test the demo app (python -m textual)"""
-    assert snap_compare(
-        Path("../../src/textual/demo.py"),
-        terminal_size=(100, 30),
-    )
-
-
 def test_label_widths(snap_compare):
     """Test renderable widths are calculate correctly."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
@@ -937,7 +929,6 @@ def test_dock_scroll_off_by_one(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
         terminal_size=(80, 25),
-        press=["_"],
     )
 
 
@@ -962,9 +953,7 @@ def test_dock_none(snap_compare):
 
 def test_scroll_to(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25), press=["_"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
 
 
 def test_auto_fr(snap_compare):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from textual._layout import Layout
+from textual.layout import Layout
 from textual.layouts.grid import GridLayout
 from textual.layouts.horizontal import HorizontalLayout
 from textual.layouts.vertical import VerticalLayout
