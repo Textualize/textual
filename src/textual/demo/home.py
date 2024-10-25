@@ -60,7 +60,6 @@ A modern Python API from the developer of [Rich](https://github.com/Textualize/r
 ```python
 # Start building!
 import textual
-
 ```
 
 Well documented, typed, and intuitive.
