@@ -90,14 +90,14 @@ class Sparkline(Widget):
         if not self.data:
             return "<empty sparkline>"
         _, base = self.background_colors
-        min_color = (
+        min_color = base + (
             self.get_component_styles("sparkline--min-color").color
             if self.min_color is None
             else self.min_color
         )
-        max_color = (
+        max_color = base + (
             self.get_component_styles("sparkline--max-color").color
-            if self.min_color is None
+            if self.max_color is None
             else self.max_color
         )
         return SparklineRenderable(
