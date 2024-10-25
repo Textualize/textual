@@ -8,8 +8,8 @@ from rich.traceback import Traceback
 
 from textual import containers
 from textual.app import ComposeResult
-from textual.demo2.data import COUNTRIES
-from textual.demo2.page import PageScreen
+from textual.demo.data import COUNTRIES
+from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
 from textual.suggester import SuggestFromList
 from textual.widgets import (
@@ -96,6 +96,8 @@ May be rendered unclickable by setting `disabled=True`.
 
 
 class Checkboxes(containers.VerticalGroup):
+    """Demonstrates Checkboxes."""
+
     DEFAULT_CLASSES = "column"
     DEFAULT_CSS = """
     Checkboxes {
@@ -137,6 +139,8 @@ Radio sets for a managed set of options where only a single option may be select
 
 
 class Datatables(containers.VerticalGroup):
+    """Demonstrates DataTables."""
+
     DEFAULT_CLASSES = "column"
     DATATABLES_MD = """\
 ## Datatables
@@ -170,6 +174,8 @@ Cells may be individually styled, and may include Rich renderables.
 
 
 class Inputs(containers.VerticalGroup):
+    """Demonstrates Inputs."""
+
     DEFAULT_CLASSES = "column"
     INPUTS_MD = """\
 ## Inputs and MaskedInputs
@@ -223,6 +229,8 @@ Build for intuitive and user-friendly forms.
 
 
 class ListViews(containers.VerticalGroup):
+    """Demonstrates List Views and Option Lists."""
+
     DEFAULT_CLASSES = "column"
     LISTS_MD = """\
 ## List Views and Option Lists
@@ -258,6 +266,8 @@ An Option List for a for field to present a list of strings to select from.
 
 
 class Logs(containers.VerticalGroup):
+    """Demonstrates Logs."""
+
     DEFAULT_CLASSES = "column"
     LOGS_MD = """\
 ## Logs and Rich Logs
@@ -334,6 +344,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         self.set_interval(1, self.update_rich_log)
 
     def update_log(self) -> None:
+        """Update the Log with new content."""
         if not self.screen.can_view(self) or not self.screen.is_active:
             return
         self.log_count += 1
@@ -343,6 +354,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         log.write_line(f"fear[{line_no}] = {line!r}")
 
     def update_rich_log(self) -> None:
+        """Update the Rich Log with content."""
         if not self.screen.can_view(self) or not self.screen.is_active:
             return
         rich_log = self.query_one(RichLog)
@@ -367,6 +379,8 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
 
 
 class Sparklines(containers.VerticalGroup):
+    """Demonstrates sparklines."""
+
     DEFAULT_CLASSES = "column"
     LOGS_MD = """\
 ## Sparklines
@@ -380,12 +394,12 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
         Sparkline {
             width: 1fr;
             margin: 1;
-            & #first > .sparkline--min-color { color: $success; }
-            & #first > .sparkline--max-color { color: $warning; }                
-            & #second > .sparkline--min-color { color: $warning; }
-            & #second > .sparkline--max-color { color: $error; }
-            & #third > .sparkline--min-color { color: $primary; }
-            & #third > .sparkline--max-color { color: $accent; }    
+            &#first > .sparkline--min-color { color: $success; }
+            &#first > .sparkline--max-color { color: $warning; }                
+            &#second > .sparkline--min-color { color: $warning; }
+            &#second > .sparkline--max-color { color: $error; }
+            &#third > .sparkline--min-color { color: $primary; }
+            &#third > .sparkline--max-color { color: $accent; }    
         }
     }
 
@@ -407,9 +421,10 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
         )
 
     def on_mount(self) -> None:
-        self.set_interval(0.1, self.update_sparks)
+        self.set_interval(0.2, self.update_sparks)
 
     def update_sparks(self) -> None:
+        """Update the sparks data."""
         if not self.screen.can_view(self) or not self.screen.is_active:
             return
         self.count += 1
@@ -418,6 +433,8 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
 
 
 class WidgetsScreen(PageScreen):
+    """The Widgets screen"""
+
     CSS = """
     WidgetsScreen { 
         align-horizontal: center;

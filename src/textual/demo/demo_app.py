@@ -1,8 +1,8 @@
 from textual.app import App
 from textual.binding import Binding
-from textual.demo2.home import HomeScreen
-from textual.demo2.projects import ProjectsScreen
-from textual.demo2.widgets import WidgetsScreen
+from textual.demo.home import HomeScreen
+from textual.demo.projects import ProjectsScreen
+from textual.demo.widgets import WidgetsScreen
 
 
 class DemoApp(App):
@@ -39,5 +39,11 @@ class DemoApp(App):
             "app.switch_mode('widgets')",
             "widgets",
             tooltip="Test the builtin widgets",
+        ),
+        Binding(
+            "ctrl+s",
+            "app.screenshot",
+            "Screenshot",
+            tooltip="Save an SVG 'screenshot' of the current screen",
         ),
     ]

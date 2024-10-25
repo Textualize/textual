@@ -6,7 +6,7 @@ import httpx
 from textual import work
 from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
-from textual.demo2.page import PageScreen
+from textual.demo.page import PageScreen
 from textual.reactive import reactive
 from textual.widgets import Collapsible, Digits, Footer, Label, Markdown
 
@@ -41,14 +41,14 @@ The retro look is not just an aesthetic choice! Textual apps have some unique pr
 
 ## Textual interfaces are *snappy*
 Even the most modern of web apps can leave the user waiting hundreds of milliseconds or more for a response.
-Given their low graphical requirements, Textual interfaces can be far more responsive—no waiting required.
+Given their low graphical requirements, Textual interfaces can be far more responsive — no waiting required.
 
 ## Reward repeated use
 Use the mouse to explore, but Textual apps are keyboard-centric and reward repeated use.
 An experience user can operate a Textual app far faster than their web / GUI counterparts.
 
 ## Command palette
-A builtin command palette with fuzzy searching, puts powerful commands at your fingertips.
+A builtin command palette with fuzzy searching puts powerful commands at your fingertips.
 
 **Try it:** Press **ctrl+p** now.
 
@@ -56,6 +56,12 @@ A builtin command palette with fuzzy searching, puts powerful commands at your f
 
 API_MD = """\
 A modern Python API from the developer of [Rich](https://github.com/Textualize/rich).
+
+```python
+# Start building!
+import textual
+
+```
 
 Well documented, typed, and intuitive.
 Textual's API is accessible to Python developers of all skill levels.

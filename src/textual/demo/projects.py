@@ -4,7 +4,7 @@ from textual import events, on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Horizontal, ItemGrid, Vertical, VerticalScroll
-from textual.demo2.page import PageScreen
+from textual.demo.page import PageScreen
 from textual.widgets import Footer, Label, Link, Markdown, Static
 
 
