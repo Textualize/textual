@@ -5,16 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
+
+### Changed
+
+- Grid will now size children to the maximum height of a row https://github.com/Textualize/textual/pull/5113
+- Markdown links will be opened with `App.open_url` automatically https://github.com/Textualize/textual/pull/5113
+- The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc) https://github.com/Textualize/textual/pull/5113
+- Renamed `Screen.can_view` and `Widget.can_view` to `Screen.can_view_entire` and `Widget.can_view_entire` https://github.com/Textualize/textual/pull/5174
+
+### Added
+
+- Added Link widget https://github.com/Textualize/textual/pull/5113
+- Added `open_links` to `Markdown` and `MarkdownViewer` widgets https://github.com/Textualize/textual/pull/5113
+- Added `App.DEFAULT_MODE` https://github.com/Textualize/textual/pull/5113
+- Added `Containers.HorizontalGroup` and `Containers.VerticalGroup` https://github.com/Textualize/textual/pull/5113
+- Added `$`, `£`, `€`, `(`, `)` symbols to Digits https://github.com/Textualize/textual/pull/5113
+- Added `Button.action` parameter to invoke action when clicked https://github.com/Textualize/textual/pull/5113
+- Added `immediate` parameter to scroll methods https://github.com/Textualize/textual/pull/5164
+- Added `textual._loop.loop_from_index` https://github.com/Textualize/textual/pull/5164
+- Added `min_color` and `max_color` to Sparklines constructor, which take precedence over CSS https://github.com/Textualize/textual/pull/5174
+- Added new demo `python -m textual`, not *quite* finished but better than the old one https://github.com/Textualize/textual/pull/5174
+- Added `Screen.can_view_partial` and `Widget.can_view_partial` https://github.com/Textualize/textual/pull/5174
+- Added `App.is_web` property to indicate if the app is running via a web browser https://github.com/Textualize/textual/pull/5128
+
+### Fixed
+
+- Fixed glitchy ListView https://github.com/Textualize/textual/issues/5163
+
+## [0.84.0] - 2024-10-22
 
 ### Fixed
 
 - Fixed `RadioSet` not being scrollable https://github.com/Textualize/textual/issues/5100
+- Fixed infinite loop in TextArea https://github.com/Textualize/textual/pull/5154
 
 ### Added
 
 - Added `background-tint` CSS rule https://github.com/Textualize/textual/pull/5117
-- Added `App.is_web` property to indicate if the app is running via a web browser https://github.com/Textualize/textual/pull/5128
+- Added `:first-of-type`, `:last-of-type`, `:odd`, and `:even` pseudo classes https://github.com/Textualize/textual/pull/5139
 
 ## [0.83.0] - 2024-10-10
 
@@ -2453,6 +2483,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.84.0]: https://github.com/Textualize/textual/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/Textualize/textual/compare/v0.82.0...v0.83.0
 [0.82.0]: https://github.com/Textualize/textual/compare/v0.81.0...v0.82.0
 [0.81.0]: https://github.com/Textualize/textual/compare/v0.80.1...v0.81.0

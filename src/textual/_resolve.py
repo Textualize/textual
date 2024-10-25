@@ -21,6 +21,7 @@ def resolve(
     gutter: int,
     size: Size,
     viewport: Size,
+    min_size: int | None = None,
 ) -> list[tuple[int, int]]:
     """Resolve a list of dimensions.
 
@@ -61,6 +62,11 @@ def resolve(
         resolved_fractions = cast(
             "list[Fraction]", [fraction for _, fraction in resolved]
         )
+
+    if min_size is not None:
+        resolved_fractions = [
+            max(Fraction(min_size), fraction) for fraction in resolved_fractions
+        ]
 
     fraction_gutter = Fraction(gutter)
     offsets = [0] + [
@@ -196,12 +202,14 @@ def resolve_box_models(
     Returns:
         List of resolved box models.
     """
+
     margin_width, margin_height = margin
-
-    fraction_width = Fraction(max(0, size.width - margin_width))
-    fraction_height = Fraction(max(0, size.height - margin_height))
-
+    fraction_width = Fraction(size.width)
+    fraction_height = Fraction(size.height)
+    fraction_zero = Fraction(0)
     margin_size = size - margin
+
+    margins = [widget.styles.margin.totals for widget in widgets]
 
     # Fixed box models
     box_models: list[BoxModel | None] = [
@@ -209,10 +217,15 @@ def resolve_box_models(
             None
             if _dimension is not None and _dimension.is_fraction
             else widget._get_box_model(
-                size, viewport_size, fraction_width, fraction_height
+                size,
+                viewport_size,
+                max(fraction_zero, fraction_width - margin_width),
+                max(fraction_zero, fraction_height - margin_height),
             )
         )
-        for (_dimension, widget) in zip(dimensions, widgets)
+        for (_dimension, widget, (margin_width, margin_height)) in zip(
+            dimensions, widgets, margins
+        )
     ]
 
     if None not in box_models:

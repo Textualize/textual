@@ -246,6 +246,8 @@ class ScrollBar(Widget):
     ```
     """
 
+    DEFAULT_CLASSES = "-textual-system"
+
     def __init__(
         self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
     ) -> None:

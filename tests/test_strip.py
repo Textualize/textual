@@ -131,7 +131,7 @@ def test_crop():
 
     assert Strip([Segment("foo")]).crop(1, 3) == Strip([Segment("oo")])
     assert Strip([Segment("foo")]).crop(1, 2) == Strip([Segment("o")])
-    assert Strip([Segment("foo")]).crop(1, 1) == Strip([Segment("")])
+    assert Strip([Segment("foo")]).crop(1, 1) == Strip([])
 
     assert Strip([Segment("foo💩"), Segment("b💩ar"), Segment("ba💩z")]).crop(
         1, 6
