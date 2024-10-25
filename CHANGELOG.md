@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Grid will now size children to the maximum height of a row https://github.com/Textualize/textual/pull/5113
 - Markdown links will be opened with `App.open_url` automatically https://github.com/Textualize/textual/pull/5113
 - The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc) https://github.com/Textualize/textual/pull/5113
+- Renamed `Screen.can_view` and `Widget.can_view` to `Screen.can_view_entire` and `Widget.can_view_entire` https://github.com/Textualize/textual/pull/5174
 
 ### Added
 
@@ -24,6 +25,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Button.action` parameter to invoke action when clicked https://github.com/Textualize/textual/pull/5113
 - Added `immediate` parameter to scroll methods https://github.com/Textualize/textual/pull/5164
 - Added `textual._loop.loop_from_index` https://github.com/Textualize/textual/pull/5164
+- Added `min_color` and `max_color` to Sparklines constructor, which take precedence over CSS https://github.com/Textualize/textual/pull/5174
+- Added new demo `python -m textual`, not *quite* finished but better than the old one https://github.com/Textualize/textual/pull/5174
+- Added `Screen.can_view_partial` and `Widget.can_view_partial` https://github.com/Textualize/textual/pull/5174
 
 ### Fixed
 

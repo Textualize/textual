@@ -1647,12 +1647,12 @@ class Widget(DOMNode):
     @property
     def is_vertical_scroll_end(self) -> bool:
         """Is the vertical scroll position at the maximum?"""
-        return self.scroll_offset.y == self.max_scroll_y
+        return self.scroll_offset.y == self.max_scroll_y or not self.size
 
     @property
     def is_horizontal_scroll_end(self) -> bool:
         """Is the horizontal scroll position at the maximum?"""
-        return self.scroll_offset.x == self.max_scroll_x
+        return self.scroll_offset.x == self.max_scroll_x or not self.size
 
     @property
     def is_vertical_scrollbar_grabbed(self) -> bool:
@@ -2480,6 +2480,8 @@ class Widget(DOMNode):
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "basic",
         immediate: bool = False,
+        x_axis: bool = True,
+        y_axis: bool = True,
     ) -> None:
         """Scroll to home position.
 
@@ -2493,12 +2495,14 @@ class Widget(DOMNode):
             level: Minimum level required for the animation to take place (inclusive).
             immediate: If `False` the scroll will be deferred until after a screen refresh,
                 set to `True` to scroll immediately.
+            x_axis: Allow scrolling on X axis?
+            y_axis: Allow scrolling on Y axis?
         """
         if speed is None and duration is None:
             duration = 1.0
         self.scroll_to(
-            0,
-            0,
+            0 if x_axis else None,
+            0 if y_axis else None,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2520,6 +2524,8 @@ class Widget(DOMNode):
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "basic",
         immediate: bool = False,
+        x_axis: bool = True,
+        y_axis: bool = True,
     ) -> None:
         """Scroll to the end of the container.
 
@@ -2533,6 +2539,9 @@ class Widget(DOMNode):
             level: Minimum level required for the animation to take place (inclusive).
             immediate: If `False` the scroll will be deferred until after a screen refresh,
                 set to `True` to scroll immediately.
+            x_axis: Allow scrolling on X axis?
+            y_axis: Allow scrolling on Y axis?
+
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -2546,8 +2555,8 @@ class Widget(DOMNode):
         def _lazily_scroll_end() -> None:
             """Scroll to the end of the widget."""
             self._scroll_to(
-                0,
-                self.max_scroll_y,
+                0 if x_axis else None,
+                self.max_scroll_y if y_axis else None,
                 animate=animate,
                 speed=speed,
                 duration=duration,
@@ -3294,8 +3303,8 @@ class Widget(DOMNode):
             immediate=immediate,
         )
 
-    def can_view(self, widget: Widget) -> bool:
-        """Check if a given widget is in the current view (scrollable area).
+    def can_view_entire(self, widget: Widget) -> bool:
+        """Check if a given widget is *fully* within the current view (scrollable area).
 
         Note: This doesn't necessarily equate to a widget being visible.
         There are other reasons why a widget may not be visible.
@@ -3304,16 +3313,43 @@ class Widget(DOMNode):
             widget: A widget that is a descendant of self.
 
         Returns:
-            True if the entire widget is in view, False if it is partially visible or not in view.
+            `True` if the entire widget is in view, `False` if it is partially visible or not in view.
         """
         if widget is self:
             return True
+
+        if widget not in self.screen._compositor.visible_widgets:
+            return False
 
         region = widget.region
         node: Widget = widget
 
         while isinstance(node.parent, Widget) and node is not self:
             if region not in node.parent.scrollable_content_region:
+                return False
+            node = node.parent
+        return True
+
+    def can_view_partial(self, widget: Widget) -> bool:
+        """Check if a given widget at least partially visible within the current view (scrollable area).
+
+        Args:
+            widget: A widget that is a descendant of self.
+
+        Returns:
+            `True` if any part of the widget is visible, `False` if it is outside of the viewable area.
+        """
+        if widget is self:
+            return True
+
+        if widget not in self.screen._compositor.visible_widgets or not widget.display:
+            return False
+
+        region = widget.region
+        node: Widget = widget
+
+        while isinstance(node.parent, Widget) and node is not self:
+            if not region.overlaps(node.parent.scrollable_content_region):
                 return False
             node = node.parent
         return True
@@ -4210,13 +4246,13 @@ class Widget(DOMNode):
         if not self._allow_scroll:
             raise SkipAction()
         self._clear_anchor()
-        self.scroll_home()
+        self.scroll_home(x_axis=self.scroll_y == 0)
 
     def action_scroll_end(self) -> None:
         if not self._allow_scroll:
             raise SkipAction()
         self._clear_anchor()
-        self.scroll_end()
+        self.scroll_end(x_axis=self.scroll_y == self.is_vertical_scroll_end)
 
     def action_scroll_left(self) -> None:
         if not self.allow_horizontal_scroll:
