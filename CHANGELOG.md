@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Button.action` parameter to invoke action when clicked https://github.com/Textualize/textual/pull/5113
 - Added `immediate` parameter to scroll methods https://github.com/Textualize/textual/pull/5164
 - Added `textual._loop.loop_from_index` https://github.com/Textualize/textual/pull/5164
-- Added `min_color` and `max_color` to Sparklines constructor, which take precedence over CSS 
+- Added `min_color` and `max_color` to Sparklines constructor, which take precedence over CSS https://github.com/Textualize/textual/pull/5174
+- Added new demo `python -m textual`, not *quite* finished but better than the old one https://github.com/Textualize/textual/pull/5174
 
 ### Fixed
 
