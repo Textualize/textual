@@ -69,7 +69,7 @@ Textual's API is accessible to Python developers of all skill levels.
 
 ## Built on Rich
 
-With over 1.4 *billion* downloads, Rich is the most popular terminal library out there.
+With over 1.5 *billion* downloads, Rich is the most popular terminal library out there.
 Textual builds on Rich to add interactivity, and is compatible with Rich renderables.
 
 ## Re-usable widgets
