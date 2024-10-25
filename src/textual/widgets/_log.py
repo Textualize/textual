@@ -164,7 +164,6 @@ class Log(ScrollView, can_focus=True):
             The `Log` instance.
         """
         is_vertical_scroll_end = self.is_vertical_scroll_end
-        print(self.scroll_offset.y, self.max_scroll_y)
         if data:
             if not self._lines:
                 self._lines.append("")
@@ -185,7 +184,7 @@ class Log(ScrollView, can_focus=True):
         if (
             auto_scroll
             and not self.is_vertical_scrollbar_grabbed
-            and self.is_vertical_scroll_end
+            and is_vertical_scroll_end
         ):
             self.scroll_end(animate=False, immediate=True, x_axis=False)
         return self

@@ -1,5 +1,6 @@
 import csv
 import io
+from math import sin
 
 from rich.syntax import Syntax
 from rich.table import Table
@@ -9,7 +10,7 @@ from textual import containers
 from textual.app import ComposeResult
 from textual.demo2.data import COUNTRIES
 from textual.demo2.page import PageScreen
-from textual.reactive import var
+from textual.reactive import reactive, var
 from textual.suggester import SuggestFromList
 from textual.widgets import (
     Button,
@@ -28,6 +29,7 @@ from textual.widgets import (
     RadioButton,
     RadioSet,
     RichLog,
+    Sparkline,
     TabbedContent,
 )
 
@@ -260,7 +262,7 @@ class Logs(containers.VerticalGroup):
     LOGS_MD = """\
 ## Logs and Rich Logs
 
-A Log widget to efficiently display a scrolling view of text.
+A Log widget to efficiently display a scrolling view of text, with optional highlighted.
 And a RichLog widget to display Rich renderables.
 
 """
@@ -320,7 +322,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def compose(self) -> ComposeResult:
         yield Markdown(self.LOGS_MD)
         with TabbedContent("Log", "RichLog"):
-            yield Log(max_lines=10_000)
+            yield Log(max_lines=10_000, highlight=True)
             yield RichLog(max_lines=10_000)
 
     def on_mount(self) -> None:
@@ -332,12 +334,17 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         self.set_interval(1, self.update_rich_log)
 
     def update_log(self) -> None:
-        if not self.screen.can_view(self):
+        if not self.screen.can_view(self) or not self.screen.is_active:
             return
         self.log_count += 1
-        self.query_one(Log).write_line(self.TEXT[self.log_count % len(self.TEXT)])
+        log = self.query_one(Log)
+        line_no = self.log_count % len(self.TEXT)
+        line = self.TEXT[self.log_count % len(self.TEXT)]
+        log.write_line(f"fear[{line_no}] = {line!r}")
 
     def update_rich_log(self) -> None:
+        if not self.screen.can_view(self) or not self.screen.is_active:
+            return
         rich_log = self.query_one(RichLog)
         self.rich_log_count += 1
         log_option = self.rich_log_count % 3
@@ -357,6 +364,57 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
             except Exception:
                 traceback = Traceback()
                 rich_log.write(traceback, animate=True)
+
+
+class Sparklines(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    LOGS_MD = """\
+## Sparklines
+
+A low-res summary of time-series data.
+
+For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual-plotext).
+"""
+    DEFAULT_CSS = """
+    Sparklines {
+        Sparkline {
+            width: 1fr;
+            margin: 1;
+            & #first > .sparkline--min-color { color: $success; }
+            & #first > .sparkline--max-color { color: $warning; }                
+            & #second > .sparkline--min-color { color: $warning; }
+            & #second > .sparkline--max-color { color: $error; }
+            & #third > .sparkline--min-color { color: $primary; }
+            & #third > .sparkline--max-color { color: $accent; }    
+        }
+    }
+
+    """
+
+    count = var(0)
+    data: reactive[list[float]] = reactive(list)
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.LOGS_MD)
+        yield Sparkline([], summary_function=max, id="first").data_bind(
+            Sparklines.data,
+        )
+        yield Sparkline([], summary_function=max, id="second").data_bind(
+            Sparklines.data
+        )
+        yield Sparkline([], summary_function=max, id="third").data_bind(
+            Sparklines.data,
+        )
+
+    def on_mount(self) -> None:
+        self.set_interval(0.1, self.update_sparks)
+
+    def update_sparks(self) -> None:
+        if not self.screen.can_view(self) or not self.screen.is_active:
+            return
+        self.count += 1
+        offset = self.count * 40
+        self.data = [abs(sin(x / 3.14)) for x in range(offset, offset + 360 * 6, 20)]
 
 
 class WidgetsScreen(PageScreen):
@@ -382,6 +440,7 @@ class WidgetsScreen(PageScreen):
             yield Inputs()
             yield ListViews()
             yield Logs()
+            yield Sparklines()
         yield Footer()
 
     def action_unfocus(self) -> None:
