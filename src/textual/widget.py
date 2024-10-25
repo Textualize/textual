@@ -3303,8 +3303,8 @@ class Widget(DOMNode):
             immediate=immediate,
         )
 
-    def can_view(self, widget: Widget) -> bool:
-        """Check if a given widget is in the current view (scrollable area).
+    def can_view_entire(self, widget: Widget) -> bool:
+        """Check if a given widget is *fully* within the current view (scrollable area).
 
         Note: This doesn't necessarily equate to a widget being visible.
         There are other reasons why a widget may not be visible.
@@ -3313,10 +3313,37 @@ class Widget(DOMNode):
             widget: A widget that is a descendant of self.
 
         Returns:
-            True if the entire widget is in view, False if it is partially visible or not in view.
+            `True` if the entire widget is in view, `False` if it is partially visible or not in view.
         """
         if widget is self:
             return True
+
+        if widget not in self.screen._compositor.visible_widgets:
+            return False
+
+        region = widget.region
+        node: Widget = widget
+
+        while isinstance(node.parent, Widget) and node is not self:
+            if region not in node.parent.scrollable_content_region:
+                return False
+            node = node.parent
+        return True
+
+    def can_view_partial(self, widget: Widget) -> bool:
+        """Check if a given widget at least partially visible within the current view (scrollable area).
+
+        Args:
+            widget: A widget that is a descendant of self.
+
+        Returns:
+            `True` if any part of the widget is visible, `False` if it is outside of the viewable area.
+        """
+        if widget is self:
+            return True
+
+        if widget not in self.screen._compositor.visible_widgets or not widget.display:
+            return False
 
         region = widget.region
         node: Widget = widget

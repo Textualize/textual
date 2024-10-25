@@ -339,25 +339,25 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         log = self.query_one(Log)
         rich_log = self.query_one(RichLog)
         log.write("I am a Log Widget")
-        rich_log.write("I am a [b]Rich Log Widget")
+        rich_log.write("I am a Rich Log Widget")
         self.set_interval(0.25, self.update_log)
         self.set_interval(1, self.update_rich_log)
 
     def update_log(self) -> None:
         """Update the Log with new content."""
-        if not self.screen.can_view(self) or not self.screen.is_active:
+        log = self.query_one(Log)
+        if not self.screen.can_view_partial(log) or not self.screen.is_active:
             return
         self.log_count += 1
-        log = self.query_one(Log)
         line_no = self.log_count % len(self.TEXT)
         line = self.TEXT[self.log_count % len(self.TEXT)]
         log.write_line(f"fear[{line_no}] = {line!r}")
 
     def update_rich_log(self) -> None:
         """Update the Rich Log with content."""
-        if not self.screen.can_view(self) or not self.screen.is_active:
-            return
         rich_log = self.query_one(RichLog)
+        if not self.screen.can_view_partial(rich_log) or not self.screen.is_active:
+            return
         self.rich_log_count += 1
         log_option = self.rich_log_count % 3
         if log_option == 0:
@@ -425,7 +425,7 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
 
     def update_sparks(self) -> None:
         """Update the sparks data."""
-        if not self.screen.can_view(self) or not self.screen.is_active:
+        if not self.screen.can_view_partial(self) or not self.screen.is_active:
             return
         self.count += 1
         offset = self.count * 40
