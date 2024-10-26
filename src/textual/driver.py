@@ -240,7 +240,9 @@ class Driver(ABC):
 
         def save_file_thread(binary: BinaryIO | TextIO, mode: str) -> None:
             try:
-                with open(save_path, mode) as destination_file:
+                with open(
+                    save_path, mode, encoding=encoding or "utf-8"
+                ) as destination_file:
                     read = binary.read
                     write = destination_file.write
                     chunk_size = 1024 * 64
