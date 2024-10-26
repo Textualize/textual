@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.85.1] - 2024-10-26
+
+### Fixed
+
+- Fixed encoding issue when saving files such as screenshots on Windows
+
 ## [0.85.0] - 2024-10-25
 
 ### Changed
@@ -2483,6 +2489,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.85.1]: https://github.com/Textualize/textual/compare/v0.85.0...v0.85.1
 [0.85.0]: https://github.com/Textualize/textual/compare/v0.84.0...v0.85.0
 [0.84.0]: https://github.com/Textualize/textual/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/Textualize/textual/compare/v0.82.0...v0.83.0
