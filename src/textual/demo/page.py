@@ -64,8 +64,9 @@ class PageScreen(Screen):
 
     @work(thread=True)
     def get_code(self, source_file: str) -> str | None:
+        """Read code from disk, or return `None` on error."""
         try:
-            with open(source_file, "rt") as file_:
+            with open(source_file, "rt", encoding="utf-8") as file_:
                 return file_.read()
         except Exception:
             return None
