@@ -1205,8 +1205,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._compositor_refresh()
-        self._refresh_layout(size)
+        if self.stack_updates:
+            self._compositor_refresh()
+            self._refresh_layout(size)
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
