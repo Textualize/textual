@@ -1211,7 +1211,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
-
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.stack_updates += 1
