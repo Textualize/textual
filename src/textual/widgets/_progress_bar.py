@@ -44,16 +44,16 @@ class Bar(Widget, can_focus=False):
         height: 1;
 
         &> .bar--bar {
-            color: $progress-bar-color;
-            background: $progress-bar-background;
+            color: $primary;
+            background: $surface;
         }
         &> .bar--indeterminate {
-            color: $progress-bar-indeterminate-color;
-            background: $progress-bar-indeterminate-background;
+            color: $error;
+            background: $surface;
         }
         &> .bar--complete {
-            color: $progress-bar-complete-color;
-            background: $progress-bar-complete-background;
+            color: $success;
+            background: $surface;
         }
     }
     """
