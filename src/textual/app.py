@@ -96,7 +96,6 @@ from textual.command import CommandListItem, CommandPalette, Provider, SimplePro
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
 from textual.css.stylesheet import RulesMap, Stylesheet
-from textual.design import ColorSystem
 from textual.dom import DOMNode, NoScreen
 from textual.driver import Driver
 from textual.errors import NoWidget
@@ -151,43 +150,6 @@ if constants.DEBUG:
 
 # `asyncio.get_event_loop()` is deprecated since Python 3.10:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
-
-LayoutDefinition = "dict[str, Any]"
-
-DEFAULT_COLORS = {
-    "dark": ColorSystem(
-        primary="#004578",
-        secondary="#ffa62b",
-        warning="#ffa62b",
-        error="#ba3c5b",
-        success="#4EBF71",
-        accent="#0178D4",
-        dark=True,
-    ),
-    "light": ColorSystem(
-        primary="#004578",
-        secondary="#ffa62b",
-        warning="#ffa62b",
-        error="#ba3c5b",
-        success="#4EBF71",
-        accent="#0178D4",
-        dark=False,
-    ),
-    "ansi": ColorSystem(
-        "ansi_blue",
-        secondary="ansi_cyan",
-        warning="ansi_yellow",
-        error="ansi_red",
-        success="ansi_green",
-        accent="ansi_bright_blue",
-        foreground="ansi_default",
-        background="ansi_default",
-        surface="ansi_default",
-        panel="ansi_default",
-        boost="ansi_default",
-    ),
-}
-
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
