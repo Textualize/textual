@@ -446,7 +446,7 @@ class WidgetsScreen(PageScreen):
     }
     """
 
-    BINDINGS = [("escape", "unfocus")]
+    BINDINGS = [("escape", "unfocus", "Unfocus any focused widget")]
 
     def compose(self) -> ComposeResult:
         with containers.VerticalScroll() as container:
