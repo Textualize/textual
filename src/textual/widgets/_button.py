@@ -210,8 +210,6 @@ class Button(Widget, can_focus=True):
 
         self.label = label
         self.variant = variant
-        self.set_reactive(Button.variant, variant)
-        self.add_class(f"-{variant}", update=False)
         self.action = action
         self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
