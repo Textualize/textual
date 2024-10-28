@@ -8,6 +8,7 @@ from rich.traceback import Traceback
 
 from textual import containers
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.demo.data import COUNTRIES
 from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
@@ -446,7 +447,7 @@ class WidgetsScreen(PageScreen):
     }
     """
 
-    BINDINGS = [("escape", "unfocus", "Unfocus any focused widget")]
+    BINDINGS = [Binding("escape", "unfocus", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
         with containers.VerticalScroll() as container:
