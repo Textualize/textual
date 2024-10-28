@@ -104,8 +104,9 @@ def resolve_fraction_unit(
     Returns:
         The value of 1fr.
     """
+    F = Fraction
     if not remaining_space or not widget_styles:
-        return Fraction(1)
+        return F(1)
 
     initial_space = remaining_space
 
@@ -155,19 +156,19 @@ def resolve_fraction_unit(
 
     while remaining_fraction > 0:
         remaining_space_changed = False
-        resolve_fraction = Fraction(remaining_space, remaining_fraction)
+        resolve_fraction = F(remaining_space, remaining_fraction)
         for index, (scalar, min_value, max_value) in enumerate(resolve):
             value = resolved[index]
             if value is None:
                 resolved_scalar = scalar.resolve(size, viewport_size, resolve_fraction)
                 if min_value is not None and resolved_scalar < min_value:
                     remaining_space -= min_value
-                    remaining_fraction -= Fraction(scalar.value)
+                    remaining_fraction -= F(scalar.value)
                     resolved[index] = min_value
                     remaining_space_changed = True
                 elif max_value is not None and resolved_scalar > max_value:
                     remaining_space -= max_value
-                    remaining_fraction -= Fraction(scalar.value)
+                    remaining_fraction -= F(scalar.value)
                     resolved[index] = max_value
                     remaining_space_changed = True
 
@@ -219,8 +220,16 @@ def resolve_box_models(
             else widget._get_box_model(
                 size,
                 viewport_size,
-                max(fraction_zero, fraction_width - margin_width),
-                max(fraction_zero, fraction_height - margin_height),
+                (
+                    fraction_zero
+                    if (_width := fraction_width - margin_width) < 0
+                    else _width
+                ),
+                (
+                    fraction_zero
+                    if (_height := fraction_height - margin_height) < 0
+                    else _height
+                ),
             )
         )
         for (_dimension, widget, (margin_width, margin_height)) in zip(

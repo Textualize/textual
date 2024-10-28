@@ -182,6 +182,7 @@ class Layout(ABC):
         Returns:
             Content height (in lines).
         """
+
         if not widget._nodes:
             height = 0
         else:
