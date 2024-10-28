@@ -54,6 +54,8 @@ def _get_environ_int(name: str, default: int, minimum: int | None = None) -> int
 def _get_environ_port(name: str, default: int) -> int:
     """Get a port no. from an environment variable.
 
+    Note that there is no 'minimum' here, as ports are more like names than a scalar value.
+
     Args:
         name: Name of environment variable.
         default: The value to use if the value is not set, or set to something other
@@ -69,7 +71,7 @@ def _get_environ_port(name: str, default: int) -> int:
         return default
     except ValueError:
         return default
-    if value < 0 or value > 65353:
+    if value < 0 or value > 65535:
         return default
     return value
 
