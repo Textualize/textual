@@ -190,6 +190,16 @@ Here's a comprehensive list of these variables, their purposes, and default valu
 | `$footer-description-background` | Background color for descriptions in the footer | `"transparent"` |
 | `$footer-item-background` | Background color for items in the footer | `"transparent"` |
 
+### Progress Bar
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$progress-bar-color` | Color of the progress bar in normal state | `$primary` |
+| `$progress-bar-background` | Background color of the progress bar in normal state | `$surface` |
+| `$progress-bar-complete-color` | Color of the progress bar when complete | `$success` |
+| `$progress-bar-complete-background` | Background color of the progress bar when complete | `$surface` |
+| `$progress-bar-indeterminate-color` | Color of the progress bar in indeterminate state | `$error` |
+| `$progress-bar-indeterminate-background` | Background color of the progress bar in indeterminate state | `$surface` |
 
 ## Previewing colors
 
