@@ -101,6 +101,29 @@ The theme system defines three CSS variables which you can use to ensure that te
 Textual uses the base colors as default values for additional variables used throughout the framework.
 These variables can be overridden by passing a `variables` argument to the `Theme` constructor.
 
+In the Gruvbox theme, for example, we override the foreground color of the block cursor (the cursor used in widgets like `OptionList`) to be `$foreground`.
+
+```python
+Theme(
+    name="gruvbox",
+    primary="#85A598",
+    secondary="#A89A85",
+    warning="#fabd2f",
+    error="#fb4934",
+    success="#b8bb26",
+    accent="#fabd2f",
+    foreground="#fbf1c7",
+    background="#282828",
+    surface="#3c3836",
+    panel="#504945",
+    dark=True,
+    variables={
+        "block-cursor-foreground": "#fbf1c7",
+        "input-selection-background": "#689d6a40",
+    },
+)
+```
+
 Here's a comprehensive list of these variables, their purposes, and default values:
 
 ### Border

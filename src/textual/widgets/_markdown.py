@@ -244,12 +244,11 @@ class MarkdownH1(MarkdownHeader):
     """An H1 Markdown header."""
 
     DEFAULT_CSS = """
-
     MarkdownH1 {
         content-align: center middle;
-        text-style: bold;
-        color: $primary;
-        &:light {color: $primary;}
+        color: $markdown-h1-color;
+        background: $markdown-h1-background;
+        text-style: $markdown-h1-text-style;
     }
     """
 
@@ -258,11 +257,10 @@ class MarkdownH2(MarkdownHeader):
     """An H2 Markdown header."""
 
     DEFAULT_CSS = """
-
     MarkdownH2 {
-        text-style: underline;
-        color: $primary;
-        &:light {color: $primary;}
+        color: $markdown-h2-color;
+        background: $markdown-h2-background;
+        text-style: $markdown-h2-text-style;
     }
     """
 
@@ -272,11 +270,11 @@ class MarkdownH3(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH3 {
-        text-style: bold;
-        color: $primary;
+        color: $markdown-h3-color;
+        background: $markdown-h3-background;
+        text-style: $markdown-h3-text-style;
         margin: 1 0;
         width: auto;
-        &:light {color: $primary;}
     }
     """
 
@@ -286,9 +284,10 @@ class MarkdownH4(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH4 {
-        text-style: bold underline;
+        color: $markdown-h4-color;
+        background: $markdown-h4-background;
+        text-style: $markdown-h4-text-style;
         margin: 1 0;
-        color: $foreground;
     }
     """
 
@@ -298,10 +297,10 @@ class MarkdownH5(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH5 {
-        text-style: bold;
-        color: $foreground;
+        color: $markdown-h5-color;
+        background: $markdown-h5-background;
+        text-style: $markdown-h5-text-style;
         margin: 1 0;
-
     }
     """
 
@@ -311,8 +310,9 @@ class MarkdownH6(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH6 {
-        text-style: bold;
-        color: $foreground-muted;
+        color: $markdown-h6-color;
+        background: $markdown-h6-background;
+        text-style: $markdown-h6-text-style;
         margin: 1 0;
     }
     """

@@ -298,6 +298,35 @@ class ColorSystem:
             "input-selection-foreground", background.hex
         )
 
+        # Markdown header styles
+        colors["markdown-h1-color"] = get("markdown-h1-color", primary.hex)
+        colors["markdown-h1-background"] = get("markdown-h1-background", "transparent")
+        colors["markdown-h1-text-style"] = get("markdown-h1-text-style", "bold")
+
+        colors["markdown-h2-color"] = get("markdown-h2-color", primary.hex)
+        colors["markdown-h2-background"] = get("markdown-h2-background", "transparent")
+        colors["markdown-h2-text-style"] = get("markdown-h2-text-style", "underline")
+
+        colors["markdown-h3-color"] = get("markdown-h3-color", primary.hex)
+        colors["markdown-h3-background"] = get("markdown-h3-background", "transparent")
+        colors["markdown-h3-text-style"] = get("markdown-h3-text-style", "bold")
+
+        colors["markdown-h4-color"] = get("markdown-h4-color", foreground.hex)
+        colors["markdown-h4-background"] = get("markdown-h4-background", "transparent")
+        colors["markdown-h4-text-style"] = get(
+            "markdown-h4-text-style", "bold underline"
+        )
+
+        colors["markdown-h5-color"] = get("markdown-h5-color", foreground.hex)
+        colors["markdown-h5-background"] = get("markdown-h5-background", "transparent")
+        colors["markdown-h5-text-style"] = get("markdown-h5-text-style", "bold")
+
+        colors["markdown-h6-color"] = get(
+            "markdown-h6-color", colors["foreground-muted"]
+        )
+        colors["markdown-h6-background"] = get("markdown-h6-background", "transparent")
+        colors["markdown-h6-text-style"] = get("markdown-h6-text-style", "bold")
+
         return colors
 
 
