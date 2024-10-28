@@ -45,22 +45,6 @@ class SelectOverlay(OptionList):
 
     BINDINGS = [("escape", "dismiss", "Dismiss menu")]
 
-    DEFAULT_CSS = """
-    SelectOverlay {
-        border: tall $border-blurred;
-        background: $surface;
-        color: $foreground;
-        width: 100%;
-        padding: 0 1;
-    }
-    SelectOverlay:focus {
-        background-tint: $foreground 5%;
-    }
-    SelectOverlay > .option-list--option {
-        padding: 0 1;
-    }
-    """
-
     @dataclass
     class Dismiss(Message):
         """Inform ancestor the overlay should be dismissed."""
@@ -110,7 +94,9 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
+        border: tall transparent;
         color: $foreground;
+        background: $surface;
         width: 1fr;
         height: auto;
         padding: 0 2;
@@ -215,16 +201,14 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     Select {
         height: auto;
         color: $foreground;
-        background: $surface;
-        border: tall $border-blurred;
         
         .up-arrow {
             display: none;
         }
 
-        &:focus {
-            background-tint: $foreground 5%;
+        &:focus > SelectCurrent {
             border: tall $border;
+            background-tint: $foreground 5%;
         }
 
         & > SelectOverlay {
@@ -235,11 +219,13 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             overlay: screen;
             constrain: none inside;
             color: $foreground;
-            padding: 1 0;
-
+            border: tall $border-blurred;
+            background: $surface;
             &:focus {
-                border: wide $border;
                 background-tint: $foreground 5%;
+            }
+            & > .option-list--option {
+                padding: 0 1;
             }
         }
 

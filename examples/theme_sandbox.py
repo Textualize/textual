@@ -261,9 +261,11 @@ class ChangingThemeApp(App[None]):
 
         yield ThemeList(id="theme-list")
         with VerticalScroll(id="widget-list") as container:
-            container.border_title = "Widget Gallery"
             container.can_focus = False
 
+            yield Select(
+                [("foo", "foo"), ("bar", "bar"), ("baz", "baz"), ("qux", "qux")]
+            )
             with Collapsible(title="An interesting story."):
                 yield Label("Interesting but verbose story.")
 
@@ -283,9 +285,6 @@ class ChangingThemeApp(App[None]):
                 yield Button.error("Error 3")
                 yield Button.warning("Warning 4")
             yield Tabs("First tab", "Second tab", "Third tab", "Fourth tab")
-            yield Select(
-                [("foo", "foo"), ("bar", "bar"), ("baz", "baz"), ("qux", "qux")]
-            )
             yield MaskedInput(
                 template="9999-9999-9999-9999;0",
             )
