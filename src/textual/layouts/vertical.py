@@ -89,9 +89,9 @@ class VerticalLayout(Layout):
                 _WidgetPlacement(
                     _Region(
                         box_margin.left,
-                        y.__int__(),
-                        content_width.__int__(),
-                        next_y.__int__() - y.__int__(),
+                        int(y),
+                        int(content_width),
+                        int(next_y) - int(y),
                     ),
                     box_margin,
                     widget,
