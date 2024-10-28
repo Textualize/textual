@@ -39,7 +39,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     | down | Move the cursor down. |
     """
 
-    index = reactive[Optional[int]](None, always_update=True, init=False)
+    index = reactive[Optional[int]](None, init=False)
     """The index of the currently highlighted item."""
 
     class Highlighted(Message):
