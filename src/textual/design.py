@@ -327,6 +327,24 @@ class ColorSystem:
         colors["markdown-h6-background"] = get("markdown-h6-background", "transparent")
         colors["markdown-h6-text-style"] = get("markdown-h6-text-style", "bold")
 
+        # Progress bar colors
+        colors["progress-bar-color"] = get("progress-bar-bar-color", primary.hex)
+        colors["progress-bar-background"] = get(
+            "progress-bar-bar-background", surface.hex
+        )
+        colors["progress-bar-complete-color"] = get(
+            "progress-bar-complete-color", success.hex
+        )
+        colors["progress-bar-complete-background"] = get(
+            "progress-bar-complete-background", surface.hex
+        )
+        colors["progress-bar-indeterminate-color"] = get(
+            "progress-bar-indeterminate-color", error.hex
+        )
+        colors["progress-bar-indeterminate-background"] = get(
+            "progress-bar-indeterminate-background", surface.hex
+        )
+
         return colors
 
 
