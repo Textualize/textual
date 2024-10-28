@@ -435,7 +435,7 @@ class Stylesheet:
 
     # pseudo classes which iterate over multiple nodes
     # These shouldn't be used in a cache key
-    EXCLUDE_PSEUDO_CLASSES = {
+    EXCLUDE_PSEUDO_CLASSES_FROM_CACHE = {
         "first-of-type",
         "last-of_type",
         "odd",
@@ -488,7 +488,7 @@ class Stylesheet:
         cache_key: tuple | None = None
 
         if cache is not None and all_pseudo_classes.isdisjoint(
-            self.EXCLUDE_PSEUDO_CLASSES
+            self.EXCLUDE_PSEUDO_CLASSES_FROM_CACHE
         ):
             cache_key = (
                 node._parent,
