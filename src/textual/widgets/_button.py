@@ -51,7 +51,7 @@ class Button(Widget, can_focus=True):
         background: $surface;
         color: $foreground;
         border: none;
-        border-top: tall $border-blurred;
+        border-top: tall $surface-lighten-1;
         border-bottom: tall $surface-darken-1;
         text-align: center;
         content-align: center middle;
