@@ -166,7 +166,7 @@ class SelectCurrent(Horizontal):
         """Toggle the class."""
         self.set_class(has_value, "-has-value")
 
-    async def _on_click(self, event: events.Click) -> None:
+    def _on_click(self, event: events.Click) -> None:
         """Inform ancestor we want to toggle."""
         event.stop()
         self.post_message(self.Toggle())
