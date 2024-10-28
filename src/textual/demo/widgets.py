@@ -449,7 +449,8 @@ class WidgetsScreen(PageScreen):
     BINDINGS = [("escape", "unfocus")]
 
     def compose(self) -> ComposeResult:
-        with containers.VerticalScroll():
+        with containers.VerticalScroll() as container:
+            container.can_focus = False
             yield Markdown(WIDGETS_MD, classes="column")
             yield Buttons()
             yield Checkboxes()
