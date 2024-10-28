@@ -211,7 +211,8 @@ class ProjectsScreen(PageScreen):
     """
 
     def compose(self) -> ComposeResult:
-        with VerticalScroll():
+        with VerticalScroll() as container:
+            container.can_focus = False
             with Center():
                 yield Markdown(PROJECTS_MD)
             with ItemGrid(min_column_width=40):
