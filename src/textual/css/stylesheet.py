@@ -433,13 +433,14 @@ class Stylesheet:
             if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
-    # pseudo classes which iterate over many nodes
-    # these have the potential to be slow, and shouldn't be used in a cache key
-    EXPENSIVE_PSEUDO_CLASSES = {
+    # pseudo classes which iterate over multiple nodes
+    # These shouldn't be used in a cache key
+    EXCLUDE_PSEUDO_CLASSES = {
         "first-of-type",
         "last-of_type",
         "odd",
         "even",
+        "focus-within",
     }
 
     def apply(
@@ -487,7 +488,7 @@ class Stylesheet:
         cache_key: tuple | None = None
 
         if cache is not None and all_pseudo_classes.isdisjoint(
-            self.EXPENSIVE_PSEUDO_CLASSES
+            self.EXCLUDE_PSEUDO_CLASSES
         ):
             cache_key = (
                 node._parent,
