@@ -372,10 +372,13 @@ class Strip:
         Returns:
             A new Strip.
         """
+
         start = max(0, start)
         end = self.cell_length if end is None else min(self.cell_length, end)
         if start == 0 and end == self.cell_length:
             return self
+        if end <= start:
+            return Strip([], 0)
         cache_key = (start, end)
         cached = self._crop_cache.get(cache_key)
         if cached is not None:

@@ -1237,9 +1237,7 @@ TextArea {
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         if not self.soft_wrap:
-            text_strip = text_strip.crop(
-                scroll_x, scroll_x + virtual_width - gutter_width
-            )
+            text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:

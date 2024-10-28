@@ -166,7 +166,7 @@ class Log(ScrollView, can_focus=True):
         Returns:
             The `Log` instance.
         """
-
+        is_vertical_scroll_end = self.is_vertical_scroll_end
         if data:
             if not self._lines:
                 self._lines.append("")
@@ -184,8 +184,12 @@ class Log(ScrollView, can_focus=True):
             self._prune_max_lines()
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
-        if auto_scroll and not self.is_vertical_scrollbar_grabbed:
-            self.scroll_end(animate=False)
+        if (
+            auto_scroll
+            and not self.is_vertical_scrollbar_grabbed
+            and is_vertical_scroll_end
+        ):
+            self.scroll_end(animate=False, immediate=True, x_axis=False)
         return self
 
     def write_line(self, line: str) -> Self:
@@ -214,6 +218,7 @@ class Log(ScrollView, can_focus=True):
         Returns:
             The `Log` instance.
         """
+        is_vertical_scroll_end = self.is_vertical_scroll_end
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
         new_lines = []
         for line in lines:
@@ -225,8 +230,12 @@ class Log(ScrollView, can_focus=True):
         self.virtual_size = Size(self._width, len(self._lines))
         self._update_size(self._updates, new_lines)
         self.refresh_lines(start_line, len(new_lines))
-        if auto_scroll and not self.is_vertical_scrollbar_grabbed:
-            self.scroll_end(animate=False)
+        if (
+            auto_scroll
+            and not self.is_vertical_scrollbar_grabbed
+            and is_vertical_scroll_end
+        ):
+            self.scroll_end(animate=False, immediate=True, x_axis=False)
         else:
             self.refresh()
         return self

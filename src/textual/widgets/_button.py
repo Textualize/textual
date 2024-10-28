@@ -36,7 +36,12 @@ class InvalidButtonVariant(Exception):
 
 
 class Button(Widget, can_focus=True):
-    """A simple clickable button."""
+    """A simple clickable button.
+
+    Clicking the button will send a [Button.Pressed][textual.widgets.Button.Pressed] message,
+    unless the `action` parameter is provided.
+
+    """
 
     DEFAULT_CSS = """
     Button {
@@ -154,7 +159,7 @@ class Button(Widget, can_focus=True):
     """The variant name for the button."""
 
     class Pressed(Message):
-        """Event sent when a `Button` is pressed.
+        """Event sent when a `Button` is pressed and there is no Button action.
 
         Can be handled using `on_button_pressed` in a subclass of
         [`Button`][textual.widgets.Button] or in a parent widget in the DOM.
@@ -183,6 +188,7 @@ class Button(Widget, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        action: str | None = None,
     ):
         """Create a Button widget.
 
@@ -194,6 +200,7 @@ class Button(Widget, can_focus=True):
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
             tooltip: Optional tooltip.
+            action: Optional action to run when clicked.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -202,8 +209,10 @@ class Button(Widget, can_focus=True):
 
         self.label = label
         self.variant = variant
+        self.action = action
         self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
+
         if tooltip is not None:
             self.tooltip = tooltip
 
@@ -268,7 +277,12 @@ class Button(Widget, can_focus=True):
         # Manage the "active" effect:
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
-        self.post_message(Button.Pressed(self))
+        if self.action is None:
+            self.post_message(Button.Pressed(self))
+        else:
+            self.call_later(
+                self.app.run_action, self.action, default_namespace=self._parent
+            )
         return self
 
     def _start_active_affect(self) -> None:

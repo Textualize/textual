@@ -739,8 +739,13 @@ class DOMNode(MessagePump):
         from textual.screen import Screen
 
         node: MessagePump | None = self
-        while node is not None and not isinstance(node, Screen):
-            node = node._parent
+        try:
+            while node is not None and not isinstance(node, Screen):
+                node = node._parent
+        except AttributeError:
+            raise RuntimeError(
+                "Widget is missing attributes; have you called the constructor in your widget class?"
+            ) from None
         if not isinstance(node, Screen):
             raise NoScreen("node has no screen")
         return node

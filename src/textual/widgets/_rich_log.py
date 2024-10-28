@@ -172,6 +172,7 @@ class RichLog(ScrollView, can_focus=True):
         expand: bool = False,
         shrink: bool = True,
         scroll_end: bool | None = None,
+        animate: bool = False,
     ) -> Self:
         """Write a string or a Rich renderable to the bottom of the log.
 
@@ -189,6 +190,7 @@ class RichLog(ScrollView, can_focus=True):
             shrink: Permit shrinking of content to fit within the content region of the RichLog.
                 If `width` is specified, then `shrink` will be ignored.
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
+            animate: Enable animation if the log will scroll.
 
         Returns:
             The `RichLog` instance.
@@ -203,6 +205,7 @@ class RichLog(ScrollView, can_focus=True):
             )
             return self
 
+        is_vertical_scroll_end = self.is_vertical_scroll_end
         renderable = self._make_renderable(content)
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
@@ -269,8 +272,12 @@ class RichLog(ScrollView, can_focus=True):
         # the new line(s), and the height will definitely have changed.
         self.virtual_size = Size(self._widest_line_width, len(self.lines))
 
-        if auto_scroll:
-            self.scroll_end(animate=False)
+        if (
+            auto_scroll
+            and not self.is_vertical_scrollbar_grabbed
+            and is_vertical_scroll_end
+        ):
+            self.scroll_end(animate=animate, immediate=False, x_axis=False)
 
         return self
 

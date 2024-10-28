@@ -7,6 +7,7 @@ import pytest
 from textual import on
 from textual._on import OnDecoratorError
 from textual.app import App, ComposeResult
+from textual.events import Enter, Leave
 from textual.message import Message
 from textual.widget import Widget
 from textual.widgets import Button, TabbedContent, TabPane
@@ -352,3 +353,28 @@ async def test_fire_on_inherited_message_plus_mixins() -> None:
         pass
 
     assert posted == ["parent", "child", "parent"]
+
+
+async def test_on_with_enter_and_leave_events():
+    class EnterLeaveApp(App):
+        messages = []
+
+        def compose(self) -> ComposeResult:
+            yield Button("OK")
+
+        @on(Enter, "Button")
+        @on(Leave, "Button")
+        def record(self, event: Enter | Leave) -> None:
+            self.messages.append(event.__class__.__name__)
+
+    app = EnterLeaveApp()
+    async with app.run_test() as pilot:
+        expected_messages = []
+
+        await pilot.hover(Button)
+        expected_messages.append("Enter")
+        assert app.messages == expected_messages
+
+        await pilot.hover(Button, offset=(0, 20))
+        expected_messages.append("Leave")
+        assert app.messages == expected_messages

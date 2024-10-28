@@ -5,7 +5,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-DIGITS = " 0123456789+-^x:ABCDEF"
+DIGITS = " 0123456789+-^x:ABCDEF$£€()"
 DIGITS3X3_BOLD = """\
 
 
@@ -73,7 +73,21 @@ DIGITS3X3_BOLD = """\
 ╭─╴
 ├─
 ╵
-
+╭╫╮
+╰╫╮
+╰╫╯
+╭─╮
+╪═
+┴─╴
+╭─╮
+╪═
+╰─╯
+╭╴ 
+│  
+╰╴ 
+ ╶╮ 
+  │ 
+ ╶╯ 
 """.splitlines()
 
 
@@ -144,7 +158,21 @@ DIGITS3X3 = """\
 ╭─╴
 ├─
 ╵
-
+╭╫╮
+╰╫╮
+╰╫╯
+╭─╮
+╪═
+┴─╴
+╭─╮
+╪═
+╰─╯
+╭╴ 
+│  
+╰╴ 
+ ╶╮ 
+  │ 
+ ╶╯ 
 """.splitlines()
 
 
@@ -156,6 +184,8 @@ class Digits:
         style: Style to apply to the digits.
 
     """
+
+    REPLACEMENTS = str.maketrans({".": "•"})
 
     def __init__(self, text: str, style: StyleType = "") -> None:
         self._text = text
@@ -186,7 +216,7 @@ class Digits:
         else:
             digits = DIGITS3X3
 
-        for character in self._text:
+        for character in self._text.translate(self.REPLACEMENTS):
             try:
                 position = DIGITS.index(character) * 3
             except ValueError:

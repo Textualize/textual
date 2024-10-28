@@ -68,11 +68,6 @@ Once you have Textual installed, run the following to get an impression of what 
 python -m textual
 ```
 
-If Textual is installed you should see the following:
-
-```{.textual path="src/textual/demo.py" columns="127" lines="53" press="enter,tab,w,i,l,l"}
-```
-
 ## Examples
 
 

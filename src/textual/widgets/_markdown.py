@@ -421,7 +421,7 @@ class MarkdownOrderedList(MarkdownList):
 
     MarkdownOrderedList Vertical {
         height: auto;
-        width: 1fr;
+        width: 1fr;        
     }
     """
 
@@ -606,8 +606,6 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
-
-
     }
 
     MarkdownFence > * {
@@ -725,6 +723,7 @@ class Markdown(Widget):
         id: str | None = None,
         classes: str | None = None,
         parser_factory: Callable[[], MarkdownIt] | None = None,
+        open_links: bool = True,
     ):
         """A Markdown widget.
 
@@ -734,11 +733,13 @@ class Markdown(Widget):
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
             parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
+            open_links: Open links automatically. If you set this to `False`, you can handle the [`LinkClicked`][textual.widgets.markdown.Markdown.LinkClicked] events.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
         self._parser_factory = parser_factory
         self._table_of_contents: TableOfContentsType | None = None
+        self._open_links = open_links
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -802,6 +803,10 @@ class Markdown(Widget):
     async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
             await self.update(self._markdown)
+
+    def on_markdown_link_clicked(self, event: LinkClicked) -> None:
+        if self._open_links:
+            self.app.open_url(event.href)
 
     def _watch_code_dark_theme(self) -> None:
         """React to the dark theme being changed."""
@@ -1161,6 +1166,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
         id: str | None = None,
         classes: str | None = None,
         parser_factory: Callable[[], MarkdownIt] | None = None,
+        open_links: bool = True,
     ):
         """Create a Markdown Viewer object.
 
@@ -1171,11 +1177,13 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
             parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
+            open_links: Open links automatically. If you set this to `False`, you can handle the [`LinkClicked`][textual.widgets.markdown.Markdown.LinkClicked] events.
         """
         super().__init__(name=name, id=id, classes=classes)
         self.show_table_of_contents = show_table_of_contents
         self._markdown = markdown
         self._parser_factory = parser_factory
+        self._open_links = open_links
 
     @property
     def document(self) -> Markdown:
@@ -1222,7 +1230,9 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
         self.set_class(show_table_of_contents, "-show-table-of-contents")
 
     def compose(self) -> ComposeResult:
-        markdown = Markdown(parser_factory=self._parser_factory)
+        markdown = Markdown(
+            parser_factory=self._parser_factory, open_links=self._open_links
+        )
         markdown.can_focus = True
         yield markdown
         yield MarkdownTableOfContents(markdown)
