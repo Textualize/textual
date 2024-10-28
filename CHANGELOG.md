@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Fixed broken focus-within https://github.com/Textualize/textual/issues/5184
+- Fixed broken focus-within https://github.com/Textualize/textual/pull/5190
 
 ## [0.85.1] - 2024-10-26
 
