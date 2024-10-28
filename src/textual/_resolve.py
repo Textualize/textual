@@ -70,7 +70,7 @@ def resolve(
 
     fraction_gutter = Fraction(gutter)
     offsets = [0] + [
-        fraction.__int__()
+        fraction.__floor__()
         for fraction in accumulate(
             value
             for fraction in resolved_fractions
