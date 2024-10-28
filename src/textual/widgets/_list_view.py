@@ -268,10 +268,16 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         async def do_pop():
             await item_to_remove.remove()
             if self.index is not None:
-                if normalized_index == self.index:
+                if normalized_index < self.index:
+                    self.index -= 1
+                elif normalized_index == self.index:
+                    old_index = self.index
+                    # Force a re-validation of the index
                     self.index = self.index
-                elif normalized_index < self.index:
-                    self.index = self.index - 1
+                    # If the index hasn't changed, the watcher won't be called
+                    # but we need to update the highlighted item
+                    if old_index == self.index:
+                        self.watch_index(old_index, self.index)
 
         return AwaitComplete(do_pop())
 
@@ -299,7 +305,13 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
                 if removed_before_highlighted:
                     self.index -= removed_before_highlighted
                 elif self.index in normalized_indices:
+                    old_index = self.index
+                    # Force a re-validation of the index
                     self.index = self.index
+                    # If the index hasn't changed, the watcher won't be called
+                    # but we need to update the highlighted item
+                    if old_index == self.index:
+                        self.watch_index(old_index, self.index)
 
         return AwaitComplete(do_remove_items())
 
