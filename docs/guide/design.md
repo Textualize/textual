@@ -190,16 +190,15 @@ Here's a comprehensive list of these variables, their purposes, and default valu
 | `$footer-description-background` | Background color for descriptions in the footer | `"transparent"` |
 | `$footer-item-background` | Background color for items in the footer | `"transparent"` |
 
-### Progress Bar
+## App-specific variables
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$progress-bar-color` | Color of the progress bar in normal state | `$primary` |
-| `$progress-bar-background` | Background color of the progress bar in normal state | `$surface` |
-| `$progress-bar-complete-color` | Color of the progress bar when complete | `$success` |
-| `$progress-bar-complete-background` | Background color of the progress bar when complete | `$surface` |
-| `$progress-bar-indeterminate-color` | Color of the progress bar in indeterminate state | `$error` |
-| `$progress-bar-indeterminate-background` | Background color of the progress bar in indeterminate state | `$surface` |
+The variables above are defined and used by Textual itself.
+However, you may also wish to expose other variables which are specific to your application.
+
+You can do this by overriding `App.get_theme_variable_defaults` in your `App` subclass.
+
+This method should return a dictionary of variable names and their default values.
+If a variable defined in this dictionary is also defined in a theme's `variables` dictionary, the theme's value will be used.
 
 ## Previewing colors
 

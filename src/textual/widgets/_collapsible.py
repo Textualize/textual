@@ -24,8 +24,8 @@ class CollapsibleTitle(Static, can_focus=True):
     }
 
     CollapsibleTitle:hover {
-        background: $foreground 10%;
-        color: $text;
+        background: $block-hover-background;
+        color: $foreground;
     }
 
     CollapsibleTitle:focus {

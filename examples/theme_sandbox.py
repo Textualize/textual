@@ -12,6 +12,7 @@ from textual.widgets import (
     Collapsible,
     DataTable,
     Footer,
+    Header,
     Input,
     Label,
     ListItem,
@@ -247,6 +248,7 @@ class ChangingThemeApp(App[None]):
         print(theme_name)
 
     def compose(self) -> ComposeResult:
+        self.title = "Theme Sandbox"
         with Grid(id="palette"):
             theme = self.current_theme
             for variable, value in vars(theme).items():
@@ -259,6 +261,9 @@ class ChangingThemeApp(App[None]):
                 }:
                     yield ColorSample(f"{variable}", classes=variable)
 
+        header = Header(show_clock=True, icon="🐟")
+        header.tall = True
+        yield header
         yield ThemeList(id="theme-list")
         with VerticalScroll(id="widget-list") as container:
             container.can_focus = False
