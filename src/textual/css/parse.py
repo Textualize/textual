@@ -362,7 +362,6 @@ def substitute_references(
     """
     variables: dict[str, list[Token]] = css_variables.copy() if css_variables else {}
     iter_tokens = iter(tokens)
-    print(variables)
 
     while True:
         token = next(iter_tokens, None)
