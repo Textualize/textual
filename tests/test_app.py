@@ -3,6 +3,7 @@ import contextlib
 from rich.terminal_theme import DIMMED_MONOKAI, MONOKAI, NIGHT_OWLISH
 
 from textual.app import App, ComposeResult
+from textual.command import SimpleCommand
 from textual.widgets import Button, Input, Static
 
 
@@ -167,9 +168,8 @@ async def test_early_exit():
 
 def test_early_exit_inline():
     """Test exiting early in inline mode doesn't break."""
-    from textual.app import App
 
-    class AppExit(App):
+    class AppExit(App[None]):
         def compose(self):
             yield Static("Hello")
 
@@ -179,3 +179,51 @@ def test_early_exit_inline():
 
     app = AppExit()
     app.run(inline=True, inline_no_clear=True)
+
+
+async def test_search_with_simple_commands():
+    """Test search with a list of SimpleCommands and ensure callbacks are invoked."""
+    called = False
+
+    def callback():
+        nonlocal called
+        called = True
+
+    app = App[None]()
+    commands = [
+        SimpleCommand("Test Command", callback, "A test command"),
+        SimpleCommand("Another Command", callback, "Another test command"),
+    ]
+    async with app.run_test() as pilot:
+        await app.search(commands)
+        await pilot.press("enter", "enter")
+        assert called
+
+
+async def test_search_with_tuples():
+    """Test search with a list of tuples and ensure callbacks are invoked.
+    In this case we also have no help text in the tuples.
+    """
+    called = False
+
+    def callback():
+        nonlocal called
+        called = True
+
+    app = App[None]()
+    commands = [
+        ("Test Command", callback),
+        ("Another Command", callback),
+    ]
+    async with app.run_test() as pilot:
+        await app.search(commands)
+        await pilot.press("enter", "enter")
+        assert called
+
+
+async def test_search_with_empty_list():
+    """Test search with an empty command list doesn't crash."""
+    app = App[None]()
+    async with app.run_test() as pilot:
+        await app.search([])
+        await pilot.press("escape")

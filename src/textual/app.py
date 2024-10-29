@@ -1655,7 +1655,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def search(
         self,
-        commands: list[CommandListItem],
+        commands: Sequence[CommandListItem],
         placeholder: str = "Search for commands…",
     ) -> AwaitMount:
         """Show a list of commands in the app.
