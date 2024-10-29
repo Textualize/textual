@@ -8,6 +8,7 @@ from rich.traceback import Traceback
 
 from textual import containers
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.demo.data import COUNTRIES
 from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
@@ -236,7 +237,7 @@ class ListViews(containers.VerticalGroup):
 ## List Views and Option Lists
 
 A List View turns any widget in to a user-navigable and selectable list.
-An Option List for a for field to present a list of strings to select from.
+An Option List for a field to present a list of strings to select from.
 
     """
 
@@ -272,7 +273,7 @@ class Logs(containers.VerticalGroup):
     LOGS_MD = """\
 ## Logs and Rich Logs
 
-A Log widget to efficiently display a scrolling view of text, with optional highlighted.
+A Log widget to efficiently display a scrolling view of text, with optional highlighting.
 And a RichLog widget to display Rich renderables.
 
 """
@@ -446,7 +447,7 @@ class WidgetsScreen(PageScreen):
     }
     """
 
-    BINDINGS = [("escape", "unfocus", "Unfocus any focused widget")]
+    BINDINGS = [Binding("escape", "unfocus", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
         with containers.VerticalScroll() as container:
