@@ -159,7 +159,7 @@ class StarCount(Vertical):
         """Worker to get stars from GitHub API."""
         if not HTTPX_AVAILABLE:
             self.notify(
-                "Install httpx with to update stars from the GitHub API.\n\n$ [b]pip install httpx[/b]",
+                "Install httpx to update stars from the GitHub API.\n\n$ [b]pip install httpx[/b]",
                 title="GitHub Stars",
             )
             return
