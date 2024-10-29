@@ -1170,7 +1170,10 @@ class App(Generic[ReturnType], DOMNode):
         # Build the Textual color system from the theme.
         # This will contain $secondary, $primary, $background, etc.
         variables = theme.to_color_system().generate()
-        return {**self.get_theme_variable_defaults(), **variables}
+        # Apply the additional variables from the theme
+        variables = {**variables, **(theme.variables)}
+        theme_variables = self.get_theme_variable_defaults()
+        return {**theme_variables, **variables}
 
     def get_theme(self, theme_name: str) -> Theme | None:
         """Get a theme by name.
@@ -1234,8 +1237,7 @@ class App(Generic[ReturnType], DOMNode):
 
         This method is called when the theme reactive attribute is set.
         """
-        theme = self.get_theme(theme_name)
-        assert theme is not None  # validated by _validate_theme
+        theme = self.current_theme
         dark = theme.dark
         self.ansi_color = theme_name == "textual-ansi"
         self.set_class(dark, "-dark-mode", update=False)

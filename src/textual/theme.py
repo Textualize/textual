@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import partial
 from typing import Callable
 
@@ -34,7 +34,7 @@ class Theme:
     dark: bool = True
     luminosity_spread: float = 0.15
     text_alpha: float = 0.95
-    variables: dict[str, str] | None = None
+    variables: dict[str, str] = field(default_factory=dict)
 
     def to_color_system(self) -> ColorSystem:
         """

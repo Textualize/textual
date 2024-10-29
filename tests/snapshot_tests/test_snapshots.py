@@ -33,6 +33,7 @@ from textual.widgets import (
     TextArea,
 )
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
+from textual.theme import Theme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -2452,5 +2453,59 @@ def test_themes(snap_compare, theme_name):
 
         def on_mount(self) -> None:
             self.theme = theme_name
+
+    assert snap_compare(ThemeApp())
+
+
+def test_custom_theme_with_variables(snap_compare):
+    """Test creating and using a custom theme with variables that get overridden.
+
+    After the overrides from the theme, the background should be blue, the text should be white, the border should be yellow,
+    the style should be bold italic, and the label should be cyan.
+    """
+
+    class ThemeApp(App[None]):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        
+        Label {
+            background: $custom-background;
+            color: $custom-text;
+            border: wide $custom-border;
+            padding: 1 2;
+            text-style: $custom-style;
+            text-align: center;
+            width: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Custom Theme")
+
+        def get_theme_variable_defaults(self) -> dict[str, str]:
+            """Override theme variables."""
+            return {
+                "custom-text": "cyan",
+                "custom-style": "bold italic",
+                "custom-border": "red",
+                "custom-background": "#0000ff 50%",
+            }
+
+        def on_mount(self) -> None:
+            custom_theme = Theme(
+                name="my-custom",
+                primary="magenta",
+                background="black",
+                variables={
+                    "custom-background": "#ff0000 20%",
+                    "custom-text": "white",
+                    "custom-border": "yellow",
+                    "custom-style": "bold",
+                },
+            )
+            self.register_theme(custom_theme)
+            self.theme = "my-custom"
 
     assert snap_compare(ThemeApp())
