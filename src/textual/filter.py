@@ -184,6 +184,7 @@ class DimFilter(LineFilter):
             dim_factor: The factor to dim by; 0 is 100% background (i.e. invisible), 1.0 is no change.
         """
         self.dim_factor = dim_factor
+        super().__init__()
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
