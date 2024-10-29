@@ -1,7 +1,12 @@
 import asyncio
 from importlib.metadata import version
 
-import httpx
+try:
+    import httpx
+
+    HTTPX_AVAILABLE = True
+except ImportError:
+    HTTPX_AVAILABLE = False
 
 from textual import work
 from textual.app import ComposeResult
@@ -152,6 +157,12 @@ class StarCount(Vertical):
     @work
     async def get_stars(self):
         """Worker to get stars from GitHub API."""
+        if not HTTPX_AVAILABLE:
+            self.notify(
+                "Install httpx to update stars from the GitHub API.\n\n$ [b]pip install httpx[/b]",
+                title="GitHub Stars",
+            )
+            return
         self.loading = True
         try:
             await asyncio.sleep(1)  # Time to admire the loading indicator
