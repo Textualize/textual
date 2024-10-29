@@ -177,14 +177,14 @@ def dim_style(style: Style, background: Color, factor: float) -> Style:
 class DimFilter(LineFilter):
     """Replace dim attributes with modified colors."""
 
-    def __init__(self, dim_factor: float = 0.5) -> None:
+    def __init__(self, dim_factor: float = 0.5, enabled: bool = True) -> None:
         """Initialize the filter.
 
         Args:
             dim_factor: The factor to dim by; 0 is 100% background (i.e. invisible), 1.0 is no change.
         """
         self.dim_factor = dim_factor
-        super().__init__()
+        super().__init__(enabled=enabled)
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
