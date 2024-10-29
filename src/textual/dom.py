@@ -1592,9 +1592,9 @@ class DOMNode(MessagePump):
             Self.
         """
         if add:
-            self.add_class(*class_names, update=update)
+            self.add_class(*class_names, update=update and self.is_attached)
         else:
-            self.remove_class(*class_names, update=update)
+            self.remove_class(*class_names, update=update and self.is_attached)
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> Self:

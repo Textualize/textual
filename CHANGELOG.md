@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+- Fixed broken focus-within https://github.com/Textualize/textual/pull/5190
+
 ## [0.85.1] - 2024-10-26
 
 ### Fixed
