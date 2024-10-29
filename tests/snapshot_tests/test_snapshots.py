@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
@@ -2416,3 +2418,39 @@ def test_split_segments_infinite_loop(snap_compare):
 
     """
     assert snap_compare(SNAPSHOT_APPS_DIR / "split_segments.py")
+
+
+@pytest.mark.parametrize("theme_name", ["nord", "gruvbox"])
+def test_themes(snap_compare, theme_name):
+    """Test setting different themes and custom theme variables.
+
+    The colors from the theme should be clear, and the text-style of the label
+    should be bold italic, since that's set in the custom theme variable.
+    """
+
+    class ThemeApp(App[None]):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        
+        Label {
+            background: $panel;
+            color: $text;
+            padding: 1 2;
+            border: wide $primary;
+            text-style: $theme-label-style;
+        }
+        """
+
+        def get_theme_variable_defaults(self) -> dict[str, str]:
+            """Define a custom theme variable."""
+            return {"theme-label-style": "bold italic", "unused": "red"}
+
+        def compose(self) -> ComposeResult:
+            yield Label(f"{theme_name.title()} Theme")
+
+        def on_mount(self) -> None:
+            self.theme = theme_name
+
+    assert snap_compare(ThemeApp())
