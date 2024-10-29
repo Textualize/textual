@@ -5,7 +5,7 @@ from collections import defaultdict
 from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import Iterable, NamedTuple, Sequence, cast
+from typing import Final, Iterable, NamedTuple, Sequence, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -435,7 +435,7 @@ class Stylesheet:
 
     # pseudo classes which iterate over multiple nodes
     # These shouldn't be used in a cache key
-    EXCLUDE_PSEUDO_CLASSES_FROM_CACHE = {
+    _EXCLUDE_PSEUDO_CLASSES_FROM_CACHE: Final[set[str]] = {
         "first-of-type",
         "last-of_type",
         "odd",
@@ -488,7 +488,7 @@ class Stylesheet:
         cache_key: tuple | None = None
 
         if cache is not None and all_pseudo_classes.isdisjoint(
-            self.EXCLUDE_PSEUDO_CLASSES_FROM_CACHE
+            self._EXCLUDE_PSEUDO_CLASSES_FROM_CACHE
         ):
             cache_key = (
                 node._parent,
