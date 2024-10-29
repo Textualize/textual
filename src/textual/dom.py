@@ -40,9 +40,10 @@ from textual.css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from textual.css.errors import DeclarationError, StyleValueError
 from textual.css.match import match
 from textual.css.parse import parse_declarations, parse_selectors
-from textual.css.query import NoMatches, TooManyMatches
+from textual.css.query import InvalidQueryFormat, NoMatches, TooManyMatches
 from textual.css.styles import RenderStyles, Styles
 from textual.css.tokenize import IDENTIFIER
+from textual.css.tokenizer import TokenError
 from textual.message_pump import MessagePump
 from textual.reactive import Reactive, ReactiveError, _Mutated, _watch
 from textual.timer import Timer
@@ -1441,7 +1442,12 @@ class DOMNode(MessagePump):
         else:
             query_selector = selector.__name__
 
-        selector_set = parse_selectors(query_selector)
+        try:
+            selector_set = parse_selectors(query_selector)
+        except TokenError:
+            raise InvalidQueryFormat(
+                f"Unable to parse {query_selector!r} as a query; check for syntax errors"
+            ) from None
 
         if all(selectors.is_simple for selectors in selector_set):
             cache_key = (self._nodes._updates, query_selector, expect_type)
@@ -1505,7 +1511,12 @@ class DOMNode(MessagePump):
         else:
             query_selector = selector.__name__
 
-        selector_set = parse_selectors(query_selector)
+        try:
+            selector_set = parse_selectors(query_selector)
+        except TokenError:
+            raise InvalidQueryFormat(
+                f"Unable to parse {query_selector!r} as a query; check for syntax errors"
+            ) from None
 
         if all(selectors.is_simple for selectors in selector_set):
             cache_key = (self._nodes._updates, query_selector, expect_type)
