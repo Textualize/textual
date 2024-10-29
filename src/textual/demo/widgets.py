@@ -236,7 +236,7 @@ class ListViews(containers.VerticalGroup):
 ## List Views and Option Lists
 
 A List View turns any widget in to a user-navigable and selectable list.
-An Option List for a for field to present a list of strings to select from.
+An Option List for a field to present a list of strings to select from.
 
     """
 
@@ -272,7 +272,7 @@ class Logs(containers.VerticalGroup):
     LOGS_MD = """\
 ## Logs and Rich Logs
 
-A Log widget to efficiently display a scrolling view of text, with optional highlighted.
+A Log widget to efficiently display a scrolling view of text, with optional highlighting.
 And a RichLog widget to display Rich renderables.
 
 """
