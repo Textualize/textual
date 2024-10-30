@@ -16,24 +16,6 @@ class ListItem(Widget, can_focus=False):
     documentation for more details on use.
     """
 
-    DEFAULT_CSS = """
-    ListItem {
-        height: auto;
-        overflow: hidden hidden;
-        background: $surface;
-
-        & > :disabled {
-            background: $background;
-        }
-        & > Widget {
-            height: auto;
-            & :hover {
-                background: $block-hover-background;
-            }
-        }
-    }
-    """
-
     highlighted = reactive(False)
     """Is this item highlighted?"""
 
@@ -48,4 +30,5 @@ class ListItem(Widget, can_focus=False):
         self.post_message(self._ChildClicked(self))
 
     def watch_highlighted(self, value: bool) -> None:
+        print("highlighted", value)
         self.set_class(value, "--highlight")

@@ -31,8 +31,8 @@ class Underline(Widget):
         width: 1fr;
         height: 1;
         & > .underline--bar {
+            color: $block-cursor-background;
             background: $foreground 10%;
-            color: $block-cursor-blurred-background;
         }
     }
     """
@@ -91,8 +91,8 @@ class Tab(Static):
     DEFAULT_CSS = """
     Tab {
         width: auto;
-        height: 2;
-        padding: 1 1 0 2;
+        height: 1;
+        padding: 0 1;
         text-align: center;
         color: $foreground 50%;
 
@@ -201,15 +201,16 @@ class Tabs(Widget, can_focus=True):
     DEFAULT_CSS = """
     Tabs {
         width: 100%;
-        height: 3;
+        height: 2;
 
         &:focus {
             .underline--bar {
-                color: $block-cursor-background;
                 background: $foreground 30%;
             }
             & .-active {
-                text-style: bold;
+                text-style: $block-cursor-text-style;
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
             }
         }
 
@@ -219,7 +220,6 @@ class Tabs(Widget, can_focus=True):
 
         #tabs-list {
             width: auto;
-            min-height: 2;            
         }
         #tabs-list-bar, #tabs-list {
             width: auto;

@@ -28,14 +28,22 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     DEFAULT_CSS = """
     ListView {
         background: transparent;
-        & > ListItem.--highlight {
-            color: $block-cursor-foreground;
-            background: $block-cursor-blurred-background;
-        }
         &:focus-within {
             background-tint: $foreground 5%;
         }
-        &:focus .--highlight {
+
+        & > ListItem {
+            color: $foreground;
+            height: auto;
+            overflow: hidden hidden;
+            
+            &.--highlight {
+                color: $block-cursor-foreground;
+                background: $block-cursor-blurred-background;
+            }
+        }
+
+        &:focus > ListItem.--highlight {
             color: $block-cursor-foreground;
             background: $block-cursor-background;
             text-style: $block-cursor-text-style;
