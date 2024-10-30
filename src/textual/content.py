@@ -193,6 +193,11 @@ class Span(NamedTuple):
     end: int
     style: Style
 
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.start
+        yield self.end
+        yield "style", self.style
+
     def extend(self, cells: int) -> "Span":
         """Extend the span by the given number of cells.
 
@@ -780,7 +785,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
         "will", Style(background=Color.parse("rgba(255, 255, 20, 0.3)"))
     )
 
-    lines = content.wrap(40, justify="center")
+    lines = content.wrap(40, justify="full")
     print(lines)
     print("x" * 40)
     for line in lines:
