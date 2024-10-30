@@ -55,20 +55,9 @@ def _justify_lines(
         lines = [line.truncate(width, overflow=overflow, pad=True) for line in lines]
 
     elif justify == "center":
-        lines = [
-            line.rstrip()
-            .truncate(width, overflow=overflow)
-            .pad_left((width - cell_len(line.plain)) // 2)
-            .pad_right(width - cell_len(line.plain))
-            for line in lines
-        ]
+        lines = [line.center(width) for line in lines]
     elif justify == "right":
-        lines = [
-            line.rstrip()
-            .truncate(width, overflow=overflow)
-            .pad_left(width - cell_len(line.plain))
-            for line in lines
-        ]
+        lines = [line.right(width) for line in lines]
 
     elif justify == "full":
         new_lines = lines.copy()
@@ -379,6 +368,17 @@ class Content:
             return Content(f"{self.plain}{character * count}", self._spans)
         return self
 
+    def center(self, width: int, overflow: OverflowMethod = "fold") -> Content:
+        content = self.rstrip().truncate(width, overflow=overflow)
+        content = content.pad_left((width - content.cell_length) // 2)
+        content = content.pad_right(width - content.cell_length)
+        return content
+
+    def right(self, width: int, overflow: OverflowMethod = "fold") -> Content:
+        content = self.rstrip().truncate(width, overflow=overflow)
+        content = content.pad_left(width - content.cell_length)
+        return content
+
     def right_crop(self, amount: int = 1) -> Content:
         """Remove a number of characters from the end of the text."""
         max_offset = len(self.plain) - amount
@@ -656,6 +656,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
     content = content.highlight_regex("F..r", Style(bold=True))
 
     lines = content.wrap(30, justify="left")
+    print("x" * 30)
     for line in lines:
         segments = Segments(line.render_segments(Style()))
         print(segments)
