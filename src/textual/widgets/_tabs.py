@@ -105,9 +105,6 @@ class Tab(Static):
 
         &.-active {
             color: $foreground;
-            &:hover {
-                color: $foreground;
-            }
         }
         &.-hidden {
             display: none;
