@@ -26,7 +26,7 @@ class ListItem(Widget, can_focus=False):
             self.item = item
             super().__init__()
 
-    async def _on_click(self, _: events.Click) -> None:
+    def _on_click(self, _: events.Click) -> None:
         self.post_message(self._ChildClicked(self))
 
     def watch_highlighted(self, value: bool) -> None:

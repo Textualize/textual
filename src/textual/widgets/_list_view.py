@@ -27,7 +27,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     DEFAULT_CSS = """
     ListView {
-        background: transparent;
+        background: $surface;
         &:focus-within {
             background-tint: $foreground 5%;
         }
@@ -43,7 +43,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             }
         }
 
-        &:focus > ListItem.--highlight {
+        &:focus > ListItem.--highlight Widget {
             color: $block-cursor-foreground;
             background: $block-cursor-background;
             text-style: $block-cursor-text-style;
