@@ -44,7 +44,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             }
         }
 
-        &:focus > ListItem.--highlight Widget {
+        &:focus > ListItem.--highlight > Widget {
+            width: 1fr;
             color: $block-cursor-foreground;
             background: $block-cursor-background;
             text-style: $block-cursor-text-style;
