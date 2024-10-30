@@ -160,6 +160,21 @@ class Span(NamedTuple):
     end: int
     style: Style
 
+    def extend(self, cells: int) -> "Span":
+        """Extend the span by the given number of cells.
+
+        Args:
+            cells (int): Additional space to add to end of span.
+
+        Returns:
+            Span: A span.
+        """
+        if cells:
+            start, end, style = self
+            return Span(start, end + cells, style)
+        else:
+            return self
+
 
 @rich.repr.auto
 class Content:
@@ -598,17 +613,74 @@ class Content:
                 return self.right_crop(min(whitespace_count, excess))
         return self
 
+    def extend_style(self, spaces: int) -> Content:
+        """Extend the Text given number of spaces where the spaces have the same style as the last character.
+
+        Args:
+            spaces (int): Number of spaces to add to the Text.
+        """
+        if spaces <= 0:
+            return self
+        spans = self._spans
+        new_spaces = " " * spaces
+        if spans:
+            end_offset = len(self)
+            spans = [
+                span.extend(spaces) if span.end >= end_offset else span
+                for span in spans
+            ]
+            return Content(self._text + new_spaces, spans, self.cell_length + spaces)
+        return Content(self._text + new_spaces, self._spans, self._cell_length)
+
+    def expand_tabs(self, tab_size: int = 8) -> Content:
+        """Converts tabs to spaces.
+
+        Args:
+            tab_size (int, optional): Size of tabs. Defaults to 8.
+
+        """
+        if "\t" not in self.plain:
+            return self
+
+        new_text: list[Content] = []
+        append = new_text.append
+
+        for line in self.split("\n", include_separator=True):
+            if "\t" not in line.plain:
+                append(line)
+            else:
+                cell_position = 0
+                parts = line.split("\t", include_separator=True)
+                for part in parts:
+                    if part.plain.endswith("\t"):
+                        part = Content(
+                            part._text[-1][:-1] + " ", part._spans, part._cell_length
+                        )
+                        cell_position += part.cell_length
+                        tab_remainder = cell_position % tab_size
+                        if tab_remainder:
+                            spaces = tab_size - tab_remainder
+                            part = part.extend_style(spaces)
+                            cell_position += spaces
+                    else:
+                        cell_position += part.cell_length
+                    append(part)
+
+        content = Content("").join(new_text)
+        return content
+
     def wrap(
         self,
         width: int,
         justify: JustifyMethod = "left",
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
+        tab_size: int = 8,
     ) -> list[Content]:
         lines: list[Content] = []
         for line in self.split(allow_blank=True):
-            # if "\t" in line:
-            #     line.expand_tabs(tab_size)
+            if "\t" in line._text:
+                line = line.expand_tabs(tab_size)
             if no_wrap:
                 new_lines = [line]
             else:
