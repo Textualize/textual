@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cached_property, lru_cache
 from itertools import zip_longest
 from marshal import loads
 from operator import itemgetter
@@ -27,7 +27,7 @@ from rich.style import Style as RichStyle
 
 from textual._cells import cell_len
 from textual._loop import loop_last
-from textual.color import Color
+from textual.color import TRANSPARENT, Color
 
 _re_whitespace = re.compile(r"\s+$")
 
@@ -35,16 +35,19 @@ _re_whitespace = re.compile(r"\s+$")
 def _justify_lines(
     lines: list[Content],
     width: int,
+    base_style: Style,
     justify: "JustifyMethod" = "left",
     overflow: "OverflowMethod" = "fold",
 ) -> list[Content]:
     """Justify and overflow text to a given width.
 
     Args:
-        console (Console): Console instance.
         width (int): Number of cells available per line.
         justify (str, optional): Default justify method for text: "left", "center", "full" or "right". Defaults to "left".
         overflow (str, optional): Default overflow for text: "crop", "fold", or "ellipsis". Defaults to "fold".
+
+    Returns:
+        List of new lines.
 
     """
 
@@ -58,14 +61,15 @@ def _justify_lines(
         lines = [line.center(width) for line in lines]
     elif justify == "right":
         lines = [line.right(width) for line in lines]
-
     elif justify == "full":
         new_lines = lines.copy()
         for line_index, line in enumerate(new_lines):
-            words = line.split(" ")
-            words_size = sum(cell_len(word.plain) for word in words)
+            if line_index == len(lines) - 1:
+                break
+            words = line.split(" ", include_separator=True)
+            words_size = sum(cell_len(word.plain.rstrip(" ")) for word in words)
             num_spaces = len(words) - 1
-            spaces = [1 for _ in range(num_spaces)]
+            spaces = [0 for _ in range(num_spaces)]
             index = 0
             if spaces:
                 while words_size + num_spaces < width:
@@ -76,12 +80,25 @@ def _justify_lines(
             for index, (word, next_word) in enumerate(zip_longest(words, words[1:])):
                 tokens.append(word)
                 if index < len(spaces):
-                    end_style = next_word.get_style_at_offset(-1)
-                    tokens.append(
-                        Content(" " * spaces[index], [Span(0, index, end_style)])
-                    )
+                    style = word.get_style_at_offset(-1)
+                    next_style = next_word.get_style_at_offset(0)
 
+                    space_style = style
+
+                    tokens.append(
+                        Content(
+                            " " * spaces[index],
+                            [
+                                Span(
+                                    0,
+                                    spaces[index],
+                                    space_style,
+                                )
+                            ],
+                        )
+                    )
             new_lines[line_index] = Content("").join(tokens)
+        print(new_lines)
         return new_lines
     return lines
 
@@ -91,8 +108,8 @@ def _justify_lines(
 class Style:
     """Represent a content style (color and other attributes)."""
 
-    background: Color = Color(0, 0, 0, ansi=-1)
-    foreground: Color = Color(255, 255, 255, ansi=-1)
+    background: Color = TRANSPARENT
+    foreground: Color = TRANSPARENT
     bold: bool | None = None
     dim: bool | None = None
     italic: bool | None = None
@@ -102,8 +119,8 @@ class Style:
     _meta: bytes | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.background
-        yield self.foreground
+        yield None, self.background
+        yield None, self.foreground
         yield "bold", self.bold, None
         yield "dim", self.dim, None
         yield "italic", self.italic, None
@@ -116,7 +133,7 @@ class Style:
             return NotImplemented
         new_style = Style(
             self.background + other.background,
-            self.foreground + other.foreground,
+            self.foreground if other.foreground.is_transparent else other.foreground,
             self.bold if other.bold is None else other.bold,
             self.dim if other.dim is None else other.dim,
             self.italic if other.italic is None else other.italic,
@@ -127,10 +144,10 @@ class Style:
         )
         return new_style
 
-    @property
+    @cached_property
     def rich_style(self) -> RichStyle:
         return RichStyle(
-            color=self.foreground.rich_color,
+            color=(self.background + self.foreground).rich_color,
             bgcolor=self.background.rich_color,
             bold=self.bold,
             dim=self.dim,
@@ -139,6 +156,17 @@ class Style:
             strike=self.strike,
             link=self.link,
             meta=self.meta,
+        )
+
+    @cached_property
+    def without_color(self) -> Style:
+        return Style(
+            bold=self.bold,
+            dim=self.dim,
+            italic=self.italic,
+            strike=self.strike,
+            link=self.link,
+            _meta=self._meta,
         )
 
     @classmethod
@@ -151,6 +179,11 @@ class Style:
     def meta(self) -> dict[str, Any]:
         """Get meta information (can not be changed after construction)."""
         return {} if self._meta is None else cast(dict[str, Any], loads(self._meta))
+
+
+ANSI_DEFAULT = Style(
+    background=Color(0, 0, 0, 0, ansi=-1), foreground=Color(0, 0, 0, 0, ansi=-1)
+)
 
 
 class Span(NamedTuple):
@@ -307,7 +340,7 @@ class Content:
                 _Span(offset + start, offset + end, style)
                 for start, end, style in content._spans
             )
-            offset += len(text)
+            offset += len(content._text)
         return Content("".join(text), spans, offset)
 
     def get_style_at_offset(self, offset: int) -> Style:
@@ -562,7 +595,7 @@ class Content:
             allow_blank (bool, optional): Return a blank line if the text ends with a separator. Defaults to False.
 
         Returns:
-            List[RichText]: A list of rich text, one per line of the original.
+            List[Content]: A list of Content, one per line of the original.
         """
         assert separator, "separator must not be empty"
 
@@ -578,9 +611,7 @@ class Content:
 
             def flatten_spans() -> Iterable[int]:
                 for match in re.finditer(re.escape(separator), text):
-                    start, end = match.span()
-                    yield start
-                    yield end
+                    yield from match.span()
 
             lines = [
                 line
@@ -676,6 +707,7 @@ class Content:
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,
+        base_style: Style = Style(),
     ) -> list[Content]:
         lines: list[Content] = []
         for line in self.split(allow_blank=True):
@@ -688,7 +720,11 @@ class Content:
                 new_lines = line.divide(offsets)
             new_lines = [line.rstrip_end(width) for line in new_lines]
             new_lines = _justify_lines(
-                new_lines, width, justify=justify, overflow=overflow
+                new_lines,
+                width,
+                base_style,
+                justify=justify,
+                overflow=overflow,
             )
             new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
             lines.extend(new_lines)
@@ -707,7 +743,6 @@ class Content:
             re_highlight = re.compile(re_highlight)
         for match in re_highlight.finditer(plain):
             start, end = match.span()
-
             if end > start:
                 append_span(_Span(start, end, style))
         return Content(self._text, spans)
@@ -725,10 +760,29 @@ And when it has gone past, I will turn the inner eye to see its path.
 Where the fear has gone there will be nothing. Only I will remain."""
 
     content = Content(TEXT)
-    content = content.highlight_regex("F..r", Style(bold=True))
+    content = content.stylize(
+        Style(Color.parse("rgb(50,50,80)"), Color.parse("rgba(255,255,255,0.7)"))
+    )
 
-    lines = content.wrap(30, justify="left")
-    print("x" * 30)
+    content = content.highlight_regex(
+        "F..r", Style(background=Color.parse("rgba(255, 255, 255, 0.3)"))
+    )
+
+    content = content.highlight_regex(
+        "is", Style(background=Color.parse("rgba(20, 255, 255, 0.3)"))
+    )
+
+    content = content.highlight_regex(
+        "the", Style(background=Color.parse("rgba(255, 20, 255, 0.3)"))
+    )
+
+    content = content.highlight_regex(
+        "will", Style(background=Color.parse("rgba(255, 255, 20, 0.3)"))
+    )
+
+    lines = content.wrap(40, justify="center")
+    print(lines)
+    print("x" * 40)
     for line in lines:
-        segments = Segments(line.render_segments(Style()))
+        segments = Segments(line.render_segments(ANSI_DEFAULT))
         print(segments)
