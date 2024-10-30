@@ -60,7 +60,13 @@ class ToggleButton(Static, can_focus=True):
         background: $surface;
 
         & > .toggle--button {
-            color: $surface;
+            color: $surface-darken-1;
+            background: $panel;
+        }
+
+        &.-on > .toggle--button {
+            color: $success;
+            background: $panel;
         }
 
         &:focus {
@@ -72,7 +78,7 @@ class ToggleButton(Static, can_focus=True):
                 text-style: $block-cursor-text-style;
             }
             & > .toggle--button {
-                background: $foreground 25%;
+                background: $panel-lighten-1;
             }
             &:hover {
                 & > .toggle--label {
@@ -85,15 +91,9 @@ class ToggleButton(Static, can_focus=True):
             & > .toggle--label {
                 background: $block-hover-background;
             }
-            & > .toggle--button {
-                background: $foreground 25%;
-            }
         }
 
     }
-
-
-
 
     /* Base button colors (including in dark themes). */
 
@@ -102,9 +102,6 @@ class ToggleButton(Static, can_focus=True):
         background: $foreground 15%;
     }
 
-    ToggleButton.-on > .toggle--button {
-        color: $success;
-    }
 
     ToggleButton.-on:focus > .toggle--button {
         background: $foreground 25%;
