@@ -93,6 +93,7 @@ class Tab(Static):
         width: auto;
         height: 1;
         padding: 0 1;
+        margin: 0 1;
         text-align: center;
         color: $foreground 50%;
 
@@ -199,7 +200,6 @@ class Tabs(Widget, can_focus=True):
     Tabs {
         width: 100%;
         height: 2;
-
         &:focus {
             .underline--bar {
                 background: $foreground 30%;

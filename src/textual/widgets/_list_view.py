@@ -36,6 +36,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             color: $foreground;
             height: auto;
             overflow: hidden hidden;
+            width: 1fr;
             
             &.--highlight {
                 color: $block-cursor-foreground;
