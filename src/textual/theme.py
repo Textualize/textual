@@ -73,6 +73,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         success="#4EBF71",
         foreground="#e0e0e0",
         dark=True,
+        variables={
+            "button-foreground": "#121212",
+        },
     ),
     "textual-light": Theme(
         name="textual-light",
@@ -83,6 +86,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#ba3c5b",
         success="#4EBF71",
         dark=False,
+        variables={
+            "button-foreground": "#efefef",
+        },
     ),
     "nord": Theme(
         name="nord",
@@ -103,6 +109,8 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-text-style": "none",
             "footer-key-foreground": "#88C0D0",
             "input-selection-background": "#81a1c1 35%",
+            "button-foreground": "#2E3440",
+            "button-focus-text-style": "reverse",
         },
     ),
     "gruvbox": Theme(
@@ -121,6 +129,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         variables={
             "block-cursor-foreground": "#fbf1c7",
             "input-selection-background": "#689d6a40",
+            "button-foreground": "#282828",
         },
     ),
     "catppuccin-mocha": Theme(
@@ -145,6 +154,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "footer-background": "#45475a",
             "block-cursor-foreground": "#1e1e2e",
             "block-cursor-text-style": "none",
+            "button-foreground": "#181825",
         },
     ),
     "textual-ansi": Theme(
@@ -175,6 +185,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="#313442",
         foreground="#F8F8F2",
         dark=True,
+        variables={
+            "button-foreground": "#282A36",
+        },
     ),
     "tokyo-night": Theme(
         name="tokyo-night",
@@ -189,6 +202,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#24283B",  # Surface
         panel="#414868",  # Panel
         dark=True,
+        variables={
+            "button-foreground": "#24283B",
+        },
     ),
     "monokai": Theme(
         name="monokai",
@@ -206,6 +222,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         variables={
             "foreground-muted": "#797979",
             "input-selection-background": "#575b6190",
+            "button-foreground": "#272822",
         },
     ),
     "cobalt": Theme(
@@ -220,7 +237,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#27343B",
         panel="#2D3E46",
         background="#1F262A",
-        variables={},
+        variables={
+            "button-foreground": "#1F262A",
+        },
     ),
     "flexoki": Theme(
         name="flexoki",
@@ -239,6 +258,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "input-cursor-foreground": "#5E409D",
             "input-cursor-background": "#FFFCF0",
             "input-selection-background": "#6F6E69 35%",  # base.600 with opacity
+            "button-foreground": "#FFFCF0",
         },
     ),
     "catppuccin-latte": Theme(
@@ -254,7 +274,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#E6E9EF",
         panel="#CCD0DA",
         dark=False,
-        variables={},
+        variables={
+            "button-foreground": "#EFF1F5",
+        },
     ),
     "solarized-light": Theme(
         name="solarized-light",
@@ -269,6 +291,12 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#eee8d5",
         panel="#eee8d5",
         dark=False,
+        variables={
+            "button-foreground": "#fdf6e3",
+            "footer-background": "#268bd2",
+            "footer-key-foreground": "#fdf6e3",
+            "footer-description-foreground": "#fdf6e3",
+        },
     ),
 }
 
