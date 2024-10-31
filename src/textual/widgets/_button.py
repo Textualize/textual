@@ -48,8 +48,8 @@ class Button(Widget, can_focus=True):
         width: auto;
         min-width: 16;
         height: auto;
-        background: $surface;
         color: $button-foreground;
+        background: $surface;
         border: none;
         border-top: tall $surface-lighten-1;
         border-bottom: tall $surface-darken-1;
@@ -72,6 +72,7 @@ class Button(Widget, can_focus=True):
         }
 
         &.-primary {
+            color: $button-color-foreground;
             background: $primary;
             border-top: tall $primary-lighten-3;
             border-bottom: tall $primary-darken-3;
@@ -89,6 +90,7 @@ class Button(Widget, can_focus=True):
         }
 
         &.-success {
+            color: $button-color-foreground;
             background: $success;
             border-top: tall $success-lighten-2;
             border-bottom: tall $success-darken-3;
@@ -106,6 +108,7 @@ class Button(Widget, can_focus=True):
         }
 
         &.-warning{
+            color: $button-color-foreground;
             background: $warning;
             border-top: tall $warning-lighten-2;
             border-bottom: tall $warning-darken-3;
@@ -123,6 +126,7 @@ class Button(Widget, can_focus=True):
         }
 
         &.-error {
+            color: $button-color-foreground;
             background: $error;
             border-top: tall $error-lighten-2;
             border-bottom: tall $error-darken-3;

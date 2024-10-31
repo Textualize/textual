@@ -322,7 +322,10 @@ class ColorSystem:
         colors["markdown-h6-background"] = get("markdown-h6-background", "transparent")
         colors["markdown-h6-text-style"] = get("markdown-h6-text-style", "bold")
 
-        colors["button-foreground"] = get("button-foreground", colors["text"])
+        colors["button-foreground"] = get("button-foreground", foreground.hex)
+        colors["button-color-foreground"] = get(
+            "button-color-foreground", colors["text"]
+        )
         colors["button-focus-text-style"] = get("button-focus-text-style", "b reverse")
 
         return colors
