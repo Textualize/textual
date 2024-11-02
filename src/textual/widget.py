@@ -1559,6 +1559,8 @@ class Widget(DOMNode):
         Returns:
             The height of the content.
         """
+        if not width:
+            return 0
         if self.is_container:
             assert self.layout is not None
             height = self.layout.get_content_height(
@@ -1577,7 +1579,7 @@ class Widget(DOMNode):
             if isinstance(renderable, Text):
                 height = (
                     len(
-                        renderable.wrap(
+                        Text(renderable.plain).wrap(
                             self._console,
                             width,
                             no_wrap=renderable.no_wrap,

@@ -35,7 +35,6 @@ _re_whitespace = re.compile(r"\s+$")
 def _justify_lines(
     lines: list[Content],
     width: int,
-    base_style: Style,
     justify: "JustifyMethod" = "left",
     overflow: "OverflowMethod" = "fold",
 ) -> list[Content]:
@@ -81,10 +80,7 @@ def _justify_lines(
                 tokens.append(word)
                 if index < len(spaces):
                     style = word.get_style_at_offset(-1)
-                    next_style = next_word.get_style_at_offset(0)
-
                     space_style = style
-
                     tokens.append(
                         Content(
                             " " * spaces[index],
@@ -712,7 +708,6 @@ class Content:
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,
-        base_style: Style = Style(),
     ) -> list[Content]:
         lines: list[Content] = []
         for line in self.split(allow_blank=True):
@@ -727,7 +722,6 @@ class Content:
             new_lines = _justify_lines(
                 new_lines,
                 width,
-                base_style,
                 justify=justify,
                 overflow=overflow,
             )
