@@ -599,7 +599,7 @@ class Content(Visual):
         if end:
             yield end, base_style
 
-    def render_segments(self, base_style: Style, end: str = "\n") -> list[Segment]:
+    def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
         _Segment = Segment
         segments = [
             _Segment(text, style.rich_style)
