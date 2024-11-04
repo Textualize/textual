@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from textual.app import RenderResult
 
 from textual.errors import RenderError
+from textual.visual import SupportsTextualize
 from textual.widget import Widget
 
 
@@ -23,9 +24,9 @@ def _check_renderable(renderable: object):
     Raises:
         RenderError: If the object can not be rendered.
     """
-    if not is_renderable(renderable):
+    if not is_renderable(renderable) and not hasattr(renderable, "textualize"):
         raise RenderError(
-            f"unable to render {renderable!r}; a string, Text, or other Rich renderable is required"
+            f"unable to render {renderable.__class__.__name__!r} type; must be a str, Text, Rich renderable oor Textual Visual instance"
         )
 
 
@@ -49,11 +50,11 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    _renderable: RenderableType
+    _renderable: RenderableType | SupportsTextualize
 
     def __init__(
         self,
-        renderable: RenderableType = "",
+        renderable: RenderableType | SupportsTextualize = "",
         *,
         expand: bool = False,
         shrink: bool = False,
@@ -71,11 +72,11 @@ class Static(Widget, inherit_bindings=False):
         _check_renderable(renderable)
 
     @property
-    def renderable(self) -> RenderableType:
+    def renderable(self) -> RenderableType | SupportsTextualize:
         return self._renderable or ""
 
     @renderable.setter
-    def renderable(self, renderable: RenderableType) -> None:
+    def renderable(self, renderable: RenderableType | SupportsTextualize) -> None:
         if isinstance(renderable, str):
             if self.markup:
                 self._renderable = Text.from_markup(renderable)

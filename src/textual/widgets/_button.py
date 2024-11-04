@@ -254,7 +254,7 @@ class Button(Widget, can_focus=True):
             1,
             1,
             self.rich_style,
-            self._get_rich_justify() or "center",
+            self._get_justify_method() or "center",
         )
 
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:

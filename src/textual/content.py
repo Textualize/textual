@@ -11,23 +11,21 @@ TBD: Is this a public facing API or an internal one?
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
-from functools import cached_property, lru_cache
 from itertools import zip_longest
-from marshal import loads
 from operator import itemgetter
-from typing import Any, Iterable, NamedTuple, Sequence, cast
+from typing import Callable, Iterable, NamedTuple, Sequence
 
 import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import JustifyMethod, OverflowMethod
 from rich.segment import Segment, Segments
-from rich.style import Style as RichStyle
 
 from textual._cells import cell_len
 from textual._loop import loop_last
-from textual.color import TRANSPARENT, Color
+from textual.color import Color
+from textual.strip import Strip
+from textual.visual import Style, Visual
 
 _re_whitespace = re.compile(r"\s+$")
 
@@ -99,87 +97,11 @@ def _justify_lines(
     return lines
 
 
-@rich.repr.auto
-@dataclass(frozen=True)
-class Style:
-    """Represent a content style (color and other attributes)."""
-
-    background: Color = TRANSPARENT
-    foreground: Color = TRANSPARENT
-    bold: bool | None = None
-    dim: bool | None = None
-    italic: bool | None = None
-    underline: bool | None = None
-    strike: bool | None = None
-    link: str | None = None
-    _meta: bytes | None = None
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield None, self.background
-        yield None, self.foreground
-        yield "bold", self.bold, None
-        yield "dim", self.dim, None
-        yield "italic", self.italic, None
-        yield "underline", self.underline, None
-        yield "strike", self.strike, None
-
-    @lru_cache(maxsize=1024)
-    def __add__(self, other: object) -> Style:
-        if not isinstance(other, Style):
-            return NotImplemented
-        new_style = Style(
-            self.background + other.background,
-            self.foreground if other.foreground.is_transparent else other.foreground,
-            self.bold if other.bold is None else other.bold,
-            self.dim if other.dim is None else other.dim,
-            self.italic if other.italic is None else other.italic,
-            self.underline if other.underline is None else other.underline,
-            self.strike if other.strike is None else other.strike,
-            self.link if other.link is None else other.link,
-            self._meta if other._meta is None else other._meta,
-        )
-        return new_style
-
-    @cached_property
-    def rich_style(self) -> RichStyle:
-        return RichStyle(
-            color=(self.background + self.foreground).rich_color,
-            bgcolor=self.background.rich_color,
-            bold=self.bold,
-            dim=self.dim,
-            italic=self.italic,
-            underline=self.underline,
-            strike=self.strike,
-            link=self.link,
-            meta=self.meta,
-        )
-
-    @cached_property
-    def without_color(self) -> Style:
-        return Style(
-            bold=self.bold,
-            dim=self.dim,
-            italic=self.italic,
-            strike=self.strike,
-            link=self.link,
-            _meta=self._meta,
-        )
-
-    @classmethod
-    def combine(cls, styles: Iterable[Style]) -> Style:
-        """Add a number of styles and get the result."""
-        iter_styles = iter(styles)
-        return sum(iter_styles, next(iter_styles))
-
-    @property
-    def meta(self) -> dict[str, Any]:
-        """Get meta information (can not be changed after construction)."""
-        return {} if self._meta is None else cast(dict[str, Any], loads(self._meta))
-
-
 ANSI_DEFAULT = Style(
     background=Color(0, 0, 0, 0, ansi=-1), foreground=Color(0, 0, 0, 0, ansi=-1)
 )
+
+TRANSPARENT_STYLE = Style()
 
 
 class Span(NamedTuple):
@@ -187,7 +109,7 @@ class Span(NamedTuple):
 
     start: int
     end: int
-    style: Style
+    style: Style | str
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.start
@@ -211,7 +133,7 @@ class Span(NamedTuple):
 
 
 @rich.repr.auto
-class Content:
+class Content(Visual):
     """Text content with marked up spans.
 
     This object can be considered immutable, although it might update its internal state
@@ -219,20 +141,72 @@ class Content:
 
     """
 
+    __slots__ = ["_text", "_spans", "_cell_length"]
+
     def __init__(
-        self, text: str, spans: list[Span] | None = None, cell_length: int | None = None
+        self,
+        text: str,
+        spans: list[Span] | None = None,
+        cell_length: int | None = None,
     ) -> None:
         self._text: str = text
         self._spans: list[Span] = [] if spans is None else spans
-        assert isinstance(self._spans, list)
-        assert all(isinstance(span, Span) for span in self._spans)
         self._cell_length = cell_length
+
+    @classmethod
+    def styled_text(
+        cls, text: str, style: Style | str = "", cell_length: int | None = None
+    ) -> Content:
+        if not text:
+            return Content("")
+        span_length = cell_len(text) if cell_length is None else cell_length
+        new_content = cls(text, [Span(0, span_length, style)], span_length)
+        return new_content
+
+    def get_optimal_width(self, tab_size: int = 8) -> int:
+        lines = self.without_spans.split("\n")
+        return max(line.expand_tabs(tab_size).cell_length for line in lines)
+
+    def get_minimal_width(self, tab_size: int = 8) -> int:
+        lines = self.without_spans.split("\n")
+        return max([cell_len(word) for line in lines for word in line.plain.split()])
+
+    def textualize(self) -> Content:
+        return self
+
+    def render_strips(
+        self,
+        width: int,
+        *,
+        height: int | None,
+        base_style: Style = Style(),
+        justify: JustifyMethod = "left",
+        overflow: OverflowMethod = "fold",
+        no_wrap: bool = False,
+        tab_size: int = 8,
+    ) -> list[Strip]:
+        lines = self.wrap(
+            width,
+            justify=justify,
+            overflow=overflow,
+            no_wrap=no_wrap,
+            tab_size=tab_size,
+        )
+        if height is not None:
+            lines = lines[:height]
+        return [
+            Strip(line.render_segments(base_style), line.cell_length) for line in lines
+        ]
+
+    def get_height(self, width: int) -> int:
+        lines = self.wrap(width)
+        return len(lines)
 
     def __len__(self) -> int:
         return len(self.plain)
 
     def __bool__(self) -> bool:
-        return self._text == []
+        return self._text == ""
 
     def __hash__(self) -> int:
         return hash(self._text)
@@ -252,6 +226,10 @@ class Content:
     def plain(self) -> str:
         """Get the text as a single string."""
         return self._text
+
+    @property
+    def without_spans(self) -> Content:
+        return Content(self.plain, [], self._cell_length)
 
     def __getitem__(self, slice: int | slice) -> Content:
         def get_text_at(offset: int) -> "Content":
@@ -317,11 +295,47 @@ class Content:
         ]
         return spans
 
+    def append(self, content: Content | str) -> Content:
+        """Append text or content to this content.
+
+        Note this is a little inefficient, if you have many strings to append, consider [`join`][textual.content.Content.join].
+
+        Args:
+            content: A content instance, or a string.
+
+        Returns:
+            New content.
+        """
+        if isinstance(content, str):
+            return Content(
+                self.plain,
+                self._spans,
+                (
+                    None
+                    if self._cell_length is None
+                    else self._cell_length + cell_len(content)
+                ),
+            )
+        return Content("").join([self, content])
+
+    def append_text(self, text: str, style: Style | str = "") -> Content:
+        return self.append(Content.styled_text(text, style))
+
     def join(self, lines: Iterable[Content]) -> Content:
+        """Join an iterable of content.
+
+        Args:
+            lines (_type_): An iterable of content instances.
+
+        Returns:
+            A single Content instance, containing all of the lines.
+
+        """
         text: list[str] = []
         spans: list[Span] = []
 
         def iter_content() -> Iterable[Content]:
+            """Iterate the lines, optionally inserting the separator."""
             if self.plain:
                 for last, line in loop_last(lines):
                     yield line
@@ -335,6 +349,8 @@ class Content:
         offset = 0
         _Span = Span
 
+        total_cell_length: int | None = self._cell_length
+
         for content in iter_content():
             extend_text(content._text)
             extend_spans(
@@ -342,7 +358,14 @@ class Content:
                 for start, end, style in content._spans
             )
             offset += len(content._text)
-        return Content("".join(text), spans, offset)
+            if total_cell_length is not None:
+                total_cell_length = (
+                    None
+                    if content._cell_length is None
+                    else total_cell_length + content._cell_length
+                )
+
+        return Content("".join(text), spans, total_cell_length)
 
     def get_style_at_offset(self, offset: int) -> Style:
         """Get the style of a character at give offset.
@@ -402,7 +425,11 @@ class Content:
                 _Span(start + count, end + count, style)
                 for start, end, style in self._spans
             ]
-            return Content(text, spans)
+            return Content(
+                text,
+                spans,
+                None if self._cell_length is None else self._cell_length + count,
+            )
         return self
 
     def pad_right(self, count: int, character: str = " ") -> Content:
@@ -414,7 +441,11 @@ class Content:
         """
         assert len(character) == 1, "Character must be a string of length 1"
         if count:
-            return Content(f"{self.plain}{character * count}", self._spans)
+            return Content(
+                f"{self.plain}{character * count}",
+                self._spans,
+                None if self._cell_length is None else self._cell_length + count,
+            )
         return self
 
     def center(self, width: int, overflow: OverflowMethod = "fold") -> Content:
@@ -445,7 +476,9 @@ class Content:
         length = None if self._cell_length is None else self._cell_length - amount
         return Content(text, spans, length)
 
-    def stylize(self, style: Style, start: int = 0, end: int | None = None) -> Content:
+    def stylize(
+        self, style: Style | str, start: int = 0, end: int | None = None
+    ) -> Content:
         """Apply a style to the text, or a portion of the text.
 
         Args:
@@ -453,6 +486,8 @@ class Content:
             start (int): Start offset (negative indexing is supported). Defaults to 0.
             end (Optional[int], optional): End offset (negative indexing is supported), or None for end of text. Defaults to None.
         """
+        if not style:
+            return self
         length = len(self)
         if start < 0:
             start = length + start
@@ -468,15 +503,63 @@ class Content:
             [*self._spans, Span(start, length if length < end else end, style)],
         )
 
-    def render(self, base_style: Style, end: str = "\n") -> Iterable[tuple[str, Style]]:
+    def stylize_before(
+        self,
+        style: Style | str,
+        start: int = 0,
+        end: int | None = None,
+    ) -> Content:
+        """Apply a style to the text, or a portion of the text. Styles will be applied before other styles already present.
+
+        Args:
+            style (Union[str, Style]): Style instance or style definition to apply.
+            start (int): Start offset (negative indexing is supported). Defaults to 0.
+            end (Optional[int], optional): End offset (negative indexing is supported), or None for end of text. Defaults to None.
+        """
+        if not style:
+            return self
+        length = len(self)
+        if start < 0:
+            start = length + start
+        if end is None:
+            end = length
+        if end < 0:
+            end = length + end
+        if start >= length or end <= start:
+            # Span not in text or not valid
+            return self
+        return Content(
+            self.plain,
+            [Span(start, length if length < end else end, style), *self._spans],
+        )
+
+    def render(
+        self,
+        base_style: Style,
+        end: str = "\n",
+        parse_style: Callable[[str], Style] | None = None,
+    ) -> Iterable[tuple[str, Style]]:
         if not self._spans:
             yield self._text, base_style
             if end:
                 yield end, base_style
             return
 
+        if parse_style is None:
+
+            def get_style(style: str, /) -> Style:
+                return TRANSPARENT_STYLE if isinstance(style, str) else style
+
+        else:
+            get_style = parse_style
+
         enumerated_spans = list(enumerate(self._spans, 1))
-        style_map = {index: span.style for index, span in enumerated_spans}
+        style_map = {
+            index: (
+                get_style(span.style) if isinstance(span.style, str) else span.style
+            )
+            for index, span in enumerated_spans
+        }
         style_map[0] = base_style
         text = self.plain
 
@@ -625,9 +708,9 @@ class Content:
 
         return lines
 
-    def rstrip(self) -> Content:
-        """Strip whitespace from end of text."""
-        text = self.plain.rstrip()
+    def rstrip(self, chars: str | None = None) -> Content:
+        """Strip characters from end of text."""
+        text = self.plain.rstrip(chars)
         return Content(text, self._trim_spans(text, self._spans))
 
     def rstrip_end(self, size: int) -> Content:
