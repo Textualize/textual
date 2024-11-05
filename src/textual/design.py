@@ -117,6 +117,8 @@ class ColorSystem:
         dark = self.dark
         luminosity_spread = self.luminosity_spread
 
+        colors: dict[str, str] = {}
+
         if dark:
             background = self.background or Color.parse(DEFAULT_DARK_BACKGROUND)
             surface = self.surface or Color.parse(DEFAULT_DARK_SURFACE)
@@ -125,7 +127,16 @@ class ColorSystem:
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
 
         foreground = self.foreground or (background.inverse)
-        boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.04)
+        contrast_text = background.get_contrast_text(1.0)
+        boost = self.boost or contrast_text.with_alpha(0.04)
+
+        # Colored text
+        colors["text-primary"] = contrast_text.tint(primary.with_alpha(0.66)).hex
+        colors["text-secondary"] = contrast_text.tint(secondary.with_alpha(0.66)).hex
+        colors["text-warning"] = contrast_text.tint(warning.with_alpha(0.66)).hex
+        colors["text-error"] = contrast_text.tint(error.with_alpha(0.66)).hex
+        colors["text-success"] = contrast_text.tint(success.with_alpha(0.66)).hex
+        colors["text-accent"] = contrast_text.tint(accent.with_alpha(0.66)).hex
 
         if self.panel is None:
             panel = surface.blend(primary, 0.1, alpha=1)
@@ -133,8 +144,6 @@ class ColorSystem:
                 panel += boost
         else:
             panel = self.panel
-
-        colors: dict[str, str] = {}
 
         def luminosity_range(spread: float) -> Iterable[tuple[str, float]]:
             """Get the range of shades from darken2 to lighten2.
