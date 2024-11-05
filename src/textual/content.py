@@ -75,24 +75,12 @@ def _justify_lines(
                     index = (index + 1) % len(spaces)
             tokens: list[Content] = []
             for index, (word, next_word) in enumerate(zip_longest(words, words[1:])):
-                tokens.append(word)
                 if index < len(spaces):
-                    style = word.get_style_at_offset(-1)
-                    space_style = style
-                    tokens.append(
-                        Content(
-                            " " * spaces[index],
-                            [
-                                Span(
-                                    0,
-                                    spaces[index],
-                                    space_style,
-                                )
-                            ],
-                        )
-                    )
+                    tokens.append(word.extend_right(spaces[index]))
+                else:
+                    tokens.append(word)
             new_lines[line_index] = Content("").join(tokens)
-        print(new_lines)
+
         return new_lines
     return lines
 
@@ -383,7 +371,9 @@ class Content(Visual):
         style = Style()
         for start, end, span_style in self._spans:
             if end > offset >= start:
+                print(style, span_style)
                 style += span_style
+        print("---", style)
         return style
 
     def truncate(
@@ -428,6 +418,29 @@ class Content(Visual):
             return Content(
                 text,
                 spans,
+                None if self._cell_length is None else self._cell_length + count,
+            )
+        return self
+
+    def extend_right(self, count: int, character: str = " ") -> Content:
+        """Add repeating characters (typically spaces) to the content with the style(s) of the last character.
+
+        Args:
+            count: Number of spaces.
+            character: Character to add with.
+
+        Returns:
+            A Content instance.
+        """
+        if count:
+            plain = self.plain
+            plain_len = len(plain)
+            return Content(
+                f"{plain}{character * count}",
+                [
+                    (span.extend(count) if span.end == plain_len else span)
+                    for span in self._spans
+                ],
                 None if self._cell_length is None else self._cell_length + count,
             )
         return self
@@ -575,18 +588,18 @@ class Content(Visual):
         stack_append = stack.append
         stack_pop = stack.remove
 
-        style_cache: dict[tuple[Style, ...], Style] = {}
+        style_cache: dict[tuple[int, ...], Style] = {}
         style_cache_get = style_cache.get
         combine = Style.combine
 
         def get_current_style() -> Style:
             """Construct current style from stack."""
-            styles = tuple(style_map[_style_id] for _style_id in sorted(stack))
-            cached_style = style_cache_get(styles)
+            cache_key = tuple(stack)
+            cached_style = style_cache_get(cache_key)
             if cached_style is not None:
                 return cached_style
-            current_style = combine(styles)
-            style_cache[styles] = current_style
+            current_style = combine([style_map[_style_id] for _style_id in cache_key])
+            style_cache[cache_key] = current_style
             return current_style
 
         for (offset, leaving, style_id), (next_offset, _, _) in zip(spans, spans[1:]):
