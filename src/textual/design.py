@@ -212,14 +212,20 @@ class ColorSystem:
             colors["text-disabled"] = "ansi_default"
 
         # Muted variants of base colors
-        colors["primary-muted"] = get("primary-muted", primary.with_alpha(0.3).hex)
-        colors["secondary-muted"] = get(
-            "secondary-muted", secondary.with_alpha(0.3).hex
+        colors["primary-muted"] = get(
+            "primary-muted", primary.blend(background, 0.7).hex
         )
-        colors["accent-muted"] = get("accent-muted", accent.with_alpha(0.3).hex)
-        colors["warning-muted"] = get("warning-muted", warning.with_alpha(0.3).hex)
-        colors["error-muted"] = get("error-muted", error.with_alpha(0.3).hex)
-        colors["success-muted"] = get("success-muted", success.with_alpha(0.3).hex)
+        colors["secondary-muted"] = get(
+            "secondary-muted", secondary.blend(background, 0.7).hex
+        )
+        colors["accent-muted"] = get("accent-muted", accent.blend(background, 0.7).hex)
+        colors["warning-muted"] = get(
+            "warning-muted", warning.blend(background, 0.7).hex
+        )
+        colors["error-muted"] = get("error-muted", error.blend(background, 0.7).hex)
+        colors["success-muted"] = get(
+            "success-muted", success.blend(background, 0.7).hex
+        )
 
         # Foreground colors
         colors["foreground-muted"] = get(
