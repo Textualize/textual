@@ -2248,6 +2248,7 @@ class App(Generic[ReturnType], DOMNode):
             await_mount = AwaitMount(self.screen, [])
 
         self._current_mode = mode
+        self.refresh_css()
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
 
