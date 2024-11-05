@@ -3700,20 +3700,26 @@ class Widget(DOMNode):
         """Render all lines."""
         width, height = self.size
         renderable = self.render()
+        styles = self.styles
+        align_horizontal, align_vertical = styles.content_align
 
         visual = textualize(renderable)
         if visual is not None:
-            visual_style = self.visual_style
             strips = visual.render_strips(
                 width,
                 height=height,
                 base_style=self.visual_style,
                 justify=self._get_justify_method() or "left",
             )
-            strips = [
-                strip.adjust_cell_length(width, visual_style.rich_style)
-                for strip in strips
-            ]
+            strips = list(
+                Strip.align(
+                    strips,
+                    _NULL_STYLE,
+                    self.size,
+                    align_horizontal,
+                    align_vertical,
+                )
+            )
 
         else:
             renderable = self.post_render(renderable)
@@ -3732,8 +3738,6 @@ class Widget(DOMNode):
                 )
             )
 
-            styles = self.styles
-            align_horizontal, align_vertical = styles.content_align
             lines = list(
                 align_lines(
                     lines,

@@ -11,7 +11,6 @@ TBD: Is this a public facing API or an internal one?
 from __future__ import annotations
 
 import re
-from itertools import zip_longest
 from operator import itemgetter
 from typing import Callable, Iterable, NamedTuple, Sequence
 
@@ -73,12 +72,10 @@ def _justify_lines(
                     spaces[len(spaces) - index - 1] += 1
                     num_spaces += 1
                     index = (index + 1) % len(spaces)
-            tokens: list[Content] = []
-            for index, (word, next_word) in enumerate(zip_longest(words, words[1:])):
-                if index < len(spaces):
-                    tokens.append(word.extend_right(spaces[index]))
-                else:
-                    tokens.append(word)
+            tokens = [
+                word.extend_right(spaces[index]) if index < len(spaces) else word
+                for index, word in enumerate(words)
+            ]
             new_lines[line_index] = Content("").join(tokens)
 
         return new_lines
