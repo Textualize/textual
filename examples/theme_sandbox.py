@@ -105,6 +105,7 @@ class ChangingThemeApp(App[None]):
     ColorSample {
         width: 1fr;
         color: $text;
+        padding: 0 1;
         &.hover-surface {
             &:hover {
                 background: $surface;
@@ -161,6 +162,30 @@ class ChangingThemeApp(App[None]):
         }
         &.text-disabled {
             color: $text-disabled;
+        }
+        &.primary-muted {
+            color: $text-primary;
+            background: $primary-muted;
+        }
+        &.secondary-muted {
+            color: $text-secondary;
+            background: $secondary-muted;
+        }
+        &.accent-muted {
+            color: $text-accent;
+            background: $accent-muted;
+        }
+        &.warning-muted {
+            color: $text-warning;
+            background: $warning-muted;
+        }
+        &.error-muted {
+            color: $text-error;
+            background: $error-muted;
+        }
+        &.success-muted {
+            color: $text-success;
+            background: $success-muted;
         }
     }
     ListView { 
@@ -280,7 +305,6 @@ class ChangingThemeApp(App[None]):
         self.title = "Theme Sandbox"
         with Grid(id="palette"):
             theme = self.current_theme
-            color_system = theme.to_color_system()
             for variable, value in vars(theme).items():
                 if variable not in {
                     "name",
@@ -291,17 +315,30 @@ class ChangingThemeApp(App[None]):
                 }:
                     yield ColorSample(f"{variable}", classes=variable)
             for color_name in [
+                "muted",
                 "primary",
                 "secondary",
                 "accent",
                 "warning",
                 "error",
                 "success",
-                "muted",
             ]:
                 yield ColorSample(
-                    f"text-{color_name}",
+                    f"text-{color_name} on background",
                     classes=f"text-{color_name} background hover-surface",
+                )
+
+            for color_name in [
+                "primary",
+                "secondary",
+                "accent",
+                "warning",
+                "error",
+                "success",
+            ]:
+                yield ColorSample(
+                    f"text-{color_name} on {color_name}-muted",
+                    classes=f"text-{color_name} {color_name}-muted",
                 )
 
         yield Header(show_clock=True, icon="🐟")
