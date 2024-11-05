@@ -299,7 +299,7 @@ class App(Generic[ReturnType], DOMNode):
     DEFAULT_CSS = """
     App {
         background: $background;
-        color: $text;
+        color: $foreground;
 
         &:ansi {
             background: ansi_default;
