@@ -16,11 +16,6 @@ NUMBER_OF_SHADES = 3
 DEFAULT_DARK_BACKGROUND = "#121212"
 # What text usually goes on top off
 DEFAULT_DARK_SURFACE = "#1e1e1e"
-# TODO - update this
-# # Where no content exists
-# DEFAULT_DARK_BACKGROUND = "#121212"
-# # What text usually goes on top off
-# DEFAULT_DARK_SURFACE = "#1e1e1e"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
@@ -326,6 +321,12 @@ class ColorSystem:
         )
         colors["markdown-h6-background"] = get("markdown-h6-background", "transparent")
         colors["markdown-h6-text-style"] = get("markdown-h6-text-style", "bold")
+
+        colors["button-foreground"] = get("button-foreground", foreground.hex)
+        colors["button-color-foreground"] = get(
+            "button-color-foreground", colors["text"]
+        )
+        colors["button-focus-text-style"] = get("button-focus-text-style", "b reverse")
 
         return colors
 

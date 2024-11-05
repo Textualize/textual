@@ -190,6 +190,14 @@ Here's a comprehensive list of these variables, their purposes, and default valu
 | `$footer-description-background` | Background color for descriptions in the footer | `"transparent"` |
 | `$footer-item-background` | Background color for items in the footer | `"transparent"` |
 
+### Button
+
+| Variable | Purpose | Default Value |
+|----------|---------|---------------|
+| `$button-foreground` | Foreground color for standard buttons | `$foreground` |
+| `$button-color-foreground` | Foreground color for colored buttons | `$text` |
+| `$button-focus-text-style` | Text style for focused buttons | `"bold reverse"` |
+
 ## App-specific variables
 
 The variables above are defined and used by Textual itself.

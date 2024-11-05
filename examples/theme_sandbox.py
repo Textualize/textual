@@ -285,6 +285,7 @@ class ChangingThemeApp(App[None]):
             yield MarkdownViewer(EXAMPLE_MARKDOWN)
 
             with Horizontal(id="buttons"):
+                yield Button("Button 0")
                 yield Button("Button 1", variant="primary")
                 yield Button.success("Success 2")
                 yield Button.error("Error 3")
