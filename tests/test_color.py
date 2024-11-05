@@ -265,3 +265,27 @@ def test_is_transparent():
     assert not Color(20, 20, 30, a=0.01).is_transparent
     assert not Color(20, 20, 30, a=1).is_transparent
     assert not Color(20, 20, 30, 0, ansi=1).is_transparent
+
+
+@pytest.mark.parametrize(
+    "base,tint,expected",
+    [
+        (
+            Color(0, 0, 0),
+            Color(10, 20, 30),
+            Color(10, 20, 30),
+        ),
+        (
+            Color(0, 0, 0, 0.5),
+            Color(255, 255, 255, 0.5),
+            Color(127, 127, 127, 0.5),
+        ),
+        (
+            Color(100, 0, 0, 0.2),
+            Color(0, 100, 0, 0.5),
+            Color(50, 50, 0, 0.2),
+        ),
+    ],
+)
+def test_tint(base: Color, tint: Color, expected: Color) -> None:
+    assert base.tint(tint) == expected

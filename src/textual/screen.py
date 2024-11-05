@@ -34,7 +34,6 @@ from textual._arrange import arrange
 from textual._callback import invoke
 from textual._compositor import Compositor, MapGeometry
 from textual._context import active_message_pump, visible_screen_stack
-from textual._layout import DockArrangeResult
 from textual._path import (
     CSSPathType,
     _css_path_type_as_list,
@@ -50,6 +49,7 @@ from textual.dom import DOMNode
 from textual.errors import NoWidget
 from textual.geometry import Offset, Region, Size
 from textual.keys import key_to_character
+from textual.layout import DockArrangeResult
 from textual.reactive import Reactive
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
@@ -896,7 +896,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
-                        if self.focused is widget and not self.can_view(widget):
+                        if self.focused is widget and not self.can_view_entire(widget):
                             self.scroll_to_center(widget, origin_visible=True)
 
                     self.call_later(scroll_to_center, widget)
@@ -1205,12 +1205,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._refresh_layout(size)
-        self.refresh()
+        if self.stack_updates:
+            self._compositor_refresh()
+            self._refresh_layout(size)
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
-        self.remove_class("-screen-suspended")
+        if self.app.SUSPENDED_SCREEN_CLASS:
+            self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
@@ -1230,7 +1232,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
-        self.add_class("-screen-suspended")
+        if self.app.SUSPENDED_SCREEN_CLASS:
+            self.add_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.app._set_mouse_over(None)
         self._clear_tooltip()
         self.stack_updates += 1
@@ -1478,24 +1481,44 @@ class Screen(Generic[ScreenResultType], Widget):
         await self._flush_next_callbacks()
         self.dismiss(result)
 
-    def can_view(self, widget: Widget) -> bool:
-        """Check if a given widget is in the current view (scrollable area).
+    def can_view_entire(self, widget: Widget) -> bool:
+        """Check if a given widget is fully within the current screen.
 
         Note: This doesn't necessarily equate to a widget being visible.
         There are other reasons why a widget may not be visible.
 
         Args:
-            widget: A widget that is a descendant of self.
+            widget: A widget.
 
         Returns:
-            True if the entire widget is in view, False if it is partially visible or not in view.
+            `True` if the entire widget is in view, `False` if it is partially visible or not in view.
         """
+        if widget not in self._compositor.visible_widgets:
+            return False
         # If the widget is one that overlays the screen...
         if widget.styles.overlay == "screen":
             # ...simply check if it's within the screen's region.
             return widget.region in self.region
         # Failing that fall back to normal checking.
-        return super().can_view(widget)
+        return super().can_view_entire(widget)
+
+    def can_view_partial(self, widget: Widget) -> bool:
+        """Check if a given widget is at least partially within the current view.
+
+        Args:
+            widget: A widget.
+
+        Returns:
+            `True` if the any part of the widget is in view, `False` if it is completely outside of the screen.
+        """
+        if widget not in self._compositor.visible_widgets:
+            return False
+        # If the widget is one that overlays the screen...
+        if widget.styles.overlay == "screen":
+            # ...simply check if it's within the screen's region.
+            return widget.region in self.region
+        # Failing that fall back to normal checking.
+        return super().can_view_partial(widget)
 
     def validate_title(self, title: Any) -> str | None:
         """Ensure the title is a string or `None`."""

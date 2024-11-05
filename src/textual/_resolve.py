@@ -21,6 +21,7 @@ def resolve(
     gutter: int,
     size: Size,
     viewport: Size,
+    min_size: int | None = None,
 ) -> list[tuple[int, int]]:
     """Resolve a list of dimensions.
 
@@ -62,9 +63,14 @@ def resolve(
             "list[Fraction]", [fraction for _, fraction in resolved]
         )
 
+    if min_size is not None:
+        resolved_fractions = [
+            max(Fraction(min_size), fraction) for fraction in resolved_fractions
+        ]
+
     fraction_gutter = Fraction(gutter)
     offsets = [0] + [
-        int(fraction)
+        fraction.__floor__()
         for fraction in accumulate(
             value
             for fraction in resolved_fractions
@@ -98,8 +104,9 @@ def resolve_fraction_unit(
     Returns:
         The value of 1fr.
     """
+    _Fraction = Fraction
     if not remaining_space or not widget_styles:
-        return Fraction(1)
+        return _Fraction(1)
 
     initial_space = remaining_space
 
@@ -149,19 +156,19 @@ def resolve_fraction_unit(
 
     while remaining_fraction > 0:
         remaining_space_changed = False
-        resolve_fraction = Fraction(remaining_space, remaining_fraction)
+        resolve_fraction = _Fraction(remaining_space, remaining_fraction)
         for index, (scalar, min_value, max_value) in enumerate(resolve):
             value = resolved[index]
             if value is None:
                 resolved_scalar = scalar.resolve(size, viewport_size, resolve_fraction)
                 if min_value is not None and resolved_scalar < min_value:
                     remaining_space -= min_value
-                    remaining_fraction -= Fraction(scalar.value)
+                    remaining_fraction -= _Fraction(scalar.value)
                     resolved[index] = min_value
                     remaining_space_changed = True
                 elif max_value is not None and resolved_scalar > max_value:
                     remaining_space -= max_value
-                    remaining_fraction -= Fraction(scalar.value)
+                    remaining_fraction -= _Fraction(scalar.value)
                     resolved[index] = max_value
                     remaining_space_changed = True
 
@@ -196,12 +203,14 @@ def resolve_box_models(
     Returns:
         List of resolved box models.
     """
+
     margin_width, margin_height = margin
-
-    fraction_width = Fraction(max(0, size.width - margin_width))
-    fraction_height = Fraction(max(0, size.height - margin_height))
-
+    fraction_width = Fraction(size.width)
+    fraction_height = Fraction(size.height)
+    fraction_zero = Fraction(0)
     margin_size = size - margin
+
+    margins = [widget.styles.margin.totals for widget in widgets]
 
     # Fixed box models
     box_models: list[BoxModel | None] = [
@@ -209,10 +218,23 @@ def resolve_box_models(
             None
             if _dimension is not None and _dimension.is_fraction
             else widget._get_box_model(
-                size, viewport_size, fraction_width, fraction_height
+                size,
+                viewport_size,
+                (
+                    fraction_zero
+                    if (_width := fraction_width - margin_width) < 0
+                    else _width
+                ),
+                (
+                    fraction_zero
+                    if (_height := fraction_height - margin_height) < 0
+                    else _height
+                ),
             )
         )
-        for (_dimension, widget) in zip(dimensions, widgets)
+        for (_dimension, widget, (margin_width, margin_height)) in zip(
+            dimensions, widgets, margins
+        )
     ]
 
     if None not in box_models:

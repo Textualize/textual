@@ -176,6 +176,6 @@ Note the use of [get_current_worker][textual.worker.get_current_worker] which th
 
 #### Posting messages
 
-Most Textual functions are not thread-safe which means you will need to use `call_from_thread` to run them from a thread worker.
+Most Textual functions are not thread-safe which means you will need to use [call_from_thread][textual.app.App.call_from_thread] to run them from a thread worker.
 An exception would be [post_message][textual.widget.Widget.post_message] which *is* thread-safe.
 If your worker needs to make multiple updates to the UI, it is a good idea to send [custom messages](./events.md) and let the message handler update the state of the UI.

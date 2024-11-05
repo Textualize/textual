@@ -12,12 +12,14 @@ from ._help_panel import HelpPanel as HelpPanel
 from ._input import Input as Input
 from ._key_panel import KeyPanel as KeyPanel
 from ._label import Label as Label
+from ._link import Link as Link
 from ._list_item import ListItem as ListItem
 from ._list_view import ListView as ListView
 from ._loading_indicator import LoadingIndicator as LoadingIndicator
 from ._log import Log as Log
 from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
+from ._masked_input import MaskedInput as MaskedInput
 from ._option_list import OptionList as OptionList
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty

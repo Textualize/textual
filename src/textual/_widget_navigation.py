@@ -8,11 +8,12 @@ to implement wrapping.
 
 from __future__ import annotations
 
-from functools import partial
 from itertools import count
 from typing import Literal, Protocol, Sequence
 
 from typing_extensions import TypeAlias
+
+from textual._loop import loop_from_index
 
 
 class Disableable(Protocol):
@@ -105,7 +106,6 @@ def find_next_enabled(
     candidates: Sequence[Disableable],
     anchor: int | None,
     direction: Direction,
-    with_anchor: bool = False,
 ) -> int | None:
     """Find the next enabled object if we're currently at the given anchor.
 
@@ -118,8 +118,6 @@ def find_next_enabled(
             enabled object.
         direction: The direction in which to traverse the candidates when looking for
             the next enabled candidate.
-        with_anchor: Consider the anchor position as the first valid position instead of
-            the last one.
 
     Returns:
         The next enabled object. If none are available, return the anchor.
@@ -134,17 +132,10 @@ def find_next_enabled(
             )
         return None
 
-    start = anchor + direction if not with_anchor else anchor
-    key_function = partial(
-        get_directed_distance,
-        start=start,
-        direction=direction,
-        wrap_at=len(candidates),
-    )
-    enabled_candidates = [
-        index for index, candidate in enumerate(candidates) if not candidate.disabled
-    ]
-    return min(enabled_candidates, key=key_function, default=anchor)
+    for index, candidate in loop_from_index(candidates, anchor, direction, wrap=True):
+        if not candidate.disabled:
+            return index
+    return anchor
 
 
 def find_next_enabled_no_wrap(
