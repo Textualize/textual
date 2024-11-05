@@ -468,6 +468,7 @@ class OptionList(ScrollView, can_focus=True):
         Returns:
             A list of strips.
         """
+
         cache_key = (option_index, style, width)
         if (strips := self._content_render_cache.get(cache_key, None)) is not None:
             return strips

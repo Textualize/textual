@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
@@ -7,17 +8,37 @@ from marshal import loads
 from typing import Any, Iterable, Protocol, cast
 
 import rich.repr
-from rich.console import JustifyMethod, OverflowMethod
+from rich.console import (
+    Console,
+    ConsoleOptions,
+    JustifyMethod,
+    OverflowMethod,
+    RenderableType,
+    RenderResult,
+)
+from rich.measure import Measurement
+from rich.segment import Segment
 from rich.style import Style as RichStyle
 
 from textual.color import TRANSPARENT, Color
 from textual.strip import Strip
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal  # pragma: no cover
+
+
+_NULL_RICH_STYLE = RichStyle()
 
 
 class SupportsTextualize(Protocol):
     """An object that supports the textualize protocol."""
 
     def textualize(self, obj: object) -> Visual | None: ...
+
+
+VisualType = RenderableType | SupportsTextualize
 
 
 def textualize(obj: object) -> Visual | None:
@@ -78,6 +99,19 @@ class Style:
             self._meta if other._meta is None else other._meta,
         )
         return new_style
+
+    @classmethod
+    @lru_cache(maxsize=1024)
+    def from_rich_style(cls, rich_style: RichStyle) -> Style:
+        return Style(
+            Color.from_rich_color(rich_style.bgcolor),
+            Color.from_rich_color(rich_style.color),
+            bold=rich_style.bold,
+            dim=rich_style.dim,
+            italic=rich_style.italic,
+            underline=rich_style.underline,
+            strike=rich_style.strike,
+        )
 
     @cached_property
     def rich_style(self) -> RichStyle:
@@ -176,3 +210,61 @@ class Visual(ABC):
         Returns:
             A height in lines.
         """
+
+    @classmethod
+    def render(
+        cls,
+        visual: Visual,
+        width: int,
+        height: int,
+        style: Style,
+        justify: Literal["default", "left", "center", "right", "full"],
+        align_horizontal: Literal["left", "center", "right"],
+        align_vertical: Literal["top", "middle", "bottom"],
+    ) -> list[Strip]:
+        strips = visual.render_strips(
+            width,
+            height=height,
+            base_style=style,
+            justify=justify,
+        )
+        strips = list(
+            Strip.align(
+                strips,
+                _NULL_RICH_STYLE,
+                width,
+                height,
+                align_horizontal,
+                align_vertical,
+            )
+        )
+        return strips
+
+    def __rich_measure__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> Measurement:
+        tab_size = console.tab_size
+        return Measurement(
+            self.get_minimal_width(tab_size),
+            self.get_optimal_width(tab_size),
+        )
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        width = options.max_width
+        tab_size = console.tab_size
+        height = options.height
+
+        strips = self.render_strips(
+            width,
+            height=height,
+            justify=options.justify,
+            overflow=options.overflow,
+            no_wrap=options.no_wrap,
+            tab_size=tab_size,
+        )
+        new_line = Segment.line()
+        for strip in strips:
+            yield from Segment.adjust_line_length(strip._segments, width)
+            yield new_line

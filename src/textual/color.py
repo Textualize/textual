@@ -169,7 +169,7 @@ class Color(NamedTuple):
     """ANSI color index. `-1` means default color. `None` if not an ANSI color."""
 
     @classmethod
-    def from_rich_color(cls, rich_color: RichColor) -> Color:
+    def from_rich_color(cls, rich_color: RichColor | None) -> Color:
         """Create a new color from Rich's Color class.
 
         Args:
@@ -178,6 +178,8 @@ class Color(NamedTuple):
         Returns:
             A new Color instance.
         """
+        if rich_color is None:
+            return TRANSPARENT
         r, g, b = rich_color.get_truecolor()
         return cls(r, g, b)
 

@@ -139,7 +139,7 @@ class Content(Visual):
         self._cell_length = cell_length
 
     @classmethod
-    def styled_text(
+    def styled(
         cls, text: str, style: Style | str = "", cell_length: int | None = None
     ) -> Content:
         if not text:
@@ -293,7 +293,7 @@ class Content(Visual):
         """
         if isinstance(content, str):
             return Content(
-                self.plain,
+                f"{self.plain}{content}",
                 self._spans,
                 (
                     None
@@ -304,7 +304,7 @@ class Content(Visual):
         return Content("").join([self, content])
 
     def append_text(self, text: str, style: Style | str = "") -> Content:
-        return self.append(Content.styled_text(text, style))
+        return self.append(Content.styled(text, style))
 
     def join(self, lines: Iterable[Content]) -> Content:
         """Join an iterable of content.

@@ -23,7 +23,6 @@ from textual.color import Color
 from textual.constants import DEBUG
 from textual.css.types import AlignHorizontal, AlignVertical
 from textual.filter import LineFilter
-from textual.geometry import Size
 
 
 def get_line_length(segments: Iterable[Segment]) -> int:
@@ -164,13 +163,13 @@ class Strip:
         cls,
         strips: list[Strip],
         style: Style,
-        size: Size,
+        width: int,
+        height: int,
         horizontal: AlignHorizontal,
         vertical: AlignVertical,
     ) -> Iterable[Strip]:
         if not strips:
             return
-        width, height = size
         line_lengths = [strip.cell_length for strip in strips]
         shape_width = max(line_lengths)
         shape_height = len(line_lengths)

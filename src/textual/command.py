@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, 
 
 import rich.repr
 from rich.align import Align
-from rich.console import Group, RenderableType
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -33,6 +32,7 @@ from typing_extensions import Final, TypeAlias
 from textual import on, work
 from textual.binding import Binding, BindingType
 from textual.containers import Horizontal, Vertical
+from textual.content import Content
 from textual.events import Click, Mount
 from textual.fuzzy import Matcher
 from textual.message import Message
@@ -40,6 +40,8 @@ from textual.reactive import var
 from textual.screen import Screen, SystemModalScreen
 from textual.timer import Timer
 from textual.types import IgnoreReturnCallbackType
+from textual.visual import Style as VisualStyle
+from textual.visual import VisualType
 from textual.widget import Widget
 from textual.widgets import Button, Input, LoadingIndicator, OptionList, Static
 from textual.widgets.option_list import Option
@@ -68,7 +70,7 @@ class Hit:
     The value should be between 0 (no match) and 1 (complete match).
     """
 
-    match_display: RenderableType
+    match_display: VisualType
     """A string or Rich renderable representation of the hit."""
 
     command: IgnoreReturnCallbackType
@@ -85,7 +87,7 @@ class Hit:
     """Optional help text for the command."""
 
     @property
-    def prompt(self) -> RenderableType:
+    def prompt(self) -> VisualType:
         """The prompt to use when displaying the hit in the command palette."""
         return self.match_display
 
@@ -116,7 +118,7 @@ class Hit:
 class DiscoveryHit:
     """Holds the details of a single command search hit."""
 
-    display: RenderableType
+    display: VisualType
     """A string or Rich renderable representation of the hit."""
 
     command: IgnoreReturnCallbackType
@@ -133,7 +135,7 @@ class DiscoveryHit:
     """Optional help text for the command."""
 
     @property
-    def prompt(self) -> RenderableType:
+    def prompt(self) -> VisualType:
         """The prompt to use when displaying the discovery hit in the command palette."""
         return self.display
 
@@ -326,7 +328,7 @@ class Command(Option):
 
     def __init__(
         self,
-        prompt: RenderableType,
+        prompt: VisualType,
         hit: DiscoveryHit | Hit,
         id: str | None = None,
         disabled: bool = False,
@@ -412,7 +414,7 @@ class SearchIcon(Static, inherit_css=False):
     icon: var[str] = var("🔎")
     """The icon to display."""
 
-    def render(self) -> RenderableType:
+    def render(self) -> VisualType:
         """Render the icon.
 
         Returns:
@@ -476,7 +478,9 @@ class CommandPalette(SystemModalScreen):
     }
 
     CommandPalette > .command-palette--help-text {           
-        text-style: dim not bold;       
+        # text-style: dim not bold;
+        text-style: underline;
+        color: $text-muted;     
     }
 
     CommandPalette:dark > .command-palette--highlight {
@@ -1015,11 +1019,19 @@ class CommandPalette(SystemModalScreen):
         while hit:
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
+
             prompt = hit.prompt
+
+            content = Content(prompt)
             if hit.help:
-                help_text = Text.from_markup(hit.help)
-                help_text.stylize(help_style)
-                prompt = Group(prompt, help_text)
+                prompt = content.append("\n").append(
+                    Content.styled(hit.help, VisualStyle.from_rich_style(help_style))
+                )
+
+            # if hit.help:
+            #     help_text = Text.from_markup(hit.help)
+            #     help_text.stylize(help_style)
+            #     prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
 
             # Before we go making any changes to the UI, we do a quick
