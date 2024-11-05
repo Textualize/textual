@@ -105,6 +105,11 @@ class ChangingThemeApp(App[None]):
     ColorSample {
         width: 1fr;
         color: $text;
+        &.hover-surface {
+            &:hover {
+                background: $surface;
+            }
+        }
         &.primary {
             background: $primary;   
         }
@@ -132,6 +137,30 @@ class ChangingThemeApp(App[None]):
         }
         &.panel {
             background: $panel;
+        }
+        &.text-primary {
+            color: $text-primary;
+        }
+        &.text-secondary {
+            color: $text-secondary;
+        }
+        &.text-success {
+            color: $text-success;
+        }
+        &.text-warning {
+            color: $text-warning;
+        }
+        &.text-error {
+            color: $text-error;
+        }
+        &.text-accent {
+            color: $text-accent;
+        }
+        &.text-muted {
+            color: $text-muted;
+        }
+        &.text-disabled {
+            color: $text-disabled;
         }
     }
     ListView { 
@@ -251,6 +280,7 @@ class ChangingThemeApp(App[None]):
         self.title = "Theme Sandbox"
         with Grid(id="palette"):
             theme = self.current_theme
+            color_system = theme.to_color_system()
             for variable, value in vars(theme).items():
                 if variable not in {
                     "name",
@@ -260,10 +290,21 @@ class ChangingThemeApp(App[None]):
                     "variables",
                 }:
                     yield ColorSample(f"{variable}", classes=variable)
+            for color_name in [
+                "primary",
+                "secondary",
+                "accent",
+                "warning",
+                "error",
+                "success",
+                "muted",
+            ]:
+                yield ColorSample(
+                    f"text-{color_name}",
+                    classes=f"text-{color_name} background hover-surface",
+                )
 
-        header = Header(show_clock=True, icon="🐟")
-        header.tall = True
-        yield header
+        yield Header(show_clock=True, icon="🐟")
         yield ThemeList(id="theme-list")
         with VerticalScroll(id="widget-list") as container:
             container.can_focus = False
