@@ -96,6 +96,11 @@ The theme system defines three CSS variables which you can use to ensure that te
 - `$text-muted` sets a slightly faded text color. Use this for text which has lower importance. For instance a sub-title or supplementary information.
 - `$text-disabled` sets faded out text which indicates it has been disabled. For instance, menu items which are not applicable and can't be clicked.
 
+### Colored text
+
+Colored text is also generated from the base colors.
+For example, `$text-primary` is a version of the `$primary` color tinted to ensure legibility.
+
 ## Additional variables
 
 Textual uses the base colors as default values for additional variables used throughout the framework.
