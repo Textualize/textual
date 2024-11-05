@@ -1,13 +1,27 @@
 # Themes
 
-Textual comes with several built-in themes, and it's easy to create your own.
+Textual comes with several built-in *themes*, and it's easy to create your own.
+A theme provides variables which can be used in the CSS of your app.
+
+## Changing the theme
+
+The theme can be changed at runtime via the [Command Palette](./command_palette.md) (++ctrl+p++).
+
+You can also programmatically change the theme by setting the value of `App.theme` to the name of a theme.
+
+A theme must be *registered* before it can be used.
+Textual comes with a selection of built-in themes which are registered by default.
+
+## Registering a theme
 
 A theme is a simple Python object which maps variable names to colors.
 Here's an example:
 
 ```python
-Theme(
-    name="nord",
+from textual.theme import Theme
+
+arctic_theme = Theme(
+    name="arctic",
     primary="#88C0D0",
     secondary="#81A1C1",
     accent="#B48EAD",
@@ -27,6 +41,23 @@ Theme(
 )
 ```
 
+You can register this theme by calling `App.register_theme` in the `on_mount` method of your `App`.
+
+```python
+from textual.app import App
+
+class MyApp(App):
+    def on_mount(self) -> None:
+        # Register the theme
+        self.register_theme(arctic_theme)  # (1)!
+
+        # Set the app's theme
+        self.theme = "arctic"  # (2)!
+```
+
+1. Register the theme, making it available to the app (and command palette)
+2. Set the app's theme. When this line runs, the app immediately refreshes to use the new theme.
+
 ## Theme variables
 
 Themes consist of up to 11 *base colors*, (`primary`, `secondary`, `accent`, etc.), which Textual uses to generate a broad range of CSS variables.
@@ -41,10 +72,12 @@ MyWidget {
 }
 ```
 
+On changing the theme, the values stored in these variables are updated to match the new theme, and the colors of `MyWidget` are updated accordingly.
+
 ## Base colors
 
 When defining a theme, only the `primary` color is required.
-Textual can generate the other base colors if they're not supplied.
+Textual will attempt to generate the other base colors if they're not supplied.
 
 The following table lists each of 11 base colors (as used in CSS) and a description of where they are used by default.
 
@@ -57,10 +90,10 @@ The following table lists each of 11 base colors (as used in CSS) and a descript
 | `$surface`              | The default background color of widgets, typically sitting on top of `$background`.                                                                 |
 | `$panel`                | A color used to differentiate a part of the UI form the main content. Used sparingly in Textual itself.                                             |
 | `$boost`                | A color with alpha that can be used to create *layers* on a background.                                                                             |
-| `$warning`              | Indicates a warning. Text or background.                                                                                                            |
-| `$error`                | Indicates an error.  Text or background.                                                                                                            |
-| `$success`              | Used to indicate success.  Text or background.                                                                                                      |
-| `$accent`               | Used sparingly to draw attention. Typically contrasts with $primary and $secondary.                                                                 |
+| `$warning`              | Indicates a warning. Typically used as a background color. `$text-warning` can be used for foreground.                                                                                                            |
+| `$error`                | Indicates an error. Typically used as a background color. `$text-error` can be used for foreground.                                                                                                             |
+| `$success`              | Used to indicate success. Typically used as a background color. `$text-success` can be used for foreground.                                                                                                      |
+| `$accent`               | Used sparingly to draw attention. Typically contrasts with `$primary` and `$secondary`.                                                                 |
 
 ## Shades
 
@@ -74,7 +107,9 @@ For example, `$secondary-darken-1` is a slightly darkened `$secondary`, and `$er
 ## Light and dark themes
 
 Themes can be either "light" or "dark".
-This setting is specified in the `Theme` constructor via the `dark` argument, and is used by Textual to determine how to generate shades from base colors.
+This setting is specified in the `Theme` constructor via the `dark` argument, and influences how Textual
+generates variables.
+Built-in widgets may also use the value of `dark` to influence their appearance.
 
 ## Text color
 
@@ -98,8 +133,39 @@ The theme system defines three CSS variables which you can use to ensure that te
 
 ### Colored text
 
-Colored text is also generated from the base colors.
+Colored text is also generated from the base colors, which is guaranteed to be legible against a background of `$background`, `$surface`, and `$panel`.
 For example, `$text-primary` is a version of the `$primary` color tinted to ensure legibility.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/themes/colored_text.py" lines="9" columns="30"}
+    ```
+
+=== "colored_text.py"
+
+    ```python title="colored_text.py"
+    --8<-- "docs/examples/themes/colored_text.py"
+    ```
+
+## Muted colors
+
+Muted colors are generated from the base colors by blending them with `$background` at 70% opacity.
+For example, `$primary-muted` is a muted version of the `$primary` color.
+
+Textual aims to ensure that the colored text it generates is legible against the corresponding muted color.
+In other words, `$text-primary` text should be legible against a background of `$primary-muted`:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/themes/muted_backgrounds.py" lines="9" columns="40"}
+    ```
+
+=== "muted_backgrounds.py"
+
+    ```python title="muted_backgrounds.py"
+    --8<-- "docs/examples/themes/muted_backgrounds.py"
+    ```
+
 
 ## Additional variables
 
@@ -222,19 +288,3 @@ textual colors
 ```
 
 Inside the preview you can change the theme via the Command Palette (++ctrl+p++), and view the base variables and shades generated from the theme.
-
-## Theme reference
-
-Here's a list of the CSS variables generated from themes.
-The colors below are from the `textual-light` and `textual-dark` themes.
-
-!!! note
-
-    `$boost` will look different on different backgrounds because of its alpha channel.
-
-```{.rich title="Textual Theme Colors"}
-from rich import print
-from textual.app import DEFAULT_COLORS
-from textual.design import show_design
-output = show_design(DEFAULT_COLORS["light"], DEFAULT_COLORS["dark"])
-```
