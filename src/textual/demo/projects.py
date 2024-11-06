@@ -41,14 +41,14 @@ PROJECTS = [
         "Bloomberg",
         "https://github.com/bloomberg/memray",
         """Memray is a memory profiler for Python. It can track memory allocations in Python code, in native extension modules, and in the Python interpreter itself.""",
-        "13.2k",
+        "13.3k",
     ),
     ProjectInfo(
         "Toolong",
         "Will McGugan",
         "https://github.com/Textualize/toolong",
         """A terminal application to view, tail, merge, and search log files (plus JSONL).""",
-        "3.1k",
+        "3.2k",
     ),
     ProjectInfo(
         "Dolphie",

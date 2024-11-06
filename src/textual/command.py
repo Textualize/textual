@@ -479,7 +479,7 @@ class CommandPalette(SystemModalScreen):
 
     CommandPalette > .command-palette--help-text {           
         text-style: not bold;        
-        color: $text-muted;     
+        color: $text-muted;       
     }
 
     CommandPalette:dark > .command-palette--highlight {
