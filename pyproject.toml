@@ -62,7 +62,7 @@ mkdocs-git-revision-date-localized-plugin = "^1.2.5"
 mkdocs-material = "^9.0.11"
 mkdocs-rss-plugin = "^1.5.0"
 mkdocstrings = { extras = ["python"], version = "^0.20.0" }
-mkdocstrings-python = "0.10.1"
+mkdocstrings-python = "^1.0.0"
 mypy = "^1.0.0"
 pre-commit = "^2.13.0"
 pytest = "^8.3.1"

@@ -2,6 +2,33 @@
 
 Textual comes with several built-in *themes*, and it's easy to create your own.
 A theme provides variables which can be used in the CSS of your app.
+Click on the tabs below to see how themes can change the appearance of an app.
+
+=== "nord"
+
+    ```{.textual path="docs/examples/themes/todo_app.py"}
+    ```
+
+
+=== "gruvbox"
+
+    ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t"}
+    ```
+
+=== "tokyo-night"
+
+    ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t,ctrl+t"}
+    ```
+
+=== "textual-dark"
+
+    ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t,ctrl+t,ctrl+t"}
+    ```
+
+=== "solarized-light"
+
+    ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t,ctrl+t,ctrl+t,ctrl+t"}
+    ```
 
 ## Changing the theme
 
@@ -145,7 +172,7 @@ The theme system defines three CSS variables which you can use to ensure that te
 Colored text is also generated from the base colors, which is guaranteed to be legible against a background of `$background`, `$surface`, and `$panel`.
 For example, `$text-primary` is a version of the `$primary` color tinted to ensure legibility.
 
-=== "Output"
+=== "Output (Theme: textual-dark)"
 
     ```{.textual path="docs/examples/themes/colored_text.py" lines="9" columns="30"}
     ```
@@ -164,7 +191,7 @@ For example, `$primary-muted` is a muted version of the `$primary` color.
 Textual aims to ensure that the colored text it generates is legible against the corresponding muted color.
 In other words, `$text-primary` text should be legible against a background of `$primary-muted`:
 
-=== "Output"
+=== "Output (Theme: textual-dark)"
 
     ```{.textual path="docs/examples/themes/muted_backgrounds.py" lines="9" columns="40"}
     ```
