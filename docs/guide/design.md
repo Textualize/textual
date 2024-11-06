@@ -121,6 +121,15 @@ There is also `$foreground-muted` for text which has lower importance.
 
 You can set the text color via the [color](../styles/color.md) CSS property.
 
+The available text colors are:
+
+- `$text-primary`
+- `$text-secondary`
+- `$text-accent`
+- `$text-warning`
+- `$text-error`
+- `$text-success`
+
 ### Ensuring text legibility
 
 In some cases, the background color of a widget is unpredictable, meaning we cannot know in advance which text colors will be legible against it.
@@ -166,11 +175,20 @@ In other words, `$text-primary` text should be legible against a background of `
     --8<-- "docs/examples/themes/muted_backgrounds.py"
     ```
 
+The available muted colors are:
+
+- `$primary-muted`
+- `$secondary-muted`
+- `$accent-muted`
+- `$warning-muted`
+- `$error-muted`
+- `$success-muted`
 
 ## Additional variables
 
 Textual uses the base colors as default values for additional variables used throughout the framework.
 These variables can be overridden by passing a `variables` argument to the `Theme` constructor.
+This also allows you to override variables such as `$primary-muted`, described above.
 
 In the Gruvbox theme, for example, we override the foreground color of the block cursor (the cursor used in widgets like `OptionList`) to be `$foreground`.
 
