@@ -192,7 +192,7 @@ This also allows you to override variables such as `$primary-muted`, described a
 
 In the Gruvbox theme, for example, we override the foreground color of the block cursor (the cursor used in widgets like `OptionList`) to be `$foreground`.
 
-```python
+```python hl_lines="14-17"
 Theme(
     name="gruvbox",
     primary="#85A598",
