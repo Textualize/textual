@@ -9,7 +9,6 @@ Click on the tabs below to see how themes can change the appearance of an app.
     ```{.textual path="docs/examples/themes/todo_app.py"}
     ```
 
-
 === "gruvbox"
 
     ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t"}
@@ -34,7 +33,13 @@ Click on the tabs below to see how themes can change the appearance of an app.
 
 The theme can be changed at runtime via the [Command Palette](./command_palette.md) (++ctrl+p++).
 
-You can also programmatically change the theme by setting the value of `App.theme` to the name of a theme.
+You can also programmatically change the theme by setting the value of `App.theme` to the name of a theme:
+
+```python
+class MyApp(App):
+    def on_mount(self) -> None:
+        self.theme = "nord"
+```
 
 A theme must be *registered* before it can be used.
 Textual comes with a selection of built-in themes which are registered by default.
@@ -159,7 +164,7 @@ The available text colors are:
 
 ### Ensuring text legibility
 
-In some cases, the background color of a widget is unpredictable, meaning we cannot know in advance which text colors will be legible against it.
+In some cases, the background color of a widget is unpredictable, so we cannot be certain our text will be readable against it.
 
 The theme system defines three CSS variables which you can use to ensure that text is legible on any background.
 
@@ -182,6 +187,8 @@ For example, `$text-primary` is a version of the `$primary` color tinted to ensu
     ```python title="colored_text.py"
     --8<-- "docs/examples/themes/colored_text.py"
     ```
+
+These colors are also be guaranteed to be legible when used as the foreground color of a widget with a *muted color* background.
 
 ## Muted colors
 
