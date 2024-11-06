@@ -34,7 +34,7 @@ PROJECTS = [
         "Darren Burns",
         "https://posting.sh/",
         """Posting is an HTTP client, not unlike Postman and Insomnia. As a TUI application, it can be used over SSH and enables efficient keyboard-centric workflows. """,
-        "4.7k",
+        "5.0k",
     ),
     ProjectInfo(
         "Memray",

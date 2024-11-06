@@ -559,7 +559,9 @@ class DOMNode(MessagePump):
         Returns:
             A Styles object.
         """
+
         styles = RenderStyles(self, Styles(), Styles())
+
         for name in names:
             if name not in self._component_styles:
                 raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")

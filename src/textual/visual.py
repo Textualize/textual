@@ -4,30 +4,33 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
+from itertools import islice
 from marshal import loads
-from typing import Any, Iterable, Protocol, cast
+from typing import TYPE_CHECKING, Any, Iterable, Protocol, cast
 
 import rich.repr
-from rich.console import (
-    Console,
-    ConsoleOptions,
-    JustifyMethod,
-    OverflowMethod,
-    RenderableType,
-    RenderResult,
-)
+from rich.console import Console, ConsoleOptions, RenderableType
 from rich.measure import Measurement
+from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style as RichStyle
+from rich.text import Text
 
+from textual._context import active_app
 from textual.color import TRANSPARENT, Color
+from textual.css.styles import RenderStyles, Styles
+from textual.dom import DOMNode
+from textual.geometry import Spacing
 from textual.strip import Strip
 
 if sys.version_info >= (3, 8):
-    from typing import Literal
+    pass
 else:
-    from typing_extensions import Literal  # pragma: no cover
+    pass
 
+
+if TYPE_CHECKING:
+    from textual.widget import Widget
 
 _NULL_RICH_STYLE = RichStyle()
 
@@ -38,10 +41,14 @@ class SupportsTextualize(Protocol):
     def textualize(self, obj: object) -> Visual | None: ...
 
 
+class VisualError(Exception):
+    """An error with the visual protocol."""
+
+
 VisualType = RenderableType | SupportsTextualize
 
 
-def textualize(obj: object) -> Visual | None:
+def visualize(widget: Widget, obj: object) -> Visual:
     """Get a visual instance from an object.
 
     Args:
@@ -50,12 +57,23 @@ def textualize(obj: object) -> Visual | None:
     Returns:
         A Visual instance to render the object, or `None` if there is no associated visual.
     """
-    textualize = getattr(obj, "textualize", None)
-    if textualize is None:
-        return None
-    visual = textualize()
-    if not isinstance(visual, Visual):
-        return None
+    if isinstance(obj, Visual):
+        # Already a visual
+        return obj
+    visualize = getattr(obj, "visualize", None)
+    if visualize is None:
+        # Doesn't expose the textualize protocol
+        if is_renderable(obj):
+            # If its is a Rich renderable, wrap it with a RichVisual
+            return RichVisual(widget, obj)
+        else:
+            # We don't know how to make a visual from this object
+            raise VisualError(
+                f"unable to display {obj.__class__.__name__!r} type; must be a str, Rich renderable, or Textual Visual object"
+            )
+    # Call the textualize method to create a visual
+    visual = visualize()
+    assert isinstance(visual, Visual), "the textualize() method should return a Visual"
     return visual
 
 
@@ -101,7 +119,6 @@ class Style:
         return new_style
 
     @classmethod
-    @lru_cache(maxsize=1024)
     def from_rich_style(cls, rich_style: RichStyle) -> Style:
         return Style(
             Color.from_rich_color(rich_style.bgcolor),
@@ -111,6 +128,19 @@ class Style:
             italic=rich_style.italic,
             underline=rich_style.underline,
             strike=rich_style.strike,
+        )
+
+    @classmethod
+    def from_render_styles(cls, styles: RenderStyles) -> Style:
+        text_style = styles.text_style
+        return Style(
+            styles.background,
+            styles.color,
+            bold=text_style.bold,
+            dim=text_style.italic,
+            italic=text_style.italic,
+            underline=text_style.underline,
+            strike=text_style.strike,
         )
 
     @cached_property
@@ -163,11 +193,8 @@ class Visual(ABC):
         width: int,
         *,
         height: int | None,
-        base_style: Style = Style(),
-        justify: JustifyMethod = "left",
-        overflow: OverflowMethod = "fold",
-        no_wrap: bool = False,
-        tab_size: int = 8,
+        base_style: Style,
+        styles: Styles,
     ) -> list[Strip]:
         """Render the visual in to an iterable of strips.
 
@@ -212,59 +239,102 @@ class Visual(ABC):
         """
 
     @classmethod
-    def render(
+    def to_strips(
         cls,
         visual: Visual,
         width: int,
         height: int,
-        style: Style,
-        justify: Literal["default", "left", "center", "right", "full"],
-        align_horizontal: Literal["left", "center", "right"],
-        align_vertical: Literal["top", "middle", "bottom"],
+        node: DOMNode,
+        base_style: Style,
+        component_classes: list[str] | None = None,
+        padding: Spacing = Spacing(0, 0, 0, 0),
     ) -> list[Strip]:
+        styles: Styles
+        if component_classes:
+            rules = node.styles.get_rules()
+            rules |= node.get_component_styles(*component_classes).get_rules()
+            styles = Styles(node, rules)
+        else:
+            styles = node.styles
+
         strips = visual.render_strips(
-            width,
-            height=height,
-            base_style=style,
-            justify=justify,
+            width, height=height, base_style=base_style, styles=styles
         )
-        strips = list(
-            Strip.align(
-                strips,
-                _NULL_RICH_STYLE,
-                width,
-                height,
-                align_horizontal,
-                align_vertical,
-            )
-        )
+
         return strips
 
-    def __rich_measure__(
-        self, console: "Console", options: "ConsoleOptions"
-    ) -> Measurement:
-        tab_size = console.tab_size
-        return Measurement(
-            self.get_minimal_width(tab_size),
-            self.get_optimal_width(tab_size),
-        )
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        width = options.max_width
-        tab_size = console.tab_size
-        height = options.height
+@rich.repr.auto
+class RichVisual(Visual):
+    def __init__(self, widget: Widget, renderable: RenderableType) -> None:
+        self._widget = widget
+        self._renderable = renderable
+        self._measurement: Measurement | None = None
 
-        strips = self.render_strips(
-            width,
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._widget
+        yield self._renderable
+
+    def _measure(self, console: Console, options: ConsoleOptions) -> Measurement:
+        if self._measurement is None:
+            self._measurement = Measurement.get(console, options, self._renderable)
+        return self._measurement
+
+    def get_optimal_width(self, tab_size: int = 8) -> int:
+        console = active_app.get().console
+        measurement = self._measure(console, console.options)
+        return measurement.maximum
+
+    def get_minimal_width(self, tab_size: int = 8) -> int:
+        console = active_app.get().console
+        measurement = self._measure(console, console.options)
+        return measurement.minimum
+
+    def get_height(self, width: int) -> int:
+        console = active_app.get().console
+        renderable = self._renderable
+        if isinstance(renderable, Text):
+            height = len(
+                Text(renderable.plain).wrap(
+                    console,
+                    width,
+                    no_wrap=renderable.no_wrap,
+                    tab_size=renderable.tab_size or 8,
+                )
+            )
+        else:
+            options = console.options.update_width(width).update(highlight=False)
+            segments = console.render(renderable, options)
+            # Cheaper than counting the lines returned from render_lines!
+            height = sum([text.count("\n") for text, _, _ in segments])
+
+        return height
+
+    def render_strips(
+        self,
+        width: int,
+        *,
+        height: int | None,
+        base_style: Style,
+        styles: Styles,
+    ) -> list[Strip]:
+        console = active_app.get().console
+        options = console.options.update(
+            highlight=False,
+            width=width,
             height=height,
-            justify=options.justify,
-            overflow=options.overflow,
-            no_wrap=options.no_wrap,
-            tab_size=tab_size,
         )
-        new_line = Segment.line()
-        for strip in strips:
-            yield from Segment.adjust_line_length(strip._segments, width)
-            yield new_line
+        renderable = self._widget.post_render(self._renderable)
+
+        segments = console.render(renderable, options)
+        strips = [
+            Strip(segments)
+            for segments in islice(
+                Segment.split_and_crop_lines(
+                    segments, width, include_new_lines=False, pad=False
+                ),
+                None,
+                height,
+            )
+        ]
+        return strips

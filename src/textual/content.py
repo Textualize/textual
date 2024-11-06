@@ -23,6 +23,7 @@ from rich.segment import Segment, Segments
 from textual._cells import cell_len
 from textual._loop import loop_last
 from textual.color import Color
+from textual.css.styles import Styles
 from textual.strip import Strip
 from textual.visual import Style, Visual
 
@@ -128,6 +129,8 @@ class Content(Visual):
 
     __slots__ = ["_text", "_spans", "_cell_length"]
 
+    _NORMALIZE_TEXT_ALIGN = {"start": "left", "end": "right", "justify": "full"}
+
     def __init__(
         self,
         text: str,
@@ -162,23 +165,22 @@ class Content(Visual):
     def render_strips(
         self,
         width: int,
-        *,
         height: int | None,
-        base_style: Style = Style(),
-        justify: JustifyMethod = "left",
-        overflow: OverflowMethod = "fold",
-        no_wrap: bool = False,
-        tab_size: int = 8,
+        base_style: Style,
+        styles: Styles,
     ) -> list[Strip]:
+        horizontal_align = styles.text_align
+        justify = self._NORMALIZE_TEXT_ALIGN.get(horizontal_align, horizontal_align)
         lines = self.wrap(
             width,
-            justify=justify,
-            overflow=overflow,
-            no_wrap=no_wrap,
-            tab_size=tab_size,
+            justify=justify,  # type: ignore[arg-type]
+            overflow="fold",
+            no_wrap=False,
+            tab_size=8,
         )
         if height is not None:
             lines = lines[:height]
+        base_style = base_style + Style.from_render_styles(styles)
         return [
             Strip(line.render_segments(base_style), line.cell_length) for line in lines
         ]
@@ -876,5 +878,5 @@ Where the fear has gone there will be nothing. Only I will remain."""
     print(lines)
     print("x" * 40)
     for line in lines:
-        segments = Segments(line.render_segments(ANSI_DEFAULT))
+        segments = Segments(line.render_segments(ANSI_DEFAULT, end="\n"))
         print(segments)

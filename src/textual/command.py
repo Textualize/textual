@@ -478,8 +478,7 @@ class CommandPalette(SystemModalScreen):
     }
 
     CommandPalette > .command-palette--help-text {           
-        # text-style: dim not bold;
-        text-style: underline;
+        text-style: not bold;        
         color: $text-muted;     
     }
 
@@ -959,10 +958,12 @@ class CommandPalette(SystemModalScreen):
 
         # We'll potentially use the help text style a lot so let's grab it
         # the once for use in the loop further down.
-        help_style = self.get_component_rich_style(
-            "command-palette--help-text", partial=True
+        # help_style = self.get_component_rich_style(
+        #     "command-palette--help-text", partial=True
+        # )
+        help_style = VisualStyle.from_render_styles(
+            self.get_component_styles("command-palette--help-text")
         )
-
         # The list to hold on to the commands we've gathered from the
         # command providers.
         gathered_commands: list[Command] = []
@@ -1025,7 +1026,7 @@ class CommandPalette(SystemModalScreen):
             content = Content(prompt)
             if hit.help:
                 prompt = content.append("\n").append(
-                    Content.styled(hit.help, VisualStyle.from_rich_style(help_style))
+                    Content.styled(hit.help, help_style)
                 )
 
             # if hit.help:

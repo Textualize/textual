@@ -9,7 +9,6 @@ from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
-from itertools import islice
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
@@ -35,7 +34,6 @@ from rich.console import (
     RenderableType,
 )
 from rich.console import RenderResult as RichRenderResult
-from rich.console import RichCast
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
@@ -53,7 +51,6 @@ from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
-from textual._segment_tools import align_lines
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
 from textual.actions import SkipAction
@@ -82,12 +79,11 @@ from textual.message import Message
 from textual.messages import CallbackType, Prune
 from textual.notifications import SeverityLevel
 from textual.reactive import Reactive
-from textual.render import measure
 from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.strip import Strip
 from textual.visual import Style as VisualStyle
-from textual.visual import Visual, textualize
+from textual.visual import Visual, visualize
 
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
@@ -1535,17 +1531,9 @@ class Widget(DOMNode):
         if self._content_width_cache[0] == cache_key:
             return self._content_width_cache[1]
 
-        console = self.app.console
-        renderable = self._render()
+        visual = self._render()
+        width = visual.get_optimal_width()
 
-        visual = textualize(renderable)
-
-        if visual is not None:
-            width = visual.get_optimal_width()
-        else:
-            width = measure(
-                console, renderable, container.width, container_width=container.width
-            )
         if self.expand:
             width = max(container.width, width)
         if self.shrink:
@@ -1582,31 +1570,8 @@ class Widget(DOMNode):
             if self._content_height_cache[0] == cache_key:
                 return self._content_height_cache[1]
 
-            renderable = self.render()
-            visual = textualize(renderable)
-            if visual is not None:
-                height = visual.get_height(width)
-            elif isinstance(renderable, Text):
-                height = (
-                    len(
-                        Text(renderable.plain).wrap(
-                            self._console,
-                            width,
-                            no_wrap=renderable.no_wrap,
-                            tab_size=renderable.tab_size or 8,
-                        )
-                    )
-                    if renderable
-                    else 0
-                )
-
-            else:
-                options = self._console.options.update_width(width).update(
-                    highlight=False
-                )
-                segments = self._console.render(renderable, options)
-                # Cheaper than counting the lines returned from render_lines!
-                height = sum([text.count("\n") for text, _, _ in segments])
+            visual = self._render()
+            height = visual.get_height(width)
             self._content_height_cache = (cache_key, height)
 
         return height
@@ -3703,51 +3668,50 @@ class Widget(DOMNode):
         styles = self.styles
         align_horizontal, align_vertical = styles.content_align
 
-        visual = textualize(renderable)
-        if visual is not None:
-            strips = visual.render_strips(
-                width,
-                height=height,
-                base_style=self.visual_style,
-                justify=self._get_justify_method() or "left",
-            )
+        visual = visualize(self, renderable)
+
+        strips = Visual.to_strips(
+            visual, width, height, self, base_style=self.visual_style
+        )
+        if not (align_horizontal == "left" and align_horizontal == "top"):
             strips = list(
                 Strip.align(
                     strips,
                     _NULL_STYLE,
-                    self.size,
-                    align_horizontal,
-                    align_vertical,
-                )
-            )
-
-        else:
-            renderable = self.post_render(renderable)
-            options = self._console.options.update(
-                highlight=False, width=width, height=height
-            )
-
-            segments = self._console.render(renderable, options)
-            lines = list(
-                islice(
-                    Segment.split_and_crop_lines(
-                        segments, width, include_new_lines=False, pad=False
-                    ),
-                    None,
+                    width,
                     height,
-                )
-            )
-
-            lines = list(
-                align_lines(
-                    lines,
-                    _NULL_STYLE,
-                    self.size,
                     align_horizontal,
                     align_vertical,
                 )
             )
-            strips = [Strip(line, width) for line in lines]
+
+        # else:
+        #     renderable = self.post_render(renderable)
+        #     options = self._console.options.update(
+        #         highlight=False, width=width, height=height
+        #     )
+
+        #     segments = self._console.render(renderable, options)
+        #     lines = list(
+        #         islice(
+        #             Segment.split_and_crop_lines(
+        #                 segments, width, include_new_lines=False, pad=False
+        #             ),
+        #             None,
+        #             height,
+        #         )
+        #     )
+
+        #     lines = list(
+        #         align_lines(
+        #             lines,
+        #             _NULL_STYLE,
+        #             self.size,
+        #             align_horizontal,
+        #             align_vertical,
+        #         )
+        #     )
+        #     strips = [Strip(line, width) for line in lines]
         self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
@@ -3954,16 +3918,15 @@ class Widget(DOMNode):
                 return Blank(self.background_colors[1])
         return self.css_identifier_styled
 
-    def _render(self) -> ConsoleRenderable | RichCast | Visual:
+    def _render(self) -> Visual:
         """Get renderable, promoting str to text as required.
 
         Returns:
             A renderable.
         """
         renderable = self.render()
-        if isinstance(renderable, str):
-            return Text.from_markup(renderable)
-        return renderable
+        visual = visualize(self, renderable)
+        return visual
 
     async def run_action(self, action: str) -> None:
         """Perform a given action, with this widget as the default namespace.
