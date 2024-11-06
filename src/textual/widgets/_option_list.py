@@ -484,7 +484,6 @@ class OptionList(ScrollView, can_focus=True):
             width,
             2,
             self,
-            self.visual_style,
             component_classes=[component_class] if component_class else None,
         )
 

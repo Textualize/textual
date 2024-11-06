@@ -3664,15 +3664,13 @@ class Widget(DOMNode):
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
-        renderable = self.render()
+        visual = self._render()
         styles = self.styles
         align_horizontal, align_vertical = styles.content_align
 
-        visual = visualize(self, renderable)
+        # visual = visualize(self, renderable)
 
-        strips = Visual.to_strips(
-            visual, width, height, self, base_style=self.visual_style
-        )
+        strips = Visual.to_strips(visual, width, height, self)
         if not (align_horizontal == "left" and align_horizontal == "top"):
             strips = list(
                 Strip.align(

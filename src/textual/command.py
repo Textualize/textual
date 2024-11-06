@@ -961,7 +961,7 @@ class CommandPalette(SystemModalScreen):
         # help_style = self.get_component_rich_style(
         #     "command-palette--help-text", partial=True
         # )
-        help_style = VisualStyle.from_render_styles(
+        help_style = VisualStyle.from_styles(
             self.get_component_styles("command-palette--help-text")
         )
         # The list to hold on to the commands we've gathered from the

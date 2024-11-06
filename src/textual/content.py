@@ -180,7 +180,8 @@ class Content(Visual):
         )
         if height is not None:
             lines = lines[:height]
-        base_style = base_style + Style.from_render_styles(styles)
+
+        base_style += Style.from_styles(styles)
         return [
             Strip(line.render_segments(base_style), line.cell_length) for line in lines
         ]

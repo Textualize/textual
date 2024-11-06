@@ -11,16 +11,15 @@ from typing import TYPE_CHECKING, Any, Iterable, Protocol, cast
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.measure import Measurement
-from rich.protocol import is_renderable
+from rich.protocol import is_renderable, rich_cast
 from rich.segment import Segment
 from rich.style import Style as RichStyle
 from rich.text import Text
 
 from textual._context import active_app
 from textual.color import TRANSPARENT, Color
-from textual.css.styles import RenderStyles, Styles
+from textual.css.styles import Styles
 from textual.dom import DOMNode
-from textual.geometry import Spacing
 from textual.strip import Strip
 
 if sys.version_info >= (3, 8):
@@ -65,7 +64,7 @@ def visualize(widget: Widget, obj: object) -> Visual:
         # Doesn't expose the textualize protocol
         if is_renderable(obj):
             # If its is a Rich renderable, wrap it with a RichVisual
-            return RichVisual(widget, obj)
+            return RichVisual(widget, rich_cast(obj))
         else:
             # We don't know how to make a visual from this object
             raise VisualError(
@@ -73,7 +72,8 @@ def visualize(widget: Widget, obj: object) -> Visual:
             )
     # Call the textualize method to create a visual
     visual = visualize()
-    assert isinstance(visual, Visual), "the textualize() method should return a Visual"
+    if not isinstance(visual, Visual) and is_renderable(visual):
+        return RichVisual(widget, visual)
     return visual
 
 
@@ -131,7 +131,7 @@ class Style:
         )
 
     @classmethod
-    def from_render_styles(cls, styles: RenderStyles) -> Style:
+    def from_styles(cls, styles: Styles) -> Style:
         text_style = styles.text_style
         return Style(
             styles.background,
@@ -191,7 +191,6 @@ class Visual(ABC):
     def render_strips(
         self,
         width: int,
-        *,
         height: int | None,
         base_style: Style,
         styles: Styles,
@@ -244,22 +243,18 @@ class Visual(ABC):
         visual: Visual,
         width: int,
         height: int,
-        node: DOMNode,
-        base_style: Style,
+        widget: DOMNode,
         component_classes: list[str] | None = None,
-        padding: Spacing = Spacing(0, 0, 0, 0),
     ) -> list[Strip]:
         styles: Styles
         if component_classes:
-            rules = node.styles.get_rules()
-            rules |= node.get_component_styles(*component_classes).get_rules()
-            styles = Styles(node, rules)
+            rules = widget.styles.get_rules()
+            rules |= widget.get_component_styles(*component_classes).get_rules()
+            styles = Styles(widget, rules)
         else:
-            styles = node.styles
+            styles = widget.styles
 
-        strips = visual.render_strips(
-            width, height=height, base_style=base_style, styles=styles
-        )
+        strips = visual.render_strips(width, height, widget.visual_style, styles)
 
         return strips
 
@@ -313,7 +308,6 @@ class RichVisual(Visual):
     def render_strips(
         self,
         width: int,
-        *,
         height: int | None,
         base_style: Style,
         styles: Styles,
