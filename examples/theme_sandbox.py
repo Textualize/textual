@@ -6,7 +6,7 @@ from typing import Any
 from textual._on import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Grid, Horizontal, VerticalScroll
+from textual.containers import Container, Grid, Horizontal, VerticalScroll
 from textual.widgets import (
     Button,
     Collapsible,
@@ -25,7 +25,7 @@ from textual.widgets import (
     Select,
     SelectionList,
     Switch,
-    Tabs,
+    TabbedContent,
     TextArea,
     Tree,
 )
@@ -209,6 +209,15 @@ class ChangingThemeApp(App[None]):
     RichLog {
         height: 4;
     }
+    TabbedContent {
+        width: 34;
+    }
+    #label-variants {
+        & > Label {
+            padding: 0 1;
+            margin-right: 1;
+        }
+    }
 
     #palette {
         height: auto;
@@ -233,6 +242,17 @@ class ChangingThemeApp(App[None]):
     }
     .no-border {
         border: none;
+    }
+    #menu {
+        height: auto;
+        width: auto;
+        border: round $border;
+
+        & OptionList {
+            background: transparent;
+            padding: 0;
+            border: none;
+        }
     }
     """
 
@@ -368,7 +388,38 @@ class ChangingThemeApp(App[None]):
                 yield Button.success("Success 2")
                 yield Button.error("Error 3")
                 yield Button.warning("Warning 4")
-            yield Tabs("First tab", "Second tab", "Third tab", "Fourth tab")
+
+            with Horizontal(id="label-variants"):
+                yield Label("Primary", variant="primary")
+                yield Label("Secondary", variant="secondary")
+                yield Label("Accent", variant="accent")
+                yield Label("Warning", variant="warning")
+                yield Label("Error", variant="error")
+                yield Label("Success", variant="success")
+
+            with Container(id="menu") as container:
+                container.border_title = "Menu"
+                with TabbedContent("Foods", "Drinks", "Desserts", "Extras"):
+                    yield OptionList(
+                        "Pizza",
+                        "Pasta",
+                        "Salad",
+                        "Soup",
+                    )
+                    yield OptionList(
+                        "Coke",
+                        "Sprite",
+                        "Fanta",
+                        "Root Beer",
+                    )
+                    yield OptionList(
+                        "Ice Cream",
+                        "Chocolate",
+                        "Cake",
+                        "Pie",
+                    )
+                    yield OptionList("Extra 1", "Extra 2", "Extra 3", "Extra 4")
+
             yield MaskedInput(
                 template="9999-9999-9999-9999;0",
             )

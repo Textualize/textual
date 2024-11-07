@@ -219,22 +219,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "button-color-foreground": "#272822",
         },
     ),
-    "cobalt": Theme(
-        name="cobalt",
-        primary="#4878A6",
-        secondary="#334D5C",
-        warning="#FFAA22",
-        error="#E63946",
-        success="#4CAF50",
-        accent="#D94E64",
-        dark=True,
-        surface="#27343B",
-        panel="#2D3E46",
-        background="#1F262A",
-        variables={
-            "button-color-foreground": "#1F262A",
-        },
-    ),
     "flexoki": Theme(
         name="flexoki",
         primary="#205EA6",  # blue
