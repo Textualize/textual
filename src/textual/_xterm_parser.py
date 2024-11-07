@@ -216,9 +216,12 @@ class XTermParser(Parser[Message]):
                         bracketed_paste = False
                     break
                 if match := _re_in_band_window_resize.fullmatch(sequence):
-                    height, width, _pixel_height, _pixel_width = match.groups()
+                    height, width, pixel_height, pixel_width = [
+                        group.partition(":")[0] for group in match.groups()
+                    ]
                     resize_event = events.Resize.from_dimensions(
-                        int(width), int(height)
+                        (int(width), int(height)),
+                        (int(pixel_width), int(pixel_height)),
                     )
                     on_token(resize_event)
                     break

@@ -143,6 +143,12 @@ class LinuxDriver(Driver):
     def _enable_in_band_window_resize(self) -> None:
         self.write("\x1b[?2048h")
 
+    def _enable_line_wrap(self) -> None:
+        self.write("x1b[?7h")
+
+    def _disable_line_wrap(self) -> None:
+        self.write("x1b[?7l")
+
     def _disable_in_band_window_resize(self) -> None:
         if self._in_band_window_resize:
             self.write("\x1b[?2048l")
@@ -269,6 +275,7 @@ class LinuxDriver(Driver):
         self._request_terminal_sync_mode_support()
         self._query_in_band_window_resize()
         self._enable_bracketed_paste()
+        self._disable_line_wrap()
 
         # Appears to fix an issue enabling mouse support in iTerm 3.5.0
         self._enable_mouse_support()
@@ -345,6 +352,7 @@ class LinuxDriver(Driver):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
+        self._enable_line_wrap()
         self._disable_in_band_window_resize()
         self.disable_input()
 
