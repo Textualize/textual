@@ -365,7 +365,6 @@ class Strip:
             strip = self
 
         self._line_length_cache[cache_key] = strip
-
         return strip
 
     def simplify(self) -> Strip:

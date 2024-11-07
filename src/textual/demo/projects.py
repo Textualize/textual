@@ -55,7 +55,7 @@ PROJECTS = [
         "Charles Thompson",
         "https://github.com/charles-001/dolphie",
         "Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL",
-        "608",
+        "649",
     ),
     ProjectInfo(
         "Harlequin",

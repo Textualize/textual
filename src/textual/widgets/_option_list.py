@@ -485,6 +485,7 @@ class OptionList(ScrollView, can_focus=True):
             2,
             self,
             component_classes=[component_class] if component_class else None,
+            padding=self.get_component_styles("option-list--option").padding,
         )
 
         # padding = self.get_component_styles("option-list--option").padding

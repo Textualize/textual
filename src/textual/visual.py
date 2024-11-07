@@ -19,7 +19,7 @@ from rich.text import Text
 from textual._context import active_app
 from textual.color import TRANSPARENT, Color
 from textual.css.styles import Styles
-from textual.dom import DOMNode
+from textual.geometry import Spacing
 from textual.strip import Strip
 
 if sys.version_info >= (3, 8):
@@ -243,8 +243,10 @@ class Visual(ABC):
         visual: Visual,
         width: int,
         height: int,
-        widget: DOMNode,
+        widget: Widget,
         component_classes: list[str] | None = None,
+        padding: Spacing = Spacing(),
+        padding_style: RichStyle = RichStyle(),
     ) -> list[Strip]:
         styles: Styles
         if component_classes:
@@ -254,7 +256,24 @@ class Visual(ABC):
         else:
             styles = widget.styles
 
-        strips = visual.render_strips(width, height, widget.visual_style, styles)
+        strips = visual.render_strips(
+            width - padding.width, height - padding.height, widget.visual_style, styles
+        )
+
+        if padding:
+            top_padding = (
+                [Strip.blank(width, padding_style)] * padding.top if padding.top else []
+            )
+            bottom_padding = (
+                [Strip.blank(width, padding_style)] * padding.bottom
+                if padding.bottom
+                else []
+            )
+            strips = [
+                *top_padding,
+                *Strip.align(strips, padding_style, width, height, "ce"),
+                *bottom_padding,
+            ]
 
         return strips
 
