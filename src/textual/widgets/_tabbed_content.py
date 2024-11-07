@@ -333,6 +333,7 @@ class TabbedContent(Widget):
         self._tab_content: list[Widget] = []
         self._initial = initial
         self._cumulative_tab_count = 0
+        """Tracks the total number of tabs added to ensure unique IDs if tabs are removed"""
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     @property
