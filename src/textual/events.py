@@ -124,6 +124,11 @@ class Resize(Event, bubble=False):
         """The size of the Widget's container widget."""
         super().__init__()
 
+    @classmethod
+    def from_dimensions(cls, width: int, height: int) -> Resize:
+        size = Size(width, height)
+        return Resize(size, size, size)
+
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 

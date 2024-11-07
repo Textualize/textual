@@ -20,6 +20,7 @@ from textual._xterm_parser import XTermParser
 from textual.driver import Driver
 from textual.drivers._writer_thread import WriterThread
 from textual.geometry import Size
+from textual.messages import TerminalSupportInBandWindowResize
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -59,6 +60,7 @@ class LinuxDriver(Driver):
         # need to know that we came in here via a SIGTSTP; this flag helps
         # keep track of this.
         self._must_signal_resume = False
+        self._in_band_window_resize = False
 
         # Put handlers for SIGTSTP and SIGCONT in place. These are necessary
         # to support the user pressing Ctrl+Z (or whatever the dev might
@@ -135,6 +137,16 @@ class LinuxDriver(Driver):
         """Enable bracketed paste mode."""
         self.write("\x1b[?2004h")
 
+    def _query_in_band_window_resize(self) -> None:
+        self.write("\x1b[?2048$p")
+
+    def _enable_in_band_window_resize(self) -> None:
+        self.write("\x1b[?2048h")
+
+    def _disable_in_band_window_resize(self) -> None:
+        if self._in_band_window_resize:
+            self.write("\x1b[?2048l")
+
     def _disable_bracketed_paste(self) -> None:
         """Disable bracketed paste mode."""
         self.write("\x1b[?2004l")
@@ -197,6 +209,8 @@ class LinuxDriver(Driver):
         loop = asyncio.get_running_loop()
 
         def send_size_event() -> None:
+            if self._in_band_window_resize:
+                return
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
@@ -253,6 +267,7 @@ class LinuxDriver(Driver):
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
+        self._query_in_band_window_resize()
         self._enable_bracketed_paste()
 
         # Appears to fix an issue enabling mouse support in iTerm 3.5.0
@@ -330,6 +345,7 @@ class LinuxDriver(Driver):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
+        self._disable_in_band_window_resize()
         self.disable_input()
 
         if self.attrs_before is not None:
@@ -418,3 +434,13 @@ class LinuxDriver(Driver):
                     pass
             except ParseError:
                 pass
+
+    def process_event(self, event: events.Event) -> None:
+        if isinstance(event, TerminalSupportInBandWindowResize):
+            if event.supported and not event.enabled:
+                self._enable_in_band_window_resize()
+                self._in_band_window_resize = event.supported
+            elif event.enabled:
+                self._in_band_window_resize = event.supported
+
+        super().process_event(event)

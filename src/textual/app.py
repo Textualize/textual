@@ -4458,3 +4458,9 @@ class App(Generic[ReturnType], DOMNode):
             self.notify(
                 "Failed to save screenshot", title="Screenshot", severity="error"
             )
+
+    @on(messages.TerminalSupportInBandWindowResize)
+    def _on_terminal_supports_in_band_window_resize(
+        self, message: messages.TerminalSupportInBandWindowResize
+    ) -> None:
+        self.log.debug(message)
