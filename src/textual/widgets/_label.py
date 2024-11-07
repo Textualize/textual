@@ -1,8 +1,12 @@
 """Provides a simple Label widget."""
 
+from typing import Literal
+
 from rich.console import RenderableType
 
 from textual.widgets._static import Static
+
+LabelVariant = Literal["success", "error", "warning", "primary", "secondary", "accent"]
 
 
 class Label(Static):
@@ -45,7 +49,7 @@ class Label(Static):
         self,
         renderable: RenderableType = "",
         *,
-        variant: str | None = None,
+        variant: LabelVariant | None = None,
         expand: bool = False,
         shrink: bool = False,
         markup: bool = True,
