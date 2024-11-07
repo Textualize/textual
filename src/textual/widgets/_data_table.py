@@ -345,6 +345,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             background: $panel;
             color: $foreground;
         }
+        &:ansi > .datatable--header {
+            background: ansi_bright_blue;
+            color: ansi_default;
+        }
 
         & > .datatable--fixed {
             background: $secondary 50%;

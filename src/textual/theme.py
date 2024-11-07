@@ -151,21 +151,31 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "button-color-foreground": "#181825",
         },
     ),
-    # "textual-ansi": Theme(
-    #     name="textual-ansi",
-    #     primary="ansi_blue",
-    #     secondary="ansi_cyan",
-    #     warning="ansi_yellow",
-    #     error="ansi_red",
-    #     success="ansi_green",
-    #     accent="ansi_bright_blue",
-    #     foreground="ansi_default",
-    #     background="ansi_default",
-    #     surface="ansi_default",
-    #     panel="ansi_default",
-    #     boost="ansi_default",
-    #     dark=False,
-    # ),
+    "textual-ansi": Theme(
+        name="textual-ansi",
+        primary="ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_yellow",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_bright_blue",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+        dark=False,
+        variables={
+            "block-cursor-text-style": "b",
+            "block-cursor-blurred-text-style": "i",
+            "input-selection-background": "ansi_blue",
+            "input-selection-foreground": "ansi_white",
+            "input-cursor-text-style": "reverse",
+            "scrollbar": "ansi_blue",
+            "border-blurred": "ansi_blue",
+            "border": "ansi_bright_blue",
+        },
+    ),
     "dracula": Theme(
         name="dracula",
         primary="#BD93F9",
@@ -292,6 +302,7 @@ class ThemeProvider(Provider):
         return [
             (theme.name, partial(set_app_theme, theme.name))
             for theme in themes.values()
+            if theme.name != "textual-ansi"
         ]
 
     async def discover(self) -> Hits:

@@ -95,6 +95,9 @@ TextArea {
     padding: 0 1;
     color: $foreground;
     background: $surface;
+    & .text-area--cursor {
+        text-style: $input-cursor-text-style;
+    }
     & .text-area--gutter {
         color: $foreground 40%;
     }
@@ -119,6 +122,13 @@ TextArea {
 
     &:focus {
         border: tall $border;
+    }
+
+    &:ansi {
+        & .text-area--selection {
+            background: transparent;
+            text-style: reverse;
+        }
     }
 
     &:dark {

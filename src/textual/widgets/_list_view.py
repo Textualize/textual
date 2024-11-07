@@ -38,9 +38,10 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             overflow: hidden hidden;
             width: 1fr;
             
-            &.--highlight {
-                color: $block-cursor-foreground;
+            &.--highlight > Widget {
+                color: $block-cursor-blurred-foreground;
                 background: $block-cursor-blurred-background;
+                text-style: $block-cursor-blurred-text-style;
             }
         }
 

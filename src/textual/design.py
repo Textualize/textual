@@ -242,7 +242,7 @@ class ColorSystem:
         colors["block-cursor-background"] = get("block-cursor-background", primary.hex)
         colors["block-cursor-text-style"] = get("block-cursor-text-style", "bold")
         colors["block-cursor-blurred-foreground"] = get(
-            "block-cursor-blurred-foreground", colors["text"]
+            "block-cursor-blurred-foreground", foreground.hex
         )
         colors["block-cursor-blurred-background"] = get(
             "block-cursor-blurred-background", primary.with_alpha(0.3).hex

@@ -102,6 +102,7 @@ class SelectCurrent(Horizontal):
         padding: 0 2;
 
         &:ansi {
+            border: tall ansi_blue;
             color: ansi_default;
             background: ansi_default;
         }

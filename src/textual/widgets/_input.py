@@ -160,6 +160,7 @@ class Input(Widget, can_focus=True):
         &>.input--cursor {
             background: $input-cursor-background;
             color: $input-cursor-foreground;
+            text-style: $input-cursor-text-style;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;
@@ -171,16 +172,10 @@ class Input(Widget, can_focus=True):
             border: tall $error;
         }    
 
-        &.-ansi-colors {
+        &:ansi {
             background: ansi_default;
             color: ansi_default;
-            border: tall ansi_default;
-
-            &:focus {
-                border: tall ansi_blue;
-            }
             &>.input--cursor {     
-                background: ansi_default;           
                 text-style: reverse;
             }
             &>.input--placeholder, &>.input--suggestion {

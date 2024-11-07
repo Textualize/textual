@@ -584,9 +584,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         background: $surface;
         color: $foreground;
 
-        & > .tree--label {
-
-        }
+        & > .tree--label {}
         & > .tree--guides {
             color: $surface-lighten-2;
         }
@@ -597,10 +595,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             color: $block-cursor-blurred-background;
         }
         & > .tree--cursor {
+            text-style: $block-cursor-blurred-text-style;
             background: $block-cursor-blurred-background;
         }
-        & > .tree--highlight {
-        }
+        & > .tree--highlight {}
         & > .tree--highlight-line {
             background: $block-hover-background;
         }
@@ -636,38 +634,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             }
         }
 
-        &.-ansi {
-            background: ansi_default;
+        &:ansi {
             color: ansi_default;
             & > .tree--guides {
                 color: ansi_green;
             }
-            & > .tree--guides-hover {
-                color: ansi_blue;
-            
-            }
-            & > .tree--guides-selected {
-                color: ansi_bright_blue;
-             
-            }
-            & > .tree--cursor {
-                background: ansi_bright_blue;
-                color: ansi_default;
-                text-style: none;
-            }
             &:nocolor > .tree--cursor{
                 text-style: reverse;
             }
-            &:focus > .tree--cursor {
-                background: ansi_bright_blue;
-            }
-            & > .tree--highlight {
-                text-style: underline;
-            }
-            & > .tree--highlight-line {
-                background: ansi_default;
-            }
-
         }
     }
 

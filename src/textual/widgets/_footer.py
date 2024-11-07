@@ -143,7 +143,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             border-left: vkey $foreground 20%;                            
         }
 
-        &.-ansi-colors {           
+        &:ansi {           
             background: ansi_default;            
             .footer-key--key {
                 background: ansi_default;

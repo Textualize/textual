@@ -21,16 +21,19 @@ class CollapsibleTitle(Static, can_focus=True):
         width: auto;
         height: auto;
         padding: 0 1 0 1;
-    }
+        text-style: $block-cursor-blurred-text-style;
+        background: $block-cursor-blurred-background;
+        color: $block-cursor-blurred-foreground;
 
-    CollapsibleTitle:hover {
-        background: $block-hover-background;
-        color: $foreground;
-    }
-
-    CollapsibleTitle:focus {
-        background: $block-cursor-background;
-        color: $block-cursor-foreground;
+        &:hover {
+            background: $block-hover-background;
+            color: $foreground;
+        }
+        &:focus {
+            text-style: $block-cursor-text-style;
+            background: $block-cursor-background;
+            color: $block-cursor-foreground;
+        }
     }
     """
 
