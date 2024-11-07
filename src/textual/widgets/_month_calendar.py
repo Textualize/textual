@@ -6,7 +6,7 @@ from typing import Sequence
 
 from rich.text import Text
 
-from textual import on
+from textual import events, on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.coordinate import Coordinate
@@ -41,6 +41,17 @@ class CalendarGrid(DataTable, inherit_bindings=False):
         }
     }
     """
+
+    async def _on_click(self, event: events.Click) -> None:
+        """Prevent selecting an empty cell, in cases where `show_other_months`
+        is false in the `MonthCalendar` widget."""
+        meta = event.style.meta
+        if "row" not in meta or "column" not in meta:
+            return
+        row_index = meta["row"]
+        column_index = meta["column"]
+        if self.get_cell_at(Coordinate(row_index, column_index)) is None:
+            event.prevent_default()
 
 
 class MonthCalendar(Widget):
@@ -202,28 +213,20 @@ class MonthCalendar(Widget):
         """Post a `DateHighlighted` message when a date cell is highlighted in
         the calendar grid."""
         event.stop()
-        if not self.show_other_months and event.value is None:
-            # TODO: This handling of blank cells is obviously a bit hacky.
-            # Instead this widget should prevent highlighting a blank cell
-            # altogether, either with the keyboard or mouse.
-            calendar_grid = self.query_one(CalendarGrid)
-            date_coordinate = self._get_date_coordinate(self.date)
-            with self.prevent(CalendarGrid.CellHighlighted):
-                calendar_grid.cursor_coordinate = date_coordinate
-        else:
-            cursor_row, cursor_column = event.coordinate
-            new_date = self._calendar_dates[cursor_row][cursor_column]
-            assert isinstance(new_date, datetime.date)
-            # Avoid possible race condition by setting the `date` reactive
-            # without invoking the watcher. When mashing the arrow keys, this
-            # otherwise would cause the app to lag or freeze entirely.
-            old_date = self.date
-            self.set_reactive(MonthCalendar.date, new_date)
-            if (new_date.month != old_date.month) or (new_date.year != old_date.year):
-                self._calendar_dates = self._get_calendar_dates()
-                self._update_calendar_grid(update_week_header=False)
+        assert event.value is not None
+        cursor_row, cursor_column = event.coordinate
+        new_date = self._calendar_dates[cursor_row][cursor_column]
+        assert isinstance(new_date, datetime.date)
+        # Avoid possible race condition by setting the `date` reactive
+        # without invoking the watcher. When mashing the arrow keys, this
+        # otherwise would cause the app to lag or freeze entirely.
+        old_date = self.date
+        self.set_reactive(MonthCalendar.date, new_date)
+        if (new_date.month != old_date.month) or (new_date.year != old_date.year):
+            self._calendar_dates = self._get_calendar_dates()
+            self._update_calendar_grid(update_week_header=False)
 
-            self.post_message(MonthCalendar.DateHighlighted(self, self.date))
+        self.post_message(MonthCalendar.DateHighlighted(self, self.date))
 
     @on(CalendarGrid.CellSelected)
     def _on_calendar_grid_cell_selected(
@@ -233,10 +236,7 @@ class MonthCalendar(Widget):
         """Post a `DateSelected` message when a date cell is selected in
         the calendar grid."""
         event.stop()
-        if not self.show_other_months and event.value is None:
-            calendar_grid = self.query_one(CalendarGrid)
-            calendar_grid._show_hover_cursor = False
-            return
+        assert event.value is not None
         # We cannot rely on the `event.coordinate` for the selected date,
         # as selecting a date from the previous or next month will update the
         # calendar to bring that entire month into view and the date at this
