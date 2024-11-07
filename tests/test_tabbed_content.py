@@ -914,3 +914,23 @@ async def test_disabling_tab_within_tabbed_content_stays_isolated():
         await pilot.pause()
         assert app.query_one("Tab#duplicate").disabled is True
         assert app.query_one("TabPane#duplicate").disabled is False
+
+
+async def test_remove_and_add_pane_no_duplicate_id_error():
+    """Ensure that removing then adding panes does not raise a `DuplicateIds` exception.
+
+    Regression test for https://github.com/Textualize/textual/issues/5215
+    """
+
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        # If no exception is raised, the test will pass
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        await tabbed_content.remove_pane("tab-1")
+        await tabbed_content.add_pane(TabPane("Tab 3", Label("tab-3")))
