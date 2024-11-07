@@ -90,11 +90,13 @@ class BindingsTable(Static):
             get_key_display = self.app.get_key_display
             for multi_bindings in action_to_bindings.values():
                 binding, enabled, tooltip = multi_bindings[0]
-                key_display = " ".join(
-                    get_key_display(binding) for binding, _, _ in multi_bindings
+                keys_display = " ".join(
+                    dict.fromkeys(  # Remove duplicates while preserving order
+                        get_key_display(binding) for binding, _, _ in multi_bindings
+                    )
                 )
                 table.add_row(
-                    Text(key_display, style=key_style),
+                    Text(keys_display, style=key_style),
                     render_description(binding),
                 )
             if namespace != previous_namespace:

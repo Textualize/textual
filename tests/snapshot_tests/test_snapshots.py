@@ -2347,7 +2347,7 @@ def test_fr_and_margin(snap_compare):
 
     class FRApp(App):
         CSS = """
-        #first-container {            
+        #first-container {
             background: green;
             height: auto;
         }
@@ -2355,7 +2355,7 @@ def test_fr_and_margin(snap_compare):
         #second-container {
             margin: 2;
             background: red;
-            height: auto;        
+            height: auto;
         }
 
         #third-container {
@@ -2416,3 +2416,21 @@ def test_split_segments_infinite_loop(snap_compare):
 
     """
     assert snap_compare(SNAPSHOT_APPS_DIR / "split_segments.py")
+
+
+def test_help_panel_key_display_not_duplicated(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5037"""
+
+    class HelpPanelApp(App):
+        BINDINGS = [
+            Binding("b,e,l", "bell", "Ring the bell", key_display="foo"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Footer()
+
+    async def run_before(pilot: Pilot):
+        pilot.app.action_show_help_panel()
+
+    app = HelpPanelApp()
+    assert snap_compare(app, run_before=run_before)
