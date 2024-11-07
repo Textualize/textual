@@ -2350,7 +2350,7 @@ def test_fr_and_margin(snap_compare):
 
     class FRApp(App):
         CSS = """
-        #first-container {            
+        #first-container {
             background: green;
             height: auto;
         }
@@ -2358,7 +2358,7 @@ def test_fr_and_margin(snap_compare):
         #second-container {
             margin: 2;
             background: red;
-            height: auto;        
+            height: auto;
         }
 
         #third-container {
@@ -2529,3 +2529,21 @@ def test_app_search_opens_and_displays_search_list(snap_compare):
         await pilot.press("b")
 
     assert snap_compare(SearchApp(), run_before=run_before)
+
+
+def test_help_panel_key_display_not_duplicated(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5037"""
+
+    class HelpPanelApp(App):
+        BINDINGS = [
+            Binding("b,e,l", "bell", "Ring the bell", key_display="foo"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Footer()
+
+    async def run_before(pilot: Pilot):
+        pilot.app.action_show_help_panel()
+
+    app = HelpPanelApp()
+    assert snap_compare(app, run_before=run_before)

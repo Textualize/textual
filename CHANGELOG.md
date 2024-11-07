@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
+
+## [0.85.2] - 2024-11-02
+
 - Fixed broken focus-within https://github.com/Textualize/textual/pull/5190
 
 ## [0.85.1] - 2024-10-26
@@ -2493,6 +2499,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.85.2]: https://github.com/Textualize/textual/compare/v0.85.1...v0.85.2
 [0.85.1]: https://github.com/Textualize/textual/compare/v0.85.0...v0.85.1
 [0.85.0]: https://github.com/Textualize/textual/compare/v0.84.0...v0.85.0
 [0.84.0]: https://github.com/Textualize/textual/compare/v0.83.0...v0.84.0

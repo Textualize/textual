@@ -2321,6 +2321,7 @@ class App(Generic[ReturnType], DOMNode):
             await_mount = AwaitMount(self.screen, [])
 
         self._current_mode = mode
+        self.refresh_css()
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
 
@@ -3751,7 +3752,7 @@ class App(Generic[ReturnType], DOMNode):
                 raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination, None)
             if action_target is None:
-                raise ActionError("Action target {destination!r} not available")
+                raise ActionError(f"Action target {destination!r} not available")
         return (
             (default_namespace if action_target is None else action_target),
             action_name,
