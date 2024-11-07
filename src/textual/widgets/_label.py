@@ -1,5 +1,7 @@
 """Provides a simple Label widget."""
 
+from __future__ import annotations
+
 from typing import Literal
 
 from rich.console import RenderableType
