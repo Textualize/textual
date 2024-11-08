@@ -786,6 +786,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._hover_effects_timer: Timer | None = None
 
+        self._resize_event: events.Resize | None = None
+        """A pending resize event, sent on idle."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -3826,9 +3829,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self.screen.post_message(event)
-        for screen in self._background_screens:
-            screen.post_message(event)
+        self._resize_event = event
 
     async def _on_app_focus(self, event: events.AppFocus) -> None:
         """App has focus."""
@@ -4467,3 +4468,11 @@ class App(Generic[ReturnType], DOMNode):
         we will just log it.
         """
         self.log.debug(message)
+
+    def _on_idle(self) -> None:
+        event = self._resize_event
+        if event is not None:
+            self._resize_event = None
+            self.screen.post_message(event)
+            for screen in self._background_screens:
+                screen.post_message(event)

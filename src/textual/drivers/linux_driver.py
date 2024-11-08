@@ -20,6 +20,7 @@ from textual._xterm_parser import XTermParser
 from textual.driver import Driver
 from textual.drivers._writer_thread import WriterThread
 from textual.geometry import Size
+from textual.message import Message
 from textual.messages import TerminalSupportInBandWindowResize
 
 if TYPE_CHECKING:
@@ -443,18 +444,21 @@ class LinuxDriver(Driver):
             except ParseError:
                 pass
 
-    def process_message(self, event: events.Event) -> None:
-        if isinstance(event, TerminalSupportInBandWindowResize):
-            if event.supported and not event.enabled:
+    def process_message(self, message: Message) -> None:
+        # intercept in-band window resize
+        if isinstance(message, TerminalSupportInBandWindowResize):
+            # If it is supported, enabled it
+            if message.supported and not message.enabled:
                 self._enable_in_band_window_resize()
-                self._in_band_window_resize = event.supported
-            elif event.enabled:
-                self._in_band_window_resize = event.supported
+                self._in_band_window_resize = message.supported
+            elif message.enabled:
+                self._in_band_window_resize = message.supported
+            # Send up-to-date message
             super().process_message(
                 TerminalSupportInBandWindowResize(
-                    event.supported, self._in_band_window_resize
+                    message.supported, self._in_band_window_resize
                 )
             )
             return
 
-        super().process_message(event)
+        super().process_message(message)
