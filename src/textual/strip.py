@@ -570,3 +570,15 @@ class Strip:
                 ]
             )
         return self._render_cache
+
+    def crop_pad(self, cell_length: int, left: int, right: int, style: Style) -> Strip:
+        if cell_length != self.cell_length:
+            strip = self.adjust_cell_length(cell_length, style)
+        if not (left or right):
+            return strip
+        segments = self._segments.copy()
+        if left:
+            segments.insert(0, Segment(" " * left, style))
+        if right:
+            segments.append(Segment(" " * right, style))
+        return Strip(segments, cell_length + left + right)

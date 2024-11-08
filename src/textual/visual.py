@@ -245,8 +245,6 @@ class Visual(ABC):
         height: int,
         widget: Widget,
         component_classes: list[str] | None = None,
-        padding: Spacing = Spacing(),
-        padding_style: RichStyle = RichStyle(),
     ) -> list[Strip]:
         styles: Styles
         if component_classes:
@@ -256,24 +254,7 @@ class Visual(ABC):
         else:
             styles = widget.styles
 
-        strips = visual.render_strips(
-            width - padding.width, height - padding.height, widget.visual_style, styles
-        )
-
-        if padding:
-            top_padding = (
-                [Strip.blank(width, padding_style)] * padding.top if padding.top else []
-            )
-            bottom_padding = (
-                [Strip.blank(width, padding_style)] * padding.bottom
-                if padding.bottom
-                else []
-            )
-            strips = [
-                *top_padding,
-                *Strip.align(strips, padding_style, width, height, "ce"),
-                *bottom_padding,
-            ]
+        strips = visual.render_strips(width, height, widget.visual_style, styles)
 
         return strips
 
@@ -350,4 +331,49 @@ class RichVisual(Visual):
                 height,
             )
         ]
+        return strips
+
+
+class Padding(Visual):
+    def __init__(self, visual: Visual, spacing: Spacing):
+        self._visual = visual
+        self._spacing = spacing
+
+    def get_optimal_width(self, tab_size: int = 8) -> int:
+        return self._visual.get_optimal_width(tab_size) + self._spacing.width
+
+    def get_minimal_width(self, tab_size: int = 8) -> int:
+        return self._visual.get_minimal_width(tab_size) + self._spacing.width
+
+    def get_height(self, width: int) -> int:
+        return self._visual.get_height(width) + self._spacing.height
+
+    def render_strips(
+        self,
+        width: int,
+        height: int | None,
+        base_style: Style,
+        styles: Styles,
+    ) -> list[Strip]:
+        padding = self._spacing
+        top, right, bottom, left = self._spacing
+        render_width = width - (left + right)
+        strips = self._visual.render_strips(
+            render_width,
+            None if height is None else height - padding.height,
+            base_style,
+            styles,
+        )
+        rich_style = base_style.rich_style
+        if padding:
+            top_padding = [Strip.blank(width, rich_style)] * top if top else []
+            bottom_padding = [Strip.blank(width, rich_style)] * bottom if bottom else []
+            strips = [
+                *top_padding,
+                *[
+                    strip.crop_pad(render_width, left, right, rich_style)
+                    for strip in strips
+                ],
+                *bottom_padding,
+            ]
         return strips

@@ -17,7 +17,7 @@ from textual.message import Message
 from textual.reactive import reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
-from textual.visual import Visual, visualize
+from textual.visual import Padding, Visual, visualize
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias
@@ -478,6 +478,10 @@ class OptionList(ScrollView, can_focus=True):
         #     return strips
 
         visual = visualize(self, content)
+        padding = self.get_component_styles("option-list--option").padding
+        if padding:
+            self.notify(str(padding))
+            visual = Padding(visual, padding)
 
         strips = Visual.to_strips(
             visual,
@@ -485,7 +489,6 @@ class OptionList(ScrollView, can_focus=True):
             2,
             self,
             component_classes=[component_class] if component_class else None,
-            padding=self.get_component_styles("option-list--option").padding,
         )
 
         # padding = self.get_component_styles("option-list--option").padding
