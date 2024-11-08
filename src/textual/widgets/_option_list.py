@@ -480,7 +480,6 @@ class OptionList(ScrollView, can_focus=True):
         visual = visualize(self, content)
         padding = self.get_component_styles("option-list--option").padding
         if padding:
-            self.notify(str(padding))
             visual = Padding(visual, padding)
 
         strips = Visual.to_strips(

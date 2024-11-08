@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from operator import itemgetter
-from typing import Callable, Iterable, NamedTuple, Sequence
+from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence
 
 import rich.repr
 from rich._wrap import divide_line
@@ -23,9 +23,12 @@ from rich.segment import Segment, Segments
 from textual._cells import cell_len
 from textual._loop import loop_last
 from textual.color import Color
-from textual.css.styles import Styles
+from textual.css.types import TextAlign
 from textual.strip import Strip
 from textual.visual import Style, Visual
+
+if TYPE_CHECKING:
+    from textual.widget import Widget
 
 _re_whitespace = re.compile(r"\s+$")
 
@@ -136,19 +139,38 @@ class Content(Visual):
         text: str,
         spans: list[Span] | None = None,
         cell_length: int | None = None,
+        justify: TextAlign = "left",
+        no_wrap: bool = False,
+        ellipsis: bool = False,
     ) -> None:
         self._text: str = text
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
+        self._justify = justify
+        self._no_wrap = no_wrap
+        self._ellipsis = ellipsis
 
     @classmethod
     def styled(
-        cls, text: str, style: Style | str = "", cell_length: int | None = None
+        cls,
+        text: str,
+        style: Style | str = "",
+        cell_length: int | None = None,
+        justify: TextAlign = "left",
+        no_wrap: bool = False,
+        ellipsis: bool = False,
     ) -> Content:
         if not text:
             return Content("")
         span_length = cell_len(text) if cell_length is None else cell_length
-        new_content = cls(text, [Span(0, span_length, style)], span_length)
+        new_content = cls(
+            text,
+            [Span(0, span_length, style)],
+            span_length,
+            justify=justify,
+            no_wrap=no_wrap,
+            ellipsis=ellipsis,
+        )
         return new_content
 
     def get_optimal_width(self, tab_size: int = 8) -> int:
@@ -164,27 +186,24 @@ class Content(Visual):
 
     def render_strips(
         self,
+        widget: Widget,
         width: int,
         height: int | None,
-        base_style: Style,
-        styles: Styles,
+        style: Style,
     ) -> list[Strip]:
-        horizontal_align = styles.text_align
-        justify = self._NORMALIZE_TEXT_ALIGN.get(horizontal_align, horizontal_align)
         lines = self.wrap(
             width,
-            justify=justify,  # type: ignore[arg-type]
-            overflow="fold",
+            justify=self._justify,
+            overflow=(
+                ("ellipsis" if self._ellipsis else "crop") if self._no_wrap else "fold"
+            ),
             no_wrap=False,
             tab_size=8,
         )
         if height is not None:
             lines = lines[:height]
 
-        base_style += Style.from_styles(styles)
-        return [
-            Strip(line.render_segments(base_style), line.cell_length) for line in lines
-        ]
+        return [Strip(line.render_segments(style), line.cell_length) for line in lines]
 
     def get_height(self, width: int) -> int:
         lines = self.wrap(width)
@@ -371,9 +390,7 @@ class Content(Visual):
         style = Style()
         for start, end, span_style in self._spans:
             if end > offset >= start:
-                print(style, span_style)
                 style += span_style
-        print("---", style)
         return style
 
     def truncate(
@@ -800,7 +817,7 @@ class Content(Visual):
     def wrap(
         self,
         width: int,
-        justify: JustifyMethod = "left",
+        justify: TextAlign = "left",
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,

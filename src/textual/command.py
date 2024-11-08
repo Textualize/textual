@@ -1021,11 +1021,9 @@ class CommandPalette(SystemModalScreen):
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
 
-            prompt = hit.prompt
-
-            content = Content(prompt)
+            prompt = Content(hit.prompt, no_wrap=True, ellipsis=True)
             if hit.help:
-                prompt = content.append("\n").append(
+                prompt = prompt.append("\n").append(
                     Content.styled(hit.help, help_style)
                 )
 

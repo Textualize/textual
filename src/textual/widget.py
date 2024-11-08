@@ -40,6 +40,8 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
 
+from textual.css.styles import StylesBase
+
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
@@ -83,7 +85,7 @@ from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.strip import Strip
 from textual.visual import Style as VisualStyle
-from textual.visual import Visual, visualize
+from textual.visual import Visual, is_visual, visualize
 
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
@@ -1012,6 +1014,49 @@ class Widget(DOMNode):
         style, partial_style = self._rich_style_cache[names]
 
         return partial_style if partial else style
+
+    def get_visual_style(self, *names: str) -> VisualStyle:
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+
+        style = Style()
+        opacity = 1.0
+
+        def iter_styles() -> Iterable[StylesBase]:
+            for node in reversed(self.ancestors_with_self):
+                yield node.styles
+            for name in names:
+                yield node.get_component_styles(name)
+
+        for styles in iter_styles():
+            has_rule = styles.has_rule
+            opacity *= styles.opacity
+            if has_rule("background"):
+                text_background = background + styles.background.tint(
+                    styles.background_tint
+                )
+                background += (
+                    styles.background.tint(styles.background_tint)
+                ).multiply_alpha(opacity)
+            else:
+                text_background = background
+            if has_rule("color"):
+                color = styles.color
+            style += styles.text_style
+            if has_rule("auto_color") and styles.auto_color:
+                color = text_background.get_contrast_text(color.a)
+
+        visual_style = VisualStyle(
+            background,
+            color,
+            bold=style.bold,
+            dim=style.dim,
+            italic=style.italic,
+            underline=style.underline,
+            strike=style.strike,
+        )
+
+        return visual_style
 
     def render_str(self, text_content: str | Text) -> Text:
         """Convert str in to a Text object.
@@ -3500,6 +3545,7 @@ class Widget(DOMNode):
     def _get_justify_method(self) -> JustifyMethod | None:
         """Get the justify method that may be passed to a Rich renderable."""
         text_justify: JustifyMethod | None = None
+
         if self.styles.has_rule("text_align"):
             text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
             text_justify = _JUSTIFY_MAP.get(text_align, text_align)
@@ -3923,6 +3969,9 @@ class Widget(DOMNode):
             A renderable.
         """
         renderable = self.render()
+        if not is_visual(renderable):
+            renderable = self.post_render(renderable)
+
         visual = visualize(self, renderable)
         return visual
 

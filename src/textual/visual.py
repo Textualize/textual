@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
@@ -22,16 +21,15 @@ from textual.css.styles import Styles
 from textual.geometry import Spacing
 from textual.strip import Strip
 
-if sys.version_info >= (3, 8):
-    pass
-else:
-    pass
-
-
 if TYPE_CHECKING:
     from textual.widget import Widget
 
 _NULL_RICH_STYLE = RichStyle()
+
+
+def is_visual(obj: object) -> bool:
+    """Check if the given object is a Visual or supports the Visual protocol."""
+    return isinstance(obj, Visual) or hasattr(obj, "textualize")
 
 
 class SupportsTextualize(Protocol):
@@ -44,7 +42,7 @@ class VisualError(Exception):
     """An error with the visual protocol."""
 
 
-VisualType = RenderableType | SupportsTextualize
+VisualType = RenderableType | SupportsTextualize | "Visual"
 
 
 def visualize(widget: Widget, obj: object) -> Visual:
@@ -189,11 +187,7 @@ class Visual(ABC):
 
     @abstractmethod
     def render_strips(
-        self,
-        width: int,
-        height: int | None,
-        base_style: Style,
-        styles: Styles,
+        self, widget: Widget, width: int, height: int | None, style: Style
     ) -> list[Strip]:
         """Render the visual in to an iterable of strips.
 
@@ -246,16 +240,12 @@ class Visual(ABC):
         widget: Widget,
         component_classes: list[str] | None = None,
     ) -> list[Strip]:
-        styles: Styles
-        if component_classes:
-            rules = widget.styles.get_rules()
-            rules |= widget.get_component_styles(*component_classes).get_rules()
-            styles = Styles(widget, rules)
-        else:
-            styles = widget.styles
-
-        strips = visual.render_strips(width, height, widget.visual_style, styles)
-
+        visual_style = (
+            widget.get_visual_style(*component_classes)
+            if component_classes
+            else widget.get_visual_style()
+        )
+        strips = visual.render_strips(widget, width, height, visual_style)
         return strips
 
 
@@ -307,10 +297,10 @@ class RichVisual(Visual):
 
     def render_strips(
         self,
+        widget: Widget,
         width: int,
         height: int | None,
-        base_style: Style,
-        styles: Styles,
+        style: Style,
     ) -> list[Strip]:
         console = active_app.get().console
         options = console.options.update(
@@ -318,12 +308,16 @@ class RichVisual(Visual):
             width=width,
             height=height,
         )
-        renderable = self._widget.post_render(self._renderable)
+        renderable = widget.post_render(self._renderable)
 
         segments = console.render(renderable, options)
+        rich_style = style.rich_style
+        if rich_style:
+            segments = Segment.apply_style(segments, style=rich_style)
+
         strips = [
-            Strip(segments)
-            for segments in islice(
+            Strip(line)
+            for line in islice(
                 Segment.split_and_crop_lines(
                     segments, width, include_new_lines=False, pad=False
                 ),
@@ -350,21 +344,21 @@ class Padding(Visual):
 
     def render_strips(
         self,
+        widget: Widget,
         width: int,
         height: int | None,
-        base_style: Style,
-        styles: Styles,
+        style: Style,
     ) -> list[Strip]:
         padding = self._spacing
         top, right, bottom, left = self._spacing
         render_width = width - (left + right)
         strips = self._visual.render_strips(
+            widget,
             render_width,
             None if height is None else height - padding.height,
-            base_style,
-            styles,
+            style,
         )
-        rich_style = base_style.rich_style
+        rich_style = style.rich_style
         if padding:
             top_padding = [Strip.blank(width, rich_style)] * top if top else []
             bottom_padding = [Strip.blank(width, rich_style)] * bottom if bottom else []
