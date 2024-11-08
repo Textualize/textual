@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
 
+### Added
+
+- Added support for in-band terminal resize protocol https://github.com/Textualize/textual/pull/5217
+
+### Changed
+
+- `Driver.process_event` is now `Driver.process_message` https://github.com/Textualize/textual/pull/5217
+
 ## [0.85.2] - 2024-11-02
 
 - Fixed broken focus-within https://github.com/Textualize/textual/pull/5190

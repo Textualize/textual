@@ -144,10 +144,10 @@ class LinuxDriver(Driver):
         self.write("\x1b[?2048h")
 
     def _enable_line_wrap(self) -> None:
-        self.write("x1b[?7h")
+        self.write("\x1b[?7h")
 
     def _disable_line_wrap(self) -> None:
-        self.write("x1b[?7l")
+        self.write("\x1b[?7l")
 
     def _disable_in_band_window_resize(self) -> None:
         if self._in_band_window_resize:
@@ -425,9 +425,9 @@ class LinuxDriver(Driver):
                         # This can occur if the stdin is piped
                         break
                     for event in feed(unicode_data):
-                        self.process_event(event)
+                        self.process_message(event)
             for event in tick():
-                self.process_event(event)
+                self.process_message(event)
 
         try:
             while not self.exit_event.is_set():
@@ -443,12 +443,18 @@ class LinuxDriver(Driver):
             except ParseError:
                 pass
 
-    def process_event(self, event: events.Event) -> None:
+    def process_message(self, event: events.Event) -> None:
         if isinstance(event, TerminalSupportInBandWindowResize):
             if event.supported and not event.enabled:
                 self._enable_in_band_window_resize()
                 self._in_band_window_resize = event.supported
             elif event.enabled:
                 self._in_band_window_resize = event.supported
+            super().process_message(
+                TerminalSupportInBandWindowResize(
+                    event.supported, self._in_band_window_resize
+                )
+            )
+            return
 
-        super().process_event(event)
+        super().process_message(event)

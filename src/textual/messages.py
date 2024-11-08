@@ -110,7 +110,7 @@ class TerminalSupportInBandWindowResize(Message):
     https://gist.github.com/rockorager/e695fb2924d36b2bcf1fff4a3704bd83"""
 
     def __init__(self, supported: bool, enabled: bool) -> None:
-        """_summary_
+        """Initialize message.
 
         Args:
             supported: Is the protocol supported?

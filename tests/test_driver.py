@@ -18,8 +18,8 @@ async def test_driver_mouse_down_up_click():
 
     app = MyApp()
     async with app.run_test() as pilot:
-        app._driver.process_event(MouseDown(0, 0, 0, 0, 1, False, False, False))
-        app._driver.process_event(MouseUp(0, 0, 0, 0, 1, False, False, False))
+        app._driver.process_message(MouseDown(0, 0, 0, 0, 1, False, False, False))
+        app._driver.process_message(MouseUp(0, 0, 0, 0, 1, False, False, False))
         await pilot.pause()
         assert len(app.messages) == 3
         assert isinstance(app.messages[0], MouseDown)
@@ -41,8 +41,8 @@ async def test_driver_mouse_down_up_click_widget():
 
     app = MyApp()
     async with app.run_test() as pilot:
-        app._driver.process_event(MouseDown(0, 0, 0, 0, 1, False, False, False))
-        app._driver.process_event(MouseUp(0, 0, 0, 0, 1, False, False, False))
+        app._driver.process_message(MouseDown(0, 0, 0, 0, 1, False, False, False))
+        app._driver.process_message(MouseUp(0, 0, 0, 0, 1, False, False, False))
         await pilot.pause()
         assert len(app.messages) == 1
 
@@ -69,8 +69,8 @@ async def test_driver_mouse_down_drag_inside_widget_up_click():
         assert (width, height) == (button_width, button_height)
 
         # Mouse down on the button, then move the mouse inside the button, then mouse up.
-        app._driver.process_event(MouseDown(0, 0, 0, 0, 1, False, False, False))
-        app._driver.process_event(
+        app._driver.process_message(MouseDown(0, 0, 0, 0, 1, False, False, False))
+        app._driver.process_message(
             MouseUp(
                 button_width - 1,
                 button_height - 1,
@@ -108,8 +108,8 @@ async def test_driver_mouse_down_drag_outside_widget_up_click():
         assert (width, height) == (button_width, button_height)
 
         # Mouse down on the button, then move the mouse outside the button, then mouse up.
-        app._driver.process_event(MouseDown(0, 0, 0, 0, 1, False, False, False))
-        app._driver.process_event(
+        app._driver.process_message(MouseDown(0, 0, 0, 0, 1, False, False, False))
+        app._driver.process_message(
             MouseUp(
                 button_width + 1,
                 button_height + 1,

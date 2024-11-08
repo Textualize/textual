@@ -283,7 +283,7 @@ class XTermParser(Parser[Message]):
             Keys
         """
 
-        if (match := _re_extended_key.match(sequence)) is not None:
+        if (match := _re_extended_key.fullmatch(sequence)) is not None:
             number, modifiers, end = match.groups()
             number = number or 1
             if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
