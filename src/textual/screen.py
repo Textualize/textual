@@ -267,7 +267,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
 
-        self._css_update_count = 0
+        self._css_update_count = -1
         """Track updates to CSS."""
 
     @property

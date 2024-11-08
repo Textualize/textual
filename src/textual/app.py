@@ -786,7 +786,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._hover_effects_timer: Timer | None = None
 
-        self._css_update_count: int = -1
+        self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
 
         if self.ENABLE_COMMAND_PALETTE:
@@ -2213,6 +2213,8 @@ class App(Generic[ReturnType], DOMNode):
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
+            if screen._css_update_count != self._css_update_count:
+                self.refresh_css()
 
             screen.post_message(events.ScreenResume())
         else:
@@ -2223,8 +2225,6 @@ class App(Generic[ReturnType], DOMNode):
             screen.post_message(events.ScreenResume())
             await_mount = AwaitMount(stack[0], [])
 
-        if screen._css_update_count != self._css_update_count:
-            self.refresh_css()
         screen._screen_resized(self.size)
 
         self._screen_stacks[mode] = stack
