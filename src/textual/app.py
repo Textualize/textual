@@ -4463,4 +4463,7 @@ class App(Generic[ReturnType], DOMNode):
     def _on_terminal_supports_in_band_window_resize(
         self, message: messages.TerminalSupportInBandWindowResize
     ) -> None:
+        """There isn't much we can do with this information currently, so
+        we will just log it.
+        """
         self.log.debug(message)
