@@ -85,7 +85,7 @@ from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.strip import Strip
 from textual.visual import Style as VisualStyle
-from textual.visual import Visual, is_visual, visualize
+from textual.visual import Visual, visualize
 
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
@@ -3969,8 +3969,8 @@ class Widget(DOMNode):
             A renderable.
         """
         renderable = self.render()
-        if not is_visual(renderable):
-            renderable = self.post_render(renderable)
+        # if not is_visual(renderable):
+        #     renderable = self.post_render(renderable)
 
         visual = visualize(self, renderable)
         return visual

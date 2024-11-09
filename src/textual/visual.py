@@ -254,6 +254,7 @@ class RichVisual(Visual):
     def __init__(self, widget: Widget, renderable: RenderableType) -> None:
         self._widget = widget
         self._renderable = renderable
+        self._post_renderable: RenderableType | None = None
         self._measurement: Measurement | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -308,12 +309,14 @@ class RichVisual(Visual):
             width=width,
             height=height,
         )
-        renderable = widget.post_render(self._renderable)
+        if self._post_renderable is None:
+            self._post_renderable = widget.post_render(self._renderable)
+        renderable = self._post_renderable
 
         segments = console.render(renderable, options)
         rich_style = style.rich_style
         if rich_style:
-            segments = Segment.apply_style(segments, style=rich_style)
+            segments = Segment.apply_style(segments, post_style=rich_style)
 
         strips = [
             Strip(line)
