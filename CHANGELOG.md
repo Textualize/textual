@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `Driver.process_event` is now `Driver.process_message` https://github.com/Textualize/textual/pull/5217
+- `Driver.send_event` is now `Driver.send_message` https://github.com/Textualize/textual/pull/5217
 
 ## [0.85.2] - 2024-11-02
 

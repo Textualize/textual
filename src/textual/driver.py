@@ -64,21 +64,21 @@ class Driver(ABC):
         """Can this driver be suspended?"""
         return False
 
-    def send_event(self, event: events.Event) -> None:
-        """Send an event to the target app.
+    def send_message(self, message: messages.Message) -> None:
+        """Send a message to the target app.
 
         Args:
-            event: An event.
+            message: A message.
         """
         asyncio.run_coroutine_threadsafe(
-            self._app._post_message(event), loop=self._loop
+            self._app._post_message(message), loop=self._loop
         )
 
     def process_message(self, message: messages.Message) -> None:
         """Perform additional processing on a message, prior to sending.
 
         Args:
-            event: An event to send.
+            event: A message to process.
         """
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.
@@ -111,7 +111,7 @@ class Driver(ABC):
                 self._down_buttons.clear()
                 move_event = self._last_move_event
                 for button in buttons:
-                    self.send_event(
+                    self.send_message(
                         MouseUp(
                             x=move_event.x,
                             y=move_event.y,
@@ -128,7 +128,7 @@ class Driver(ABC):
                     )
             self._last_move_event = message
 
-        self.send_event(message)
+        self.send_message(message)
 
     @abstractmethod
     def write(self, data: str) -> None:

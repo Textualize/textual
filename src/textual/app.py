@@ -1678,7 +1678,7 @@ class App(Generic[ReturnType], DOMNode):
                     char = key if len(key) == 1 else None
                 key_event = events.Key(key, char)
                 key_event.set_sender(app)
-                driver.send_event(key_event)
+                driver.send_message(key_event)
                 await wait_for_idle(0)
                 await app._animator.wait_until_complete()
                 await wait_for_idle(0)
@@ -4470,6 +4470,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log.debug(message)
 
     def _on_idle(self) -> None:
+        """Send app resize events on idle, so we don't do more resizing that necessary."""
         event = self._resize_event
         if event is not None:
             self._resize_event = None
