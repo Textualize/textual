@@ -1577,7 +1577,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         visual = self._render()
-        width = visual.get_optimal_width()
+        width = visual.get_optimal_width(container.width)
 
         if self.expand:
             width = max(container.width, width)

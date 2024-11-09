@@ -19,6 +19,7 @@ from textual._context import active_app
 from textual.color import TRANSPARENT, Color
 from textual.css.styles import Styles
 from textual.geometry import Spacing
+from textual.render import measure
 from textual.strip import Strip
 
 if TYPE_CHECKING:
@@ -203,7 +204,7 @@ class Visual(ABC):
         """
 
     @abstractmethod
-    def get_optimal_width(self, tab_size: int = 8) -> int:
+    def get_optimal_width(self, container_width: int) -> int:
         """Get ideal width of the renderable to display its content.
 
         Args:
@@ -212,17 +213,6 @@ class Visual(ABC):
         Returns:
             A width in cells.
 
-        """
-
-    @abstractmethod
-    def get_minimal_width(self, tab_size: int = 8) -> int:
-        """Get the minimal width (the small width that doesn't lose information).
-
-        Args:
-            tab_size: Size of tabs.
-
-        Returns:
-            A width in cells.
         """
 
     @abstractmethod
@@ -270,15 +260,13 @@ class RichVisual(Visual):
             self._measurement = Measurement.get(console, options, self._renderable)
         return self._measurement
 
-    def get_optimal_width(self, tab_size: int = 8) -> int:
+    def get_optimal_width(self, container_width: int) -> int:
         console = active_app.get().console
-        measurement = self._measure(console, console.options)
-        return measurement.maximum
+        width = measure(
+            console, self._renderable, container_width, container_width=container_width
+        )
 
-    def get_minimal_width(self, tab_size: int = 8) -> int:
-        console = active_app.get().console
-        measurement = self._measure(console, console.options)
-        return measurement.minimum
+        return width
 
     def get_height(self, width: int) -> int:
         console = active_app.get().console
@@ -340,11 +328,8 @@ class Padding(Visual):
         yield self._visual
         yield self._spacing
 
-    def get_optimal_width(self, tab_size: int = 8) -> int:
-        return self._visual.get_optimal_width(tab_size) + self._spacing.width
-
-    def get_minimal_width(self, tab_size: int = 8) -> int:
-        return self._visual.get_minimal_width(tab_size) + self._spacing.width
+    def get_optimal_width(self, container_width: int) -> int:
+        return self._visual.get_optimal_width(container_width) + self._spacing.width
 
     def get_height(self, width: int) -> int:
         return self._visual.get_height(width) + self._spacing.height

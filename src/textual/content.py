@@ -196,13 +196,9 @@ class Content(Visual):
         )
         return new_content
 
-    def get_optimal_width(self, tab_size: int = 8) -> int:
+    def get_optimal_width(self, container_width: int) -> int:
         lines = self.without_spans.split("\n")
-        return max(line.expand_tabs(tab_size).cell_length for line in lines)
-
-    def get_minimal_width(self, tab_size: int = 8) -> int:
-        lines = self.without_spans.split("\n")
-        return max([cell_len(word) for line in lines for word in line.plain.split()])
+        return max(line.expand_tabs(8).cell_length for line in lines)
 
     def textualize(self) -> Content:
         return self
