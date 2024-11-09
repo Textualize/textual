@@ -482,13 +482,18 @@ class OptionList(ScrollView, can_focus=True):
         if padding:
             visual = Padding(visual, padding)
 
-        strips = Visual.to_strips(
-            visual,
-            width,
-            2,
-            self,
-            component_classes=[component_class] if component_class else None,
+        visual_style = (
+            self.get_visual_style("option-list--option", component_class)
+            if component_class
+            else self.get_visual_style("option-list--option")
         )
+
+        # strips = visual.render_strips(self, width, None, style=visual_style)
+        strips = Visual.to_strips(self, visual, width, None, visual_style, pad=True)
+
+        # strips = [
+        #     strip.extend_cell_length(width, visual_style.rich_style) for strip in strips
+        # ]
 
         # padding = self.get_component_styles("option-list--option").padding
         # console = self.app.console
@@ -501,9 +506,7 @@ class OptionList(ScrollView, can_focus=True):
         # lines = self.app.console.render_lines(renderable, options, style=style)
 
         style_meta = Style.from_meta({"option": option_index})
-        strips = [
-            strip.adjust_cell_length(width).apply_style(style_meta) for strip in strips
-        ]
+        strips = [strip.apply_style(style_meta) for strip in strips]
 
         # strips = [Strip(line, width).apply_style(style_meta) for line in lines]
 

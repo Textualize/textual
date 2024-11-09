@@ -212,6 +212,7 @@ class Content(Visual):
     ) -> list[Strip]:
         if not width:
             return []
+
         lines = self.wrap(
             width,
             justify=self._justify,

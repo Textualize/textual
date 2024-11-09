@@ -65,7 +65,8 @@ def visualize(widget: Widget, obj: object) -> Visual:
         # Doesn't expose the textualize protocol
         if is_renderable(obj):
             if isinstance(obj, str):
-                obj = Text.from_markup(obj)
+                obj = widget.render_str(obj)
+
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))
         else:
@@ -228,18 +229,18 @@ class Visual(ABC):
     @classmethod
     def to_strips(
         cls,
+        widget: Widget,
         visual: Visual,
         width: int,
-        height: int,
-        widget: Widget,
-        component_classes: list[str] | None = None,
+        height: int | None,
+        style: Style,
+        pad: bool = False,
     ) -> list[Strip]:
-        visual_style = (
-            widget.get_visual_style(*component_classes)
-            if component_classes
-            else widget.get_visual_style()
-        )
-        strips = visual.render_strips(widget, width, height, visual_style)
+        strips = visual.render_strips(widget, width, height, style)
+        if pad:
+            strips = [
+                strip.extend_cell_length(width, style.rich_style) for strip in strips
+            ]
         return strips
 
 
@@ -256,7 +257,9 @@ class RichVisual(Visual):
 
     def _measure(self, console: Console, options: ConsoleOptions) -> Measurement:
         return Measurement.get(
-            console, options, self._widget.post_render(self._renderable)
+            console,
+            options,
+            self._widget.post_render(self._renderable, RichStyle.null()),
         )
         if self._measurement is None:
             self._measurement = Measurement.get(console, options, self._renderable)
@@ -303,12 +306,11 @@ class RichVisual(Visual):
             width=width,
             height=height,
         )
-        renderable = widget.post_render(self._renderable)
-        segments = console.render(renderable, options.update_width(width))
         rich_style = style.rich_style
-
+        renderable = widget.post_render(self._renderable, rich_style)
+        segments = console.render(renderable, options.update_width(width))
         strips = [
-            Strip(line).apply_style(rich_style)
+            Strip(line)
             for line in islice(
                 Segment.split_and_crop_lines(
                     segments, width, include_new_lines=False, pad=False
@@ -354,6 +356,7 @@ class Padding(Visual):
             None if height is None else height - padding.height,
             style,
         )
+
         rich_style = style.rich_style
         if padding:
             top_padding = [Strip.blank(width, rich_style)] * top if top else []

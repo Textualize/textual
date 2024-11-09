@@ -3551,7 +3551,9 @@ class Widget(DOMNode):
             text_justify = _JUSTIFY_MAP.get(text_align, text_align)
         return text_justify
 
-    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+    def post_render(
+        self, renderable: RenderableType, base_style: Style
+    ) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         This method is called by Textual itself.
@@ -3576,7 +3578,7 @@ class Widget(DOMNode):
 
         renderable = _Styled(
             cast(ConsoleRenderable, renderable),
-            self.rich_style,
+            base_style,
             self.link_style if self.auto_links else None,
         )
 
@@ -3716,7 +3718,7 @@ class Widget(DOMNode):
 
         # visual = visualize(self, renderable)
 
-        strips = Visual.to_strips(visual, width, height, self)
+        strips = Visual.to_strips(self, visual, width, height, self.visual_style)
         if not (align_horizontal == "left" and align_horizontal == "top"):
             strips = list(
                 Strip.align(

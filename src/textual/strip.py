@@ -576,7 +576,9 @@ class Strip:
             strip = self.adjust_cell_length(cell_length, style)
         if not (left or right):
             return strip
-        segments = self._segments.copy()
+        else:
+            strip = self
+        segments = strip._segments.copy()
         if left:
             segments.insert(0, Segment(" " * left, style))
         if right:
