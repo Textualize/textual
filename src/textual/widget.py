@@ -3966,13 +3966,10 @@ class Widget(DOMNode):
         """Get renderable, promoting str to text as required.
 
         Returns:
-            A renderable.
+            A Visual.
         """
-        renderable = self.render()
-        # if not is_visual(renderable):
-        #     renderable = self.post_render(renderable)
 
-        visual = visualize(self, renderable)
+        visual = visualize(self, self.render())
         return visual
 
     async def run_action(self, action: str) -> None:

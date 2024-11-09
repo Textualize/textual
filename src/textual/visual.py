@@ -264,6 +264,9 @@ class RichVisual(Visual):
         yield self._renderable
 
     def _measure(self, console: Console, options: ConsoleOptions) -> Measurement:
+        return Measurement.get(
+            console, options, self._widget.post_render(self._renderable)
+        )
         if self._measurement is None:
             self._measurement = Measurement.get(console, options, self._renderable)
         return self._measurement
@@ -314,7 +317,7 @@ class RichVisual(Visual):
 
         renderable = widget.post_render(self._renderable)
 
-        segments = console.render(renderable, options)
+        segments = console.render(renderable, options.update_width(width))
         rich_style = style.rich_style
 
         strips = [
