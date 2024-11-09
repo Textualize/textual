@@ -256,7 +256,6 @@ class RichVisual(Visual):
     def __init__(self, widget: Widget, renderable: RenderableType) -> None:
         self._widget = widget
         self._renderable = renderable
-
         self._measurement: Measurement | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -314,9 +313,7 @@ class RichVisual(Visual):
             width=width,
             height=height,
         )
-
         renderable = widget.post_render(self._renderable)
-
         segments = console.render(renderable, options.update_width(width))
         rich_style = style.rich_style
 
@@ -324,10 +321,7 @@ class RichVisual(Visual):
             Strip(line).apply_style(rich_style)
             for line in islice(
                 Segment.split_and_crop_lines(
-                    segments,
-                    width,
-                    include_new_lines=False,
-                    pad=False,
+                    segments, width, include_new_lines=False, pad=False
                 ),
                 None,
                 height,
@@ -365,7 +359,7 @@ class Padding(Visual):
         padding = self._spacing
         top, right, bottom, left = self._spacing
         render_width = width - (left + right)
-        if render_width <= 2:
+        if render_width <= 0:
             return []
         strips = self._visual.render_strips(
             widget,
