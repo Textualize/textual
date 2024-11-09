@@ -473,9 +473,9 @@ class OptionList(ScrollView, can_focus=True):
             A list of strips.
         """
 
-        # cache_key = (option_index, style, width)
-        # if (strips := self._content_render_cache.get(cache_key, None)) is not None:
-        #     return strips
+        cache_key = (option_index, component_class, width)
+        if (strips := self._content_render_cache.get(cache_key, None)) is not None:
+            return strips
 
         visual = visualize(self, content)
         padding = self.get_component_styles("option-list--option").padding
@@ -501,11 +501,13 @@ class OptionList(ScrollView, can_focus=True):
         # lines = self.app.console.render_lines(renderable, options, style=style)
 
         style_meta = Style.from_meta({"option": option_index})
-        strips = [strip.apply_style(style_meta) for strip in strips]
+        strips = [
+            strip.adjust_cell_length(width).apply_style(style_meta) for strip in strips
+        ]
 
         # strips = [Strip(line, width).apply_style(style_meta) for line in lines]
 
-        # self._content_render_cache[cache_key] = strips
+        self._content_render_cache[cache_key] = strips
         return strips
 
     def _duplicate_id_check(self, candidate_items: list[OptionListContent]) -> None:
