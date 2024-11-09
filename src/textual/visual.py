@@ -64,6 +64,8 @@ def visualize(widget: Widget, obj: object) -> Visual:
     if visualize is None:
         # Doesn't expose the textualize protocol
         if is_renderable(obj):
+            if isinstance(obj, str):
+                obj = Text.from_markup(obj)
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))
         else:
