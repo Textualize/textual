@@ -22,6 +22,8 @@ from textual.geometry import Spacing
 from textual.strip import Strip
 
 if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
+
     from textual.widget import Widget
 
 _NULL_RICH_STYLE = RichStyle()
@@ -42,7 +44,7 @@ class VisualError(Exception):
     """An error with the visual protocol."""
 
 
-VisualType = RenderableType | SupportsTextualize | "Visual"
+VisualType: TypeAlias = RenderableType | SupportsTextualize | "Visual"
 
 
 def visualize(widget: Widget, obj: object) -> Visual:
@@ -314,10 +316,6 @@ class RichVisual(Visual):
 
         segments = console.render(renderable, options)
         rich_style = style.rich_style
-        # if rich_style:
-        #     segments = Segment.apply_style(segments, post_style=rich_style)
-
-        # lines = console.render_lines(renderable, options, style=rich_style)
 
         strips = [
             Strip(line).apply_style(rich_style)
@@ -335,10 +333,15 @@ class RichVisual(Visual):
         return strips
 
 
+@rich.repr.auto
 class Padding(Visual):
     def __init__(self, visual: Visual, spacing: Spacing):
         self._visual = visual
         self._spacing = spacing
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._visual
+        yield self._spacing
 
     def get_optimal_width(self, tab_size: int = 8) -> int:
         return self._visual.get_optimal_width(tab_size) + self._spacing.width
@@ -359,6 +362,8 @@ class Padding(Visual):
         padding = self._spacing
         top, right, bottom, left = self._spacing
         render_width = width - (left + right)
+        if render_width <= 2:
+            return []
         strips = self._visual.render_strips(
             widget,
             render_width,

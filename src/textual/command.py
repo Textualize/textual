@@ -104,14 +104,15 @@ class Hit:
     def __post_init__(self) -> None:
         """Ensure 'text' is populated."""
         if self.text is None:
-            if isinstance(self.match_display, str):
-                self.text = self.match_display
-            elif isinstance(self.match_display, Text):
-                self.text = self.match_display.plain
-            else:
-                raise ValueError(
-                    "A value for 'text' is required if 'match_display' is not a str or Text"
-                )
+            self.text = str(self.match_display)
+            # if isinstance(self.match_display, str):
+            #     self.text = self.match_display
+            # elif isinstance(self.match_display, Text):
+            #     self.text = self.match_display.plain
+            # else:
+            #     raise ValueError(
+            #         "A value for 'text' is required if 'match_display' is not a str or Text"
+            #     )
 
 
 @dataclass
@@ -164,14 +165,16 @@ class DiscoveryHit:
     def __post_init__(self) -> None:
         """Ensure 'text' is populated."""
         if self.text is None:
-            if isinstance(self.display, str):
-                self.text = self.display
-            elif isinstance(self.display, Text):
-                self.text = self.display.plain
-            else:
-                raise ValueError(
-                    "A value for 'text' is required if 'display' is not a str or Text"
-                )
+            self.text = str(self.display)
+        # if self.text is None:
+        #     if isinstance(self.display, str):
+        #         self.text = self.display
+        #     elif isinstance(self.display, Text):
+        #         self.text = self.display.plain
+        #     else:
+        #         raise ValueError(
+        #             "A value for 'text' is required if 'display' is not a str or Text"
+        #         )
 
 
 Hits: TypeAlias = AsyncIterator["DiscoveryHit | Hit"]
@@ -1021,7 +1024,8 @@ class CommandPalette(SystemModalScreen):
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
 
-            prompt = Content(hit.prompt, no_wrap=True, ellipsis=True)
+            # prompt = Content(str(hit.prompt), no_wrap=True, ellipsis=True)
+            prompt = Content.from_rich_text(hit.prompt)
             if hit.help:
                 prompt = prompt.append("\n").append(
                     Content.styled(hit.help, help_style)

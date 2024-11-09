@@ -19,6 +19,7 @@ from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import JustifyMethod, OverflowMethod
 from rich.segment import Segment, Segments
+from rich.text import Text
 
 from textual._cells import cell_len
 from textual._loop import loop_last
@@ -151,6 +152,28 @@ class Content(Visual):
         self._ellipsis = ellipsis
 
     @classmethod
+    def from_rich_text(
+        cls,
+        text: str | Text,
+        justify: TextAlign = "left",
+        no_wrap: bool = False,
+        ellipsis: bool = False,
+    ) -> Content:
+        if isinstance(text, str):
+            return cls(text, justify=justify, no_wrap=no_wrap, ellipsis=ellipsis)
+        spans = [
+            Span(start, end, Style.from_rich_style(style))
+            for start, end, style in text._spans
+        ]
+        return cls(
+            text.plain,
+            spans,
+            justify=justify,
+            no_wrap=no_wrap,
+            ellipsis=ellipsis,
+        )
+
+    @classmethod
     def styled(
         cls,
         text: str,
@@ -191,6 +214,8 @@ class Content(Visual):
         height: int | None,
         style: Style,
     ) -> list[Strip]:
+        if not width:
+            return []
         lines = self.wrap(
             width,
             justify=self._justify,
