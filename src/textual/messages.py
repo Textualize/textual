@@ -103,10 +103,6 @@ class TerminalSupportsSynchronizedOutput(Message):
 class TerminalSupportInBandWindowResize(Message):
     """Reports if the in-band window resize protocol is supported.
 
-    !!! note
-
-        This is used internally. The app will never see this.
-
     https://gist.github.com/rockorager/e695fb2924d36b2bcf1fff4a3704bd83"""
 
     def __init__(self, supported: bool, enabled: bool) -> None:
