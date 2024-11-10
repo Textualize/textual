@@ -3713,51 +3713,14 @@ class Widget(DOMNode):
         """Render all lines."""
         width, height = self.size
         visual = self._render()
-        styles = self.styles
-        align_horizontal, align_vertical = styles.content_align
-
-        # visual = visualize(self, renderable)
-
-        strips = Visual.to_strips(self, visual, width, height, self.visual_style)
-        if not (align_horizontal == "left" and align_horizontal == "top"):
-            strips = list(
-                Strip.align(
-                    strips,
-                    _NULL_STYLE,
-                    width,
-                    height,
-                    align_horizontal,
-                    align_vertical,
-                )
-            )
-
-        # else:
-        #     renderable = self.post_render(renderable)
-        #     options = self._console.options.update(
-        #         highlight=False, width=width, height=height
-        #     )
-
-        #     segments = self._console.render(renderable, options)
-        #     lines = list(
-        #         islice(
-        #             Segment.split_and_crop_lines(
-        #                 segments, width, include_new_lines=False, pad=False
-        #             ),
-        #             None,
-        #             height,
-        #         )
-        #     )
-
-        #     lines = list(
-        #         align_lines(
-        #             lines,
-        #             _NULL_STYLE,
-        #             self.size,
-        #             align_horizontal,
-        #             align_vertical,
-        #         )
-        #     )
-        #     strips = [Strip(line, width) for line in lines]
+        strips = Visual.to_strips(
+            self,
+            visual,
+            width,
+            height,
+            self.visual_style,
+            align=self.styles.content_align,
+        )
         self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 

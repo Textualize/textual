@@ -234,13 +234,29 @@ class Visual(ABC):
         width: int,
         height: int | None,
         style: Style,
+        *,
         pad: bool = False,
+        align=("left", "top"),
     ) -> list[Strip]:
         strips = visual.render_strips(widget, width, height, style)
+        if height is None:
+            height = len(strips)
+        rich_style = style.rich_style
         if pad:
-            strips = [
-                strip.extend_cell_length(width, style.rich_style) for strip in strips
-            ]
+            strips = [strip.extend_cell_length(width, rich_style) for strip in strips]
+        if align != ("left", "top"):
+            align_horizontal, align_vertical = align
+            strips = list(
+                Strip.align(
+                    strips,
+                    rich_style,
+                    width,
+                    height,
+                    align_horizontal,
+                    align_vertical,
+                )
+            )
+
         return strips
 
 
@@ -356,9 +372,11 @@ class Padding(Visual):
             None if height is None else height - padding.height,
             style,
         )
+        for strip in strips:
+            print(strip.cell_length, repr(strip.text))
 
-        rich_style = style.rich_style
         if padding:
+            rich_style = style.rich_style
             top_padding = [Strip.blank(width, rich_style)] * top if top else []
             bottom_padding = [Strip.blank(width, rich_style)] * bottom if bottom else []
             strips = [
@@ -369,4 +387,5 @@ class Padding(Visual):
                 ],
                 *bottom_padding,
             ]
+
         return strips

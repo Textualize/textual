@@ -490,6 +490,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # strips = visual.render_strips(self, width, None, style=visual_style)
         strips = Visual.to_strips(self, visual, width, None, visual_style, pad=True)
+        print(strips)
 
         # strips = [
         #     strip.extend_cell_length(width, visual_style.rich_style) for strip in strips

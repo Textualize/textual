@@ -308,6 +308,7 @@ class Strip:
         Returns:
             A new Strip.
         """
+        print(self.cell_length, cell_length)
         if self.cell_length < cell_length:
             missing_space = cell_length - self.cell_length
             segments = self._segments + [Segment(" " * missing_space, style)]
@@ -574,10 +575,10 @@ class Strip:
     def crop_pad(self, cell_length: int, left: int, right: int, style: Style) -> Strip:
         if cell_length != self.cell_length:
             strip = self.adjust_cell_length(cell_length, style)
-        if not (left or right):
-            return strip
         else:
             strip = self
+        if not (left or right):
+            return strip
         segments = strip._segments.copy()
         if left:
             segments.insert(0, Segment(" " * left, style))
