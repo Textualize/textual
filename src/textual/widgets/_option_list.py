@@ -22,7 +22,7 @@ from textual.visual import Padding, Visual, visualize
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias
 
-    from textual.app import ContentType
+    from textual.app import RenderResult
 
 
 class DuplicateID(Exception):
@@ -42,7 +42,7 @@ class Option:
     """Class that holds the details of an individual option."""
 
     def __init__(
-        self, prompt: ContentType, id: str | None = None, disabled: bool = False
+        self, prompt: RenderResult, id: str | None = None, disabled: bool = False
     ) -> None:
         """Initialise the option.
 
@@ -56,11 +56,11 @@ class Option:
         self.disabled = disabled
 
     @property
-    def prompt(self) -> ContentType:
+    def prompt(self) -> RenderResult:
         """The prompt for the option."""
         return self._prompt
 
-    def set_prompt(self, prompt: ContentType) -> None:
+    def set_prompt(self, prompt: RenderResult) -> None:
         """Set the prompt for the option.
 
         Args:
@@ -81,7 +81,7 @@ class Option:
         yield "id", self.id, None
         yield "disabled", self.disabled, False
 
-    def __rich__(self) -> ContentType:
+    def __rich__(self) -> RenderResult:
         return self._prompt
 
 
@@ -459,7 +459,7 @@ class OptionList(ScrollView, can_focus=True):
         return Option(content)
 
     def _render_option_content(
-        self, option_index: int, content: ContentType, component_class: str, width: int
+        self, option_index: int, content: RenderResult, component_class: str, width: int
     ) -> list[Strip]:
         """Render content for option and style.
 
@@ -873,12 +873,6 @@ class OptionList(ScrollView, can_focus=True):
                     component_class = "option-list--option-highlighted"
                 elif mouse_over:
                     component_class = "option-list--option-hover"
-
-        # style = (
-        #     self.get_component_rich_style(component_class)
-        #     if component_class
-        #     else self.rich_style
-        # )
 
         strips = self._render_option_content(
             option_index,

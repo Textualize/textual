@@ -238,10 +238,6 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.expand_tabs(8).cell_length for line in lines)
 
-    # def textualize(self) -> Content:
-    #     ""
-    #     return self
-
     def render_strips(
         self,
         widget: Widget,

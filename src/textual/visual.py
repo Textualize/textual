@@ -61,10 +61,12 @@ def visualize(widget: Widget, obj: object) -> Visual:
     if isinstance(obj, Visual):
         # Already a visual
         return obj
+    # The visualize method should return a Visual if present.
     visualize = getattr(obj, "visualize", None)
     if visualize is None:
         # Doesn't expose the textualize protocol
         if is_renderable(obj):
+            # If it is a string, render it to Text
             if isinstance(obj, str):
                 obj = widget.render_str(obj)
 

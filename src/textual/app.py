@@ -190,8 +190,7 @@ DEFAULT_COLORS = {
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType | Visual | SupportsTextualize
-ContentType = RenderableType | Visual | SupportsTextualize
-"""Any content that can be rendered."""
+"""Result of Widget.render()"""
 
 AutopilotCallbackType: TypeAlias = (
     "Callable[[Pilot[object]], Coroutine[Any, Any, None]]"
