@@ -144,6 +144,16 @@ class Content(Visual):
         no_wrap: bool = False,
         ellipsis: bool = False,
     ) -> None:
+        """
+
+        Args:
+            text: text content.
+            spans: Optional list of spans.
+            cell_length: Cell length of text if known, otherwise `None`.
+            justify: Justify method.
+            no_wrap: Disable wrapping.
+            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
+        """
         self._text: str = text
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
@@ -159,10 +169,25 @@ class Content(Visual):
         no_wrap: bool = False,
         ellipsis: bool = False,
     ) -> Content:
+        """Create equivalent Visual Content for str or Text.
+
+        Args:
+            text: String or Rich Text.
+            justify: Justify method.
+            no_wrap: Disable wrapping.
+            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
+
+        Returns:
+            New Content.
+        """
         if isinstance(text, str):
             return cls(text, justify=justify, no_wrap=no_wrap, ellipsis=ellipsis)
         spans = [
-            Span(start, end, Style.from_rich_style(style))
+            Span(
+                start,
+                end,
+                style if isinstance(style, str) else Style.from_rich_style(style),
+            )
             for start, end, style in text._spans
         ]
         return cls(
@@ -183,8 +208,21 @@ class Content(Visual):
         no_wrap: bool = False,
         ellipsis: bool = False,
     ) -> Content:
+        """Create a Content instance from a single styled piece of text.
+
+        Args:
+            text: String content.
+            style: Desired style.
+            cell_length: Cell length of text if known, otherwise `None`.
+            justify: Justify method.
+            no_wrap: Disable wrapping.
+            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
+
+        Returns:
+            New Content instance.
+        """
         if not text:
-            return Content("")
+            return Content("", justify=justify, no_wrap=no_wrap, ellipsis=ellipsis)
         span_length = cell_len(text) if cell_length is None else cell_length
         new_content = cls(
             text,
@@ -200,8 +238,9 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.expand_tabs(8).cell_length for line in lines)
 
-    def textualize(self) -> Content:
-        return self
+    # def textualize(self) -> Content:
+    #     ""
+    #     return self
 
     def render_strips(
         self,
