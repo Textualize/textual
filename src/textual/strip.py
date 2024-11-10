@@ -168,6 +168,20 @@ class Strip:
         horizontal: AlignHorizontal,
         vertical: AlignVertical,
     ) -> Iterable[Strip]:
+        """Align a list of strips on both axis.
+
+        Args:
+            strips: A list of strips, such as from a render.
+            style: The Rich style of additional space.
+            width: Width of container.
+            height: Height of container.
+            horizontal: Horizontal alignment method.
+            vertical: Vertical alignment method.
+
+        Returns:
+            An iterable of strips, with additional padding.
+
+        """
         if not strips:
             return
         line_lengths = [strip.cell_length for strip in strips]
@@ -572,6 +586,17 @@ class Strip:
         return self._render_cache
 
     def crop_pad(self, cell_length: int, left: int, right: int, style: Style) -> Strip:
+        """Crop the strip to `cell_length`, and add optional padding.
+
+        Args:
+            cell_length: Cell length of strip prior to padding.
+            left: Additional padding on the left.
+            right: Additional padding on the right.
+            style: Style of any padding.
+
+        Returns:
+            Cropped and padded strip.
+        """
         if cell_length != self.cell_length:
             strip = self.adjust_cell_length(cell_length, style)
         else:

@@ -17,7 +17,8 @@ from rich.text import Text
 
 from textual._context import active_app
 from textual.color import TRANSPARENT, Color
-from textual.css.styles import Styles
+from textual.css.styles import StylesBase
+from textual.css.types import AlignHorizontal, AlignVertical
 from textual.geometry import Spacing
 from textual.render import measure
 from textual.strip import Strip
@@ -135,7 +136,7 @@ class Style:
         )
 
     @classmethod
-    def from_styles(cls, styles: Styles) -> Style:
+    def from_styles(cls, styles: StylesBase) -> Style:
         text_style = styles.text_style
         return Style(
             styles.background,
@@ -236,8 +237,22 @@ class Visual(ABC):
         style: Style,
         *,
         pad: bool = False,
-        align=("left", "top"),
+        align: tuple[AlignHorizontal, AlignVertical] = ("left", "top"),
     ) -> list[Strip]:
+        """High level function to render a visual to strips.
+
+        Args:
+            widget: Widget that produced the visual.
+            visual: A Visual instance.
+            width: Desired width (in cells).
+            height: Desired height (in lines).
+            style: A (Visual) Style instance.
+            pad: Pad to desired height?
+            align: Tuple of horizontal and vertical alignment.
+
+        Returns:
+            _type_: _description_
+        """
         strips = visual.render_strips(widget, width, height, style)
         if height is None:
             height = len(strips)

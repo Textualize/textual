@@ -488,28 +488,9 @@ class OptionList(ScrollView, can_focus=True):
             else self.get_visual_style("option-list--option")
         )
 
-        # strips = visual.render_strips(self, width, None, style=visual_style)
         strips = Visual.to_strips(self, visual, width, None, visual_style, pad=True)
-        print(strips)
-
-        # strips = [
-        #     strip.extend_cell_length(width, visual_style.rich_style) for strip in strips
-        # ]
-
-        # padding = self.get_component_styles("option-list--option").padding
-        # console = self.app.console
-        # options = console.options.update_width(width)
-        # if not self._wrap:
-        #     options = options.update(no_wrap=True, overflow="ellipsis")
-        # if padding:
-        #     renderable = Padding(renderable, padding)
-
-        # lines = self.app.console.render_lines(renderable, options, style=style)
-
         style_meta = Style.from_meta({"option": option_index})
         strips = [strip.apply_style(style_meta) for strip in strips]
-
-        # strips = [Strip(line, width).apply_style(style_meta) for line in lines]
 
         self._content_render_cache[cache_key] = strips
         return strips
