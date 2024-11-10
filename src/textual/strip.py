@@ -308,7 +308,6 @@ class Strip:
         Returns:
             A new Strip.
         """
-        print(self.cell_length, cell_length)
         if self.cell_length < cell_length:
             missing_space = cell_length - self.cell_length
             segments = self._segments + [Segment(" " * missing_space, style)]
