@@ -423,6 +423,9 @@ class Widget(DOMNode):
         self._border_title: Text | None = None
         self._border_subtitle: Text | None = None
 
+        self._layout_cache: dict[str, object] = {}
+        """A dict that is refreshed when the widget is resized / refreshed."""
+
         self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
@@ -447,7 +450,6 @@ class Widget(DOMNode):
 
         self._scrollbar_changes: set[tuple[bool, bool]] = set()
         """Used to stabilize scrollbars."""
-
         super().__init__(
             name=name,
             id=id,
@@ -489,9 +491,6 @@ class Widget(DOMNode):
         """Used to cache :last-of-type pseudoclass state."""
         self._odd: tuple[int, bool] = (-1, False)
         """Used to cache :odd pseudoclass state."""
-
-        self._layout_cache: dict[str, object] = {}
-        """A dict that is refreshed when the widget is resized / refreshed."""
 
     @property
     def is_mounted(self) -> bool:
