@@ -490,6 +490,9 @@ class Widget(DOMNode):
         self._odd: tuple[int, bool] = (-1, False)
         """Used to cache :odd pseudoclass state."""
 
+        self._layout_cache: dict[str, object] = {}
+        """A dict that is refreshed when the widget is resized / refreshed."""
+
     @property
     def is_mounted(self) -> bool:
         """Check if this widget is mounted."""
@@ -1015,7 +1018,16 @@ class Widget(DOMNode):
 
         return partial_style if partial else style
 
-    def get_visual_style(self, *names: str) -> VisualStyle:
+    def get_visual_style(self, component_classes: Iterable[str]) -> VisualStyle:
+        """Get the visual style for the widget, including any component styles.
+
+        Args:
+            component_classes: Optional component styles.
+
+        Returns:
+            A Visual style instance.
+
+        """
         background = Color(0, 0, 0, 0)
         color = Color(255, 255, 255, 0)
 
@@ -1023,9 +1035,10 @@ class Widget(DOMNode):
         opacity = 1.0
 
         def iter_styles() -> Iterable[StylesBase]:
+            """Iterate over the styles from the DOM and additional components styles."""
             for node in reversed(self.ancestors_with_self):
                 yield node.styles
-            for name in names:
+            for name in component_classes:
                 yield node.get_component_styles(name)
 
         for styles in iter_styles():
@@ -3627,7 +3640,7 @@ class Widget(DOMNode):
         Returns:
             True if anything changed, or False if nothing changed.
         """
-
+        self._layout_cache.clear()
         if (
             self._size != size
             or self.virtual_size != virtual_size
@@ -3818,7 +3831,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-
+        self._layout_cache.clear()
         if layout:
             self._layout_required = True
             for ancestor in self.ancestors:
@@ -3933,8 +3946,13 @@ class Widget(DOMNode):
         Returns:
             A Visual.
         """
-
+        cache_key = "_render.visual"
+        cached_visual = self._layout_cache.get(cache_key, None)
+        if cached_visual is not None:
+            assert isinstance(cached_visual, Visual)
+            return cached_visual
         visual = visualize(self, self.render())
+        self._layout_cache[cache_key] = visual
         return visual
 
     async def run_action(self, action: str) -> None:

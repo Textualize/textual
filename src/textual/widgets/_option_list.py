@@ -307,7 +307,7 @@ class OptionList(ScrollView, can_focus=True):
         }
         """A dictionary of option IDs and the option indexes they relate to."""
 
-        self._content_render_cache: LRUCache[tuple[int, Style, int], list[Strip]]
+        self._content_render_cache: LRUCache[tuple[int, str, int], list[Strip]]
         self._content_render_cache = LRUCache(256)
 
         self._lines: list[tuple[int, int]] | None = None
@@ -405,7 +405,6 @@ class OptionList(ScrollView, can_focus=True):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         # Get the content height without requiring a refresh
         # TODO: Internal data structure could be simplified
-        style = self.rich_style
         _render_option_content = self._render_option_content
         heights = [
             len(_render_option_content(index, option, "", width))
@@ -465,14 +464,13 @@ class OptionList(ScrollView, can_focus=True):
 
         Args:
             option_index: Option index to render.
-            renderable: The Option renderable.
-            style: The Rich style to render with.
-            width: The width of the renderable.
+            content: Render result for prompt.
+            component class: Additional component class.
+            width: Desired width of render.
 
         Returns:
             A list of strips.
         """
-
         cache_key = (option_index, component_class, width)
         if (strips := self._content_render_cache.get(cache_key, None)) is not None:
             return strips
@@ -482,11 +480,11 @@ class OptionList(ScrollView, can_focus=True):
         if padding:
             visual = Padding(visual, padding)
 
-        visual_style = (
-            self.get_visual_style("option-list--option", component_class)
-            if component_class
-            else self.get_visual_style("option-list--option")
-        )
+        component_class_list = ["option-list--option"]
+        if component_class:
+            component_class_list.append(component_class)
+
+        visual_style = self.get_visual_style(component_class_list)
 
         strips = Visual.to_strips(self, visual, width, None, visual_style, pad=True)
         style_meta = Style.from_meta({"option": option_index})

@@ -57,7 +57,6 @@ def _justify_lines(
 
     if justify == "left":
         lines = [line.truncate(width, overflow=overflow, pad=True) for line in lines]
-
     elif justify == "center":
         lines = [line.center(width) for line in lines]
     elif justify == "right":
@@ -658,7 +657,7 @@ class Content(Visual):
         ]
         spans.sort(key=itemgetter(0, 1))
 
-        stack: list[int] = [0]
+        stack: list[int] = []
         stack_append = stack.append
         stack_pop = stack.remove
 
@@ -672,7 +671,8 @@ class Content(Visual):
             cached_style = style_cache_get(cache_key)
             if cached_style is not None:
                 return cached_style
-            current_style = combine([style_map[_style_id] for _style_id in cache_key])
+            styles = [style_map[_style_id] for _style_id in cache_key]
+            current_style = combine(styles)
             style_cache[cache_key] = current_style
             return current_style
 
@@ -890,10 +890,7 @@ class Content(Visual):
                 new_lines = line.divide(offsets)
             new_lines = [line.rstrip_end(width) for line in new_lines]
             new_lines = _justify_lines(
-                new_lines,
-                width,
-                justify=justify,
-                overflow=overflow,
+                new_lines, width, justify=justify, overflow=overflow
             )
             new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
             lines.extend(new_lines)

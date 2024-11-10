@@ -98,6 +98,7 @@ class Style:
     strike: bool | None = None
     link: str | None = None
     _meta: bytes | None = None
+    auto_color: bool = False
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.background
@@ -142,12 +143,17 @@ class Style:
         text_style = styles.text_style
         return Style(
             styles.background,
-            styles.color,
+            (
+                Color(0, 0, 0, styles.color.a, auto=True)
+                if styles.auto_color
+                else styles.color
+            ),
             bold=text_style.bold,
             dim=text_style.italic,
             italic=text_style.italic,
             underline=text_style.underline,
             strike=text_style.strike,
+            auto_color=styles.auto_color,
         )
 
     @cached_property
@@ -389,8 +395,6 @@ class Padding(Visual):
             None if height is None else height - padding.height,
             style,
         )
-        for strip in strips:
-            print(strip.cell_length, repr(strip.text))
 
         if padding:
             rich_style = style.rich_style

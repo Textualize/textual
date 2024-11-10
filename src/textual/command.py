@@ -380,7 +380,7 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option {
-        padding-left: 2;
+        padding: 0 2;
     }
     """
 
