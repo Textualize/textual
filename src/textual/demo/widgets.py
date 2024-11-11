@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 import io
 from math import sin
@@ -6,7 +8,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.traceback import Traceback
 
-from textual import containers
+from textual import containers, lazy
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.demo.data import COUNTRIES
@@ -439,19 +441,22 @@ class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
         align-horizontal: center;
-        & > VerticalScroll > * {            
-            &:last-of-type { margin-bottom: 2; } 
-            &:even { background: $boost; }            
-            padding-bottom: 1;                                        
-        }                           
+        & > VerticalScroll {
+            scrollbar-gutter: stable;
+            &> * {            
+                &:last-of-type { margin-bottom: 2; } 
+                &:even { background: $boost; }            
+                padding-bottom: 1;                                            
+            }                           
+
+        }
     }
     """
 
     BINDINGS = [Binding("escape", "unfocus", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
-        with containers.VerticalScroll() as container:
-            container.can_focus = False
+        with lazy.Reveal(containers.VerticalScroll(can_focus=False)):
             yield Markdown(WIDGETS_MD, classes="column")
             yield Buttons()
             yield Checkboxes()

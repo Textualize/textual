@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from textual.app import App
 from textual.binding import Binding
 from textual.demo.home import HomeScreen
