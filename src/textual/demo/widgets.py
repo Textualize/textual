@@ -452,7 +452,7 @@ class WidgetsScreen(PageScreen):
     }
     """
 
-    BINDINGS = [Binding("escape", "unfocus", "Unfocus any focused widget", show=False)]
+    BINDINGS = [Binding("escape", "blur", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
         with lazy.Reveal(containers.VerticalScroll(can_focus=False)):
@@ -465,6 +465,3 @@ class WidgetsScreen(PageScreen):
             yield Logs()
             yield Sparklines()
         yield Footer()
-
-    def action_unfocus(self) -> None:
-        self.set_focus(None)

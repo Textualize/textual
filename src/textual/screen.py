@@ -780,6 +780,10 @@ class Screen(Generic[ScreenResultType], Widget):
         """Action to minimize the currently maximized widget."""
         self.minimize()
 
+    def action_blur(self) -> None:
+        """Action to remove focus (if set)."""
+        self.set_focus(None)
+
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
     ) -> None:
