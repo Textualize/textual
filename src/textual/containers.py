@@ -73,6 +73,40 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     | ctrl+pagedown | Scroll right one page, if horizontal scrolling is available. |
     """
 
+    def __init__(
+        self,
+        *children: Widget,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+        can_focus: bool | None = None,
+        can_focus_children: bool | None = None,
+    ) -> None:
+        """
+
+        Args:
+            *children: Child widgets.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+            can_focus: Can this container be focused?
+            can_focus_children: Can this container's children be focused?
+        """
+
+        super().__init__(
+            *children,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
+        if can_focus is not None:
+            self.can_focus = can_focus
+        if can_focus_children is not None:
+            self.can_focus_children = can_focus_children
+
 
 class Vertical(Widget, inherit_bindings=False):
     """An expanding container with vertical layout and no scrollbars."""
