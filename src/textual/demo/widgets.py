@@ -445,10 +445,9 @@ class WidgetsScreen(PageScreen):
             scrollbar-gutter: stable;
             &> * {            
                 &:last-of-type { margin-bottom: 2; } 
-                &:even { background: $boost; }            
-                padding-bottom: 1;                                            
-            }                           
-
+                &:even { background: $boost; }
+                padding-bottom: 1;
+            }
         }
     }
     """
