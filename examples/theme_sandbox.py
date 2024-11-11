@@ -436,6 +436,8 @@ class ChangingThemeApp(App[None]):
             table.add_columns(*HEADERS)
             table.add_rows(ROWS)
             table.zebra_stripes = True
+            table.fixed_columns = 1
+            table.cursor_type = "row"
             yield table
             yield ListView(
                 ListItem(Label("One")),
