@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `can_focus` and `can_focus_children` parameters to scrollable container types.
-- Added `textual.lazy.Reveal`
+- Added `can_focus` and `can_focus_children` parameters to scrollable container types. https://github.com/Textualize/textual/pull/5226
+- Added `textual.lazy.Reveal` https://github.com/Textualize/textual/pull/5226
 
 ## [0.85.2] - 2024-11-02
 
