@@ -46,7 +46,7 @@ class Toast(Static, inherit_css=False):
         visibility: visible;
         margin-top: 1;
         padding: 1 1;
-        background: $panel;
+        background: $panel-lighten-1;
         link-background: initial;
         link-color: $foreground;
         link-style: underline;
