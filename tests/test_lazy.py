@@ -46,6 +46,7 @@ async def test_lazy_reveal():
 
         # All children should be visible after a pause
         await pilot.pause()
+        await pilot.pause()
 
         assert app.query_one("#foo").display
         assert app.query_one("#bar").display
