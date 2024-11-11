@@ -80,8 +80,8 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        can_focus: bool = True,
-        can_focus_children: bool = True,
+        can_focus: bool | None = None,
+        can_focus_children: bool | None = None,
     ) -> None:
         """
 
@@ -102,8 +102,10 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
             classes=classes,
             disabled=disabled,
         )
-        self.can_focus = can_focus
-        self.can_focus_children = can_focus_children
+        if can_focus is not None:
+            self.can_focus = can_focus
+        if can_focus_children is not None:
+            self.can_focus_children = can_focus_children
 
 
 class Vertical(Widget, inherit_bindings=False):
