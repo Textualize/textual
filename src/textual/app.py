@@ -123,7 +123,6 @@ from textual.screen import (
 )
 from textual.signal import Signal
 from textual.timer import Timer
-from textual.visual import SupportsTextualize, Visual
 from textual.widget import AwaitMount, Widget
 from textual.widgets._toast import ToastRack
 from textual.worker import NoActiveWorker, get_current_worker
@@ -189,7 +188,7 @@ DEFAULT_COLORS = {
 }
 
 ComposeResult = Iterable[Widget]
-RenderResult = RenderableType | Visual | SupportsTextualize
+RenderResult = "RenderableType | Visual | SupportsTextualize"
 """Result of Widget.render()"""
 
 AutopilotCallbackType: TypeAlias = (
