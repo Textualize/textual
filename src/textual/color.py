@@ -320,7 +320,10 @@ class Color(NamedTuple):
 
         For example, `"rgb(10,20,30)"` for an RGB color, or `"rgb(50,70,80,0.5)"` for an RGBA color.
         """
-        r, g, b, a, ansi, _ = self
+        r, g, b, a, ansi, auto = self
+        if auto:
+            alpha_percentage = clamp(a, 0.0, 1.0) * 100.0
+            return f"auto {alpha_percentage:.1d}%"
         if ansi is not None:
             return "ansi_default" if ansi == -1 else f"ansi_{ANSI_COLORS[ansi]}"
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
