@@ -46,7 +46,7 @@ class VisualError(Exception):
     """An error with the visual protocol."""
 
 
-VisualType: TypeAlias = RenderableType | SupportsTextualize | "Visual"
+VisualType: TypeAlias = "RenderableType | SupportsTextualize | Visual"
 
 
 def visualize(widget: Widget, obj: object) -> Visual:
