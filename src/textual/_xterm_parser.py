@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 from typing import Any, Generator, Iterable
 
@@ -40,6 +41,9 @@ _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQR
 _re_in_band_window_resize: Final = re.compile(
     r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
 )
+
+
+IS_ITERM = os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
 
 
 class XTermParser(Parser[Message]):
@@ -262,7 +266,8 @@ class XTermParser(Parser[Message]):
                         setting_parameter = int(mode_report_match["setting_parameter"])
                         if mode_id == "2026" and setting_parameter > 0:
                             on_token(messages.TerminalSupportsSynchronizedOutput())
-                        elif mode_id == "2048":
+                        elif mode_id == "2048" and not IS_ITERM:
+                            # TODO: remove "and not IS_ITERM" when https://gitlab.com/gnachman/iterm2/-/issues/11961 is fixed
                             in_band_event = messages.TerminalSupportInBandWindowResize.from_setting_parameter(
                                 setting_parameter
                             )
