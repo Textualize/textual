@@ -1536,12 +1536,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def action_change_theme(self) -> None:
         """An [action](/guide/actions) to change the current theme."""
-        self.app.push_screen(
-            CommandPalette(
-                [ThemeProvider],
-                placeholder="Search for themes…",
-            ),
-        )
+        self.search_themes()
 
     def action_screenshot(
         self, filename: str | None = None, path: str | None = None
@@ -1671,6 +1666,18 @@ class App(Generic[ReturnType], DOMNode):
                 providers=[SimpleProvider(self.screen, commands)],
                 placeholder=placeholder,
             )
+        )
+
+    def search_themes(self) -> None:
+        """Show a fuzzy search command palette containing all registered themes.
+
+        Selecting a theme in the list will change the app's theme.
+        """
+        self.push_screen(
+            CommandPalette(
+                providers=[ThemeProvider],
+                placeholder="Search for themes…",
+            ),
         )
 
     def bind(

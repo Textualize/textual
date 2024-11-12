@@ -342,9 +342,7 @@ class SimpleCommand(NamedTuple):
     """The description of the command."""
 
 
-CommandListItem: TypeAlias = (
-    "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
-)
+CommandListItem: TypeAlias = "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
 
 
 class SimpleProvider(Provider):
@@ -357,7 +355,6 @@ class SimpleProvider(Provider):
     ) -> None:
         # Convert all commands to SimpleCommand instances
         super().__init__(screen, None)
-        print("setting commands")
         self._commands: list[SimpleCommand] = []
         for command in commands:
             if isinstance(command, SimpleCommand):
