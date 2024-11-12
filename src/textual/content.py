@@ -401,6 +401,9 @@ class Content(Visual):
                     if self._cell_length is None
                     else self._cell_length + cell_len(content)
                 ),
+                align=self.align,
+                no_wrap=self.no_wrap,
+                ellipsis=self.ellipsis,
             )
         return Content("").join([self, content])
 
