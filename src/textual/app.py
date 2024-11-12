@@ -1253,7 +1253,7 @@ class App(Generic[ReturnType], DOMNode):
     def _invalidate_css(self) -> None:
         """Invalidate CSS, so it will be refreshed."""
         self._css_update_count += 1
-        
+
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.current_theme.dark:
             self._refresh_truecolor_filter(theme)
