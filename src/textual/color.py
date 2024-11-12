@@ -171,9 +171,9 @@ class Color(NamedTuple):
     """Is the color automatic? (automatic colors may be white or black, to provide maximum contrast)"""
 
     @classmethod
-    def automatic(cls, alpha: float = 1.0) -> Color:
+    def automatic(cls, alpha_percentage: float = 100.0) -> Color:
         """Create an automatic color."""
-        return cls(0, 0, 0, alpha, auto=True)
+        return cls(0, 0, 0, alpha_percentage / 100.0, auto=True)
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor | None) -> Color:
@@ -323,7 +323,9 @@ class Color(NamedTuple):
         r, g, b, a, ansi, auto = self
         if auto:
             alpha_percentage = clamp(a, 0.0, 1.0) * 100.0
-            return f"auto {alpha_percentage:.1d}%"
+            if not alpha_percentage % 1:
+                return f"auto {int(alpha_percentage)}%"
+            return f"auto {alpha_percentage:.1f}%"
         if ansi is not None:
             return "ansi_default" if ansi == -1 else f"ansi_{ANSI_COLORS[ansi]}"
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
@@ -340,12 +342,13 @@ class Color(NamedTuple):
         return Color(gray, gray, gray, a)
 
     def __rich_repr__(self) -> rich.repr.Result:
-        r, g, b, a, ansi, _ = self
+        r, g, b, a, ansi, auto = self
         yield r
         yield g
         yield b
         yield "a", a, 1.0
         yield "ansi", ansi, None
+        yield "auto", auto, False
 
     def with_alpha(self, alpha: float) -> Color:
         """Create a new color with the given alpha.
@@ -566,7 +569,7 @@ class Color(NamedTuple):
             l = percentage_string_to_float(l)
             a = clamp(float(a), 0.0, 1.0)
             color = Color.from_hsl(h, s, l).with_alpha(a)
-        else:
+        else:  # pragma: no-cover
             raise AssertionError(  # pragma: no-cover
                 "Can't get here if RE_COLOR matches"
             )
