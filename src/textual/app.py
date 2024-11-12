@@ -761,6 +761,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._hover_effects_timer: Timer | None = None
 
+        self._resize_event: events.Resize | None = None
+        """A pending resize event, sent on idle."""
+
         self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
 
@@ -1765,7 +1768,7 @@ class App(Generic[ReturnType], DOMNode):
                     char = key if len(key) == 1 else None
                 key_event = events.Key(key, char)
                 key_event.set_sender(app)
-                driver.send_event(key_event)
+                driver.send_message(key_event)
                 await wait_for_idle(0)
                 await app._animator.wait_until_complete()
                 await wait_for_idle(0)
@@ -3921,9 +3924,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self.screen.post_message(event)
-        for screen in self._background_screens:
-            screen.post_message(event)
+        self._resize_event = event
 
     async def _on_app_focus(self, event: events.AppFocus) -> None:
         """App has focus."""
@@ -4562,3 +4563,21 @@ class App(Generic[ReturnType], DOMNode):
             self.notify(
                 "Failed to save screenshot", title="Screenshot", severity="error"
             )
+
+    @on(messages.TerminalSupportInBandWindowResize)
+    def _on_terminal_supports_in_band_window_resize(
+        self, message: messages.TerminalSupportInBandWindowResize
+    ) -> None:
+        """There isn't much we can do with this information currently, so
+        we will just log it.
+        """
+        self.log.debug(message)
+
+    def _on_idle(self) -> None:
+        """Send app resize events on idle, so we don't do more resizing that necessary."""
+        event = self._resize_event
+        if event is not None:
+            self._resize_event = None
+            self.screen.post_message(event)
+            for screen in self._background_screens:
+                screen.post_message(event)

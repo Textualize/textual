@@ -97,3 +97,42 @@ class TerminalSupportsSynchronizedOutput(Message):
     Used to make the App aware that the terminal emulator supports synchronised output.
     @link https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
     """
+
+
+@rich.repr.auto
+class TerminalSupportInBandWindowResize(Message):
+    """Reports if the in-band window resize protocol is supported.
+
+    https://gist.github.com/rockorager/e695fb2924d36b2bcf1fff4a3704bd83"""
+
+    def __init__(self, supported: bool, enabled: bool) -> None:
+        """Initialize message.
+
+        Args:
+            supported: Is the protocol supported?
+            enabled: Is the protocol enabled.
+        """
+        self.supported = supported
+        self.enabled = enabled
+        super().__init__()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "supported", self.supported
+        yield "enabled", self.enabled
+
+    @classmethod
+    def from_setting_parameter(
+        cls, setting_parameter: int
+    ) -> TerminalSupportInBandWindowResize:
+        """Construct the message from the setting parameter.
+
+        Args:
+            setting_parameter: Setting parameter from stdin.
+
+        Returns:
+            New TerminalSupportInBandWindowResize instance.
+        """
+
+        supported = setting_parameter not in (0, 4)
+        enabled = setting_parameter in (1, 3)
+        return TerminalSupportInBandWindowResize(supported, enabled)

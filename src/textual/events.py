@@ -115,6 +115,7 @@ class Resize(Event, bubble=False):
         size: Size,
         virtual_size: Size,
         container_size: Size | None = None,
+        pixel_size: Size | None = None,
     ) -> None:
         self.size = size
         """The new size of the Widget."""
@@ -122,15 +123,33 @@ class Resize(Event, bubble=False):
         """The virtual size (scrollable size) of the Widget."""
         self.container_size = size if container_size is None else container_size
         """The size of the Widget's container widget."""
+        self.pixel_size = pixel_size
+        """Size of terminal window in pixels if known, or `None` if not known."""
         super().__init__()
+
+    @classmethod
+    def from_dimensions(
+        cls, cells: tuple[int, int], pixels: tuple[int, int] | None
+    ) -> Resize:
+        """Construct from basic dimensions.
+
+        Args:
+            cells: tuple of (<width>, <height>) in cells.
+            pixels: tuple of (<width>, <height>) in pixels if known, or `None` if not known.
+
+        """
+        size = Size(*cells)
+        pixel_size = Size(*pixels) if pixels is not None else None
+        return Resize(size, size, size, pixel_size)
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
-        yield "virtual_size", self.virtual_size
+        yield "virtual_size", self.virtual_size, self.size
         yield "container_size", self.container_size, self.size
+        yield "pixel_size", self.pixel_size, None
 
 
 class Compose(Event, bubble=False, verbose=True):
