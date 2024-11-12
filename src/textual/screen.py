@@ -266,6 +266,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
 
+        self._css_update_count = -1
+        """Track updates to CSS."""
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -778,6 +781,10 @@ class Screen(Generic[ScreenResultType], Widget):
     def action_minimize(self) -> None:
         """Action to minimize the currently maximized widget."""
         self.minimize()
+
+    def action_blur(self) -> None:
+        """Action to remove focus (if set)."""
+        self.set_focus(None)
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None

@@ -761,6 +761,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._hover_effects_timer: Timer | None = None
 
+        self._css_update_count: int = 0
+        """Incremented when CSS is invalidated."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -1243,17 +1246,24 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
+        self._invalidate_css()
         self.call_next(self.refresh_css)
         self.call_next(self.theme_changed_signal.publish, theme)
 
+    def _invalidate_css(self) -> None:
+        """Invalidate CSS, so it will be refreshed."""
+        self._css_update_count += 1
+        
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.current_theme.dark:
             self._refresh_truecolor_filter(theme)
+            self._invalidate_css()
             self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         if not self.current_theme.dark:
             self._refresh_truecolor_filter(theme)
+            self._invalidate_css()
             self.call_next(self.refresh_css)
 
     @property
@@ -2283,7 +2293,9 @@ class App(Generic[ReturnType], DOMNode):
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
-            self.refresh_css()
+            if screen._css_update_count != self._css_update_count:
+                self.refresh_css()
+
             screen.post_message(events.ScreenResume())
         else:
             # Mode is not defined
@@ -2328,7 +2340,8 @@ class App(Generic[ReturnType], DOMNode):
             await_mount = AwaitMount(self.screen, [])
 
         self._current_mode = mode
-        self.refresh_css()
+        if self.screen._css_update_count != self._css_update_count:
+            self.refresh_css()
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
 
@@ -3445,6 +3458,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         try:
             self.screen._refresh_layout(self.size)
+            self.screen._css_update_count = self._css_update_count
         except ScreenError:
             pass
         # The other screens in the stack will need to know about some style
@@ -3453,6 +3467,7 @@ class App(Generic[ReturnType], DOMNode):
         for screen in self.screen_stack:
             if screen != self.screen:
                 stylesheet.update(screen, animate=animate)
+                screen._css_update_count = self._css_update_count
 
     def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
