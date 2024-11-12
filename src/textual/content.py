@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence
 import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
-from rich.console import JustifyMethod, OverflowMethod
+from rich.console import OverflowMethod
 from rich.segment import Segment, Segments
 from rich.text import Text
 
@@ -34,17 +34,17 @@ if TYPE_CHECKING:
 _re_whitespace = re.compile(r"\s+$")
 
 
-def _justify_lines(
+def _align_lines(
     lines: list[Content],
     width: int,
-    justify: "JustifyMethod" = "left",
+    align: TextAlign = "left",
     overflow: "OverflowMethod" = "fold",
 ) -> list[Content]:
-    """Justify and overflow text to a given width.
+    """Align and overflow text.
 
     Args:
         width (int): Number of cells available per line.
-        justify (str, optional): Default justify method for text: "left", "center", "full" or "right". Defaults to "left".
+        align (str, optional): Desired text alignment.
         overflow (str, optional): Default overflow for text: "crop", "fold", or "ellipsis". Defaults to "fold".
 
     Returns:
@@ -55,13 +55,13 @@ def _justify_lines(
     for line in lines:
         assert isinstance(line._spans, list)
 
-    if justify == "left":
+    if align == "left":
         lines = [line.truncate(width, overflow=overflow, pad=True) for line in lines]
-    elif justify == "center":
+    elif align == "center":
         lines = [line.center(width) for line in lines]
-    elif justify == "right":
+    elif align == "right":
         lines = [line.right(width) for line in lines]
-    elif justify == "full":
+    elif align == "full":
         new_lines = lines.copy()
         for line_index, line in enumerate(new_lines):
             if line_index == len(lines) - 1:
@@ -139,7 +139,7 @@ class Content(Visual):
         text: str,
         spans: list[Span] | None = None,
         cell_length: int | None = None,
-        justify: TextAlign = "left",
+        align: TextAlign = "left",
         no_wrap: bool = False,
         ellipsis: bool = False,
     ) -> None:
@@ -149,14 +149,14 @@ class Content(Visual):
             text: text content.
             spans: Optional list of spans.
             cell_length: Cell length of text if known, otherwise `None`.
-            justify: Justify method.
+            align: Align method.
             no_wrap: Disable wrapping.
             ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
         """
         self._text: str = text
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
-        self._justify = justify
+        self._align = align
         self._no_wrap = no_wrap
         self._ellipsis = ellipsis
 
@@ -164,7 +164,7 @@ class Content(Visual):
     def from_rich_text(
         cls,
         text: str | Text,
-        justify: TextAlign = "left",
+        align: TextAlign = "left",
         no_wrap: bool = False,
         ellipsis: bool = False,
     ) -> Content:
@@ -172,7 +172,7 @@ class Content(Visual):
 
         Args:
             text: String or Rich Text.
-            justify: Justify method.
+            align: Align method.
             no_wrap: Disable wrapping.
             ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
 
@@ -180,7 +180,7 @@ class Content(Visual):
             New Content.
         """
         if isinstance(text, str):
-            return cls(text, justify=justify, no_wrap=no_wrap, ellipsis=ellipsis)
+            return cls(text, align=align, no_wrap=no_wrap, ellipsis=ellipsis)
         spans = [
             Span(
                 start,
@@ -192,7 +192,7 @@ class Content(Visual):
         return cls(
             text.plain,
             spans,
-            justify=justify,
+            align=align,
             no_wrap=no_wrap,
             ellipsis=ellipsis,
         )
@@ -203,7 +203,7 @@ class Content(Visual):
         text: str,
         style: Style | str = "",
         cell_length: int | None = None,
-        justify: TextAlign = "left",
+        align: TextAlign = "left",
         no_wrap: bool = False,
         ellipsis: bool = False,
     ) -> Content:
@@ -213,7 +213,7 @@ class Content(Visual):
             text: String content.
             style: Desired style.
             cell_length: Cell length of text if known, otherwise `None`.
-            justify: Justify method.
+            align: Text alignment.
             no_wrap: Disable wrapping.
             ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
 
@@ -221,13 +221,13 @@ class Content(Visual):
             New Content instance.
         """
         if not text:
-            return Content("", justify=justify, no_wrap=no_wrap, ellipsis=ellipsis)
+            return Content("", align=align, no_wrap=no_wrap, ellipsis=ellipsis)
         span_length = cell_len(text) if cell_length is None else cell_length
         new_content = cls(
             text,
             [Span(0, span_length, style)],
             span_length,
-            justify=justify,
+            align=align,
             no_wrap=no_wrap,
             ellipsis=ellipsis,
         )
@@ -235,7 +235,7 @@ class Content(Visual):
 
     def get_optimal_width(self, container_width: int) -> int:
         lines = self.without_spans.split("\n")
-        return max(line.expand_tabs(8).cell_length for line in lines)
+        return max(line.cell_length for line in lines)
 
     def render_strips(
         self,
@@ -249,7 +249,7 @@ class Content(Visual):
 
         lines = self.wrap(
             width,
-            justify=self._justify,
+            align=self._align,
             overflow=(
                 ("ellipsis" if self._ellipsis else "crop") if self._no_wrap else "fold"
             ),
@@ -269,7 +269,7 @@ class Content(Visual):
         return len(self.plain)
 
     def __bool__(self) -> bool:
-        return self._text == ""
+        return self._text != ""
 
     def __hash__(self) -> int:
         return hash(self._text)
@@ -286,13 +286,36 @@ class Content(Visual):
         return self._cell_length
 
     @property
+    def align(self) -> TextAlign:
+        """Text alignment."""
+        return self._align
+
+    @property
+    def no_wrap(self) -> bool:
+        """Disable text wrapping?"""
+        return self._no_wrap
+
+    @property
+    def ellipsis(self) -> bool:
+        """Crop text with ellipsis?"""
+        return self._ellipsis
+
+    @property
     def plain(self) -> str:
         """Get the text as a single string."""
         return self._text
 
     @property
     def without_spans(self) -> Content:
-        return Content(self.plain, [], self._cell_length)
+        """The content with no spans"""
+        return Content(
+            self.plain,
+            [],
+            self._cell_length,
+            align=self._align,
+            no_wrap=self._no_wrap,
+            ellipsis=self._ellipsis,
+        )
 
     def __getitem__(self, slice: int | slice) -> Content:
         def get_text_at(offset: int) -> "Content":
@@ -874,7 +897,7 @@ class Content(Visual):
     def wrap(
         self,
         width: int,
-        justify: TextAlign = "left",
+        align: TextAlign = "left",
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,
@@ -889,9 +912,7 @@ class Content(Visual):
                 offsets = divide_line(line._text, width, fold=overflow == "fold")
                 new_lines = line.divide(offsets)
             new_lines = [line.rstrip_end(width) for line in new_lines]
-            new_lines = _justify_lines(
-                new_lines, width, justify=justify, overflow=overflow
-            )
+            new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
             new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
             lines.extend(new_lines)
         return lines
@@ -946,7 +967,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
         "will", Style(background=Color.parse("rgba(255, 255, 20, 0.3)"))
     )
 
-    lines = content.wrap(40, justify="full")
+    lines = content.wrap(40, align="full")
     print(lines)
     print("x" * 40)
     for line in lines:
