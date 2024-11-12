@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, BinaryIO, Iterator, Literal, TextIO
 
-from textual import events, log
+from textual import events, log, messages
 from textual.events import MouseUp
 
 if TYPE_CHECKING:
@@ -64,46 +64,46 @@ class Driver(ABC):
         """Can this driver be suspended?"""
         return False
 
-    def send_event(self, event: events.Event) -> None:
-        """Send an event to the target app.
+    def send_message(self, message: messages.Message) -> None:
+        """Send a message to the target app.
 
         Args:
-            event: An event.
+            message: A message.
         """
         asyncio.run_coroutine_threadsafe(
-            self._app._post_message(event), loop=self._loop
+            self._app._post_message(message), loop=self._loop
         )
 
-    def process_event(self, event: events.Event) -> None:
-        """Perform additional processing on an event, prior to sending.
+    def process_message(self, message: messages.Message) -> None:
+        """Perform additional processing on a message, prior to sending.
 
         Args:
-            event: An event to send.
+            event: A message to process.
         """
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.
-        event.set_sender(self._app)
+        message.set_sender(self._app)
         if self.cursor_origin is None:
             offset_x = 0
             offset_y = 0
         else:
             offset_x, offset_y = self.cursor_origin
-        if isinstance(event, events.MouseEvent):
-            event.x -= offset_x
-            event.y -= offset_y
-            event.screen_x -= offset_x
-            event.screen_y -= offset_y
+        if isinstance(message, events.MouseEvent):
+            message.x -= offset_x
+            message.y -= offset_y
+            message.screen_x -= offset_x
+            message.screen_y -= offset_y
 
-        if isinstance(event, events.MouseDown):
-            if event.button:
-                self._down_buttons.append(event.button)
-        elif isinstance(event, events.MouseUp):
-            if event.button and event.button in self._down_buttons:
-                self._down_buttons.remove(event.button)
-        elif isinstance(event, events.MouseMove):
+        if isinstance(message, events.MouseDown):
+            if message.button:
+                self._down_buttons.append(message.button)
+        elif isinstance(message, events.MouseUp):
+            if message.button and message.button in self._down_buttons:
+                self._down_buttons.remove(message.button)
+        elif isinstance(message, events.MouseMove):
             if (
                 self._down_buttons
-                and not event.button
+                and not message.button
                 and self._last_move_event is not None
             ):
                 # Deduplicate self._down_buttons while preserving order.
@@ -111,24 +111,24 @@ class Driver(ABC):
                 self._down_buttons.clear()
                 move_event = self._last_move_event
                 for button in buttons:
-                    self.send_event(
+                    self.send_message(
                         MouseUp(
                             x=move_event.x,
                             y=move_event.y,
                             delta_x=0,
                             delta_y=0,
                             button=button,
-                            shift=event.shift,
-                            meta=event.meta,
-                            ctrl=event.ctrl,
+                            shift=message.shift,
+                            meta=message.meta,
+                            ctrl=message.ctrl,
                             screen_x=move_event.screen_x,
                             screen_y=move_event.screen_y,
-                            style=event.style,
+                            style=message.style,
                         )
                     )
-            self._last_move_event = event
+            self._last_move_event = message
 
-        self.send_event(event)
+        self.send_message(message)
 
     @abstractmethod
     def write(self, data: str) -> None:

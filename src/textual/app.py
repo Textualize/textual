@@ -788,6 +788,12 @@ class App(Generic[ReturnType], DOMNode):
 
         self._hover_effects_timer: Timer | None = None
 
+        self._resize_event: events.Resize | None = None
+        """A pending resize event, sent on idle."""
+
+        self._css_update_count: int = 0
+        """Incremented when CSS is invalidated."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -1191,6 +1197,10 @@ class App(Generic[ReturnType], DOMNode):
         variables = design.generate()
         return variables
 
+    def _invalidate_css(self) -> None:
+        """Invalidate CSS, so it will be refreshed."""
+        self._css_update_count += 1
+
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool.
 
@@ -1200,16 +1210,19 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
+        self._invalidate_css()
         self.call_next(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.dark:
             self._refresh_truecolor_filter(theme)
+            self._invalidate_css()
             self.call_next(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         if not self.dark:
             self._refresh_truecolor_filter(theme)
+            self._invalidate_css()
             self.call_next(self.refresh_css)
 
     @property
@@ -1677,7 +1690,7 @@ class App(Generic[ReturnType], DOMNode):
                     char = key if len(key) == 1 else None
                 key_event = events.Key(key, char)
                 key_event.set_sender(app)
-                driver.send_event(key_event)
+                driver.send_message(key_event)
                 await wait_for_idle(0)
                 await app._animator.wait_until_complete()
                 await wait_for_idle(0)
@@ -2205,7 +2218,9 @@ class App(Generic[ReturnType], DOMNode):
             screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
-            self.refresh_css()
+            if screen._css_update_count != self._css_update_count:
+                self.refresh_css()
+
             screen.post_message(events.ScreenResume())
         else:
             # Mode is not defined
@@ -2250,6 +2265,8 @@ class App(Generic[ReturnType], DOMNode):
             await_mount = AwaitMount(self.screen, [])
 
         self._current_mode = mode
+        if self.screen._css_update_count != self._css_update_count:
+            self.refresh_css()
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
 
@@ -3366,6 +3383,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         try:
             self.screen._refresh_layout(self.size)
+            self.screen._css_update_count = self._css_update_count
         except ScreenError:
             pass
         # The other screens in the stack will need to know about some style
@@ -3374,6 +3392,7 @@ class App(Generic[ReturnType], DOMNode):
         for screen in self.screen_stack:
             if screen != self.screen:
                 stylesheet.update(screen, animate=animate)
+                screen._css_update_count = self._css_update_count
 
     def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
@@ -3680,7 +3699,7 @@ class App(Generic[ReturnType], DOMNode):
                 raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination, None)
             if action_target is None:
-                raise ActionError("Action target {destination!r} not available")
+                raise ActionError(f"Action target {destination!r} not available")
         return (
             (default_namespace if action_target is None else action_target),
             action_name,
@@ -3827,9 +3846,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self.screen.post_message(event)
-        for screen in self._background_screens:
-            screen.post_message(event)
+        self._resize_event = event
 
     async def _on_app_focus(self, event: events.AppFocus) -> None:
         """App has focus."""
@@ -4459,3 +4476,21 @@ class App(Generic[ReturnType], DOMNode):
             self.notify(
                 "Failed to save screenshot", title="Screenshot", severity="error"
             )
+
+    @on(messages.TerminalSupportInBandWindowResize)
+    def _on_terminal_supports_in_band_window_resize(
+        self, message: messages.TerminalSupportInBandWindowResize
+    ) -> None:
+        """There isn't much we can do with this information currently, so
+        we will just log it.
+        """
+        self.log.debug(message)
+
+    def _on_idle(self) -> None:
+        """Send app resize events on idle, so we don't do more resizing that necessary."""
+        event = self._resize_event
+        if event is not None:
+            self._resize_event = None
+            self.screen.post_message(event)
+            for screen in self._background_screens:
+                screen.post_message(event)
