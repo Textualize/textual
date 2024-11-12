@@ -195,12 +195,12 @@ class WebDriver(Driver):
                         if packet_type == "D":
                             # Treat as stdin
                             for event in parser.feed(decode(payload)):
-                                self.process_event(event)
+                                self.process_message(event)
                         else:
                             # Process meta information separately
                             self._on_meta(packet_type, payload)
                 for event in parser.tick():
-                    self.process_event(event)
+                    self.process_message(event)
         except _ExitInput:
             pass
         except Exception:
