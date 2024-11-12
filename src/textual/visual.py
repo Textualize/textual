@@ -36,6 +36,7 @@ def is_visual(obj: object) -> bool:
     return isinstance(obj, Visual) or hasattr(obj, "textualize")
 
 
+# Note: not runtime checkable currently, as I've found that to be slow
 class SupportsTextualize(Protocol):
     """An object that supports the textualize protocol."""
 
@@ -51,6 +52,9 @@ VisualType: TypeAlias = "RenderableType | SupportsTextualize | Visual"
 
 def visualize(widget: Widget, obj: object) -> Visual:
     """Get a visual instance from an object.
+
+    If the object does not support the Visual protocol and is a Rich renderable, it
+    will be wrapped in a [RichVisual][textual.visual.RichVisual].
 
     Args:
         obj: An object.
@@ -87,7 +91,7 @@ def visualize(widget: Widget, obj: object) -> Visual:
 @rich.repr.auto
 @dataclass(frozen=True)
 class Style:
-    """Represent a content style (color and other attributes)."""
+    """Represents a style in the Visual interface (color and other attributes)."""
 
     background: Color = TRANSPARENT
     foreground: Color = TRANSPARENT
@@ -128,6 +132,14 @@ class Style:
 
     @classmethod
     def from_rich_style(cls, rich_style: RichStyle) -> Style:
+        """Build a Style from a (Rich) Style.
+
+        Args:
+            rich_style: A Rich Style object.
+
+        Returns:
+            New Style.
+        """
         return Style(
             Color.from_rich_color(rich_style.bgcolor),
             Color.from_rich_color(rich_style.color),
@@ -140,6 +152,12 @@ class Style:
 
     @classmethod
     def from_styles(cls, styles: StylesBase) -> Style:
+        """Create a Visual Style from a Textual styles object.
+
+        Args:
+            styles: A Styles object, such as `my_widget.styles`.
+
+        """
         text_style = styles.text_style
         return Style(
             styles.background,
@@ -158,6 +176,11 @@ class Style:
 
     @cached_property
     def rich_style(self) -> RichStyle:
+        """Convert this Styles in to a Rich style.
+
+        Returns:
+            A Rich style object.
+        """
         return RichStyle(
             color=(self.background + self.foreground).rich_color,
             bgcolor=self.background.rich_color,
@@ -209,10 +232,11 @@ class Visual(ABC):
         Args:
             base_style: The base style.
             width: Width of desired render.
-            height: Height of desired render.
+            height: Height of desired render or `None` for any height.
+            style: A Visual Style.
 
         Returns:
-            An iterable of Strips.
+            An list of Strips.
         """
 
     @abstractmethod
@@ -220,7 +244,7 @@ class Visual(ABC):
         """Get ideal width of the renderable to display its content.
 
         Args:
-            tab_size: Size of tabs.
+            container_size: The size of the container.
 
         Returns:
             A width in cells.
@@ -253,13 +277,13 @@ class Visual(ABC):
             widget: Widget that produced the visual.
             visual: A Visual instance.
             width: Desired width (in cells).
-            height: Desired height (in lines).
+            height: Desired height (in lines) or `None` for no limit.
             style: A (Visual) Style instance.
-            pad: Pad to desired height?
+            pad: Pad to desired width?
             align: Tuple of horizontal and vertical alignment.
 
         Returns:
-            _type_: _description_
+            A list of Strips containing the render.
         """
         strips = visual.render_strips(widget, width, height, style)
         if height is None:
@@ -285,7 +309,15 @@ class Visual(ABC):
 
 @rich.repr.auto
 class RichVisual(Visual):
+    """A Visual to wrap a Rich renderable."""
+
     def __init__(self, widget: Widget, renderable: RenderableType) -> None:
+        """
+
+        Args:
+            widget: The associated Widget.
+            renderable: A Rich renderable.
+        """
         self._widget = widget
         self._renderable = renderable
         self._measurement: Measurement | None = None
@@ -295,13 +327,12 @@ class RichVisual(Visual):
         yield self._renderable
 
     def _measure(self, console: Console, options: ConsoleOptions) -> Measurement:
-        return Measurement.get(
-            console,
-            options,
-            self._widget.post_render(self._renderable, RichStyle.null()),
-        )
         if self._measurement is None:
-            self._measurement = Measurement.get(console, options, self._renderable)
+            self._measurement = Measurement.get(
+                console,
+                options,
+                self._widget.post_render(self._renderable, RichStyle.null()),
+            )
         return self._measurement
 
     def get_optimal_width(self, container_width: int) -> int:
@@ -363,7 +394,15 @@ class RichVisual(Visual):
 
 @rich.repr.auto
 class Padding(Visual):
+    """A Visual to pad another visual."""
+
     def __init__(self, visual: Visual, spacing: Spacing):
+        """
+
+        Args:
+            Visual: A Visual.
+            spacing: A Spacing object containing desired padding dimensions.
+        """
         self._visual = visual
         self._spacing = spacing
 

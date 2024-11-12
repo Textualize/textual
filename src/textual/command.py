@@ -1000,8 +1000,10 @@ class CommandPalette(SystemModalScreen):
             # list of commands that have been gathered so far.
 
             def build_prompt() -> Iterable[Content]:
+                """Generator for prompt content."""
                 assert hit is not None
                 yield Content.from_rich_text(hit.prompt)
+                # Optional help text
                 if hit.help:
                     help_style = VisualStyle.from_styles(
                         self.get_component_styles("command-palette--help-text")
