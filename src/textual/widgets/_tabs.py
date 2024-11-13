@@ -561,6 +561,7 @@ class Tabs(Widget, can_focus=True):
                 self.active = next_tab.id or ""
             if not self.query("#tabs-list > Tab"):
                 self.active = ""
+            self._highlight_active(animate=False)
 
         return AwaitComplete(do_remove())
 

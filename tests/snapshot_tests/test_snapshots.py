@@ -30,6 +30,8 @@ from textual.widgets import (
     SelectionList,
     Static,
     Switch,
+    Tab,
+    Tabs,
     TextArea,
 )
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
@@ -2547,3 +2549,25 @@ def test_help_panel_key_display_not_duplicated(snap_compare):
 
     app = HelpPanelApp()
     assert snap_compare(app, run_before=run_before)
+
+
+def test_tabs_remove_tab_updates_highlighting(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5218"""
+
+    class TabsApp(App):
+        BINDINGS = [("r", "remove_foo", "Remove foo")]
+
+        def compose(self) -> ComposeResult:
+            yield Tabs(
+                Tab("foo", id="foo"),
+                Tab("bar", id="bar"),
+                active="bar",
+            )
+            yield Footer()
+
+        def action_remove_foo(self) -> None:
+            tabs = self.query_one(Tabs)
+            tabs.remove_tab("foo")
+
+    app = TabsApp()
+    assert snap_compare(app, press="r")
