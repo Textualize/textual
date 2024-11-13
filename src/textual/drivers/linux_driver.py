@@ -269,6 +269,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
         self.write("\x1b[=1;u")
+
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
@@ -366,6 +367,7 @@ class LinuxDriver(Driver):
         # Disable the Kitty keyboard protocol. This must be done before leaving
         # the alt screen. https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.write("\x1b[<u")
+
         # Alt screen false, show cursor
         self.write("\x1b[?1049l")
         self.write("\x1b[?25h")

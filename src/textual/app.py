@@ -152,7 +152,8 @@ if constants.DEBUG:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 ComposeResult = Iterable[Widget]
-RenderResult = RenderableType
+RenderResult = "RenderableType | Visual | SupportsTextualize"
+"""Result of Widget.render()"""
 
 AutopilotCallbackType: TypeAlias = (
     "Callable[[Pilot[object]], Coroutine[Any, Any, None]]"

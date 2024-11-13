@@ -14,6 +14,8 @@ from textual import events
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
+from rich.style import Style
+
 from textual.binding import Binding
 from textual.css._error_tools import friendly_list
 from textual.geometry import Size
@@ -248,10 +250,12 @@ class Button(Widget, can_focus=True):
             1,
             1,
             self.rich_style,
-            self._get_rich_justify() or "center",
+            self._get_justify_method() or "center",
         )
 
-    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+    def post_render(
+        self, renderable: RenderableType, base_style: Style
+    ) -> ConsoleRenderable:
         return cast(ConsoleRenderable, renderable)
 
     async def _on_click(self, event: events.Click) -> None:

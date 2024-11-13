@@ -9,7 +9,6 @@ from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
-from itertools import islice
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
@@ -35,12 +34,13 @@ from rich.console import (
     RenderableType,
 )
 from rich.console import RenderResult as RichRenderResult
-from rich.console import RichCast
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
+
+from textual.css.styles import StylesBase
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
@@ -53,7 +53,6 @@ from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
-from textual._segment_tools import align_lines
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
 from textual.actions import SkipAction
@@ -82,10 +81,11 @@ from textual.message import Message
 from textual.messages import CallbackType, Prune
 from textual.notifications import SeverityLevel
 from textual.reactive import Reactive
-from textual.render import measure
 from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.strip import Strip
+from textual.visual import Style as VisualStyle
+from textual.visual import Visual, visualize
 
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
@@ -423,6 +423,9 @@ class Widget(DOMNode):
         self._border_title: Text | None = None
         self._border_subtitle: Text | None = None
 
+        self._layout_cache: dict[str, object] = {}
+        """A dict that is refreshed when the widget is resized / refreshed."""
+
         self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
@@ -447,7 +450,6 @@ class Widget(DOMNode):
 
         self._scrollbar_changes: set[tuple[bool, bool]] = set()
         """Used to stabilize scrollbars."""
-
         super().__init__(
             name=name,
             id=id,
@@ -1015,6 +1017,59 @@ class Widget(DOMNode):
 
         return partial_style if partial else style
 
+    def get_visual_style(self, component_classes: Iterable[str]) -> VisualStyle:
+        """Get the visual style for the widget, including any component styles.
+
+        Args:
+            component_classes: Optional component styles.
+
+        Returns:
+            A Visual style instance.
+
+        """
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+
+        style = Style()
+        opacity = 1.0
+
+        def iter_styles() -> Iterable[StylesBase]:
+            """Iterate over the styles from the DOM and additional components styles."""
+            for node in reversed(self.ancestors_with_self):
+                yield node.styles
+            for name in component_classes:
+                yield node.get_component_styles(name)
+
+        for styles in iter_styles():
+            has_rule = styles.has_rule
+            opacity *= styles.opacity
+            if has_rule("background"):
+                text_background = background + styles.background.tint(
+                    styles.background_tint
+                )
+                background += (
+                    styles.background.tint(styles.background_tint)
+                ).multiply_alpha(opacity)
+            else:
+                text_background = background
+            if has_rule("color"):
+                color = styles.color
+            style += styles.text_style
+            if has_rule("auto_color") and styles.auto_color:
+                color = text_background.get_contrast_text(color.a)
+
+        visual_style = VisualStyle(
+            background,
+            color,
+            bold=style.bold,
+            dim=style.dim,
+            italic=style.italic,
+            underline=style.underline,
+            strike=style.strike,
+        )
+
+        return visual_style
+
     def render_str(self, text_content: str | Text) -> Text:
         """Convert str in to a Text object.
 
@@ -1533,12 +1588,9 @@ class Widget(DOMNode):
         if self._content_width_cache[0] == cache_key:
             return self._content_width_cache[1]
 
-        console = self.app.console
-        renderable = self._render()
+        visual = self._render()
+        width = visual.get_optimal_width(container.width)
 
-        width = measure(
-            console, renderable, container.width, container_width=container.width
-        )
         if self.expand:
             width = max(container.width, width)
         if self.shrink:
@@ -1559,6 +1611,8 @@ class Widget(DOMNode):
         Returns:
             The height of the content.
         """
+        if not width:
+            return 0
         if self.is_container:
             assert self.layout is not None
             height = self.layout.get_content_height(
@@ -1573,27 +1627,8 @@ class Widget(DOMNode):
             if self._content_height_cache[0] == cache_key:
                 return self._content_height_cache[1]
 
-            renderable = self.render()
-            if isinstance(renderable, Text):
-                height = (
-                    len(
-                        renderable.wrap(
-                            self._console,
-                            width,
-                            no_wrap=renderable.no_wrap,
-                            tab_size=renderable.tab_size or 8,
-                        )
-                    )
-                    if renderable
-                    else 0
-                )
-            else:
-                options = self._console.options.update_width(width).update(
-                    highlight=False
-                )
-                segments = self._console.render(renderable, options)
-                # Cheaper than counting the lines returned from render_lines!
-                height = sum([text.count("\n") for text, _, _ in segments])
+            visual = self._render()
+            height = visual.get_height(width)
             self._content_height_cache = (cache_key, height)
 
         return height
@@ -3519,15 +3554,18 @@ class Widget(DOMNode):
             self.is_disabled,
         )
 
-    def _get_rich_justify(self) -> JustifyMethod | None:
+    def _get_justify_method(self) -> JustifyMethod | None:
         """Get the justify method that may be passed to a Rich renderable."""
         text_justify: JustifyMethod | None = None
+
         if self.styles.has_rule("text_align"):
             text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
             text_justify = _JUSTIFY_MAP.get(text_align, text_align)
         return text_justify
 
-    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+    def post_render(
+        self, renderable: RenderableType, base_style: Style
+    ) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         This method is called by Textual itself.
@@ -3537,7 +3575,7 @@ class Widget(DOMNode):
             A new renderable.
         """
 
-        text_justify = self._get_rich_justify()
+        text_justify = self._get_justify_method()
 
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
@@ -3552,7 +3590,7 @@ class Widget(DOMNode):
 
         renderable = _Styled(
             cast(ConsoleRenderable, renderable),
-            self.rich_style,
+            base_style,
             self.link_style if self.auto_links else None,
         )
 
@@ -3601,7 +3639,7 @@ class Widget(DOMNode):
         Returns:
             True if anything changed, or False if nothing changed.
         """
-
+        self._layout_cache.clear()
         if (
             self._size != size
             or self.virtual_size != virtual_size
@@ -3646,38 +3684,55 @@ class Widget(DOMNode):
         self.scroll_x = self.validate_scroll_x(self.scroll_x)
         self.scroll_y = self.validate_scroll_y(self.scroll_y)
 
+    @property
+    def visual_style(self) -> VisualStyle:
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+
+        style = Style()
+        opacity = 1.0
+
+        for node in reversed(self.ancestors_with_self):
+            styles = node.styles
+            has_rule = styles.has_rule
+            opacity *= styles.opacity
+            if has_rule("background"):
+                text_background = background + styles.background.tint(
+                    styles.background_tint
+                )
+                background += (
+                    styles.background.tint(styles.background_tint)
+                ).multiply_alpha(opacity)
+            else:
+                text_background = background
+            if has_rule("color"):
+                color = styles.color
+            style += styles.text_style
+            if has_rule("auto_color") and styles.auto_color:
+                color = text_background.get_contrast_text(color.a)
+
+        return VisualStyle(
+            background,
+            color,
+            bold=style.bold,
+            dim=style.dim,
+            italic=style.italic,
+            underline=style.underline,
+            strike=style.strike,
+        )
+
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
-        renderable = self.render()
-        renderable = self.post_render(renderable)
-        options = self._console.options.update(
-            highlight=False, width=width, height=height
+        visual = self._render()
+        strips = Visual.to_strips(
+            self,
+            visual,
+            width,
+            height,
+            self.visual_style,
+            align=self.styles.content_align,
         )
-
-        segments = self._console.render(renderable, options)
-        lines = list(
-            islice(
-                Segment.split_and_crop_lines(
-                    segments, width, include_new_lines=False, pad=False
-                ),
-                None,
-                height,
-            )
-        )
-
-        styles = self.styles
-        align_horizontal, align_vertical = styles.content_align
-        lines = list(
-            align_lines(
-                lines,
-                _NULL_STYLE,
-                self.size,
-                align_horizontal,
-                align_vertical,
-            )
-        )
-        strips = [Strip(line, width) for line in lines]
         self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
@@ -3775,7 +3830,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-
+        self._layout_cache.clear()
         if layout:
             self._layout_required = True
             for ancestor in self.ancestors:
@@ -3884,16 +3939,20 @@ class Widget(DOMNode):
                 return Blank(self.background_colors[1])
         return self.css_identifier_styled
 
-    def _render(self) -> ConsoleRenderable | RichCast:
+    def _render(self) -> Visual:
         """Get renderable, promoting str to text as required.
 
         Returns:
-            A renderable.
+            A Visual.
         """
-        renderable = self.render()
-        if isinstance(renderable, str):
-            return Text.from_markup(renderable)
-        return renderable
+        cache_key = "_render.visual"
+        cached_visual = self._layout_cache.get(cache_key, None)
+        if cached_visual is not None:
+            assert isinstance(cached_visual, Visual)
+            return cached_visual
+        visual = visualize(self, self.render())
+        self._layout_cache[cache_key] = visual
+        return visual
 
     async def run_action(self, action: str) -> None:
         """Perform a given action, with this widget as the default namespace.

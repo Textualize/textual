@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 import rich.repr
 from rich.console import RenderableType
 from rich.measure import Measurement
-from rich.padding import Padding
 from rich.rule import Rule
-from rich.style import NULL_STYLE, Style
+from rich.style import Style
 
 from textual import _widget_navigation, events
 from textual._widget_navigation import Direction
@@ -18,9 +17,12 @@ from textual.message import Message
 from textual.reactive import reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
+from textual.visual import Padding, Visual, visualize
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias
+
+    from textual.app import RenderResult
 
 
 class DuplicateID(Exception):
@@ -40,7 +42,7 @@ class Option:
     """Class that holds the details of an individual option."""
 
     def __init__(
-        self, prompt: RenderableType, id: str | None = None, disabled: bool = False
+        self, prompt: RenderResult, id: str | None = None, disabled: bool = False
     ) -> None:
         """Initialise the option.
 
@@ -49,35 +51,38 @@ class Option:
             id: The optional ID for the option.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
-        self.__prompt = prompt
-        self.__id = id
+        self._prompt = prompt
+        self._id = id
         self.disabled = disabled
 
     @property
-    def prompt(self) -> RenderableType:
+    def prompt(self) -> RenderResult:
         """The prompt for the option."""
-        return self.__prompt
+        return self._prompt
 
-    def set_prompt(self, prompt: RenderableType) -> None:
+    def set_prompt(self, prompt: RenderResult) -> None:
         """Set the prompt for the option.
 
         Args:
             prompt: The new prompt for the option.
         """
-        self.__prompt = prompt
+        self._prompt = prompt
+
+    def visualize(self) -> object:
+        return self._prompt
 
     @property
     def id(self) -> str | None:
         """The optional ID for the option."""
-        return self.__id
+        return self._id
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "prompt", self.prompt
         yield "id", self.id, None
         yield "disabled", self.disabled, False
 
-    def __rich__(self) -> RenderableType:
-        return self.__prompt
+    def __rich__(self) -> RenderResult:
+        return self._prompt
 
 
 class OptionLineSpan(NamedTuple):
@@ -292,7 +297,7 @@ class OptionList(ScrollView, can_focus=True):
         }
         """A dictionary of option IDs and the option indexes they relate to."""
 
-        self._content_render_cache: LRUCache[tuple[int, Style, int], list[Strip]]
+        self._content_render_cache: LRUCache[tuple[int, str, int], list[Strip]]
         self._content_render_cache = LRUCache(256)
 
         self._lines: list[tuple[int, int]] | None = None
@@ -346,13 +351,12 @@ class OptionList(ScrollView, can_focus=True):
         """
         assert self._lines is not None
         assert self._spans is not None
-        style = NULL_STYLE
 
         for index, content in enumerate(new_content, len(self._lines)):
             if isinstance(content, Option):
                 height = len(
                     self._render_option_content(
-                        index, content, style, width - self._left_gutter_width()
+                        index, content, "", width - self._left_gutter_width()
                     )
                 )
 
@@ -391,10 +395,9 @@ class OptionList(ScrollView, can_focus=True):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         # Get the content height without requiring a refresh
         # TODO: Internal data structure could be simplified
-        style = self.rich_style
         _render_option_content = self._render_option_content
         heights = [
-            len(_render_option_content(index, option, style, width))
+            len(_render_option_content(index, option, "", width))
             for index, option in enumerate(self._options)
         ]
         separator_count = sum(
@@ -445,34 +448,37 @@ class OptionList(ScrollView, can_focus=True):
         return Option(content)
 
     def _render_option_content(
-        self, option_index: int, renderable: RenderableType, style: Style, width: int
+        self, option_index: int, content: RenderResult, component_class: str, width: int
     ) -> list[Strip]:
         """Render content for option and style.
 
         Args:
             option_index: Option index to render.
-            renderable: The Option renderable.
-            style: The Rich style to render with.
-            width: The width of the renderable.
+            content: Render result for prompt.
+            component class: Additional component class.
+            width: Desired width of render.
 
         Returns:
             A list of strips.
         """
-        cache_key = (option_index, style, width)
+        cache_key = (option_index, component_class, width)
         if (strips := self._content_render_cache.get(cache_key, None)) is not None:
             return strips
 
+        visual = visualize(self, content)
         padding = self.get_component_styles("option-list--option").padding
-        console = self.app.console
-        options = console.options.update_width(width)
-        if not self._wrap:
-            options = options.update(no_wrap=True, overflow="ellipsis")
         if padding:
-            renderable = Padding(renderable, padding)
-        lines = self.app.console.render_lines(renderable, options, style=style)
+            visual = Padding(visual, padding)
 
+        component_class_list = ["option-list--option"]
+        if component_class:
+            component_class_list.append(component_class)
+
+        visual_style = self.get_visual_style(component_class_list)
+
+        strips = Visual.to_strips(self, visual, width, None, visual_style, pad=True)
         style_meta = Style.from_meta({"option": option_index})
-        strips = [Strip(line, width).apply_style(style_meta) for line in lines]
+        strips = [strip.apply_style(style_meta) for strip in strips]
 
         self._content_render_cache[cache_key] = strips
         return strips
@@ -839,7 +845,7 @@ class OptionList(ScrollView, can_focus=True):
 
         mouse_over = self._mouse_hovering_over == option_index
 
-        component_class: str | None = None
+        component_class: str = ""
 
         if option_index == -1:
             component_class = "option-list--separator"
@@ -856,16 +862,10 @@ class OptionList(ScrollView, can_focus=True):
                 elif mouse_over:
                     component_class = "option-list--option-hover"
 
-        style = (
-            self.get_component_rich_style(component_class)
-            if component_class
-            else self.rich_style
-        )
-
         strips = self._render_option_content(
             option_index,
             renderable,
-            style,
+            component_class,
             self.scrollable_content_region.width - self._left_gutter_width(),
         )
         try:

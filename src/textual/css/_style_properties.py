@@ -808,8 +808,8 @@ class StringEnumProperty(Generic[EnumType]):
         """Get the string property, or the default value if it's not set.
 
         Args:
-            obj: The ``Styles`` object.
-            objtype: The ``Styles`` class.
+            obj: The `Styles` object.
+            objtype: The `Styles` class.
 
         Returns:
             The string property value.
@@ -823,7 +823,7 @@ class StringEnumProperty(Generic[EnumType]):
         """Set the string property and ensure it is in the set of allowed values.
 
         Args:
-            obj: The ``Styles`` object.
+            obj: The `Styles` object.
             value: The string value to set the property to.
 
         Raises:

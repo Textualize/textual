@@ -34,7 +34,6 @@ from typing import (
 
 import rich.repr
 from rich.align import Align
-from rich.console import Group, RenderableType
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -42,6 +41,7 @@ from typing_extensions import Final, TypeAlias
 from textual import on, work
 from textual.binding import Binding, BindingType
 from textual.containers import Horizontal, Vertical
+from textual.content import Content
 from textual.events import Click, Mount
 from textual.fuzzy import Matcher
 from textual.message import Message
@@ -49,6 +49,8 @@ from textual.reactive import var
 from textual.screen import Screen, SystemModalScreen
 from textual.timer import Timer
 from textual.types import IgnoreReturnCallbackType
+from textual.visual import Style as VisualStyle
+from textual.visual import VisualType
 from textual.widget import Widget
 from textual.widgets import Button, Input, LoadingIndicator, OptionList, Static
 from textual.widgets.option_list import Option
@@ -77,7 +79,7 @@ class Hit:
     The value should be between 0 (no match) and 1 (complete match).
     """
 
-    match_display: RenderableType
+    match_display: VisualType
     """A string or Rich renderable representation of the hit."""
 
     command: IgnoreReturnCallbackType
@@ -94,7 +96,7 @@ class Hit:
     """Optional help text for the command."""
 
     @property
-    def prompt(self) -> RenderableType:
+    def prompt(self) -> VisualType:
         """The prompt to use when displaying the hit in the command palette."""
         return self.match_display
 
@@ -111,21 +113,14 @@ class Hit:
     def __post_init__(self) -> None:
         """Ensure 'text' is populated."""
         if self.text is None:
-            if isinstance(self.match_display, str):
-                self.text = self.match_display
-            elif isinstance(self.match_display, Text):
-                self.text = self.match_display.plain
-            else:
-                raise ValueError(
-                    "A value for 'text' is required if 'match_display' is not a str or Text"
-                )
+            self.text = str(self.match_display)
 
 
 @dataclass
 class DiscoveryHit:
     """Holds the details of a single command search hit."""
 
-    display: RenderableType
+    display: VisualType
     """A string or Rich renderable representation of the hit."""
 
     command: IgnoreReturnCallbackType
@@ -142,7 +137,7 @@ class DiscoveryHit:
     """Optional help text for the command."""
 
     @property
-    def prompt(self) -> RenderableType:
+    def prompt(self) -> VisualType:
         """The prompt to use when displaying the discovery hit in the command palette."""
         return self.display
 
@@ -171,14 +166,7 @@ class DiscoveryHit:
     def __post_init__(self) -> None:
         """Ensure 'text' is populated."""
         if self.text is None:
-            if isinstance(self.display, str):
-                self.text = self.display
-            elif isinstance(self.display, Text):
-                self.text = self.display.plain
-            else:
-                raise ValueError(
-                    "A value for 'text' is required if 'display' is not a str or Text"
-                )
+            self.text = str(self.display)
 
 
 Hits: TypeAlias = AsyncIterator["DiscoveryHit | Hit"]
@@ -410,7 +398,7 @@ class Command(Option):
 
     def __init__(
         self,
-        prompt: RenderableType,
+        prompt: VisualType,
         hit: DiscoveryHit | Hit,
         id: str | None = None,
         disabled: bool = False,
@@ -477,7 +465,7 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option {
-        padding-left: 2;
+        padding: 0 2;
         color: $foreground;
     }
     """
@@ -498,7 +486,7 @@ class SearchIcon(Static, inherit_css=False):
     icon: var[str] = var("🔎")
     """The icon to display."""
 
-    def render(self) -> RenderableType:
+    def render(self) -> VisualType:
         """Render the icon.
 
         Returns:
@@ -564,7 +552,7 @@ class CommandPalette(SystemModalScreen[None]):
     }
 
     CommandPalette > .command-palette--help-text {           
-        color: $foreground-muted;
+        color: auto 50%;
         background: transparent;
         text-style: not bold;       
     }
@@ -1068,11 +1056,6 @@ class CommandPalette(SystemModalScreen[None]):
         Args:
             search_value: The value to search for.
         """
-
-        # We'll potentially use the help text style a lot so let's grab it
-        # the once for use in the loop further down.
-        help_style = self.get_component_rich_style("command-palette--help-text")
-
         # The list to hold on to the commands we've gathered from the
         # command providers.
         gathered_commands: list[Command] = []
@@ -1129,25 +1112,25 @@ class CommandPalette(SystemModalScreen[None]):
         while hit:
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
-            prompt = hit.prompt
-            if hit.help:
-                help_text = Text(hit.help, style=help_style)
-                prompt = Group(prompt, help_text)
+
+            def build_prompt() -> Iterable[Content]:
+                """Generator for prompt content."""
+                assert hit is not None
+                yield Content.from_rich_text(hit.prompt)
+                # Optional help text
+                if hit.help:
+                    help_style = VisualStyle.from_styles(
+                        self.get_component_styles("command-palette--help-text")
+                    )
+                    yield Content.styled(hit.help, help_style)
+
+            prompt = Content("\n").join(build_prompt())
+
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
 
-            # Before we go making any changes to the UI, we do a quick
-            # double-check that the worker hasn't been cancelled. There's
-            # little point in doing UI work on a value that isn't needed any
-            # more.
             if worker.is_cancelled:
                 break
 
-            # Having made it this far, it's safe to update the list of
-            # commands that match the input. Note that we batch up the
-            # results and only refresh the list once every so often; this
-            # helps reduce how much UI work needs to be done, but at the
-            # same time we keep the update frequency often enough so that it
-            # looks like things are moving along.
             now = monotonic()
             if (now - last_update) > self._RESULT_BATCH_TIME:
                 self._refresh_command_list(
@@ -1156,7 +1139,6 @@ class CommandPalette(SystemModalScreen[None]):
                 clear_current = False
                 last_update = now
 
-            # Bump the ID.
             command_id += 1
 
             # Finally, get the available command from the incoming queue;

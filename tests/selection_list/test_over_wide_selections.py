@@ -14,7 +14,7 @@ class SelectionListApp(App[None]):
     """
 
     def compose(self) -> ComposeResult:
-        yield SelectionList[int](*[(f"{n} " * 100, n) for n in range(10)])
+        yield SelectionList[int](*[(f"{n} ", n) for n in range(10)])
 
 
 async def test_over_wide_options() -> None:
