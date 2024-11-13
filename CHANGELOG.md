@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
+- Fixed `Tabs` not updating the highlighting after removing a tab https://github.com/Textualize/textual/issues/5218
 
 ### Added
 
