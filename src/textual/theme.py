@@ -82,6 +82,9 @@ BUILTIN_THEMES: dict[str, Theme] = {
         warning="#ffa62b",
         error="#ba3c5b",
         success="#4EBF71",
+        surface="#D8D8D8",
+        panel="#D0D0D0",
+        background="#E0E0E0",
         dark=False,
     ),
     "nord": Theme(

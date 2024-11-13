@@ -94,7 +94,7 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
-        border: tall transparent;
+        border: tall $border-blurred;
         color: $foreground;
         background: $surface;
         width: 1fr;

@@ -138,7 +138,7 @@ For example, `$secondary-darken-1` is a slightly darkened `$secondary`, and `$er
 
 ## Light and dark themes
 
-Themes can be either "light" or "dark".
+Themes can be either *light* or *dark*.
 This setting is specified in the `Theme` constructor via the `dark` argument, and influences how Textual
 generates variables.
 Built-in widgets may also use the value of `dark` to influence their appearance.
