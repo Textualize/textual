@@ -77,6 +77,9 @@ class Timer(Digits):
         width: auto;
         margin: 2 8;
         color: $warning;
+        &:light {
+            color: $secondary;
+        }
     }
     """
     start_time = var(0.0)
@@ -115,7 +118,7 @@ class MerlinApp(App):
     Grid {
         width: auto;
         height: auto;
-        border: thick $primary;
+        border: thick $border;
         padding: 1 2;
         grid-size: 3 3;
         grid-rows: auto;
@@ -162,6 +165,7 @@ class MerlinApp(App):
         if self.check_win():
             self.query_one("Screen").add_class("-win")
             self.query_one(Timer).running = False
+            self.notify("You win!", title="congratulations", severity="information")
 
     def on_key(self, event: events.Key) -> None:
         """Maps switches to keys, so we can use the keyboard as well."""

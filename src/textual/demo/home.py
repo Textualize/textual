@@ -142,7 +142,7 @@ class StarCount(Vertical):
         layout: horizontal;
         background: $boost;
         padding: 0 1;
-        color: $warning;
+        color: $text-warning;
         #stars { align: center top; }
         #forks { align: right top; }
         Label { text-style: bold; }
