@@ -138,9 +138,14 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         border: tall transparent;
         box-sizing: border-box;
         &:focus {
-            border: tall $accent;
-            background: $primary 40%;
-            opacity: 1.0;            
+            background: $success-muted;
+            color: $text-success;
+            border: tall $success;
+            # background: $primary 40%;
+            # opacity: 1.0;    
+            &.link {
+                color: red !important;
+            }        
         }
         #title { text-style: bold; width: 1fr; }
         #author { text-style: italic; }
@@ -152,7 +157,7 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         }
         .header { height: 1; }
         .link {
-            color: $accent;
+            color: $text-accent;
             text-style: underline;
         }
         .description { color: $text-muted; }
@@ -207,7 +212,7 @@ class ProjectsScreen(PageScreen):
             grid-rows: auto;           
             keyline:thin $foreground 50%;        
         }              
-        Markdown { margin: 0; padding: 0 2; max-width: 100;}
+        Markdown { margin: 0; padding: 0 2; max-width: 100; background: transparent; }
     }
     """
 

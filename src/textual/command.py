@@ -467,6 +467,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList > .option-list--option {
         padding: 0 2;
         color: $foreground;
+        text-style: bold;
     }
     """
 
@@ -551,19 +552,15 @@ class CommandPalette(SystemModalScreen[None]):
         }
     }
 
-    CommandPalette > .command-palette--help-text {           
-        color: auto 50%;
+    CommandPalette > .command-palette--help-text {                   
+        color: $text-muted;
         background: transparent;
-        text-style: not bold;       
+        text-style: not bold dim;       
     }
-
-    CommandPalette:dark > .command-palette--highlight {
-        text-style: bold;
-        color: $warning;
-    }
+    
     CommandPalette > .command-palette--highlight {
         text-style: bold;
-        color: $warning-darken-2;
+        color: $block-cursor-foreground;
 
     }
 

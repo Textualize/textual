@@ -57,7 +57,12 @@ class Button(Widget, can_focus=True):
         border-bottom: tall $surface-darken-1;
         text-align: center;
         content-align: center middle;
+        text-style: bold;
 
+        &:disabled {
+            text-style: not bold;
+        }
+        
         &:focus {
             text-style: $button-focus-text-style;
             background-tint: $foreground 5%;

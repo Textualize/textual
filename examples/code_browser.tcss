@@ -1,5 +1,5 @@
 Screen {
-    background: $surface-darken-1;
+    # background: $surface-darken-1;
     &:inline {
         height: 50vh;
     }
@@ -23,7 +23,7 @@ CodeBrowser.-show-tree #tree-view {
 #code-view {
     overflow: auto scroll;
     min-width: 100%;
-    hatch: right $primary;
+    hatch: right $panel;
 }
 #code {
     width: auto;

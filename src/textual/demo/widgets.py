@@ -441,6 +441,9 @@ class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
         align-horizontal: center;
+        Markdown {
+            background: transparent;
+        }
         & > VerticalScroll {
             scrollbar-gutter: stable;
             &> * {            

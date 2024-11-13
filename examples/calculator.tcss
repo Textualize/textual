@@ -27,7 +27,7 @@ Button {
     column-span: 4;
     padding: 0 1;
     height: 100%;
-    background: $primary-lighten-2;
+    background: $panel;
     color: $text;
     content-align: center middle;
     text-align: right;
