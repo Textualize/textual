@@ -560,14 +560,37 @@ class Content(Visual):
             )
         return self
 
-    def center(self, width: int, overflow: OverflowMethod = "fold") -> Content:
-        content = self.rstrip().truncate(width, overflow=overflow)
-        content = content.pad_left((width - content.cell_length) // 2)
-        content = content.pad_right(width - content.cell_length)
+    def center(self, width: int, ellipsis: bool = False) -> Content:
+        """Align a line to the center.
+
+        Args:
+            width: Desired width of output.
+            ellipsis: Insert ellipsis if content is truncated.
+
+        Returns:
+            New line Content.
+        """
+        content = self.rstrip().truncate(
+            width, overflow="ellipsis" if ellipsis else "fold"
+        )
+        left = (content.cell_length - width) // 2
+        right = width = left
+        content = content.pad_left(left).pad_right(right)
         return content
 
-    def right(self, width: int, overflow: OverflowMethod = "fold") -> Content:
-        content = self.rstrip().truncate(width, overflow=overflow)
+    def right(self, width: int, ellipsis: bool = False) -> Content:
+        """Align a line to the right.
+
+        Args:
+            width: Desired width of output.
+            ellipsis: Insert ellipsis if content is truncated.
+
+        Returns:
+            New line Content.
+        """
+        content = self.rstrip().truncate(
+            width, overflow="ellipsis" if ellipsis else "fold"
+        )
         content = content.pad_left(width - content.cell_length)
         return content
 
