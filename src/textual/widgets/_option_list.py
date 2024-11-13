@@ -149,9 +149,6 @@ class OptionList(ScrollView, can_focus=True):
         border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
-        &:ansi {
-            border: tall $border-blurred;
-        }
         & > .option-list--option-highlighted {
             color: $block-cursor-blurred-foreground;
             background: $block-cursor-blurred-background;
