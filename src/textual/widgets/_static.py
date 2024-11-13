@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from textual.app import RenderResult
 
 from textual.errors import RenderError
-from textual.visual import SupportsTextualize, Visual, visualize
+from textual.visual import SupportsVisual, Visual, visualize
 from textual.widget import Widget
 
 
@@ -50,11 +50,11 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    _renderable: RenderableType | SupportsTextualize
+    _renderable: RenderableType | SupportsVisual
 
     def __init__(
         self,
-        content: RenderableType | SupportsTextualize = "",
+        content: RenderableType | SupportsVisual = "",
         *,
         expand: bool = False,
         shrink: bool = False,
@@ -78,11 +78,11 @@ class Static(Widget, inherit_bindings=False):
         return self._visual
 
     @property
-    def renderable(self) -> RenderableType | SupportsTextualize:
+    def renderable(self) -> RenderableType | SupportsVisual:
         return self._content or ""
 
     @renderable.setter
-    def renderable(self, renderable: RenderableType | SupportsTextualize) -> None:
+    def renderable(self, renderable: RenderableType | SupportsVisual) -> None:
         if isinstance(renderable, str):
             if self.markup:
                 self._renderable = Text.from_markup(renderable)
@@ -101,7 +101,7 @@ class Static(Widget, inherit_bindings=False):
         """
         return self.visual
 
-    def update(self, content: RenderableType | SupportsTextualize = "") -> None:
+    def update(self, content: RenderableType | SupportsVisual = "") -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:

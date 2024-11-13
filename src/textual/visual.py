@@ -37,17 +37,27 @@ def is_visual(obj: object) -> bool:
 
 
 # Note: not runtime checkable currently, as I've found that to be slow
-class SupportsTextualize(Protocol):
+class SupportsVisual(Protocol):
     """An object that supports the textualize protocol."""
 
-    def textualize(self, obj: object) -> Visual | None: ...
+    def visualize(self, widget: Widget, obj: object) -> Visual | None:
+        """Convert the result of a Widget.render() call in to a Visual, using the Visual protocol.
+
+        Args:
+            widget: The widget that generated the render.
+            obj: The result of the the render.
+
+        Returns:
+            A Visual instance, or `None` if it wasn't possible.
+
+        """
 
 
 class VisualError(Exception):
     """An error with the visual protocol."""
 
 
-VisualType: TypeAlias = "RenderableType | SupportsTextualize | Visual"
+VisualType: TypeAlias = "RenderableType | SupportsVisual | Visual"
 
 
 def visualize(widget: Widget, obj: object) -> Visual:
