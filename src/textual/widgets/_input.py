@@ -146,20 +146,21 @@ class Input(Widget, can_focus=True):
 
     DEFAULT_CSS = """
     Input {
-        background: $boost;
-        color: $text;
+        background: $surface;
+        color: $foreground;
         padding: 0 2;
-        border: tall $background;
+        border: tall $border-blurred;
         width: 100%;
         height: 3;
 
         &:focus {
-            border: tall $accent;
+            border: tall $border;
+            background-tint: $foreground 5%;
         }
         &>.input--cursor {
-            background: $surface;
-            color: $text;
-            text-style: reverse;
+            background: $input-cursor-background;
+            color: $input-cursor-foreground;
+            text-style: $input-cursor-text-style;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;
@@ -171,16 +172,10 @@ class Input(Widget, can_focus=True):
             border: tall $error;
         }    
 
-        &.-ansi-colors {
+        &:ansi {
             background: ansi_default;
             color: ansi_default;
-            border: tall ansi_default;
-
-            &:focus {
-                border: tall ansi_blue;
-            }
             &>.input--cursor {     
-                background: ansi_default;           
                 text-style: reverse;
             }
             &>.input--placeholder, &>.input--suggestion {

@@ -21,16 +21,19 @@ class CollapsibleTitle(Static, can_focus=True):
         width: auto;
         height: auto;
         padding: 0 1 0 1;
-    }
+        text-style: $block-cursor-blurred-text-style;
+        background: $block-cursor-blurred-background;
+        color: $block-cursor-blurred-foreground;
 
-    CollapsibleTitle:hover {
-        background: $foreground 10%;
-        color: $text;
-    }
-
-    CollapsibleTitle:focus {
-        background: $accent;
-        color: $text;
+        &:hover {
+            background: $block-hover-background;
+            color: $foreground;
+        }
+        &:focus {
+            text-style: $block-cursor-text-style;
+            background: $block-cursor-background;
+            color: $block-cursor-foreground;
+        }
     }
     """
 
@@ -100,14 +103,18 @@ class Collapsible(Widget):
     Collapsible {
         width: 1fr;
         height: auto;
-        background: $boost;
+        background: $surface;
         border-top: hkey $background;
         padding-bottom: 1;
         padding-left: 1;
-    }
 
-    Collapsible.-collapsed > Contents {
-        display: none;
+        &:focus-within {
+            background-tint: $foreground 5%;
+        }
+
+        &.-collapsed > Contents {
+            display: none;   
+        }
     }
     """
 

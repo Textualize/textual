@@ -139,49 +139,41 @@ class OptionList(ScrollView, can_focus=True):
     OptionList {
         height: auto;
         max-height: 100%;
-        background: $boost;
-        color: $text;
+        color: $foreground;
         overflow-x: hidden;
         border: tall transparent;
         padding: 0 1;
-    }
-
-    OptionList:focus {
-        border: tall $accent;
-
-    }
-
-    OptionList > .option-list--separator {
-        color: $foreground 15%;
-    }
-
-    OptionList > .option-list--option-highlighted {
-        color: $text;
-        text-style: bold;
-    }
-
-    OptionList:focus > .option-list--option-highlighted {
-        background: $accent;
-    }
-
-    OptionList > .option-list--option-disabled {
-        color: $text-disabled;
-    }
-
-    OptionList > .option-list--option-hover {
-        background: $boost;
-    }
-
-    OptionList > .option-list--option-hover-highlighted {
-        background: $accent 60%;
-        color: $text;
-        text-style: bold;
-    }
-
-    OptionList:focus > .option-list--option-hover-highlighted {
-        background: $accent;
-        color: $text;
-        text-style: bold;
+        background: $surface;
+        &:ansi {
+            border: tall $border-blurred;
+        }
+        & > .option-list--option-highlighted {
+            color: $block-cursor-blurred-foreground;
+            background: $block-cursor-blurred-background;
+            text-style: $block-cursor-blurred-text-style;
+        }
+        &:focus {
+            border: tall $border;
+            background-tint: $foreground 5%;
+            & > .option-list--option-highlighted {
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
+                text-style: $block-cursor-text-style;
+            }
+        }
+        & > .option-list--separator {
+            color: $foreground 15%;
+        }
+        & > .option-list--option-highlighted {
+            color: $foreground;
+            background: $block-cursor-blurred-background;
+        }
+        & > .option-list--option-disabled {
+            color: $text-disabled;
+        }
+        & > .option-list--option-hover {
+            background: $block-hover-background;
+        }
     }
     """
 
@@ -190,7 +182,6 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option-disabled",
         "option-list--option-highlighted",
         "option-list--option-hover",
-        "option-list--option-hover-highlighted",
         "option-list--separator",
     }
     """
@@ -199,7 +190,6 @@ class OptionList(ScrollView, can_focus=True):
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
-    | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
     | `option-list--separator` | Target the separators. |
     """
 

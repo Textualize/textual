@@ -117,7 +117,7 @@ If you run this code, you should see something like the following:
 ```{.textual path="docs/examples/tutorial/stopwatch01.py" title="stopwatch01.py"}
 ```
 
-Hit the ++d++ key to toggle between light and dark mode.
+Hit the ++d++ key to toggle between light and dark themes.
 
 ```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="stopwatch01.py"}
 ```
@@ -136,7 +136,7 @@ The first line imports the Textual `App` class, which we will use as the base cl
 
 The following lines define the app itself:
 
-```python title="stopwatch01.py" hl_lines="5-17"
+```python title="stopwatch01.py" hl_lines="5-19"
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
@@ -150,7 +150,7 @@ Here's what the above app defines:
 
 - `action_toggle_dark()` defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The `BINDINGS` list above tells Textual to run this action when the user hits the ++d++ key. See [actions](./guide/actions.md) in the guide for details.
 
-```python title="stopwatch01.py" hl_lines="20-22"
+```python title="stopwatch01.py" hl_lines="22-24"
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 

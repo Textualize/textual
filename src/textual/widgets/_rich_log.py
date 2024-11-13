@@ -50,8 +50,11 @@ class RichLog(ScrollView, can_focus=True):
     DEFAULT_CSS = """
     RichLog{
         background: $surface;
-        color: $text;
+        color: $foreground;
         overflow-y: scroll;
+        &:focus {
+            background-tint: $foreground 5%;
+        }
     }
     """
 

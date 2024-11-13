@@ -4,6 +4,10 @@ run := poetry run
 test:
 	$(run) pytest tests/ -n 16 --dist=loadgroup $(ARGS)
 
+.PHONY: testv
+testv:
+	$(run) pytest tests/ -vvv -n 16 --dist=loadgroup $(ARGS)
+
 .PHONY: test-snapshot-update
 test-snapshot-update:
 	$(run) pytest tests/ --snapshot-update -n 16 --dist=loadgroup $(ARGS)

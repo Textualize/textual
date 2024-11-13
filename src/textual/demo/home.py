@@ -231,6 +231,7 @@ class HomeScreen(PageScreen):
             Markdown {
                 margin-right: 1;
                 padding-right: 1;
+                background: transparent;
             }
         }
     }

@@ -13,14 +13,14 @@ class ClassicFooterStylingApp(App):
 
     CSS = """
     Footer {
-        background: $accent;
+        background: $secondary;
 
         FooterKey {
-            background: $accent;
+            background: $secondary;
             color: $text;
 
             .footer-key--key {
-                background: $accent-darken-2;
+                background: $secondary-darken-2;
                 color: $text;
             }
 

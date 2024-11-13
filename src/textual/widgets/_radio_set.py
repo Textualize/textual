@@ -27,37 +27,55 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
 
     DEFAULT_CSS = """
     RadioSet {
-        border: tall transparent;
-        background: $boost;
-        padding: 0 1 0 0;
+        border: tall $border-blurred;
+        background: $surface;
+        padding: 0 1;
         height: auto;
         width: auto;
-    }
 
-    RadioSet:focus {
-        border: tall $accent;
-    }
+        & > RadioButton {
+            background: transparent;
+            border: none;
+            padding: 0;
 
-    /* The following rules/styles mimic similar ToggleButton:focus rules in
-     * ToggleButton. If those styles ever get updated, these should be too.
-     */
+            & > .toggle--button {
+                color: $surface;
+                background: $panel;
+            }
 
-    RadioSet > RadioButton {
-        background: transparent;
-        border: none;
-        padding: 0 1;
-    }
+            &.-selected {
+                background: $block-cursor-blurred-background;
+            }
+        }
 
-    RadioSet:focus > RadioButton.-selected > .toggle--label {
-        text-style: underline;
-    }
+        & > RadioButton.-on .toggle--button {
+            color: $success;
+        }
 
-    RadioSet:focus ToggleButton.-selected > .toggle--button {
-        background: $foreground 25%;
-    }
+        &:focus {
+            /* The following rules/styles mimic similar ToggleButton:focus rules in
+            * ToggleButton. If those styles ever get updated, these should be too.
+            */
+            border: tall $border;
+            background-tint: $foreground 5%;
 
-    RadioSet:focus > RadioButton.-on.-selected > .toggle--button {
-        background: $foreground 25%;
+            & > RadioButton {
+                & > .toggle--button {
+                    color: $surface;
+                    background: $panel-lighten-1;
+                }
+                &.-on > .toggle--button {
+                    color: $success;
+                }
+            }
+
+            & > RadioButton.-selected {
+                color: $block-cursor-foreground;
+                text-style: $block-cursor-text-style;
+                background: $block-cursor-background;
+            }
+
+        }
     }
     """
 

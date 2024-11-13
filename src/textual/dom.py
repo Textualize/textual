@@ -238,7 +238,7 @@ class DOMNode(MessagePump):
 
         Example:
             ```python
-            self.set_reactive(App.dark_mode, True)
+            self.set_reactive(App.theme, "textual-light")
             ```
 
         Args:
@@ -248,15 +248,14 @@ class DOMNode(MessagePump):
         Raises:
             AttributeError: If the first argument is not a reactive.
         """
+        name = reactive.name
         if not isinstance(reactive, Reactive):
-            raise TypeError(
-                "A Reactive class is required; for example: MyApp.dark_mode"
-            )
-        if reactive.name not in self._reactives:
+            raise TypeError("A Reactive class is required; for example: MyApp.theme")
+        if name not in self._reactives:
             raise AttributeError(
-                "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
+                f"No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
             )
-        setattr(self, f"_reactive_{reactive.name}", value)
+        setattr(self, f"_reactive_{name}", value)
 
     def mutate_reactive(self, reactive: Reactive[ReactiveType]) -> None:
         """Force an update to a mutable reactive.
@@ -1224,11 +1223,11 @@ class DOMNode(MessagePump):
 
         Example:
             ```python
-            def on_dark_change(old_value:bool, new_value:bool) -> None:
-                # Called when app.dark changes.
-                print("App.dark went from {old_value} to {new_value}")
+            def on_theme_change(old_value:str, new_value:str) -> None:
+                # Called when app.theme changes.
+                print(f"App.theme went from {old_value} to {new_value}")
 
-            self.watch(self.app, "dark", self.on_dark_change, init=False)
+            self.watch(self.app, "theme", self.on_theme_change, init=False)
             ```
 
         Args:
