@@ -22,7 +22,6 @@ class CollapsibleTitle(Static, can_focus=True):
         height: auto;
         padding: 0 1 0 1;
         text-style: $block-cursor-blurred-text-style;
-        background: $block-cursor-blurred-background;
         color: $block-cursor-blurred-foreground;
 
         &:hover {

@@ -467,6 +467,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList > .option-list--option {
         padding: 0 2;
         color: $foreground;
+        text-style: bold;
     }
     """
 
@@ -551,21 +552,15 @@ class CommandPalette(SystemModalScreen[None]):
         }
     }
 
-    CommandPalette > .command-palette--help-text {           
-        color: auto 50%;
+    CommandPalette > .command-palette--help-text {                   
+        color: $text-muted;
         background: transparent;
-        text-style: not bold;       
+        text-style: not bold dim;       
     }
-
-    CommandPalette:dark > .command-palette--highlight {
-        text-style: bold;
-        color: $warning;
-    }
+    
     CommandPalette > .command-palette--highlight {
-        text-style: bold;
-        color: $warning-darken-2;
-
-    }
+        text-style: bold underline;
+    }   
 
     CommandPalette:nocolor > .command-palette--highlight {
         text-style: underline;
@@ -806,7 +801,9 @@ class CommandPalette(SystemModalScreen[None]):
         self.app.post_message(CommandPalette.Opened())
         self._calling_screen = self.app.screen_stack[-2]
 
-        match_style = self.get_component_rich_style("command-palette--highlight")
+        match_style = self.get_component_rich_style(
+            "command-palette--highlight", partial=True
+        )
 
         assert self._calling_screen is not None
         self._providers = [
