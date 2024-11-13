@@ -559,10 +559,8 @@ class CommandPalette(SystemModalScreen[None]):
     }
     
     CommandPalette > .command-palette--highlight {
-        text-style: bold;
-        color: $block-cursor-foreground;
-
-    }
+        text-style: bold underline;
+    }   
 
     CommandPalette:nocolor > .command-palette--highlight {
         text-style: underline;
@@ -803,7 +801,9 @@ class CommandPalette(SystemModalScreen[None]):
         self.app.post_message(CommandPalette.Opened())
         self._calling_screen = self.app.screen_stack[-2]
 
-        match_style = self.get_component_rich_style("command-palette--highlight")
+        match_style = self.get_component_rich_style(
+            "command-palette--highlight", partial=True
+        )
 
         assert self._calling_screen is not None
         self._providers = [
