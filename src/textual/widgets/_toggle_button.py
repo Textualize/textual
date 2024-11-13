@@ -60,7 +60,7 @@ class ToggleButton(Static, can_focus=True):
         background: $surface;
 
         & > .toggle--button {
-            color: $surface-darken-1;
+            color: red;
             background: $panel;
         }
 
@@ -80,6 +80,10 @@ class ToggleButton(Static, can_focus=True):
             & > .toggle--button {
                 background: $panel-lighten-1;
             }
+            &.-on > .toggle--button {
+                background: $panel-lighten-1;
+            }
+            
             &:hover {
                 & > .toggle--label {
                     background: $block-cursor-background;
@@ -107,23 +111,6 @@ class ToggleButton(Static, can_focus=True):
         background: $foreground 25%;
     }
 
-    /* Light theme overrides. */
-    ToggleButton:light {
-        color: $text;
-        & > .toggle--button {
-            color: $background;
-            background: $foreground 10%;
-        }
-        &:focus > .toggle--button {
-            background: $foreground 25%;
-        }
-        &.-on > .toggle--button {
-            color: $success;
-        }
-        &.-on:focus > .toggle--button {
-            color: $success-darken-1;
-        }
-    }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
     BUTTON_LEFT: str = "▐"
