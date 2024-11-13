@@ -128,7 +128,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         align: center top;
 
         &> BindingsTable > .bindings-table--key {
-            color: $secondary;           
+            color: $accent;           
             text-style: bold;
             padding: 0 1;
         }

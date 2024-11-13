@@ -581,70 +581,67 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     Tree {
-        background: $panel;
-        color: $text;
+        background: $surface;
+        color: $foreground;
 
-        & > .tree--label {
-
-        }
+        & > .tree--label {}
         & > .tree--guides {
-            color: $success-darken-3;
+            color: $surface-lighten-2;
         }
         & > .tree--guides-hover {
-            color: $success;
-            text-style: bold;
+            color: $surface-lighten-2;
         }
         & > .tree--guides-selected {
-            color: $warning;
-            text-style: bold;
+            color: $block-cursor-blurred-background;
         }
         & > .tree--cursor {
-            background: $secondary-darken-2;
-            color: $text;
-            text-style: bold;
+            text-style: $block-cursor-blurred-text-style;
+            background: $block-cursor-blurred-background;
         }
-        &:focus > .tree--cursor {
-            background: $secondary;
-        }
-        & > .tree--highlight {
-            text-style: underline;
-        }
+        & > .tree--highlight {}
         & > .tree--highlight-line {
-            background: $boost;
+            background: $block-hover-background;
         }
 
-        &.-ansi {
-            background: ansi_default;
-            color: ansi_default;
+        &:focus {
+            background-tint: $foreground 5%;
+            & > .tree--cursor {
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
+                text-style: $block-cursor-text-style;
+            }
             & > .tree--guides {
-                color: green;
+                color: $surface-lighten-3;
             }
             & > .tree--guides-hover {
-                color: ansi_blue;
-            
+                color: $surface-lighten-3;
             }
             & > .tree--guides-selected {
-                color: ansi_bright_blue;
-             
+                color: $block-cursor-background;
             }
-            & > .tree--cursor {
-                background: ansi_bright_blue;
-                color: ansi_default;
-                text-style: none;                   
+        }
+
+        &:light {
+            /* In light mode the guides are darker*/
+            & > .tree--guides {
+                color: $surface-darken-1;
+            }
+            & > .tree--guides-hover {
+                color: $block-cursor-background;
+            }
+            & > .tree--guides-selected {
+                color: $block-cursor-background;
+            }
+        }
+
+        &:ansi {
+            color: ansi_default;
+            & > .tree--guides {
+                color: ansi_green;
             }
             &:nocolor > .tree--cursor{
                 text-style: reverse;
             }
-            &:focus > .tree--cursor {
-                background: ansi_bright_blue;
-            }
-            & > .tree--highlight {
-                text-style: underline;
-            }
-            & > .tree--highlight-line {
-                background: ansi_default;
-            }
-
         }
     }
 

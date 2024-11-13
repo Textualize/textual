@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added `App.theme` reactive attribute https://github.com/Textualize/textual/pull/5087
+- Added various starter themes https://github.com/Textualize/textual/pull/5087
+- Added "Change theme" command to command palette https://github.com/Textualize/textual/pull/5087
+- Added `variant` parameter to `Label` widget for quick access to common styles https://github.com/Textualize/textual/pull/5087
+- Added `App.get_theme` which returns a theme by name https://github.com/Textualize/textual/pull/5087
+- Added `App.register_theme` and `App.unregister_theme` https://github.com/Textualize/textual/pull/5087
+- Added `App.theme_changed_signal` https://github.com/Textualize/textual/pull/5087
+- Added `App.available_themes` property which returns a mapping of theme names to `Theme` instances https://github.com/Textualize/textual/pull/5087
+- Added `App.current_theme` property which returns the currently active theme object https://github.com/Textualize/textual/pull/5087
+- Added `App.get_theme_variable_defaults` which returns a mapping of theme variables to their default values https://github.com/Textualize/textual/pull/5087
+- Added `App.search` which allows bringing up a fuzzy search list of commands on-demand https://github.com/Textualize/textual/pull/5087
+- Added `App.search_themes` which allows bringing up a fuzzy search list of themes on-demand https://github.com/Textualize/textual/pull/5087
+- Added `textual.theme.ThemeProvider`, a command palette provider which returns all registered themes https://github.com/Textualize/textual/pull/5087
+- Added several new built-in CSS variables https://github.com/Textualize/textual/pull/5087
 - Added support for in-band terminal resize protocol https://github.com/Textualize/textual/pull/5217
 
 ### Changed
@@ -22,6 +36,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `can_focus` and `can_focus_children` parameters to scrollable container types. https://github.com/Textualize/textual/pull/5226
 - Added `textual.lazy.Reveal` https://github.com/Textualize/textual/pull/5226
 - Added `Screen.action_blur` https://github.com/Textualize/textual/pull/5226
+
+### Changed
+
+- Breaking change: Removed `App.dark` reactive attribute https://github.com/Textualize/textual/pull/5087
+- Breaking change: To improve consistency, several changes have been made to default widget CSS and the CSS variables which ship with Textual. On upgrading, your app will likely look different. All of these changes can be overidden with your own CSS. https://github.com/Textualize/textual/pull/5087
 
 ## [0.85.2] - 2024-11-02
 

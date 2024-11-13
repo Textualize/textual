@@ -277,21 +277,21 @@ class Widget(DOMNode):
 
     DEFAULT_CSS = """
     Widget{
-        scrollbar-background: $panel-darken-1;
-        scrollbar-background-hover: $panel-darken-2;
-        scrollbar-background-active: $panel-darken-3;
-        scrollbar-color: $primary-lighten-1;
-        scrollbar-color-active: $warning-darken-1;
-        scrollbar-color-hover: $primary-lighten-1;
-        scrollbar-corner-color: $panel-darken-1;
+        scrollbar-background: $scrollbar-background;
+        scrollbar-background-hover: $scrollbar-background-hover;
+        scrollbar-background-active: $scrollbar-background-active;
+        scrollbar-color: $scrollbar;
+        scrollbar-color-active: $scrollbar-active;
+        scrollbar-color-hover: $scrollbar-hover;
+        scrollbar-corner-color: $scrollbar-corner-color;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background: initial;
-        link-color: $text;
-        link-style: underline;
-        link-background-hover: $accent;
-        link-color-hover: $text;
-        link-style-hover: bold not underline;
+        link-background: $link-background;
+        link-color: $link-color;
+        link-style: $link-style;
+        link-background-hover: $link-background-hover;
+        link-color-hover: $link-color-hover;
+        link-style-hover: $link-style-hover;
         background: transparent;
     }
     """
@@ -374,8 +374,8 @@ class Widget(DOMNode):
         "can-focus": lambda widget: widget.can_focus,
         "disabled": lambda widget: widget.is_disabled,
         "enabled": lambda widget: not widget.is_disabled,
-        "dark": lambda widget: widget.app.dark,
-        "light": lambda widget: not widget.app.dark,
+        "dark": lambda widget: widget.app.current_theme.dark,
+        "light": lambda widget: not widget.app.current_theme.dark,
         "focus-within": lambda widget: widget.has_focus_within,
         "inline": lambda widget: widget.app.is_inline,
         "ansi": lambda widget: widget.app.ansi_color,

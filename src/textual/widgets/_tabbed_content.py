@@ -169,7 +169,6 @@ class TabPane(Widget):
     DEFAULT_CSS = """
     TabPane {
         height: auto;
-        padding: 1 2;
     }
     """
 

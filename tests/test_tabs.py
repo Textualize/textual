@@ -389,7 +389,7 @@ async def test_navigate_tabs_with_mouse():
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-2"
 
-        await pilot.click("Underline")
+        await pilot.click("Underline", offset=(2, 0))
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
 
@@ -484,7 +484,7 @@ async def test_mouse_navigation_messages():
     async with TabsMessageCatchApp().run_test() as pilot:
         await pilot.click("#tab-2")
         await pilot.pause()
-        await pilot.click("Underline")
+        await pilot.click("Underline", offset=(2, 0))
         await pilot.pause()
         assert pilot.app.intended_handlers == [
             "on_tabs_tab_activated",

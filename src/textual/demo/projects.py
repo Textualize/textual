@@ -136,7 +136,6 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         height: auto;      
         padding: 0 1;
         border: tall transparent;
-        opacity: 0.8;
         box-sizing: border-box;
         &:focus {
             border: tall $accent;
@@ -146,7 +145,7 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         #title { text-style: bold; width: 1fr; }
         #author { text-style: italic; }
         .stars {
-            color: $secondary;
+            color: $text-accent;
             text-align: right;
             text-style: bold;
             width: auto;

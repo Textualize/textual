@@ -91,15 +91,19 @@ class TextArea(ScrollView):
 TextArea {
     width: 1fr;
     height: 1fr;
-    border: tall $background;
+    border: tall $border-blurred;
     padding: 0 1;
-
+    color: $foreground;
+    background: $surface;
+    & .text-area--cursor {
+        text-style: $input-cursor-text-style;
+    }
     & .text-area--gutter {
-        color: $text 40%;
+        color: $foreground 40%;
     }
 
     & .text-area--cursor-gutter {
-        color: $text 60%;
+        color: $foreground 60%;
         background: $boost;
         text-style: bold;
     }
@@ -109,7 +113,7 @@ TextArea {
     }
 
     & .text-area--selection {
-        background: $accent-lighten-1 40%;
+        background: $input-selection-background;
     }
 
     & .text-area--matching-bracket {
@@ -117,13 +121,20 @@ TextArea {
     }
 
     &:focus {
-        border: tall $accent;
+        border: tall $border;
+    }
+
+    &:ansi {
+        & .text-area--selection {
+            background: transparent;
+            text-style: reverse;
+        }
     }
 
     &:dark {
         .text-area--cursor {
-           color: $text 90%;
-            background: $foreground 90%;
+            color: $input-cursor-foreground;
+            background: $input-cursor-background;
         }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
@@ -744,7 +755,7 @@ TextArea {
         if padding is applied, the colors match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self) -> None:
+    def _app_theme_changed(self) -> None:
         self._set_theme(self._theme.name)
 
     def _set_theme(self, theme: str) -> None:
@@ -1518,8 +1529,8 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
-        # When `app.dark` is toggled, reset the theme (since it caches values).
-        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+        # When `app.theme` reactive is changed, reset the theme to clear cached styles.
+        self.watch(self.app, "theme", self._app_theme_changed, init=False)
 
         self.blink_timer = self.set_interval(
             0.5,

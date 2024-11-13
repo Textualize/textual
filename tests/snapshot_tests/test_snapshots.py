@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
@@ -31,6 +33,7 @@ from textual.widgets import (
     TextArea,
 )
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
+from textual.theme import Theme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -1345,12 +1348,12 @@ def test_recompose(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
 
 
-@pytest.mark.parametrize("dark", [True, False])
-def test_ansi_color_mapping(snap_compare, dark):
+@pytest.mark.parametrize("theme", ["textual-dark", "textual-light"])
+def test_ansi_color_mapping(snap_compare, theme):
     """Test how ANSI colors in Rich renderables are mapped to hex colors."""
 
     def setup(pilot):
-        pilot.app.dark = dark
+        pilot.app.theme = theme
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
 
@@ -2416,6 +2419,116 @@ def test_split_segments_infinite_loop(snap_compare):
 
     """
     assert snap_compare(SNAPSHOT_APPS_DIR / "split_segments.py")
+
+
+@pytest.mark.parametrize("theme_name", ["nord", "gruvbox"])
+def test_themes(snap_compare, theme_name):
+    """Test setting different themes and custom theme variables.
+
+    The colors from the theme should be clear, and the text-style of the label
+    should be bold italic, since that's set in the custom theme variable.
+    """
+
+    class ThemeApp(App[None]):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        
+        Label {
+            background: $panel;
+            color: $text;
+            padding: 1 2;
+            border: wide $primary;
+            text-style: $theme-label-style;
+        }
+        """
+
+        def get_theme_variable_defaults(self) -> dict[str, str]:
+            """Define a custom theme variable."""
+            return {"theme-label-style": "bold italic", "unused": "red"}
+
+        def compose(self) -> ComposeResult:
+            yield Label(f"{theme_name.title()} Theme")
+
+        def on_mount(self) -> None:
+            self.theme = theme_name
+
+    assert snap_compare(ThemeApp())
+
+
+def test_custom_theme_with_variables(snap_compare):
+    """Test creating and using a custom theme with variables that get overridden.
+
+    After the overrides from the theme, the background should be blue, the text should be white, the border should be yellow,
+    the style should be bold italic, and the label should be cyan.
+    """
+
+    class ThemeApp(App[None]):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        
+        Label {
+            background: $custom-background;
+            color: $custom-text;
+            border: wide $custom-border;
+            padding: 1 2;
+            text-style: $custom-style;
+            text-align: center;
+            width: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Custom Theme")
+
+        def get_theme_variable_defaults(self) -> dict[str, str]:
+            """Override theme variables."""
+            return {
+                "custom-text": "cyan",
+                "custom-style": "bold italic",
+                "custom-border": "red",
+                "custom-background": "#0000ff 50%",
+            }
+
+        def on_mount(self) -> None:
+            custom_theme = Theme(
+                name="my-custom",
+                primary="magenta",
+                background="black",
+                variables={
+                    "custom-background": "#ff0000 20%",
+                    "custom-text": "white",
+                    "custom-border": "yellow",
+                    "custom-style": "bold",
+                },
+            )
+            self.register_theme(custom_theme)
+            self.theme = "my-custom"
+
+    assert snap_compare(ThemeApp())
+
+
+def test_app_search_opens_and_displays_search_list(snap_compare):
+    """Test the App.search method for displaying a list of commands."""
+
+    class SearchApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Label("Search Commands")
+
+        async def on_mount(self) -> None:
+            def callback():
+                """Dummy no-op callback."""
+
+            commands = [("foo", callback), ("bar", callback), ("baz", callback)]
+            await self.search(commands)
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.press("b")
+
+    assert snap_compare(SearchApp(), run_before=run_before)
 
 
 def test_help_panel_key_display_not_duplicated(snap_compare):
