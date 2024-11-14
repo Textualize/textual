@@ -768,6 +768,9 @@ class App(Generic[ReturnType], DOMNode):
         self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
 
+        self.theme_variables: dict[str, str] = {}
+        """Variables generated from the current theme."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -1180,7 +1183,10 @@ class App(Generic[ReturnType], DOMNode):
         # Apply the additional variables from the theme
         variables = {**variables, **(theme.variables)}
         theme_variables = self.get_theme_variable_defaults()
-        return {**theme_variables, **variables}
+
+        combined_variables = {**theme_variables, **variables}
+        self.theme_variables = combined_variables
+        return combined_variables
 
     def get_theme(self, theme_name: str) -> Theme | None:
         """Get a theme by name.
