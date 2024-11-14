@@ -367,6 +367,8 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def update_log(self) -> None:
         """Update the Log with new content."""
         log = self.query_one(Log)
+        if self.is_scrolling:
+            return
         if not self.app.screen.can_view_entire(log) and not log.is_in_maximized_view:
             return
         self.log_count += 1
@@ -377,6 +379,8 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def update_rich_log(self) -> None:
         """Update the Rich Log with content."""
         rich_log = self.query_one(RichLog)
+        if self.is_scrolling:
+            return
         if (
             not self.app.screen.can_view_entire(rich_log)
             and not rich_log.is_in_maximized_view
@@ -457,6 +461,8 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
 
     def update_sparks(self) -> None:
         """Update the sparks data."""
+        if self.is_scrolling:
+            return
         if (
             not self.app.screen.can_view_partial(self)
             and not self.query_one(Sparkline).is_in_maximized_view
@@ -490,6 +496,8 @@ Switches {
         yield Markdown(self.SWITCHES_MD)
         with containers.ItemGrid(min_column_width=32):
             for theme in BUILTIN_THEMES:
+                if theme.endswith("-ansi"):
+                    continue
                 with containers.HorizontalGroup():
                     yield Switch(id=theme)
                     yield Label(theme, name=theme)

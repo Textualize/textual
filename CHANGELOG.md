@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added several new built-in CSS variables https://github.com/Textualize/textual/pull/5087
 - Added support for in-band terminal resize protocol https://github.com/Textualize/textual/pull/5217
 - Added TEXTUAL_THEME environment var, which should be a comma separated list of desired themes
+- Added `Widget.is_scrolling`
 
 ### Changed
 

@@ -2209,6 +2209,19 @@ class Widget(DOMNode):
         return self.styles.layout is not None or bool(self._nodes)
 
     @property
+    def is_scrolling(self) -> bool:
+        """Is this widget currently scrolling?"""
+        for node in self.ancestors:
+            if not isinstance(node, Widget):
+                break
+            if (
+                node.scroll_x != node.scroll_target_x
+                or node.scroll_y != node.scroll_target_y
+            ):
+                return True
+        return False
+
+    @property
     def layer(self) -> str:
         """Get the name of this widgets layer.
 
