@@ -363,8 +363,31 @@ class ChangingThemeApp(App[None]):
 
         yield Header(show_clock=True, icon="🐟")
         yield ThemeList(id="theme-list")
-        with VerticalScroll(id="widget-list") as container:
-            container.can_focus = False
+        with VerticalScroll(id="widget-list", can_focus=False) as container:
+            yield ToggleButton(label="Toggle Button")
+
+            yield SelectionList[int](
+                ("Falken's Maze", 0, True),
+                ("Black Jack", 1),
+                ("Gin Rummy", 2),
+                ("Hearts", 3),
+                ("Bridge", 4),
+                ("Checkers", 5),
+                ("Chess", 6, True),
+                ("Poker", 7),
+                ("Fighter Combat", 8, True),
+            )
+            yield RadioSet(
+                "Amanda",
+                "Connor MacLeod",
+                "Duncan MacLeod",
+                "Heather MacLeod",
+                "Joe Dawson",
+                "Kurgan, [bold italic red]The[/]",
+                "Methos",
+                "Rachel Ellenstein",
+                "Ramírez",
+            )
 
             yield Select(
                 [("foo", "foo"), ("bar", "bar"), ("baz", "baz"), ("qux", "qux")]
@@ -460,35 +483,11 @@ class ChangingThemeApp(App[None]):
             )
 
             yield Switch()
-            yield ToggleButton(label="Toggle Button")
-
-            yield SelectionList[int](
-                ("Falken's Maze", 0, True),
-                ("Black Jack", 1),
-                ("Gin Rummy", 2),
-                ("Hearts", 3),
-                ("Bridge", 4),
-                ("Checkers", 5),
-                ("Chess", 6, True),
-                ("Poker", 7),
-                ("Fighter Combat", 8, True),
-            )
-            yield RadioSet(
-                "Amanda",
-                "Connor MacLeod",
-                "Duncan MacLeod",
-                "Heather MacLeod",
-                "Joe Dawson",
-                "Kurgan, [bold italic red]The[/]",
-                "Methos",
-                "Rachel Ellenstein",
-                "Ramírez",
-            )
 
         yield Footer()
 
     def on_mount(self) -> None:
-        self.theme = "textual-ansi"
+        self.theme = "textual-light"
         text_area = self.query_one(TextArea)
         text_area.selection = Selection((0, 0), (1, 10))
 

@@ -39,7 +39,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             padding: 0;
 
             & > .toggle--button {
-                color: $surface;
+                color: $panel-darken-1;
                 background: $panel;
             }
 
@@ -49,7 +49,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         }
 
         & > RadioButton.-on .toggle--button {
-            color: $success;
+            color: $text-success;
         }
 
         &:focus {
@@ -58,17 +58,6 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             */
             border: tall $border;
             background-tint: $foreground 5%;
-
-            & > RadioButton {
-                & > .toggle--button {
-                    color: $surface;
-                    background: $panel-lighten-1;
-                }
-                &.-on > .toggle--button {
-                    color: $success;
-                }
-            }
-
             & > RadioButton.-selected {
                 color: $block-cursor-foreground;
                 text-style: $block-cursor-text-style;
