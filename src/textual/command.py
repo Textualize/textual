@@ -330,7 +330,9 @@ class SimpleCommand(NamedTuple):
     """The description of the command."""
 
 
-CommandListItem: TypeAlias = "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
+CommandListItem: TypeAlias = (
+    "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
+)
 
 
 class SimpleProvider(Provider):
