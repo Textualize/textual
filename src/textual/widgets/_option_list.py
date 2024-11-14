@@ -146,10 +146,9 @@ class OptionList(ScrollView, can_focus=True):
         max-height: 100%;
         color: $foreground;
         overflow-x: hidden;
-        border: tall transparent;
+        border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
-
         & > .option-list--option-highlighted {
             color: $block-cursor-blurred-foreground;
             background: $block-cursor-blurred-background;
