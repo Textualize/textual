@@ -60,7 +60,8 @@ class Button(Widget, can_focus=True):
         text-style: bold;
 
         &:disabled {
-            text-style: not bold;
+            text-style: bold;
+            text-opacity: 0.5;
         }
         
         &:focus {
