@@ -571,6 +571,7 @@ class CommandPalette(SystemModalScreen[None]):
         height: 100%;
         visibility: hidden;
         background: $surface;
+        &:dark { background: $panel-darken-1; }
     }
 
     CommandPalette #--input {

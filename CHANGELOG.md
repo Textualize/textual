@@ -39,11 +39,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `textual.lazy.Reveal` https://github.com/Textualize/textual/pull/5226
 - Added `Screen.action_blur` https://github.com/Textualize/textual/pull/5226
 - `Click` events can now be used with the on decorator to match the initially clicked widget
-
-### Changed
-
 - Breaking change: Removed `App.dark` reactive attribute https://github.com/Textualize/textual/pull/5087
 - Breaking change: To improve consistency, several changes have been made to default widget CSS and the CSS variables which ship with Textual. On upgrading, your app will likely look different. All of these changes can be overidden with your own CSS. https://github.com/Textualize/textual/pull/5087
+
+### Removed
+
+- Removed `App.HOVER_EFFECTS_SCROLL_PAUSE`
 
 ## [0.85.2] - 2024-11-02
 
