@@ -15,6 +15,14 @@ class DemoApp(App):
             align: center top;
             &>*{ max-width: 100; }        
     }
+    Screen .-maximized {
+        margin: 1 2;        
+        max-width: 100%;
+        &.column { margin: 1 2; padding: 1 2; }
+        &.column > * {        
+            max-width: 100%;           
+        }        
+    }
     """
 
     MODES = {
@@ -48,4 +56,30 @@ class DemoApp(App):
             "Screenshot",
             tooltip="Save an SVG 'screenshot' of the current screen",
         ),
+        Binding(
+            "ctrl+m",
+            "app.maximize",
+            "Maximize",
+            tooltip="Maximized the focused widget (if possible)",
+        ),
     ]
+
+    def action_maximize(self) -> None:
+        if self.screen.focused is None:
+            self.notify(
+                "Nothing to be maximized (try pressing [b]tab[/b])",
+                title="Maximize",
+                severity="warning",
+            )
+        else:
+            if self.screen.maximize(self.screen.focused):
+                self.notify(
+                    "You are now in the maximized view. Press [b]escape[/b] to return.",
+                    title="Maximize",
+                )
+            else:
+                self.notify(
+                    "This widget may not be maximized.",
+                    title="Maximize",
+                    severity="warning",
+                )

@@ -8,13 +8,14 @@ from rich.syntax import Syntax
 from rich.table import Table
 from rich.traceback import Traceback
 
-from textual import containers, lazy
+from textual import containers, events, lazy, on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.demo.data import COUNTRIES
 from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
 from textual.suggester import SuggestFromList
+from textual.theme import BUILTIN_THEMES
 from textual.widgets import (
     Button,
     Checkbox,
@@ -33,6 +34,7 @@ from textual.widgets import (
     RadioSet,
     RichLog,
     Sparkline,
+    Switch,
     TabbedContent,
 )
 
@@ -49,6 +51,7 @@ The following list is *not* exhaustive…
 class Buttons(containers.VerticalGroup):
     """Buttons demo."""
 
+    ALLOW_MAXIMIZE = True
     DEFAULT_CLASSES = "column"
     DEFAULT_CSS = """
     Buttons {
@@ -179,6 +182,7 @@ Cells may be individually styled, and may include Rich renderables.
 class Inputs(containers.VerticalGroup):
     """Demonstrates Inputs."""
 
+    ALLOW_MAXIMIZE = True
     DEFAULT_CLASSES = "column"
     INPUTS_MD = """\
 ## Inputs and MaskedInputs
@@ -234,6 +238,7 @@ Build for intuitive and user-friendly forms.
 class ListViews(containers.VerticalGroup):
     """Demonstrates List Views and Option Lists."""
 
+    ALLOW_MAXIMIZE = True
     DEFAULT_CLASSES = "column"
     LISTS_MD = """\
 ## List Views and Option Lists
@@ -435,6 +440,59 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
         self.data = [abs(sin(x / 3.14)) for x in range(offset, offset + 360 * 6, 20)]
 
 
+class Switches(containers.VerticalGroup):
+    """Demonstrate the Switch widget."""
+
+    ALLOW_MAXIMIZE = True
+    DEFAULT_CLASSES = "column"
+    SWITCHES_MD = """\
+## Switches
+
+Functionally almost identical to a Checkbox, but more displays more prominently in the UI.
+"""
+    DEFAULT_CSS = """\
+Switches {    
+    Label {
+        padding: 1;
+        &:hover {text-style:underline; }
+    }
+}
+"""
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.SWITCHES_MD)
+        with containers.ItemGrid(min_column_width=32):
+            for theme in BUILTIN_THEMES:
+                with containers.HorizontalGroup():
+                    yield Switch(id=theme)
+                    yield Label(theme, name=theme)
+
+    @on(events.Click, "Label")
+    def on_click(self, event: events.Click) -> None:
+        """Make the label toggle the switch."""
+        # TODO: Add a dedicated form label
+        event.stop()
+        if event.widget is not None:
+            self.query_one(f"#{event.widget.name}", Switch).toggle()
+
+    def on_switch_changed(self, event: Switch.Changed) -> None:
+        # Don't issue more Changed events
+        with self.prevent(Switch.Changed):
+            # Reset all other switches
+            for switch in self.query("Switch").results(Switch):
+                if switch.id != event.switch.id:
+                    switch.value = False
+        assert event.switch.id is not None
+        theme_id = event.switch.id
+
+        def switch_theme() -> None:
+            """Callback to switch the theme."""
+            self.app.theme = theme_id
+
+        # Call after a short delay, so we see the Switch animation
+        self.set_timer(0.3, switch_theme)
+
+
 class WidgetsScreen(PageScreen):
     """The Widgets screen"""
 
@@ -467,4 +525,5 @@ class WidgetsScreen(PageScreen):
             yield ListViews()
             yield Logs()
             yield Sparklines()
+            yield Switches()
         yield Footer()

@@ -3702,7 +3702,9 @@ class App(Generic[ReturnType], DOMNode):
                             self.get_widget_at(event.x, event.y)[0]
                             is self._mouse_down_widget
                         ):
-                            click_event = events.Click.from_event(event)
+                            click_event = events.Click.from_event(
+                                self._mouse_down_widget, event
+                            )
                             self.screen._forward_event(click_event)
                     except NoWidget:
                         pass

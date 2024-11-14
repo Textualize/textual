@@ -25,6 +25,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         index: The index in the list that's currently highlighted.
     """
 
+    ALLOW_MAXIMIZE = True
+
     DEFAULT_CSS = """
     ListView {
         background: $surface;

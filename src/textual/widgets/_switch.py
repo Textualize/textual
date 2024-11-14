@@ -50,6 +50,7 @@ class Switch(Widget, can_focus=True):
         background: $surface;
         height: auto;
         width: auto;
+        
         padding: 0 2;
         &.-on > .switch--slider {
             color: $success;

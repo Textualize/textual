@@ -145,7 +145,7 @@ class StarCount(Vertical):
         color: $text-warning;
         #stars { align: center top; }
         #forks { align: right top; }
-        Label { text-style: bold; }
+        Label { text-style: bold; color: $foreground; }
         LoadingIndicator { background: transparent !important; }
         Digits { width: auto; margin-right: 1; }
         Label { margin-right: 1; }

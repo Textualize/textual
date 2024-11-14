@@ -746,12 +746,15 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._move_focus(-1, selector)
 
-    def maximize(self, widget: Widget, container: bool = True) -> None:
+    def maximize(self, widget: Widget, container: bool = True) -> bool:
         """Maximize a widget, so it fills the screen.
 
         Args:
             widget: Widget to maximize.
             container: If one of the widgets ancestors is a maximizeable widget, maximize that instead.
+
+        Returns:
+            `True` if the widget was maximized, otherwise `False`.
         """
         if widget.allow_maximize:
             if container:
@@ -761,9 +764,10 @@ class Screen(Generic[ScreenResultType], Widget):
                         break
                     if maximize_widget.allow_maximize:
                         self.maximized = maximize_widget
-                        return
+                        return True
 
             self.maximized = widget
+        return False
 
     def minimize(self) -> None:
         """Restore any maximized widget to normal state."""
@@ -1371,6 +1375,7 @@ class Screen(Generic[ScreenResultType], Widget):
         the origin of the specified region.
         """
         return events.MouseMove(
+            event.widget,
             event.x - region.x,
             event.y - region.y,
             event.delta_x,

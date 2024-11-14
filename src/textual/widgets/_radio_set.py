@@ -25,6 +25,8 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
     turned off.
     """
 
+    ALLOW_MAXIMIZE = True
+
     DEFAULT_CSS = """
     RadioSet {
         border: tall $border-blurred;

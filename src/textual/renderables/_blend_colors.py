@@ -15,8 +15,10 @@ def blend_colors(color1: Color, color2: Color, ratio: float) -> Color:
     Returns:
         A Color representing the blending of the two supplied colors.
     """
-    assert color1.triplet is not None
-    assert color2.triplet is not None
+    # assert color1.triplet is not None
+    # assert color2.triplet is not None
+    if color1.triplet is None or color2.triplet is None:
+        return color2
     r1, g1, b1 = color1.triplet
     r2, g2, b2 = color2.triplet
 
