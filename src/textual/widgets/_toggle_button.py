@@ -78,13 +78,11 @@ class ToggleButton(Static, can_focus=True):
                 text-style: $block-cursor-text-style;
             }
         }
-
-        &:hover {
+        &:blur:hover {
             & > .toggle--label {
                 background: $block-hover-background;
             }
         }
-
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 

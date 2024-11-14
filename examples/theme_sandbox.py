@@ -364,8 +364,8 @@ class ChangingThemeApp(App[None]):
         yield Header(show_clock=True, icon="🐟")
         yield ThemeList(id="theme-list")
         with VerticalScroll(id="widget-list", can_focus=False) as container:
+            yield Switch()
             yield ToggleButton(label="Toggle Button")
-
             yield SelectionList[int](
                 ("Falken's Maze", 0, True),
                 ("Black Jack", 1),
@@ -481,8 +481,6 @@ class ChangingThemeApp(App[None]):
                 "Tauron",
                 "Virgon",
             )
-
-            yield Switch()
 
         yield Footer()
 

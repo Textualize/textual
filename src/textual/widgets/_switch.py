@@ -72,23 +72,6 @@ class Switch(Widget, can_focus=True):
             border: tall $border;
             background-tint: $foreground 5%;
         }
-        &:light {
-            & > .switch--slider {
-                background: $surface-lighten-2;
-                color: $surface-darken-1;
-            }
-            &.-on {
-                & > .switch--slider {
-                    color: $success-lighten-1;
-                }
-                &:hover > .switch--slider {
-                    color: $success;
-                }
-            }
-            &:hover > .switch--slider {
-                color: $surface-darken-2;
-            }
-        }
     }
 
     """
