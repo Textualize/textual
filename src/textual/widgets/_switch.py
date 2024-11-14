@@ -52,42 +52,41 @@ class Switch(Widget, can_focus=True):
         width: auto;
         
         padding: 0 2;
-        &.-on > .switch--slider {
+        &.-on .switch--slider {
             color: $success;
         }
-        & > .switch--slider {
-            background: $surface-darken-1;
-            color: $surface-lighten-2;
+        & .switch--slider {
+            color: $panel;
+            background: $panel-darken-2;
         }
         &:hover {
             & > .switch--slider {
-                color: $surface-lighten-3;
+                color: $panel-lighten-1
             }
-            &.-on {
-                & > .switch--slider {
-                    color: $success-lighten-1;
-                }
+            &.-on > .switch--slider {
+                color: $success-lighten-1;
             }
         }
         &:focus {
             border: tall $border;
             background-tint: $foreground 5%;
         }
+
         &:light {
-            & > .switch--slider {
-                background: $surface-lighten-2;
-                color: $surface-darken-1;
+            &.-on .switch--slider {
+                color: $success;
             }
-            &.-on {
+            & .switch--slider {
+                color: $primary 15%;
+                background: $panel-darken-2;
+            }
+            &:hover {
                 & > .switch--slider {
+                    color: $primary 25%;
+                }
+                &.-on > .switch--slider {
                     color: $success-lighten-1;
                 }
-                &:hover > .switch--slider {
-                    color: $success;
-                }
-            }
-            &:hover > .switch--slider {
-                color: $surface-darken-2;
             }
         }
     }

@@ -195,7 +195,7 @@ async def test_search_with_simple_commands():
         SimpleCommand("Another Command", callback, "Another test command"),
     ]
     async with app.run_test() as pilot:
-        await app.search(commands)
+        await app.search_commands(commands)
         await pilot.press("enter", "enter")
         assert called
 
@@ -216,7 +216,7 @@ async def test_search_with_tuples():
         ("Another Command", callback),
     ]
     async with app.run_test() as pilot:
-        await app.search(commands)
+        await app.search_commands(commands)
         await pilot.press("enter", "enter")
         assert called
 
@@ -225,5 +225,5 @@ async def test_search_with_empty_list():
     """Test search with an empty command list doesn't crash."""
     app = App[None]()
     async with app.run_test() as pilot:
-        await app.search([])
+        await app.search_commands([])
         await pilot.press("escape")
