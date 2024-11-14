@@ -367,7 +367,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def update_log(self) -> None:
         """Update the Log with new content."""
         log = self.query_one(Log)
-        if not self.app.screen.can_view_partial(log) and not log.is_in_maximized_view:
+        if not self.app.screen.can_view_entire(log) and not log.is_in_maximized_view:
             return
         self.log_count += 1
         line_no = self.log_count % len(self.TEXT)
@@ -378,7 +378,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
         """Update the Rich Log with content."""
         rich_log = self.query_one(RichLog)
         if (
-            not self.app.screen.can_view_partial(rich_log)
+            not self.app.screen.can_view_entire(rich_log)
             and not rich_log.is_in_maximized_view
         ):
             return
