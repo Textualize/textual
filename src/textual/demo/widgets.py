@@ -11,7 +11,7 @@ from rich.traceback import Traceback
 from textual import containers, events, lazy, on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.demo.data import COUNTRIES
+from textual.demo.data import COUNTRIES, MOVIES
 from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
 from textual.suggester import SuggestFromList
@@ -154,29 +154,29 @@ class Datatables(containers.VerticalGroup):
 A fully-featured DataTable, with cell, row, and columns cursors.
 Cells may be individually styled, and may include Rich renderables.
 
+**Tip:** Focus the table and press `ctrl+m`
+
 """
-    ROWS = [
-        ("lane", "swimmer", "country", "time"),
-        (4, "Joseph Schooling", "Singapore", 50.39),
-        (2, "Michael Phelps", "United States", 51.14),
-        (5, "Chad le Clos", "South Africa", 51.14),
-        (6, "László Cseh", "Hungary", 51.14),
-        (3, "Li Zhuhao", "China", 51.26),
-        (8, "Mehdy Metella", "France", 51.58),
-        (7, "Tom Shields", "United States", 51.73),
-        (1, "Aleksandr Sadovnikov", "Russia", 51.84),
-        (10, "Darren Burns", "Scotland", 51.84),
-    ]
+    DEFAULT_CSS = """    
+    DataTable {        
+        height: 16 !important;            
+        &.-maximized {
+            height: auto !important;
+        }
+    }
+    
+    """
 
     def compose(self) -> ComposeResult:
         yield Markdown(self.DATATABLES_MD)
         with containers.Center():
-            yield DataTable()
+            yield DataTable(fixed_columns=1)
 
     def on_mount(self) -> None:
+        ROWS = list(csv.reader(io.StringIO(MOVIES)))
         table = self.query_one(DataTable)
-        table.add_columns(*self.ROWS[0])
-        table.add_rows(self.ROWS[1:])
+        table.add_columns(*ROWS[0])
+        table.add_rows(ROWS[1:])
 
 
 class Inputs(containers.VerticalGroup):

@@ -76,9 +76,9 @@ class MyApp(App):
 MyApp().run()
 ```
 
+* Intuitive, batteries-included, API.
 * Well documented: See the [tutorial](https://textual.textualize.io/tutorial/), [guide](https://textual.textualize.io/guide/app/), and [reference](https://textual.textualize.io/reference/). 
 * Fully typed, with modern type annotations.
-* Intuitive, batteries-included, API
 * Accessible to Python developers of all skill levels.
 
 **Hint:** press **C** to view the code for this page.

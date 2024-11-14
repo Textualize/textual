@@ -555,7 +555,7 @@ class CommandPalette(SystemModalScreen[None]):
     CommandPalette > .command-palette--help-text {                   
         color: $text-muted;
         background: transparent;
-        text-style: not bold dim;       
+        text-style: not bold;       
     }
     
     CommandPalette > .command-palette--highlight {
