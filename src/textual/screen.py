@@ -767,6 +767,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         return True
 
             self.maximized = widget
+            return True
         return False
 
     def minimize(self) -> None:

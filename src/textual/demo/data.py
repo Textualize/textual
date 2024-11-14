@@ -196,3 +196,5 @@ COUNTRIES = [
     "Zambia",
     "Zimbabwe",
 ]
+# Sort by length for auto-complete
+COUNTRIES.sort(key=str.__len__)

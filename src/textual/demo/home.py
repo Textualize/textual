@@ -66,11 +66,20 @@ A modern Python API from the developer of [Rich](https://github.com/Textualize/r
 
 ```python
 # Start building!
-import textual
+from textual import App, ComposeResult
+from textual.widgets import Label
+
+class MyApp(App):
+    def compose(self) -> ComposeResult:
+        yield Label("Hello, World!")
+
+MyApp().run()
 ```
 
-Well documented, typed, and intuitive.
-Textual's API is accessible to Python developers of all skill levels.
+* Well documented: See the [tutorial](https://textual.textualize.io/tutorial/), [guide](https://textual.textualize.io/guide/app/), and [reference](https://textual.textualize.io/reference/). 
+* Fully typed, with modern type annotations.
+* Intuitive, batteries-included, API
+* Accessible to Python developers of all skill levels.
 
 **Hint:** press **C** to view the code for this page.
 
