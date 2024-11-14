@@ -487,7 +487,7 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
-    theme: Reactive[str] = Reactive("textual-dark")
+    theme: Reactive[str] = Reactive(constants.DEFAULT_THEME)
     """The name of the currently active theme."""
 
     ansi_theme_dark = Reactive(MONOKAI, init=False)
@@ -1186,12 +1186,17 @@ class App(Generic[ReturnType], DOMNode):
         """Get a theme by name.
 
         Args:
-            theme_name: The name of the theme to get.
+            theme_name: The name of the theme to get. May also be a comma
+                separated list of names, to pick the first available theme.
 
         Returns:
             A Theme instance and None if the theme doesn't exist.
         """
-        return self.available_themes[theme_name]
+        theme_names = [token.strip() for token in theme_name.split(",")]
+        for theme_name in theme_names:
+            if theme_name in self.available_themes:
+                return self.available_themes[theme_name]
+        return None
 
     def register_theme(self, theme: Theme) -> None:
         """Register a theme with the app.
@@ -1227,6 +1232,8 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def current_theme(self) -> Theme:
         theme = self.get_theme(self.theme)
+        if theme is None:
+            theme = self.get_theme("textual-dark")
         assert theme is not None  # validated by _validate_theme
         return theme
 

@@ -66,6 +66,8 @@ class Buttons(containers.VerticalGroup):
 A simple button, with a number of semantic styles.
 May be rendered unclickable by setting `disabled=True`.
 
+Press `return` to active a button when focused (or click it).
+
     """
 
     def compose(self) -> ComposeResult:
@@ -119,18 +121,28 @@ class Checkboxes(containers.VerticalGroup):
 
 Checkboxes to toggle booleans.
 Radio buttons for exclusive booleans.
-Radio sets for a managed set of options where only a single option may be selected.
+
+Hit `return` to toggle an checkbox / radio button, when focused.
 
     """
+    RADIOSET_MD = """\
+
+### Radio Sets
+
+A *radio set* is a list of mutually exclusive options.
+Use the `up` and `down` keys to navigate the list.
+Press `return` to toggle a radio button.
+
+"""
 
     def compose(self) -> ComposeResult:
         yield Markdown(self.CHECKBOXES_MD)
-        with containers.HorizontalGroup():
-            with containers.VerticalGroup():
-                yield Checkbox("Arrakis")
-                yield Checkbox("Caladan")
-                yield RadioButton("Chusuk")
-                yield RadioButton("Giedi Prime")
+
+        with containers.VerticalGroup():
+            yield Checkbox("A Checkbox")
+            yield RadioButton("A Radio Button")
+
+            yield Markdown(self.RADIOSET_MD)
             yield RadioSet(
                 "Amanda",
                 "Connor MacLeod",
