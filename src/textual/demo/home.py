@@ -85,8 +85,8 @@ MyApp().run()
 
 ## Built on Rich
 
-With over 1.5 *billion* downloads, Rich is the most popular terminal library out there.
-Textual builds on Rich to add interactivity, and is compatible with Rich renderables.
+With over 1.6 *billion* downloads, Rich is the most popular terminal library out there.
+Textual builds on Rich to add interactivity, and is fully-compatible with Rich renderables.
 
 ## Re-usable widgets
 
@@ -122,6 +122,8 @@ Textual has [amazing docs](https://textual.textualize.io/)!
 """
 
 DEPLOY_MD = """\
+Textual apps have extremely low system requirements, and will run on virtually any OS and hardware; locally or remotely via SSH.
+
 There are a number of ways to deploy and share Textual apps.
 
 ## As a Python library

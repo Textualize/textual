@@ -236,6 +236,7 @@ class TabPane(Widget):
 class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
+    ALLOW_MAXIMIZE = True
     DEFAULT_CSS = """
     TabbedContent {
         height: auto;
