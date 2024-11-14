@@ -98,12 +98,12 @@ class SelectionList(Generic[SelectionType], OptionList):
         height: auto;
         
         & > .selection-list--button {
-            color: $panel-darken-1;
+            color: $panel-darken-2;
             background: $panel;
         }
 
         & > .selection-list--button-highlighted {
-            color: $panel-darken-1;
+            color: $panel-darken-2;
             background: $panel;
         }
 

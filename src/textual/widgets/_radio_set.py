@@ -39,7 +39,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             padding: 0;
 
             & > .toggle--button {
-                color: $panel-darken-1;
+                color: $panel-darken-2;
                 background: $panel;
             }
 

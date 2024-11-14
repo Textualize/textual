@@ -60,7 +60,7 @@ class ToggleButton(Static, can_focus=True):
         background: $surface;
 
         & > .toggle--button {
-            color: $panel-darken-1;
+            color: $panel-darken-2;
             background: $panel;
         }
 

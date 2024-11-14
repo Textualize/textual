@@ -56,7 +56,7 @@ class Switch(Widget, can_focus=True):
         }
         & .switch--slider {
             color: $panel;
-            background: $panel-darken-1;
+            background: $panel-darken-2;
         }
         &:hover {
             & > .switch--slider {
@@ -77,7 +77,7 @@ class Switch(Widget, can_focus=True):
             }
             & .switch--slider {
                 color: $primary 15%;
-                background: $panel-darken-1;
+                background: $panel-darken-2;
             }
             &:hover {
                 & > .switch--slider {
