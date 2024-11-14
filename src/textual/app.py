@@ -1662,7 +1662,7 @@ class App(Generic[ReturnType], DOMNode):
             name="screenshot",
         )
 
-    def search(
+    def search_commands(
         self,
         commands: Sequence[CommandListItem],
         placeholder: str = "Search for commands…",
@@ -1671,6 +1671,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             commands: A list of SimpleCommand instances.
+            placeholder: Placeholder text for the search field.
 
         Returns:
             AwaitMount: An awaitable that resolves when the commands are shown.

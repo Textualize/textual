@@ -302,7 +302,7 @@ class ChangingThemeApp(App[None]):
         self.theme = "not-a-theme"
 
     def action_widget_search(self) -> None:
-        self.search(
+        self.search_commands(
             [
                 (
                     widget.__class__.__name__,
