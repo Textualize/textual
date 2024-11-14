@@ -72,8 +72,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#ba3c5b",
         success="#4EBF71",
         foreground="#e0e0e0",
-        panel="#2f3236",
-        dark=True,
     ),
     "textual-light": Theme(
         name="textual-light",
@@ -103,7 +101,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#BF616A",
         surface="#3B4252",
         panel="#434C5E",
-        dark=True,
         variables={
             "block-cursor-background": "#88C0D0",
             "block-cursor-foreground": "#2E3440",
@@ -126,7 +123,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#282828",
         surface="#3c3836",
         panel="#504945",
-        dark=True,
         variables={
             "block-cursor-foreground": "#fbf1c7",
             "input-selection-background": "#689d6a40",
@@ -145,7 +141,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#181825",
         surface="#313244",
         panel="#45475a",
-        dark=True,
         variables={
             "input-cursor-foreground": "#11111b",
             "input-cursor-background": "#f5e0dc",
@@ -195,7 +190,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#2B2E3B",
         panel="#313442",
         foreground="#F8F8F2",
-        dark=True,
         variables={
             "button-color-foreground": "#282A36",
         },
@@ -212,7 +206,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#1A1B26",  # Background
         surface="#24283B",  # Surface
         panel="#414868",  # Panel
-        dark=True,
         variables={
             "button-color-foreground": "#24283B",
         },
@@ -229,7 +222,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#272822",
         surface="#2e2e2e",
         panel="#3E3D32",
-        dark=True,
         variables={
             "foreground-muted": "#797979",
             "input-selection-background": "#575b6190",
@@ -248,7 +240,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
         surface="#1C1B1A",  # base.950
         panel="#282726",  # base.900
         foreground="#FFFCF0",  # base.paper
-        dark=True,
         variables={
             "input-cursor-foreground": "#5E409D",
             "input-cursor-background": "#FFFCF0",

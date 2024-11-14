@@ -330,9 +330,7 @@ class SimpleCommand(NamedTuple):
     """The description of the command."""
 
 
-CommandListItem: TypeAlias = (
-    "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
-)
+CommandListItem: TypeAlias = "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
 
 
 class SimpleProvider(Provider):
@@ -570,7 +568,7 @@ class CommandPalette(SystemModalScreen[None]):
         margin-top: 3; 
         height: 100%;
         visibility: hidden;
-        background: $panel-darken-1;
+        background: $surface;
     }
 
     CommandPalette #--input {
