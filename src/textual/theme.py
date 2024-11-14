@@ -72,6 +72,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         error="#ba3c5b",
         success="#4EBF71",
         foreground="#e0e0e0",
+        panel="#2f3236",
         dark=True,
     ),
     "textual-light": Theme(
