@@ -82,6 +82,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
         disabled: bool = False,
         can_focus: bool | None = None,
         can_focus_children: bool | None = None,
+        can_maximize: bool | None = None,
     ) -> None:
         """
 
@@ -93,6 +94,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
             disabled: Whether the widget is disabled or not.
             can_focus: Can this container be focused?
             can_focus_children: Can this container's children be focused?
+            can_maximized: Allow this container to maximize? `None` to use default logic.,
         """
 
         super().__init__(
@@ -106,6 +108,13 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
             self.can_focus = can_focus
         if can_focus_children is not None:
             self.can_focus_children = can_focus_children
+        self.can_maximize = can_maximize
+
+    @property
+    def allow_maximize(self) -> bool:
+        if self.can_maximize is None:
+            return super().allow_maximize
+        return self.can_maximize
 
 
 class Vertical(Widget, inherit_bindings=False):

@@ -137,23 +137,20 @@ Press `return` to toggle a radio button.
 
     def compose(self) -> ComposeResult:
         yield Markdown(self.CHECKBOXES_MD)
-
-        with containers.VerticalGroup():
-            yield Checkbox("A Checkbox")
-            yield RadioButton("A Radio Button")
-
-            yield Markdown(self.RADIOSET_MD)
-            yield RadioSet(
-                "Amanda",
-                "Connor MacLeod",
-                "Duncan MacLeod",
-                "Heather MacLeod",
-                "Joe Dawson",
-                "Kurgan, [bold italic red]The[/]",
-                "Methos",
-                "Rachel Ellenstein",
-                "Ramírez",
-            )
+        yield Checkbox("A Checkbox")
+        yield RadioButton("A Radio Button")
+        yield Markdown(self.RADIOSET_MD)
+        yield RadioSet(
+            "Amanda",
+            "Connor MacLeod",
+            "Duncan MacLeod",
+            "Heather MacLeod",
+            "Joe Dawson",
+            "Kurgan, [bold italic red]The[/]",
+            "Methos",
+            "Rachel Ellenstein",
+            "Ramírez",
+        )
 
 
 class Datatables(containers.VerticalGroup):
@@ -309,6 +306,10 @@ And a RichLog widget to display Rich renderables.
             }
         }
         TabPane { padding: 0; }
+        TabbedContent.-maximized {
+            height: 1fr;
+            Log, RichLog { height: 1fr; }
+        }
     }
     """
 
@@ -366,7 +367,7 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def update_log(self) -> None:
         """Update the Log with new content."""
         log = self.query_one(Log)
-        if not self.screen.can_view_partial(log) or not self.screen.is_active:
+        if not self.app.screen.can_view_partial(log) and not log.is_in_maximized_view:
             return
         self.log_count += 1
         line_no = self.log_count % len(self.TEXT)
@@ -376,7 +377,10 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def update_rich_log(self) -> None:
         """Update the Rich Log with content."""
         rich_log = self.query_one(RichLog)
-        if not self.screen.can_view_partial(rich_log) or not self.screen.is_active:
+        if (
+            not self.app.screen.can_view_partial(rich_log)
+            and not rich_log.is_in_maximized_view
+        ):
             return
         self.rich_log_count += 1
         log_option = self.rich_log_count % 3
@@ -421,6 +425,11 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
             &#third > .sparkline--min-color { color: $primary; }
             &#third > .sparkline--max-color { color: $accent; }    
         }
+        VerticalScroll {
+            height: auto;
+            border: heavy transparent;
+            &:focus { border: heavy $accent; }
+        }
     }
 
     """
@@ -430,22 +439,28 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
 
     def compose(self) -> ComposeResult:
         yield Markdown(self.LOGS_MD)
-        yield Sparkline([], summary_function=max, id="first").data_bind(
-            Sparklines.data,
-        )
-        yield Sparkline([], summary_function=max, id="second").data_bind(
-            Sparklines.data,
-        )
-        yield Sparkline([], summary_function=max, id="third").data_bind(
-            Sparklines.data,
-        )
+        with containers.VerticalScroll(
+            id="container", can_focus=True, can_maximize=True
+        ):
+            yield Sparkline([], summary_function=max, id="first").data_bind(
+                Sparklines.data,
+            )
+            yield Sparkline([], summary_function=max, id="second").data_bind(
+                Sparklines.data,
+            )
+            yield Sparkline([], summary_function=max, id="third").data_bind(
+                Sparklines.data,
+            )
 
     def on_mount(self) -> None:
-        self.set_interval(0.2, self.update_sparks)
+        self.set_interval(0.1, self.update_sparks)
 
     def update_sparks(self) -> None:
         """Update the sparks data."""
-        if not self.screen.can_view_partial(self) or not self.screen.is_active:
+        if (
+            not self.app.screen.can_view_partial(self)
+            and not self.query_one(Sparkline).is_in_maximized_view
+        ):
             return
         self.count += 1
         offset = self.count * 40

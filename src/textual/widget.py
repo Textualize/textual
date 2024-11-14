@@ -617,6 +617,17 @@ class Widget(DOMNode):
             return False
 
     @property
+    def is_in_maximized_view(self) -> bool:
+        """Is this widget, or a parent maximized?"""
+        maximized = self.screen.maximized
+        if not maximized:
+            return False
+        for node in self.ancestors_with_self:
+            if maximized is node:
+                return True
+        return False
+
+    @property
     def _render_widget(self) -> Widget:
         """The widget the compositor should render."""
         # Will return the "cover widget" if one is set, otherwise self.
