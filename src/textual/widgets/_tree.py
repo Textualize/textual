@@ -785,6 +785,52 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
+    def add_json(self, json_data: object, node: TreeNode | None = None) -> None:
+        """Adds JSON data to a node.
+
+        Args:
+            json_data: An object decoded from JSON.
+            node: Node to add data to.
+
+        """
+
+        if node is None:
+            node = self.root
+
+        from rich.highlighter import ReprHighlighter
+
+        highlighter = ReprHighlighter()
+
+        def add_node(name: str, node: TreeNode, data: object) -> None:
+            """Adds a node to the tree.
+
+            Args:
+                name: Name of the node.
+                node: Parent node.
+                data: Data associated with the node.
+            """
+            if isinstance(data, dict):
+                node.set_label(Text(f"{{}} {name}"))
+                for key, value in data.items():
+                    new_node = node.add("")
+                    add_node(key, new_node, value)
+            elif isinstance(data, list):
+                node.set_label(Text(f"[] {name}"))
+                for index, value in enumerate(data):
+                    new_node = node.add("")
+                    add_node(str(index), new_node, value)
+            else:
+                node.allow_expand = False
+                if name:
+                    label = Text.assemble(
+                        Text.from_markup(f"[b]{name}[/b]="), highlighter(repr(data))
+                    )
+                else:
+                    label = Text(repr(data))
+                node.set_label(label)
+
+        add_node("", node, json_data)
+
     @property
     def cursor_node(self) -> TreeNode[TreeDataType] | None:
         """The currently selected node, or ``None`` if no selection."""

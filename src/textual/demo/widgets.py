@@ -11,7 +11,7 @@ from rich.traceback import Traceback
 from textual import containers, events, lazy, on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.demo.data import COUNTRIES, MOVIES
+from textual.demo.data import COUNTRIES, MOVIES, MOVIES_TREE
 from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
 from textual.suggester import SuggestFromList
@@ -38,6 +38,7 @@ from textual.widgets import (
     Switch,
     TabbedContent,
     TextArea,
+    Tree,
 )
 
 WIDGETS_MD = """\
@@ -635,6 +636,41 @@ Switches {
         self.set_timer(0.3, switch_theme)
 
 
+class Trees(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    TREES_MD = """\
+## Tree
+
+The Tree widget displays hierarchical data.
+
+There is also the Tree widget's cousin, DirectoryTree, to navigate folders and files on the filesystem.
+    """
+    DEFAULT_CSS = """
+    Trees {
+        Tree {
+            height: 16;            
+            &.-maximized { height: 1fr; }            
+        }
+        VerticalGroup {
+            border: heavy transparent;            
+            &:focus-within { border: heavy $border; }
+        }
+    }
+
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.TREES_MD)
+        with containers.VerticalGroup():
+            yield Tree("80s movies")
+
+    def on_mount(self) -> None:
+        tree = self.query_one(Tree)
+        tree.show_root = False
+        tree.add_json(MOVIES_TREE)
+        tree.root.expand()
+
+
 class TextAreas(containers.VerticalGroup):
     ALLOW_MAXIMIZE = True
     DEFAULT_CLASSES = "column"
@@ -743,5 +779,6 @@ class WidgetsScreen(PageScreen):
             yield Sparklines()
             yield Switches()
             yield TextAreas()
+            yield Trees()
             yield YourWidgets()
         yield Footer()

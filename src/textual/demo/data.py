@@ -1,3 +1,5 @@
+import json
+
 COUNTRIES = [
     "Afghanistan",
     "Albania",
@@ -325,3 +327,89 @@ Date,Title,Genre,Director,Box Office (millions),Rating,Runtime (min)
 1989-11-17,All Dogs Go to Heaven,Animation,Don Bluth,27,G,84
 1989-12-20,Tango & Cash,Action,Andrei Konchalovsky,63,R,104
 """
+
+MOVIES_JSON = """{
+  "decades": {
+    "1980s": {
+      "genres": {
+        "action": {
+          "franchises": {
+            "terminator": {
+              "name": "The Terminator",
+              "movies": [
+                {
+                  "title": "The Terminator",
+                  "year": 1984,
+                  "director": "James Cameron",
+                  "stars": ["Arnold Schwarzenegger", "Linda Hamilton", "Michael Biehn"],
+                  "boxOffice": 78371200,
+                  "quotes": ["I'll be back", "Come with me if you want to live"]
+                }
+              ]
+            },
+            "rambo": {
+              "name": "Rambo",
+              "movies": [
+                {
+                  "title": "First Blood",
+                  "year": 1982,
+                  "director": "Ted Kotcheff",
+                  "stars": ["Sylvester Stallone", "Richard Crenna", "Brian Dennehy"],
+                  "boxOffice": 47212904
+                },
+                {
+                  "title": "Rambo: First Blood Part II",
+                  "year": 1985,
+                  "director": "George P. Cosmatos",
+                  "stars": ["Sylvester Stallone", "Richard Crenna", "Charles Napier"],
+                  "boxOffice": 150415432
+                }
+              ]
+            }
+          },
+          "standalone_classics": {
+            "die_hard": {
+              "title": "Die Hard",
+              "year": 1988,
+              "director": "John McTiernan",
+              "stars": ["Bruce Willis", "Alan Rickman", "Reginald VelJohnson"],
+              "boxOffice": 140700000,
+              "location": "Nakatomi Plaza",
+              "quotes": ["Yippee-ki-yay, motherf***er"]
+            },
+            "predator": {
+              "title": "Predator",
+              "year": 1987,
+              "director": "John McTiernan",
+              "stars": ["Arnold Schwarzenegger", "Carl Weathers", "Jesse Ventura"],
+              "boxOffice": 98267558,
+              "location": "Val Verde jungle",
+              "quotes": ["Get to the chopper!"]
+            }
+          },
+          "common_themes": [
+            "Cold War politics",
+            "One man army",
+            "Revenge plots",
+            "Military operations",
+            "Law enforcement"
+          ],
+          "typical_elements": {
+            "weapons": ["M60 machine gun", "Desert Eagle", "Explosive arrows"],
+            "vehicles": ["Military helicopters", "Muscle cars", "Tanks"],
+            "locations": ["Urban jungle", "Actual jungle", "Industrial facilities"]
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "total_movies": 4,
+    "date_compiled": "2024",
+    "box_office_total": 467654094,
+    "most_frequent_actor": "Arnold Schwarzenegger",
+    "most_frequent_director": "John McTiernan"
+  }
+}"""
+
+MOVIES_TREE = json.loads(MOVIES_JSON)
