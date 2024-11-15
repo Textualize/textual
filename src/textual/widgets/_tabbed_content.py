@@ -331,6 +331,7 @@ class TabbedContent(Widget):
         self.titles = [self.render_str(title) for title in titles]
         self._tab_content: list[Widget] = []
         self._initial = initial
+        self._tabs_counter = 0
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     @property
@@ -383,6 +384,8 @@ class TabbedContent(Widget):
             for content in pane_content
         ]
 
+        self._tabs_counter = len(tabs)
+
         # Yield the tabs, and ensure they're linked to this TabbedContent.
         # It's important to associate the Tabs with the TabbedContent, so that this
         # TabbedContent can determine whether a message received from a Tabs instance
@@ -418,12 +421,13 @@ class TabbedContent(Widget):
             Only one of `before` or `after` can be provided. If both are
             provided an exception is raised.
         """
+        self._tabs_counter += 1
         if isinstance(before, TabPane):
             before = before.id
         if isinstance(after, TabPane):
             after = after.id
         tabs = self.get_child_by_type(ContentTabs)
-        pane = self._set_id(pane, tabs.tab_count + 1)
+        pane = self._set_id(pane, self._tabs_counter)
         assert pane.id is not None
         pane.display = False
         return AwaitComplete(
