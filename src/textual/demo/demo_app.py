@@ -65,6 +65,8 @@ class DemoApp(App):
     ]
 
     def action_maximize(self) -> None:
+        if self.screen.is_maximized:
+            return
         if self.screen.focused is None:
             self.notify(
                 "Nothing to be maximized (try pressing [b]tab[/b])",

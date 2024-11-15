@@ -836,6 +836,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
     async def on_callback(self, event: events.Callback) -> None:
         if self.app._closing:
             return
+        try:
+            self.app.screen
+        except Exception:
+            self.log.warning(
+                f"Not invoking timer callback {event.callback!r} because there is no screen."
+            )
+            return
         await invoke(event.callback)
 
     async def on_timer(self, event: events.Timer) -> None:
