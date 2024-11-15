@@ -33,9 +33,11 @@ from textual.widgets import (
     RadioButton,
     RadioSet,
     RichLog,
+    Select,
     Sparkline,
     Switch,
     TabbedContent,
+    TextArea,
 )
 
 WIDGETS_MD = """\
@@ -528,6 +530,60 @@ Switches {
         self.set_timer(0.3, switch_theme)
 
 
+class TextAreas(containers.VerticalGroup):
+    ALLOW_MAXIMIZE = True
+    DEFAULT_CLASSES = "column"
+    TEXTAREA_MD = """\
+## TextArea
+
+A powerful and highly configurable text area that supports syntax highlighting, line numbers, soft wrapping, and more.
+
+"""
+    DEFAULT_CSS = """
+    TextAreas {
+        TextArea {
+            height: 16;
+        }
+        &.-maximized {
+            height: 1fr;
+        }
+    }
+    """
+    DEFAULT_TEXT = """\
+# Start building!
+from textual import App, ComposeResult
+"""
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.TEXTAREA_MD)
+        yield Select.from_values(
+            [
+                "Bash",
+                "Css",
+                "Go",
+                "HTML",
+                "Java",
+                "Javascript",
+                "JSON",
+                "Kotlin",
+                "Markdown",
+                "Python",
+                "Rust",
+                "Regex",
+                "Sql",
+                "TOML",
+                "YAML",
+            ],
+            value="Python",
+            prompt="Highlight language",
+        )
+
+        yield TextArea(self.DEFAULT_TEXT, show_line_numbers=True)
+
+    def on_select_changed(self, event: Select.Changed) -> None:
+        self.query_one(TextArea).language = (event.value or "").lower()
+
+
 class WidgetsScreen(PageScreen):
     """The Widgets screen"""
 
@@ -561,4 +617,5 @@ class WidgetsScreen(PageScreen):
             yield Logs()
             yield Sparklines()
             yield Switches()
+            yield TextAreas()
         yield Footer()
