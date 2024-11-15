@@ -462,9 +462,6 @@ class App(Generic[ReturnType], DOMNode):
     SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
     """Class to apply to suspended screens, or empty string for no class."""
 
-    HOVER_EFFECTS_SCROLL_PAUSE: ClassVar[float] = 0.02
-    """Seconds to pause hover effects for when scrolling."""
-
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
@@ -2824,8 +2821,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget: Widget under mouse, or None for no widgets.
         """
-        if widget is not None and widget.is_scrolling:
-            return
         if widget is None:
             if self.mouse_over is not None:
                 try:
