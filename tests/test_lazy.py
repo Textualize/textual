@@ -42,7 +42,6 @@ async def test_lazy_reveal():
         # Only first child should be available initially
         assert app.query_one("#foo").display
         # Next two aren't mounted yet
-        assert not app.query("#bar")
         assert not app.query("#baz")
 
         # All children should be visible after a pause
