@@ -98,58 +98,23 @@ class SelectionList(Generic[SelectionType], OptionList):
         height: auto;
         
         & > .selection-list--button {
-            color: $surface-darken-1;
+            color: $panel-darken-2;
             background: $panel;
         }
 
         & > .selection-list--button-highlighted {
-            color: $surface-darken-1;
+            color: $panel-darken-2;
             background: $panel;
         }
 
         & > .selection-list--button-selected {
-            color: $success;
+            color: $text-success;
             background: $panel;
         }
 
         & > .selection-list--button-selected-highlighted {
-            color: $success;
+            color: $text-success;
             background: $panel;
-        }
-
-        &:light {
-            & > .selection-list--button-selected-highlighted {
-                color: $success;
-            }
-
-            &:focus {
-                & > .selection-list--button-selected {
-                    color: $success-darken-1;
-                }
-                & > .selection-list--button-selected-highlighted {
-                    color: $success-darken-1;
-                }
-            }
-        }
-
-        &:focus {
-            & > .selection-list--button {
-                background: $panel-lighten-1;
-            }
-
-            & > .selection-list--button-highlighted {
-                background: $panel-lighten-1;
-            }
-
-            & > .selection-list--button-selected {
-                color: $success;
-                background: $panel-lighten-1;
-            }
-
-            & > .selection-list--button-selected-highlighted {
-                color: $success;
-                background: $panel-lighten-1;
-            }
         }
 
     }

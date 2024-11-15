@@ -60,12 +60,12 @@ class ToggleButton(Static, can_focus=True):
         background: $surface;
 
         & > .toggle--button {
-            color: $surface-darken-1;
+            color: $panel-darken-2;
             background: $panel;
         }
 
         &.-on > .toggle--button {
-            color: $success;
+            color: $text-success;
             background: $panel;
         }
 
@@ -77,51 +77,11 @@ class ToggleButton(Static, can_focus=True):
                 background: $block-cursor-background;
                 text-style: $block-cursor-text-style;
             }
-            & > .toggle--button {
-                background: $panel-lighten-1;
-            }
-            &:hover {
-                & > .toggle--label {
-                    background: $block-cursor-background;
-                }
-            }
         }
-
-        &:hover {
+        &:blur:hover {
             & > .toggle--label {
                 background: $block-hover-background;
             }
-        }
-
-    }
-
-    /* Base button colors (including in dark themes). */
-
-    ToggleButton > .toggle--button {
-        text-style: $block-cursor-text-style;
-        background: $foreground 15%;
-    }
-
-
-    ToggleButton.-on:focus > .toggle--button {
-        background: $foreground 25%;
-    }
-
-    /* Light theme overrides. */
-    ToggleButton:light {
-        color: $text;
-        & > .toggle--button {
-            color: $background;
-            background: $foreground 10%;
-        }
-        &:focus > .toggle--button {
-            background: $foreground 25%;
-        }
-        &.-on > .toggle--button {
-            color: $success;
-        }
-        &.-on:focus > .toggle--button {
-            color: $success-darken-1;
         }
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780

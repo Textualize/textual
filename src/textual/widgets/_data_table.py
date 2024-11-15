@@ -360,7 +360,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         }
 
         & > .datatable--fixed {
-            background: $secondary 50%;
+            background: $secondary-muted;
             color: $foreground;
         }
 

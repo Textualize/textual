@@ -2513,8 +2513,8 @@ def test_custom_theme_with_variables(snap_compare):
     assert snap_compare(ThemeApp())
 
 
-def test_app_search_opens_and_displays_search_list(snap_compare):
-    """Test the App.search method for displaying a list of commands."""
+def test_app_search_commands_opens_and_displays_search_list(snap_compare):
+    """Test the App.search_commands method for displaying a list of commands."""
 
     class SearchApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -2525,7 +2525,7 @@ def test_app_search_opens_and_displays_search_list(snap_compare):
                 """Dummy no-op callback."""
 
             commands = [("foo", callback), ("bar", callback), ("baz", callback)]
-            await self.search(commands)
+            await self.search_commands(commands)
 
     async def run_before(pilot: Pilot) -> None:
         await pilot.press("b")
