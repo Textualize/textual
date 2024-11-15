@@ -237,7 +237,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
     @property
     def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
-        if self.app._exit:
+        try:
+            if self.app._exit:
+                return False
+        except NoActiveAppError:
             return False
         node: MessagePump | None = self
         while (node := node._parent) is not None:

@@ -5,14 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
+
+### Fixed
+
+- Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
+- Fixed `TextArea` mouse selection with tab characters https://github.com/Textualize/textual/issues/5212
+
+### Added
+
+- Added `App.theme` reactive attribute https://github.com/Textualize/textual/pull/5087
+- Added various starter themes https://github.com/Textualize/textual/pull/5087
+- Added "Change theme" command to command palette https://github.com/Textualize/textual/pull/5087
+- Added `variant` parameter to `Label` widget for quick access to common styles https://github.com/Textualize/textual/pull/5087
+- Added `App.get_theme` which returns a theme by name https://github.com/Textualize/textual/pull/5087
+- Added `App.register_theme` and `App.unregister_theme` https://github.com/Textualize/textual/pull/5087
+- Added `App.theme_changed_signal` https://github.com/Textualize/textual/pull/5087
+- Added `App.available_themes` property which returns a mapping of theme names to `Theme` instances https://github.com/Textualize/textual/pull/5087
+- Added `App.current_theme` property which returns the currently active theme object https://github.com/Textualize/textual/pull/5087
+- Added `App.get_theme_variable_defaults` which returns a mapping of theme variables to their default values https://github.com/Textualize/textual/pull/5087
+- Added `App.search` which allows bringing up a fuzzy search list of commands on-demand https://github.com/Textualize/textual/pull/5087
+- Added `App.search_themes` which allows bringing up a fuzzy search list of themes on-demand https://github.com/Textualize/textual/pull/5087
+- Added `textual.theme.ThemeProvider`, a command palette provider which returns all registered themes https://github.com/Textualize/textual/pull/5087
+- Added several new built-in CSS variables https://github.com/Textualize/textual/pull/5087
+- Added support for in-band terminal resize protocol https://github.com/Textualize/textual/pull/5217
+
+### Changed
+
+- `Driver.process_event` is now `Driver.process_message` https://github.com/Textualize/textual/pull/5217
+- `Driver.send_event` is now `Driver.send_message` https://github.com/Textualize/textual/pull/5217
+- Added `can_focus` and `can_focus_children` parameters to scrollable container types. https://github.com/Textualize/textual/pull/5226
+- Added `textual.lazy.Reveal` https://github.com/Textualize/textual/pull/5226
+- Added `Screen.action_blur` https://github.com/Textualize/textual/pull/5226
+
+### Changed
+
+- Breaking change: Removed `App.dark` reactive attribute https://github.com/Textualize/textual/pull/5087
+- Breaking change: To improve consistency, several changes have been made to default widget CSS and the CSS variables which ship with Textual. On upgrading, your app will likely look different. All of these changes can be overidden with your own CSS. https://github.com/Textualize/textual/pull/5087
+
+## [0.85.2] - 2024-11-02
+
+- Fixed broken focus-within https://github.com/Textualize/textual/pull/5190
+
+## [0.85.1] - 2024-10-26
+
+### Fixed
+
+- Fixed encoding issue when saving files such as screenshots on Windows https://github.com/Textualize/textual/pull/5182
+
+## [0.85.0] - 2024-10-25
 
 ### Changed
 
 - Grid will now size children to the maximum height of a row https://github.com/Textualize/textual/pull/5113
 - Markdown links will be opened with `App.open_url` automatically https://github.com/Textualize/textual/pull/5113
 - The universal selector (`*`) will now not match widgets with the class `-textual-system` (scrollbars, notifications etc) https://github.com/Textualize/textual/pull/5113
+- Renamed `Screen.can_view` and `Widget.can_view` to `Screen.can_view_entire` and `Widget.can_view_entire` https://github.com/Textualize/textual/pull/5174
 
 ### Added
 
@@ -24,6 +72,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Button.action` parameter to invoke action when clicked https://github.com/Textualize/textual/pull/5113
 - Added `immediate` parameter to scroll methods https://github.com/Textualize/textual/pull/5164
 - Added `textual._loop.loop_from_index` https://github.com/Textualize/textual/pull/5164
+- Added `min_color` and `max_color` to Sparklines constructor, which take precedence over CSS https://github.com/Textualize/textual/pull/5174
+- Added new demo `python -m textual`, not *quite* finished but better than the old one https://github.com/Textualize/textual/pull/5174
+- Added `Screen.can_view_partial` and `Widget.can_view_partial` https://github.com/Textualize/textual/pull/5174
+- Added `App.is_web` property to indicate if the app is running via a web browser https://github.com/Textualize/textual/pull/5128
+- `Enter` and `Leave` events can now be used with the `on` decorator https://github.com/Textualize/textual/pull/5159
 
 ### Fixed
 
@@ -2484,6 +2537,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.85.2]: https://github.com/Textualize/textual/compare/v0.85.1...v0.85.2
+[0.85.1]: https://github.com/Textualize/textual/compare/v0.85.0...v0.85.1
+[0.85.0]: https://github.com/Textualize/textual/compare/v0.84.0...v0.85.0
 [0.84.0]: https://github.com/Textualize/textual/compare/v0.83.0...v0.84.0
 [0.83.0]: https://github.com/Textualize/textual/compare/v0.82.0...v0.83.0
 [0.82.0]: https://github.com/Textualize/textual/compare/v0.81.0...v0.82.0

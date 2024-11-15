@@ -69,6 +69,10 @@ class WebDriver(Driver):
         """Maps delivery keys to file-like objects, used
         for delivering files to the browser."""
 
+    @property
+    def is_web(self) -> bool:
+        return True
+
     def write(self, data: str) -> None:
         """Write string data to the output device, which may be piped to
         the parent process (i.e. textual-web/textual-serve).
@@ -191,12 +195,12 @@ class WebDriver(Driver):
                         if packet_type == "D":
                             # Treat as stdin
                             for event in parser.feed(decode(payload)):
-                                self.process_event(event)
+                                self.process_message(event)
                         else:
                             # Process meta information separately
                             self._on_meta(packet_type, payload)
                 for event in parser.tick():
-                    self.process_event(event)
+                    self.process_message(event)
         except _ExitInput:
             pass
         except Exception:

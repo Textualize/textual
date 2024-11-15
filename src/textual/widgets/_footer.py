@@ -27,37 +27,30 @@ class FooterKey(Widget):
     FooterKey {
         width: auto;
         height: 1;
-        background: $panel;
-        color: $text-muted;
+        background: $footer-item-background;
         .footer-key--key {
-            color: $secondary;
-            background: $panel;
+            color: $footer-key-foreground;
+            background: $footer-key-background;
             text-style: bold;
             padding: 0 1;
         }
 
         .footer-key--description {
             padding: 0 1 0 0;
-        }
-
-        &:light .footer-key--key {
-            color: $primary;
+            color: $footer-description-foreground;
+            background: $footer-description-background;
         }
 
         &:hover {
-            background: $panel-darken-2;
-            color: $text;
-            .footer-key--key {
-                background: $panel-darken-2;
-            }
+            color: $footer-key-foreground;
+            background: $block-hover-background;
         }
 
         &.-disabled {
             text-style: dim;
-            background: $panel;
             &:hover {
                 .footer-key--key {
-                    background: $panel;
+                    background: $foreground-disabled;
                 }
             }
         }
@@ -136,8 +129,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     Footer {
         layout: grid;
         grid-columns: auto;
-        background: $panel;
-        color: $text;
+        color: $footer-foreground;
+        background: $footer-background;
         dock: bottom;
         height: 1;
         scrollbar-size: 0 0;
@@ -150,7 +143,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             border-left: vkey $foreground 20%;                            
         }
 
-        &.-ansi-colors {           
+        &:ansi {           
             background: ansi_default;            
             .footer-key--key {
                 background: ansi_default;
@@ -259,6 +252,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             await self.recompose()
 
     def on_mount(self) -> None:
+        self.call_next(self.bindings_changed, self.screen)
         self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:

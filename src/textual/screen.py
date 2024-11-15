@@ -147,10 +147,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     DEFAULT_CSS = """
     Screen {
-    
         layout: vertical;
         overflow-y: auto;
-        background: $surface;        
+        background: $background;        
         
         &:inline {
             height: auto;
@@ -266,6 +265,9 @@ class Screen(Generic[ScreenResultType], Widget):
         """Indicates that a binding update was requested."""
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
+
+        self._css_update_count = -1
+        """Track updates to CSS."""
 
     @property
     def is_modal(self) -> bool:
@@ -780,6 +782,10 @@ class Screen(Generic[ScreenResultType], Widget):
         """Action to minimize the currently maximized widget."""
         self.minimize()
 
+    def action_blur(self) -> None:
+        """Action to remove focus (if set)."""
+        self.set_focus(None)
+
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
     ) -> None:
@@ -896,7 +902,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
-                        if self.focused is widget and not self.can_view(widget):
+                        if self.focused is widget and not self.can_view_entire(widget):
                             self.scroll_to_center(widget, origin_visible=True)
 
                     self.call_later(scroll_to_center, widget)
@@ -1205,8 +1211,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._compositor_refresh()
-        self._refresh_layout(size)
+        if self.stack_updates:
+            self._compositor_refresh()
+            self._refresh_layout(size)
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
@@ -1480,24 +1487,44 @@ class Screen(Generic[ScreenResultType], Widget):
         await self._flush_next_callbacks()
         self.dismiss(result)
 
-    def can_view(self, widget: Widget) -> bool:
-        """Check if a given widget is in the current view (scrollable area).
+    def can_view_entire(self, widget: Widget) -> bool:
+        """Check if a given widget is fully within the current screen.
 
         Note: This doesn't necessarily equate to a widget being visible.
         There are other reasons why a widget may not be visible.
 
         Args:
-            widget: A widget that is a descendant of self.
+            widget: A widget.
 
         Returns:
-            True if the entire widget is in view, False if it is partially visible or not in view.
+            `True` if the entire widget is in view, `False` if it is partially visible or not in view.
         """
+        if widget not in self._compositor.visible_widgets:
+            return False
         # If the widget is one that overlays the screen...
         if widget.styles.overlay == "screen":
             # ...simply check if it's within the screen's region.
             return widget.region in self.region
         # Failing that fall back to normal checking.
-        return super().can_view(widget)
+        return super().can_view_entire(widget)
+
+    def can_view_partial(self, widget: Widget) -> bool:
+        """Check if a given widget is at least partially within the current view.
+
+        Args:
+            widget: A widget.
+
+        Returns:
+            `True` if the any part of the widget is in view, `False` if it is completely outside of the screen.
+        """
+        if widget not in self._compositor.visible_widgets:
+            return False
+        # If the widget is one that overlays the screen...
+        if widget.styles.overlay == "screen":
+            # ...simply check if it's within the screen's region.
+            return widget.region in self.region
+        # Failing that fall back to normal checking.
+        return super().can_view_partial(widget)
 
     def validate_title(self, title: Any) -> str | None:
         """Ensure the title is a string or `None`."""

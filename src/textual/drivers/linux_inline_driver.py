@@ -155,12 +155,12 @@ class LinuxInlineDriver(Driver):
                         if isinstance(event, events.CursorPosition):
                             self.cursor_origin = (event.x, event.y)
                         else:
-                            self.process_event(event)
+                            self.process_message(event)
             for event in tick():
                 if isinstance(event, events.CursorPosition):
                     self.cursor_origin = (event.x, event.y)
                 else:
-                    self.process_event(event)
+                    self.process_message(event)
 
         try:
             while not self.exit_event.is_set():

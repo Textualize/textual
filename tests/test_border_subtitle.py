@@ -12,7 +12,7 @@ async def test_border_subtitle():
             yield BorderWidget()
 
     empty_app = SimpleApp()
-    async with empty_app.run_test() as pilot:
+    async with empty_app.run_test():
         widget = empty_app.query_one(BorderWidget)
         assert widget.border_title == "foo"
         assert widget.border_subtitle == "bar"

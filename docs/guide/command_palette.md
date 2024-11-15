@@ -11,8 +11,8 @@ Textual will suggest commands as you type in that input.
 Press ++up++ or ++down++ to select a command from the list, and ++enter++ to invoke it.
 
 Commands are looked up via a *fuzzy* search, which means Textual will show commands that match the keys you type in the same order, but not necessarily at the start of the command.
-For instance the "Toggle light/dark mode" command will be shown if you type "to" (for **to**ggle), but you could also type "dm" (to match **d**ark **m**ode).
-This scheme allows the user to quickly get to a particular command with a minimum of key-presses.
+For instance the "Change theme" command will be shown if you type "ch" (for **ch**ange), but you could also type "th" (to match **t**heme).
+This scheme allows the user to quickly get to a particular command with fewer key-presses.
 
 
 === "Command Palette"

@@ -5,7 +5,7 @@ from collections import defaultdict
 from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import Iterable, NamedTuple, Sequence, cast
+from typing import Final, Iterable, NamedTuple, Sequence, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -433,13 +433,14 @@ class Stylesheet:
             if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
-    # pseudo classes which iterate over many nodes
-    # these have the potential to be slow, and shouldn't be used in a cache key
-    EXPENSIVE_PSEUDO_CLASSES = {
+    # pseudo classes which iterate over multiple nodes
+    # These shouldn't be used in a cache key
+    _EXCLUDE_PSEUDO_CLASSES_FROM_CACHE: Final[set[str]] = {
         "first-of-type",
         "last-of_type",
         "odd",
         "even",
+        "focus-within",
     }
 
     def apply(
@@ -487,7 +488,7 @@ class Stylesheet:
         cache_key: tuple | None = None
 
         if cache is not None and all_pseudo_classes.isdisjoint(
-            self.EXPENSIVE_PSEUDO_CLASSES
+            self._EXCLUDE_PSEUDO_CLASSES_FROM_CACHE
         ):
             cache_key = (
                 node._parent,

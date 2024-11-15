@@ -37,8 +37,10 @@ class VerticalLayout(Layout):
                 ),
                 sum(
                     [
-                        max(margin1[2], margin2[0])
-                        for margin1, margin2 in zip(box_margins, box_margins[1:])
+                        bottom if bottom > top else top
+                        for (_, _, bottom, _), (top, _, _, _) in zip(
+                            box_margins, box_margins[1:]
+                        )
                     ]
                 )
                 + (box_margins[0].top + box_margins[-1].bottom),
@@ -56,9 +58,14 @@ class VerticalLayout(Layout):
         )
 
         margins = [
-            max((box1.margin.bottom, box2.margin.top))
-            for box1, box2 in zip(box_models, box_models[1:])
+            (
+                margin_bottom
+                if (margin_bottom := margin1.bottom) > (margin_top := margin2.top)
+                else margin_top
+            )
+            for (_, _, margin1), (_, _, margin2) in zip(box_models, box_models[1:])
         ]
+
         if box_models:
             margins.append(box_models[-1].margin.bottom)
 
@@ -82,9 +89,9 @@ class VerticalLayout(Layout):
                 _WidgetPlacement(
                     _Region(
                         box_margin.left,
-                        int(y),
-                        int(content_width),
-                        int(next_y) - int(y),
+                        y.__floor__(),
+                        content_width.__floor__(),
+                        next_y.__floor__() - y.__floor__(),
                     ),
                     box_margin,
                     widget,

@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from textual.app import RenderResult
 
 from textual.errors import RenderError
+from textual.visual import SupportsVisual, Visual, visualize
 from textual.widget import Widget
 
 
@@ -23,9 +24,9 @@ def _check_renderable(renderable: object):
     Raises:
         RenderError: If the object can not be rendered.
     """
-    if not is_renderable(renderable):
+    if not is_renderable(renderable) and not hasattr(renderable, "visualize"):
         raise RenderError(
-            f"unable to render {renderable!r}; a string, Text, or other Rich renderable is required"
+            f"unable to render {renderable.__class__.__name__!r} type; must be a str, Text, Rich renderable oor Textual Visual instance"
         )
 
 
@@ -49,11 +50,11 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    _renderable: RenderableType
+    _renderable: RenderableType | SupportsVisual
 
     def __init__(
         self,
-        renderable: RenderableType = "",
+        content: RenderableType | SupportsVisual = "",
         *,
         expand: bool = False,
         shrink: bool = False,
@@ -67,15 +68,21 @@ class Static(Widget, inherit_bindings=False):
         self.expand = expand
         self.shrink = shrink
         self.markup = markup
-        self.renderable = renderable
-        _check_renderable(renderable)
+        self._content = content
+        self._visual: Visual | None = None
 
     @property
-    def renderable(self) -> RenderableType:
-        return self._renderable or ""
+    def visual(self) -> Visual:
+        if self._visual is None:
+            self._visual = visualize(self, self._content)
+        return self._visual
+
+    @property
+    def renderable(self) -> RenderableType | SupportsVisual:
+        return self._content or ""
 
     @renderable.setter
-    def renderable(self, renderable: RenderableType) -> None:
+    def renderable(self, renderable: RenderableType | SupportsVisual) -> None:
         if isinstance(renderable, str):
             if self.markup:
                 self._renderable = Text.from_markup(renderable)
@@ -83,6 +90,7 @@ class Static(Widget, inherit_bindings=False):
                 self._renderable = Text(renderable)
         else:
             self._renderable = renderable
+        self._visual = None
         self.clear_cached_dimensions()
 
     def render(self) -> RenderResult:
@@ -91,14 +99,15 @@ class Static(Widget, inherit_bindings=False):
         Returns:
             A rich renderable.
         """
-        return self._renderable
+        return self.visual
 
-    def update(self, renderable: RenderableType = "") -> None:
+    def update(self, content: RenderableType | SupportsVisual = "") -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
-            renderable: A new rich renderable. Defaults to empty renderable;
+            content: New content.
         """
-        _check_renderable(renderable)
-        self.renderable = renderable
+
+        self._content = content
+        self._visual = visualize(self, content)
         self.refresh(layout=True)

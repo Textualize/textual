@@ -184,7 +184,7 @@ async def test_link_in_markdown_table_posts_message_when_clicked():
         messages = []
 
         def compose(self) -> ComposeResult:
-            yield Markdown(markdown_table)
+            yield Markdown(markdown_table, open_links=False)
 
         @on(Markdown.LinkClicked)
         def log_markdown_link_clicked(
@@ -205,7 +205,7 @@ async def test_markdown_quoting():
 
     class MyApp(App):
         def compose(self) -> ComposeResult:
-            self.md = Markdown(markdown="[tété](tété)")
+            self.md = Markdown(markdown="[tété](tété)", open_links=False)
             yield self.md
 
         def on_markdown_link_clicked(self, message: Markdown.LinkClicked):
@@ -213,5 +213,5 @@ async def test_markdown_quoting():
 
     app = MyApp()
     async with app.run_test() as pilot:
-        await pilot.click(Markdown, offset=(0, 0))
+        await pilot.click(Markdown, offset=(3, 0))
     assert links == ["tété"]

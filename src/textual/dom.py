@@ -40,9 +40,10 @@ from textual.css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from textual.css.errors import DeclarationError, StyleValueError
 from textual.css.match import match
 from textual.css.parse import parse_declarations, parse_selectors
-from textual.css.query import NoMatches, TooManyMatches
+from textual.css.query import InvalidQueryFormat, NoMatches, TooManyMatches
 from textual.css.styles import RenderStyles, Styles
 from textual.css.tokenize import IDENTIFIER
+from textual.css.tokenizer import TokenError
 from textual.message_pump import MessagePump
 from textual.reactive import Reactive, ReactiveError, _Mutated, _watch
 from textual.timer import Timer
@@ -237,7 +238,7 @@ class DOMNode(MessagePump):
 
         Example:
             ```python
-            self.set_reactive(App.dark_mode, True)
+            self.set_reactive(App.theme, "textual-light")
             ```
 
         Args:
@@ -247,15 +248,14 @@ class DOMNode(MessagePump):
         Raises:
             AttributeError: If the first argument is not a reactive.
         """
+        name = reactive.name
         if not isinstance(reactive, Reactive):
-            raise TypeError(
-                "A Reactive class is required; for example: MyApp.dark_mode"
-            )
-        if reactive.name not in self._reactives:
+            raise TypeError("A Reactive class is required; for example: MyApp.theme")
+        if name not in self._reactives:
             raise AttributeError(
-                "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
+                f"No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
             )
-        setattr(self, f"_reactive_{reactive.name}", value)
+        setattr(self, f"_reactive_{name}", value)
 
     def mutate_reactive(self, reactive: Reactive[ReactiveType]) -> None:
         """Force an update to a mutable reactive.
@@ -558,7 +558,9 @@ class DOMNode(MessagePump):
         Returns:
             A Styles object.
         """
+
         styles = RenderStyles(self, Styles(), Styles())
+
         for name in names:
             if name not in self._component_styles:
                 raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
@@ -1223,11 +1225,11 @@ class DOMNode(MessagePump):
 
         Example:
             ```python
-            def on_dark_change(old_value:bool, new_value:bool) -> None:
-                # Called when app.dark changes.
-                print("App.dark went from {old_value} to {new_value}")
+            def on_theme_change(old_value:str, new_value:str) -> None:
+                # Called when app.theme changes.
+                print(f"App.theme went from {old_value} to {new_value}")
 
-            self.watch(self.app, "dark", self.on_dark_change, init=False)
+            self.watch(self.app, "theme", self.on_theme_change, init=False)
             ```
 
         Args:
@@ -1441,7 +1443,12 @@ class DOMNode(MessagePump):
         else:
             query_selector = selector.__name__
 
-        selector_set = parse_selectors(query_selector)
+        try:
+            selector_set = parse_selectors(query_selector)
+        except TokenError:
+            raise InvalidQueryFormat(
+                f"Unable to parse {query_selector!r} as a query; check for syntax errors"
+            ) from None
 
         if all(selectors.is_simple for selectors in selector_set):
             cache_key = (self._nodes._updates, query_selector, expect_type)
@@ -1505,7 +1512,12 @@ class DOMNode(MessagePump):
         else:
             query_selector = selector.__name__
 
-        selector_set = parse_selectors(query_selector)
+        try:
+            selector_set = parse_selectors(query_selector)
+        except TokenError:
+            raise InvalidQueryFormat(
+                f"Unable to parse {query_selector!r} as a query; check for syntax errors"
+            ) from None
 
         if all(selectors.is_simple for selectors in selector_set):
             cache_key = (self._nodes._updates, query_selector, expect_type)
@@ -1581,9 +1593,9 @@ class DOMNode(MessagePump):
             Self.
         """
         if add:
-            self.add_class(*class_names, update=update)
+            self.add_class(*class_names, update=update and self.is_attached)
         else:
-            self.remove_class(*class_names, update=update)
+            self.remove_class(*class_names, update=update and self.is_attached)
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> Self:

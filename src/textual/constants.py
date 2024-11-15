@@ -27,24 +27,53 @@ def _get_environ_bool(name: str) -> bool:
     return has_environ
 
 
-def _get_environ_int(name: str, default: int) -> int:
+def _get_environ_int(name: str, default: int, minimum: int | None = None) -> int:
     """Retrieves an integer environment variable.
 
     Args:
         name: Name of environment variable.
         default: The value to use if the value is not set, or set to something other
             than a valid integer.
+        minimum: Optional minimum value.
 
     Returns:
         The integer associated with the environment variable if it's set to a valid int
             or the default value otherwise.
     """
     try:
-        return int(os.environ[name])
+        value = int(os.environ[name])
     except KeyError:
         return default
     except ValueError:
         return default
+    if minimum is not None:
+        return max(minimum, value)
+    return value
+
+
+def _get_environ_port(name: str, default: int) -> int:
+    """Get a port no. from an environment variable.
+
+    Note that there is no 'minimum' here, as ports are more like names than a scalar value.
+
+    Args:
+        name: Name of environment variable.
+        default: The value to use if the value is not set, or set to something other
+            than a valid port.
+
+    Returns:
+        An integer port number.
+
+    """
+    try:
+        value = int(os.environ[name])
+    except KeyError:
+        return default
+    except ValueError:
+        return default
+    if value < 0 or value > 65535:
+        return default
+    return value
 
 
 def _is_valid_animation_level(value: str) -> TypeGuard[AnimationLevel]:
@@ -89,11 +118,11 @@ LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 DEVTOOLS_HOST: Final[str] = get_environ("TEXTUAL_DEVTOOLS_HOST", "127.0.0.1")
 """The host where textual console is running."""
 
-DEVTOOLS_PORT: Final[int] = _get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
+DEVTOOLS_PORT: Final[int] = _get_environ_port("TEXTUAL_DEVTOOLS_PORT", 8081)
 """Constant with the port that the devtools will connect to."""
 
-SCREENSHOT_DELAY: Final[int] = _get_environ_int("TEXTUAL_SCREENSHOT", -1)
-"""Seconds delay before taking screenshot."""
+SCREENSHOT_DELAY: Final[int] = _get_environ_int("TEXTUAL_SCREENSHOT", -1, minimum=-1)
+"""Seconds delay before taking screenshot, -1 for no screenshot."""
 
 SCREENSHOT_LOCATION: Final[str | None] = get_environ("TEXTUAL_SCREENSHOT_LOCATION")
 """The location where screenshots should be written."""
@@ -107,7 +136,7 @@ PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
 SHOW_RETURN: Final[bool] = _get_environ_bool("TEXTUAL_SHOW_RETURN")
 """Write the return value on exit."""
 
-MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
+MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60, minimum=1)
 """Maximum frames per second for updates."""
 
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
@@ -116,10 +145,10 @@ COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
 TEXTUAL_ANIMATIONS: Final[AnimationLevel] = _get_textual_animations()
 """Determines whether animations run or not."""
 
-ESCAPE_DELAY: Final[float] = _get_environ_int("ESCDELAY", 100) / 1000.0
+ESCAPE_DELAY: Final[float] = _get_environ_int("ESCDELAY", 100, minimum=1) / 1000.0
 """The delay (in seconds) before reporting an escape key (not used if the extend key protocol is available)."""
 
-SLOW_THRESHOLD: int = _get_environ_int("TEXTUAL_SLOW_THRESHOLD", 500)
+SLOW_THRESHOLD: int = _get_environ_int("TEXTUAL_SLOW_THRESHOLD", 500, minimum=100)
 """The time threshold (in milliseconds) after which a warning is logged 
 if message processing exceeds this duration.
 """

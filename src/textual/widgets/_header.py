@@ -75,7 +75,7 @@ class HeaderClock(HeaderClockSpace):
     DEFAULT_CSS = """
     HeaderClock {
         background: $foreground-darken-1 5%;
-        color: $text;
+        color: $foreground;
         text-opacity: 85%;
         content-align: center middle;
     }
@@ -131,8 +131,8 @@ class Header(Widget):
     Header {
         dock: top;
         width: 100%;
-        background: $foreground 5%;
-        color: $text;
+        background: $panel;
+        color: $foreground;
         height: 1;
     }
     Header.-tall {

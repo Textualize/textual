@@ -14,6 +14,8 @@ from textual import events
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
+from rich.style import Style
+
 from textual.binding import Binding
 from textual.css._error_tools import friendly_list
 from textual.geometry import Size
@@ -48,40 +50,42 @@ class Button(Widget, can_focus=True):
         width: auto;
         min-width: 16;
         height: auto;
-        background: $panel;
-        color: $text;
+        color: $button-foreground;
+        background: $surface;
         border: none;
-        border-top: tall $panel-lighten-2;
-        border-bottom: tall $panel-darken-3;
+        border-top: tall $surface-lighten-1;
+        border-bottom: tall $surface-darken-1;
         text-align: center;
         content-align: center middle;
         text-style: bold;
 
-
+        &:disabled {
+            text-style: not bold;
+        }
+        
         &:focus {
-            text-style: bold reverse;
+            text-style: $button-focus-text-style;
+            background-tint: $foreground 5%;
         }
         &:hover {
-            border-top: tall $panel;
-            background: $panel-darken-2;
-            color: $text;
+            border-top: tall $surface;
+            background: $surface-darken-1;
         }
         &.-active {
-            background: $panel;
-            border-bottom: tall $panel-lighten-2;
-            border-top: tall $panel-darken-2;
+            background: $surface;
+            border-bottom: tall $surface-lighten-1;
+            border-top: tall $surface-darken-1;
             tint: $background 30%;
         }
 
         &.-primary {
+            color: $button-color-foreground;
             background: $primary;
-            color: $text;
             border-top: tall $primary-lighten-3;
             border-bottom: tall $primary-darken-3;
 
             &:hover {
                 background: $primary-darken-2;
-                color: $text;
                 border-top: tall $primary;
             }
 
@@ -93,14 +97,13 @@ class Button(Widget, can_focus=True):
         }
 
         &.-success {
+            color: $button-color-foreground;
             background: $success;
-            color: $text;
             border-top: tall $success-lighten-2;
             border-bottom: tall $success-darken-3;
 
             &:hover {
                 background: $success-darken-2;
-                color: $text;
                 border-top: tall $success;
             }
 
@@ -112,14 +115,13 @@ class Button(Widget, can_focus=True):
         }
 
         &.-warning{
+            color: $button-color-foreground;
             background: $warning;
-            color: $text;
             border-top: tall $warning-lighten-2;
             border-bottom: tall $warning-darken-3;
 
             &:hover {
                 background: $warning-darken-2;
-                color: $text;
                 border-top: tall $warning;
             }
 
@@ -131,14 +133,13 @@ class Button(Widget, can_focus=True):
         }
 
         &.-error {
+            color: $button-color-foreground;
             background: $error;
-            color: $text;
             border-top: tall $error-lighten-2;
             border-bottom: tall $error-darken-3;
 
             &:hover {
                 background: $error-darken-1;
-                color: $text;
                 border-top: tall $error;
             }
 
@@ -254,10 +255,12 @@ class Button(Widget, can_focus=True):
             1,
             1,
             self.rich_style,
-            self._get_rich_justify() or "center",
+            self._get_justify_method() or "center",
         )
 
-    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+    def post_render(
+        self, renderable: RenderableType, base_style: Style
+    ) -> ConsoleRenderable:
         return cast(ConsoleRenderable, renderable)
 
     async def _on_click(self, event: events.Click) -> None:

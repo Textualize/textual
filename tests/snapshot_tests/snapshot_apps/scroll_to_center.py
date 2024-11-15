@@ -13,7 +13,7 @@ class MyApp(App[None]):
         height: 21;
     }
     HorizontalScroll {
-        border: round $secondary;
+        border: round $accent;
         height: auto;
     }
     Label {

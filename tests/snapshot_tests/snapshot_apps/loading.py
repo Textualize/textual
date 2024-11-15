@@ -15,7 +15,7 @@ class SimpleLoadingIndicator(Widget):
         height: 100%;
         min-height: 1;
         content-align: center middle;
-        color: $accent;        
+        color: $secondary;        
     }
     SimpleLoadingIndicator.-textual-loading-indicator {
         layer: _loading;
