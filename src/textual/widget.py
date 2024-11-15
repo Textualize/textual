@@ -9,6 +9,7 @@ from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
+from time import monotonic
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
@@ -491,6 +492,8 @@ class Widget(DOMNode):
         """Used to cache :last-of-type pseudoclass state."""
         self._odd: tuple[int, bool] = (-1, False)
         """Used to cache :odd pseudoclass state."""
+        self._last_scroll_time = monotonic()
+        """Time of last scroll."""
 
     @property
     def is_mounted(self) -> bool:
@@ -2211,6 +2214,7 @@ class Widget(DOMNode):
     @property
     def is_scrolling(self) -> bool:
         """Is this widget currently scrolling?"""
+        current_time = monotonic()
         for node in self.ancestors:
             if not isinstance(node, Widget):
                 break
@@ -2218,6 +2222,9 @@ class Widget(DOMNode):
                 node.scroll_x != node.scroll_target_x
                 or node.scroll_y != node.scroll_target_y
             ):
+                return True
+            if current_time - node._last_scroll_time < 0.1:
+                # Scroll ended very recently
                 return True
         return False
 
@@ -2360,6 +2367,11 @@ class Widget(DOMNode):
         animator.force_stop_animation(self, "scroll_x")
         animator.force_stop_animation(self, "scroll_y")
 
+        def _animate_on_complete():
+            self._last_scroll_time = monotonic()
+            if on_complete is not None:
+                self.call_next(on_complete)
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -2378,7 +2390,7 @@ class Widget(DOMNode):
                         speed=speed,
                         duration=duration,
                         easing=easing,
-                        on_complete=on_complete,
+                        on_complete=_animate_on_complete,
                         level=level,
                     )
                     scrolled_x = True
@@ -2392,7 +2404,7 @@ class Widget(DOMNode):
                         speed=speed,
                         duration=duration,
                         easing=easing,
-                        on_complete=on_complete,
+                        on_complete=_animate_on_complete,
                         level=level,
                     )
                     scrolled_y = True
@@ -2409,6 +2421,7 @@ class Widget(DOMNode):
                 self.scroll_target_y = self.scroll_y = y
                 scrolled_y = scroll_y != self.scroll_y
 
+            self._last_scroll_time = monotonic()
             if on_complete is not None:
                 self.call_after_refresh(on_complete)
 
@@ -2892,6 +2905,7 @@ class Widget(DOMNode):
             force=force,
             on_complete=on_complete,
             level=level,
+            immediate=immediate,
         )
 
     def _scroll_up_for_pointer(

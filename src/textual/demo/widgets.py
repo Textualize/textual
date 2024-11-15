@@ -128,7 +128,6 @@ Hit `return` to toggle an checkbox / radio button, when focused.
 
     """
     RADIOSET_MD = """\
-
 ### Radio Sets
 
 A *radio set* is a list of mutually exclusive options.
@@ -408,6 +407,108 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
                 rich_log.write(traceback, animate=True)
 
 
+class Markdowns(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    DEFAULT_CSS = """
+    Markdowns {
+        #container {
+            border: tall transparent;       
+            height: 16;
+            padding: 0 1;
+            &:focus { border: tall $border; }
+            &.-maximized { height: 1fr; }
+        }
+        #movies {
+            padding: 0 1;
+            MarkdownBlock { padding: 0 1 0 0; }                                   
+        }
+    }
+    """
+    MD_MD = """\
+## Markdown
+
+Display Markdown in your apps with the Markdown widget.
+Most of the text on this page is Markdown.
+
+Here's an AI generated Markdown document:
+
+"""
+    MOVIES_MD = """\
+# The Golden Age of Action Cinema: The 1980s
+
+The 1980s marked a transformative era in action cinema, defined by **excessive machismo**, explosive practical effects, and unforgettable one-liners. This decade gave birth to many of Hollywood's most enduring action franchises, from _Die Hard_ to _Rambo_, setting templates that filmmakers still reference today.
+
+## Technical Innovation
+
+Technologically, the 80s represented a sweet spot between practical effects and early CGI. Filmmakers relied heavily on:
+
+* Practical stunts
+* Pyrotechnics
+* Hand-built models
+
+These elements lent the films a tangible quality that many argue remains superior to modern digital effects.
+
+## The Action Hero Archetype
+
+The quintessential action hero emerged during this period, with key characteristics:
+
+1. Impressive physique
+2. Military background
+3. Anti-authority attitude
+4. Memorable catchphrases
+
+> "I'll be back" - The Terminator (1984)
+
+Heroes like Arnold Schwarzenegger and Sylvester Stallone became global icons. However, the decade also saw more nuanced characters emerge, like Bruce Willis's everyman John McClane in *Die Hard*, and powerful female protagonists like Sigourney Weaver's Ellen Ripley in *Aliens*.
+
+### Political Influence
+
+Cold War politics heavily influenced these films' narratives, with many plots featuring American heroes facing off against Soviet adversaries. This political subtext, combined with themes of individual triumph over bureaucratic systems, perfectly captured the era's zeitgeist.
+
+---
+
+While often dismissed as simple entertainment, 80s action films left an indelible mark on cinema history, influencing everything from filming techniques to narrative structures, and continuing to inspire filmmakers and delight audiences decades later.
+
+"""
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.MD_MD)
+        with containers.VerticalScroll(
+            id="container", can_focus=True, can_maximize=True
+        ):
+            yield Markdown(self.MOVIES_MD, id="movies")
+
+
+class Selects(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    SELECTS_MD = """\
+## Selects
+
+Selects (AKA *Combo boxes*), present a list of options in a menu that may be expanded by the user.
+"""
+    HEROS = [
+        "Arnold Schwarzenegger",
+        "Brigitte Nielsen",
+        "Bruce Willis",
+        "Carl Weathers",
+        "Chuck Norris",
+        "Dolph Lundgren",
+        "Grace Jones",
+        "Harrison Ford",
+        "Jean-Claude Van Damme",
+        "Kurt Russell",
+        "Linda Hamilton",
+        "Mel Gibson",
+        "Michelle Yeoh",
+        "Sigourney Weaver",
+        "Sylvester Stallone",
+    ]
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.SELECTS_MD)
+        yield Select.from_values(self.HEROS, prompt="80s action hero")
+
+
 class Sparklines(containers.VerticalGroup):
     """Demonstrates sparklines."""
 
@@ -514,6 +615,10 @@ Switches {
 
     def on_switch_changed(self, event: Switch.Changed) -> None:
         # Don't issue more Changed events
+        if not event.value:
+            self.query_one("#textual-dark", Switch).value = True
+            return
+
         with self.prevent(Switch.Changed):
             # Reset all other switches
             for switch in self.query("Switch").results(Switch):
@@ -578,10 +683,28 @@ from textual import App, ComposeResult
             prompt="Highlight language",
         )
 
-        yield TextArea(self.DEFAULT_TEXT, show_line_numbers=True)
+        yield TextArea(self.DEFAULT_TEXT, show_line_numbers=True, language=None)
 
     def on_select_changed(self, event: Select.Changed) -> None:
-        self.query_one(TextArea).language = (event.value or "").lower()
+        self.query_one(TextArea).language = (
+            event.value.lower() if isinstance(event.value, str) else None
+        )
+
+
+class YourWidgets(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    YOUR_MD = """\
+## Your widget here
+
+The Textual API allows you to [build custom re-usable widgets](https://textual.textualize.io/guide/widgets/#custom-widgets) and share them across projects.
+Custom widgets can be themed, just like the builtin widget library.
+
+Combine existing widgets to add new functionality, or use the powerful [Line API](https://textual.textualize.io/guide/widgets/#line-api) for unique creations.
+
+"""
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.YOUR_MD)
 
 
 class WidgetsScreen(PageScreen):
@@ -607,7 +730,7 @@ class WidgetsScreen(PageScreen):
     BINDINGS = [Binding("escape", "blur", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
-        with lazy.Reveal(containers.VerticalScroll(can_focus=False)):
+        with lazy.Reveal(containers.VerticalScroll(can_focus=True)):
             yield Markdown(WIDGETS_MD, classes="column")
             yield Buttons()
             yield Checkboxes()
@@ -615,7 +738,10 @@ class WidgetsScreen(PageScreen):
             yield Inputs()
             yield ListViews()
             yield Logs()
+            yield Markdowns()
+            yield Selects()
             yield Sparklines()
             yield Switches()
             yield TextAreas()
+            yield YourWidgets()
         yield Footer()
