@@ -115,9 +115,15 @@ class Reveal(Widget):
             if not widgets:
                 return
             widget = widgets.pop(0)
-            await parent.mount(widget)
+            try:
+                await parent.mount(widget)
+            except Exception:
+                # I think this can occur if the parent is removed before all children are added
+                # Only noticed this on shutdown
+                return
+
             if widgets:
-                parent.call_next(check_children)
+                parent.set_timer(0.02, check_children)
 
         parent.call_next(check_children)
 
