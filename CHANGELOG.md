@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
+- Fixed `TextArea` mouse selection with tab characters https://github.com/Textualize/textual/issues/5212
 
 ### Added
 

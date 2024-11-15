@@ -334,3 +334,22 @@ async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
 
         assert text_area.cursor_screen_offset == (5, 1)
         assert app.cursor_position == (5, 1)
+
+
+async def test_mouse_selection_with_tab_characters():
+    """Regression test for https://github.com/Textualize/textual/issues/5212"""
+
+    class TextAreaTabsApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(soft_wrap=False, text="\t\t")
+
+    app = TextAreaTabsApp()
+    async with app.run_test() as pilot:
+        text_area = pilot.app.query_one(TextArea)
+        expected_selection = Selection((0, 0), (0, 0))
+        assert text_area.selection == expected_selection
+
+        await pilot.mouse_down(text_area, offset=(2, 1))
+        await pilot.hover(text_area, offset=(3, 1))
+
+        assert text_area.selection == expected_selection

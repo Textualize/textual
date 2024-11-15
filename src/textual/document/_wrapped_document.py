@@ -295,7 +295,9 @@ class WrappedDocument:
         if not self._width:
             # No wrapping, so we directly map offset to location and clamp.
             line_index = min(y, len(self._wrap_offsets) - 1)
-            column_index = min(x, len(self.document.get_line(line_index)))
+            column_index = cell_width_to_column_index(
+                self.document.get_line(line_index), x, self._tab_width
+            )
             return line_index, column_index
 
         # Find the line corresponding to the given y offset in the wrapped document.
