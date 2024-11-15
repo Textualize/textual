@@ -11,7 +11,7 @@ from rich.traceback import Traceback
 from textual import containers, events, lazy, on
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.demo.data import COUNTRIES, MOVIES, MOVIES_TREE
+from textual.demo.data import COUNTRIES, DUNE_BIOS, MOVIES, MOVIES_TREE
 from textual.demo.page import PageScreen
 from textual.reactive import reactive, var
 from textual.suggester import SuggestFromList
@@ -35,6 +35,7 @@ from textual.widgets import (
     RichLog,
     Select,
     Sparkline,
+    Static,
     Switch,
     TabbedContent,
     TextArea,
@@ -636,6 +637,29 @@ Switches {
         self.set_timer(0.3, switch_theme)
 
 
+class TabsDemo(containers.VerticalGroup):
+    DEFAULT_CLASSES = "column"
+    TABS_MD = """\
+## Tabs
+
+A navigable list of section headers.
+
+Typically used with `ContentTabs`, to display additional content associate with each tab.
+
+Use the cursor keys to navigate.
+
+"""
+    DEFAULT_CSS = """
+    .bio { padding: 1 2; background: $boost; color: $foreground-muted; }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.TABS_MD)
+        with TabbedContent(*[bio["name"] for bio in DUNE_BIOS]):
+            for bio in DUNE_BIOS:
+                yield Static(bio["description"], classes="bio")
+
+
 class Trees(containers.VerticalGroup):
     DEFAULT_CLASSES = "column"
     TREES_MD = """\
@@ -778,6 +802,7 @@ class WidgetsScreen(PageScreen):
             yield Selects()
             yield Sparklines()
             yield Switches()
+            yield TabsDemo()
             yield TextAreas()
             yield Trees()
             yield YourWidgets()

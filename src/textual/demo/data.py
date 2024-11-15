@@ -413,3 +413,46 @@ MOVIES_JSON = """{
 }"""
 
 MOVIES_TREE = json.loads(MOVIES_JSON)
+
+DUNE_BIOS = [
+    {
+        "name": "Paul Atreides",
+        "description": "Heir to House Atreides who becomes the Fremen messiah Muad'Dib. Born with extraordinary mental abilities due to Bene Gesserit breeding program.",
+    },
+    {
+        "name": "Lady Jessica",
+        "description": "Bene Gesserit concubine to Duke Leto and mother of Paul. Defied her order by bearing a son instead of a daughter, disrupting centuries of careful breeding.",
+    },
+    {
+        "name": "Baron Vladimir Harkonnen",
+        "description": "Cruel and corpulent leader of House Harkonnen, sworn enemy of House Atreides. Known for his cunning and brutality in pursuing power.",
+    },
+    {
+        "name": "Leto Atreides",
+        "description": "Noble Duke and father of Paul, known for his honor and just rule. Accepts governorship of Arrakis despite knowing it's likely a trap.",
+    },
+    {
+        "name": "Stilgar",
+        "description": "Leader of the Fremen Sietch Tabr, becomes a loyal supporter of Paul. Skilled warrior who helps train Paul in Fremen ways.",
+    },
+    {
+        "name": "Chani",
+        "description": "Fremen warrior and daughter of planetologist Liet-Kynes. Becomes Paul's concubine and true love after appearing in his prescient visions.",
+    },
+    {
+        "name": "Thufir Hawat",
+        "description": "Mentat and Master of Assassins for House Atreides. Serves three generations of Atreides with his superhuman computational skills.",
+    },
+    {
+        "name": "Duncan Idaho",
+        "description": "Swordmaster of the Ginaz, loyal to House Atreides. Known for his exceptional fighting skills and sacrifice to save Paul and Jessica.",
+    },
+    {
+        "name": "Gurney Halleck",
+        "description": "Warrior-troubadour of House Atreides, skilled with sword and baliset. Serves as Paul's weapons teacher and loyal friend.",
+    },
+    {
+        "name": "Dr. Yueh",
+        "description": "Suk doctor conditioned against taking human life, but betrays House Atreides after the Harkonnens torture his wife. Imperial Conditioning broken.",
+    },
+]
