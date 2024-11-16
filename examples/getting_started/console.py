@@ -10,7 +10,6 @@ from textual.widgets import Static
 
 class ConsoleApp(App):
     def compose(self):
-        self.dark = True
         yield Static(DevConsoleHeader())
 
 

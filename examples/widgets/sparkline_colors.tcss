@@ -39,10 +39,10 @@ Sparkline {
 }
 
 #sxt > .sparkline--max-color {
-    color: $accent 30%;
+    color: $primary 30%;
 }
 #sxt > .sparkline--min-color {
-    color: $accent;
+    color: $primary;
 }
 
 #svt > .sparkline--max-color {

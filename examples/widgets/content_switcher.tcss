@@ -9,19 +9,14 @@ Screen {
 }
 
 ContentSwitcher {
-    background: $panel;
     border: round $primary;
     width: 90%;
     height: 1fr;
 }
 
-DataTable {
-    background: $panel;
-}
-
 MarkdownH2 {
-    background: $primary;
+    background: $panel;
     color: yellow;
     border: none;
-    padding: 0;
+    padding: 0 1;
 }

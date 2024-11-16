@@ -834,7 +834,7 @@ window.onload = async (event) => {
         
   
   <span class="md-ellipsis">
-    Design System
+    Themes
   </span>
   
 
@@ -6561,6 +6561,29 @@ window.onload = async (event) => {
 
 
 
+<h1 id="textual.events.Resize.pixel_size" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">pixel_size</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.events.Resize.pixel_size" class="headerlink" title="Permanent link">&para;</a></h1>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">pixel_size</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Resize.pixel_size" href="../../api/events/#textual.events.Resize.pixel_size">pixel_size</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Size of terminal window in pixels if known, or <code>None</code> if not known.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h1 id="textual.events.Resize.size" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">size</span>
 
@@ -6604,6 +6627,76 @@ window.onload = async (event) => {
 </div>
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h1 id="textual.events.Resize.from_dimensions" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">from_dimensions</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#textual.events.Resize.from_dimensions" class="headerlink" title="Permanent link">&para;</a></h1>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">from_dimensions</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="../../api/events/#textual.events.Resize.from_dimensions(cells)">cells</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../api/events/#textual.events.Resize.from_dimensions(pixels)">pixels</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Construct from basic dimensions.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.events.Resize.from_dimensions(cells)" class="doc doc-heading doc-heading-parameter">                  <code>cells</code>
+<a href="#textual.events.Resize.from_dimensions(cells)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>tuple of (<width>, <height>) in cells.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.events.Resize.from_dimensions(pixels)" class="doc doc-heading doc-heading-parameter">                  <code>pixels</code>
+<a href="#textual.events.Resize.from_dimensions(pixels)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>tuple of (<width>, <height>) in pixels if known, or <code>None</code> if not known.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
 
 
 

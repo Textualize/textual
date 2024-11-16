@@ -834,7 +834,7 @@ window.onload = async (event) => {
         
   
   <span class="md-ellipsis">
-    Design System
+    Themes
   </span>
   
 
@@ -11950,7 +11950,7 @@ iterable of class names.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">set_reactive</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">dark_mode</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">set_reactive</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">theme</span><span class="p">,</span> <span class="s2">&quot;textual-light&quot;</span><span class="p">)</span>
 </code></pre></div>
 </details>
 
@@ -12424,11 +12424,11 @@ or <code>None</code> to sort without a key function.</p>
 
 <details class="example" open>
   <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_dark_change</span><span class="p">(</span><span class="n">old_value</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span><span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Called when app.dark changes.</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;App.dark went from </span><span class="si">{old_value}</span><span class="s2"> to </span><span class="si">{new_value}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_theme_change</span><span class="p">(</span><span class="n">old_value</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Called when app.theme changes.</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;App.theme went from </span><span class="si">{</span><span class="n">old_value</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">new_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="bp">self</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_dark_change</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="bp">self</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;theme&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_theme_change</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 </details>
 

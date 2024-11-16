@@ -834,7 +834,7 @@ window.onload = async (event) => {
         
   
   <span class="md-ellipsis">
-    Design System
+    Themes
   </span>
   
 
@@ -5389,6 +5389,15 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#textual.lazy.Reveal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Reveal
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -6514,6 +6523,15 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#textual.lazy.Reveal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Reveal
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -6627,6 +6645,72 @@ in queries for a brief interval until they are mounted. Your code should take th
           </tr>
       </tbody>
     </table>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.lazy.Reveal" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Reveal</span>
+
+
+<a href="#textual.lazy.Reveal" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Reveal</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code></p>
+
+
+
+        <p>Similar to <a class="autorefs autorefs-internal" href="#textual.lazy.Lazy">Lazy</a>, but mounts children sequentially.</p>
+<p>This is useful when you have so many child widgets that there is a noticeable delay before
+you see anything. By mounting the children over several frames, the user will feel that
+something is happening.</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <p>```python
+def compose(self) -&gt; ComposeResult:
+    with lazy.Reveal(containers.VerticalScroll(can_focus=False)):
+        yield Markdown(WIDGETS_MD, classes="column")
+        yield Buttons()
+        yield Checkboxes()
+        yield Datatables()
+        yield Inputs()
+        yield ListViews()
+        yield Logs()
+        yield Sparklines()
+    yield Footer()</p>
+</details>        <p>```</p>
 
 
 

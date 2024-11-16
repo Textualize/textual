@@ -834,7 +834,7 @@ window.onload = async (event) => {
         
   
   <span class="md-ellipsis">
-    Design System
+    Themes
   </span>
   
 
@@ -5174,6 +5174,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.constants.DEFAULT_THEME" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DEFAULT_THEME
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.constants.DEVTOOLS_HOST" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DEVTOOLS_HOST
@@ -6629,6 +6638,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.constants.DEFAULT_THEME" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DEFAULT_THEME
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.constants.DEVTOOLS_HOST" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DEVTOOLS_HOST
@@ -6848,6 +6866,30 @@ window.onload = async (event) => {
 
 
 
+<h2 id="textual.constants.DEFAULT_THEME" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">DEFAULT_THEME</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.constants.DEFAULT_THEME" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_THEME</span> <span class="o">=</span> <span class="n"><span title="textual.constants.get_environ">get_environ</span></span><span class="p">(</span><span class="s2">&quot;TEXTUAL_THEME&quot;</span><span class="p">,</span> <span class="s2">&quot;textual-dark&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Textual theme to make default. More than one theme may be specified in a comma separated list.
+Textual will use the first theme that exists.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h2 id="textual.constants.DEVTOOLS_HOST" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">DEVTOOLS_HOST</span>
 
@@ -6882,7 +6924,7 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.constants.DEVTOOLS_PORT" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEVTOOLS_PORT</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEVTOOLS_PORT</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_port">_get_environ_port</span></span><span class="p">(</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;TEXTUAL_DEVTOOLS_PORT&quot;</span><span class="p">,</span> <span class="mi">8081</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
@@ -6930,7 +6972,9 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.constants.ESCAPE_DELAY" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ESCAPE_DELAY</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span><span class="s1">&#39;ESCDELAY&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ESCAPE_DELAY</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span><span class="s2">&quot;ESCDELAY&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n"><span title="textual.constants._get_environ_int(minimum)">minimum</span></span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6999,7 +7043,7 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.constants.MAX_FPS" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MAX_FPS</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span><span class="s1">&#39;TEXTUAL_FPS&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MAX_FPS</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span><span class="s1">&#39;TEXTUAL_FPS&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="n"><span title="textual.constants._get_environ_int(minimum)">minimum</span></span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7046,13 +7090,13 @@ window.onload = async (event) => {
 
 <a href="#textual.constants.SCREENSHOT_DELAY" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SCREENSHOT_DELAY</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;TEXTUAL_SCREENSHOT&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;TEXTUAL_SCREENSHOT&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n"><span title="textual.constants._get_environ_int(minimum)">minimum</span></span><span class="o">=-</span><span class="mi">1</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Seconds delay before taking screenshot.</p>
+        <p>Seconds delay before taking screenshot, -1 for no screenshot.</p>
     </div>
 
 </div>
@@ -7144,7 +7188,7 @@ window.onload = async (event) => {
 
 <a href="#textual.constants.SLOW_THRESHOLD" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SLOW_THRESHOLD</span> <span class="o">=</span> <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;TEXTUAL_SLOW_THRESHOLD&quot;</span><span class="p">,</span> <span class="mi">500</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;TEXTUAL_SLOW_THRESHOLD&quot;</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="n"><span title="textual.constants._get_environ_int(minimum)">minimum</span></span><span class="o">=</span><span class="mi">100</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
