@@ -414,7 +414,8 @@ class Markdowns(containers.VerticalGroup):
     DEFAULT_CSS = """
     Markdowns {
         #container {
-            border: tall transparent;       
+            background: $boost;
+            border: tall transparent;   
             height: 16;
             padding: 0 1;
             &:focus { border: tall $border; }
@@ -422,7 +423,7 @@ class Markdowns(containers.VerticalGroup):
         }
         #movies {
             padding: 0 1;
-            MarkdownBlock { padding: 0 1 0 0; }                                   
+            MarkdownBlock { padding: 0 1 0 0; }              
         }
     }
     """
@@ -525,7 +526,7 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
     DEFAULT_CSS = """
     Sparklines {
         Sparkline {
-            width: 1fr;
+            width: 1fr;          
             margin: 1;
             &#first > .sparkline--min-color { color: $success; }
             &#first > .sparkline--max-color { color: $warning; }                
@@ -775,7 +776,7 @@ class WidgetsScreen(PageScreen):
     WidgetsScreen { 
         align-horizontal: center;
         Markdown { background: transparent; }
-        #container {
+        & > VerticalScroll {
             scrollbar-gutter: stable;
             & > * {                          
                 &:even { background: $boost; }
@@ -788,7 +789,7 @@ class WidgetsScreen(PageScreen):
     BINDINGS = [Binding("escape", "blur", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
-        with lazy.Reveal(containers.VerticalScroll(id="container", can_focus=True)):
+        with lazy.Reveal(containers.VerticalScroll(can_focus=True)):
             yield Markdown(WIDGETS_MD, classes="column")
             yield Buttons()
             yield Checkboxes()
