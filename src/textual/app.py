@@ -530,6 +530,9 @@ class App(Generic[ReturnType], DOMNode):
         
         This excludes the built-in themes."""
 
+        for theme in BUILTIN_THEMES.values():
+            self.register_theme(theme)
+
         ansi_theme = (
             self.ansi_theme_dark if self.current_theme.dark else self.ansi_theme_light
         )
@@ -1228,7 +1231,7 @@ class App(Generic[ReturnType], DOMNode):
 
         A dictionary mapping theme names to Theme instances.
         """
-        return {**BUILTIN_THEMES, **self._registered_themes}
+        return {**self._registered_themes}
 
     @property
     def current_theme(self) -> Theme:
