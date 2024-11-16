@@ -1253,11 +1253,18 @@ class Widget(DOMNode):
             parent, *widgets, before=insert_before, after=insert_after
         )
 
-        def update_styles(children: Iterable[DOMNode]) -> None:
+        def update_styles(children: list[DOMNode]) -> None:
             """Update order related CSS"""
-            for child in children:
-                if child._has_order_style:
-                    child._update_styles()
+            if before is not None or after is not None:
+                # If the new children aren't at the end.
+                # we need to update both odd/even and first-of-type/last-of-type
+                for child in children:
+                    if child._has_order_style or child._has_odd_or_even:
+                        child._update_styles()
+            else:
+                for child in children:
+                    if child._has_order_style:
+                        child._update_styles()
 
         self.call_later(update_styles, list(self.children))
         await_mount = AwaitMount(self, mounted)

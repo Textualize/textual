@@ -775,10 +775,9 @@ class WidgetsScreen(PageScreen):
     WidgetsScreen { 
         align-horizontal: center;
         Markdown { background: transparent; }
-        & > VerticalScroll {
+        #container {
             scrollbar-gutter: stable;
-            &> * {            
-              
+            & > * {                          
                 &:even { background: $boost; }
                 padding-bottom: 1;
             }
@@ -789,7 +788,7 @@ class WidgetsScreen(PageScreen):
     BINDINGS = [Binding("escape", "blur", "Unfocus any focused widget", show=False)]
 
     def compose(self) -> ComposeResult:
-        with lazy.Reveal(containers.VerticalScroll(can_focus=True)):
+        with lazy.Reveal(containers.VerticalScroll(id="container", can_focus=True)):
             yield Markdown(WIDGETS_MD, classes="column")
             yield Buttons()
             yield Checkboxes()
