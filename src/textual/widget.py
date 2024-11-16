@@ -2374,7 +2374,8 @@ class Widget(DOMNode):
         animator.force_stop_animation(self, "scroll_x")
         animator.force_stop_animation(self, "scroll_y")
 
-        def _animate_on_complete():
+        def _animate_on_complete() -> None:
+            """set last scroll time, and invoke callback."""
             self._last_scroll_time = monotonic()
             if on_complete is not None:
                 self.call_next(on_complete)
