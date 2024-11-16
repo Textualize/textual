@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `can_focus` and `can_focus_children` parameters to scrollable container types. https://github.com/Textualize/textual/pull/5226
 - Added `textual.lazy.Reveal` https://github.com/Textualize/textual/pull/5226
 - Added `Screen.action_blur` https://github.com/Textualize/textual/pull/5226
-- `Click` events can now be used with the on decorator to match the initially clicked widget https://github.com/Textualize/textual/pull/5238
+- `Click` events can now be used with the on decorator to match the originally clicked widget https://github.com/Textualize/textual/pull/5238
 - Breaking change: Removed `App.dark` reactive attribute https://github.com/Textualize/textual/pull/5087
 - Breaking change: To improve consistency, several changes have been made to default widget CSS and the CSS variables which ship with Textual. On upgrading, your app will likely look different. All of these changes can be overidden with your own CSS. https://github.com/Textualize/textual/pull/5087
 
