@@ -327,6 +327,7 @@ class MouseEvent(InputEvent, bubble=True):
     - [ ] Verbose
 
     Args:
+        widget: The widget under the mouse.
         x: The relative x coordinate.
         y: The relative y coordinate.
         delta_x: Change in x since the last message.
@@ -341,6 +342,7 @@ class MouseEvent(InputEvent, bubble=True):
     """
 
     __slots__ = [
+        "widget",
         "x",
         "y",
         "delta_x",
@@ -356,6 +358,7 @@ class MouseEvent(InputEvent, bubble=True):
 
     def __init__(
         self,
+        widget: Widget | None,
         x: int,
         y: int,
         delta_x: int,
@@ -369,6 +372,8 @@ class MouseEvent(InputEvent, bubble=True):
         style: Style | None = None,
     ) -> None:
         super().__init__()
+        self.widget: Widget | None = widget
+        """The widget under the mouse at the time of a click."""
         self.x = x
         """The relative x coordinate."""
         self.y = y
@@ -392,8 +397,11 @@ class MouseEvent(InputEvent, bubble=True):
         self._style = style or Style()
 
     @classmethod
-    def from_event(cls: Type[MouseEventT], event: MouseEvent) -> MouseEventT:
+    def from_event(
+        cls: Type[MouseEventT], widget: Widget, event: MouseEvent
+    ) -> MouseEventT:
         new_event = cls(
+            widget,
             event.x,
             event.y,
             event.delta_x,
@@ -409,6 +417,7 @@ class MouseEvent(InputEvent, bubble=True):
         return new_event
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield self.widget
         yield "x", self.x
         yield "y", self.y
         yield "delta_x", self.delta_x, 0
@@ -421,6 +430,10 @@ class MouseEvent(InputEvent, bubble=True):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
+
+    @property
+    def control(self) -> Widget | None:
+        return self.widget
 
     @property
     def offset(self) -> Offset:
@@ -478,6 +491,7 @@ class MouseEvent(InputEvent, bubble=True):
 
     def _apply_offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
+            self.widget,
             x=self.x + x,
             y=self.y + y,
             delta_x=self.delta_x,

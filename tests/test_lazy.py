@@ -39,10 +39,10 @@ async def test_lazy_reveal():
     async with app.run_test() as pilot:
         # No #foo on initial mount
 
-        # Only first child should be visible initially
+        # Only first child should be available initially
         assert app.query_one("#foo").display
-        assert not app.query_one("#bar").display
-        assert not app.query_one("#baz").display
+        # Next two aren't mounted yet
+        assert not app.query("#baz")
 
         # All children should be visible after a pause
         await pilot.pause()

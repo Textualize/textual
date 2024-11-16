@@ -25,6 +25,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         index: The index in the list that's currently highlighted.
     """
 
+    ALLOW_MAXIMIZE = True
+
     DEFAULT_CSS = """
     ListView {
         background: $surface;
@@ -37,19 +39,23 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             height: auto;
             overflow: hidden hidden;
             width: 1fr;
+
+            &.-hovered {
+                background: $block-hover-background;
+            }
             
-            &.--highlight > Widget {
+            &.-highlight {
                 color: $block-cursor-blurred-foreground;
                 background: $block-cursor-blurred-background;
                 text-style: $block-cursor-blurred-text-style;
             }
         }
 
-        &:focus > ListItem.--highlight > Widget {
+        &:focus > ListItem.-highlight > Widget {
             width: 1fr;
             color: $block-cursor-foreground;
             background: $block-cursor-background;
-            text-style: $block-cursor-text-style;
+            text-style: $block-cursor-text-style;            
         }
     }
     """

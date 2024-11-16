@@ -462,9 +462,6 @@ class App(Generic[ReturnType], DOMNode):
     SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
     """Class to apply to suspended screens, or empty string for no class."""
 
-    HOVER_EFFECTS_SCROLL_PAUSE: ClassVar[float] = 0.2
-    """Seconds to pause hover effects for when scrolling."""
-
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
@@ -487,7 +484,7 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
-    theme: Reactive[str] = Reactive("textual-dark")
+    theme: Reactive[str] = Reactive(constants.DEFAULT_THEME)
     """The name of the currently active theme."""
 
     ansi_theme_dark = Reactive(MONOKAI, init=False)
@@ -759,9 +756,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self._previous_inline_height: int | None = None
         """Size of previous inline update."""
-
-        self._paused_hover_effects: bool = False
-        """Have the hover effects been paused?"""
 
         self._hover_effects_timer: Timer | None = None
 
@@ -1195,12 +1189,17 @@ class App(Generic[ReturnType], DOMNode):
         """Get a theme by name.
 
         Args:
-            theme_name: The name of the theme to get.
+            theme_name: The name of the theme to get. May also be a comma
+                separated list of names, to pick the first available theme.
 
         Returns:
             A Theme instance and None if the theme doesn't exist.
         """
-        return self.available_themes[theme_name]
+        theme_names = [token.strip() for token in theme_name.split(",")]
+        for theme_name in theme_names:
+            if theme_name in self.available_themes:
+                return self.available_themes[theme_name]
+        return None
 
     def register_theme(self, theme: Theme) -> None:
         """Register a theme with the app.
@@ -1236,6 +1235,8 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def current_theme(self) -> Theme:
         theme = self.get_theme(self.theme)
+        if theme is None:
+            theme = self.get_theme("textual-dark")
         assert theme is not None  # validated by _validate_theme
         return theme
 
@@ -2817,43 +2818,12 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.set_focus(widget, scroll_visible)
 
-    def _pause_hover_effects(self):
-        """Pause any hover effects based on Enter and Leave events for 200ms."""
-        if not self.HOVER_EFFECTS_SCROLL_PAUSE or self.is_headless:
-            return
-        self._paused_hover_effects = True
-        if self._hover_effects_timer is None:
-            self._hover_effects_timer = self.set_interval(
-                self.HOVER_EFFECTS_SCROLL_PAUSE, self._resume_hover_effects
-            )
-        else:
-            self._hover_effects_timer.reset()
-            self._hover_effects_timer.resume()
-
-    def _resume_hover_effects(self):
-        """Resume sending Enter and Leave for hover effects."""
-        if not self.HOVER_EFFECTS_SCROLL_PAUSE or self.is_headless:
-            return
-        if self._paused_hover_effects:
-            self._paused_hover_effects = False
-            if self._hover_effects_timer is not None:
-                self._hover_effects_timer.pause()
-            try:
-                widget, _ = self.screen.get_widget_at(*self.mouse_position)
-            except NoWidget:
-                pass
-            else:
-                if widget is not self.mouse_over:
-                    self._set_mouse_over(widget)
-
     def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
 
         Args:
             widget: Widget under mouse, or None for no widgets.
         """
-        if self._paused_hover_effects:
-            return
         if widget is None:
             if self.mouse_over is not None:
                 try:
@@ -3712,7 +3682,9 @@ class App(Generic[ReturnType], DOMNode):
                             self.get_widget_at(event.x, event.y)[0]
                             is self._mouse_down_widget
                         ):
-                            click_event = events.Click.from_event(event)
+                            click_event = events.Click.from_event(
+                                self._mouse_down_widget, event
+                            )
                             self.screen._forward_event(click_event)
                     except NoWidget:
                         pass

@@ -87,8 +87,7 @@ class Sparkline(Widget):
 
     def render(self) -> RenderResult:
         """Renders the sparkline when there is data available."""
-        if not self.data:
-            return "<empty sparkline>"
+        data = self.data or []
         _, base = self.background_colors
         min_color = base + (
             self.get_component_styles("sparkline--min-color").color
@@ -101,7 +100,7 @@ class Sparkline(Widget):
             else self.max_color
         )
         return SparklineRenderable(
-            self.data,
+            data,
             width=self.size.width,
             min_color=min_color.rich_color,
             max_color=max_color.rich_color,

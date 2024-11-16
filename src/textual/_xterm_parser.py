@@ -93,6 +93,7 @@ class XTermParser(Parser[Message]):
                     event_class = events.MouseDown if state == "M" else events.MouseUp
 
             event = event_class(
+                None,
                 x,
                 y,
                 delta_x,

@@ -6,6 +6,7 @@ from typing import Callable, Generic, Iterable, Sequence, TypeVar
 
 from rich.color import Color
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 
@@ -94,6 +95,11 @@ class Sparkline(Generic[T]):
             bars_rendered += 1
             bucket_index += step
             yield Segment(self.BARS[bar_index], Style.from_color(bar_color))
+
+    def __rich_measure__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> Measurement:
+        return Measurement(self.width or options.max_width, 1)
 
 
 if __name__ == "__main__":
