@@ -57,7 +57,7 @@ class DemoApp(App):
             tooltip="Save an SVG 'screenshot' of the current screen",
         ),
         Binding(
-            "ctrl+m",
+            "ctrl+a",
             "app.maximize",
             "Maximize",
             tooltip="Maximized the focused widget (if possible)",

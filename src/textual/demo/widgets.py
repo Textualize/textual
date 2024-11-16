@@ -537,7 +537,7 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
         VerticalScroll {
             height: auto;
             border: heavy transparent;
-            &:focus { border: heavy $accent; }
+            &:focus { border: heavy $border; }
         }
     }
 
@@ -686,13 +686,11 @@ There is also the Tree widget's cousin, DirectoryTree, to navigate folders and f
     def compose(self) -> ComposeResult:
         yield Markdown(self.TREES_MD)
         with containers.VerticalGroup():
-            yield Tree("80s movies")
-
-    def on_mount(self) -> None:
-        tree = self.query_one(Tree)
-        tree.show_root = False
-        tree.add_json(MOVIES_TREE)
-        tree.root.expand()
+            tree = Tree("80s movies")
+            tree.show_root = False
+            tree.add_json(MOVIES_TREE)
+            tree.root.expand()
+            yield tree
 
 
 class TextAreas(containers.VerticalGroup):
@@ -754,7 +752,7 @@ from textual import App, ComposeResult
 class YourWidgets(containers.VerticalGroup):
     DEFAULT_CLASSES = "column"
     YOUR_MD = """\
-## Your widget here
+## Your Widget Here!
 
 The Textual API allows you to [build custom re-usable widgets](https://textual.textualize.io/guide/widgets/#custom-widgets) and share them across projects.
 Custom widgets can be themed, just like the builtin widget library.
@@ -762,6 +760,9 @@ Custom widgets can be themed, just like the builtin widget library.
 Combine existing widgets to add new functionality, or use the powerful [Line API](https://textual.textualize.io/guide/widgets/#line-api) for unique creations.
 
 """
+    DEFAULT_CSS = """
+    YourWidgets { margin-bottom: 2; }
+    """
 
     def compose(self) -> ComposeResult:
         yield Markdown(self.YOUR_MD)
@@ -773,13 +774,11 @@ class WidgetsScreen(PageScreen):
     CSS = """
     WidgetsScreen { 
         align-horizontal: center;
-        Markdown {
-            background: transparent;
-        }
+        Markdown { background: transparent; }
         & > VerticalScroll {
             scrollbar-gutter: stable;
             &> * {            
-                &:last-of-type { margin-bottom: 2; } 
+              
                 &:even { background: $boost; }
                 padding-bottom: 1;
             }

@@ -88,8 +88,6 @@ class Sparkline(Widget):
     def render(self) -> RenderResult:
         """Renders the sparkline when there is data available."""
         data = self.data or []
-        if not data:
-            return ""
         _, base = self.background_colors
         min_color = base + (
             self.get_component_styles("sparkline--min-color").color
