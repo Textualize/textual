@@ -28,9 +28,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `textual.theme.ThemeProvider`, a command palette provider which returns all registered themes https://github.com/Textualize/textual/pull/5087
 - Added several new built-in CSS variables https://github.com/Textualize/textual/pull/5087
 - Added support for in-band terminal resize protocol https://github.com/Textualize/textual/pull/5217
-- Added TEXTUAL_THEME environment var, which should be a comma separated list of desired themes
-- Added `Widget.is_scrolling`
-- Added `Tree.add_json`
+- Added TEXTUAL_THEME environment var, which should be a comma separated list of desired themes https://github.com/Textualize/textual/pull/5238
+- Added `Widget.is_scrolling` https://github.com/Textualize/textual/pull/5238
+- Added `Tree.add_json` https://github.com/Textualize/textual/pull/5238
 
 ### Changed
 
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-- Removed `App.HOVER_EFFECTS_SCROLL_PAUSE`
+- Removed `App.HOVER_EFFECTS_SCROLL_PAUSE` https://github.com/Textualize/textual/pull/5238
 
 ## [0.85.2] - 2024-11-02
 
