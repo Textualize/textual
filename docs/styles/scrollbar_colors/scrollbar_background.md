@@ -35,7 +35,7 @@ The `scrollbar-background` style sets the background color of the scrollbar.
 ## CSS
 
 ```css
-scrollbar-backround: blue;
+scrollbar-background: blue;
 ```
 
 ## Python
