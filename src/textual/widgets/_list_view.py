@@ -300,7 +300,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         item_to_remove = self.query("ListItem")[index]
         normalized_index = index if index >= 0 else index + len(self)
 
-        async def do_pop():
+        async def do_pop() -> None:
+            """Remove the item and update the highlighted index."""
             await item_to_remove.remove()
             if self.index is not None:
                 if normalized_index < self.index:
@@ -331,7 +332,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             index if index >= 0 else index + len(self) for index in indices
         )
 
-        async def do_remove_items():
+        async def do_remove_items() -> None:
+            """Remove the items and update the highlighted index."""
             await self.remove_children(items_to_remove)
             if self.index is not None:
                 removed_before_highlighted = sum(
