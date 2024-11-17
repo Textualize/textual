@@ -72,10 +72,10 @@ async def test_lists_of_selectors_in_nested_css() -> None:
 class DeclarationAfterNestedApp(App[None]):
     CSS = """
     Screen {
+        background: green;
         Label {
             background: red;
-        }
-        background: green;
+        }        
     }
     """
 

@@ -9,6 +9,7 @@ from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
+from time import monotonic
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
@@ -491,6 +492,8 @@ class Widget(DOMNode):
         """Used to cache :last-of-type pseudoclass state."""
         self._odd: tuple[int, bool] = (-1, False)
         """Used to cache :odd pseudoclass state."""
+        self._last_scroll_time = monotonic()
+        """Time of last scroll."""
 
     @property
     def is_mounted(self) -> bool:
@@ -615,6 +618,17 @@ class Widget(DOMNode):
             return self.screen.maximized is self
         except NoScreen:
             return False
+
+    @property
+    def is_in_maximized_view(self) -> bool:
+        """Is this widget, or a parent maximized?"""
+        maximized = self.screen.maximized
+        if not maximized:
+            return False
+        for node in self.ancestors_with_self:
+            if maximized is node:
+                return True
+        return False
 
     @property
     def _render_widget(self) -> Widget:
@@ -1239,11 +1253,18 @@ class Widget(DOMNode):
             parent, *widgets, before=insert_before, after=insert_after
         )
 
-        def update_styles(children: Iterable[DOMNode]) -> None:
+        def update_styles(children: list[DOMNode]) -> None:
             """Update order related CSS"""
-            for child in children:
-                if child._has_order_style:
-                    child._update_styles()
+            if before is not None or after is not None:
+                # If the new children aren't at the end.
+                # we need to update both odd/even and first-of-type/last-of-type
+                for child in children:
+                    if child._has_order_style or child._has_odd_or_even:
+                        child._update_styles()
+            else:
+                for child in children:
+                    if child._has_order_style:
+                        child._update_styles()
 
         self.call_later(update_styles, list(self.children))
         await_mount = AwaitMount(self, mounted)
@@ -2198,6 +2219,23 @@ class Widget(DOMNode):
         return self.styles.layout is not None or bool(self._nodes)
 
     @property
+    def is_scrolling(self) -> bool:
+        """Is this widget currently scrolling?"""
+        current_time = monotonic()
+        for node in self.ancestors:
+            if not isinstance(node, Widget):
+                break
+            if (
+                node.scroll_x != node.scroll_target_x
+                or node.scroll_y != node.scroll_target_y
+            ):
+                return True
+            if current_time - node._last_scroll_time < 0.1:
+                # Scroll ended very recently
+                return True
+        return False
+
+    @property
     def layer(self) -> str:
         """Get the name of this widgets layer.
 
@@ -2336,6 +2374,12 @@ class Widget(DOMNode):
         animator.force_stop_animation(self, "scroll_x")
         animator.force_stop_animation(self, "scroll_y")
 
+        def _animate_on_complete() -> None:
+            """set last scroll time, and invoke callback."""
+            self._last_scroll_time = monotonic()
+            if on_complete is not None:
+                self.call_next(on_complete)
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -2354,7 +2398,7 @@ class Widget(DOMNode):
                         speed=speed,
                         duration=duration,
                         easing=easing,
-                        on_complete=on_complete,
+                        on_complete=_animate_on_complete,
                         level=level,
                     )
                     scrolled_x = True
@@ -2368,7 +2412,7 @@ class Widget(DOMNode):
                         speed=speed,
                         duration=duration,
                         easing=easing,
-                        on_complete=on_complete,
+                        on_complete=_animate_on_complete,
                         level=level,
                     )
                     scrolled_y = True
@@ -2385,11 +2429,9 @@ class Widget(DOMNode):
                 self.scroll_target_y = self.scroll_y = y
                 scrolled_y = scroll_y != self.scroll_y
 
+            self._last_scroll_time = monotonic()
             if on_complete is not None:
                 self.call_after_refresh(on_complete)
-
-        if scrolled_x or scrolled_y:
-            self.app._pause_hover_effects()
 
         return scrolled_x or scrolled_y
 
@@ -2871,6 +2913,7 @@ class Widget(DOMNode):
             force=force,
             on_complete=on_complete,
             level=level,
+            immediate=immediate,
         )
 
     def _scroll_up_for_pointer(

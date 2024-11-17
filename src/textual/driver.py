@@ -113,6 +113,7 @@ class Driver(ABC):
                 for button in buttons:
                     self.send_message(
                         MouseUp(
+                            message.widget,
                             x=move_event.x,
                             y=move_event.y,
                             delta_x=0,

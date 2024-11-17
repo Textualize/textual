@@ -725,6 +725,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
                                 continue
                             for attribute, selector in selectors.items():
                                 node = getattr(message, attribute)
+                                if node is None:
+                                    break
                                 if not isinstance(node, Widget):
                                     raise OnNoWidget(
                                         f"on decorator can't match against {attribute!r} as it is not a widget."
@@ -834,6 +836,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
     async def on_callback(self, event: events.Callback) -> None:
         if self.app._closing:
             return
+        try:
+            self.app.screen
+        except Exception:
+            self.log.warning(
+                f"Not invoking timer callback {event.callback!r} because there is no screen."
+            )
+            return
         await invoke(event.callback)
 
     async def on_timer(self, event: events.Timer) -> None:
@@ -842,6 +851,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
         event.prevent_default()
         event.stop()
         if event.callback is not None:
+            try:
+                self.app.screen
+            except Exception:
+                self.log.warning(
+                    f"Not invoking timer callback {event.callback!r} because there is no screen."
+                )
+                return
             try:
                 await invoke(event.callback)
             except Exception as error:

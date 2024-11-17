@@ -556,10 +556,12 @@ class Tabs(Widget, can_focus=True):
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_tab.remove()
-            if next_tab is not None:
-                self.active = next_tab.id or ""
             if not self.query("#tabs-list > Tab"):
                 self.active = ""
+            elif next_tab is not None:
+                self.active = next_tab.id or ""
+            else:
+                self._highlight_active(animate=False)
 
         return AwaitComplete(do_remove())
 

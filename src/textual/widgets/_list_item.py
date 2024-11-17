@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from textual import events
+from textual import events, on
 from textual.message import Message
 from textual.reactive import reactive
 from textual.widget import Widget
@@ -30,5 +30,10 @@ class ListItem(Widget, can_focus=False):
         self.post_message(self._ChildClicked(self))
 
     def watch_highlighted(self, value: bool) -> None:
-        print("highlighted", value)
-        self.set_class(value, "--highlight")
+        self.set_class(value, "-highlight")
+
+    @on(events.Enter)
+    @on(events.Leave)
+    def on_enter_or_leave(self, event: events.Enter | events.Leave) -> None:
+        event.stop()
+        self.set_class(self.is_mouse_over, "-hovered")

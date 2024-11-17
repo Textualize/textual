@@ -9,9 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
+
+## [0.86.1] - 2024-11-16
+
+### Fixed
+
+- Tweaks to demo
+
+## [0.86.0] - 2024-11-16
+
+### Fixed
+
 - Fixed duplicated key displays in the help panel https://github.com/Textualize/textual/issues/5037
 - Fixed `TextArea` mouse selection with tab characters https://github.com/Textualize/textual/issues/5212
-- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
+- Fixed `Tabs` not updating the highlighting after removing a tab https://github.com/Textualize/textual/issues/5218
 
 ### Added
 
@@ -30,6 +42,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `textual.theme.ThemeProvider`, a command palette provider which returns all registered themes https://github.com/Textualize/textual/pull/5087
 - Added several new built-in CSS variables https://github.com/Textualize/textual/pull/5087
 - Added support for in-band terminal resize protocol https://github.com/Textualize/textual/pull/5217
+- Added TEXTUAL_THEME environment var, which should be a comma separated list of desired themes https://github.com/Textualize/textual/pull/5238
+- Added `Widget.is_scrolling` https://github.com/Textualize/textual/pull/5238
+- Added `Tree.add_json` https://github.com/Textualize/textual/pull/5238
 
 ### Changed
 
@@ -38,11 +53,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `can_focus` and `can_focus_children` parameters to scrollable container types. https://github.com/Textualize/textual/pull/5226
 - Added `textual.lazy.Reveal` https://github.com/Textualize/textual/pull/5226
 - Added `Screen.action_blur` https://github.com/Textualize/textual/pull/5226
-
-### Changed
-
+- `Click` events can now be used with the on decorator to match the originally clicked widget https://github.com/Textualize/textual/pull/5238
 - Breaking change: Removed `App.dark` reactive attribute https://github.com/Textualize/textual/pull/5087
 - Breaking change: To improve consistency, several changes have been made to default widget CSS and the CSS variables which ship with Textual. On upgrading, your app will likely look different. All of these changes can be overidden with your own CSS. https://github.com/Textualize/textual/pull/5087
+
+### Removed
+
+- Removed `App.HOVER_EFFECTS_SCROLL_PAUSE` https://github.com/Textualize/textual/pull/5238
 
 ## [0.85.2] - 2024-11-02
 
@@ -2537,6 +2554,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.86.0]: https://github.com/Textualize/textual/compare/v0.85.2...v0.86.0
 [0.85.2]: https://github.com/Textualize/textual/compare/v0.85.1...v0.85.2
 [0.85.1]: https://github.com/Textualize/textual/compare/v0.85.0...v0.85.1
 [0.85.0]: https://github.com/Textualize/textual/compare/v0.84.0...v0.85.0
