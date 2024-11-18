@@ -84,10 +84,10 @@ class HorizontalLayout(Layout):
             add_placement(
                 _WidgetPlacement(
                     _Region(
-                        int(x),
+                        x.__floor__(),
                         offset_y,
-                        int(next_x - int(x)),
-                        int(content_height),
+                        (next_x - x.__floor__()).__floor__(),
+                        content_height.__floor__(),
                     ),
                     box_margin,
                     widget,
