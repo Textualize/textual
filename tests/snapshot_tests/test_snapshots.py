@@ -2571,3 +2571,20 @@ def test_tabs_remove_tab_updates_highlighting(snap_compare):
 
     app = TabsApp()
     assert snap_compare(app, press="r")
+
+
+def test_theme_variables_available_in_code(snap_compare):
+    """Test that theme variables are available in code."""
+
+    class ThemeVariablesApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("Hello")
+
+        def on_mount(self) -> None:
+            variables = self.theme_variables
+            label = self.query_one(Label)
+            label.update(f"$text-primary = {variables['text-primary']}")
+            label.styles.background = variables["primary-muted"]
+            label.styles.color = variables["text-primary"]
+
+    assert snap_compare(ThemeVariablesApp())
