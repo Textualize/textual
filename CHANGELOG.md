@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.86.2] - Unreleased
+
+### Fixed
+
+- Fixed visibility glitch for widgets with an offset https://github.com/Textualize/textual/pull/5253
+
 ## [0.86.1] - 2024-11-16
 
 ### Fixed
