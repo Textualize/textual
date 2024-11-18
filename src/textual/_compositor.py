@@ -580,15 +580,9 @@ class Compositor:
                 add_new_widget(widget)
             else:
                 add_new_invisible_widget(widget)
-            styles_offset = styles.offset
-            layout_offset = (
-                styles_offset.resolve(region.size, clip.size)
-                if styles_offset
-                else ORIGIN
-            )
 
             # Container region is minus border
-            container_region = region.shrink(styles.gutter).translate(layout_offset)
+            container_region = region.shrink(styles.gutter)
             container_size = container_region.size
 
             # Widgets with scrollbars (containers or scroll view) require additional processing
@@ -613,8 +607,11 @@ class Compositor:
                     sub_clip = clip.intersection(child_region)
 
                     if visible_only:
-                        placements = arrange_result.get_visible_placements(
+                        widget_window = (
                             sub_clip - child_region.offset + widget.scroll_offset
+                        )
+                        placements = arrange_result.get_visible_placements(
+                            widget_window
                         )
                     else:
                         placements = arrange_result.placements
@@ -643,15 +640,25 @@ class Compositor:
                         )
 
                     # Add all the widgets
-                    for sub_region, _, _, sub_widget, z, fixed, overlay in reversed(
-                        placements
-                    ):
+                    for (
+                        sub_region,
+                        sub_region_offset,
+                        _,
+                        sub_widget,
+                        z,
+                        fixed,
+                        overlay,
+                    ) in reversed(placements):
                         layer_index = get_layer_index(sub_widget.layer, 0)
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
-                            widget_region = sub_region + placement_offset
+                            widget_region = (
+                                sub_region + sub_region_offset + placement_offset
+                            )
                         else:
-                            widget_region = sub_region + placement_scroll_offset
+                            widget_region = (
+                                sub_region + sub_region_offset + placement_scroll_offset
+                            )
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
@@ -699,7 +706,7 @@ class Compositor:
                             )
 
                     map[widget] = _MapGeometry(
-                        region + layout_offset,
+                        region,
                         order,
                         clip,
                         total_region.size,
@@ -711,7 +718,7 @@ class Compositor:
             elif visible:
                 # Add the widget to the map
 
-                widget_region = region + layout_offset
+                widget_region = region
 
                 if widget.absolute_offset is not None:
                     margin = styles.margin

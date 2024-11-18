@@ -22,6 +22,7 @@ class VerticalLayout(Layout):
     ) -> ArrangeResult:
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
+        viewport = parent.app.size
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [
@@ -80,11 +81,21 @@ class VerticalLayout(Layout):
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
+        _Size = Size
         for widget, (content_width, content_height, box_margin), margin in zip(
             children, box_models, margins
         ):
-            overlay = widget.styles.overlay == "screen"
+            styles = widget.styles
+            overlay = styles.overlay == "screen"
             next_y = y + content_height
+            offset = (
+                styles.offset.resolve(
+                    _Size(content_width.__floor__(), content_height.__floor__()),
+                    viewport,
+                )
+                if styles.has_rule("offset")
+                else NULL_OFFSET
+            )
             add_placement(
                 _WidgetPlacement(
                     _Region(
@@ -93,7 +104,7 @@ class VerticalLayout(Layout):
                         content_width.__floor__(),
                         next_y.__floor__() - y.__floor__(),
                     ),
-                    NULL_OFFSET,
+                    offset,
                     box_margin,
                     widget,
                     0,

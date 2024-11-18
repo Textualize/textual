@@ -284,15 +284,23 @@ class GridLayout(Layout):
                     if (height > cell_size.height)
                     else Fraction(cell_size.height)
                 )
+
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))
                 .crop_size(cell_size)
                 .shrink(margin)
             )
+
+            offset = (
+                styles.offset.resolve(cell_size, viewport)
+                if styles.has_rule("offset")
+                else NULL_OFFSET
+            )
+
             add_placement(
                 WidgetPlacement(
-                    region + offset,
-                    NULL_OFFSET,
+                    region,
+                    offset,
                     (
                         margin
                         if gutter_spacing is None

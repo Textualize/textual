@@ -39,6 +39,7 @@ class DockArrangeResult:
             self._spatial_map.insert(
                 (
                     placement.region.grow(placement.margin),
+                    placement.offset,
                     placement.fixed,
                     placement.overlay,
                     placement,
@@ -75,7 +76,7 @@ class DockArrangeResult:
         culled_placements = [
             placement
             for placement in visible_placements
-            if placement.fixed or overlaps(placement.region)
+            if placement.fixed or overlaps(placement.region + placement.offset)
         ]
         return culled_placements
 

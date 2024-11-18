@@ -437,9 +437,9 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache: FIFOCache[tuple[Size, int], DockArrangeResult] = (
-            FIFOCache(4)
-        )
+        self._arrangement_cache: FIFOCache[
+            tuple[Size, int, Widget], DockArrangeResult
+        ] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
