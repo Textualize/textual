@@ -50,8 +50,10 @@ class CalendarGrid(DataTable, inherit_bindings=False):
             return
         row_index = meta["row"]
         column_index = meta["column"]
-        if self.get_cell_at(Coordinate(row_index, column_index)) is None:
-            event.prevent_default()
+        is_header_click = self.show_header and row_index == -1
+        if not is_header_click:
+            if self.get_cell_at(Coordinate(row_index, column_index)) is None:
+                event.prevent_default()
 
 
 class MonthCalendar(Widget):
