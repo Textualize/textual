@@ -84,6 +84,7 @@ class WidgetPlacement(NamedTuple):
     """The position, size, and relative order of a widget within its parent."""
 
     region: Region
+    offset: Offset
     margin: Spacing
     widget: Widget
     order: int = 0
@@ -92,7 +93,7 @@ class WidgetPlacement(NamedTuple):
 
     @classmethod
     def translate(
-        cls, placements: list[WidgetPlacement], offset: Offset
+        cls, placements: list[WidgetPlacement], translate_offset: Offset
     ) -> list[WidgetPlacement]:
         """Move all placements by a given offset.
 
@@ -103,10 +104,18 @@ class WidgetPlacement(NamedTuple):
         Returns:
             Placements with adjusted region, or same instance if offset is null.
         """
-        if offset:
+        if translate_offset:
             return [
-                cls(region + offset, margin, layout_widget, order, fixed, overlay)
-                for region, margin, layout_widget, order, fixed, overlay in placements
+                cls(
+                    region + translate_offset,
+                    offset,
+                    margin,
+                    layout_widget,
+                    order,
+                    fixed,
+                    overlay,
+                )
+                for region, offset, margin, layout_widget, order, fixed, overlay in placements
             ]
         return placements
 

@@ -643,7 +643,7 @@ class Compositor:
                         )
 
                     # Add all the widgets
-                    for sub_region, _, sub_widget, z, fixed, overlay in reversed(
+                    for sub_region, _, _, sub_widget, z, fixed, overlay in reversed(
                         placements
                     ):
                         layer_index = get_layer_index(sub_widget.layer, 0)

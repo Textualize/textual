@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from textual._resolve import resolve
 from textual.css.scalar import Scalar
-from textual.geometry import Region, Size, Spacing
+from textual.geometry import NULL_OFFSET, Region, Size, Spacing
 from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
@@ -292,6 +292,7 @@ class GridLayout(Layout):
             add_placement(
                 WidgetPlacement(
                     region + offset,
+                    NULL_OFFSET,
                     (
                         margin
                         if gutter_spacing is None

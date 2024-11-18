@@ -4,7 +4,7 @@ from fractions import Fraction
 from typing import TYPE_CHECKING
 
 from textual._resolve import resolve_box_models
-from textual.geometry import Region, Size
+from textual.geometry import NULL_OFFSET, Region, Size
 from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
@@ -93,6 +93,7 @@ class VerticalLayout(Layout):
                         content_width.__floor__(),
                         next_y.__floor__() - y.__floor__(),
                     ),
+                    NULL_OFFSET,
                     box_margin,
                     widget,
                     0,
