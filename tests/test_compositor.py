@@ -36,4 +36,5 @@ async def test_compositor_scroll_placements():
         static = app.query_one("#hello")
         widgets = app.screen._compositor.visible_widgets
         # The static wasn't scrolled out of view, and should be visible
+        # This wasn't the case <= v0.86.1
         assert static in widgets
