@@ -33,7 +33,7 @@ from textual import errors
 from textual._cells import cell_len
 from textual._context import visible_screen_stack
 from textual._loop import loop_last
-from textual.geometry import NULL_OFFSET, NULL_SPACING, Offset, Region, Size, Spacing
+from textual.geometry import NULL_SPACING, Offset, Region, Size, Spacing
 from textual.map_geometry import MapGeometry
 from textual.strip import Strip, StripRenderable
 
@@ -535,8 +535,6 @@ class Compositor:
             Compositor map and set of widgets.
         """
 
-        ORIGIN = NULL_OFFSET
-
         map: CompositorMap = {}
         widgets: set[Widget] = set()
         add_new_widget = widgets.add
@@ -580,15 +578,9 @@ class Compositor:
                 add_new_widget(widget)
             else:
                 add_new_invisible_widget(widget)
-            styles_offset = styles.offset
-            layout_offset = (
-                styles_offset.resolve(region.size, clip.size)
-                if styles_offset
-                else ORIGIN
-            )
 
             # Container region is minus border
-            container_region = region.shrink(styles.gutter).translate(layout_offset)
+            container_region = region.shrink(styles.gutter)
             container_size = container_region.size
 
             # Widgets with scrollbars (containers or scroll view) require additional processing
@@ -643,15 +635,25 @@ class Compositor:
                         )
 
                     # Add all the widgets
-                    for sub_region, _, sub_widget, z, fixed, overlay in reversed(
-                        placements
-                    ):
+                    for (
+                        sub_region,
+                        sub_region_offset,
+                        _,
+                        sub_widget,
+                        z,
+                        fixed,
+                        overlay,
+                    ) in reversed(placements):
                         layer_index = get_layer_index(sub_widget.layer, 0)
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
-                            widget_region = sub_region + placement_offset
+                            widget_region = (
+                                sub_region + sub_region_offset + placement_offset
+                            )
                         else:
-                            widget_region = sub_region + placement_scroll_offset
+                            widget_region = (
+                                sub_region + sub_region_offset + placement_scroll_offset
+                            )
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
@@ -699,7 +701,7 @@ class Compositor:
                             )
 
                     map[widget] = _MapGeometry(
-                        region + layout_offset,
+                        region,
                         order,
                         clip,
                         total_region.size,
@@ -711,19 +713,15 @@ class Compositor:
             elif visible:
                 # Add the widget to the map
 
-                widget_region = region + layout_offset
-
                 if widget.absolute_offset is not None:
                     margin = styles.margin
-                    widget_region = widget_region.at_offset(
-                        widget.absolute_offset + margin.top_left
-                    )
-                    widget_region = widget_region.translate(
-                        styles.offset.resolve(widget_region.grow(margin).size, size)
+                    region = region.at_offset(widget.absolute_offset + margin.top_left)
+                    region = region.translate(
+                        styles.offset.resolve(region.grow(margin).size, size)
                     )
                 has_rule = styles.has_rule
                 if has_rule("constrain_x") or has_rule("constrain_y"):
-                    widget_region = widget_region.constrain(
+                    region = region.constrain(
                         styles.constrain_x,
                         styles.constrain_y,
                         styles.margin,
@@ -731,7 +729,7 @@ class Compositor:
                     )
 
                 map[widget._render_widget] = _MapGeometry(
-                    widget_region,
+                    region,
                     order,
                     clip,
                     region.size,

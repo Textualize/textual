@@ -1,7 +1,7 @@
 import pytest
 
 from textual._spatial_map import SpatialMap
-from textual.geometry import Region
+from textual.geometry import Offset, Region
 
 
 @pytest.mark.parametrize(
@@ -44,9 +44,9 @@ def test_get_values_in_region() -> None:
 
     spatial_map.insert(
         [
-            (Region(10, 5, 5, 5), False, False, "foo"),
-            (Region(5, 20, 5, 5), False, False, "bar"),
-            (Region(0, 0, 40, 1), True, False, "title"),
+            (Region(10, 5, 5, 5), Offset(), False, False, "foo"),
+            (Region(5, 20, 5, 5), Offset(), False, False, "bar"),
+            (Region(0, 0, 40, 1), Offset(), True, False, "title"),
         ]
     )
 

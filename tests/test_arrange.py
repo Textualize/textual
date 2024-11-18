@@ -2,7 +2,7 @@ import pytest
 
 from textual._arrange import TOP_Z, arrange
 from textual.app import App
-from textual.geometry import Region, Size, Spacing
+from textual.geometry import NULL_OFFSET, Region, Size, Spacing
 from textual.layout import WidgetPlacement
 from textual.widget import Widget
 
@@ -27,9 +27,11 @@ def test_arrange_dock_top():
 
     assert result.placements == [
         WidgetPlacement(
-            Region(0, 0, 80, 1), Spacing(), header, order=TOP_Z, fixed=True
+            Region(0, 0, 80, 1), NULL_OFFSET, Spacing(), header, order=TOP_Z, fixed=True
         ),
-        WidgetPlacement(Region(0, 1, 80, 23), Spacing(), child, order=0, fixed=False),
+        WidgetPlacement(
+            Region(0, 1, 80, 23), NULL_OFFSET, Spacing(), child, order=0, fixed=False
+        ),
     ]
     assert result.widgets == {child, header}
 
@@ -45,9 +47,16 @@ def test_arrange_dock_left():
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
     assert result.placements == [
         WidgetPlacement(
-            Region(0, 0, 10, 24), Spacing(), header, order=TOP_Z, fixed=True
+            Region(0, 0, 10, 24),
+            NULL_OFFSET,
+            Spacing(),
+            header,
+            order=TOP_Z,
+            fixed=True,
         ),
-        WidgetPlacement(Region(10, 0, 70, 24), Spacing(), child, order=0, fixed=False),
+        WidgetPlacement(
+            Region(10, 0, 70, 24), NULL_OFFSET, Spacing(), child, order=0, fixed=False
+        ),
     ]
     assert result.widgets == {child, header}
 
@@ -63,9 +72,16 @@ def test_arrange_dock_right():
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
     assert result.placements == [
         WidgetPlacement(
-            Region(70, 0, 10, 24), Spacing(), header, order=TOP_Z, fixed=True
+            Region(70, 0, 10, 24),
+            NULL_OFFSET,
+            Spacing(),
+            header,
+            order=TOP_Z,
+            fixed=True,
         ),
-        WidgetPlacement(Region(0, 0, 70, 24), Spacing(), child, order=0, fixed=False),
+        WidgetPlacement(
+            Region(0, 0, 70, 24), NULL_OFFSET, Spacing(), child, order=0, fixed=False
+        ),
     ]
     assert result.widgets == {child, header}
 
@@ -81,9 +97,16 @@ def test_arrange_dock_bottom():
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
     assert result.placements == [
         WidgetPlacement(
-            Region(0, 23, 80, 1), Spacing(), header, order=TOP_Z, fixed=True
+            Region(0, 23, 80, 1),
+            NULL_OFFSET,
+            Spacing(),
+            header,
+            order=TOP_Z,
+            fixed=True,
         ),
-        WidgetPlacement(Region(0, 0, 80, 23), Spacing(), child, order=0, fixed=False),
+        WidgetPlacement(
+            Region(0, 0, 80, 23), NULL_OFFSET, Spacing(), child, order=0, fixed=False
+        ),
     ]
     assert result.widgets == {child, header}
 

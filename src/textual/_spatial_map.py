@@ -6,7 +6,7 @@ from typing import Generic, Iterable, TypeVar
 
 from typing_extensions import TypeAlias
 
-from textual.geometry import Region
+from textual.geometry import Offset, Region
 
 ValueType = TypeVar("ValueType")
 GridCoordinate: TypeAlias = "tuple[int, int]"
@@ -57,7 +57,7 @@ class SpatialMap(Generic[ValueType]):
         )
 
     def insert(
-        self, regions_and_values: Iterable[tuple[Region, bool, bool, ValueType]]
+        self, regions_and_values: Iterable[tuple[Region, Offset, bool, bool, ValueType]]
     ) -> None:
         """Insert values into the Spatial map.
 
@@ -65,19 +65,19 @@ class SpatialMap(Generic[ValueType]):
         indicates fixed regions. Fixed regions don't scroll and are always visible.
 
         Args:
-            regions_and_values: An iterable of (REGION, FIXED, OVERLAY, VALUE).
+            regions_and_values: An iterable of (REGION, OFFSET, FIXED, OVERLAY, VALUE).
         """
         append_fixed = self._fixed.append
         get_grid_list = self._map.__getitem__
         _region_to_grid = self._region_to_grid_coordinates
         total_region = self.total_region
-        for region, fixed, overlay, value in regions_and_values:
+        for region, offset, fixed, overlay, value in regions_and_values:
             if fixed:
                 append_fixed(value)
             else:
                 if not overlay:
                     total_region = total_region.union(region)
-                for grid in _region_to_grid(region):
+                for grid in _region_to_grid(region + offset):
                     get_grid_list(grid).append(value)
         self.total_region = total_region
 

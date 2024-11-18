@@ -5,11 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+
+## [0.86.2] - 2024-11-18
 
 ### Fixed
 
+- Fixed visibility glitch for widgets with an offset https://github.com/Textualize/textual/pull/5253
 - Fixed theme variables being unavailable in code until refresh_css was called https://github.com/Textualize/textual/pull/5254
+
 
 ## [0.86.1] - 2024-11-16
 
@@ -2549,6 +2552,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+
+[0.86.2]: https://github.com/Textualize/textual/compare/v0.86.1...v0.86.2
+[0.86.1]: https://github.com/Textualize/textual/compare/v0.86.0...v0.86.1
 [0.86.0]: https://github.com/Textualize/textual/compare/v0.85.2...v0.86.0
 [0.85.2]: https://github.com/Textualize/textual/compare/v0.85.1...v0.85.2
 [0.85.1]: https://github.com/Textualize/textual/compare/v0.85.0...v0.85.1
