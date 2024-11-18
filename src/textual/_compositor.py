@@ -605,11 +605,8 @@ class Compositor:
                     sub_clip = clip.intersection(child_region)
 
                     if visible_only:
-                        widget_window = (
-                            sub_clip - child_region.offset + widget.scroll_offset
-                        )
                         placements = arrange_result.get_visible_placements(
-                            widget_window
+                            sub_clip - child_region.offset + widget.scroll_offset
                         )
                     else:
                         placements = arrange_result.placements
