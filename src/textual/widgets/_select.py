@@ -415,8 +415,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         option_list = self.query_one(SelectOverlay)
         option_list.clear_options()
-        for option in self._select_options:
-            option_list.add_option(option)
+        option_list.add_options(self._select_options)
 
     def _init_selected_option(self, hint: SelectType | NoSelection = BLANK) -> None:
         """Initialises the selected option for the `Select`."""
