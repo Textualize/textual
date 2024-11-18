@@ -716,19 +716,15 @@ class Compositor:
             elif visible:
                 # Add the widget to the map
 
-                widget_region = region
-
                 if widget.absolute_offset is not None:
                     margin = styles.margin
-                    widget_region = widget_region.at_offset(
-                        widget.absolute_offset + margin.top_left
-                    )
-                    widget_region = widget_region.translate(
-                        styles.offset.resolve(widget_region.grow(margin).size, size)
+                    region = region.at_offset(widget.absolute_offset + margin.top_left)
+                    region = region.translate(
+                        styles.offset.resolve(region.grow(margin).size, size)
                     )
                 has_rule = styles.has_rule
                 if has_rule("constrain_x") or has_rule("constrain_y"):
-                    widget_region = widget_region.constrain(
+                    region = region.constrain(
                         styles.constrain_x,
                         styles.constrain_y,
                         styles.margin,
@@ -736,7 +732,7 @@ class Compositor:
                     )
 
                 map[widget._render_widget] = _MapGeometry(
-                    widget_region,
+                    region,
                     order,
                     clip,
                     region.size,
