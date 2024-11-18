@@ -273,21 +273,20 @@ class GridLayout(Layout):
             x2, cell_width = columns[min(max_column, column + column_span)]
             y2, cell_height = rows[min(max_row, row + row_span)]
             cell_size = Size(cell_width + x2 - x, cell_height + y2 - y)
-            width, height, margin = widget._get_box_model(
+            box_width, box_height, margin = widget._get_box_model(
                 cell_size,
                 viewport,
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
             )
             if self.stretch_height and len(children) > 1:
-                height = (
-                    height
-                    if (height > cell_size.height)
-                    else Fraction(cell_size.height)
-                )
+                if box_height <= cell_size.height:
+                    box_height = Fraction(cell_size.height)
 
             region = (
-                Region(x, y, int(width + margin.width), int(height + margin.height))
+                Region(
+                    x, y, int(box_width + margin.width), int(box_height + margin.height)
+                )
                 .crop_size(cell_size)
                 .shrink(margin)
             )

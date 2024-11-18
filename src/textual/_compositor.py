@@ -33,7 +33,7 @@ from textual import errors
 from textual._cells import cell_len
 from textual._context import visible_screen_stack
 from textual._loop import loop_last
-from textual.geometry import NULL_OFFSET, NULL_SPACING, Offset, Region, Size, Spacing
+from textual.geometry import NULL_SPACING, Offset, Region, Size, Spacing
 from textual.map_geometry import MapGeometry
 from textual.strip import Strip, StripRenderable
 
@@ -534,8 +534,6 @@ class Compositor:
         Returns:
             Compositor map and set of widgets.
         """
-
-        ORIGIN = NULL_OFFSET
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
