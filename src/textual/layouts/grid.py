@@ -258,6 +258,7 @@ class GridLayout(Layout):
         rows = resolve(row_scalars, size.height, gutter_horizontal, size, viewport)
 
         placements: list[WidgetPlacement] = []
+        _WidgetPlacement = WidgetPlacement
         add_placement = placements.append
         widgets: list[Widget] = []
         add_widget = widgets.append
@@ -291,16 +292,16 @@ class GridLayout(Layout):
                 .shrink(margin)
             )
 
-            offset = (
+            placement_offset = (
                 styles.offset.resolve(cell_size, viewport)
                 if styles.has_rule("offset")
                 else NULL_OFFSET
             )
 
             add_placement(
-                WidgetPlacement(
-                    region,
-                    offset,
+                _WidgetPlacement(
+                    region + offset,
+                    placement_offset,
                     (
                         margin
                         if gutter_spacing is None
