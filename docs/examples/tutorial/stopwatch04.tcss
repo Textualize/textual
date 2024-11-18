@@ -7,9 +7,9 @@ Stopwatch {
     padding: 1;
 }
 
-TimeDisplay {
-    content-align: center middle;
-    text-opacity: 60%;
+TimeDisplay {   
+    text-align: center;
+    color: $foreground-muted;
     height: 3;
 }
 
@@ -31,13 +31,12 @@ Button {
 }
 
 .started {
-    text-style: bold;
-    background: $success;
+    background: $success-muted;
     color: $text;
 }
 
 .started TimeDisplay {
-    text-opacity: 100%;
+    color: $foreground;
 }
 
 .started #start {

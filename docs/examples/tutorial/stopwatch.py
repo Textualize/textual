@@ -3,10 +3,10 @@ from time import monotonic
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
 from textual.reactive import reactive
-from textual.widgets import Button, Footer, Header, Static
+from textual.widgets import Button, Digits, Footer, Header, Static
 
 
-class TimeDisplay(Static):
+class TimeDisplay(Digits):
     """A widget to display elapsed time."""
 
     start_time = reactive(monotonic)

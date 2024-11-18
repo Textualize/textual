@@ -7,9 +7,9 @@ Stopwatch {
     padding: 1;
 }
 
-TimeDisplay {
-    content-align: center middle;
-    text-opacity: 60%;
+TimeDisplay {   
+    text-align: center;
+    color: $foreground-muted;
     height: 3;
 }
 

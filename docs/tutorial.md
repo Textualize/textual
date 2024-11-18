@@ -132,7 +132,10 @@ Let's examine `stopwatch01.py` in more detail.
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The first line imports the Textual `App` class, which we will use as the base class for our App. The second line imports two builtin widgets: `Footer` which shows a bar at the bottom of the screen with bound keys, and `Header` which shows a title at the top of the screen. Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build widgets in this tutorial.
+The first line imports `App` class, which is the base class for all Textual apps.
+The second line imports two builtin widgets: [`Footer`](widgets/footer.md) which shows a bar at the bottom of the screen with bound keys, and [`Header`](widgets/header) which shows a title at the top of the screen.
+Widgets are re-usable components responsible for managing a part of the screen.
+We will cover how to build widgets in this tutorial.
 
 The following lines define the app itself:
 
@@ -173,19 +176,21 @@ We need a `Stopwatch` widget composed of the following _child_ widgets:
 - A "Reset" button
 - A time display
 
-Textual has a builtin `Button` widget which takes care of the first three components. All we need to build is the time display widget which will show the elapsed time and the stopwatch widget itself.
-
-Let's add those to the app. Just a skeleton for now, we will add the rest of the features as we go.
+Let's add those to the app.
+Just a skeleton for now, we will add the rest of the features as we go.
 
 ```python title="stopwatch02.py" hl_lines="2-3 6-7 10-18 30"
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
-We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `ScrollableContainer` from `textual.containers` which (as the name suggests) is a `Widget` which contains other widgets.
+We've imported two new widgets in this code: [`Button`](widgets/button.md) for the buttons and [`Digits`](widgets/digits.md) for the time display.
+Additionally, we've imported `Horizontal` and `VerticalScroll` from `textual.containers` (as the name of the module suggests, *containers* are widgets which contain other widgets).
+We will use these container widgets to define the general layout of our interface.
 
-We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later.
+The `TimeDisplay` is currently very simple, all it does is extend `Digits` without defining any methods of its own. We will flesh this out later.
 
-The Stopwatch widget class also extends `Static`. This class has a `compose()` method which yields child widgets, consisting of three `Button` objects and a single `TimeDisplay` object. These widgets will form the stopwatch in our sketch.
+The `Stopwatch` widget class extends the `HorizontalGroup` container class, which will arrange its children into a horizontal row.
+It's children are yielded from the Stopwatch's `compose()` method, and define the components from the sketch above.
 
 #### The buttons
 
