@@ -352,8 +352,9 @@ Some of the new styles have more than one selector separated by a space. The spa
 }
 ```
 
-The `.started` selector matches any widget with a `"started"` CSS class. While `#start` matches a child widget with an ID of `"start"`.
-When combined with a space, the the selector will match the start button *only* if it is inside a container with a CSS class of "started".
+The `.started` selector matches any widget with a `"started"` CSS class.
+While `#start` matches a child widget with an ID of `"start"`.
+Combining the two selectors with a space (`.started #start`) creates a new selector that will match the start button *only* if it is also inside a container with a CSS class of "started".
 
 As before, the `display: none` rule will cause any matching widgets to be hidden from view. 
 
