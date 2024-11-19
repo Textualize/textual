@@ -1,5 +1,4 @@
-Stopwatch {
-    layout: horizontal;
+Stopwatch {   
     background: $boost;
     height: 5;
     margin: 1;
@@ -7,9 +6,9 @@ Stopwatch {
     padding: 1;
 }
 
-TimeDisplay {
-    content-align: center middle;
-    text-opacity: 60%;
+TimeDisplay {   
+    text-align: center;
+    color: $foreground-muted;
     height: 3;
 }
 
