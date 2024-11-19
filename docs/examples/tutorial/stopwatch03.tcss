@@ -1,5 +1,4 @@
-Stopwatch {
-    layout: horizontal;
+Stopwatch {   
     background: $boost;
     height: 5;
     margin: 1;
