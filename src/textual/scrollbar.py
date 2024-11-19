@@ -259,7 +259,7 @@ class ScrollBar(Widget):
 
     window_virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(0)
-    position: Reactive[int] = Reactive(0)
+    position: Reactive[float] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
     grabbed: Reactive[Offset | None] = Reactive(None)
 
