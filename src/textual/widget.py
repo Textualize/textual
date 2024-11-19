@@ -3319,9 +3319,9 @@ class Widget(DOMNode):
                     immediate=immediate,
                 )
             else:
-                # self.region is falsey which may indicate the widget hasn't been through a layout operation
+                # self.region is falsy which may indicate the widget hasn't been through a layout operation
                 # We can potentially make it do the right thing by postponing the scroll to after a refresh
-                self.call_after_refresh(
+                parent.call_after_refresh(
                     self.screen.scroll_to_widget,
                     self,
                     animate=animate,

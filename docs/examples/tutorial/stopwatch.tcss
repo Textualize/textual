@@ -8,8 +8,8 @@ Stopwatch {
 }
 
 TimeDisplay {
-    content-align: center middle;
-    text-opacity: 60%;
+    text-align: center;
+    color: $foreground-muted;   
     height: 3;
 }
 
@@ -30,14 +30,13 @@ Button {
     dock: right;
 }
 
-.started {
-    text-style: bold;
-    background: $success;
+.started {   
+    background: $success-muted;
     color: $text;
 }
 
 .started TimeDisplay {
-    text-opacity: 100%;
+    color: $foreground;
 }
 
 .started #start {
