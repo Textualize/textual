@@ -353,7 +353,7 @@ Some of the new styles have more than one selector separated by a space. The spa
 ```
 
 The `.started` selector matches any widget with a `"started"` CSS class.
-While `#start` matches a child widget with an ID of `"start"`.
+While `#start` matches a widget with an ID of `"start"`.
 Combining the two selectors with a space (`.started #start`) creates a new selector that will match the start button *only* if it is also inside a container with a CSS class of "started".
 
 As before, the `display: none` rule will cause any matching widgets to be hidden from view. 
@@ -376,6 +376,8 @@ The following code will start or stop the stopwatches in response to clicking a 
 The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc.
 Event handlers begin with `on_` followed by the name of the event they will handle.
 Hence `on_button_pressed` will handle the button pressed event.
+
+See the guide on [message handlers](./guide/events.md#message-handlers) for the details on how to write event handlers.
 
 If you run `stopwatch04.py` now you will be able to toggle between the two states by clicking the first button:
 
