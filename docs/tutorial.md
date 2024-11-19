@@ -191,7 +191,7 @@ We've imported two new widgets in this code: [`Button`](widgets/button.md) for t
 Additionally, we've imported [`Horizontal`][textual.containers.Horizontal] and [`VerticalScroll`][textual.containers.VerticalScroll] from `textual.containers` (as the name of the module suggests, *containers* are widgets which contain other widgets).
 We will use these container widgets to define the general layout of our interface.
 
-The `TimeDisplay` is currently very simple, all it does is extend `Digits` without adding any new. We will flesh this out later.
+The `TimeDisplay` is currently very simple, all it does is extend `Digits` without adding any new features. We will flesh this out later.
 
 The `Stopwatch` widget class extends the `HorizontalGroup` container class, which will arrange its children into a horizontal row. The Stopwatch's `compose()` adds those children, which correspond to the components from the sketch above.
 
