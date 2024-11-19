@@ -397,7 +397,7 @@ Reactive attributes work like any other attribute, such as those you might set i
 
 To add a reactive attribute, import [reactive][textual.reactive.reactive] and create an instance in your class scope.
 
-Let's see this an action, by adding reactives to our stopwatch which we will use to calculate the elapsed time when a Stopwatch is started.
+Let's add reactives to our stopwatch to calculate and display the elapsed time.
 
 ```python title="stopwatch05.py" hl_lines="1 5 12-27 45"
 --8<-- "docs/examples/tutorial/stopwatch05.py"
