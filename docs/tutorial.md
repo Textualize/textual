@@ -320,13 +320,14 @@ The `Button` block sets the width (`width:`) of buttons to 16 cells (character w
 
 The last 3 blocks have a slightly different format. When the declaration begins with a `#` then the styles will be applied to widgets with a matching "id" attribute. We've set an ID on the `Button` widgets we yielded in `compose`. For instance the first button has `id="start"` which matches `#start` in the CSS.
 
-The buttons have a `dock` style which aligns the widget to a given edge. The start and stop buttons are docked to the left edge, while the reset button is docked to the right edge.
+The buttons have a `dock` style which aligns the widget to a given edge.
+The start and stop buttons are docked to the left edge, while the reset button is docked to the right edge.
 
 You may have noticed that the stop button (`#stop` in the CSS) has `display: none;`. This tells Textual to not show the button. We do this because we don't want to display the stop button when the timer is *not* running. Similarly, we don't want to show the start button when the timer is running. We will cover how to manage such dynamic user interfaces in the next section.
 
 ### Dynamic CSS
 
-We want our `Stopwatch` widget to have two states: a default state with a Start and Reset button; and a _started_ state with a Stop button. When a stopwatch is started it should also have a green background and bold text.
+We want our `Stopwatch` widget to have two states: a default state with a Start and Reset button; and a _started_ state with a Stop button. When a stopwatch is started it should also have a green background to indicate it is currently active.
 
 <div class="excalidraw">
 --8<-- "docs/images/css_stopwatch.excalidraw.svg"
@@ -351,31 +352,37 @@ Some of the new styles have more than one selector separated by a space. The spa
 }
 ```
 
-The `.started` selector matches any widget with a `"started"` CSS class. While `#start` matches a child widget with an ID of `"start"`. So it matches the Start button only for Stopwatches in a started state.
+The `.started` selector matches any widget with a `"started"` CSS class. While `#start` matches a child widget with an ID of `"start"`.
+When combined with a space, the the selector will match the start button *only* if it is inside a container with a CSS class of "started".
 
-The rule is `"display: none"` which tells Textual to hide the button.
+As before, the `display: none` rule will cause any matching widgets to be hidden from view. 
+
+If we were to write this in English, it would be something like: "Hide the start button if the widget is already started".
 
 ### Manipulating classes
 
 Modifying a widget's CSS classes is a convenient way to update visuals without introducing a lot of messy display related code.
 
-You can add and remove CSS classes with the [add_class()][textual.dom.DOMNode.add_class] and [remove_class()][textual.dom.DOMNode.remove_class] methods. We will use these methods to connect the started state to the Start / Stop buttons.
+You can add and remove CSS classes with the [add_class()][textual.dom.DOMNode.add_class] and [remove_class()][textual.dom.DOMNode.remove_class] methods.
+We will use these methods to connect the started state to the Start / Stop buttons.
 
-The following code will start or stop the stopwatches in response to clicking a button.
+The following code will start or stop the stopwatches in response to clicking a button:
 
 ```python title="stopwatch04.py" hl_lines="13-18"
 --8<-- "docs/examples/tutorial/stopwatch04.py"
 ```
 
-The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc. Event handlers begin with `on_` followed by the name of the event they will handle. Hence `on_button_pressed` will handle the button pressed event.
+The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc.
+Event handlers begin with `on_` followed by the name of the event they will handle.
+Hence `on_button_pressed` will handle the button pressed event.
 
 If you run `stopwatch04.py` now you will be able to toggle between the two states by clicking the first button:
 
 ```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter"}
 ```
 
-When the button event handler adds or removes the `"started"` CSS class, Textual will reapply the CSS and make the required visual changes.
-This keeps our Python code of potentially messy display logic.
+When the button event handler adds or removes the `"started"` CSS class, Textual re-applies the CSS and updates the visuals.
+
 
 ## Reactive attributes
 
