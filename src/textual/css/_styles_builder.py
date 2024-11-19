@@ -553,7 +553,9 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        color_property_help_text(name, context="css", error=error),
+                        color_property_help_text(
+                            name, context="css", error=error, value=token.value
+                        ),
                     )
             elif token.name == "token":
                 try:
@@ -668,10 +670,16 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        color_property_help_text(name, context="css", error=error),
+                        color_property_help_text(
+                            name, context="css", error=error, value=token.value
+                        ),
                     )
             else:
-                self.error(name, token, color_property_help_text(name, context="css"))
+                self.error(
+                    name,
+                    token,
+                    color_property_help_text(name, context="css", value=token.value),
+                )
 
         if color is not None or alpha is not None:
             if alpha is not None:
@@ -1149,7 +1157,9 @@ class StylesBuilder:
                 self.error(
                     name,
                     color_token,
-                    color_property_help_text(name, context="css", error=error),
+                    color_property_help_text(
+                        name, context="css", error=error, value=color_token.value
+                    ),
                 )
         else:
             self.error(

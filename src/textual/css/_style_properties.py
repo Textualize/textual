@@ -988,7 +988,7 @@ class ColorProperty:
                     raise StyleValueError(
                         f"Invalid color value '{token}'",
                         help_text=color_property_help_text(
-                            self.name, context="inline", error=error
+                            self.name, context="inline", error=error, value=token
                         ),
                     )
             parsed_color = parsed_color.with_alpha(alpha)
