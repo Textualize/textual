@@ -393,8 +393,11 @@ A recurring theme in Textual is that you rarely need to explicitly update a widg
 It is possible: you can call [refresh()][textual.widget.Widget.refresh] to display new data.
 However, Textual prefers to do this automatically via _reactive_ attributes.
 
-You can declare a reactive attribute with [reactive][textual.reactive.reactive].
-Let's use this feature to create a timer that displays elapsed time and keeps it updated.
+Reactive attributes work like any other attribute, such as those you might set in an `__init__` method, but allow Textual to detect when you assign to them, in addition to some other [*superpowers*](./guide/reactivity.md).
+
+To add a reactive attribute, import [reactive][textual.reactive.reactive] and create an instance in your class scope.
+
+Let's see this an action, by adding reactives to our stopwatch which we will use to calculate the elapsed time when a Stopwatch is started.
 
 ```python title="stopwatch05.py" hl_lines="1 5 12-27 45"
 --8<-- "docs/examples/tutorial/stopwatch05.py"
