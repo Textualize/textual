@@ -11,6 +11,7 @@ from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
+from textual.visual import RichVisual
 from textual.widget import BadWidgetName, MountError, PseudoClasses, Widget
 from textual.widgets import (
     Button,
@@ -425,23 +426,23 @@ async def test_loading():
         app = pilot.app
         label = app.query_one(Label)
         assert label.loading == False
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
         label.loading = True
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 1
+        assert label._cover_widget is not None
 
         label.loading = True  # Setting to same value is a null-op
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 1
+        assert label._cover_widget is not None
 
         label.loading = False
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
         label.loading = False  # Setting to same value is a null-op
         await pilot.pause()
-        assert len(label.query(LoadingIndicator)) == 0
+        assert label._cover_widget is None
 
 
 async def test_is_mounted_property():
@@ -492,8 +493,11 @@ async def test_render_returns_text():
 
     widget = SimpleWidget()
     render_result = widget._render()
-    assert isinstance(render_result, Text)
-    assert render_result.plain == "Hello World!"
+    assert isinstance(render_result, RichVisual)
+    renderable = render_result._renderable
+    assert isinstance(renderable, Text)
+
+    assert renderable.plain == "Hello World!"
 
 
 async def test_sort_children() -> None:
@@ -576,3 +580,56 @@ def test_bad_widget_name_raised() -> None:
 
         class lowercaseWidget(Widget):
             pass
+
+
+def test_lazy_loading() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/5077
+
+    Check that the lazy loading magic doesn't break attribute access.
+
+    """
+
+    with pytest.raises(ImportError):
+        from textual.widgets import Foo  # nopycln: import
+
+    from textual import widgets
+    from textual.widgets import Label
+
+    assert not hasattr(widgets, "foo")
+    assert not hasattr(widgets, "bar")
+    assert hasattr(widgets, "Label")
+
+
+async def test_of_type() -> None:
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            for ordinal in range(5):
+                yield Label(f"Item {ordinal}")
+
+    app = MyApp()
+    async with app.run_test():
+        labels = list(app.query(Label))
+        assert labels[0].first_of_type
+        assert not labels[0].last_of_type
+        assert labels[0].is_odd
+        assert not labels[0].is_even
+
+        assert not labels[1].first_of_type
+        assert not labels[1].last_of_type
+        assert not labels[1].is_odd
+        assert labels[1].is_even
+
+        assert not labels[2].first_of_type
+        assert not labels[2].last_of_type
+        assert labels[2].is_odd
+        assert not labels[2].is_even
+
+        assert not labels[3].first_of_type
+        assert not labels[3].last_of_type
+        assert not labels[3].is_odd
+        assert labels[3].is_even
+
+        assert not labels[4].first_of_type
+        assert labels[4].last_of_type
+        assert labels[4].is_odd
+        assert not labels[4].is_even

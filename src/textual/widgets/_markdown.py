@@ -244,12 +244,11 @@ class MarkdownH1(MarkdownHeader):
     """An H1 Markdown header."""
 
     DEFAULT_CSS = """
-
     MarkdownH1 {
         content-align: center middle;
-        text-style: bold;
-        color: $success;
-        &:light {color: $primary;}
+        color: $markdown-h1-color;
+        background: $markdown-h1-background;
+        text-style: $markdown-h1-text-style;
     }
     """
 
@@ -258,11 +257,10 @@ class MarkdownH2(MarkdownHeader):
     """An H2 Markdown header."""
 
     DEFAULT_CSS = """
-
     MarkdownH2 {
-        text-style: underline;
-        color: $success;
-        &:light {color: $primary;}
+        color: $markdown-h2-color;
+        background: $markdown-h2-background;
+        text-style: $markdown-h2-text-style;
     }
     """
 
@@ -272,11 +270,11 @@ class MarkdownH3(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH3 {
-        text-style: bold;
-        color: $success;
+        color: $markdown-h3-color;
+        background: $markdown-h3-background;
+        text-style: $markdown-h3-text-style;
         margin: 1 0;
         width: auto;
-        &:light {color: $primary;}
     }
     """
 
@@ -286,9 +284,10 @@ class MarkdownH4(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH4 {
-        text-style: bold underline;
+        color: $markdown-h4-color;
+        background: $markdown-h4-background;
+        text-style: $markdown-h4-text-style;
         margin: 1 0;
-        color: $text;
     }
     """
 
@@ -298,10 +297,10 @@ class MarkdownH5(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH5 {
-        text-style: bold;
-        color: $text;
+        color: $markdown-h5-color;
+        background: $markdown-h5-background;
+        text-style: $markdown-h5-text-style;
         margin: 1 0;
-
     }
     """
 
@@ -311,8 +310,9 @@ class MarkdownH6(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH6 {
-        text-style: bold;
-        color: $text-muted;
+        color: $markdown-h6-color;
+        background: $markdown-h6-background;
+        text-style: $markdown-h6-text-style;
         margin: 1 0;
     }
     """
@@ -323,7 +323,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownHorizontalRule {
-        border-bottom: heavy $primary;
+        border-bottom: heavy $secondary;
         height: 1;
         padding-top: 1;
         margin-bottom: 1;
@@ -353,7 +353,7 @@ class MarkdownBlockQuote(MarkdownBlock):
         padding: 0 1;
     }
     MarkdownBlockQuote:light {
-        border-left: outer $primary;
+        border-left: outer $secondary;
     }
     MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
@@ -421,7 +421,7 @@ class MarkdownOrderedList(MarkdownList):
 
     MarkdownOrderedList Vertical {
         height: auto;
-        width: 1fr;
+        width: 1fr;        
     }
     """
 
@@ -500,7 +500,7 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        background: $panel;
+        background: $surface;
     }
     """
 
@@ -554,7 +554,7 @@ class MarkdownBullet(Widget):
         color: $success;
         text-style: bold;
         &:light {
-            color: $primary;
+            color: $secondary;
         }
     }
     """
@@ -606,8 +606,6 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
-
-
     }
 
     MarkdownFence > * {
@@ -621,7 +619,7 @@ class MarkdownFence(MarkdownBlock):
         self.lexer = lexer
         self.theme = (
             self._markdown.code_dark_theme
-            if self.app.dark
+            if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
 
@@ -637,13 +635,13 @@ class MarkdownFence(MarkdownBlock):
 
     def _on_mount(self, _: Mount) -> None:
         """Watch app theme switching."""
-        self.watch(self.app, "dark", self._retheme)
+        self.watch(self.app, "theme", self._retheme)
 
     def _retheme(self) -> None:
         """Rerender when the theme changes."""
         self.theme = (
             self._markdown.code_dark_theme
-            if self.app.dark
+            if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
         self.get_child_by_type(Static).update(self._block())
@@ -672,10 +670,15 @@ class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
         height: auto;
-        margin: 0 2 1 2;
+        padding: 0 2 1 2;
         layout: vertical;
-        color: $text;
+        color: $foreground;
+        background: $surface;
         overflow-y: auto;
+
+        &:focus {
+            background-tint: $foreground 5%;
+        }
     }
     .em {
         text-style: italic;
@@ -700,17 +703,17 @@ class Markdown(Widget):
     | :- | :- |
     | `code_inline` | Target text that is styled as inline code. |
     | `em` | Target text that is emphasized inline. |
-    | `s` | Target text that is styled inline with strykethrough. |
+    | `s` | Target text that is styled inline with strikethrough. |
     | `strong` | Target text that is styled inline with strong. |
     """
 
     BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
 
     code_dark_theme: reactive[str] = reactive("material")
-    """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
+    """The theme to use for code blocks when the App theme is dark."""
 
     code_light_theme: reactive[str] = reactive("material-light")
-    """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
+    """The theme to use for code blocks when the App theme is light."""
 
     def __init__(
         self,
@@ -720,6 +723,7 @@ class Markdown(Widget):
         id: str | None = None,
         classes: str | None = None,
         parser_factory: Callable[[], MarkdownIt] | None = None,
+        open_links: bool = True,
     ):
         """A Markdown widget.
 
@@ -729,11 +733,13 @@ class Markdown(Widget):
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
             parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
+            open_links: Open links automatically. If you set this to `False`, you can handle the [`LinkClicked`][textual.widgets.markdown.Markdown.LinkClicked] events.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
         self._parser_factory = parser_factory
         self._table_of_contents: TableOfContentsType | None = None
+        self._open_links = open_links
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -798,15 +804,19 @@ class Markdown(Widget):
         if self._markdown is not None:
             await self.update(self._markdown)
 
+    def on_markdown_link_clicked(self, event: LinkClicked) -> None:
+        if self._open_links:
+            self.app.open_url(event.href)
+
     def _watch_code_dark_theme(self) -> None:
         """React to the dark theme being changed."""
-        if self.app.dark:
+        if self.app.current_theme.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()
 
     def _watch_code_light_theme(self) -> None:
         """React to the light theme being changed."""
-        if not self.app.dark:
+        if not self.app.current_theme.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()
 
@@ -1038,12 +1048,17 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     DEFAULT_CSS = """
     MarkdownTableOfContents {
         width: auto;
+        height: 1fr;
         background: $panel;
-        border-right: wide $background;
+        &:focus-within {
+            background-tint: $foreground 5%;
+        }
     }
     MarkdownTableOfContents > Tree {
         padding: 1;
         width: auto;
+        height: 1fr;
+        background: $panel;
     }
     """
 
@@ -1113,7 +1128,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
         message.stop()
 
 
-class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
+class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
     """A Markdown viewer widget."""
 
     SCOPED_CSS = False
@@ -1122,14 +1137,11 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     MarkdownViewer {
         height: 1fr;
         scrollbar-gutter: stable;
-    }
-
-    MarkdownTableOfContents {
-        dock:left;
-    }
-
-    MarkdownViewer > MarkdownTableOfContents {
-        display: none;
+        background: $surface;
+        & > MarkdownTableOfContents {
+            display: none;
+            dock:left;
+        }
     }
 
     MarkdownViewer.-show-table-of-contents > MarkdownTableOfContents {
@@ -1154,6 +1166,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         id: str | None = None,
         classes: str | None = None,
         parser_factory: Callable[[], MarkdownIt] | None = None,
+        open_links: bool = True,
     ):
         """Create a Markdown Viewer object.
 
@@ -1164,11 +1177,13 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
             parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
+            open_links: Open links automatically. If you set this to `False`, you can handle the [`LinkClicked`][textual.widgets.markdown.Markdown.LinkClicked] events.
         """
         super().__init__(name=name, id=id, classes=classes)
         self.show_table_of_contents = show_table_of_contents
         self._markdown = markdown
         self._parser_factory = parser_factory
+        self._open_links = open_links
 
     @property
     def document(self) -> Markdown:
@@ -1215,9 +1230,12 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         self.set_class(show_table_of_contents, "-show-table-of-contents")
 
     def compose(self) -> ComposeResult:
-        markdown = Markdown(parser_factory=self._parser_factory)
-        yield MarkdownTableOfContents(markdown)
+        markdown = Markdown(
+            parser_factory=self._parser_factory, open_links=self._open_links
+        )
+        markdown.can_focus = True
         yield markdown
+        yield MarkdownTableOfContents(markdown)
 
     def _on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated

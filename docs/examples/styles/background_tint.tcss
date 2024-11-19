@@ -1,0 +1,9 @@
+Vertical {
+    background: $panel;
+    color: auto 90%;
+}
+#tint1 { background-tint: $text 0%; }
+#tint2 { background-tint: $text 25%; }
+#tint3 { background-tint: $text 50%; }
+#tint4 { background-tint: $text 75% }
+#tint5 { background-tint: $text 100% }

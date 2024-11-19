@@ -3,10 +3,10 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING, Iterable
 
-from textual._layout import ArrangeResult, Layout, WidgetPlacement
 from textual._resolve import resolve
 from textual.css.scalar import Scalar
-from textual.geometry import Region, Size, Spacing
+from textual.geometry import NULL_OFFSET, Region, Size, Spacing
+from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from textual.widget import Widget
@@ -17,9 +17,15 @@ class GridLayout(Layout):
 
     name = "grid"
 
+    def __init__(self) -> None:
+        self.min_column_width: int | None = None
+        self.stretch_height: bool = False
+        self.regular = False
+
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
+        parent.pre_layout(self)
         styles = parent.styles
         row_scalars = styles.grid_rows or (
             [Scalar.parse("1fr")] if size.height else [Scalar.parse("auto")]
@@ -27,10 +33,25 @@ class GridLayout(Layout):
         column_scalars = styles.grid_columns or [Scalar.parse("1fr")]
         gutter_horizontal = styles.grid_gutter_horizontal
         gutter_vertical = styles.grid_gutter_vertical
+
         table_size_columns = max(1, styles.grid_size_columns)
+        min_column_width = self.min_column_width
+
+        if min_column_width is not None:
+            container_width = size.width
+            table_size_columns = max(
+                1,
+                (container_width + gutter_horizontal)
+                // (min_column_width + gutter_horizontal),
+            )
+            table_size_columns = min(table_size_columns, len(children))
+            if self.regular:
+                while len(children) % table_size_columns and table_size_columns > 1:
+                    table_size_columns -= 1
+
         table_size_rows = styles.grid_size_rows
         viewport = parent.screen.size
-        keyline_style, keyline_color = styles.keyline
+        keyline_style, _keyline_color = styles.keyline
         offset = (0, 0)
         gutter_spacing: Spacing | None
         if keyline_style == "none":
@@ -199,7 +220,13 @@ class GridLayout(Layout):
                         )
                 column_scalars[column] = Scalar.from_number(width)
 
-        columns = resolve(column_scalars, size.width, gutter_vertical, size, viewport)
+        columns = resolve(
+            column_scalars,
+            size.width,
+            gutter_vertical,
+            size,
+            viewport,
+        )
 
         # Handle any auto rows
         for row, scalar in enumerate(row_scalars):
@@ -231,6 +258,7 @@ class GridLayout(Layout):
         rows = resolve(row_scalars, size.height, gutter_horizontal, size, viewport)
 
         placements: list[WidgetPlacement] = []
+        _WidgetPlacement = WidgetPlacement
         add_placement = placements.append
         widgets: list[Widget] = []
         add_widget = widgets.append
@@ -245,20 +273,34 @@ class GridLayout(Layout):
             x2, cell_width = columns[min(max_column, column + column_span)]
             y2, cell_height = rows[min(max_row, row + row_span)]
             cell_size = Size(cell_width + x2 - x, cell_height + y2 - y)
-            width, height, margin = widget._get_box_model(
+            box_width, box_height, margin = widget._get_box_model(
                 cell_size,
                 viewport,
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
             )
+            if self.stretch_height and len(children) > 1:
+                if box_height <= cell_size.height:
+                    box_height = Fraction(cell_size.height)
+
             region = (
-                Region(x, y, int(width + margin.width), int(height + margin.height))
+                Region(
+                    x, y, int(box_width + margin.width), int(box_height + margin.height)
+                )
                 .crop_size(cell_size)
                 .shrink(margin)
             )
+
+            placement_offset = (
+                styles.offset.resolve(cell_size, viewport)
+                if styles.has_rule("offset")
+                else NULL_OFFSET
+            )
+
             add_placement(
-                WidgetPlacement(
+                _WidgetPlacement(
                     region + offset,
+                    placement_offset,
                     (
                         margin
                         if gutter_spacing is None

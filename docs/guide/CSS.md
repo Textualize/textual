@@ -327,13 +327,17 @@ The `background: green` is only applied to the Button underneath the mouse curso
 Here are some other pseudo classes:
 
 - `:blur` Matches widgets which *do not* have input focus.
-- `:dark` Matches widgets in dark mode (where `App.dark == True`).
+- `:dark` Matches widgets in dark themes (where `App.theme.dark == True`).
 - `:disabled` Matches widgets which are in a disabled state.
 - `:enabled` Matches widgets which are in an enabled state.
+- `:even` Matches a widget at an evenly numbered position within its siblings.
+- `:first-of-type` Matches a widget that is the first of its type amongst its siblings.
 - `:focus-within` Matches widgets with a focused child widget.
 - `:focus` Matches widgets which have input focus.
 - `:inline` Matches widgets when the app is running in inline mode.
-- `:light` Matches widgets in dark mode (where `App.dark == False`).
+- `:last-of-type` Matches a widget that is the last of its type amongst its siblings.
+- `:light` Matches widgets in light themes (where `App.theme.dark == False`).
+- `:odd` Matches a widget at an oddly numbered position within its siblings.
 
 ## Combinators
 

@@ -55,57 +55,34 @@ class ToggleButton(Static, can_focus=True):
     DEFAULT_CSS = """
     ToggleButton {
         width: auto;
-        border: tall transparent;
+        border: tall $border-blurred;
         padding: 0 1;
-        background: $boost;
-    }
+        background: $surface;
 
-    ToggleButton:focus {
-        border: tall $accent;
-    }
+        & > .toggle--button {
+            color: $panel-darken-2;
+            background: $panel;
+        }
 
-    ToggleButton:hover {
-        text-style: bold;
-        background: $boost;
-    }
+        &.-on > .toggle--button {
+            color: $text-success;
+            background: $panel;
+        }
 
-    ToggleButton:focus > .toggle--label {
-        text-style: underline;
-    }
-
-    /* Base button colors (including in dark mode). */
-
-    ToggleButton > .toggle--button {
-        color: $background;
-        text-style: bold;
-        background: $foreground 15%;
-    }
-
-    ToggleButton:focus > .toggle--button {
-        background: $foreground 25%;
-    }
-
-    ToggleButton.-on > .toggle--button {
-        color: $success;
-    }
-
-    ToggleButton.-on:focus > .toggle--button {
-        background: $foreground 25%;
-    }
-
-    /* Light mode overrides. */
-
-    ToggleButton:light > .toggle--button {
-        color: $background;
-        background: $foreground 10%;
-    }
-
-    ToggleButton:light:focus > .toggle--button {
-        background: $foreground 25%;
-    }
-
-    ToggleButton:light.-on > .toggle--button {
-        color: $primary;
+        &:focus {
+            border: tall $border;
+            background-tint: $foreground 5%;
+            & > .toggle--label {
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
+                text-style: $block-cursor-text-style;
+            }
+        }
+        &:blur:hover {
+            & > .toggle--label {
+                background: $block-hover-background;
+            }
+        }
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
@@ -189,13 +166,6 @@ class ToggleButton(Static, can_focus=True):
         # Grab the button style.
         button_style = self.get_component_rich_style("toggle--button")
 
-        # If the button is off, we're going to do a bit of a switcharound to
-        # make it look like it's a "cutout".
-        if not self.value:
-            button_style += Style.from_color(
-                self.background_colors[1].rich_color, button_style.bgcolor
-            )
-
         # Building the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
         # BUTTON_LEFT and BUTTON_RIGHT.
@@ -217,9 +187,7 @@ class ToggleButton(Static, can_focus=True):
         """
         button = self._button
         label = self._label.copy()
-        label.stylize_before(
-            self.get_component_rich_style("toggle--label", partial=True)
-        )
+        label.stylize_before(self.get_component_rich_style("toggle--label"))
         spacer = " " if label else ""
         return Text.assemble(
             *(

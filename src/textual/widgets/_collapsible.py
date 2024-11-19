@@ -21,16 +21,18 @@ class CollapsibleTitle(Static, can_focus=True):
         width: auto;
         height: auto;
         padding: 0 1 0 1;
-    }
+        text-style: $block-cursor-blurred-text-style;
+        color: $block-cursor-blurred-foreground;
 
-    CollapsibleTitle:hover {
-        background: $foreground 10%;
-        color: $text;
-    }
-
-    CollapsibleTitle:focus {
-        background: $accent;
-        color: $text;
+        &:hover {
+            background: $block-hover-background;
+            color: $foreground;
+        }
+        &:focus {
+            text-style: $block-cursor-text-style;
+            background: $block-cursor-background;
+            color: $block-cursor-foreground;
+        }
     }
     """
 
@@ -92,6 +94,7 @@ class CollapsibleTitle(Static, can_focus=True):
 class Collapsible(Widget):
     """A collapsible container."""
 
+    ALLOW_MAXIMIZE = True
     collapsed = reactive(True, init=False)
     title = reactive("Toggle")
 
@@ -99,14 +102,18 @@ class Collapsible(Widget):
     Collapsible {
         width: 1fr;
         height: auto;
-        background: $boost;
+        background: $surface;
         border-top: hkey $background;
         padding-bottom: 1;
         padding-left: 1;
-    }
 
-    Collapsible.-collapsed > Contents {
-        display: none;
+        &:focus-within {
+            background-tint: $foreground 5%;
+        }
+
+        &.-collapsed > Contents {
+            display: none;   
+        }
     }
     """
 
@@ -202,6 +209,7 @@ class Collapsible(Widget):
             self.post_message(self.Collapsed(self))
         else:
             self.post_message(self.Expanded(self))
+            self.call_after_refresh(self.scroll_visible)
 
     def _update_collapsed(self, collapsed: bool) -> None:
         """Update children to match collapsed state."""

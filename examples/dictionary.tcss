@@ -13,13 +13,13 @@ Input#dictionary-search {
 }
 
 #results-container {
-    background: $background 50%;
+    background: $surface;
     margin: 0 0 1 0;
     height: 100%;
     overflow: hidden auto;
-    border: tall $background;
+    border: tall transparent;
 }
 
 #results-container:focus {
-    border: tall $accent;
+    border: tall $border;
 }

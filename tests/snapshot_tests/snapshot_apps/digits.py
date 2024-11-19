@@ -4,21 +4,29 @@ from textual.widgets import Digits
 
 class DigitApp(App):
     CSS = """
-    #digits1 {
+    .left {
         text-align: left;
     }
-    #digits2 {
+    .center {
         text-align:center;
     }
-    #digits3 {
+    .right {
         text-align:right;
+    }
+    .bold {
+        text-style: bold;
     }
     """
 
     def compose(self) -> ComposeResult:
-        yield Digits("3.1427", id="digits1")
-        yield Digits(" 0123456789+-.,", id="digits2")
-        yield Digits("3x10^4", id="digits3")
+        yield Digits("3.14159265359", classes="left")
+        yield Digits(" 0123456789+-.,ABCDEF", classes="center")
+        yield Digits(" 0123456789+-.,ABCDEF", classes="center bold")
+        yield Digits("3x10^4", classes="right")
+        yield Digits("3x10^4", classes="right")
+        yield Digits("($123.45)")
+        yield Digits("£123.45")
+        yield Digits("€123.45")
 
 
 if __name__ == "__main__":

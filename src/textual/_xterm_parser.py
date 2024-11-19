@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 from typing import Any, Generator, Iterable
 
@@ -15,7 +16,7 @@ from textual.message import Message
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-_MAX_SEQUENCE_SEARCH_THRESHOLD = 20
+_MAX_SEQUENCE_SEARCH_THRESHOLD = 32
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
@@ -37,6 +38,12 @@ SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSO
 """Set of special sequences."""
 
 _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
+_re_in_band_window_resize: Final = re.compile(
+    r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
+)
+
+
+IS_ITERM = os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
 
 
 class XTermParser(Parser[Message]):
@@ -86,6 +93,7 @@ class XTermParser(Parser[Message]):
                     event_class = events.MouseDown if state == "M" else events.MouseUp
 
             event = event_class(
+                None,
                 x,
                 y,
                 delta_x,
@@ -212,6 +220,16 @@ class XTermParser(Parser[Message]):
                     elif sequence == BRACKETED_PASTE_END:
                         bracketed_paste = False
                     break
+                if match := _re_in_band_window_resize.fullmatch(sequence):
+                    height, width, pixel_height, pixel_width = [
+                        group.partition(":")[0] for group in match.groups()
+                    ]
+                    resize_event = events.Resize.from_dimensions(
+                        (int(width), int(height)),
+                        (int(pixel_width), int(pixel_height)),
+                    )
+                    on_token(resize_event)
+                    break
 
                 if not bracketed_paste:
                     # Check cursor position report
@@ -246,9 +264,15 @@ class XTermParser(Parser[Message]):
                     mode_report_match = _re_terminal_mode_response.match(sequence)
                     if mode_report_match is not None:
                         mode_id = mode_report_match["mode_id"]
-                        setting_parameter = mode_report_match["setting_parameter"]
-                        if mode_id == "2026" and int(setting_parameter) > 0:
+                        setting_parameter = int(mode_report_match["setting_parameter"])
+                        if mode_id == "2026" and setting_parameter > 0:
                             on_token(messages.TerminalSupportsSynchronizedOutput())
+                        elif mode_id == "2048" and not IS_ITERM:
+                            # TODO: remove "and not IS_ITERM" when https://gitlab.com/gnachman/iterm2/-/issues/11961 is fixed
+                            in_band_event = messages.TerminalSupportInBandWindowResize.from_setting_parameter(
+                                setting_parameter
+                            )
+                            on_token(in_band_event)
                         break
 
         if self._debug_log_file is not None:
@@ -265,7 +289,7 @@ class XTermParser(Parser[Message]):
             Keys
         """
 
-        if (match := _re_extended_key.match(sequence)) is not None:
+        if (match := _re_extended_key.fullmatch(sequence)) is not None:
             number, modifiers, end = match.groups()
             number = number or 1
             if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):

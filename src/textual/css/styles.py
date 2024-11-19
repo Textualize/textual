@@ -69,9 +69,9 @@ from textual.css.types import (
 from textual.geometry import Offset, Spacing
 
 if TYPE_CHECKING:
-    from textual._layout import Layout
     from textual.css.types import CSSLocation
     from textual.dom import DOMNode
+    from textual.layout import Layout
 
 
 class RulesMap(TypedDict, total=False):
@@ -90,6 +90,8 @@ class RulesMap(TypedDict, total=False):
     color: Color
     background: Color
     text_style: Style
+
+    background_tint: Color
 
     opacity: float
     text_opacity: float
@@ -190,7 +192,8 @@ class RulesMap(TypedDict, total=False):
     hatch: tuple[str, Color] | Literal["none"]
 
     overlay: Overlay
-    constrain: Constrain
+    constrain_x: Constrain
+    constrain_y: Constrain
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -214,6 +217,7 @@ class StylesBase:
         "auto_color",
         "color",
         "background",
+        "background_tint",
         "opacity",
         "text_opacity",
         "tint",
@@ -283,6 +287,11 @@ class StylesBase:
     """Set the background color of the widget.
     Supports `Color` objects but also strings e.g. "red" or "#ff0000"
     You can also specify an opacity after a color e.g. "blue 10%"
+    """
+    background_tint = ColorProperty(Color(0, 0, 0, 0))
+    """Set a color to tint (blend) with the background.
+    Supports `Color` objects but also strings e.g. "red" or "#ff0000"
+    You can also specify an opacity after a color e.g. "blue 10%"   
     """
     text_style = StyleFlagsProperty()
     """Set the text style of the widget using Rich StyleFlags.
@@ -450,7 +459,12 @@ class StylesBase:
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
     )
-    constrain = StringEnumProperty(VALID_CONSTRAIN, "none")
+    constrain_x: StringEnumProperty[Constrain] = StringEnumProperty(
+        VALID_CONSTRAIN, "none"
+    )
+    constrain_y: StringEnumProperty[Constrain] = StringEnumProperty(
+        VALID_CONSTRAIN, "none"
+    )
 
     def __textual_animation__(
         self,
@@ -1005,6 +1019,8 @@ class Styles(StylesBase):
             append_declaration("color", self.color.hex)
         if "background" in rules:
             append_declaration("background", self.background.hex)
+        if "background_tint" in rules:
+            append_declaration("background-tint", self.background_tint.hex)
         if "text_style" in rules:
             append_declaration("text-style", str(get_rule("text_style")))
         if "tint" in rules:
@@ -1172,8 +1188,18 @@ class Styles(StylesBase):
             append_declaration("subtitle-text-style", str(self.border_subtitle_style))
         if "overlay" in rules:
             append_declaration("overlay", str(self.overlay))
-        if "constrain" in rules:
-            append_declaration("constrain", str(self.constrain))
+        if "constrain_x" in rules and "constrain_y" in rules:
+            if self.constrain_x == self.constrain_y:
+                append_declaration("constrain", self.constrain_x)
+            else:
+                append_declaration(
+                    "constrain", f"{self.constrain_x} {self.constrain_y}"
+                )
+        elif "constrain_x" in rules:
+            append_declaration("constrain-x", self.constrain_x)
+        elif "constrain_y" in rules:
+            append_declaration("constrain-y", self.constrain_y)
+
         if "keyline" in rules:
             keyline_type, keyline_color = self.keyline
             if keyline_type != "none":

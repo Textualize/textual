@@ -1,7 +1,6 @@
 # This stub file must re-export every classes exposed in the __init__.py's `__all__` list:
 from ._button import Button as Button
 from ._checkbox import Checkbox as Checkbox
-from ._classic_footer import ClassicFooter as ClassicFooter
 from ._collapsible import Collapsible as Collapsible
 from ._content_switcher import ContentSwitcher as ContentSwitcher
 from ._data_table import DataTable as DataTable
@@ -13,12 +12,14 @@ from ._help_panel import HelpPanel as HelpPanel
 from ._input import Input as Input
 from ._key_panel import KeyPanel as KeyPanel
 from ._label import Label as Label
+from ._link import Link as Link
 from ._list_item import ListItem as ListItem
 from ._list_view import ListView as ListView
 from ._loading_indicator import LoadingIndicator as LoadingIndicator
 from ._log import Log as Log
 from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
+from ._masked_input import MaskedInput as MaskedInput
 from ._month_calendar import MonthCalendar as MonthCalendar
 from ._option_list import OptionList as OptionList
 from ._placeholder import Placeholder as Placeholder

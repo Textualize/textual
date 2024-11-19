@@ -34,7 +34,6 @@ from textual._arrange import arrange
 from textual._callback import invoke
 from textual._compositor import Compositor, MapGeometry
 from textual._context import active_message_pump, visible_screen_stack
-from textual._layout import DockArrangeResult
 from textual._path import (
     CSSPathType,
     _css_path_type_as_list,
@@ -50,6 +49,7 @@ from textual.dom import DOMNode
 from textual.errors import NoWidget
 from textual.geometry import Offset, Region, Size
 from textual.keys import key_to_character
+from textual.layout import DockArrangeResult
 from textual.reactive import Reactive
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
@@ -149,7 +149,7 @@ class Screen(Generic[ScreenResultType], Widget):
     Screen {
         layout: vertical;
         overflow-y: auto;
-        background: $surface;        
+        background: $background;        
         
         &:inline {
             height: auto;
@@ -162,11 +162,11 @@ class Screen(Generic[ScreenResultType], Widget):
             background: ansi_default;
             color: ansi_default;
 
-            &.-screen-suspended {
+            &.-screen-suspended {                                            
+                text-style: dim;
                 ScrollBar {
                     text-style: not dim;
                 }
-                text-style: dim;
             }
         }
     }
@@ -203,8 +203,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
-    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = ".-textual-system,Footer"
-    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget)."""
+    ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str | None] = None
+    """A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget). Or
+    `None` to default to [App.ALLOW_IN_MAXIMIZED_VIEW][textual.app.App.ALLOW_IN_MAXIMIZED_VIEW]"""
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool | None] = None
     """Use escape key to minimize (potentially overriding bindings) or `None` to defer to [`App.ESCAPE_TO_MINIMIZE`][textual.app.App.ESCAPE_TO_MINIMIZE]."""
@@ -264,6 +265,9 @@ class Screen(Generic[ScreenResultType], Widget):
         """Indicates that a binding update was requested."""
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
+
+        self._css_update_count = -1
+        """Track updates to CSS."""
 
     @property
     def is_modal(self) -> bool:
@@ -332,8 +336,8 @@ class Screen(Generic[ScreenResultType], Widget):
         focused = self.focused
         if focused is not None and focused.loading:
             focused = None
-        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
 
+        namespace_bindings: list[tuple[DOMNode, BindingsMap]]
         if focused is None:
             namespace_bindings = [
                 (self, self._bindings.copy()),
@@ -351,8 +355,18 @@ class Screen(Generic[ScreenResultType], Widget):
                 check_consume_key = filter_namespace.check_consume_key
                 for key in list(bindings_map.key_to_bindings):
                     if check_consume_key(key, key_to_character(key)):
+                        # If the widget consumes the key (e.g. like an Input widget),
+                        # then remove the key from the bindings map.
                         del bindings_map.key_to_bindings[key]
+
             filter_namespaces.append(namespace)
+
+        keymap = self.app._keymap
+        for namespace, bindings_map in namespace_bindings:
+            if keymap:
+                result = bindings_map.apply_keymap(keymap)
+                if result.clashed_bindings:
+                    self.app.handle_bindings_clash(result.clashed_bindings, namespace)
 
         return namespace_bindings
 
@@ -378,15 +392,17 @@ class Screen(Generic[ScreenResultType], Widget):
             A map of keys to a tuple containing (NAMESPACE, BINDING, ENABLED).
         """
         bindings_map: dict[str, ActiveBinding] = {}
+        app = self.app
         for namespace, bindings in self._modal_binding_chain:
             for key, binding in bindings:
                 # This will call the nodes `check_action` method.
-                action_state = self.app._check_action_state(binding.action, namespace)
+                action_state = app._check_action_state(binding.action, namespace)
                 if action_state is False:
                     # An action_state of False indicates the action is disabled and not shown
                     # Note that None has a different meaning, which is why there is an `is False`
                     # rather than a truthy check.
                     continue
+
                 enabled = bool(action_state)
                 if existing_key_and_binding := bindings_map.get(key):
                     # This key has already been bound
@@ -421,10 +437,36 @@ class Screen(Generic[ScreenResultType], Widget):
         if cached_result is not None:
             return cached_result
 
+        allow_in_maximized_view = (
+            self.app.ALLOW_IN_MAXIMIZED_VIEW
+            if self.ALLOW_IN_MAXIMIZED_VIEW is None
+            else self.ALLOW_IN_MAXIMIZED_VIEW
+        )
+
+        def get_maximize_widgets(maximized: Widget) -> list[Widget]:
+            """Get widgets to display in maximized view.
+
+            Returns:
+                A list of widgets.
+
+            """
+            # De-duplicate with a set
+            widgets = {
+                maximized,
+                *self.query_children(allow_in_maximized_view),
+                *self.query_children(".-textual-system"),
+            }
+            # Restore order of widgets.
+            maximize_widgets = [widget for widget in self.children if widget in widgets]
+            # Add the maximized widget, if its not already included
+            if maximized not in maximize_widgets:
+                maximize_widgets.insert(0, maximized)
+            return maximize_widgets
+
         arrangement = self._arrangement_cache[cache_key] = arrange(
             self,
             (
-                [self.maximized, *self.query_children(self.ALLOW_IN_MAXIMIZED_VIEW)]
+                get_maximize_widgets(self.maximized)
                 if self.maximized is not None
                 else self._nodes
             ),
@@ -704,12 +746,15 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._move_focus(-1, selector)
 
-    def maximize(self, widget: Widget, container: bool = True) -> None:
+    def maximize(self, widget: Widget, container: bool = True) -> bool:
         """Maximize a widget, so it fills the screen.
 
         Args:
             widget: Widget to maximize.
             container: If one of the widgets ancestors is a maximizeable widget, maximize that instead.
+
+        Returns:
+            `True` if the widget was maximized, otherwise `False`.
         """
         if widget.allow_maximize:
             if container:
@@ -719,9 +764,11 @@ class Screen(Generic[ScreenResultType], Widget):
                         break
                     if maximize_widget.allow_maximize:
                         self.maximized = maximize_widget
-                        return
+                        return True
 
             self.maximized = widget
+            return True
+        return False
 
     def minimize(self) -> None:
         """Restore any maximized widget to normal state."""
@@ -739,6 +786,10 @@ class Screen(Generic[ScreenResultType], Widget):
     def action_minimize(self) -> None:
         """Action to minimize the currently maximized widget."""
         self.minimize()
+
+    def action_blur(self) -> None:
+        """Action to remove focus (if set)."""
+        self.set_focus(None)
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
@@ -856,7 +907,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
-                        if self.focused is widget and not self.can_view(widget):
+                        if self.focused is widget and not self.can_view_entire(widget):
                             self.scroll_to_center(widget, origin_visible=True)
 
                     self.call_later(scroll_to_center, widget)
@@ -965,13 +1016,12 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_timer.pause()
         if self.is_current and not self.app._batch_count:
             if self._layout_required:
-                self._refresh_layout()
+                self._refresh_layout(scroll=self._scroll_required)
                 self._layout_required = False
-                self._scroll_required = False
                 self._dirty_widgets.clear()
             elif self._scroll_required:
                 self._refresh_layout(scroll=True)
-                self._scroll_required = False
+            self._scroll_required = False
 
             if self._repaint_required:
                 self._dirty_widgets.clear()
@@ -1124,8 +1174,9 @@ class Screen(Generic[ScreenResultType], Widget):
         widget = message.widget
         assert isinstance(widget, Widget)
 
-        self._dirty_widgets.add(widget)
-        self.check_idle()
+        if self in self._compositor:
+            self._dirty_widgets.add(widget)
+            self.check_idle()
 
     async def _on_layout(self, message: messages.Layout) -> None:
         message.stop()
@@ -1165,12 +1216,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._refresh_layout(size)
-        self.refresh()
+        if self.stack_updates:
+            self._compositor_refresh()
+            self._refresh_layout(size)
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
-        self.remove_class("-screen-suspended")
+        if self.app.SUSPENDED_SCREEN_CLASS:
+            self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
@@ -1190,7 +1243,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
-        self.add_class("-screen-suspended")
+        if self.app.SUSPENDED_SCREEN_CLASS:
+            self.add_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.app._set_mouse_over(None)
         self._clear_tooltip()
         self.stack_updates += 1
@@ -1264,7 +1318,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 tooltip.display = False
             else:
                 tooltip.display = True
-                tooltip._absolute_offset = self.app.mouse_position
+                tooltip.absolute_offset = self.app.mouse_position
                 tooltip.update(tooltip_content)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
@@ -1322,6 +1376,7 @@ class Screen(Generic[ScreenResultType], Widget):
         the origin of the specified region.
         """
         return events.MouseMove(
+            event.widget,
             event.x - region.x,
             event.y - region.y,
             event.delta_x,
@@ -1412,6 +1467,23 @@ class Screen(Generic[ScreenResultType], Widget):
 
         return await_pop
 
+    def pop_until_active(self) -> None:
+        """Pop any screens on top of this one, until this screen is active.
+
+        Raises:
+            ScreenError: If this screen is not in the current mode.
+
+        """
+        from textual.app import ScreenError
+
+        try:
+            self.app._pop_to_screen(self)
+        except ScreenError:
+            # More specific error message
+            raise ScreenError(
+                f"Can't make {self} active as it is not in the current stack."
+            ) from None
+
     async def action_dismiss(self, result: ScreenResultType | None = None) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
 
@@ -1421,24 +1493,44 @@ class Screen(Generic[ScreenResultType], Widget):
         await self._flush_next_callbacks()
         self.dismiss(result)
 
-    def can_view(self, widget: Widget) -> bool:
-        """Check if a given widget is in the current view (scrollable area).
+    def can_view_entire(self, widget: Widget) -> bool:
+        """Check if a given widget is fully within the current screen.
 
         Note: This doesn't necessarily equate to a widget being visible.
         There are other reasons why a widget may not be visible.
 
         Args:
-            widget: A widget that is a descendant of self.
+            widget: A widget.
 
         Returns:
-            True if the entire widget is in view, False if it is partially visible or not in view.
+            `True` if the entire widget is in view, `False` if it is partially visible or not in view.
         """
+        if widget not in self._compositor.visible_widgets:
+            return False
         # If the widget is one that overlays the screen...
         if widget.styles.overlay == "screen":
             # ...simply check if it's within the screen's region.
             return widget.region in self.region
         # Failing that fall back to normal checking.
-        return super().can_view(widget)
+        return super().can_view_entire(widget)
+
+    def can_view_partial(self, widget: Widget) -> bool:
+        """Check if a given widget is at least partially within the current view.
+
+        Args:
+            widget: A widget.
+
+        Returns:
+            `True` if the any part of the widget is in view, `False` if it is completely outside of the screen.
+        """
+        if widget not in self._compositor.visible_widgets:
+            return False
+        # If the widget is one that overlays the screen...
+        if widget.styles.overlay == "screen":
+            # ...simply check if it's within the screen's region.
+            return widget.region in self.region
+        # Failing that fall back to normal checking.
+        return super().can_view_partial(widget)
 
     def validate_title(self, title: Any) -> str | None:
         """Ensure the title is a string or `None`."""

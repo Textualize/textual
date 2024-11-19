@@ -22,11 +22,11 @@ async def test_reactive_prompt_change():
         select_current_label = select_current.query_one("#label", Static)
         select_overlay = select_widget.query_one(SelectOverlay)
 
-        assert select_current_label.renderable == Text("Old prompt")
+        assert select_current_label.renderable == "Old prompt"
         assert select_overlay._options[0].prompt == Text("Old prompt")
 
         select_widget.prompt = "New prompt"
-        assert select_current_label.renderable == Text("New prompt")
+        assert select_current_label.renderable == "New prompt"
         assert select_overlay._options[0].prompt == Text("New prompt")
 
 
@@ -46,9 +46,9 @@ async def test_reactive_prompt_change_when_allow_blank_is_false():
         select_current_label = select_current.query_one("#label", Static)
         select_overlay = select_widget.query_one(SelectOverlay)
 
-        assert select_current_label.renderable == Text("0")
+        assert select_current_label.renderable == "0"
         assert select_overlay._options[0].prompt == "0"
 
         select_widget.prompt = "New prompt"
-        assert select_current_label.renderable == Text("0")
+        assert select_current_label.renderable == "0"
         assert select_overlay._options[0].prompt == "0"

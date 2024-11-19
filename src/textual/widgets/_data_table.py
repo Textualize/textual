@@ -261,12 +261,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
-        Binding("up", "cursor_up", "Cursor Up", show=False),
-        Binding("down", "cursor_down", "Cursor Down", show=False),
-        Binding("right", "cursor_right", "Cursor Right", show=False),
-        Binding("left", "cursor_left", "Cursor Left", show=False),
-        Binding("pageup", "page_up", "Page Up", show=False),
-        Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("up", "cursor_up", "Cursor up", show=False),
+        Binding("down", "cursor_down", "Cursor down", show=False),
+        Binding("right", "cursor_right", "Cursor right", show=False),
+        Binding("left", "cursor_left", "Cursor left", show=False),
+        Binding("pageup", "page_up", "Page up", show=False),
+        Binding("pagedown", "page_down", "Page down", show=False),
         Binding("ctrl+home", "scroll_top", "Top", show=False),
         Binding("ctrl+end", "scroll_bottom", "Bottom", show=False),
         Binding("home", "scroll_home", "Home", show=False),
@@ -314,58 +314,87 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """
 
     DEFAULT_CSS = """
-    DataTable:dark {
-        background: initial;
-    }
     DataTable {
-        background: $surface ;
-        color: $text;
+        background: $surface;
+        color: $foreground;
         height: auto;
         max-height: 100%;
-    }
-    DataTable > .datatable--header {
-        text-style: bold;
-        background: $primary;
-        color: $text;
-    }
-    DataTable > .datatable--fixed {
-        background: $primary 50%;
-        color: $text;
-    }
+        
+        &.datatable--fixed-cursor {
+            background: $block-cursor-blurred-background;
+        }
 
-    DataTable > .datatable--odd-row {
+        &:focus {
+            background-tint: $foreground 5%;
+            & > .datatable--cursor {
+                background: $block-cursor-background;
+                color: $block-cursor-foreground;
+                text-style: $block-cursor-text-style;
+            }
 
-    }
+            & > .datatable--header {
+                background-tint: $foreground 5%;
+            }
 
-    DataTable > .datatable--even-row {
-        background: $primary 10%;
-    }
+            & > .datatable--fixed-cursor {
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
+            }
+        }
 
-    DataTable > .datatable--cursor {
-        background: $secondary;
-        color: $text;
-    }
+        &:dark {
+            background: $surface;
+            & > .datatable--even-row {
+                background: $surface-darken-1 40%;
+            }
+        }
 
-    DataTable > .datatable--fixed-cursor {
-        background: $secondary 92%;
-        color: $text;
-    }
+        & > .datatable--header {
+            text-style: bold;
+            background: $panel;
+            color: $foreground;
+        }
+        &:ansi > .datatable--header {
+            background: ansi_bright_blue;
+            color: ansi_default;
+        }
 
-    DataTable > .datatable--header-cursor {
-        background: $secondary-darken-1;
-        color: $text;
-    }
+        & > .datatable--fixed {
+            background: $secondary-muted;
+            color: $foreground;
+        }
 
-    DataTable > .datatable--header-hover {
-        background: $secondary 30%;
-    }
+        & > .datatable--odd-row {
 
-    DataTable:dark > .datatable--even-row {
-        background: $primary 15%;
-    }
+        }
 
-    DataTable > .datatable--hover {
-        background: $secondary 20%;
+        & > .datatable--even-row {
+            background: $surface-lighten-1 50%;
+        }
+
+        & > .datatable--cursor {
+            background: $block-cursor-blurred-background;
+            color: $block-cursor-blurred-foreground;
+            text-style: $block-cursor-blurred-text-style;
+        }
+
+        & > .datatable--fixed-cursor {
+            background: $block-cursor-blurred-background;
+            color: $foreground;
+        }
+
+        & > .datatable--header-cursor {
+            background: $accent-darken-1;
+            color: $foreground;
+        }
+
+        & > .datatable--header-hover {
+            background: $accent 30%;
+        }
+
+        & > .datatable--hover {
+            background: $block-hover-background;
+        }
     }
     """
 

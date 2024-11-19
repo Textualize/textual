@@ -1,32 +1,41 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import pytest
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual import events
+from textual import events, on
 from textual.app import App, ComposeResult
-from textual.binding import Binding
-from textual.containers import Vertical
+from textual.binding import Binding, Keymap
+from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
-from textual.screen import Screen
+from textual.renderables.gradient import LinearGradient
+from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
-    Header,
     DataTable,
-    Input,
-    RichLog,
-    TextArea,
     Footer,
+    Header,
+    Input,
+    Label,
     Log,
     OptionList,
+    Placeholder,
+    ProgressBar,
+    RadioSet,
+    RichLog,
     SelectionList,
+    Static,
+    Switch,
+    Tab,
+    Tabs,
+    TextArea,
 )
-from textual.widgets import Switch
-from textual.widgets import Label
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
+from textual.theme import Theme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -328,6 +337,23 @@ def test_radio_set_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "radio_set.py")
 
 
+def test_radio_set_is_scrollable(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5100"""
+
+    class RadioSetApp(App):
+        CSS = """
+        RadioSet {
+            height: 5;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield RadioSet(*[(f"This is option #{n}") for n in range(10)])
+
+    app = RadioSetApp()
+    assert snap_compare(app, press=["up"])
+
+
 def test_content_switcher_example_initial(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py")
 
@@ -502,7 +528,7 @@ def test_directory_tree_reloading(snap_compare, tmp_path):
     async def run_before(pilot):
         await pilot.app.setup(tmp_path)
         await pilot.press(
-            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+            "down", "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
         )
 
     assert snap_compare(
@@ -578,14 +604,6 @@ def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
 
-def test_demo(snap_compare):
-    """Test the demo app (python -m textual)"""
-    assert snap_compare(
-        Path("../../src/textual/demo.py"),
-        terminal_size=(100, 30),
-    )
-
-
 def test_label_widths(snap_compare):
     """Test renderable widths are calculate correctly."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
@@ -649,7 +667,8 @@ def test_richlog_width(snap_compare):
 def test_richlog_min_width(snap_compare):
     """The available space of this RichLog is less than the minimum width, so written
     content should be rendered at `min_width`. This snapshot should show the renderable
-    clipping at the right edge, as there's not enough space to satisfy the minimum width."""
+    clipping at the right edge, as there's not enough space to satisfy the minimum width.
+    """
 
     class RichLogMinWidth20(App[None]):
         def compose(self) -> ComposeResult:
@@ -915,7 +934,6 @@ def test_dock_scroll_off_by_one(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
         terminal_size=(80, 25),
-        press=["_"],
     )
 
 
@@ -940,9 +958,7 @@ def test_dock_none(snap_compare):
 
 def test_scroll_to(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25), press=["_"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
 
 
 def test_auto_fr(snap_compare):
@@ -1334,12 +1350,12 @@ def test_recompose(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
 
 
-@pytest.mark.parametrize("dark", [True, False])
-def test_ansi_color_mapping(snap_compare, dark):
+@pytest.mark.parametrize("theme", ["textual-dark", "textual-light"])
+def test_ansi_color_mapping(snap_compare, theme):
     """Test how ANSI colors in Rich renderables are mapped to hex colors."""
 
     def setup(pilot):
-        pilot.app.dark = dark
+        pilot.app.theme = theme
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
 
@@ -1938,6 +1954,7 @@ def test_ansi_command_palette(snap_compare):
     """Test command palette on top of ANSI colors."""
 
     class CommandPaletteApp(App[None]):
+        SUSPENDED_SCREEN_CLASS = "-screen-suspended"
         CSS = """
         Label {
             width: 1fr;
@@ -1992,3 +2009,582 @@ def test_disabled(snap_compare):
 
     app = DisabledApp()
     assert snap_compare(app)
+
+
+def test_keymap_bindings_display_footer_and_help_panel(snap_compare):
+    """Bindings overridden by the Keymap are shown as expected in the Footer
+    and help panel. Testing that the keys work as expected is done elsewhere.
+
+    Footer should show bindings `k` to Increment, and `down` to Decrement.
+
+    Key panel should show bindings `k, plus` to increment,
+    and `down, minus, j` to decrement.
+
+    """
+
+    class Counter(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+            ),
+            Binding(
+                key="d,down",
+                action="decrement",
+                description="Decrement",
+                id="app.decrement",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Counter")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap(
+                {
+                    "app.increment": "k,plus",
+                    "app.decrement": "down,minus,j",
+                }
+            )
+
+    assert snap_compare(Counter())
+
+
+def test_keymap_bindings_key_display(snap_compare):
+    """If a default binding in `BINDINGS` has a key_display, it should be reset
+    when that binding is overridden by a Keymap.
+
+    The key_display should be taken from `App.get_key_display`, so in this case
+    it should be "THIS IS CORRECT" in the Footer and help panel, not "INCORRECT".
+    """
+
+    class MyApp(App[None]):
+        BINDINGS = [
+            Binding(
+                key="i,up",
+                action="increment",
+                description="Increment",
+                id="app.increment",
+                key_display="INCORRECT",
+            ),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Check the footer and help panel")
+            yield Footer()
+
+        def on_mount(self) -> None:
+            self.action_show_help_panel()
+            self.set_keymap({"app.increment": "k,plus,j,l"})
+
+        def get_key_display(self, binding: Binding) -> str:
+            if binding.id == "app.increment":
+                return "correct"
+            return super().get_key_display(binding)
+
+    assert snap_compare(MyApp())
+
+
+def test_missing_new_widgets(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5024"""
+
+    class MRE(App):
+        BINDINGS = [("z", "toggle_console", "Console")]
+        CSS = """
+        RichLog { border-top: dashed blue; height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            yield VerticalScroll()
+            yield ProgressBar(
+                classes="hidden"
+            )  # removing or displaying this widget prevents the bug
+            yield Footer()  # clicking "Console" in the footer prevents the bug
+            yield RichLog(classes="hidden")
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_console(self) -> None:
+            self.query_one(RichLog).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["space", "space", "z"])
+
+
+def test_pop_until_active(snap_compare):
+    """End result should be screen showing 'BASE'"""
+
+    class BaseScreen(Screen):
+        def compose(self) -> ComposeResult:
+            yield Label("BASE")
+
+    class FooScreen(Screen):
+        def compose(self) -> ComposeResult:
+            yield Label("Foo")
+
+    class BarScreen(Screen):
+        BINDINGS = [("b", "app.make_base_active")]
+
+        def compose(self) -> ComposeResult:
+            yield Label("Bar")
+
+    class PopApp(App):
+        SCREENS = {"base": BaseScreen}
+
+        async def on_mount(self) -> None:
+            # Push base
+            await self.push_screen("base")
+            # Push two screens
+            await self.push_screen(FooScreen())
+            await self.push_screen(BarScreen())
+
+        def action_make_base_active(self) -> None:
+            self.get_screen("base").pop_until_active()
+
+    app = PopApp()
+    # App will push three screens
+    # Pressing "b" will call pop_until_active, and pop two screens
+    # End result should be screen showing "BASE"
+    assert snap_compare(app, press=["b"])
+
+
+def test_updates_with_auto_refresh(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5056
+
+    After hiding and unhiding the RichLog, you should be able to see 1.5 fully rendered placeholder widgets.
+    Prior to this fix, the bottom portion of the screen did not
+    refresh after the RichLog was hidden/unhidden while in the presence of the auto-refreshing ProgressBar widget.
+    """
+
+    class MRE(App):
+        BINDINGS = [
+            ("z", "toggle_widget('RichLog')", "Console"),
+        ]
+        CSS = """
+        Placeholder { height: 15; }
+        RichLog { height: 6; }
+        .hidden { display: none; }
+        """
+
+        def compose(self):
+            with VerticalScroll():
+                for i in range(10):
+                    yield Placeholder()
+            yield ProgressBar(classes="hidden")
+            yield RichLog(classes="hidden")
+
+        def on_ready(self) -> None:
+            self.query_one(RichLog).write("\n".join(f"line #{i}" for i in range(5)))
+
+        def action_toggle_widget(self, widget_type: str) -> None:
+            self.query_one(widget_type).toggle_class("hidden")
+
+    app = MRE()
+    assert snap_compare(app, press=["z", "z"])
+
+
+def test_push_screen_on_mount(snap_compare):
+    """Test pushing (modal) screen immediately on mount, which was not refreshing the base screen.
+
+    Should show a panel partially obscuring Hello World text
+
+    """
+
+    class QuitScreen(ModalScreen[None]):
+        """Screen with a dialog to quit."""
+
+        DEFAULT_CSS = """
+        QuitScreen {
+            align: center middle;
+        }
+
+        #dialog {
+            grid-size: 2;
+            grid-gutter: 1 2;
+            grid-rows: 1fr 3;
+            padding: 0 1;
+            width: 60;
+            height: 11;
+            border: thick $primary 80%;
+            background: $surface;
+        }
+
+        #question {
+            column-span: 2;
+            height: 1fr;
+            width: 1fr;
+            content-align: center middle;
+        }
+
+        Button {
+            width: 100%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Grid(
+                Label("Are you sure you want to quit?", id="question"), id="dialog"
+            )
+
+    class MyApp(App[None]):
+        def compose(self) -> ComposeResult:
+            s = "Hello World Foo Bar Baz"
+            yield Middle(Center(Static(s)))
+
+        def on_mount(self) -> None:
+            self.push_screen(QuitScreen())
+
+    app = MyApp()
+
+    assert snap_compare(app)
+
+
+def test_transparent_background(snap_compare):
+    """Check that a transparent background defers to render().
+
+    This should display a colorful gradient, filling the screen.
+    """
+
+    COLORS = [
+        "#881177",
+        "#aa3355",
+        "#cc6666",
+        "#ee9944",
+        "#eedd00",
+        "#99dd55",
+        "#44dd88",
+        "#22ccbb",
+        "#00bbcc",
+        "#0099cc",
+        "#3366bb",
+        "#663399",
+    ]
+
+    class TransparentApp(App):
+        CSS = """
+        Screen {
+            background: transparent;
+        }
+        """
+
+        def render(self) -> LinearGradient:
+            """Renders a gradient, when the background is transparent."""
+            stops = [(i / (len(COLORS) - 1), c) for i, c in enumerate(COLORS)]
+            return LinearGradient(30.0, stops)
+
+    app = TransparentApp()
+    snap_compare(app)
+
+
+def test_maximize_allow(snap_compare):
+    """Check that App.ALLOW_IN_MAXIMIZED_VIEW is the default.
+
+    If working this should show a header, some text, a focused button, and more text.
+
+    """
+
+    class MaximizeApp(App):
+        ALLOW_IN_MAXIMIZED_VIEW = "Header"
+        BINDINGS = [("m", "screen.maximize", "maximize focused widget")]
+
+        def compose(self) -> ComposeResult:
+            yield Label(
+                "Above", classes="-textual-system"
+            )  # Allowed in maximize view because it has class -textual-system
+            yield Header()  # Allowed because it matches ALLOW_IN_MAXIMIZED_VIEW
+            yield Button("Hello")  # Allowed because it is the maximized widget
+            yield Label(
+                "Below", classes="-textual-system"
+            )  # Allowed because it has class -textual-system
+            yield Button("World")  # Not allowed
+            yield Footer()  # Not allowed
+
+    assert snap_compare(MaximizeApp(), press=["m"])
+
+
+def test_background_tint(snap_compare):
+    """Test background tint with alpha."""
+
+    # The screen background is dark blue
+    # The vertical is 20% white
+    # With no background tint, the verticals will be a light blue
+    # With a 100% tint, the vertical should be 20% red plus the blue (i.e. purple)
+
+    # tl;dr you should see 4 bars, blue at the top, purple at the bottom, and two shades in between
+
+    class BackgroundTintApp(App):
+        CSS = """
+        Screen {
+            background: rgb(0,0,100)
+        }
+        Vertical {
+            background: rgba(255,255,255,0.2);
+        }
+        #tint1 { background-tint: rgb(255,0,0) 0%; }
+        #tint2 { background-tint: rgb(255,0,0) 33%; }
+        #tint3 { background-tint: rgb(255,0,0) 66%; }
+        #tint4 { background-tint: rgb(255,0,0) 100% }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="tint1"):
+                yield Label("0%")
+            with Vertical(id="tint2"):
+                yield Label("33%")
+            with Vertical(id="tint3"):
+                yield Label("66%")
+            with Vertical(id="tint4"):
+                yield Label("100%")
+
+    assert snap_compare(BackgroundTintApp())
+
+
+def test_fr_and_margin(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5116"""
+
+    # Check margins can be independently applied to widgets with fr unites
+
+    class FRApp(App):
+        CSS = """
+        #first-container {
+            background: green;
+            height: auto;
+        }
+
+        #second-container {
+            margin: 2;
+            background: red;
+            height: auto;
+        }
+
+        #third-container {
+            margin: 4;
+            background: blue;
+            height: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container(id="first-container"):
+                yield Label("No margin - should extend to left and right")
+
+            with Container(id="second-container"):
+                yield Label("A margin of 2, should be 2 cells around the text")
+
+            with Container(id="third-container"):
+                yield Label("A margin of 4, should be 4 cells around the text")
+
+    assert snap_compare(FRApp())
+
+
+def test_pseudo_classes(snap_compare):
+    """Test pseudo classes added in https://github.com/Textualize/textual/pull/5139
+
+    You should see 6 bars, with alternating green and red backgrounds.
+
+    The first bar should have a red border.
+
+    The last bar should have a green border.
+
+    """
+
+    class PSApp(App):
+        CSS = """
+        Label { width: 1fr; height: 1fr; }
+        Label:first-of-type { border:heavy red; }
+        Label:last-of-type { border:heavy green; }
+        Label:odd {background: $success 20%; }
+        Label:even {background: $error 20%; }
+        """
+
+        def compose(self) -> ComposeResult:
+            for item_number in range(5):
+                yield Label(f"Item {item_number+1}")
+
+        def on_mount(self) -> None:
+            # Mounting a new widget should updated previous widgets, as the last of type has changed
+            self.mount(Label("HELLO"))
+
+    assert snap_compare(PSApp())
+
+
+def test_split_segments_infinite_loop(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5151
+
+    Should be a bare-bones text editor containing "x"
+
+    """
+    assert snap_compare(SNAPSHOT_APPS_DIR / "split_segments.py")
+
+
+@pytest.mark.parametrize("theme_name", ["nord", "gruvbox"])
+def test_themes(snap_compare, theme_name):
+    """Test setting different themes and custom theme variables.
+
+    The colors from the theme should be clear, and the text-style of the label
+    should be bold italic, since that's set in the custom theme variable.
+    """
+
+    class ThemeApp(App[None]):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        
+        Label {
+            background: $panel;
+            color: $text;
+            padding: 1 2;
+            border: wide $primary;
+            text-style: $theme-label-style;
+        }
+        """
+
+        def get_theme_variable_defaults(self) -> dict[str, str]:
+            """Define a custom theme variable."""
+            return {"theme-label-style": "bold italic", "unused": "red"}
+
+        def compose(self) -> ComposeResult:
+            yield Label(f"{theme_name.title()} Theme")
+
+        def on_mount(self) -> None:
+            self.theme = theme_name
+
+    assert snap_compare(ThemeApp())
+
+
+def test_custom_theme_with_variables(snap_compare):
+    """Test creating and using a custom theme with variables that get overridden.
+
+    After the overrides from the theme, the background should be blue, the text should be white, the border should be yellow,
+    the style should be bold italic, and the label should be cyan.
+    """
+
+    class ThemeApp(App[None]):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        
+        Label {
+            background: $custom-background;
+            color: $custom-text;
+            border: wide $custom-border;
+            padding: 1 2;
+            text-style: $custom-style;
+            text-align: center;
+            width: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Custom Theme")
+
+        def get_theme_variable_defaults(self) -> dict[str, str]:
+            """Override theme variables."""
+            return {
+                "custom-text": "cyan",
+                "custom-style": "bold italic",
+                "custom-border": "red",
+                "custom-background": "#0000ff 50%",
+            }
+
+        def on_mount(self) -> None:
+            custom_theme = Theme(
+                name="my-custom",
+                primary="magenta",
+                background="black",
+                variables={
+                    "custom-background": "#ff0000 20%",
+                    "custom-text": "white",
+                    "custom-border": "yellow",
+                    "custom-style": "bold",
+                },
+            )
+            self.register_theme(custom_theme)
+            self.theme = "my-custom"
+
+    assert snap_compare(ThemeApp())
+
+
+def test_app_search_commands_opens_and_displays_search_list(snap_compare):
+    """Test the App.search_commands method for displaying a list of commands."""
+
+    class SearchApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Label("Search Commands")
+
+        async def on_mount(self) -> None:
+            def callback():
+                """Dummy no-op callback."""
+
+            commands = [("foo", callback), ("bar", callback), ("baz", callback)]
+            await self.search_commands(commands)
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.press("b")
+
+    assert snap_compare(SearchApp(), run_before=run_before)
+
+
+def test_help_panel_key_display_not_duplicated(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5037"""
+
+    class HelpPanelApp(App):
+        BINDINGS = [
+            Binding("b,e,l", "bell", "Ring the bell", key_display="foo"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Footer()
+
+    async def run_before(pilot: Pilot):
+        pilot.app.action_show_help_panel()
+
+    app = HelpPanelApp()
+    assert snap_compare(app, run_before=run_before)
+
+
+def test_tabs_remove_tab_updates_highlighting(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5218"""
+
+    class TabsApp(App):
+        BINDINGS = [("r", "remove_foo", "Remove foo")]
+
+        def compose(self) -> ComposeResult:
+            yield Tabs(
+                Tab("foo", id="foo"),
+                Tab("bar", id="bar"),
+                active="bar",
+            )
+            yield Footer()
+
+        def action_remove_foo(self) -> None:
+            tabs = self.query_one(Tabs)
+            tabs.remove_tab("foo")
+
+    app = TabsApp()
+    assert snap_compare(app, press="r")
+
+
+def test_theme_variables_available_in_code(snap_compare):
+    """Test that theme variables are available in code."""
+
+    class ThemeVariablesApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("Hello")
+
+        def on_mount(self) -> None:
+            variables = self.theme_variables
+            label = self.query_one(Label)
+            label.update(f"$text-primary = {variables['text-primary']}")
+            label.styles.background = variables["primary-muted"]
+            label.styles.color = variables["text-primary"]
+
+    assert snap_compare(ThemeVariablesApp())

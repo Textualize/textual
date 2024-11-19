@@ -93,23 +93,25 @@ class Input(Widget, can_focus=True):
     """A text input widget."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
-        Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
-        Binding("backspace", "delete_left", "delete left", show=False),
-        Binding("home,ctrl+a", "home", "home", show=False),
-        Binding("end,ctrl+e", "end", "end", show=False),
-        Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
-        Binding("enter", "submit", "submit", show=False),
+        Binding("left", "cursor_left", "Move cursor left", show=False),
+        Binding("ctrl+left", "cursor_left_word", "Move cursor left a word", show=False),
+        Binding("right", "cursor_right", "Move cursor right", show=False),
         Binding(
-            "ctrl+w", "delete_left_word", "delete left to start of word", show=False
+            "ctrl+right", "cursor_right_word", "Move cursor right a word", show=False
         ),
-        Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
+        Binding("backspace", "delete_left", "Delete character left", show=False),
+        Binding("home,ctrl+a", "home", "Go to start", show=False),
+        Binding("end,ctrl+e", "end", "Go to end", show=False),
+        Binding("delete,ctrl+d", "delete_right", "Delete character right", show=False),
+        Binding("enter", "submit", "Submit", show=False),
         Binding(
-            "ctrl+f", "delete_right_word", "delete right to start of word", show=False
+            "ctrl+w", "delete_left_word", "Delete left to start of word", show=False
         ),
-        Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
+        Binding("ctrl+u", "delete_left_all", "Delete all to the left", show=False),
+        Binding(
+            "ctrl+f", "delete_right_word", "Delete right to start of word", show=False
+        ),
+        Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
     ]
     """
     | Key(s) | Description |
@@ -144,20 +146,21 @@ class Input(Widget, can_focus=True):
 
     DEFAULT_CSS = """
     Input {
-        background: $boost;
-        color: $text;
+        background: $surface;
+        color: $foreground;
         padding: 0 2;
-        border: tall $background;
+        border: tall $border-blurred;
         width: 100%;
         height: 3;
 
         &:focus {
-            border: tall $accent;
+            border: tall $border;
+            background-tint: $foreground 5%;
         }
         &>.input--cursor {
-            background: $surface;
-            color: $text;
-            text-style: reverse;
+            background: $input-cursor-background;
+            color: $input-cursor-foreground;
+            text-style: $input-cursor-text-style;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;
@@ -169,16 +172,10 @@ class Input(Widget, can_focus=True):
             border: tall $error;
         }    
 
-        &.-ansi-colors {
+        &:ansi {
             background: ansi_default;
             color: ansi_default;
-            border: tall ansi_default;
-
-            &:focus {
-                border: tall ansi_blue;
-            }
             &>.input--cursor {     
-                background: ansi_default;           
                 text-style: reverse;
             }
             &>.input--placeholder, &>.input--suggestion {

@@ -17,7 +17,7 @@ A bullet point summary of the formats available follows:
  - a color description in the RGB system, [with](#rgba-description) or [without](#rgb-description) opacity (e.g., `rgb(23, 78, 200)`);
  - a color description in the HSL system, [with](#hsla-description) or [without](#hsl-description) opacity (e.g., `hsl(290, 70%, 80%)`);
 
-[Textual's default themes](../guide/design.md#theme-reference) also provide many CSS variables with colors that can be used out of the box.
+[Textual's default themes](../guide/design.md) also provide many CSS variables with colors that can be used out of the box.
 
 ### Named colors
 

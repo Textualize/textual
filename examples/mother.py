@@ -22,7 +22,9 @@ from textual.widgets import Footer, Header, Input, Markdown
 try:
     import llm
 except ImportError:
-    raise ImportError("install the 'llm' package or run with 'uv run mother.py'")
+    raise ImportError(
+        "install the 'llm' package or run with 'uv run mother.py'"
+    ) from None
 
 # The system prompt
 SYSTEM = """Formulate all responses as if you where the sentient AI named Mother from the Alien movies."""

@@ -407,3 +407,20 @@ async def test_fail_early():
     with pytest.raises(StylesheetError):
         async with app.run_test() as pilot:
             await pilot.press("enter")
+
+
+async def test_click_by_widget():
+    """Test that click accept a Widget instance."""
+    pressed = False
+
+    class TestApp(CenteredButtonApp):
+        def on_button_pressed(self):
+            nonlocal pressed
+            pressed = True
+
+    app = TestApp()
+    async with app.run_test() as pilot:
+        button = app.query_one(Button)
+        assert not pressed
+        await pilot.click(button)
+        assert pressed

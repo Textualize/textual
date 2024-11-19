@@ -36,7 +36,7 @@ The `scrollbar-background-active` style sets the background color of the scrollb
 ## CSS
 
 ```css
-scrollbar-backround-active: red;
+scrollbar-background-active: red;
 ```
 
 ## Python

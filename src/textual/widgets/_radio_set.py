@@ -9,14 +9,14 @@ from rich.console import RenderableType
 
 from textual import _widget_navigation
 from textual.binding import Binding, BindingType
-from textual.containers import Container
+from textual.containers import VerticalScroll
 from textual.events import Click, Mount
 from textual.message import Message
 from textual.reactive import var
 from textual.widgets._radio_button import RadioButton
 
 
-class RadioSet(Container, can_focus=True, can_focus_children=False):
+class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
     """Widget for grouping a collection of radio buttons into a set.
 
     When a collection of [`RadioButton`][textual.widgets.RadioButton]s are
@@ -25,46 +25,55 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
     turned off.
     """
 
+    ALLOW_MAXIMIZE = True
+
     DEFAULT_CSS = """
     RadioSet {
-        border: tall transparent;
-        background: $boost;
-        padding: 0 1 0 0;
+        border: tall $border-blurred;
+        background: $surface;
+        padding: 0 1;
         height: auto;
         width: auto;
-    }
 
-    RadioSet:focus {
-        border: tall $accent;
-    }
+        & > RadioButton {
+            background: transparent;
+            border: none;
+            padding: 0;
 
-    /* The following rules/styles mimic similar ToggleButton:focus rules in
-     * ToggleButton. If those styles ever get updated, these should be too.
-     */
+            & > .toggle--button {
+                color: $panel-darken-2;
+                background: $panel;
+            }
 
-    RadioSet > * {
-        background: transparent;
-        border: none;
-        padding: 0 1;
-    }
+            &.-selected {
+                background: $block-cursor-blurred-background;
+            }
+        }
 
-    RadioSet:focus > RadioButton.-selected > .toggle--label {
-        text-style: underline;
-    }
+        & > RadioButton.-on .toggle--button {
+            color: $text-success;
+        }
 
-    RadioSet:focus ToggleButton.-selected > .toggle--button {
-        background: $foreground 25%;
-    }
+        &:focus {
+            /* The following rules/styles mimic similar ToggleButton:focus rules in
+            * ToggleButton. If those styles ever get updated, these should be too.
+            */
+            border: tall $border;
+            background-tint: $foreground 5%;
+            & > RadioButton.-selected {
+                color: $block-cursor-foreground;
+                text-style: $block-cursor-text-style;
+                background: $block-cursor-background;
+            }
 
-    RadioSet:focus > RadioButton.-on.-selected > .toggle--button {
-        background: $foreground 25%;
+        }
     }
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("down,right", "next_button", "", show=False),
+        Binding("down,right", "next_button", "Next option", show=False),
         Binding("enter,space", "toggle_button", "Toggle", show=False),
-        Binding("up,left", "previous_button", "", show=False),
+        Binding("up,left", "previous_button", "Previous option", show=False),
     ]
     """
     | Key(s) | Description |
@@ -188,6 +197,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         self.query(RadioButton).remove_class("-selected")
         if self._selected is not None:
             self._nodes[self._selected].add_class("-selected")
+            self._scroll_to_selected()
 
     def _on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
@@ -276,3 +286,9 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             button = self._nodes[self._selected]
             assert isinstance(button, RadioButton)
             button.toggle()
+
+    def _scroll_to_selected(self) -> None:
+        """Ensure that the selected button is in view."""
+        if self._selected is not None:
+            button = self._nodes[self._selected]
+            self.call_after_refresh(self.scroll_to_widget, button, animate=False)

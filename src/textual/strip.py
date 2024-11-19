@@ -2,7 +2,7 @@
 This module contains the `Strip` class and related objects.
 
 A `Strip` contains the result of rendering a widget.
-See [line API](/guide/widgets#line-api) for how to use Strips.
+See [Line API](/guide/widgets#line-api) for how to use Strips.
 """
 
 from __future__ import annotations
@@ -17,10 +17,11 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-from textual._segment_tools import index_to_cell_position
+from textual._segment_tools import index_to_cell_position, line_pad
 from textual.cache import FIFOCache
 from textual.color import Color
 from textual.constants import DEBUG
+from textual.css.types import AlignHorizontal, AlignVertical
 from textual.filter import LineFilter
 
 
@@ -157,6 +158,101 @@ class Strip:
         """
         return [cls(segments, cell_length) for segments in lines]
 
+    @classmethod
+    def align(
+        cls,
+        strips: list[Strip],
+        style: Style,
+        width: int,
+        height: int,
+        horizontal: AlignHorizontal,
+        vertical: AlignVertical,
+    ) -> Iterable[Strip]:
+        """Align a list of strips on both axis.
+
+        Args:
+            strips: A list of strips, such as from a render.
+            style: The Rich style of additional space.
+            width: Width of container.
+            height: Height of container.
+            horizontal: Horizontal alignment method.
+            vertical: Vertical alignment method.
+
+        Returns:
+            An iterable of strips, with additional padding.
+
+        """
+        if not strips:
+            return
+        line_lengths = [strip.cell_length for strip in strips]
+        shape_width = max(line_lengths)
+        shape_height = len(line_lengths)
+
+        def blank_lines(count: int) -> Iterable[Strip]:
+            """Create blank lines.
+
+            Args:
+                count: Desired number of blank lines.
+
+            Returns:
+                An iterable of blank lines.
+            """
+            blank = cls([Segment(" " * width, style)], width)
+            for _ in range(count):
+                yield blank
+
+        top_blank_lines = bottom_blank_lines = 0
+        vertical_excess_space = max(0, height - shape_height)
+
+        if vertical == "top":
+            bottom_blank_lines = vertical_excess_space
+        elif vertical == "middle":
+            top_blank_lines = vertical_excess_space // 2
+            bottom_blank_lines = vertical_excess_space - top_blank_lines
+        elif vertical == "bottom":
+            top_blank_lines = vertical_excess_space
+
+        if top_blank_lines:
+            yield from blank_lines(top_blank_lines)
+
+        if horizontal == "left":
+            for strip in strips:
+                if strip.cell_length == width:
+                    yield strip
+                else:
+                    yield Strip(
+                        line_pad(strip._segments, 0, width - strip.cell_length, style),
+                        width,
+                    )
+        elif horizontal == "center":
+            left_space = max(0, width - shape_width) // 2
+            for strip in strips:
+                if strip.cell_length == width:
+                    yield strip
+                else:
+                    yield Strip(
+                        line_pad(
+                            strip._segments,
+                            left_space,
+                            width - strip.cell_length - left_space,
+                            style,
+                        ),
+                        width,
+                    )
+
+        elif horizontal == "right":
+            for strip in strips:
+                if strip.cell_length == width:
+                    yield strip
+                else:
+                    yield cls(
+                        line_pad(strip._segments, width - strip.cell_length, 0, style),
+                        width,
+                    )
+
+        if bottom_blank_lines:
+            yield from blank_lines(bottom_blank_lines)
+
     def index_to_cell_position(self, index: int) -> int:
         """Given a character index, return the cell position of that character.
         This is the sum of the cell lengths of all the characters *before* the character
@@ -283,7 +379,6 @@ class Strip:
             strip = self
 
         self._line_length_cache[cache_key] = strip
-
         return strip
 
     def simplify(self) -> Strip:
@@ -372,10 +467,13 @@ class Strip:
         Returns:
             A new Strip.
         """
+
         start = max(0, start)
         end = self.cell_length if end is None else min(self.cell_length, end)
         if start == 0 and end == self.cell_length:
             return self
+        if end <= start:
+            return Strip([], 0)
         cache_key = (start, end)
         cached = self._crop_cache.get(cache_key)
         if cached is not None:
@@ -486,3 +584,28 @@ class Strip:
                 ]
             )
         return self._render_cache
+
+    def crop_pad(self, cell_length: int, left: int, right: int, style: Style) -> Strip:
+        """Crop the strip to `cell_length`, and add optional padding.
+
+        Args:
+            cell_length: Cell length of strip prior to padding.
+            left: Additional padding on the left.
+            right: Additional padding on the right.
+            style: Style of any padding.
+
+        Returns:
+            Cropped and padded strip.
+        """
+        if cell_length != self.cell_length:
+            strip = self.adjust_cell_length(cell_length, style)
+        else:
+            strip = self
+        if not (left or right):
+            return strip
+        segments = strip._segments.copy()
+        if left:
+            segments.insert(0, Segment(" " * left, style))
+        if right:
+            segments.append(Segment(" " * right, style))
+        return Strip(segments, cell_length + left + right)

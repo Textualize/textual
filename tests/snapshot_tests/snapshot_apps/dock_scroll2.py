@@ -24,9 +24,6 @@ class TestApp(App):
         yield Label(text)
         yield Footer()
 
-    def on_mount(self):
-        self.dark = False
-
 
 if __name__ == "__main__":
     app = TestApp()

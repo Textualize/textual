@@ -3,9 +3,9 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING
 
-from textual._layout import ArrangeResult, Layout, WidgetPlacement
 from textual._resolve import resolve_box_models
-from textual.geometry import Region, Size
+from textual.geometry import NULL_OFFSET, Region, Size
+from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from textual.geometry import Spacing
@@ -22,6 +22,7 @@ class VerticalLayout(Layout):
     ) -> ArrangeResult:
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
+        viewport = parent.app.size
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [
@@ -37,8 +38,10 @@ class VerticalLayout(Layout):
                 ),
                 sum(
                     [
-                        max(margin1[2], margin2[0])
-                        for margin1, margin2 in zip(box_margins, box_margins[1:])
+                        bottom if bottom > top else top
+                        for (_, _, bottom, _), (top, _, _, _) in zip(
+                            box_margins, box_margins[1:]
+                        )
                     ]
                 )
                 + (box_margins[0].top + box_margins[-1].bottom),
@@ -56,9 +59,14 @@ class VerticalLayout(Layout):
         )
 
         margins = [
-            max((box1.margin.bottom, box2.margin.top))
-            for box1, box2 in zip(box_models, box_models[1:])
+            (
+                margin_bottom
+                if (margin_bottom := margin1.bottom) > (margin_top := margin2.top)
+                else margin_top
+            )
+            for (_, _, margin1), (_, _, margin2) in zip(box_models, box_models[1:])
         ]
+
         if box_models:
             margins.append(box_models[-1].margin.bottom)
 
@@ -73,19 +81,30 @@ class VerticalLayout(Layout):
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
+        _Size = Size
         for widget, (content_width, content_height, box_margin), margin in zip(
             children, box_models, margins
         ):
-            overlay = widget.styles.overlay == "screen"
+            styles = widget.styles
+            overlay = styles.overlay == "screen"
             next_y = y + content_height
+            offset = (
+                styles.offset.resolve(
+                    _Size(content_width.__floor__(), content_height.__floor__()),
+                    viewport,
+                )
+                if styles.has_rule("offset")
+                else NULL_OFFSET
+            )
             add_placement(
                 _WidgetPlacement(
                     _Region(
                         box_margin.left,
-                        int(y),
-                        int(content_width),
-                        int(next_y) - int(y),
+                        y.__floor__(),
+                        content_width.__floor__(),
+                        next_y.__floor__() - y.__floor__(),
                     ),
+                    offset,
                     box_margin,
                     widget,
                     0,

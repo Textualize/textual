@@ -581,70 +581,67 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     Tree {
-        background: $panel;
-        color: $text;
+        background: $surface;
+        color: $foreground;
 
-        & > .tree--label {
-
-        }
+        & > .tree--label {}
         & > .tree--guides {
-            color: $success-darken-3;
+            color: $surface-lighten-2;
         }
         & > .tree--guides-hover {
-            color: $success;
-            text-style: bold;
+            color: $surface-lighten-2;
         }
         & > .tree--guides-selected {
-            color: $warning;
-            text-style: bold;
+            color: $block-cursor-blurred-background;
         }
         & > .tree--cursor {
-            background: $secondary-darken-2;
-            color: $text;
-            text-style: bold;
+            text-style: $block-cursor-blurred-text-style;
+            background: $block-cursor-blurred-background;
         }
-        &:focus > .tree--cursor {
-            background: $secondary;
-        }
-        & > .tree--highlight {
-            text-style: underline;
-        }
+        & > .tree--highlight {}
         & > .tree--highlight-line {
-            background: $boost;
+            background: $block-hover-background;
         }
 
-        &.-ansi {
-            background: ansi_default;
-            color: ansi_default;
+        &:focus {
+            background-tint: $foreground 5%;
+            & > .tree--cursor {
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
+                text-style: $block-cursor-text-style;
+            }
             & > .tree--guides {
-                color: green;
+                color: $surface-lighten-3;
             }
             & > .tree--guides-hover {
-                color: ansi_blue;
-            
+                color: $surface-lighten-3;
             }
             & > .tree--guides-selected {
-                color: ansi_bright_blue;
-             
+                color: $block-cursor-background;
             }
-            & > .tree--cursor {
-                background: ansi_bright_blue;
-                color: ansi_default;
-                text-style: none;                   
+        }
+
+        &:light {
+            /* In light mode the guides are darker*/
+            & > .tree--guides {
+                color: $surface-darken-1;
+            }
+            & > .tree--guides-hover {
+                color: $block-cursor-background;
+            }
+            & > .tree--guides-selected {
+                color: $block-cursor-background;
+            }
+        }
+
+        &:ansi {
+            color: ansi_default;
+            & > .tree--guides {
+                color: ansi_green;
             }
             &:nocolor > .tree--cursor{
                 text-style: reverse;
             }
-            &:focus > .tree--cursor {
-                background: ansi_bright_blue;
-            }
-            & > .tree--highlight {
-                text-style: underline;
-            }
-            & > .tree--highlight-line {
-                background: ansi_default;
-            }
-
         }
     }
 
@@ -654,7 +651,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1)
+    cursor_line = var(-1, always_update=True)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
@@ -788,6 +785,52 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
+    def add_json(self, json_data: object, node: TreeNode | None = None) -> None:
+        """Adds JSON data to a node.
+
+        Args:
+            json_data: An object decoded from JSON.
+            node: Node to add data to.
+
+        """
+
+        if node is None:
+            node = self.root
+
+        from rich.highlighter import ReprHighlighter
+
+        highlighter = ReprHighlighter()
+
+        def add_node(name: str, node: TreeNode, data: object) -> None:
+            """Adds a node to the tree.
+
+            Args:
+                name: Name of the node.
+                node: Parent node.
+                data: Data associated with the node.
+            """
+            if isinstance(data, dict):
+                node.set_label(Text(f"{{}} {name}"))
+                for key, value in data.items():
+                    new_node = node.add("")
+                    add_node(key, new_node, value)
+            elif isinstance(data, list):
+                node.set_label(Text(f"[] {name}"))
+                for index, value in enumerate(data):
+                    new_node = node.add("")
+                    add_node(str(index), new_node, value)
+            else:
+                node.allow_expand = False
+                if name:
+                    label = Text.assemble(
+                        Text.from_markup(f"[b]{name}[/b]="), highlighter(repr(data))
+                    )
+                else:
+                    label = Text(repr(data))
+                node.set_label(label)
+
+        add_node("", node, json_data)
+
     @property
     def cursor_node(self) -> TreeNode[TreeDataType] | None:
         """The currently selected node, or ``None`` if no selection."""
@@ -846,7 +889,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         if node._allow_expand:
             prefix = (
-                self.ICON_NODE if node.is_expanded else self.ICON_NODE_EXPANDED,
+                self.ICON_NODE_EXPANDED if node.is_expanded else self.ICON_NODE,
                 base_style + TOGGLE_STYLE,
             )
         else:
@@ -929,6 +972,24 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_node,
                 animate=animate and abs(self.cursor_line - previous_cursor_line) > 1,
             )
+
+    def move_cursor_to_line(self, line: int, animate=False) -> None:
+        """Move the cursor to the given line.
+
+        Args:
+            line: The line number (negative indexes are offsets from the last line).
+            animate: Enable scrolling animation.
+
+        Raises:
+            IndexError: If the line doesn't exist.
+        """
+        if self.cursor_line == line:
+            return
+        try:
+            node = self._tree_lines[line].node
+        except IndexError:
+            raise IndexError(f"No line no. {line} in the tree")
+        self.move_cursor(node, animate=animate)
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node and select it, or reset cursor.
@@ -1079,22 +1140,33 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def watch_cursor_line(self, previous_line: int, line: int) -> None:
         previous_node = self._get_node(previous_line)
+        node = self._get_node(line)
+
+        if self.cursor_node is not None:
+            self.cursor_node._selected = False
+
+        if previous_node is not None:
+            previous_node._selected = False
+
+        if node is not None:
+            node._selected = True
+            self._cursor_node = node
+        else:
+            self._cursor_node = None
+
+        if previous_line == line:
+            # No change, so no need for refresh
+            return
+
         # Refresh previous cursor node
         if previous_node is not None:
             self._refresh_node(previous_node)
-            previous_node._selected = False
-            self._cursor_node = None
 
-        node = self._get_node(line)
         # Refresh new node
         if node is not None:
             self._refresh_node(node)
-            node._selected = True
-            self._cursor_node = node
             if previous_node != node:
                 self.post_message(self.NodeHighlighted(node))
-        else:
-            self._cursor_node = None
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
@@ -1113,7 +1185,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         region = self._get_label_region(line)
         if region is not None:
             self.scroll_to_region(
-                region, animate=animate, force=True, center=self.center_scroll
+                region,
+                animate=animate,
+                force=True,
+                center=self.center_scroll,
+                origin_visible=False,
+                x_axis=False,  # Scrolling the X axis is quite jarring, and rarely necessary
             )
 
     def scroll_to_node(

@@ -115,6 +115,7 @@ class Resize(Event, bubble=False):
         size: Size,
         virtual_size: Size,
         container_size: Size | None = None,
+        pixel_size: Size | None = None,
     ) -> None:
         self.size = size
         """The new size of the Widget."""
@@ -122,15 +123,33 @@ class Resize(Event, bubble=False):
         """The virtual size (scrollable size) of the Widget."""
         self.container_size = size if container_size is None else container_size
         """The size of the Widget's container widget."""
+        self.pixel_size = pixel_size
+        """Size of terminal window in pixels if known, or `None` if not known."""
         super().__init__()
+
+    @classmethod
+    def from_dimensions(
+        cls, cells: tuple[int, int], pixels: tuple[int, int] | None
+    ) -> Resize:
+        """Construct from basic dimensions.
+
+        Args:
+            cells: tuple of (<width>, <height>) in cells.
+            pixels: tuple of (<width>, <height>) in pixels if known, or `None` if not known.
+
+        """
+        size = Size(*cells)
+        pixel_size = Size(*pixels) if pixels is not None else None
+        return Resize(size, size, size, pixel_size)
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
-        yield "virtual_size", self.virtual_size
+        yield "virtual_size", self.virtual_size, self.size
         yield "container_size", self.container_size, self.size
+        yield "pixel_size", self.pixel_size, None
 
 
 class Compose(Event, bubble=False, verbose=True):
@@ -308,6 +327,7 @@ class MouseEvent(InputEvent, bubble=True):
     - [ ] Verbose
 
     Args:
+        widget: The widget under the mouse.
         x: The relative x coordinate.
         y: The relative y coordinate.
         delta_x: Change in x since the last message.
@@ -322,6 +342,7 @@ class MouseEvent(InputEvent, bubble=True):
     """
 
     __slots__ = [
+        "widget",
         "x",
         "y",
         "delta_x",
@@ -337,6 +358,7 @@ class MouseEvent(InputEvent, bubble=True):
 
     def __init__(
         self,
+        widget: Widget | None,
         x: int,
         y: int,
         delta_x: int,
@@ -350,6 +372,8 @@ class MouseEvent(InputEvent, bubble=True):
         style: Style | None = None,
     ) -> None:
         super().__init__()
+        self.widget: Widget | None = widget
+        """The widget under the mouse at the time of a click."""
         self.x = x
         """The relative x coordinate."""
         self.y = y
@@ -373,8 +397,11 @@ class MouseEvent(InputEvent, bubble=True):
         self._style = style or Style()
 
     @classmethod
-    def from_event(cls: Type[MouseEventT], event: MouseEvent) -> MouseEventT:
+    def from_event(
+        cls: Type[MouseEventT], widget: Widget, event: MouseEvent
+    ) -> MouseEventT:
         new_event = cls(
+            widget,
             event.x,
             event.y,
             event.delta_x,
@@ -390,6 +417,7 @@ class MouseEvent(InputEvent, bubble=True):
         return new_event
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield self.widget
         yield "x", self.x
         yield "y", self.y
         yield "delta_x", self.delta_x, 0
@@ -402,6 +430,10 @@ class MouseEvent(InputEvent, bubble=True):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
+
+    @property
+    def control(self) -> Widget | None:
+        return self.widget
 
     @property
     def offset(self) -> Offset:
@@ -459,6 +491,7 @@ class MouseEvent(InputEvent, bubble=True):
 
     def _apply_offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
+            self.widget,
             x=self.x + x,
             y=self.y + y,
             delta_x=self.delta_x,
@@ -572,6 +605,11 @@ class Enter(Event, bubble=True, verbose=True):
         """The node directly under the mouse."""
         super().__init__()
 
+    @property
+    def control(self) -> DOMNode:
+        """Alias for the `node` under the mouse."""
+        return self.node
+
 
 class Leave(Event, bubble=True, verbose=True):
     """Sent when the mouse is moved away from a widget, or if a widget is
@@ -591,6 +629,11 @@ class Leave(Event, bubble=True, verbose=True):
         self.node = node
         """The node that was previously directly under the mouse."""
         super().__init__()
+
+    @property
+    def control(self) -> DOMNode:
+        """Alias for the `node` that was previously under the mouse."""
+        return self.node
 
 
 class Focus(Event, bubble=False):

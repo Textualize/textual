@@ -22,7 +22,8 @@ class LoadingIndicator(Widget):
         height: 100%;
         min-height: 1;
         content-align: center middle;
-        color: $accent;
+        color: $primary;
+        text-style: not reverse;
     }
     LoadingIndicator.-textual-loading-indicator {
         layer: _loading;

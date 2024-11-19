@@ -91,15 +91,19 @@ class TextArea(ScrollView):
 TextArea {
     width: 1fr;
     height: 1fr;
-    border: tall $background;
+    border: tall $border-blurred;
     padding: 0 1;
-
+    color: $foreground;
+    background: $surface;
+    & .text-area--cursor {
+        text-style: $input-cursor-text-style;
+    }
     & .text-area--gutter {
-        color: $text 40%;
+        color: $foreground 40%;
     }
 
     & .text-area--cursor-gutter {
-        color: $text 60%;
+        color: $foreground 60%;
         background: $boost;
         text-style: bold;
     }
@@ -109,7 +113,7 @@ TextArea {
     }
 
     & .text-area--selection {
-        background: $accent-lighten-1 40%;
+        background: $input-selection-background;
     }
 
     & .text-area--matching-bracket {
@@ -117,13 +121,20 @@ TextArea {
     }
 
     &:focus {
-        border: tall $accent;
+        border: tall $border;
+    }
+
+    &:ansi {
+        & .text-area--selection {
+            background: transparent;
+            text-style: reverse;
+        }
     }
 
     &:dark {
         .text-area--cursor {
-           color: $text 90%;
-            background: $foreground 90%;
+            color: $input-cursor-foreground;
+            background: $input-cursor-background;
         }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
@@ -167,63 +178,63 @@ TextArea {
 
     BINDINGS = [
         # Cursor movement
-        Binding("up", "cursor_up", "cursor up", show=False),
-        Binding("down", "cursor_down", "cursor down", show=False),
-        Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("ctrl+left", "cursor_word_left", "cursor word left", show=False),
-        Binding("ctrl+right", "cursor_word_right", "cursor word right", show=False),
-        Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
-        Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
-        Binding("pageup", "cursor_page_up", "cursor page up", show=False),
-        Binding("pagedown", "cursor_page_down", "cursor page down", show=False),
+        Binding("up", "cursor_up", "Cursor up", show=False),
+        Binding("down", "cursor_down", "Cursor down", show=False),
+        Binding("left", "cursor_left", "Cursor left", show=False),
+        Binding("right", "cursor_right", "Cursor right", show=False),
+        Binding("ctrl+left", "cursor_word_left", "Cursor word left", show=False),
+        Binding("ctrl+right", "cursor_word_right", "Cursor word right", show=False),
+        Binding("home,ctrl+a", "cursor_line_start", "Cursor line start", show=False),
+        Binding("end,ctrl+e", "cursor_line_end", "Cursor line end", show=False),
+        Binding("pageup", "cursor_page_up", "Cursor page up", show=False),
+        Binding("pagedown", "cursor_page_down", "Cursor page down", show=False),
         # Making selections (generally holding the shift key and moving cursor)
         Binding(
             "ctrl+shift+left",
             "cursor_word_left(True)",
-            "cursor left word select",
+            "Cursor left word select",
             show=False,
         ),
         Binding(
             "ctrl+shift+right",
             "cursor_word_right(True)",
-            "cursor right word select",
+            "Cursor right word select",
             show=False,
         ),
         Binding(
             "shift+home",
             "cursor_line_start(True)",
-            "cursor line start select",
+            "Cursor line start select",
             show=False,
         ),
         Binding(
-            "shift+end", "cursor_line_end(True)", "cursor line end select", show=False
+            "shift+end", "cursor_line_end(True)", "Cursor line end select", show=False
         ),
-        Binding("shift+up", "cursor_up(True)", "cursor up select", show=False),
-        Binding("shift+down", "cursor_down(True)", "cursor down select", show=False),
-        Binding("shift+left", "cursor_left(True)", "cursor left select", show=False),
-        Binding("shift+right", "cursor_right(True)", "cursor right select", show=False),
+        Binding("shift+up", "cursor_up(True)", "Cursor up select", show=False),
+        Binding("shift+down", "cursor_down(True)", "Cursor down select", show=False),
+        Binding("shift+left", "cursor_left(True)", "Cursor left select", show=False),
+        Binding("shift+right", "cursor_right(True)", "Cursor right select", show=False),
         # Shortcut ways of making selections
         # Binding("f5", "select_word", "select word", show=False),
-        Binding("f6", "select_line", "select line", show=False),
-        Binding("f7", "select_all", "select all", show=False),
+        Binding("f6", "select_line", "Select line", show=False),
+        Binding("f7", "select_all", "Select all", show=False),
         # Deletion
-        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("backspace", "delete_left", "Delete character left", show=False),
         Binding(
-            "ctrl+w", "delete_word_left", "delete left to start of word", show=False
+            "ctrl+w", "delete_word_left", "Delete left to start of word", show=False
         ),
-        Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
+        Binding("delete,ctrl+d", "delete_right", "Delete character right", show=False),
         Binding(
-            "ctrl+f", "delete_word_right", "delete right to start of word", show=False
+            "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
-        Binding("ctrl+x", "delete_line", "delete line", show=False),
+        Binding("ctrl+x", "delete_line", "Delete line", show=False),
         Binding(
-            "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
+            "ctrl+u", "delete_to_start_of_line", "Delete to line start", show=False
         ),
         Binding(
             "ctrl+k",
             "delete_to_end_of_line_or_delete_line",
-            "delete to line end",
+            "Delete to line end",
             show=False,
         ),
         Binding("ctrl+z", "undo", "Undo", show=False),
@@ -744,7 +755,7 @@ TextArea {
         if padding is applied, the colors match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self) -> None:
+    def _app_theme_changed(self) -> None:
         self._set_theme(self._theme.name)
 
     def _set_theme(self, theme: str) -> None:
@@ -1236,9 +1247,7 @@ TextArea {
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         if not self.soft_wrap:
-            text_strip = text_strip.crop(
-                scroll_x, scroll_x + virtual_width - gutter_width
-            )
+            text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:
@@ -1520,8 +1529,8 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
-        # When `app.dark` is toggled, reset the theme (since it caches values).
-        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+        # When `app.theme` reactive is changed, reset the theme to clear cached styles.
+        self.watch(self.app, "theme", self._app_theme_changed, init=False)
 
         self.blink_timer = self.set_interval(
             0.5,

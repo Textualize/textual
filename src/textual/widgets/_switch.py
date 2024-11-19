@@ -46,33 +46,51 @@ class Switch(Widget, can_focus=True):
 
     DEFAULT_CSS = """
     Switch {
-        border: tall transparent;
-        background: $boost;
+        border: tall $border-blurred;
+        background: $surface;
         height: auto;
         width: auto;
+        
         padding: 0 2;
+        &.-on .switch--slider {
+            color: $success;
+        }
+        & .switch--slider {
+            color: $panel;
+            background: $panel-darken-2;
+        }
+        &:hover {
+            & > .switch--slider {
+                color: $panel-lighten-1
+            }
+            &.-on > .switch--slider {
+                color: $success-lighten-1;
+            }
+        }
+        &:focus {
+            border: tall $border;
+            background-tint: $foreground 5%;
+        }
+
+        &:light {
+            &.-on .switch--slider {
+                color: $success;
+            }
+            & .switch--slider {
+                color: $primary 15%;
+                background: $panel-darken-2;
+            }
+            &:hover {
+                & > .switch--slider {
+                    color: $primary 25%;
+                }
+                &.-on > .switch--slider {
+                    color: $success-lighten-1;
+                }
+            }
+        }
     }
 
-    Switch > .switch--slider {
-        background: $panel-darken-2;
-        color: $panel-lighten-2;
-    }
-
-    Switch:hover {
-        border: tall $background;
-    }
-
-    Switch:focus {
-        border: tall $accent;
-    }
-
-    Switch.-on {
-
-    }
-
-    Switch.-on > .switch--slider {
-        color: $success;
-    }
     """
 
     value: reactive[bool] = reactive(False, init=False)

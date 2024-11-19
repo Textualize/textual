@@ -1,0 +1,12 @@
+Counter {
+    background: $panel-darken-1;
+    padding: 1 2;
+    color: $text-muted;
+
+    &:focus {  /* (1)! */
+        background: $primary;
+        color: $text;
+        text-style: bold;
+        outline-left: thick $accent;
+    }
+}

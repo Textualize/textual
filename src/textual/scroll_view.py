@@ -1,5 +1,5 @@
 """
-`ScrollView` is a base class for [line api](/guide/widgets#line-api) widgets.
+`ScrollView` is a base class for [Line API](/guide/widgets#line-api) widgets.
 """
 
 from __future__ import annotations
@@ -123,6 +123,7 @@ class ScrollView(ScrollableContainer):
         force: bool = False,
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "basic",
+        immediate: bool = False,
     ) -> None:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -136,6 +137,8 @@ class ScrollView(ScrollableContainer):
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
             level: Minimum level required for the animation to take place (inclusive).
+            immediate: If `False` the scroll will be deferred until after a screen refresh,
+                set to `True` to scroll immediately.
         """
 
         self._scroll_to(

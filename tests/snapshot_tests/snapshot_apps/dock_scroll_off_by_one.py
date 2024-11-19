@@ -3,6 +3,8 @@ from textual.widgets import Checkbox, Footer
 
 
 class ScrollOffByOne(App):
+    AUTO_FOCUS = None
+
     def compose(self) -> ComposeResult:
         for number in range(1, 100):
             yield Checkbox(str(number))

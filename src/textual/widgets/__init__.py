@@ -23,6 +23,7 @@ if typing.TYPE_CHECKING:
     from textual.widgets._input import Input
     from textual.widgets._key_panel import KeyPanel
     from textual.widgets._label import Label
+    from textual.widgets._link import Link
     from textual.widgets._list_item import ListItem
     from textual.widgets._list_view import ListView
     from textual.widgets._loading_indicator import LoadingIndicator
@@ -64,6 +65,7 @@ __all__ = [
     "Input",
     "KeyPanel",
     "Label",
+    "Link",
     "ListItem",
     "ListView",
     "LoadingIndicator",
@@ -106,7 +108,7 @@ def __getattr__(widget_class: str) -> type[Widget]:
         pass
 
     if widget_class not in __all__:
-        raise ImportError(f"Package 'textual.widgets' has no class '{widget_class}'")
+        raise AttributeError(f"Package 'textual.widgets' has no class '{widget_class}'")
 
     widget_module_path = f"._{camel_to_snake(widget_class)}"
     module = import_module(widget_module_path, package="textual.widgets")

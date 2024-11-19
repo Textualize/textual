@@ -540,10 +540,11 @@ class StylesBuilder:
     def process_keyline(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
-        if len(tokens) > 2:
+        if len(tokens) > 3:
             self.error(name, tokens[0], keyline_help_text())
         keyline_style = "none"
         keyline_color = Color.parse("green")
+        keyline_alpha = 1.0
         for token in tokens:
             if token.name == "color":
                 try:
@@ -562,7 +563,16 @@ class StylesBuilder:
                     if keyline_style not in VALID_KEYLINE:
                         self.error(name, token, keyline_help_text())
 
-        self.styles._rules["keyline"] = (keyline_style, keyline_color)
+            elif token.name == "scalar":
+                alpha_scalar = Scalar.parse(token.value)
+                if alpha_scalar.unit != Unit.PERCENT:
+                    self.error(name, token, "alpha must be given as a percentage.")
+                keyline_alpha = alpha_scalar.value / 100.0
+
+        self.styles._rules["keyline"] = (
+            keyline_style,
+            keyline_color.multiply_alpha(keyline_alpha),
+        )
 
     def process_offset(self, name: str, tokens: list[Token]) -> None:
         def offset_error(name: str, token: Token) -> None:
@@ -670,6 +680,7 @@ class StylesBuilder:
 
     process_tint = process_color
     process_background = process_color
+    process_background_tint = process_color
     process_scrollbar_color = process_color
     process_scrollbar_color_hover = process_color
     process_scrollbar_color_active = process_color
@@ -1047,6 +1058,40 @@ class StylesBuilder:
             self.styles._rules[name] = value  # type: ignore
 
     def process_constrain(self, name: str, tokens: list[Token]) -> None:
+        if len(tokens) == 1:
+            try:
+                value = self._process_enum(name, tokens, VALID_CONSTRAIN)
+            except StyleValueError:
+                self.error(
+                    name,
+                    tokens[0],
+                    string_enum_help_text(name, VALID_CONSTRAIN, context="css"),
+                )
+            else:
+                self.styles._rules["constrain_x"] = value  # type: ignore
+                self.styles._rules["constrain_y"] = value  # type: ignore
+        elif len(tokens) == 2:
+            constrain_x, constrain_y = self._process_enum_multiple(
+                name, tokens, VALID_CONSTRAIN, 2
+            )
+            self.styles._rules["constrain_x"] = constrain_x  # type: ignore
+            self.styles._rules["constrain_y"] = constrain_y  # type: ignore
+        else:
+            self.error(name, tokens[0], "one or two values expected here")
+
+    def process_constrain_x(self, name: str, tokens: list[Token]) -> None:
+        try:
+            value = self._process_enum(name, tokens, VALID_CONSTRAIN)
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_CONSTRAIN, context="css"),
+            )
+        else:
+            self.styles._rules[name] = value  # type: ignore
+
+    def process_constrain_y(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_CONSTRAIN)
         except StyleValueError:

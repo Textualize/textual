@@ -231,8 +231,6 @@ def align_lines(
     if top_blank_lines:
         yield from blank_lines(top_blank_lines)
 
-    horizontal_excess_space = max(0, width - shape_width)
-
     if horizontal == "left":
         for cell_length, line in zip(line_lengths, lines):
             if cell_length == width:
@@ -241,7 +239,7 @@ def align_lines(
                 yield line_pad(line, 0, width - cell_length, style)
 
     elif horizontal == "center":
-        left_space = horizontal_excess_space // 2
+        left_space = max(0, width - shape_width) // 2
         for cell_length, line in zip(line_lengths, lines):
             if cell_length == width:
                 yield line

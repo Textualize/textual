@@ -10,6 +10,9 @@ from __future__ import annotations
 from typing import ClassVar
 
 from textual.binding import Binding, BindingType
+from textual.layout import Layout
+from textual.layouts.grid import GridLayout
+from textual.reactive import reactive
 from textual.widget import Widget
 
 
@@ -70,14 +73,70 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     | ctrl+pagedown | Scroll right one page, if horizontal scrolling is available. |
     """
 
+    def __init__(
+        self,
+        *children: Widget,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+        can_focus: bool | None = None,
+        can_focus_children: bool | None = None,
+        can_maximize: bool | None = None,
+    ) -> None:
+        """
+
+        Args:
+            *children: Child widgets.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+            can_focus: Can this container be focused?
+            can_focus_children: Can this container's children be focused?
+            can_maximized: Allow this container to maximize? `None` to use default logic.,
+        """
+
+        super().__init__(
+            *children,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
+        if can_focus is not None:
+            self.can_focus = can_focus
+        if can_focus_children is not None:
+            self.can_focus_children = can_focus_children
+        self.can_maximize = can_maximize
+
+    @property
+    def allow_maximize(self) -> bool:
+        if self.can_maximize is None:
+            return super().allow_maximize
+        return self.can_maximize
+
 
 class Vertical(Widget, inherit_bindings=False):
-    """A container with vertical layout and no scrollbars."""
+    """An expanding container with vertical layout and no scrollbars."""
 
     DEFAULT_CSS = """
     Vertical {
         width: 1fr;
         height: 1fr;
+        layout: vertical;
+        overflow: hidden hidden;
+    }
+    """
+
+
+class VerticalGroup(Widget, inherit_bindings=False):
+    """A non-expanding container with vertical layout and no scrollbars."""
+
+    DEFAULT_CSS = """
+    VerticalGroup {
+        width: 1fr;
+        height: auto;
         layout: vertical;
         overflow: hidden hidden;
     }
@@ -97,12 +156,25 @@ class VerticalScroll(ScrollableContainer):
 
 
 class Horizontal(Widget, inherit_bindings=False):
-    """A container with horizontal layout and no scrollbars."""
+    """An expanding container with horizontal layout and no scrollbars."""
 
     DEFAULT_CSS = """
     Horizontal {
         width: 1fr;
         height: 1fr;
+        layout: horizontal;
+        overflow: hidden hidden;
+    }
+    """
+
+
+class HorizontalGroup(Widget, inherit_bindings=False):
+    """A non-expanding container with horizontal layout and no scrollbars."""
+
+    DEFAULT_CSS = """
+    HorizontalGroup {
+        width: 1fr;
+        height: auto;
         layout: horizontal;
         overflow: hidden hidden;
     }
@@ -133,6 +205,18 @@ class Center(Widget, inherit_bindings=False):
     """
 
 
+class Right(Widget, inherit_bindings=False):
+    """A container which aligns children on the X axis."""
+
+    DEFAULT_CSS = """
+    Right {
+        align-horizontal: right;
+        width: 1fr;
+        height: auto;
+    }
+    """
+
+
 class Middle(Widget, inherit_bindings=False):
     """A container which aligns children on the Y axis."""
 
@@ -155,3 +239,55 @@ class Grid(Widget, inherit_bindings=False):
         layout: grid;
     }
     """
+
+
+class ItemGrid(Widget, inherit_bindings=False):
+    """A container with grid layout."""
+
+    DEFAULT_CSS = """
+    ItemGrid {
+        width: 1fr;
+        height: auto;
+        layout: grid;
+    }
+    """
+
+    stretch_height: reactive[bool] = reactive(True)
+    min_column_width: reactive[int | None] = reactive(None, layout=True)
+    regular: reactive[bool] = reactive(False)
+
+    def __init__(
+        self,
+        *children: Widget,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+        min_column_width: int | None = None,
+        stretch_height: bool = True,
+        regular: bool = False,
+    ) -> None:
+        """Initialize a Widget.
+
+        Args:
+            *children: Child widgets.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+            stretch_height: Expand the height of widgets to the row height.
+            min_column_width: The smallest permitted column width.
+            regular: All rows should have the same number of items.
+        """
+        super().__init__(
+            *children, name=name, id=id, classes=classes, disabled=disabled
+        )
+        self.set_reactive(ItemGrid.stretch_height, stretch_height)
+        self.set_reactive(ItemGrid.min_column_width, min_column_width)
+        self.set_reactive(ItemGrid.regular, regular)
+
+    def pre_layout(self, layout: Layout) -> None:
+        if isinstance(layout, GridLayout):
+            layout.stretch_height = self.stretch_height
+            layout.min_column_width = self.min_column_width
+            layout.regular = self.regular

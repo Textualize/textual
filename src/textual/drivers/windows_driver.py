@@ -101,7 +101,7 @@ class WindowsDriver(Driver):
         self._enable_bracketed_paste()
 
         self._event_thread = win32.EventMonitor(
-            loop, self._app, self.exit_event, self.process_event
+            loop, self._app, self.exit_event, self.process_message
         )
         self._event_thread.start()
 

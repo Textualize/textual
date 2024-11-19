@@ -46,18 +46,18 @@ class Toast(Static, inherit_css=False):
         visibility: visible;
         margin-top: 1;
         padding: 1 1;
-        background: $panel;
-        tint: white 5%;
+        background: $panel-lighten-1;
         link-background: initial;
-        link-color: $text;
+        link-color: $foreground;
         link-style: underline;
-        link-background-hover: $accent;
-        link-color-hover: $text;
+        link-background-hover: $primary;
+        link-color-hover: $foreground;
         link-style-hover: bold not underline;
     }
 
     .toast--title {
         text-style: bold;
+        color: $foreground;
     }
 
     Toast.-information {
@@ -65,7 +65,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-information .toast--title {
-        color: $success-darken-1;
+        color: $text-success;
     }
 
     Toast.-warning {
@@ -73,7 +73,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-warning .toast--title {
-        color: $warning-darken-1;
+        color: $text-warning;
     }
 
     Toast.-error {
@@ -81,7 +81,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-error .toast--title {
-       color: $error-darken-1;
+       color: $text-error;
     }
     """
 

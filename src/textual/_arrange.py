@@ -5,9 +5,9 @@ from fractions import Fraction
 from operator import attrgetter
 from typing import TYPE_CHECKING, Iterable, Mapping, Sequence
 
-from textual._layout import DockArrangeResult, WidgetPlacement
 from textual._partition import partition
-from textual.geometry import Region, Size, Spacing
+from textual.geometry import NULL_OFFSET, NULL_SPACING, Region, Size, Spacing
+from textual.layout import DockArrangeResult, WidgetPlacement
 
 if TYPE_CHECKING:
     from textual.widget import Widget
@@ -90,7 +90,7 @@ def arrange(
 
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
-            layout_placements = widget._layout.arrange(
+            layout_placements = widget.layout.arrange(
                 widget,
                 layout_widgets,
                 dock_region.size,
@@ -133,7 +133,8 @@ def _arrange_dock_widgets(
     region_offset = region.offset
     size = region.size
     width, height = size
-    null_spacing = Spacing()
+    null_spacing = NULL_SPACING
+    null_offset = NULL_OFFSET
 
     top = right = bottom = left = 0
 
@@ -173,6 +174,7 @@ def _arrange_dock_widgets(
         append_placement(
             _WidgetPlacement(
                 dock_region.translate(region_offset),
+                null_offset,
                 null_spacing,
                 dock_widget,
                 top_z,
@@ -202,7 +204,8 @@ def _arrange_split_widgets(
     placements: list[WidgetPlacement] = []
     append_placement = placements.append
     view_region = size.region
-    null_spacing = Spacing()
+    null_spacing = NULL_SPACING
+    null_offset = NULL_OFFSET
 
     for split_widget in split_widgets:
         split = split_widget.styles.split
@@ -226,7 +229,9 @@ def _arrange_split_widgets(
             raise AssertionError("invalid value for split edge")  # pragma: no-cover
 
         append_placement(
-            _WidgetPlacement(split_region, null_spacing, split_widget, 1, True)
+            _WidgetPlacement(
+                split_region, null_offset, null_spacing, split_widget, 1, True
+            )
         )
 
     return placements, view_region

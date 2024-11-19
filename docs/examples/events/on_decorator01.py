@@ -16,7 +16,9 @@ class OnDecoratorApp(App):
         if event.button.id == "bell":
             self.bell()
         elif event.button.has_class("toggle", "dark"):
-            self.dark = not self.dark
+            self.theme = (
+                "textual-dark" if self.theme == "textual-light" else "textual-light"
+            )
         elif event.button.id == "quit":
             self.exit()
 
