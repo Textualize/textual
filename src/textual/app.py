@@ -636,6 +636,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._css_has_errors = False
 
+        self.theme_variables: dict[str, str] = {}
+        """Variables generated from the current theme."""
+
         # Note that the theme must be set *before* self.get_css_variables() is called
         # to ensure that the variables are retrieved from the currently active theme.
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
@@ -764,9 +767,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
-
-        self.theme_variables: dict[str, str] = {}
-        """Variables generated from the current theme."""
 
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
