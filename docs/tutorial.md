@@ -334,7 +334,7 @@ We want our `Stopwatch` widget to have two states: a default state with a Start 
 </div>
 
 
-We can accomplish this with a CSS _class_. Not to be confused with a Python class, a CSS class is like a tag you can add to a widget to modify its styles. A widget may have any number of CSS classes, which may be added and removes to change the style of your widget.
+We can accomplish this with a CSS _class_. Not to be confused with a Python class, a CSS class is like a tag you can add to a widget to modify its styles. A widget may have any number of CSS classes, which may be added and removed to change its appearance.
 
 Here's the new CSS:
 
