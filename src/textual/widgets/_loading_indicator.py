@@ -60,7 +60,7 @@ class LoadingIndicator(Widget):
 
     @on(InputEvent)
     def on_input(self, event: InputEvent) -> None:
-        """Prevent all input events from bubbling, disabling widgets in a loading state."""
+        """Prevent all input events from bubbling, thus disabling widgets in a loading state."""
         event.stop()
         event.prevent_default()
 
