@@ -504,7 +504,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self.set_class(expanded, "-expanded")
         if expanded:
             select_current = self.query_one(SelectCurrent)
-            overlay.focus()
+            overlay.focus(scroll_visible=False)
             if self.value is self.BLANK:
                 overlay.select(None)
                 select_current.has_value = False
