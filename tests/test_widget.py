@@ -452,7 +452,7 @@ async def test_loading_button():
 
     class LoadingApp(App):
         def compose(self) -> ComposeResult:
-            yield Button("Hello, World", action="app.inc", active_effect_duration=0)
+            yield Button("Hello, World", action="app.inc")
 
         def action_inc(self) -> None:
             nonlocal counter
@@ -462,16 +462,18 @@ async def test_loading_button():
         # Sanity check
         assert counter == 0
 
+        button = pilot.app.query_one(Button)
+        button.active_effect_duration = 0
+
         # Click the button to advance the counter
-        await pilot.click(Button)
+        await pilot.click(button)
         assert counter == 1
 
         # Set the button to loading state
-        button = pilot.app.query_one(Button)
         button.loading = True
 
         # A click should do nothing
-        await pilot.click(Button)
+        await pilot.click(button)
         assert counter == 1
 
         # Set the button to not loading

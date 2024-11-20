@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added Styles.has_any_rules https://github.com/Textualize/textual/pull/5264
-- Added `active_effect_duration` to `Button.__init__` https://github.com/Textualize/textual/pull/5267
 
 ### Fixed 
 

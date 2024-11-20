@@ -204,7 +204,6 @@ class Button(Widget, can_focus=True):
             disabled: Whether the button is disabled or not.
             tooltip: Optional tooltip.
             action: Optional action to run when clicked.
-            active_effect_duration: Amount of time in seconds the button 'press' animation lasts.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -214,7 +213,7 @@ class Button(Widget, can_focus=True):
         self.label = label
         self.variant = variant
         self.action = action
-        self.active_effect_duration = active_effect_duration
+        self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
 
         if tooltip is not None:
