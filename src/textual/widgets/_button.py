@@ -191,7 +191,6 @@ class Button(Widget, can_focus=True):
         disabled: bool = False,
         tooltip: RenderableType | None = None,
         action: str | None = None,
-        active_effect_duration: float = 0.2,
     ):
         """Create a Button widget.
 
