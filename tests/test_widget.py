@@ -480,7 +480,7 @@ async def test_loading_button():
         button.loading = False
 
         # Click should advance counter
-        await pilot.click(Button)
+        await pilot.click(button)
         assert counter == 2
 
 
