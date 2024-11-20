@@ -657,17 +657,6 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        # if overlay:
-                        #     styles = sub_widget.styles
-                        #     has_rule = styles.has_rule
-                        #     if has_rule("constrain_x") or has_rule("constrain_y"):
-                        #         widget_region = widget_region.constrain(
-                        #             styles.constrain_x,
-                        #             styles.constrain_y,
-                        #             styles.margin,
-                        #             no_clip,
-                        #         )
-
                         if widget._cover_widget is None:
                             add_widget(
                                 sub_widget,
@@ -712,22 +701,6 @@ class Compositor:
 
             elif visible:
                 # Add the widget to the map
-
-                # if widget.absolute_offset is not None:
-                #     margin = styles.margin
-                #     region = region.at_offset(widget.absolute_offset + margin.top_left)
-                #     region = region.translate(
-                #         styles.offset.resolve(region.grow(margin).size, size)
-                #     )
-                # has_rule = styles.has_rule
-                # if has_rule("constrain_x") or has_rule("constrain_y"):
-                #     region = region.constrain(
-                #         styles.constrain_x,
-                #         styles.constrain_y,
-                #         styles.margin,
-                #         size.region,
-                #     )
-
                 map[widget._render_widget] = _MapGeometry(
                     region,
                     order,
