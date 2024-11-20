@@ -214,7 +214,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         & > SelectOverlay {
             width: 1fr;
-            display: none;
+            visibility: hidden;
             height: auto;
             max-height: 12;
             overlay: screen;
@@ -240,7 +240,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             }
 
             & > SelectOverlay {
-                display: block;
+                visibility: visible;
             }
         }
 
@@ -494,7 +494,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._setup_options_renderables()
         self._init_selected_option(self._value)
 
-    def _watch_expanded(self, expanded: bool) -> None:
+    async def _watch_expanded(self, expanded: bool) -> None:
         """Display or hide overlay."""
         try:
             overlay = self.query_one(SelectOverlay)
@@ -503,17 +503,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             return
         self.set_class(expanded, "-expanded")
         if expanded:
+            select_current = self.query_one(SelectCurrent)
             overlay.focus()
             if self.value is self.BLANK:
                 overlay.select(None)
-                self.query_one(SelectCurrent).has_value = False
+                select_current.has_value = False
             else:
                 value = self.value
                 for index, (_prompt, prompt_value) in enumerate(self._options):
                     if value == prompt_value:
                         overlay.select(index)
                         break
-                self.query_one(SelectCurrent).has_value = True
+                select_current.has_value = True
 
     @on(SelectCurrent.Toggle)
     def _select_current_toggle(self, event: SelectCurrent.Toggle) -> None:
