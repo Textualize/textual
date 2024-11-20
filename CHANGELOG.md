@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Updated the tutorial (text and code) https://github.com/Textualize/textual/pull/5257
-- The Select widget no longer scrolls it's container when expanded
+- The Select widget no longer scrolls it's container when expanded https://github.com/Textualize/textual/pull/5265
 
 ### Fixed
 
