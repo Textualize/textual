@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added Styles.has_any_rules
+- Added Styles.has_any_rules https://github.com/Textualize/textual/pull/5264
 
 ### Fixed 
 
-- Fixed offset applied to docked widgets
+- Fixed offset applied to docked widgets https://github.com/Textualize/textual/pull/5264
 
 ## [0.86.3] - 2024-11-19
 
