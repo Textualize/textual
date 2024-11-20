@@ -191,6 +191,7 @@ class Button(Widget, can_focus=True):
         disabled: bool = False,
         tooltip: RenderableType | None = None,
         action: str | None = None,
+        active_effect_duration: float = 0.2,
     ):
         """Create a Button widget.
 
@@ -203,6 +204,7 @@ class Button(Widget, can_focus=True):
             disabled: Whether the button is disabled or not.
             tooltip: Optional tooltip.
             action: Optional action to run when clicked.
+            active_effect_duration: Amount of time in seconds the button 'press' animation lasts.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -212,7 +214,7 @@ class Button(Widget, can_focus=True):
         self.label = label
         self.variant = variant
         self.action = action
-        self.active_effect_duration = 0.2
+        self.active_effect_duration = active_effect_duration
         """Amount of time in seconds the button 'press' animation lasts."""
 
         if tooltip is not None:

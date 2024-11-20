@@ -445,6 +445,43 @@ async def test_loading():
         assert label._cover_widget is None
 
 
+async def test_loading_button():
+    """Test loading indicator renders buttons unclickable."""
+
+    counter = 0
+
+    class LoadingApp(App):
+        def compose(self) -> ComposeResult:
+            yield Button("Hello, World", action="app.inc", active_effect_duration=0)
+
+        def action_inc(self) -> None:
+            nonlocal counter
+            counter += 1
+
+    async with LoadingApp().run_test() as pilot:
+        # Sanity check
+        assert counter == 0
+
+        # Click the button to advance the counter
+        await pilot.click(Button)
+        assert counter == 1
+
+        # Set the button to loading state
+        button = pilot.app.query_one(Button)
+        button.loading = True
+
+        # A click should do nothing
+        await pilot.click(Button)
+        assert counter == 1
+
+        # Set the button to not loading
+        button.loading = False
+
+        # Click should advance counter
+        await pilot.click(Button)
+        assert counter == 2
+
+
 async def test_is_mounted_property():
     class TestWidgetIsMountedApp(App):
         pass
