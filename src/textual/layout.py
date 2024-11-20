@@ -96,7 +96,7 @@ class WidgetPlacement(NamedTuple):
     def translate(
         cls, placements: list[WidgetPlacement], translate_offset: Offset
     ) -> list[WidgetPlacement]:
-        """Move all placements by a given offset.
+        """Move all non-absolute placements by a given offset.
 
         Args:
             placements: List of placements.
@@ -108,7 +108,11 @@ class WidgetPlacement(NamedTuple):
         if translate_offset:
             return [
                 cls(
-                    region + translate_offset,
+                    (
+                        region + translate_offset
+                        if layout_widget.absolute_offset is None
+                        else region
+                    ),
                     offset,
                     margin,
                     layout_widget,
@@ -150,9 +154,7 @@ class WidgetPlacement(NamedTuple):
         margin = self.margin
         if widget.absolute_offset is not None:
             region = region.at_offset(widget.absolute_offset + margin.top_left)
-            region.translate(
-                styles.offset.resolve(region.grow(margin).size, constrain_region.size)
-            )
+
         region = region.translate(self.offset).constrain(
             styles.constrain_x,
             styles.constrain_y,
@@ -162,9 +164,10 @@ class WidgetPlacement(NamedTuple):
         offset = region.offset - self.region.offset
         if offset != self.offset:
             region, _offset, margin, widget, order, fixed, overlay = self
-            return WidgetPlacement(
+            placement = WidgetPlacement(
                 region, offset, margin, widget, order, fixed, overlay
             )
+            return placement
         return self
 
 

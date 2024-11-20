@@ -118,7 +118,6 @@ class VerticalLayout(Layout):
                 placement = placement.process_offset(
                     viewport.region if overlay else size.region
                 )
-
             add_placement(placement)
             if not overlay:
                 y = next_y + margin

@@ -133,7 +133,6 @@ def _arrange_dock_widgets(
     size = region.size
     width, height = size
     null_spacing = NULL_SPACING
-    null_offset = NULL_OFFSET
 
     top = right = bottom = left = 0
 
