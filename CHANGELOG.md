@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unreleased
+
+### Added
+
+- Added Styles.has_any_rules
+
+### Fixed 
+
+- Fixed offset applied to docked widgets
+
 ## [0.86.3] - 2024-11-19
 
 ### Changed

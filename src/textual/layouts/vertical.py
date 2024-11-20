@@ -86,7 +86,6 @@ class VerticalLayout(Layout):
             children, box_models, margins
         ):
             styles = widget.styles
-            has_rule = styles.has_rule
             overlay = styles.overlay == "screen"
             next_y = y + content_height
             offset = (
@@ -112,10 +111,14 @@ class VerticalLayout(Layout):
                 False,
                 overlay,
             )
-            if has_rule("constrain_x") or has_rule("constrain_y"):
-                placement = placement.apply_constrain(
-                    viewport.region if placement.overlay else size.region
+            if (
+                styles.has_any_rules("constrain_x", "constrain_y")
+                or widget.absolute_offset is not None
+            ):
+                placement = placement.process_offset(
+                    viewport.region if overlay else size.region
                 )
+
             add_placement(placement)
             if not overlay:
                 y = next_y + margin

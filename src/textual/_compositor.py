@@ -713,12 +713,12 @@ class Compositor:
             elif visible:
                 # Add the widget to the map
 
-                if widget.absolute_offset is not None:
-                    margin = styles.margin
-                    region = region.at_offset(widget.absolute_offset + margin.top_left)
-                    region = region.translate(
-                        styles.offset.resolve(region.grow(margin).size, size)
-                    )
+                # if widget.absolute_offset is not None:
+                #     margin = styles.margin
+                #     region = region.at_offset(widget.absolute_offset + margin.top_left)
+                #     region = region.translate(
+                #         styles.offset.resolve(region.grow(margin).size, size)
+                #     )
                 # has_rule = styles.has_rule
                 # if has_rule("constrain_x") or has_rule("constrain_y"):
                 #     region = region.constrain(

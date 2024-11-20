@@ -135,10 +135,25 @@ class WidgetPlacement(NamedTuple):
         )
         return bounding_region
 
-    def apply_constrain(self, constrain_region: Region) -> WidgetPlacement:
-        styles = self.widget.styles
+    def process_offset(self, constrain_region: Region) -> WidgetPlacement:
+        """Apply any absolute offset or constrain rules to the placement.
 
-        region = self.region.translate(self.offset).constrain(
+        Args:
+            constrain_region: The container region when applying constrain rules.
+
+        Returns:
+            Processes placement, may be the same instance.
+        """
+        widget = self.widget
+        styles = widget.styles
+        region = self.region
+        margin = self.margin
+        if widget.absolute_offset is not None:
+            region = region.at_offset(widget.absolute_offset + margin.top_left)
+            region.translate(
+                styles.offset.resolve(region.grow(margin).size, constrain_region.size)
+            )
+        region = region.translate(self.offset).constrain(
             styles.constrain_x,
             styles.constrain_y,
             self.margin,

@@ -1353,6 +1353,19 @@ class RenderStyles(StylesBase):
             rule_name
         )
 
+    def has_any_rules(self, *rule_names: str) -> bool:
+        """Check if any of the supplied rules have been set.
+
+        Args:
+            rule_names: Number of rules.
+
+        Returns:
+            `True` if any of the supplied rules have been set, `False` if none have.
+        """
+        inline_has_rule = self._inline_styles.has_rule
+        base_has_rule = self._base_styles.has_rule
+        return any(inline_has_rule(name) or base_has_rule(name) for name in rule_names)
+
     def set_rule(self, rule_name: str, value: object | None) -> bool:
         self._updates += 1
         return self._inline_styles.set_rule(rule_name, value)
