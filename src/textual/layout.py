@@ -135,6 +135,23 @@ class WidgetPlacement(NamedTuple):
         )
         return bounding_region
 
+    def apply_constrain(self, constrain_region: Region) -> WidgetPlacement:
+        styles = self.widget.styles
+        1 / 0
+        region = self.region.translate(self.offset).constrain(
+            styles.constrain_x,
+            styles.constrain_y,
+            self.margin,
+            constrain_region,
+        )
+        offset = region.offset - self.region.offset
+        if offset != self.offset:
+            region, _offset, margin, widget, order, fixed, overlay = self
+            return WidgetPlacement(
+                region, offset, margin, widget, order, fixed, overlay
+            )
+        return self
+
 
 class Layout(ABC):
     """Base class of the object responsible for arranging Widgets within a container."""

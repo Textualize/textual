@@ -81,6 +81,7 @@ class HorizontalLayout(Layout):
             children, box_models, margins
         ):
             styles = widget.styles
+            has_rule = styles.has_rule
             overlay = styles.overlay == "screen"
             offset = (
                 styles.offset.resolve(
@@ -92,22 +93,27 @@ class HorizontalLayout(Layout):
             )
             offset_y = box_margin.top
             next_x = x + content_width
-            add_placement(
-                _WidgetPlacement(
-                    _Region(
-                        x.__floor__(),
-                        offset_y,
-                        (next_x - x.__floor__()).__floor__(),
-                        content_height.__floor__(),
-                    ),
-                    offset,
-                    box_margin,
-                    widget,
-                    0,
-                    False,
-                    overlay,
-                )
+
+            placement = _WidgetPlacement(
+                _Region(
+                    x.__floor__(),
+                    offset_y,
+                    (next_x - x.__floor__()).__floor__(),
+                    content_height.__floor__(),
+                ),
+                offset,
+                box_margin,
+                widget,
+                0,
+                False,
+                overlay,
             )
+
+            if has_rule("constrain_x") or has_rule("constrain_y"):
+                placement = placement.apply_constrain(
+                    viewport.region if placement.overlay else size.region
+                )
+            add_placement(placement)
             if not overlay:
                 x = next_x + margin
 

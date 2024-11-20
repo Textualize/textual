@@ -214,7 +214,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         & > SelectOverlay {
             width: 1fr;
-            display: none;
+            # display: none;
             height: auto;
             max-height: 12;
             overlay: screen;

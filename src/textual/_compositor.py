@@ -657,16 +657,16 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        if overlay:
-                            styles = sub_widget.styles
-                            has_rule = styles.has_rule
-                            if has_rule("constrain_x") or has_rule("constrain_y"):
-                                widget_region = widget_region.constrain(
-                                    styles.constrain_x,
-                                    styles.constrain_y,
-                                    styles.margin,
-                                    no_clip,
-                                )
+                        # if overlay:
+                        #     styles = sub_widget.styles
+                        #     has_rule = styles.has_rule
+                        #     if has_rule("constrain_x") or has_rule("constrain_y"):
+                        #         widget_region = widget_region.constrain(
+                        #             styles.constrain_x,
+                        #             styles.constrain_y,
+                        #             styles.margin,
+                        #             no_clip,
+                        #         )
 
                         if widget._cover_widget is None:
                             add_widget(
@@ -719,14 +719,14 @@ class Compositor:
                     region = region.translate(
                         styles.offset.resolve(region.grow(margin).size, size)
                     )
-                has_rule = styles.has_rule
-                if has_rule("constrain_x") or has_rule("constrain_y"):
-                    region = region.constrain(
-                        styles.constrain_x,
-                        styles.constrain_y,
-                        styles.margin,
-                        size.region,
-                    )
+                # has_rule = styles.has_rule
+                # if has_rule("constrain_x") or has_rule("constrain_y"):
+                #     region = region.constrain(
+                #         styles.constrain_x,
+                #         styles.constrain_y,
+                #         styles.margin,
+                #         size.region,
+                #     )
 
                 map[widget._render_widget] = _MapGeometry(
                     region,
