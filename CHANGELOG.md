@@ -11,11 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added Styles.has_any_rules https://github.com/Textualize/textual/pull/5264
-- Added `active_effect_duration` to `Button.__init__`
+- Added `active_effect_duration` to `Button.__init__` https://github.com/Textualize/textual/pull/5267
 
 ### Fixed 
 
 - Fixed offset applied to docked widgets https://github.com/Textualize/textual/pull/5264
+- Fixed loading widgets responding to input https://github.com/Textualize/textual/pull/5267
 
 ## [0.86.3] - 2024-11-19
 
