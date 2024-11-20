@@ -260,8 +260,6 @@ class GridLayout(Layout):
         placements: list[WidgetPlacement] = []
         _WidgetPlacement = WidgetPlacement
         add_placement = placements.append
-        widgets: list[Widget] = []
-        add_widget = widgets.append
         max_column = len(columns) - 1
         max_row = len(rows) - 1
 
@@ -297,18 +295,23 @@ class GridLayout(Layout):
                 else NULL_OFFSET
             )
 
-            add_placement(
-                _WidgetPlacement(
-                    region + offset,
-                    placement_offset,
-                    (
-                        margin
-                        if gutter_spacing is None
-                        else margin.grow_maximum(gutter_spacing)
-                    ),
-                    widget,
-                )
+            placement = _WidgetPlacement(
+                region + offset,
+                placement_offset,
+                (
+                    margin
+                    if gutter_spacing is None
+                    else margin.grow_maximum(gutter_spacing)
+                ),
+                widget,
             )
-            add_widget(widget)
+            if (
+                styles.has_any_rules("constrain_x", "constrain_y")
+                or widget.absolute_offset is not None
+            ):
+                placement = placement.process_offset(
+                    viewport.region if placement.overlay else size.region
+                )
+            add_placement(placement)
 
         return placements

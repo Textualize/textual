@@ -96,7 +96,7 @@ class WidgetPlacement(NamedTuple):
     def translate(
         cls, placements: list[WidgetPlacement], translate_offset: Offset
     ) -> list[WidgetPlacement]:
-        """Move all placements by a given offset.
+        """Move all non-absolute placements by a given offset.
 
         Args:
             placements: List of placements.
@@ -108,7 +108,11 @@ class WidgetPlacement(NamedTuple):
         if translate_offset:
             return [
                 cls(
-                    region + translate_offset,
+                    (
+                        region + translate_offset
+                        if layout_widget.absolute_offset is None
+                        else region
+                    ),
                     offset,
                     margin,
                     layout_widget,
@@ -134,6 +138,37 @@ class WidgetPlacement(NamedTuple):
             [placement.region.grow(placement.margin) for placement in placements]
         )
         return bounding_region
+
+    def process_offset(self, constrain_region: Region) -> WidgetPlacement:
+        """Apply any absolute offset or constrain rules to the placement.
+
+        Args:
+            constrain_region: The container region when applying constrain rules.
+
+        Returns:
+            Processes placement, may be the same instance.
+        """
+        widget = self.widget
+        styles = widget.styles
+        region = self.region
+        margin = self.margin
+        if widget.absolute_offset is not None:
+            region = region.at_offset(widget.absolute_offset + margin.top_left)
+
+        region = region.translate(self.offset).constrain(
+            styles.constrain_x,
+            styles.constrain_y,
+            self.margin,
+            constrain_region,
+        )
+        offset = region.offset - self.region.offset
+        if offset != self.offset:
+            region, _offset, margin, widget, order, fixed, overlay = self
+            placement = WidgetPlacement(
+                region, offset, margin, widget, order, fixed, overlay
+            )
+            return placement
+        return self
 
 
 class Layout(ABC):

@@ -1348,7 +1348,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if widget is self:
                 self.post_message(event)
             else:
-                mouse_event = self._translate_mouse_move_event(event, region)
+                mouse_event = self._translate_mouse_move_event(event, widget, region)
                 mouse_event._set_forwarded()
                 widget._forward_event(mouse_event)
 
@@ -1373,14 +1373,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
     @staticmethod
     def _translate_mouse_move_event(
-        event: events.MouseMove, region: Region
+        event: events.MouseMove, widget: Widget, region: Region
     ) -> events.MouseMove:
         """
         Returns a mouse move event whose relative coordinates are translated to
         the origin of the specified region.
         """
         return events.MouseMove(
-            event.widget,
+            widget,
             event.x - region.x,
             event.y - region.y,
             event.delta_x,

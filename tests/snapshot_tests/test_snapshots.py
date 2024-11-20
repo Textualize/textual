@@ -2588,3 +2588,27 @@ def test_theme_variables_available_in_code(snap_compare):
             label.styles.color = variables["text-primary"]
 
     assert snap_compare(ThemeVariablesApp())
+
+
+def test_dock_offset(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5261
+    You should see 10 labels, 0 thru 9, in a diagonal line starting at the top left.
+    """
+
+    class OffsetBugApp(App):
+        CSS = """
+        .label {
+            dock: top;
+            color: $text-success;
+            background: $success-muted;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            # I'd expect this to draw a diagonal line of labels, but it places them all at the top left.
+            for i in range(10):
+                label = Label(str(i), classes="label")
+                label.styles.offset = (i, i)
+                yield label
+
+    assert snap_compare(OffsetBugApp())
