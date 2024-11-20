@@ -562,6 +562,10 @@ class Screen(Generic[ScreenResultType], Widget):
         except NoWidget:
             return None
 
+        if widget.has_class("-textual-system"):
+            # Clicking Textual system widgets should not focus anything
+            return None
+
         for node in widget.ancestors_with_self:
             if isinstance(node, Widget) and node.focusable:
                 return node
