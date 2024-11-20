@@ -137,7 +137,7 @@ class WidgetPlacement(NamedTuple):
 
     def apply_constrain(self, constrain_region: Region) -> WidgetPlacement:
         styles = self.widget.styles
-        1 / 0
+
         region = self.region.translate(self.offset).constrain(
             styles.constrain_x,
             styles.constrain_y,
