@@ -494,7 +494,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._setup_options_renderables()
         self._init_selected_option(self._value)
 
-    async def _watch_expanded(self, expanded: bool) -> None:
+    def _watch_expanded(self, expanded: bool) -> None:
         """Display or hide overlay."""
         try:
             overlay = self.query_one(SelectOverlay)
