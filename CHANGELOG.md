@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
 
 ### Fixed
@@ -15,6 +16,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 - `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
+
+## [0.86.3] - 2024-11-19
+
+### Changed
+
+- Updated the tutorial (text and code) https://github.com/Textualize/textual/pull/5257
+
+### Fixed
+
+- Fixed a glitch with the scrollbar that occurs when you hold `a` to add stopwatches in the tutorial app https://github.com/Textualize/textual/pull/5257
+
 
 ## [0.86.2] - 2024-11-18
 
@@ -2562,7 +2574,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
-
+[0.86.3]: https://github.com/Textualize/textual/compare/v0.86.2...v0.86.3
 [0.86.2]: https://github.com/Textualize/textual/compare/v0.86.1...v0.86.2
 [0.86.1]: https://github.com/Textualize/textual/compare/v0.86.0...v0.86.1
 [0.86.0]: https://github.com/Textualize/textual/compare/v0.85.2...v0.86.0

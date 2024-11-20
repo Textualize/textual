@@ -287,9 +287,7 @@ def test_did_you_mean_for_color_names(
 
     _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
     displayed_css_property_name = css_property_name.replace("_", "-")
-    expected_error_summary = (
-        f"Invalid value for the [i]{displayed_css_property_name}[/] property"
-    )
+    expected_error_summary = f"Invalid value ({css_property_value!r}) for the [i]{displayed_css_property_name}[/] property"
 
     if expected_color_suggestion is not None:
         expected_error_summary += f". Did you mean '{expected_color_suggestion}'?"

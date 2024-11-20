@@ -60,7 +60,7 @@ class DemoApp(App):
             "ctrl+a",
             "app.maximize",
             "Maximize",
-            tooltip="Maximized the focused widget (if possible)",
+            tooltip="Maximize the focused widget (if possible)",
         ),
     ]
 

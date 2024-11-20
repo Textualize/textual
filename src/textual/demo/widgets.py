@@ -166,7 +166,7 @@ class Datatables(containers.VerticalGroup):
 A fully-featured DataTable, with cell, row, and columns cursors.
 Cells may be individually styled, and may include Rich renderables.
 
-**Tip:** Focus the table and press `ctrl+m`
+**Tip:** Focus the table and press `ctrl+a`
 
 """
     DEFAULT_CSS = """    

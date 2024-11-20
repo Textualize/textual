@@ -305,6 +305,7 @@ def color_property_help_text(
     context: StylingContext,
     *,
     error: Exception | None = None,
+    value: str | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
     property. For example, an unparsable color string.
@@ -318,7 +319,10 @@ def color_property_help_text(
         Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
-    summary = f"Invalid value for the [i]{property_name}[/] property"
+    if value is None:
+        summary = f"Invalid value for the [i]{property_name}[/] property"
+    else:
+        summary = f"Invalid value ({value!r}) for the [i]{property_name}[/] property"
     suggested_color = (
         error.suggested_color if error and isinstance(error, ColorParseError) else None
     )
