@@ -598,6 +598,7 @@ class Compositor:
                 if widget.is_container:
                     # Arrange the layout
                     arrange_result = widget._arrange(child_region.size)
+
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
@@ -615,6 +616,11 @@ class Compositor:
                     # An offset added to all placements
                     placement_offset = container_region.offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
+
+                    placements = [
+                        placement.process_offset(size.region, placement_scroll_offset)
+                        for placement in placements
+                    ]
 
                     layers_to_index = {
                         layer_name: index

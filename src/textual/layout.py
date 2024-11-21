@@ -139,28 +139,39 @@ class WidgetPlacement(NamedTuple):
         )
         return bounding_region
 
-    def process_offset(self, constrain_region: Region) -> WidgetPlacement:
+    def process_offset(
+        self, constrain_region: Region, absolute_offset: Offset
+    ) -> WidgetPlacement:
         """Apply any absolute offset or constrain rules to the placement.
 
         Args:
             constrain_region: The container region when applying constrain rules.
+            absolute_offset: Default absolute offset that moves widget in to screen coordinates.
 
         Returns:
             Processes placement, may be the same instance.
         """
         widget = self.widget
         styles = widget.styles
+        if not widget.absolute_offset and not styles.has_any_rules(
+            "constrain_x", "constrain_y"
+        ):
+            # Bail early if there is nothing to do
+            return self
         region = self.region
         margin = self.margin
         if widget.absolute_offset is not None:
-            region = region.at_offset(widget.absolute_offset + margin.top_left)
+            region = region.at_offset(
+                widget.absolute_offset + margin.top_left - absolute_offset
+            )
 
         region = region.translate(self.offset).constrain(
             styles.constrain_x,
             styles.constrain_y,
             self.margin,
-            constrain_region,
+            constrain_region - absolute_offset,
         )
+
         offset = region.offset - self.region.offset
         if offset != self.offset:
             region, _offset, margin, widget, order, fixed, overlay = self
