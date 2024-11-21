@@ -208,10 +208,7 @@ class LinuxInlineDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
-
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-        # Disambiguate escape codes https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
-        self.write("\x1b[=1;u")
         self.flush()
 
         self._enable_mouse_support()

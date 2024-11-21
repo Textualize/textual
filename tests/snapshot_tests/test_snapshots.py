@@ -27,6 +27,7 @@ from textual.widgets import (
     ProgressBar,
     RadioSet,
     RichLog,
+    Select,
     SelectionList,
     Static,
     Switch,
@@ -2612,3 +2613,27 @@ def test_dock_offset(snap_compare):
                 yield label
 
     assert snap_compare(OffsetBugApp())
+
+
+def test_select_overlay_constrain(snap_compare):
+    """Check that the constrain logic on Select is working.
+    You should see the select overlay in full, anchored to the bottom of the screen."""
+
+    class OApp(App):
+        CSS = """
+        Label {
+            height: 16;
+            background: blue;
+            border: tall white;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Padding (ignore)")
+            yield Select.from_values(["Foo", "bar", "baz"] * 10)
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(Select)
+
+    assert snap_compare(OApp(), run_before=run_before)

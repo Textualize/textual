@@ -295,23 +295,17 @@ class GridLayout(Layout):
                 else NULL_OFFSET
             )
 
-            placement = _WidgetPlacement(
-                region + offset,
-                placement_offset,
-                (
-                    margin
-                    if gutter_spacing is None
-                    else margin.grow_maximum(gutter_spacing)
-                ),
-                widget,
-            )
-            if (
-                styles.has_any_rules("constrain_x", "constrain_y")
-                or widget.absolute_offset is not None
-            ):
-                placement = placement.process_offset(
-                    viewport.region if placement.overlay else size.region
+            add_placement(
+                WidgetPlacement(
+                    region + offset,
+                    placement_offset,
+                    (
+                        margin
+                        if gutter_spacing is None
+                        else margin.grow_maximum(gutter_spacing)
+                    ),
+                    widget,
                 )
-            add_placement(placement)
+            )
 
         return placements

@@ -178,22 +178,16 @@ def _arrange_dock_widgets(
             if styles.has_rule("offset")
             else NULL_OFFSET
         )
-        placement = _WidgetPlacement(
-            dock_region.translate(region_offset),
-            offset,
-            null_spacing,
-            dock_widget,
-            top_z,
-            True,
-        )
-        if (
-            styles.has_any_rules("constrain_x", "constrain_y")
-            or dock_widget.absolute_offset is not None
-        ):
-            placement = placement.process_offset(
-                viewport.region if placement.overlay else size.region
+        append_placement(
+            _WidgetPlacement(
+                dock_region.translate(region_offset),
+                offset,
+                null_spacing,
+                dock_widget,
+                top_z,
+                True,
             )
-        append_placement(placement)
+        )
 
     dock_spacing = Spacing(top, right, bottom, left)
     return (placements, dock_spacing)
