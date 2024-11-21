@@ -324,17 +324,13 @@ class OptionList(ScrollView, can_focus=True):
         self._lines = None
         self._spans = None
         self._content_render_cache.clear()
-        self.check_idle()
+        self._populate()
 
     def notify_style_update(self) -> None:
         self._content_render_cache.clear()
 
     def _on_resize(self):
         self._refresh_lines()
-
-    def on_idle(self):
-        if self._lines is None:
-            self._populate()
 
     def _add_lines(
         self, new_content: list[OptionListContent], width: int, option_index=0
@@ -364,6 +360,8 @@ class OptionList(ScrollView, can_focus=True):
                 option_index += 1
             else:
                 self._lines.append(OptionLineSpan(-1, 0))
+
+        self._populate()
 
         self.virtual_size = Size(width, len(self._lines))
 
