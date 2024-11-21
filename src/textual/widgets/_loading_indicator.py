@@ -8,8 +8,10 @@ from rich.text import Text
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
+
+from textual import on
 from textual.color import Gradient
-from textual.events import Mount
+from textual.events import InputEvent, Mount
 from textual.widget import Widget
 
 
@@ -55,6 +57,12 @@ class LoadingIndicator(Widget):
     def _on_mount(self, _: Mount) -> None:
         self._start_time = time()
         self.auto_refresh = 1 / 16
+
+    @on(InputEvent)
+    def on_input(self, event: InputEvent) -> None:
+        """Prevent all input events from bubbling, thus disabling widgets in a loading state."""
+        event.stop()
+        event.prevent_default()
 
     def render(self) -> RenderResult:
         if self.app.animation_level == "none":

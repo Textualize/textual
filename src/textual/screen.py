@@ -562,7 +562,7 @@ class Screen(Generic[ScreenResultType], Widget):
         except NoWidget:
             return None
 
-        if widget.has_class("-textual-system"):
+        if widget.has_class("-textual-system") or widget.loading:
             # Clicking Textual system widgets should not focus anything
             return None
 
@@ -1421,6 +1421,8 @@ class Screen(Generic[ScreenResultType], Widget):
                     if focusable_widget:
                         self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
+                if widget.loading:
+                    return
                 if widget is self:
                     event._set_forwarded()
                     self.post_message(event)
