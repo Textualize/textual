@@ -674,11 +674,13 @@ There is also the Tree widget's cousin, DirectoryTree, to navigate folders and f
     Trees {
         Tree {
             height: 16;            
-            &.-maximized { height: 1fr; }            
+            padding: 1;
+            &.-maximized { height: 1fr; }    
+            border: wide transparent;            
+            &:focus { border: wide $border; }        
         }
         VerticalGroup {
-            border: heavy transparent;            
-            &:focus-within { border: heavy $border; }
+            
         }
     }
 
