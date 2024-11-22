@@ -300,12 +300,12 @@ And a RichLog widget to display Rich renderables.
     Logs {
         Log, RichLog {
             width: 1fr;
-            height: 20;           
-            border: blank;
-            padding: 0;
+            height: 20;
+            padding: 1;
             overflow-x: auto;
+            border: wide transparent;
             &:focus {
-                border: heavy $accent;
+                border: wide $border;
             }
         }
         TabPane { padding: 0; }
