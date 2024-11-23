@@ -294,7 +294,7 @@ class Game(containers.Vertical, can_focus=True):
     ALLOW_MAXIMIZE = False
     DEFAULT_CSS = """
     Game {
-        
+        visibility: hidden;
         align: center middle;
         hatch: right $panel;
         border: heavy transparent;
@@ -458,6 +458,7 @@ class Game(containers.Vertical, can_focus=True):
 
     @work(exclusive=True)
     async def shuffle(self, shuffles: int = 150) -> None:
+        self.visible = True
         if self.play_timer is not None:
             self.play_timer.stop()
         self.query_one("#grid").border_title = "[reverse bold] SHUFFLING - Please Wait "
