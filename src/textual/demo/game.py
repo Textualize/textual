@@ -366,7 +366,13 @@ class Game(containers.Vertical, can_focus=True):
         self.locations[tile_height - 1][tile_width - 1] = None
 
     def compose(self) -> ComposeResult:
-        syntax = Syntax(self.code, self.language.lower(), indent_guides=True)
+        syntax = Syntax(
+            self.code,
+            self.language.lower(),
+            indent_guides=True,
+            line_numbers=True,
+            theme="material",
+        )
         tile_width, tile_height = self.dimensions
         self.state = "waiting"
         yield Digits("")
