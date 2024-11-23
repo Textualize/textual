@@ -101,8 +101,6 @@ class HorizontalLayout(Layout):
                 (next_x - x.__floor__()).__floor__(),
                 content_height.__floor__(),
             )
-            if styles.has_rule("position") and styles.position == "absolute":
-                region = region.reset_offset
             add_placement(
                 _WidgetPlacement(
                     region,
@@ -112,6 +110,7 @@ class HorizontalLayout(Layout):
                     0,
                     False,
                     overlay,
+                    styles.has_rule("position") and styles.position == "absolute",
                 )
             )
             if not overlay:

@@ -294,8 +294,6 @@ class GridLayout(Layout):
                 if styles.has_rule("offset")
                 else NULL_OFFSET
             )
-            if styles.has_rule("position") and styles.position == "absolute":
-                region = region.reset_offset
 
             add_placement(
                 _WidgetPlacement(
@@ -307,6 +305,7 @@ class GridLayout(Layout):
                         else margin.grow_maximum(gutter_spacing)
                     ),
                     widget,
+                    styles.has_rule("position") and styles.position == "absolute",
                 )
             )
 

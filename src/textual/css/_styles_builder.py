@@ -22,6 +22,7 @@ from textual.css._help_text import (
     layout_property_help_text,
     offset_property_help_text,
     offset_single_axis_help_text,
+    position_help_text,
     property_invalid_value_help_text,
     scalar_help_text,
     scrollbar_size_property_help_text,
@@ -624,10 +625,14 @@ class StylesBuilder:
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_position(self, name: str, tokens: list[Token]):
-        if tokens:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
+        else:
             token = tokens[0]
             if token.value not in VALID_POSITION:
-                pass
+                self.error(name, tokens[0], position_help_text(name))
             self.styles._rules["position"] = token.value
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:

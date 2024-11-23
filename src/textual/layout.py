@@ -91,6 +91,12 @@ class WidgetPlacement(NamedTuple):
     order: int = 0
     fixed: bool = False
     overlay: bool = False
+    absolute: bool = False
+
+    @property
+    def reset_origin(self) -> WidgetPlacement:
+        """Reset the origin in the placement (moves it to (0, 0))."""
+        return self._replace(region=self.region.reset_offset)
 
     @classmethod
     def translate(
@@ -119,10 +125,22 @@ class WidgetPlacement(NamedTuple):
                     order,
                     fixed,
                     overlay,
+                    absolute,
                 )
-                for region, offset, margin, layout_widget, order, fixed, overlay in placements
+                for region, offset, margin, layout_widget, order, fixed, overlay, absolute in placements
             ]
         return placements
+
+    @classmethod
+    def apply_absolute(cls, placements: list[WidgetPlacement]) -> None:
+        """Applies absolute offsets (in place).
+
+        Args:
+            placements: A list of placements.
+        """
+        for index, placement in enumerate(placements):
+            if placement.absolute:
+                placements[index] = placement.reset_origin
 
     @classmethod
     def get_bounds(cls, placements: Iterable[WidgetPlacement]) -> Region:
@@ -174,9 +192,9 @@ class WidgetPlacement(NamedTuple):
 
         offset = region.offset - self.region.offset
         if offset != self.offset:
-            region, _offset, margin, widget, order, fixed, overlay = self
+            region, _offset, margin, widget, order, fixed, overlay, absolute = self
             placement = WidgetPlacement(
-                region, offset, margin, widget, order, fixed, overlay
+                region, offset, margin, widget, order, fixed, overlay, absolute
             )
             return placement
         return self

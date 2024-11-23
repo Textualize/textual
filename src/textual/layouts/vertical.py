@@ -104,8 +104,7 @@ class VerticalLayout(Layout):
                 content_width.__floor__(),
                 next_y.__floor__() - y.__floor__(),
             )
-            if styles.has_rule("position") and styles.position == "absolute":
-                region = region.reset_offset
+
             add_placement(
                 _WidgetPlacement(
                     region,
@@ -115,6 +114,7 @@ class VerticalLayout(Layout):
                     0,
                     False,
                     overlay,
+                    styles.has_rule("position") and styles.position == "absolute",
                 )
             )
             if not overlay:

@@ -281,7 +281,7 @@ class GameDialog(containers.VerticalGroup):
 class GameDialogScreen(ModalScreen):
     CSS = """
     GameDialogScreen {
-        hatch: right $panel;
+      
         align: center middle;        
       
     }
@@ -426,6 +426,7 @@ class Game(containers.Vertical, can_focus=True):
         tile.position = position
 
         if self.check_win():
+            self.state = "won"
             self.notify("You won!")
 
     def can_move(self, tile: int) -> bool:
