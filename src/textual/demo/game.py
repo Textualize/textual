@@ -121,7 +121,7 @@ XML_CODE = """\
 BF_CODE = """\
 [life.b -- John Horton Conway's Game of Life
 (c) 2021 Daniel B. Cristofani
-http://brainfuck.org/]
+]
 
 >>>->+>+++++>(++++++++++)[[>>>+<<<-]>+++++>+>>+[<<+>>>>>+<<<-]<-]>>>>[
   [>>>+>+<<<<-]+++>>+[<+>>>+>+<<<-]>>[>[[>>>+<<<-]<]<<++>+>>>>>>-]<-
@@ -145,10 +145,6 @@ http://brainfuck.org/]
 ]
 
 [This program simulates the Game of Life cellular automaton.
-
-It duplicates the interface of the classic program at
-http://www.linusakesson.net/programming/brainfuck/index.php,
-but this program was written from scratch.
 
 Type e.g. "be" to toggle the fifth cell in the second row, "q" to quit,
 or a bare linefeed to advance one generation.
