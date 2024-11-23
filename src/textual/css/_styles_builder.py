@@ -47,6 +47,7 @@ from textual.css.constants import (
     VALID_KEYLINE,
     VALID_OVERFLOW,
     VALID_OVERLAY,
+    VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
@@ -621,6 +622,13 @@ class StylesBuilder:
             y = Scalar.parse(token.value, Unit.HEIGHT)
             x = self.styles.offset.x
             self.styles._rules["offset"] = ScalarOffset(x, y)
+
+    def process_position(self, name: str, tokens: list[Token]):
+        if tokens:
+            token = tokens[0]
+            if token.value not in VALID_POSITION:
+                pass
+            self.styles._rules["position"] = token.value
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:
         from textual.layouts.factory import MissingLayout, get_layout

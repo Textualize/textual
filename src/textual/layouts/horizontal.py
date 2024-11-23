@@ -22,6 +22,7 @@ class HorizontalLayout(Layout):
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
+        parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         viewport = parent.app.size
@@ -94,14 +95,17 @@ class HorizontalLayout(Layout):
             offset_y = box_margin.top
             next_x = x + content_width
 
+            region = _Region(
+                x.__floor__(),
+                offset_y,
+                (next_x - x.__floor__()).__floor__(),
+                content_height.__floor__(),
+            )
+            if styles.has_rule("position") and styles.position == "absolute":
+                region = region.reset_offset
             add_placement(
                 _WidgetPlacement(
-                    _Region(
-                        x.__floor__(),
-                        offset_y,
-                        (next_x - x.__floor__()).__floor__(),
-                        content_height.__floor__(),
-                    ),
+                    region,
                     offset,
                     box_margin,
                     widget,

@@ -2446,6 +2446,21 @@ class Widget(DOMNode):
 
         """
 
+    def set_scroll(self, x: float | None, y: float | None) -> None:
+        """Set the scroll position without any validation.
+
+        This is a low-level method for when you want to see the scroll position in the next frame.
+        For a more fully featured method, see [`scroll_to`][textual.widget.Widget.scroll_to].
+
+        Args:
+            x: Desired `X` coordinate.
+            y: Desired `Y` coordinate.
+        """
+        if x is not None:
+            self.set_reactive(Widget.scroll_x, round(x))
+        if y is not None:
+            self.set_reactive(Widget.scroll_y, round(y))
+
     def scroll_to(
         self,
         x: float | None = None,

@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed offset applied to docked widgets https://github.com/Textualize/textual/pull/5264
 - Fixed loading widgets responding to input https://github.com/Textualize/textual/pull/5267
 
+### Changed
+
+- Added `position` CSS rule.
+- Added `Widget.set_scroll`
+
 ## [0.86.3] - 2024-11-19
 
 ### Changed

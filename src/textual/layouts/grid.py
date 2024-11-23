@@ -287,17 +287,19 @@ class GridLayout(Layout):
                 )
                 .crop_size(cell_size)
                 .shrink(margin)
-            )
+            ) + offset
 
             placement_offset = (
                 styles.offset.resolve(cell_size, viewport)
                 if styles.has_rule("offset")
                 else NULL_OFFSET
             )
+            if styles.has_rule("position") and styles.position == "absolute":
+                region = region.reset_offset
 
             add_placement(
-                WidgetPlacement(
-                    region + offset,
+                _WidgetPlacement(
+                    region,
                     placement_offset,
                     (
                         margin
