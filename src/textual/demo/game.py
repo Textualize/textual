@@ -295,6 +295,7 @@ class GameDialogScreen(ModalScreen):
 
 
 class Game(containers.Vertical, can_focus=True):
+    ALLOW_MAXIMIZE = False
     DEFAULT_CSS = """
     Game {
         
@@ -326,7 +327,7 @@ class Game(containers.Vertical, can_focus=True):
 
     state = reactive("waiting")
     play_start_time = reactive(monotonic)
-    play_time = reactive(0.0)
+    play_time = reactive(0.0, init=False)
     code = reactive("")
     dimensions = reactive(Size(3, 3))
     code = reactive("")
@@ -372,7 +373,7 @@ class Game(containers.Vertical, can_focus=True):
         syntax = Syntax(self.code, self.language.lower(), indent_guides=True)
         tile_width, tile_height = self.dimensions
         self.state = "waiting"
-        yield Digits("00:00:00")
+        yield Digits("")
         with containers.HorizontalGroup(id="grid") as grid:
             grid.styles.width = tile_width * self.tile_size[0]
             grid.styles.height = tile_height * self.tile_size[1]
@@ -395,7 +396,7 @@ class Game(containers.Vertical, can_focus=True):
     def watch_play_time(self, play_time: float) -> None:
         minutes, seconds = divmod(play_time, 60)
         hours, minutes = divmod(minutes, 60)
-        self.query_one(Digits).update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
+        self.query_one(Digits).update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:04.1f}")
 
     def watch_state(self, old_state: str, new_state: str) -> None:
         if self.play_timer is not None:
@@ -403,7 +404,7 @@ class Game(containers.Vertical, can_focus=True):
 
         if new_state == "playing":
             self.play_start_time = monotonic()
-            self.play_timer = self.set_interval(1 / 15, self.update_clock)
+            self.play_timer = self.set_interval(1 / 10, self.update_clock)
 
     def get_tile_location(self, tile: int | None) -> Offset:
         return self.get_tile(tile).position
@@ -461,9 +462,9 @@ class Game(containers.Vertical, can_focus=True):
 
     @work(exclusive=True)
     async def shuffle(self, shuffles: int = 150) -> None:
-        self.play_time = 0
         if self.play_timer is not None:
             self.play_timer.stop()
+        self.query_one("#grid").border_title = "[reverse bold] SHUFFLING - Please Wait "
         self.state = "shuffling"
         previous_move: Offset = Offset(-1, -1)
         tile_width, tile_height = self.dimensions
@@ -484,6 +485,7 @@ class Game(containers.Vertical, can_focus=True):
             self.move_tile(move_tile.tile, blank)
             await sleep(0.05)
             previous_move = blank
+        self.query_one("#grid").border_title = ""
         self.state = "playing"
 
     @on(events.Click, ".tile")
@@ -504,7 +506,7 @@ class GameScreen(PageScreen):
     ]
 
     def compose(self) -> ComposeResult:
-        yield Game("", "", dimensions=(4, 4), tile_size=(16, 8))
+        yield Game("\n" * 100, "", dimensions=(4, 4), tile_size=(16, 8))
         yield Footer()
 
     def action_shuffle(self) -> None:
