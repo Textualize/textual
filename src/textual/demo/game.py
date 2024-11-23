@@ -229,6 +229,7 @@ class Tile(containers.Vertical):
 class GameDialog(containers.VerticalGroup):
     DEFAULT_CSS = """
         GameDialog {
+            background: $boost;
             border: thick $primary-muted;
             padding: 0 2;
             width: 50;
