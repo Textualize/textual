@@ -380,9 +380,14 @@ class OptionList(ScrollView, can_focus=True):
         """Get maximum width of options."""
         console = self.app.console
         options = console.options
-        return max(
-            Measurement.get(console, options, option.prompt).maximum
-            for option in self._options
+        padding = self.get_component_styles("option-list--option").padding
+        padding_width = padding.width
+        return (
+            max(
+                Measurement.get(console, options, option.prompt).maximum
+                for option in self._options
+            )
+            + padding_width
         )
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
