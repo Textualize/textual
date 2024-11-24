@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.87.1] - 2024-11-24
+
+## Fixed
+
+- Fixed offset not being applied to grid layout https://github.com/Textualize/textual/pull/5281
 
 ## [0.87.0] - 2024-11-24
 
