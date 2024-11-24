@@ -506,7 +506,6 @@ class Game(containers.Vertical, can_focus=True):
 class GameScreen(PageScreen):
     """The screen containing the game."""
 
-    AUTO_FOCUS = "Game"
     BINDINGS = [
         ("s", "shuffle", "Shuffle"),
         ("n", "new_game", "New Game"),
@@ -531,6 +530,7 @@ class GameScreen(PageScreen):
         game.language = new_game.language
         game.dimensions = Size(*new_game.size)
         await game.recompose()
+        game.focus()
 
     def on_mount(self) -> None:
         self.action_new_game()
