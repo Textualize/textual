@@ -71,6 +71,7 @@ from textual import (
     on,
 )
 from textual._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
+from textual.visual import Visual, SupportsVisual
 from textual._ansi_sequences import SYNC_END, SYNC_START
 from textual._ansi_theme import ALABASTER, MONOKAI
 from textual._callback import invoke
@@ -152,7 +153,7 @@ if constants.DEBUG:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 ComposeResult = Iterable[Widget]
-RenderResult = "RenderableType | Visual | SupportsTextualize"
+RenderResult: TypeAlias = "RenderableType | Visual | SupportsVisual"
 """Result of Widget.render()"""
 
 AutopilotCallbackType: TypeAlias = (
