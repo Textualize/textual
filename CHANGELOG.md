@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Fixed
 
 - Fixed offset not being applied to grid layout https://github.com/Textualize/textual/pull/5281
-- Fixed Select overlay set to auto width
+- Fixed Select overlay set to auto width https://github.com/Textualize/textual/pull/5282
 
 ## [0.87.0] - 2024-11-24
 
@@ -2582,6 +2582,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.87.1]: https://github.com/Textualize/textual/compare/v0.87.0...v0.87.1
 [0.87.0]: https://github.com/Textualize/textual/compare/v0.86.4...v0.87.0
 [0.86.3]: https://github.com/Textualize/textual/compare/v0.86.2...v0.86.3
 [0.86.2]: https://github.com/Textualize/textual/compare/v0.86.1...v0.86.2
