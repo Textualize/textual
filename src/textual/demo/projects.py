@@ -222,3 +222,14 @@ class ProjectsScreen(PageScreen):
                 for project in PROJECTS:
                     yield Project(project)
         yield Footer()
+
+
+if __name__ == "__main__":
+    from textual.app import App
+
+    class GameApp(App):
+        def get_default_screen(self) -> Screen:
+            return ProjectsScreen()
+
+    app = GameApp()
+    app.run()

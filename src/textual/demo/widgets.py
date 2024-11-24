@@ -808,3 +808,14 @@ class WidgetsScreen(PageScreen):
             yield Trees()
             yield YourWidgets()
         yield Footer()
+
+
+if __name__ == "__main__":
+    from textual.app import App
+
+    class GameApp(App):
+        def get_default_screen(self) -> Screen:
+            return WidgetsScreen()
+
+    app = GameApp()
+    app.run()

@@ -180,9 +180,7 @@ class Tile(containers.Vertical):
 
     DEFAULT_CSS = """
     Tile {
-        width: 16;
-        height: 8;
-        position: absolute;        
+        position: absolute;
         Static {
             width: auto;
             height: auto;
@@ -384,7 +382,7 @@ class Game(containers.Vertical, can_focus=True):
                 tile_no = self.locations[position]
                 yield Tile(syntax, tile_no, self.tile_size, position)
         if self.language:
-            self.call_later(self.shuffle)
+            self.call_after_refresh(self.shuffle)
 
     def update_clock(self) -> None:
         if self.state == "playing":
@@ -428,9 +426,9 @@ class Game(containers.Vertical, can_focus=True):
         self.locations[blank_position] = tile_no
         tile.position = blank_position
 
-        if self.check_win():
+        if self.state == "playing" and self.check_win():
             self.state = "won"
-            self.notify("You won!")
+            self.notify("You won!", title="Sliding Tile Puzzle")
 
     def can_move(self, tile: int) -> bool:
         """Check if a tile may move."""
@@ -462,6 +460,19 @@ class Game(containers.Vertical, can_focus=True):
             return
         self.move_tile(tile.tile)
 
+    def get_legal_moves(self) -> set[Offset]:
+        """Get the positions of all tiles that can move."""
+        blank = self.get_tile(None).position
+        moves: list[Offset] = []
+
+        DIRECTIONS = [(-1, 0), (+1, -0), (0, -1), (0, +1)]
+        moves = [
+            blank + direction
+            for direction in DIRECTIONS
+            if (blank + direction) in self.locations
+        ]
+        return {self.get_tile_at(position).position for position in moves}
+
     @work(exclusive=True)
     async def shuffle(self, shuffles: int = 150) -> None:
         """A worker to do the shuffling."""
@@ -471,24 +482,14 @@ class Game(containers.Vertical, can_focus=True):
         self.query_one("#grid").border_title = "[reverse bold] SHUFFLING - Please Wait "
         self.state = "shuffling"
         previous_move: Offset = Offset(-1, -1)
-        tile_width, tile_height = self.dimensions
         for _ in range(shuffles):
-            blank = self.get_tile(None).position
-            moves: list[Offset] = []
-            if blank.x > 0:
-                moves.append(blank + (-1, 0))
-            if blank.x < tile_width - 1:
-                moves.append(blank + (+1, 0))
-            if blank.y > 0:
-                moves.append(blank + (0, -1))
-            if blank.y < tile_height - 1:
-                moves.append(blank + (0, +1))
-            # Avoid moving back to the previous position
-            move_position = choice([move for move in moves if move != previous_move])
+            legal_moves = self.get_legal_moves()
+            legal_moves.discard(previous_move)
+            previous_move = self.get_tile(None).position
+            move_position = choice(list(legal_moves))
             move_tile = self.get_tile_at(move_position)
             self.move_tile(move_tile.tile)
             await sleep(0.05)
-            previous_move = blank
         self.query_one("#grid").border_title = ""
         self.state = "playing"
 
