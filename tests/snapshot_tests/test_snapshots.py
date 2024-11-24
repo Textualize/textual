@@ -2681,3 +2681,37 @@ def test_position_absolute(snap_compare):
             yield Label("Relative 3", classes="relative offset3")
 
     assert snap_compare(AbsoluteApp())
+
+
+def test_grid_offset(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5279
+    You should see 6 boxes arranged in a 3x2 grid. The 6th should be offset 10 lines down.
+    """
+
+    class GridOffsetApp(App):
+        CSS = """
+        Screen {
+            layout: grid;
+            grid-size: 3 2;
+        }
+
+        .box {
+            height: 100%;
+            border: solid green;
+        }
+
+        #six {   
+            offset: 0 10;
+            background: blue;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("One", classes="box")
+            yield Static("Two", classes="box")
+            yield Static("Three", classes="box")
+            yield Static("Four", classes="box")
+            yield Static("Five", classes="box")
+            yield Static("Six", classes="box", id="six")
+
+    assert snap_compare(GridOffsetApp())
