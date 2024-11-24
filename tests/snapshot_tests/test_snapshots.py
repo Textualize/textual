@@ -2715,3 +2715,37 @@ def test_grid_offset(snap_compare):
             yield Static("Six", classes="box", id="six")
 
     assert snap_compare(GridOffsetApp())
+
+
+def test_select_width_auto(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5280"
+    The overlay has a width of auto, so the first (widest) option should not wrap."""
+
+    class TallSelectApp(App[None]):
+        CSS = """
+            Screen {
+                align: center middle;
+
+                & > Select {
+                    width: 50;
+
+                    & > SelectOverlay {
+                        max-height: 100vh;
+                        width: auto;
+                    }
+                }
+            }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Select(
+                [("Extra long option here", 100)]
+                + [(f"Option {idx + 1}", idx) for idx in range(100)],
+                value=25,
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click("Select")
+
+    snap_compare(TallSelectApp(), run_before=run_before)

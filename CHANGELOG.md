@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Fixed
 
 - Fixed offset not being applied to grid layout https://github.com/Textualize/textual/pull/5281
+- Fixed Select overlay set to auto width
 
 ## [0.87.0] - 2024-11-24
 
