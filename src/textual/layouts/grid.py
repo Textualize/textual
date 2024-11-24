@@ -289,12 +289,16 @@ class GridLayout(Layout):
                 .shrink(margin)
             ) + offset
 
+            widget_styles = widget.styles
             placement_offset = (
-                styles.offset.resolve(cell_size, viewport)
-                if styles.has_rule("offset")
+                widget_styles.offset.resolve(cell_size, viewport)
+                if widget_styles.has_rule("offset")
                 else NULL_OFFSET
             )
 
+            absolute = (
+                widget_styles.has_rule("position") and styles.position == "absolute"
+            )
             add_placement(
                 _WidgetPlacement(
                     region,
@@ -305,7 +309,7 @@ class GridLayout(Layout):
                         else margin.grow_maximum(gutter_spacing)
                     ),
                     widget,
-                    styles.has_rule("position") and styles.position == "absolute",
+                    absolute,
                 )
             )
 
