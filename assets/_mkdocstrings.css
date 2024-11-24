@@ -26,39 +26,118 @@
   float: right;
 }
 
-/* Keep headings consistent. */
-h1.doc-heading,
-h2.doc-heading,
-h3.doc-heading,
-h4.doc-heading,
-h5.doc-heading,
-h6.doc-heading {
-  font-weight: 400;
-  line-height: 1.5;
+/* Parameter headings must be inline, not blocks. */
+.doc-heading-parameter {
+  display: inline;
+}
+
+/* Prefer space on the right, not the left of parameter permalinks. */
+.doc-heading-parameter .headerlink {
+  margin-left: 0 !important;
+  margin-right: 0.2rem;
+}
+
+/* Backward-compatibility: docstring section titles in bold. */
+.doc-section-title {
+  font-weight: bold;
+}
+
+/* Symbols in Navigation and ToC. */
+:root, :host,
+[data-md-color-scheme="default"] {
+  --doc-symbol-parameter-fg-color: #df50af;
+  --doc-symbol-attribute-fg-color: #953800;
+  --doc-symbol-function-fg-color: #8250df;
+  --doc-symbol-method-fg-color: #8250df;
+  --doc-symbol-class-fg-color: #0550ae;
+  --doc-symbol-module-fg-color: #5cad0f;
+
+  --doc-symbol-parameter-bg-color: #df50af1a;
+  --doc-symbol-attribute-bg-color: #9538001a;
+  --doc-symbol-function-bg-color: #8250df1a;
+  --doc-symbol-method-bg-color: #8250df1a;
+  --doc-symbol-class-bg-color: #0550ae1a;
+  --doc-symbol-module-bg-color: #5cad0f1a;
+}
+
+[data-md-color-scheme="slate"] {
+  --doc-symbol-parameter-fg-color: #ffa8cc;
+  --doc-symbol-attribute-fg-color: #ffa657;
+  --doc-symbol-function-fg-color: #d2a8ff;
+  --doc-symbol-method-fg-color: #d2a8ff;
+  --doc-symbol-class-fg-color: #79c0ff;
+  --doc-symbol-module-fg-color: #baff79;
+
+  --doc-symbol-parameter-bg-color: #ffa8cc1a;
+  --doc-symbol-attribute-bg-color: #ffa6571a;
+  --doc-symbol-function-bg-color: #d2a8ff1a;
+  --doc-symbol-method-bg-color: #d2a8ff1a;
+  --doc-symbol-class-bg-color: #79c0ff1a;
+  --doc-symbol-module-bg-color: #baff791a;
+}
+
+code.doc-symbol {
+  border-radius: .1rem;
+  font-size: .85em;
+  padding: 0 .3em;
+  font-weight: bold;
+}
+
+code.doc-symbol-parameter {
+  color: var(--doc-symbol-parameter-fg-color);
+  background-color: var(--doc-symbol-parameter-bg-color);
+}
+
+code.doc-symbol-parameter::after {
+  content: "param";
+}
+
+code.doc-symbol-attribute {
+  color: var(--doc-symbol-attribute-fg-color);
+  background-color: var(--doc-symbol-attribute-bg-color);
+}
+
+code.doc-symbol-attribute::after {
+  content: "attr";
+}
+
+code.doc-symbol-function {
+  color: var(--doc-symbol-function-fg-color);
+  background-color: var(--doc-symbol-function-bg-color);
+}
+
+code.doc-symbol-function::after {
+  content: "func";
+}
+
+code.doc-symbol-method {
+  color: var(--doc-symbol-method-fg-color);
+  background-color: var(--doc-symbol-method-bg-color);
+}
+
+code.doc-symbol-method::after {
+  content: "meth";
+}
+
+code.doc-symbol-class {
+  color: var(--doc-symbol-class-fg-color);
+  background-color: var(--doc-symbol-class-bg-color);
+}
+
+code.doc-symbol-class::after {
+  content: "class";
+}
+
+code.doc-symbol-module {
+  color: var(--doc-symbol-module-fg-color);
+  background-color: var(--doc-symbol-module-bg-color);
+}
+
+code.doc-symbol-module::after {
+  content: "mod";
+}
+
+.doc-signature .autorefs {
   color: inherit;
-  text-transform: none;
-}
-
-h1.doc-heading {
-  font-size: 1.6rem;
-}
-
-h2.doc-heading {
-  font-size: 1.2rem;
-}
-
-h3.doc-heading {
-  font-size: 1.15rem;
-}
-
-h4.doc-heading {
-  font-size: 1.10rem;
-}
-
-h5.doc-heading {
-  font-size: 1.05rem;
-}
-
-h6.doc-heading {
-  font-size: 1rem;
+  border-bottom: 1px dotted currentcolor;
 }

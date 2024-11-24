@@ -5447,7 +5447,7 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.logging" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.logging
+      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;logging
     </span>
   </a>
   
@@ -5456,17 +5456,35 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.logging.TextualHandler" class="md-nav__link">
     <span class="md-ellipsis">
-      TextualHandler
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TextualHandler
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="TextualHandler">
+    <nav class="md-nav" aria-label=" TextualHandler">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.logging.TextualHandler(stderr)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;stderr
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.logging.TextualHandler(stdout)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;stdout
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#textual.logging.TextualHandler.emit" class="md-nav__link">
     <span class="md-ellipsis">
-      emit()
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;emit
     </span>
   </a>
   
@@ -6530,7 +6548,7 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.logging" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.logging
+      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;logging
     </span>
   </a>
   
@@ -6539,17 +6557,35 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.logging.TextualHandler" class="md-nav__link">
     <span class="md-ellipsis">
-      TextualHandler
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;TextualHandler
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="TextualHandler">
+    <nav class="md-nav" aria-label=" TextualHandler">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.logging.TextualHandler(stderr)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;stderr
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.logging.TextualHandler(stdout)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;stdout
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#textual.logging.TextualHandler.emit" class="md-nav__link">
     <span class="md-ellipsis">
-      emit()
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;emit
     </span>
   </a>
   
@@ -6583,14 +6619,20 @@ window.onload = async (event) => {
 <div class="doc doc-object doc-module">
 
 
+
 <a id="textual.logging"></a>
-  <div class="doc doc-contents first">
-  
-      <p>A Textual Logging handler.</p>
+    <div class="doc doc-contents first">
+
+        <p>A Textual Logging handler.</p>
 <p>If there is an active Textual app, then log messages will go via the app (and logged via textual console).</p>
 <p>If there is <em>no</em> active app, then log messages will go to stderr or stdout, depending on configuration.</p>
 
-  
+
+
+
+
+
+
 
   <div class="doc doc-children">
 
@@ -6606,70 +6648,78 @@ window.onload = async (event) => {
 
 
 <h2 id="textual.logging.TextualHandler" class="doc doc-heading">
-          <span class="doc doc-object-name doc-class-name">TextualHandler</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">TextualHandler</span>
 
 
 <a href="#textual.logging.TextualHandler" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TextualHandler</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">TextualHandler</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.logging.TextualHandler(stderr)">stderr</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.logging.TextualHandler(stdout)">stdout</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-          <p class="doc doc-class-bases">
-            Bases: <code><a class="autorefs autorefs-external" title="logging.Handler" href="https://docs.python.org/3/library/logging.html#logging.Handler">Handler</a></code></p>
-
-  
-      <p>A Logging handler for Textual apps.</p>
-  
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-external" title="logging.Handler" href="https://docs.python.org/3/library/logging.html#logging.Handler">Handler</a></code></p>
 
 
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+        <p>A Logging handler for Textual apps.</p>
+
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>stderr</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Log to stderr when there is no active app.</p>
-            </div>
-          </td>
-          <td>
-                <code>True</code>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
-        <tr>
-          <td><code>stdout</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Log to stdout when there is no active app.</p>
-            </div>
-          </td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.logging.TextualHandler(stderr)" class="doc doc-heading doc-heading-parameter">                  <code>stderr</code>
+<a href="#textual.logging.TextualHandler(stderr)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Log to stderr when there is no active app.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.logging.TextualHandler(stdout)" class="doc doc-heading doc-heading-parameter">                  <code>stdout</code>
+<a href="#textual.logging.TextualHandler(stdout)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Log to stdout when there is no active app.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-  
+
+
+
+
+
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -6682,37 +6732,36 @@ window.onload = async (event) => {
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="textual.logging.TextualHandler.emit" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">emit</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">emit</span>
 
 
 <a href="#textual.logging.TextualHandler.emit" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">emit</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
-      <p>Invoked by logging.</p>
+    <div class="doc doc-contents ">
 
-  </div>
+        <p>Invoked by logging.</p>
 
-</div>
-
-
-
-  </div>
-
-  </div>
+    </div>
 
 </div>
 
 
 
+  </div>
+
+    </div>
+
+</div>
+
+
+
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
