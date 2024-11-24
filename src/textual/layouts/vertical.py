@@ -105,6 +105,7 @@ class VerticalLayout(Layout):
                 next_y.__floor__() - y.__floor__(),
             )
 
+            absolute = styles.has_rule("position") and styles.position == "absolute"
             add_placement(
                 _WidgetPlacement(
                     region,
@@ -114,10 +115,10 @@ class VerticalLayout(Layout):
                     0,
                     False,
                     overlay,
-                    styles.has_rule("position") and styles.position == "absolute",
+                    absolute,
                 )
             )
-            if not overlay:
+            if not overlay and not absolute:
                 y = next_y + margin
 
         return placements

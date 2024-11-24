@@ -11,16 +11,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added Styles.has_any_rules https://github.com/Textualize/textual/pull/5264
+- Added `position` CSS rule.
+- Added `Widget.set_scroll`
+- Added `Select.selection`
 
 ### Fixed 
 
 - Fixed offset applied to docked widgets https://github.com/Textualize/textual/pull/5264
 - Fixed loading widgets responding to input https://github.com/Textualize/textual/pull/5267
 
-### Changed
 
-- Added `position` CSS rule.
-- Added `Widget.set_scroll`
 
 ## [0.86.3] - 2024-11-19
 

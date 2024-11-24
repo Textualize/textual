@@ -1,6 +1,14 @@
+"""
+An implementation of the "Sliding Tile" puzzle.
+
+Textual isn't a game engine exactly, but it wasn't hard to build this.
+
+"""
+
 from __future__ import annotations
 
 from asyncio import sleep
+from collections import defaultdict
 from dataclasses import dataclass
 from itertools import product
 from random import choice
@@ -10,6 +18,7 @@ from rich.console import ConsoleRenderable
 from rich.syntax import Syntax
 
 from textual import containers, events, on, work
+from textual._loop import loop_last
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.demo.page import PageScreen
@@ -22,6 +31,8 @@ from textual.widgets import Button, Digits, Footer, Select, Static
 
 @dataclass
 class NewGame:
+    """A dataclass to report the desired game type."""
+
     language: str
     code: str
     size: tuple[int, int]
@@ -160,29 +171,25 @@ LEVELS = {"Python": PYTHON_CODE, "XML": XML_CODE, "BF": BF_CODE}
 
 
 class Tile(containers.Vertical):
+    """An individual tile in the puzzle.
+
+    A Tile is a container with a static inside it.
+    The static contains the code (as a Rich Syntax object), scrolled so the
+    relevant portion is visible.
+    """
+
     DEFAULT_CSS = """
     Tile {
         width: 16;
         height: 8;
-        position: absolute;
-       
-        transition: opacity 0.1s;
+        position: absolute;        
         Static {
             width: auto;
             height: auto;
-
-            &:hover {
-              
-                tint: $primary 30%;
-            }
-
-        }
-       
-        &#blank {
-            visibility: hidden;
-        }
+            &:hover { tint: $primary 30%; }
+        }       
+        &#blank { visibility: hidden; }
     }
-   
     """
 
     position: reactive[Offset] = reactive(Offset)
@@ -208,6 +215,7 @@ class Tile(containers.Vertical):
             classes="tile",
             name="blank" if self.tile is None else str(self.tile),
         )
+        assert self.parent is not None
         static.styles.width = self.parent.styles.width
         static.styles.height = self.parent.styles.height
         yield static
@@ -219,14 +227,17 @@ class Tile(containers.Vertical):
             self.styles.height = height
             column, row = self.position
             self.set_scroll(column * width, row * height)
-
         self.offset = self.position * self.tile_size
 
     def watch_position(self, position: Offset) -> None:
+        """The 'position' is in tile coordinate.
+        When it changes we animate it to the cell coordinates."""
         self.animate("offset", position * self.tile_size, duration=0.2)
 
 
 class GameDialog(containers.VerticalGroup):
+    """A dialog to ask the user for the initial game parameters."""
+
     DEFAULT_CSS = """
         GameDialog {
             background: $boost;
@@ -264,25 +275,23 @@ class GameDialog(containers.VerticalGroup):
                 id="level",
                 allow_blank=False,
             )
-
         yield Button("Start", variant="primary")
 
     @on(Button.Pressed)
     def on_button_pressed(self) -> None:
-        language = self.query_one("#language", Select).value
-
-        level = self.query_one("#level", Select).value
+        language = self.query_one("#language", Select).selection
+        level = self.query_one("#level", Select).selection
+        assert language is not None and level is not None
         self.screen.dismiss(NewGame(language, LEVELS[language], level))
 
 
 class GameDialogScreen(ModalScreen):
-    CSS = """
-    GameDialogScreen {
-      
-        align: center middle;        
-      
-    }
+    """Modal screen containing the dialog."""
 
+    CSS = """
+    GameDialogScreen {      
+        align: center middle;              
+    }
     """
 
     BINDINGS = [("escape", "dismiss")]
@@ -292,6 +301,8 @@ class GameDialogScreen(ModalScreen):
 
 
 class Game(containers.Vertical, can_focus=True):
+    """Widget for the game board."""
+
     ALLOW_MAXIMIZE = False
     DEFAULT_CSS = """
     Game {
@@ -312,7 +323,6 @@ class Game(containers.Vertical, can_focus=True):
             color: $foreground;
         }
     }
-
     """
 
     BINDINGS = [
@@ -323,7 +333,7 @@ class Game(containers.Vertical, can_focus=True):
     ]
 
     state = reactive("waiting")
-    play_start_time = reactive(monotonic)
+    play_start_time: reactive[float] = reactive(monotonic)
     play_time = reactive(0.0, init=False)
     code = reactive("")
     dimensions = reactive(Size(3, 3))
@@ -339,32 +349,21 @@ class Game(containers.Vertical, can_focus=True):
     ) -> None:
         self.set_reactive(Game.code, code)
         self.set_reactive(Game.language, language)
-        self.set_reactive(Game.dimensions, Size(*dimensions))
-        self.tile_size = Size(*tile_size)
-
-        tile_width, tile_height = dimensions
-        tile_no = -1
-        self.locations: list[list[int | None]] = [
-            [(tile_no := tile_no + 1) for _ in range(tile_width)]
-            for _ in range(tile_height)
-        ]
-        self.locations[tile_height - 1][tile_width - 1] = None
-
+        self.locations: defaultdict[Offset, int | None] = defaultdict(None)
         super().__init__()
-
+        self.dimensions = Size(*dimensions)
+        self.tile_size = Size(*tile_size)
         self.play_timer: Timer | None = None
 
     def check_win(self) -> bool:
         return all(tile.start_position == tile.position for tile in self.query(Tile))
 
     def watch_dimensions(self, dimensions: Size) -> None:
+        self.locations.clear()
         tile_width, tile_height = dimensions
-        tile_no = 0
-        self.locations: list[list[int | None]] = [
-            [(tile_no := tile_no + 1) for _ in range(tile_width)]
-            for _ in range(tile_height)
-        ]
-        self.locations[tile_height - 1][tile_width - 1] = None
+        for last, tile_no in loop_last(range(0, tile_width * tile_height)):
+            position = Offset(*divmod(tile_no, tile_width))
+            self.locations[position] = None if last else tile_no
 
     def compose(self) -> ComposeResult:
         syntax = Syntax(
@@ -381,13 +380,9 @@ class Game(containers.Vertical, can_focus=True):
             grid.styles.width = tile_width * self.tile_size[0]
             grid.styles.height = tile_height * self.tile_size[1]
             for row, column in product(range(tile_width), range(tile_height)):
-                tile_no = self.locations[column][row]
-                yield Tile(
-                    syntax,
-                    tile_no,
-                    self.tile_size,
-                    Offset(row, column),
-                )
+                position = Offset(row, column)
+                tile_no = self.locations[position]
+                yield Tile(syntax, tile_no, self.tile_size, position)
         if self.language:
             self.call_later(self.shuffle)
 
@@ -409,31 +404,36 @@ class Game(containers.Vertical, can_focus=True):
             self.play_start_time = monotonic()
             self.play_timer = self.set_interval(1 / 10, self.update_clock)
 
-    def get_tile_location(self, tile: int | None) -> Offset:
-        return self.get_tile(tile).position
-
     def get_tile(self, tile: int | None) -> Tile:
+        """Get a tile (int) or the blank (None)."""
         return self.query_one("#blank" if tile is None else f"#tile{tile}", Tile)
 
     def get_tile_at(self, position: Offset) -> Tile:
-        if position.x < 0 or position.y < 0:
+        """Get a tile at the given position, or raise an IndexError."""
+        if position not in self.locations:
             raise IndexError("No tile")
-        tile_no = self.locations[position.y][position.x]
-        return self.get_tile(tile_no)
+        return self.get_tile(self.locations[position])
 
-    def move_tile(self, tile_no: int | None, position: Offset) -> None:
+    def move_tile(self, tile_no: int | None) -> None:
+        """Move a tile to the blank.
+        Note: this doesn't do any validation of legal moves.
+        """
         tile = self.get_tile(tile_no)
         blank = self.get_tile(None)
-        self.locations[tile.position.y][tile.position.x] = None
+        blank_position = blank.position
+
+        self.locations[tile.position] = None
         blank.position = tile.position
-        self.locations[position.y][position.x] = tile_no
-        tile.position = position
+
+        self.locations[blank_position] = tile_no
+        tile.position = blank_position
 
         if self.check_win():
             self.state = "won"
             self.notify("You won!")
 
     def can_move(self, tile: int) -> bool:
+        """Check if a tile may move."""
         blank_position = self.get_tile(None).position
         tile_position = self.get_tile(tile).position
         return blank_position in (
@@ -460,11 +460,11 @@ class Game(containers.Vertical, can_focus=True):
             tile = self.get_tile_at(position)
         except IndexError:
             return
-
-        self.move_tile(tile.tile, blank)
+        self.move_tile(tile.tile)
 
     @work(exclusive=True)
     async def shuffle(self, shuffles: int = 150) -> None:
+        """A worker to do the shuffling."""
         self.visible = True
         if self.play_timer is not None:
             self.play_timer.stop()
@@ -483,10 +483,10 @@ class Game(containers.Vertical, can_focus=True):
                 moves.append(blank + (0, -1))
             if blank.y < tile_height - 1:
                 moves.append(blank + (0, +1))
+            # Avoid moving back to the previous position
             move_position = choice([move for move in moves if move != previous_move])
-
             move_tile = self.get_tile_at(move_position)
-            self.move_tile(move_tile.tile, blank)
+            self.move_tile(move_tile.tile)
             await sleep(0.05)
             previous_move = blank
         self.query_one("#grid").border_title = ""
@@ -494,15 +494,17 @@ class Game(containers.Vertical, can_focus=True):
 
     @on(events.Click, ".tile")
     def on_tile_clicked(self, event: events.Click) -> None:
+        assert event.widget is not None
         tile = int(event.widget.name or 0)
         if self.state != "playing" or not self.can_move(tile):
             self.app.bell()
             return
-        blank = self.get_tile_location(None)
-        self.move_tile(tile, blank)
+        self.move_tile(tile)
 
 
 class GameScreen(PageScreen):
+    """The screen containing the game."""
+
     AUTO_FOCUS = "Game"
     BINDINGS = [
         ("s", "shuffle", "Shuffle"),
