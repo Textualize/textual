@@ -378,6 +378,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             disabled=disabled,
         )
 
+    @property
+    def selection(self) -> SelectType | None:
+        """The currently selected item.
+
+        Unlike [value][textual.widgets.Select.value], this will not return Blanks.
+        If nothing is selected, this will return `None`.
+
+        """
+        value = self.value
+        assert not isinstance(value, NoSelection)
+        return value
+
     def _setup_variables_for_options(
         self,
         options: Iterable[tuple[RenderableType, SelectType]],

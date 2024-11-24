@@ -45,6 +45,7 @@ from textual.css.constants import (
     VALID_DISPLAY,
     VALID_OVERFLOW,
     VALID_OVERLAY,
+    VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
@@ -99,6 +100,7 @@ class RulesMap(TypedDict, total=False):
     padding: Spacing
     margin: Spacing
     offset: ScalarOffset
+    position: str
 
     border_top: tuple[str, Color]
     border_right: tuple[str, Color]
@@ -219,6 +221,7 @@ class StylesBase:
         "background",
         "background_tint",
         "opacity",
+        "position",
         "text_opacity",
         "tint",
         "scrollbar_color",
@@ -307,6 +310,9 @@ class StylesBase:
     """Set the margin (spacing outside the border) of the widget."""
     offset = OffsetProperty()
     """Set the offset of the widget relative to where it would have been otherwise."""
+    position = StringEnumProperty(VALID_POSITION, "relative")
+    """If `relative` offset is applied to widgets current position, if `absolute` it is applied to (0, 0)."""
+
     border = BorderProperty(layout=True)
     """Set the border of the widget e.g. ("rounded", "green") or "none"."""
 
@@ -1003,6 +1009,8 @@ class Styles(StylesBase):
         if "offset" in rules:
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
+        if "position" in rules:
+            append_declaration("position", self.position)
         if "dock" in rules:
             append_declaration("dock", rules["dock"])
         if "split" in rules:

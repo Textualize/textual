@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.86.3"
+version = "0.87.0"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
 include = [

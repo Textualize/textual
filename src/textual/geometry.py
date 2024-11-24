@@ -126,6 +126,9 @@ class Offset(NamedTuple):
         if isinstance(other, (float, int)):
             x, y = self
             return Offset(int(x * other), int(y * other))
+        if isinstance(other, tuple):
+            x, y = self
+            return Offset(int(x * other[0]), int(y * other[1]))
         return NotImplemented
 
     def __neg__(self) -> Offset:

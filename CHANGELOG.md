@@ -6,11 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## [0.87.0] - 2024-11-24
 
 ### Added
 
 - Added Styles.has_any_rules https://github.com/Textualize/textual/pull/5264
+- Added `position` CSS rule. https://github.com/Textualize/textual/pull/5278
+- Added `Widget.set_scroll` https://github.com/Textualize/textual/pull/5278
+- Added `Select.selection` https://github.com/Textualize/textual/pull/5278
 
 ### Fixed 
 
@@ -2573,6 +2576,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.87.0]: https://github.com/Textualize/textual/compare/v0.86.4...v0.87.0
 [0.86.3]: https://github.com/Textualize/textual/compare/v0.86.2...v0.86.3
 [0.86.2]: https://github.com/Textualize/textual/compare/v0.86.1...v0.86.2
 [0.86.1]: https://github.com/Textualize/textual/compare/v0.86.0...v0.86.1

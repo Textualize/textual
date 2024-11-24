@@ -2637,3 +2637,47 @@ def test_select_overlay_constrain(snap_compare):
         await pilot.click(Select)
 
     assert snap_compare(OApp(), run_before=run_before)
+
+
+def test_position_absolute(snap_compare):
+    """Check position: absolute works as expected.
+    You should see three staggered labels at the top-left, and three staggered relative labels in the center.
+    The relative labels will have an additional line between them.
+    """
+
+    class AbsoluteApp(App):
+        CSS = """
+        Screen {        
+            align: center middle;
+
+            .absolute {
+                position: absolute;
+            }
+
+            .relative {
+                position: relative;
+            }
+
+            .offset1 {
+                offset: 1 1;
+            }
+            .offset2 {
+                offset: 2 2;                
+            }
+            .offset3 {
+                offset: 3 3;
+            }
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Absolute 1", classes="absolute offset1")
+            yield Label("Absolute 2", classes="absolute offset2")
+            yield Label("Absolute 3", classes="absolute offset3")
+
+            yield Label("Relative 1", classes="relative offset1")
+            yield Label("Relative 2", classes="relative offset2")
+            yield Label("Relative 3", classes="relative offset3")
+
+    assert snap_compare(AbsoluteApp())

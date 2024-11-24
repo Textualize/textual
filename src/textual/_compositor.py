@@ -649,6 +649,7 @@ class Compositor:
                         z,
                         fixed,
                         overlay,
+                        absolute,
                     ) in reversed(placements):
                         layer_index = get_layer_index(sub_widget.layer, 0)
                         # Combine regions with children to calculate the "virtual size"

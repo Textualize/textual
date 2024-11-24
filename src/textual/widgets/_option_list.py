@@ -295,7 +295,7 @@ class OptionList(ScrollView, can_focus=True):
         """A dictionary of option IDs and the option indexes they relate to."""
 
         self._content_render_cache: LRUCache[tuple[int, str, int], list[Strip]]
-        self._content_render_cache = LRUCache(256)
+        self._content_render_cache = LRUCache(1024)
 
         self._lines: list[tuple[int, int]] | None = None
         self._spans: list[OptionLineSpan] | None = None
@@ -361,8 +361,6 @@ class OptionList(ScrollView, can_focus=True):
             else:
                 self._lines.append(OptionLineSpan(-1, 0))
 
-        self._populate()
-
         self.virtual_size = Size(width, len(self._lines))
 
     def _populate(self) -> None:
@@ -376,7 +374,7 @@ class OptionList(ScrollView, can_focus=True):
             self._contents,
             self.scrollable_content_region.width - self._left_gutter_width(),
         )
-        self.refresh()
+        self.refresh(layout=True)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
@@ -548,7 +546,7 @@ class OptionList(ScrollView, can_focus=True):
                 self.scrollable_content_region.width - self._left_gutter_width(),
                 option_index=option_index,
             )
-            self.refresh()
+            self.refresh(layout=True)
         return self
 
     def add_option(self, item: NewOptionListContent = None) -> Self:
