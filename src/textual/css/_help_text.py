@@ -772,7 +772,7 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
 
 
 def position_help_text(property_name: str) -> HelpText:
-    """Help text to show when the user supplies the wrong value for position.,
+    """Help text to show when the user supplies the wrong value for position.
 
     Args:
         property_name: The name of the property.
@@ -783,7 +783,7 @@ def position_help_text(property_name: str) -> HelpText:
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/]",
         bullets=[
-            Bullet(f"Valid scalar units are {friendly_list(VALID_POSITION)}"),
+            Bullet(f"Valid values are {friendly_list(VALID_POSITION)}"),
         ],
     )
 
