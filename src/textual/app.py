@@ -71,7 +71,6 @@ from textual import (
     on,
 )
 from textual._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
-from textual.visual import Visual, SupportsVisual
 from textual._ansi_sequences import SYNC_END, SYNC_START
 from textual._ansi_theme import ALABASTER, MONOKAI
 from textual._callback import invoke
@@ -124,6 +123,7 @@ from textual.screen import (
 from textual.signal import Signal
 from textual.theme import BUILTIN_THEMES, Theme, ThemeProvider
 from textual.timer import Timer
+from textual.visual import SupportsVisual, Visual
 from textual.widget import AwaitMount, Widget
 from textual.widgets._toast import ToastRack
 from textual.worker import NoActiveWorker, get_current_worker
@@ -632,8 +632,6 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         self._logger = Logger(self._log)
-
-        self._refresh_required = False
 
         self._css_has_errors = False
 
