@@ -745,10 +745,10 @@ class OffsetProperty:
         _rich_traceback_omit = True
         if offset is None:
             if obj.clear_rule(self.name):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, repaint=False)
         elif isinstance(offset, ScalarOffset):
             if obj.set_rule(self.name, offset):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, repaint=False)
         else:
             x, y = offset
 
@@ -771,7 +771,7 @@ class OffsetProperty:
             _offset = ScalarOffset(scalar_x, scalar_y)
 
             if obj.set_rule(self.name, _offset):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, repaint=False)
 
 
 class StringEnumProperty(Generic[EnumType]):
