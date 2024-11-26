@@ -593,7 +593,7 @@ class Widget(DOMNode):
     @property
     def is_anchored(self) -> bool:
         """Is this widget anchored?"""
-        return self._parent is not None and self._parent is self
+        return isinstance(self._parent, Widget) and self._parent._anchored is self
 
     @property
     def is_mouse_over(self) -> bool:
@@ -4080,9 +4080,7 @@ class Widget(DOMNode):
         self._check_refresh()
 
         if self.is_anchored:
-            self.scroll_visible(animate=self._anchor_animate)
-        if self._anchored:
-            self._anchored.scroll_visible(animate=self._anchor_animate)
+            self.scroll_visible(animate=self._anchor_animate, immediate=True)
 
     def _check_refresh(self) -> None:
         """Check if a refresh was requested."""
