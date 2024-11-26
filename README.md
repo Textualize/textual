@@ -65,7 +65,10 @@ Run the following command to see a little of what Textual can do:
 python -m textual
 ```
 
-<img width="1514" alt="demo" src="https://github.com/user-attachments/assets/5bd9a7e9-fcc5-48b2-b27d-a7f050e2dd63">
+
+
+<img width="1348" alt="Screenshot of the Textual demo" src="https://github.com/user-attachments/assets/d30bc738-10ed-48c9-ac9d-8eac84b2da4a">
+
 
 ## Documentation
 
