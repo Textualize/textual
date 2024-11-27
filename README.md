@@ -1,46 +1,27 @@
 
 [![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
 
-# Textual
-
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/0.87.1)](https://pypi.org/project/textual/)
 [![PyPI version](https://badge.fury.io/py/textual.svg)](https://badge.fury.io/py/textual)
 ![OS support](https://img.shields.io/badge/OS-macOS%20Linux%20Windows-red)
 
 
+
+# Textual
+
 Textual is a *Rapid Application Development* framework for Python.
 
-Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and a [web browser](https://github.com/Textualize/textual-web)!
+Build sophisticated, cross-platform, user interfaces with a simple Python API. Run your apps in the terminal or a [web browser](https://github.com/Textualize/textual-web)!
 
 
 <details>
   <summary> 🎬 Demonstration </summary>
   <hr>
 
-A quick run through of some Textual features.
-
 https://github.com/user-attachments/assets/71afec49-fe89-4e8d-a8cf-148fa2601362
 
+
  </details>
-
-
-### Impatient?
-
-Try the [textual demo](https://github.com/textualize/textual-demo) *without* installing.
-
-
-
-![Textual supports themes](https://github.com/user-attachments/assets/3de1a991-1154-48b4-b547-21f98509f8c4)
-
-
-
-
-
----
-
-Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with an API inspired by modern web development.
-
-A powerful layout engine, theming system, and re-usable [widgets](https://textual.textualize.io/widget_gallery/) makes it possible to build apps that rival the desktop and web experience. Here are just a few examples:
 
 <table>
 
@@ -78,8 +59,13 @@ A powerful layout engine, theming system, and re-usable [widgets](https://textua
 
 </table>
 
+### Impatient?
 
-Great [documentation](https://textual.textualize.io/) and a [builtin testing framework](https://textual.textualize.io/guide/testing/) means that Textual apps can be maintained indefinitely.
+Try the [textual demo](https://github.com/textualize/textual-demo) *without* installing.
+
+
+
+![Textual supports themes](https://github.com/user-attachments/assets/3de1a991-1154-48b4-b547-21f98509f8c4)
 
 
 
