@@ -323,7 +323,9 @@ class StylesBase:
     """Set the left border of the widget e.g. ("rounded", "green") or "none"."""
 
     border_title_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    """The alignment of the border title text."""
     border_subtitle_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "right")
+    """The alignment of the border subtitle text."""
 
     outline = BorderProperty(layout=False)
     """Set the outline of the widget e.g. ("rounded", "green") or "none".
