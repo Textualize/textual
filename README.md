@@ -9,10 +9,11 @@
 
 # Textual
 
-Textual is a *Rapid Application Development* framework for Python.
+Build sophisticated, cross-platform, user interfaces with a simple Python API.
 
-Build sophisticated, cross-platform, user interfaces with a simple Python API. Run your apps in the terminal or a [web browser](https://github.com/Textualize/textual-web)!
+Run your apps in the terminal or a web browser with [Textual Web](https://github.com/Textualize/textual-web) or [Textual Serve](https://github.com/Textualize/textual-serve).
 
+## Videos
 
 <details>
   <summary> 🎬 Demonstration </summary>
@@ -22,6 +23,23 @@ https://github.com/user-attachments/assets/71afec49-fe89-4e8d-a8cf-148fa2601362
 
 
  </details>
+
+
+
+<details>
+  <summary> 🎬 Textual Serve </summary>
+  <hr>
+
+
+https://github.com/user-attachments/assets/97ab8825-0af6-42e9-b7e5-f554303a2112
+
+
+
+
+ </details>
+
+
+## Textual in Action
 
 <table>
 
