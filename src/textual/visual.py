@@ -149,6 +149,7 @@ class Style:
 
         Args:
             rich_style: A Rich Style object.
+            theme: Optional Rich [terminal theme][rich.terminal_theme.TerminalTheme].
 
         Returns:
             New Style.

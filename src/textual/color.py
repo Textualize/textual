@@ -184,6 +184,7 @@ class Color(NamedTuple):
 
         Args:
             rich_color: An instance of [Rich color][rich.color.Color].
+            theme: Optional Rich [terminal theme][rich.terminal_theme.TerminalTheme].
 
         Returns:
             A new Color instance.
