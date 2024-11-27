@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### Unreleased
+
+### Fixed
+
+- Fixed infinite loop in `Widget.anchor` https://github.com/Textualize/textual/pull/5290
+
 ## [0.87.1] - 2024-11-24
 
 ## Fixed
