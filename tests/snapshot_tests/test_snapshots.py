@@ -2749,3 +2749,45 @@ def test_select_width_auto(snap_compare):
         await pilot.click("Select")
 
     snap_compare(TallSelectApp(), run_before=run_before)
+
+
+def test_app_resize_order(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5284
+    You should see a placeholder with text "BAR", focused and scrolled down so it fills the screen.
+    """
+
+    class FocusPlaceholder(Placeholder, can_focus=True):
+        pass
+
+    class NarrowScreen(Screen):
+        AUTO_FOCUS = "#bar"
+
+        def compose(self) -> ComposeResult:
+            yield FocusPlaceholder("FOO", id="foo")
+            yield FocusPlaceholder("BAR", id="bar")
+
+    class SCApp(App):
+        CSS = """
+        Placeholder:focus {
+            border: heavy white;
+        }
+        #foo {
+            height: 24;
+        }
+        #bar {
+            height: 1fr;
+        }
+
+        .narrow #bar {
+            height: 100%;
+        }
+
+        """
+
+        def on_mount(self) -> None:
+            self.push_screen(NarrowScreen())
+
+        def on_resize(self) -> None:
+            self.add_class("narrow")
+
+    snap_compare(SCApp())
