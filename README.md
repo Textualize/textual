@@ -44,7 +44,7 @@ Textual apps can use **16.7 million** colors with mouse support and smooth flick
 
 A powerful layout engine, theming system, and re-usable [widgets](https://textual.textualize.io/widget_gallery/) makes it possible to build apps that rival the desktop and web experience.
 
-Great [documentation](https://textual.textualize.io/) and a [builtin testing framework](https://textual.textualize.io/guide/testing/) means that Textual apps can be maintained idefinitely.
+Great [documentation](https://textual.textualize.io/) and a [builtin testing framework](https://textual.textualize.io/guide/testing/) means that Textual apps can be maintained indefinitely.
 
 
 ## Installing
