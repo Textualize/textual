@@ -40,11 +40,47 @@ Try the [textual demo](https://github.com/textualize/textual-demo) *without* ins
 
 Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with an API inspired by modern web development.
 
-Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation.
+A powerful layout engine, theming system, and re-usable [widgets](https://textual.textualize.io/widget_gallery/) makes it possible to build apps that rival the desktop and web experience. Here are just a few examples:
 
-A powerful layout engine, theming system, and re-usable [widgets](https://textual.textualize.io/widget_gallery/) makes it possible to build apps that rival the desktop and web experience.
+<table>
+
+<tr>
+
+  <td>
+    
+  ![buttons](https://github.com/user-attachments/assets/2ac26387-aaa3-41ed-bc00-7d488600343c)
+    
+  </td>
+
+  <td>
+    
+![tree](https://github.com/user-attachments/assets/61ccd6e9-97ea-4918-8eda-3ee0f0d3770e)
+    
+  </td>
+  
+</tr>
+
+<tr>
+
+  <td>
+    
+  ![datatables](https://github.com/user-attachments/assets/3e1f9f7a-f965-4901-a114-3c188bd17695)
+    
+  </td>
+
+  <td>
+    
+![inputs](https://github.com/user-attachments/assets/b02aa203-7c37-42da-a1bb-2cb244b7d0d3)
+    
+  </td>
+  
+</tr>
+
+</table>
+
 
 Great [documentation](https://textual.textualize.io/) and a [builtin testing framework](https://textual.textualize.io/guide/testing/) means that Textual apps can be maintained indefinitely.
+
 
 
 ## Installing
@@ -66,9 +102,11 @@ python -m textual
 ```
 
 
+<!--
 
 <img width="1348" alt="Screenshot of the Textual demo" src="https://github.com/user-attachments/assets/d30bc738-10ed-48c9-ac9d-8eac84b2da4a">
 
+-->
 
 ## Documentation
 
