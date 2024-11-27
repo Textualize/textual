@@ -35,6 +35,8 @@ from textual.widgets import (
     Tab,
     Tabs,
     TextArea,
+    TabbedContent,
+    TabPane,
 )
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 from textual.theme import Theme
@@ -2752,7 +2754,6 @@ def test_select_width_auto(snap_compare):
     snap_compare(TallSelectApp(), run_before=run_before)
 
 
-
 def test_markup_command_list(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5276
     You should see a command list, with console markup applied to the action name and help text."""
@@ -2768,6 +2769,7 @@ def test_markup_command_list(snap_compare):
             )
 
     snap_compare(MyApp())
+
 
 def test_app_resize_order(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5284
@@ -2810,3 +2812,32 @@ def test_app_resize_order(snap_compare):
 
     snap_compare(SCApp())
 
+
+def test_add_remove_tabs(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5215
+    You should see a TabbedContent with two panes, entitled 'tab-2' and 'tab-3'"""
+
+    class ExampleApp(App):
+        BINDINGS = [
+            ("r", "remove_pane", "Remove first pane"),
+            ("a", "add_pane", "Add pane"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="tab-2"):
+                with TabPane("tab-1"):
+                    yield Label("tab-1")
+                with TabPane("tab-2"):
+                    yield Label("tab-2")
+            yield Footer()
+
+        def action_remove_pane(self) -> None:
+            tabbed_content = self.query_one(TabbedContent)
+            tabbed_content.remove_pane("tab-1")
+
+        def action_add_pane(self) -> None:
+            tabbed_content = self.query_one(TabbedContent)
+            new_pane = TabPane("tab-3", Label("tab-3"))
+            tabbed_content.add_pane(new_pane)
+
+    snap_compare(ExampleApp(), press=["a", "r"])
