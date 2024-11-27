@@ -1122,7 +1122,6 @@ class CommandPalette(SystemModalScreen[None]):
                     )
                     yield Content.from_rich_text(hit.help).stylize_before(help_style)
 
-            prompt = list(build_prompt())[0]
             prompt = Content("\n").join(build_prompt())
 
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
