@@ -40,6 +40,7 @@ import rich.repr
 from rich.color import Color as RichColor
 from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
+from rich.terminal_theme import TerminalTheme
 from typing_extensions import Final
 
 from textual._color_constants import ANSI_COLORS, COLOR_NAME_TO_RGB
@@ -176,7 +177,9 @@ class Color(NamedTuple):
         return cls(0, 0, 0, alpha_percentage / 100.0, auto=True)
 
     @classmethod
-    def from_rich_color(cls, rich_color: RichColor | None) -> Color:
+    def from_rich_color(
+        cls, rich_color: RichColor | None, theme: TerminalTheme | None = None
+    ) -> Color:
         """Create a new color from Rich's Color class.
 
         Args:
@@ -187,7 +190,7 @@ class Color(NamedTuple):
         """
         if rich_color is None:
             return TRANSPARENT
-        r, g, b = rich_color.get_truecolor()
+        r, g, b = rich_color.get_truecolor(theme)
         return cls(r, g, b)
 
     @classmethod

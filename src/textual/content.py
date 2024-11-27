@@ -182,11 +182,16 @@ class Content(Visual):
         """
         if isinstance(text, str):
             text = Text.from_markup(text)
+        app = active_app.get()
         spans = [
             Span(
                 start,
                 end,
-                style if isinstance(style, str) else Style.from_rich_style(style),
+                (
+                    style
+                    if isinstance(style, str)
+                    else Style.from_rich_style(style, app.ansi_theme)
+                ),
             )
             for start, end, style in text._spans
         ]
@@ -683,12 +688,12 @@ class Content(Visual):
             return
 
         if parse_style is None:
-            console = active_app.get().console
+            app = active_app.get()
             # TODO: Update when we add Content.from_markup
 
             def get_style(style: str, /) -> Style:
                 return (
-                    Style.from_rich_style(console.get_style(style))
+                    Style.from_rich_style(app.console.get_style(style), app.ansi_theme)
                     if isinstance(style, str)
                     else style
                 )

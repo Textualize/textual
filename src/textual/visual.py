@@ -13,6 +13,7 @@ from rich.measure import Measurement
 from rich.protocol import is_renderable, rich_cast
 from rich.segment import Segment
 from rich.style import Style as RichStyle
+from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 
 from textual._context import active_app
@@ -141,7 +142,9 @@ class Style:
         return new_style
 
     @classmethod
-    def from_rich_style(cls, rich_style: RichStyle) -> Style:
+    def from_rich_style(
+        cls, rich_style: RichStyle, theme: TerminalTheme | None = None
+    ) -> Style:
         """Build a Style from a (Rich) Style.
 
         Args:
@@ -151,8 +154,8 @@ class Style:
             New Style.
         """
         return Style(
-            Color.from_rich_color(rich_style.bgcolor),
-            Color.from_rich_color(rich_style.color),
+            Color.from_rich_color(rich_style.bgcolor, theme),
+            Color.from_rich_color(rich_style.color, theme),
             bold=rich_style.bold,
             dim=rich_style.dim,
             italic=rich_style.italic,
