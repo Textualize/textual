@@ -2815,7 +2815,7 @@ def test_app_resize_order(snap_compare):
 
 def test_add_remove_tabs(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5215
-    You should see a TabbedContent with two panes, entitled 'tab-2' and 'tab-3'"""
+    You should see a TabbedContent with three panes, entitled 'tab-2', 'New tab' and 'New tab'"""
 
     class ExampleApp(App):
         BINDINGS = [
@@ -2837,7 +2837,7 @@ def test_add_remove_tabs(snap_compare):
 
         def action_add_pane(self) -> None:
             tabbed_content = self.query_one(TabbedContent)
-            new_pane = TabPane("tab-3", Label("tab-3"))
+            new_pane = TabPane("New tab", Label("new"))
             tabbed_content.add_pane(new_pane)
 
-    snap_compare(ExampleApp(), press=["a", "r"])
+    snap_compare(ExampleApp(), press=["a", "r", "a"])
