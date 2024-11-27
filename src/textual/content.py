@@ -22,6 +22,7 @@ from rich.segment import Segment, Segments
 from rich.text import Text
 
 from textual._cells import cell_len
+from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
 from textual.css.types import TextAlign
@@ -180,7 +181,7 @@ class Content(Visual):
             New Content.
         """
         if isinstance(text, str):
-            return cls(text, align=align, no_wrap=no_wrap, ellipsis=ellipsis)
+            text = Text.from_markup(text)
         spans = [
             Span(
                 start,
@@ -189,6 +190,7 @@ class Content(Visual):
             )
             for start, end, style in text._spans
         ]
+
         return cls(
             text.plain,
             spans,
@@ -681,9 +683,15 @@ class Content(Visual):
             return
 
         if parse_style is None:
+            console = active_app.get().console
+            # TODO: Update when we add Content.from_markup
 
             def get_style(style: str, /) -> Style:
-                return TRANSPARENT_STYLE if isinstance(style, str) else style
+                return (
+                    Style.from_rich_style(console.get_style(style))
+                    if isinstance(style, str)
+                    else style
+                )
 
         else:
             get_style = parse_style

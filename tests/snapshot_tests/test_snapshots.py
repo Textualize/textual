@@ -10,6 +10,7 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
+from textual.command import SimpleCommand
 from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
@@ -2749,3 +2750,20 @@ def test_select_width_auto(snap_compare):
         await pilot.click("Select")
 
     snap_compare(TallSelectApp(), run_before=run_before)
+
+
+def test_markup_command_list(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5276
+    You should see a command list, with console markup applied to the action name and help text."""
+
+    class MyApp(App):
+        def on_mount(self) -> None:
+            self.search_commands(
+                [
+                    SimpleCommand(
+                        "Hello [u green]World", lambda: None, "Help [u red]text"
+                    )
+                ]
+            )
+
+    snap_compare(MyApp())
