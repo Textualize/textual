@@ -19,6 +19,7 @@ from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import OverflowMethod
 from rich.segment import Segment, Segments
+from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 
 from textual._cells import cell_len
@@ -182,19 +183,26 @@ class Content(Visual):
         """
         if isinstance(text, str):
             text = Text.from_markup(text)
-        app = active_app.get()
-        spans = [
-            Span(
-                start,
-                end,
-                (
-                    style
-                    if isinstance(style, str)
-                    else Style.from_rich_style(style, app.ansi_theme)
-                ),
-            )
-            for start, end, style in text._spans
-        ]
+        if text._spans:
+            ansi_theme: TerminalTheme | None
+            try:
+                ansi_theme = active_app.get().ansi_theme
+            except LookupError:
+                ansi_theme = None
+            spans = [
+                Span(
+                    start,
+                    end,
+                    (
+                        style
+                        if isinstance(style, str)
+                        else Style.from_rich_style(style, ansi_theme)
+                    ),
+                )
+                for start, end, style in text._spans
+            ]
+        else:
+            spans = []
 
         return cls(
             text.plain,
