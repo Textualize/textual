@@ -3067,6 +3067,9 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         await self._dispatch_message(events.Compose())
+                        await self._dispatch_message(
+                            events.Resize.from_dimensions(self.size, None)
+                        )
                         default_screen = self.screen
                         self.stylesheet.apply(self)
                         await self._dispatch_message(events.Mount())
