@@ -1121,7 +1121,6 @@ class CommandPalette(SystemModalScreen[None]):
                         self.get_component_styles("command-palette--help-text")
                     )
                     yield Content.from_rich_text(hit.help).stylize_before(help_style)
-                    # yield Content.styled(hit.help, help_style)
 
             prompt = list(build_prompt())[0]
             prompt = Content("\n").join(build_prompt())
