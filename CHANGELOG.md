@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed infinite loop in `Widget.anchor` https://github.com/Textualize/textual/pull/5290
+- Restores the ability to supply console markup to command list https://github.com/Textualize/textual/pull/5294
 - Fixed delayed App Resize event https://github.com/Textualize/textual/pull/5296
 
 ## [0.87.1] - 2024-11-24
