@@ -5,17 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
 
 ### Fixed
 
+- Fixed infinite loop in `Widget.anchor` https://github.com/Textualize/textual/pull/5290
+- Restores the ability to supply console markup to command list https://github.com/Textualize/textual/pull/5294
+- Fixed delayed App Resize event https://github.com/Textualize/textual/pull/5296
 - Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
 
 ### Changed
 
 - `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 - `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
+
+## [0.87.1] - 2024-11-24
+
+## Fixed
+
+- Fixed offset not being applied to grid layout https://github.com/Textualize/textual/pull/5281
+- Fixed Select overlay set to auto width https://github.com/Textualize/textual/pull/5282
+
+## [0.87.0] - 2024-11-24
+
+### Added
+
+- Added Styles.has_any_rules https://github.com/Textualize/textual/pull/5264
+- Added `position` CSS rule. https://github.com/Textualize/textual/pull/5278
+- Added `Widget.set_scroll` https://github.com/Textualize/textual/pull/5278
+- Added `Select.selection` https://github.com/Textualize/textual/pull/5278
+
+### Fixed 
+
+- Fixed offset applied to docked widgets https://github.com/Textualize/textual/pull/5264
+- Fixed loading widgets responding to input https://github.com/Textualize/textual/pull/5267
 
 ## [0.86.3] - 2024-11-19
 
@@ -2574,6 +2597,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.87.1]: https://github.com/Textualize/textual/compare/v0.87.0...v0.87.1
+[0.87.0]: https://github.com/Textualize/textual/compare/v0.86.4...v0.87.0
 [0.86.3]: https://github.com/Textualize/textual/compare/v0.86.2...v0.86.3
 [0.86.2]: https://github.com/Textualize/textual/compare/v0.86.1...v0.86.2
 [0.86.1]: https://github.com/Textualize/textual/compare/v0.86.0...v0.86.1

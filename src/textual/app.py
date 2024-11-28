@@ -123,6 +123,7 @@ from textual.screen import (
 from textual.signal import Signal
 from textual.theme import BUILTIN_THEMES, Theme, ThemeProvider
 from textual.timer import Timer
+from textual.visual import SupportsVisual, Visual
 from textual.widget import AwaitMount, Widget
 from textual.widgets._toast import ToastRack
 from textual.worker import NoActiveWorker, get_current_worker
@@ -152,7 +153,7 @@ if constants.DEBUG:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 ComposeResult = Iterable[Widget]
-RenderResult = "RenderableType | Visual | SupportsTextualize"
+RenderResult: TypeAlias = "RenderableType | Visual | SupportsVisual"
 """Result of Widget.render()"""
 
 AutopilotCallbackType: TypeAlias = (
@@ -631,8 +632,6 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         self._logger = Logger(self._log)
-
-        self._refresh_required = False
 
         self._css_has_errors = False
 
@@ -3068,6 +3067,9 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         await self._dispatch_message(events.Compose())
+                        await self._dispatch_message(
+                            events.Resize.from_dimensions(self.size, None)
+                        )
                         default_screen = self.screen
                         self.stylesheet.apply(self)
                         await self._dispatch_message(events.Mount())

@@ -234,11 +234,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             .down-arrow {
                 display: none;
             }
-
             .up-arrow {
                 display: block;
             }
-
             & > SelectOverlay {
                 display: block;
             }
@@ -380,6 +378,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             disabled=disabled,
         )
 
+    @property
+    def selection(self) -> SelectType | None:
+        """The currently selected item.
+
+        Unlike [value][textual.widgets.Select.value], this will not return Blanks.
+        If nothing is selected, this will return `None`.
+
+        """
+        value = self.value
+        assert not isinstance(value, NoSelection)
+        return value
+
     def _setup_variables_for_options(
         self,
         options: Iterable[tuple[RenderableType, SelectType]],
@@ -415,8 +425,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         option_list = self.query_one(SelectOverlay)
         option_list.clear_options()
-        for option in self._select_options:
-            option_list.add_option(option)
+        option_list.add_options(self._select_options)
 
     def _init_selected_option(self, hint: SelectType | NoSelection = BLANK) -> None:
         """Initialises the selected option for the `Select`."""
@@ -503,7 +512,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             return
         self.set_class(expanded, "-expanded")
         if expanded:
-            overlay.focus()
+            overlay.focus(scroll_visible=False)
             if self.value is self.BLANK:
                 overlay.select(None)
                 self.query_one(SelectCurrent).has_value = False

@@ -45,6 +45,7 @@ from textual.css.constants import (
     VALID_DISPLAY,
     VALID_OVERFLOW,
     VALID_OVERLAY,
+    VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
@@ -99,6 +100,7 @@ class RulesMap(TypedDict, total=False):
     padding: Spacing
     margin: Spacing
     offset: ScalarOffset
+    position: str
 
     border_top: tuple[str, Color]
     border_right: tuple[str, Color]
@@ -219,6 +221,7 @@ class StylesBase:
         "background",
         "background_tint",
         "opacity",
+        "position",
         "text_opacity",
         "tint",
         "scrollbar_color",
@@ -235,9 +238,7 @@ class StylesBase:
 
     node: DOMNode | None = None
 
-    display = StringEnumProperty(
-        VALID_DISPLAY, "block", layout=True, refresh_parent=True, refresh_children=True
-    )
+    display = StringEnumProperty(VALID_DISPLAY, "block", layout=True)
     """Set the display of the widget, defining how it's rendered.
 
     Valid values are "block" or "none".
@@ -250,9 +251,7 @@ class StylesBase:
         StyleValueError: If an invalid display is specified.
     """
 
-    visibility = StringEnumProperty(
-        VALID_VISIBILITY, "visible", layout=True, refresh_parent=True
-    )
+    visibility = StringEnumProperty(VALID_VISIBILITY, "visible", layout=True)
     """Set the visibility of the widget.
     
     Valid values are "visible" or "hidden".
@@ -278,6 +277,7 @@ class StylesBase:
     """
 
     auto_color = BooleanProperty(default=False)
+    """Enable automatic picking of best contrasting color."""
     color = ColorProperty(Color(255, 255, 255))
     """Set the foreground (text) color of the widget.
     Supports `Color` objects but also strings e.g. "red" or "#ff0000".
@@ -307,6 +307,9 @@ class StylesBase:
     """Set the margin (spacing outside the border) of the widget."""
     offset = OffsetProperty()
     """Set the offset of the widget relative to where it would have been otherwise."""
+    position = StringEnumProperty(VALID_POSITION, "relative")
+    """If `relative` offset is applied to widgets current position, if `absolute` it is applied to (0, 0)."""
+
     border = BorderProperty(layout=True)
     """Set the border of the widget e.g. ("rounded", "green") or "none"."""
 
@@ -320,7 +323,9 @@ class StylesBase:
     """Set the left border of the widget e.g. ("rounded", "green") or "none"."""
 
     border_title_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    """The alignment of the border title text."""
     border_subtitle_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "right")
+    """The alignment of the border subtitle text."""
 
     outline = BorderProperty(layout=False)
     """Set the outline of the widget e.g. ("rounded", "green") or "none".
@@ -336,8 +341,10 @@ class StylesBase:
     """Set the left outline of the widget e.g. ("rounded", "green") or "none"."""
 
     keyline = KeylineProperty()
+    """Keyline parameters."""
 
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
+    """Box sizing method ("border-box" or "conetnt-box")"""
     width = ScalarProperty(percent_unit=Unit.WIDTH)
     """Set the width of the widget."""
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
@@ -626,7 +633,12 @@ class StylesBase:
         raise NotImplementedError()
 
     def refresh(
-        self, *, layout: bool = False, children: bool = False, parent: bool = False
+        self,
+        *,
+        layout: bool = False,
+        children: bool = False,
+        parent: bool = False,
+        repaint: bool = True,
     ) -> None:
         """Mark the styles as requiring a refresh.
 
@@ -634,6 +646,7 @@ class StylesBase:
             layout: Also require a layout.
             children: Also refresh children.
             parent: Also refresh the parent.
+            repaint: Repaint the widgets.
         """
 
     def reset(self) -> None:
@@ -844,17 +857,22 @@ class Styles(StylesBase):
         return changed
 
     def refresh(
-        self, *, layout: bool = False, children: bool = False, parent: bool = False
+        self,
+        *,
+        layout: bool = False,
+        children: bool = False,
+        parent: bool = False,
+        repaint=True,
     ) -> None:
         node = self.node
         if node is None or not node._is_mounted:
             return
         if parent and node._parent is not None:
-            node._parent.refresh()
+            node._parent.refresh(repaint=repaint)
         node.refresh(layout=layout)
         if children:
             for child in node.walk_children(with_self=False, reverse=True):
-                child.refresh(layout=layout)
+                child.refresh(layout=layout, repaint=repaint)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
@@ -1003,6 +1021,8 @@ class Styles(StylesBase):
         if "offset" in rules:
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
+        if "position" in rules:
+            append_declaration("position", self.position)
         if "dock" in rules:
             append_declaration("dock", rules["dock"])
         if "split" in rules:
@@ -1326,9 +1346,16 @@ class RenderStyles(StylesBase):
                 yield rule_name, getattr(self, rule_name)
 
     def refresh(
-        self, *, layout: bool = False, children: bool = False, parent: bool = False
+        self,
+        *,
+        layout: bool = False,
+        children: bool = False,
+        parent: bool = False,
+        repaint: bool = True,
     ) -> None:
-        self._inline_styles.refresh(layout=layout, children=children, parent=parent)
+        self._inline_styles.refresh(
+            layout=layout, children=children, parent=parent, repaint=repaint
+        )
 
     def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
@@ -1352,6 +1379,19 @@ class RenderStyles(StylesBase):
         return self._inline_styles.has_rule(rule_name) or self._base_styles.has_rule(
             rule_name
         )
+
+    def has_any_rules(self, *rule_names: str) -> bool:
+        """Check if any of the supplied rules have been set.
+
+        Args:
+            rule_names: Number of rules.
+
+        Returns:
+            `True` if any of the supplied rules have been set, `False` if none have.
+        """
+        inline_has_rule = self._inline_styles.has_rule
+        base_has_rule = self._base_styles.has_rule
+        return any(inline_has_rule(name) or base_has_rule(name) for name in rule_names)
 
     def set_rule(self, rule_name: str, value: object | None) -> bool:
         self._updates += 1

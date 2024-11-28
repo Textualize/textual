@@ -14,6 +14,7 @@ from textual.css.constants import (
     VALID_BORDER,
     VALID_KEYLINE,
     VALID_LAYOUT,
+    VALID_POSITION,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
 )
@@ -766,6 +767,23 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
                 ],
             ),
             Bullet(f"Valid scalar units are {friendly_list(SYMBOL_UNIT)}"),
+        ],
+    )
+
+
+def position_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies the wrong value for position.
+
+    Args:
+        property_name: The name of the property.
+
+    Returns:
+        Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(f"Valid values are {friendly_list(VALID_POSITION)}"),
         ],
     )
 

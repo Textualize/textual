@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from textual.app import App
 from textual.binding import Binding
+from textual.demo.game import GameScreen
 from textual.demo.home import HomeScreen
 from textual.demo.projects import ProjectsScreen
 from textual.demo.widgets import WidgetsScreen
@@ -26,6 +27,7 @@ class DemoApp(App):
     """
 
     MODES = {
+        "game": GameScreen,
         "home": HomeScreen,
         "projects": ProjectsScreen,
         "widgets": WidgetsScreen,
@@ -37,6 +39,12 @@ class DemoApp(App):
             "app.switch_mode('home')",
             "home",
             tooltip="Show the home screen",
+        ),
+        Binding(
+            "g",
+            "app.switch_mode('game')",
+            "game",
+            tooltip="Unwind with a Textual game",
         ),
         Binding(
             "p",

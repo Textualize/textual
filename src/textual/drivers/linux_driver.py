@@ -216,8 +216,6 @@ class LinuxDriver(Driver):
         loop = asyncio.get_running_loop()
 
         def send_size_event() -> None:
-            if self._in_band_window_resize:
-                return
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
@@ -231,7 +229,8 @@ class LinuxDriver(Driver):
         self._writer_thread.start()
 
         def on_terminal_resize(signum, stack) -> None:
-            send_size_event()
+            if not self._in_band_window_resize:
+                send_size_event()
 
         signal.signal(signal.SIGWINCH, on_terminal_resize)
 

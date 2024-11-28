@@ -295,7 +295,7 @@ class OptionList(ScrollView, can_focus=True):
         """A dictionary of option IDs and the option indexes they relate to."""
 
         self._content_render_cache: LRUCache[tuple[int, str, int], list[Strip]]
-        self._content_render_cache = LRUCache(256)
+        self._content_render_cache = LRUCache(1024)
 
         self._lines: list[tuple[int, int]] | None = None
         self._spans: list[OptionLineSpan] | None = None
@@ -324,17 +324,13 @@ class OptionList(ScrollView, can_focus=True):
         self._lines = None
         self._spans = None
         self._content_render_cache.clear()
-        self.check_idle()
+        self._populate()
 
     def notify_style_update(self) -> None:
         self._content_render_cache.clear()
 
     def _on_resize(self):
         self._refresh_lines()
-
-    def on_idle(self):
-        if self._lines is None:
-            self._populate()
 
     def _add_lines(
         self, new_content: list[OptionListContent], width: int, option_index=0
@@ -378,15 +374,20 @@ class OptionList(ScrollView, can_focus=True):
             self._contents,
             self.scrollable_content_region.width - self._left_gutter_width(),
         )
-        self.refresh()
+        self.refresh(layout=True)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
         console = self.app.console
         options = console.options
-        return max(
-            Measurement.get(console, options, option.prompt).maximum
-            for option in self._options
+        padding = self.get_component_styles("option-list--option").padding
+        padding_width = padding.width
+        return (
+            max(
+                Measurement.get(console, options, option.prompt).maximum
+                for option in self._options
+            )
+            + padding_width
         )
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
@@ -550,7 +551,7 @@ class OptionList(ScrollView, can_focus=True):
                 self.scrollable_content_region.width - self._left_gutter_width(),
                 option_index=option_index,
             )
-            self.refresh()
+            self.refresh(layout=True)
         return self
 
     def add_option(self, item: NewOptionListContent = None) -> Self:

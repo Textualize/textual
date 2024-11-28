@@ -50,11 +50,12 @@ def arrange(
 
     get_dock = attrgetter("styles.is_docked")
     get_split = attrgetter("styles.is_split")
+    get_display = attrgetter("styles.display")
 
     styles = widget.styles
 
     # Widgets which will be displayed
-    display_widgets = [child for child in children if child.styles.display != "none"]
+    display_widgets = [child for child in children if get_display(child) != "none"]
 
     # Widgets organized into layers
     layers = _build_layers(display_widgets)
@@ -91,9 +92,7 @@ def arrange(
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
             layout_placements = widget.layout.arrange(
-                widget,
-                layout_widgets,
-                dock_region.size,
+                widget, layout_widgets, dock_region.size
             )
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             placement_offset = dock_region.offset
@@ -109,6 +108,8 @@ def arrange(
                 layout_placements = WidgetPlacement.translate(
                     layout_placements, placement_offset
                 )
+
+            WidgetPlacement.apply_absolute(layout_placements)
 
             placements.extend(layout_placements)
 
@@ -134,7 +135,6 @@ def _arrange_dock_widgets(
     size = region.size
     width, height = size
     null_spacing = NULL_SPACING
-    null_offset = NULL_OFFSET
 
     top = right = bottom = left = 0
 
@@ -171,16 +171,27 @@ def _arrange_dock_widgets(
             (widget_width, widget_height), size
         )
         dock_region = dock_region.shrink(margin).translate(align_offset)
+        styles = dock_widget.styles
+        offset = (
+            styles.offset.resolve(
+                size,
+                viewport,
+            )
+            if styles.has_rule("offset")
+            else NULL_OFFSET
+        )
         append_placement(
             _WidgetPlacement(
                 dock_region.translate(region_offset),
-                null_offset,
+                offset,
                 null_spacing,
                 dock_widget,
                 top_z,
                 True,
+                False,
             )
         )
+
     dock_spacing = Spacing(top, right, bottom, left)
     return (placements, dock_spacing)
 
@@ -230,7 +241,7 @@ def _arrange_split_widgets(
 
         append_placement(
             _WidgetPlacement(
-                split_region, null_offset, null_spacing, split_widget, 1, True
+                split_region, null_offset, null_spacing, split_widget, 1, True, False
             )
         )
 
