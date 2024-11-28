@@ -374,7 +374,7 @@ class TreeNode(Generic[TreeDataType]):
             before: Optional index or `TreeNode` to add the node before.
             after: Optional index or `TreeNode` to add the node after.
             expand: Node should be expanded.
-            allow_expand: Allow use to expand the node via keyboard or mouse.
+            allow_expand: Allow user to expand the node via keyboard or mouse.
 
         Returns:
             A new Tree node
