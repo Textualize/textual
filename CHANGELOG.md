@@ -5,13 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-### Unreleased
+## Unreleased
 
 ### Fixed
 
 - Fixed infinite loop in `Widget.anchor` https://github.com/Textualize/textual/pull/5290
 - Restores the ability to supply console markup to command list https://github.com/Textualize/textual/pull/5294
 - Fixed delayed App Resize event https://github.com/Textualize/textual/pull/5296
+- Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
+
+### Changed
+
+- `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
+- `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 - Fixed ListView focus styling rule being too broad https://github.com/Textualize/textual/pull/5304
 - Fixed issue with auto-generated tab IDs https://github.com/Textualize/textual/pull/5298
 
@@ -45,6 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed a glitch with the scrollbar that occurs when you hold `a` to add stopwatches in the tutorial app https://github.com/Textualize/textual/pull/5257
+
 
 ## [0.86.2] - 2024-11-18
 
