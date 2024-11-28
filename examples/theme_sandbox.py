@@ -190,12 +190,7 @@ class ChangingThemeApp(App[None]):
     }
     ListView { 
         height: auto;
-        & > ListItem {
-            width: 1fr;
-            & > Label {
-                width: 1fr;
-            }
-        }
+
     }
     Tree {
         height: 5;

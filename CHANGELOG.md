@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 - `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
+- Fixed ListView focus styling rule being too broad https://github.com/Textualize/textual/pull/5304
+- Fixed issue with auto-generated tab IDs https://github.com/Textualize/textual/pull/5298
 
 ## [0.87.1] - 2024-11-24
 

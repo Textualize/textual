@@ -332,6 +332,7 @@ class TabbedContent(Widget):
         self.titles = [self.render_str(title) for title in titles]
         self._tab_content: list[Widget] = []
         self._initial = initial
+        self._tab_counter = 0
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     @property
@@ -357,6 +358,15 @@ class TabbedContent(Widget):
             content.id = f"tab-{new_id}"
         return content
 
+    def _generate_tab_id(self) -> int:
+        """Auto generate a new tab id.
+
+        Returns:
+            An auto-incrementing integer.
+        """
+        self._tab_counter += 1
+        return self._tab_counter
+
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
 
@@ -368,7 +378,7 @@ class TabbedContent(Widget):
                     if isinstance(content, TabPane)
                     else TabPane(title or self.render_str(f"Tab {index}"), content)
                 ),
-                index,
+                self._generate_tab_id(),
             )
             for index, (title, content) in enumerate(
                 zip_longest(self.titles, self._tab_content), 1
@@ -424,7 +434,7 @@ class TabbedContent(Widget):
         if isinstance(after, TabPane):
             after = after.id
         tabs = self.get_child_by_type(ContentTabs)
-        pane = self._set_id(pane, tabs.tab_count + 1)
+        pane = self._set_id(pane, self._generate_tab_id())
         assert pane.id is not None
         pane.display = False
         return AwaitComplete(
