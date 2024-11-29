@@ -80,7 +80,9 @@ https://github.com/user-attachments/assets/97ab8825-0af6-42e9-b7e5-f554303a2112
 
 Try the [textual demo](https://github.com/textualize/textual-demo) *without* installing.
 
-
+```bash
+uvx --python 3.12 textual-demo
+```
 
 ![Textual supports themes](https://github.com/user-attachments/assets/3de1a991-1154-48b4-b547-21f98509f8c4)
 
@@ -94,22 +96,15 @@ Install Textual via pip:
 pip install textual textual-dev
 ```
 
-See the docs if you need help [getting started](https://textual.textualize.io/getting_started/).
-
-## Demo
-
-Run the following command to see a little of what Textual can do:
+Check out the demo:
 
 ```
 python -m textual
 ```
 
+See [getting started](https://textual.textualize.io/getting_started/) for details.
 
-<!--
 
-<img width="1348" alt="Screenshot of the Textual demo" src="https://github.com/user-attachments/assets/d30bc738-10ed-48c9-ac9d-8eac84b2da4a">
-
--->
 
 ## Documentation
 
