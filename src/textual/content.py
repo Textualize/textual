@@ -19,9 +19,11 @@ from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import OverflowMethod
 from rich.segment import Segment, Segments
+from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 
 from textual._cells import cell_len
+from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
 from textual.css.types import TextAlign
@@ -180,15 +182,28 @@ class Content(Visual):
             New Content.
         """
         if isinstance(text, str):
-            return cls(text, align=align, no_wrap=no_wrap, ellipsis=ellipsis)
-        spans = [
-            Span(
-                start,
-                end,
-                style if isinstance(style, str) else Style.from_rich_style(style),
-            )
-            for start, end, style in text._spans
-        ]
+            text = Text.from_markup(text)
+        if text._spans:
+            ansi_theme: TerminalTheme | None
+            try:
+                ansi_theme = active_app.get().ansi_theme
+            except LookupError:
+                ansi_theme = None
+            spans = [
+                Span(
+                    start,
+                    end,
+                    (
+                        style
+                        if isinstance(style, str)
+                        else Style.from_rich_style(style, ansi_theme)
+                    ),
+                )
+                for start, end, style in text._spans
+            ]
+        else:
+            spans = []
+
         return cls(
             text.plain,
             spans,
@@ -681,9 +696,15 @@ class Content(Visual):
             return
 
         if parse_style is None:
+            app = active_app.get()
+            # TODO: Update when we add Content.from_markup
 
             def get_style(style: str, /) -> Style:
-                return TRANSPARENT_STYLE if isinstance(style, str) else style
+                return (
+                    Style.from_rich_style(app.console.get_style(style), app.ansi_theme)
+                    if isinstance(style, str)
+                    else style
+                )
 
         else:
             get_style = parse_style

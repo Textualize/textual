@@ -20,6 +20,7 @@ class VerticalLayout(Layout):
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
+        parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         viewport = parent.app.size
@@ -96,23 +97,28 @@ class VerticalLayout(Layout):
                 if styles.has_rule("offset")
                 else NULL_OFFSET
             )
+
+            region = _Region(
+                box_margin.left,
+                y.__floor__(),
+                content_width.__floor__(),
+                next_y.__floor__() - y.__floor__(),
+            )
+
+            absolute = styles.has_rule("position") and styles.position == "absolute"
             add_placement(
                 _WidgetPlacement(
-                    _Region(
-                        box_margin.left,
-                        y.__floor__(),
-                        content_width.__floor__(),
-                        next_y.__floor__() - y.__floor__(),
-                    ),
+                    region,
                     offset,
                     box_margin,
                     widget,
                     0,
                     False,
                     overlay,
+                    absolute,
                 )
             )
-            if not overlay:
+            if not overlay and not absolute:
                 y = next_y + margin
 
         return placements

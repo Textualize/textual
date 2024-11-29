@@ -10,6 +10,7 @@ from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding, Keymap
+from textual.command import SimpleCommand
 from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
@@ -27,12 +28,15 @@ from textual.widgets import (
     ProgressBar,
     RadioSet,
     RichLog,
+    Select,
     SelectionList,
     Static,
     Switch,
     Tab,
     Tabs,
     TextArea,
+    TabbedContent,
+    TabPane,
 )
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 from textual.theme import Theme
@@ -2588,3 +2592,252 @@ def test_theme_variables_available_in_code(snap_compare):
             label.styles.color = variables["text-primary"]
 
     assert snap_compare(ThemeVariablesApp())
+
+
+def test_dock_offset(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5261
+    You should see 10 labels, 0 thru 9, in a diagonal line starting at the top left.
+    """
+
+    class OffsetBugApp(App):
+        CSS = """
+        .label {
+            dock: top;
+            color: $text-success;
+            background: $success-muted;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            # I'd expect this to draw a diagonal line of labels, but it places them all at the top left.
+            for i in range(10):
+                label = Label(str(i), classes="label")
+                label.styles.offset = (i, i)
+                yield label
+
+    assert snap_compare(OffsetBugApp())
+
+
+def test_select_overlay_constrain(snap_compare):
+    """Check that the constrain logic on Select is working.
+    You should see the select overlay in full, anchored to the bottom of the screen."""
+
+    class OApp(App):
+        CSS = """
+        Label {
+            height: 16;
+            background: blue;
+            border: tall white;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Padding (ignore)")
+            yield Select.from_values(["Foo", "bar", "baz"] * 10)
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(Select)
+
+    assert snap_compare(OApp(), run_before=run_before)
+
+
+def test_position_absolute(snap_compare):
+    """Check position: absolute works as expected.
+    You should see three staggered labels at the top-left, and three staggered relative labels in the center.
+    The relative labels will have an additional line between them.
+    """
+
+    class AbsoluteApp(App):
+        CSS = """
+        Screen {        
+            align: center middle;
+
+            .absolute {
+                position: absolute;
+            }
+
+            .relative {
+                position: relative;
+            }
+
+            .offset1 {
+                offset: 1 1;
+            }
+            .offset2 {
+                offset: 2 2;                
+            }
+            .offset3 {
+                offset: 3 3;
+            }
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Absolute 1", classes="absolute offset1")
+            yield Label("Absolute 2", classes="absolute offset2")
+            yield Label("Absolute 3", classes="absolute offset3")
+
+            yield Label("Relative 1", classes="relative offset1")
+            yield Label("Relative 2", classes="relative offset2")
+            yield Label("Relative 3", classes="relative offset3")
+
+    assert snap_compare(AbsoluteApp())
+
+
+def test_grid_offset(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5279
+    You should see 6 boxes arranged in a 3x2 grid. The 6th should be offset 10 lines down.
+    """
+
+    class GridOffsetApp(App):
+        CSS = """
+        Screen {
+            layout: grid;
+            grid-size: 3 2;
+        }
+
+        .box {
+            height: 100%;
+            border: solid green;
+        }
+
+        #six {   
+            offset: 0 10;
+            background: blue;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("One", classes="box")
+            yield Static("Two", classes="box")
+            yield Static("Three", classes="box")
+            yield Static("Four", classes="box")
+            yield Static("Five", classes="box")
+            yield Static("Six", classes="box", id="six")
+
+    assert snap_compare(GridOffsetApp())
+
+
+def test_select_width_auto(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5280"
+    The overlay has a width of auto, so the first (widest) option should not wrap."""
+
+    class TallSelectApp(App[None]):
+        CSS = """
+            Screen {
+                align: center middle;
+
+                & > Select {
+                    width: 50;
+
+                    & > SelectOverlay {
+                        max-height: 100vh;
+                        width: auto;
+                    }
+                }
+            }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Select(
+                [("Extra long option here", 100)]
+                + [(f"Option {idx + 1}", idx) for idx in range(100)],
+                value=25,
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click("Select")
+
+    snap_compare(TallSelectApp(), run_before=run_before)
+
+
+def test_markup_command_list(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5276
+    You should see a command list, with console markup applied to the action name and help text."""
+
+    class MyApp(App):
+        def on_mount(self) -> None:
+            self.search_commands(
+                [
+                    SimpleCommand(
+                        "Hello [u green]World", lambda: None, "Help [u red]text"
+                    )
+                ]
+            )
+
+    snap_compare(MyApp())
+
+
+def test_app_resize_order(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5284
+    You should see a placeholder with text "BAR", focused and scrolled down so it fills the screen.
+    """
+
+    class FocusPlaceholder(Placeholder, can_focus=True):
+        pass
+
+    class NarrowScreen(Screen):
+        AUTO_FOCUS = "#bar"
+
+        def compose(self) -> ComposeResult:
+            yield FocusPlaceholder("FOO", id="foo")
+            yield FocusPlaceholder("BAR", id="bar")
+
+    class SCApp(App):
+        CSS = """
+        Placeholder:focus {
+            border: heavy white;
+        }
+        #foo {
+            height: 24;
+        }
+        #bar {
+            height: 1fr;
+        }
+
+        .narrow #bar {
+            height: 100%;
+        }
+
+        """
+
+        def on_mount(self) -> None:
+            self.push_screen(NarrowScreen())
+
+        def on_resize(self) -> None:
+            self.add_class("narrow")
+
+    snap_compare(SCApp())
+
+
+def test_add_remove_tabs(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5215
+    You should see a TabbedContent with three panes, entitled 'tab-2', 'New tab' and 'New tab'"""
+
+    class ExampleApp(App):
+        BINDINGS = [
+            ("r", "remove_pane", "Remove first pane"),
+            ("a", "add_pane", "Add pane"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="tab-2"):
+                with TabPane("tab-1"):
+                    yield Label("tab-1")
+                with TabPane("tab-2"):
+                    yield Label("tab-2")
+            yield Footer()
+
+        def action_remove_pane(self) -> None:
+            tabbed_content = self.query_one(TabbedContent)
+            tabbed_content.remove_pane("tab-1")
+
+        def action_add_pane(self) -> None:
+            tabbed_content = self.query_one(TabbedContent)
+            new_pane = TabPane("New tab", Label("new"))
+            tabbed_content.add_pane(new_pane)
+
+    snap_compare(ExampleApp(), press=["a", "r", "a"])

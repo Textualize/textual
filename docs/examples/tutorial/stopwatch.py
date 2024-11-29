@@ -1,12 +1,12 @@
 from time import monotonic
 
 from textual.app import App, ComposeResult
-from textual.containers import ScrollableContainer
+from textual.containers import HorizontalGroup, VerticalScroll
 from textual.reactive import reactive
-from textual.widgets import Button, Footer, Header, Static
+from textual.widgets import Button, Digits, Footer, Header
 
 
-class TimeDisplay(Static):
+class TimeDisplay(Digits):
     """A widget to display elapsed time."""
 
     start_time = reactive(monotonic)
@@ -44,7 +44,7 @@ class TimeDisplay(Static):
         self.time = 0
 
 
-class Stopwatch(Static):
+class Stopwatch(HorizontalGroup):
     """A stopwatch widget."""
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -83,7 +83,7 @@ class StopwatchApp(App):
         """Called to add widgets to the app."""
         yield Header()
         yield Footer()
-        yield ScrollableContainer(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
+        yield VerticalScroll(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
 
     def action_add_stopwatch(self) -> None:
         """An action to add a timer."""

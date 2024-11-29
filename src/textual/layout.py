@@ -91,12 +91,18 @@ class WidgetPlacement(NamedTuple):
     order: int = 0
     fixed: bool = False
     overlay: bool = False
+    absolute: bool = False
+
+    @property
+    def reset_origin(self) -> WidgetPlacement:
+        """Reset the origin in the placement (moves it to (0, 0))."""
+        return self._replace(region=self.region.reset_offset)
 
     @classmethod
     def translate(
         cls, placements: list[WidgetPlacement], translate_offset: Offset
     ) -> list[WidgetPlacement]:
-        """Move all placements by a given offset.
+        """Move all non-absolute placements by a given offset.
 
         Args:
             placements: List of placements.
@@ -108,17 +114,33 @@ class WidgetPlacement(NamedTuple):
         if translate_offset:
             return [
                 cls(
-                    region + translate_offset,
+                    (
+                        region + translate_offset
+                        if layout_widget.absolute_offset is None
+                        else region
+                    ),
                     offset,
                     margin,
                     layout_widget,
                     order,
                     fixed,
                     overlay,
+                    absolute,
                 )
-                for region, offset, margin, layout_widget, order, fixed, overlay in placements
+                for region, offset, margin, layout_widget, order, fixed, overlay, absolute in placements
             ]
         return placements
+
+    @classmethod
+    def apply_absolute(cls, placements: list[WidgetPlacement]) -> None:
+        """Applies absolute offsets (in place).
+
+        Args:
+            placements: A list of placements.
+        """
+        for index, placement in enumerate(placements):
+            if placement.absolute:
+                placements[index] = placement.reset_origin
 
     @classmethod
     def get_bounds(cls, placements: Iterable[WidgetPlacement]) -> Region:
@@ -134,6 +156,48 @@ class WidgetPlacement(NamedTuple):
             [placement.region.grow(placement.margin) for placement in placements]
         )
         return bounding_region
+
+    def process_offset(
+        self, constrain_region: Region, absolute_offset: Offset
+    ) -> WidgetPlacement:
+        """Apply any absolute offset or constrain rules to the placement.
+
+        Args:
+            constrain_region: The container region when applying constrain rules.
+            absolute_offset: Default absolute offset that moves widget in to screen coordinates.
+
+        Returns:
+            Processes placement, may be the same instance.
+        """
+        widget = self.widget
+        styles = widget.styles
+        if not widget.absolute_offset and not styles.has_any_rules(
+            "constrain_x", "constrain_y"
+        ):
+            # Bail early if there is nothing to do
+            return self
+        region = self.region
+        margin = self.margin
+        if widget.absolute_offset is not None:
+            region = region.at_offset(
+                widget.absolute_offset + margin.top_left - absolute_offset
+            )
+
+        region = region.translate(self.offset).constrain(
+            styles.constrain_x,
+            styles.constrain_y,
+            self.margin,
+            constrain_region - absolute_offset,
+        )
+
+        offset = region.offset - self.region.offset
+        if offset != self.offset:
+            region, _offset, margin, widget, order, fixed, overlay, absolute = self
+            placement = WidgetPlacement(
+                region, offset, margin, widget, order, fixed, overlay, absolute
+            )
+            return placement
+        return self
 
 
 class Layout(ABC):

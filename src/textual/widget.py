@@ -593,7 +593,7 @@ class Widget(DOMNode):
     @property
     def is_anchored(self) -> bool:
         """Is this widget anchored?"""
-        return self._parent is not None and self._parent is self
+        return isinstance(self._parent, Widget) and self._parent._anchored is self
 
     @property
     def is_mouse_over(self) -> bool:
@@ -2446,6 +2446,21 @@ class Widget(DOMNode):
 
         """
 
+    def set_scroll(self, x: float | None, y: float | None) -> None:
+        """Set the scroll position without any validation.
+
+        This is a low-level method for when you want to see the scroll position in the next frame.
+        For a more fully featured method, see [`scroll_to`][textual.widget.Widget.scroll_to].
+
+        Args:
+            x: Desired `X` coordinate.
+            y: Desired `Y` coordinate.
+        """
+        if x is not None:
+            self.set_reactive(Widget.scroll_x, round(x))
+        if y is not None:
+            self.set_reactive(Widget.scroll_y, round(y))
+
     def scroll_to(
         self,
         x: float | None = None,
@@ -3319,9 +3334,9 @@ class Widget(DOMNode):
                     immediate=immediate,
                 )
             else:
-                # self.region is falsey which may indicate the widget hasn't been through a layout operation
+                # self.region is falsy which may indicate the widget hasn't been through a layout operation
                 # We can potentially make it do the right thing by postponing the scroll to after a refresh
-                self.call_after_refresh(
+                parent.call_after_refresh(
                     self.screen.scroll_to_widget,
                     self,
                     animate=animate,
@@ -4065,9 +4080,7 @@ class Widget(DOMNode):
         self._check_refresh()
 
         if self.is_anchored:
-            self.scroll_visible(animate=self._anchor_animate)
-        if self._anchored:
-            self._anchored.scroll_visible(animate=self._anchor_animate)
+            self.scroll_visible(animate=self._anchor_animate, immediate=True)
 
     def _check_refresh(self) -> None:
         """Check if a refresh was requested."""

@@ -14,6 +14,7 @@ from textual.css.constants import (
     VALID_BORDER,
     VALID_KEYLINE,
     VALID_LAYOUT,
+    VALID_POSITION,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
 )
@@ -305,6 +306,7 @@ def color_property_help_text(
     context: StylingContext,
     *,
     error: Exception | None = None,
+    value: str | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
     property. For example, an unparsable color string.
@@ -318,7 +320,10 @@ def color_property_help_text(
         Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
-    summary = f"Invalid value for the [i]{property_name}[/] property"
+    if value is None:
+        summary = f"Invalid value for the [i]{property_name}[/] property"
+    else:
+        summary = f"Invalid value ({value!r}) for the [i]{property_name}[/] property"
     suggested_color = (
         error.suggested_color if error and isinstance(error, ColorParseError) else None
     )
@@ -762,6 +767,23 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
                 ],
             ),
             Bullet(f"Valid scalar units are {friendly_list(SYMBOL_UNIT)}"),
+        ],
+    )
+
+
+def position_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies the wrong value for position.
+
+    Args:
+        property_name: The name of the property.
+
+    Returns:
+        Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(f"Valid values are {friendly_list(VALID_POSITION)}"),
         ],
     )
 

@@ -166,7 +166,7 @@ class Datatables(containers.VerticalGroup):
 A fully-featured DataTable, with cell, row, and columns cursors.
 Cells may be individually styled, and may include Rich renderables.
 
-**Tip:** Focus the table and press `ctrl+m`
+**Tip:** Focus the table and press `ctrl+a`
 
 """
     DEFAULT_CSS = """    
@@ -300,12 +300,12 @@ And a RichLog widget to display Rich renderables.
     Logs {
         Log, RichLog {
             width: 1fr;
-            height: 20;           
-            border: blank;
-            padding: 0;
+            height: 20;
+            padding: 1;
             overflow-x: auto;
+            border: wide transparent;
             &:focus {
-                border: heavy $accent;
+                border: wide $border;
             }
         }
         TabPane { padding: 0; }
@@ -674,11 +674,13 @@ There is also the Tree widget's cousin, DirectoryTree, to navigate folders and f
     Trees {
         Tree {
             height: 16;            
-            &.-maximized { height: 1fr; }            
+            padding: 1;
+            &.-maximized { height: 1fr; }    
+            border: wide transparent;            
+            &:focus { border: wide $border; }        
         }
         VerticalGroup {
-            border: heavy transparent;            
-            &:focus-within { border: heavy $border; }
+            
         }
     }
 
@@ -806,3 +808,14 @@ class WidgetsScreen(PageScreen):
             yield Trees()
             yield YourWidgets()
         yield Footer()
+
+
+if __name__ == "__main__":
+    from textual.app import App
+
+    class GameApp(App):
+        def get_default_screen(self) -> Screen:
+            return WidgetsScreen()
+
+    app = GameApp()
+    app.run()

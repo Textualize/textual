@@ -562,6 +562,10 @@ class Screen(Generic[ScreenResultType], Widget):
         except NoWidget:
             return None
 
+        if widget.has_class("-textual-system") or widget.loading:
+            # Clicking Textual system widgets should not focus anything
+            return None
+
         for node in widget.ancestors_with_self:
             if isinstance(node, Widget) and node.focusable:
                 return node
@@ -1344,7 +1348,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if widget is self:
                 self.post_message(event)
             else:
-                mouse_event = self._translate_mouse_move_event(event, region)
+                mouse_event = self._translate_mouse_move_event(event, widget, region)
                 mouse_event._set_forwarded()
                 widget._forward_event(mouse_event)
 
@@ -1369,14 +1373,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
     @staticmethod
     def _translate_mouse_move_event(
-        event: events.MouseMove, region: Region
+        event: events.MouseMove, widget: Widget, region: Region
     ) -> events.MouseMove:
         """
         Returns a mouse move event whose relative coordinates are translated to
         the origin of the specified region.
         """
         return events.MouseMove(
-            event.widget,
+            widget,
             event._x - region.x,
             event._y - region.y,
             event._delta_x,
@@ -1417,6 +1421,8 @@ class Screen(Generic[ScreenResultType], Widget):
                     if focusable_widget:
                         self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
+                if widget.loading:
+                    return
                 if widget is self:
                     event._set_forwarded()
                     self.post_message(event)
