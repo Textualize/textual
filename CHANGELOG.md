@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.88.0]
 
 ### Fixed
 
@@ -13,13 +13,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Restores the ability to supply console markup to command list https://github.com/Textualize/textual/pull/5294
 - Fixed delayed App Resize event https://github.com/Textualize/textual/pull/5296
 - Fixed `ListView` not updating its index or highlighting after removing items https://github.com/Textualize/textual/issues/5114
+- Fixed ListView focus styling rule being too broad https://github.com/Textualize/textual/pull/5304
+- Fixed issue with auto-generated tab IDs https://github.com/Textualize/textual/pull/5298
 
 ### Changed
 
 - `ListView.pop` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
 - `ListView.remove_items` now returns `AwaitComplete` rather than `AwaitRemove` https://github.com/Textualize/textual/pull/5135
-- Fixed ListView focus styling rule being too broad https://github.com/Textualize/textual/pull/5304
-- Fixed issue with auto-generated tab IDs https://github.com/Textualize/textual/pull/5298
+
 
 ## [0.87.1] - 2024-11-24
 
@@ -2599,6 +2600,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.88.0]: https://github.com/Textualize/textual/compare/v0.87.1...v0.88.0
 [0.87.1]: https://github.com/Textualize/textual/compare/v0.87.0...v0.87.1
 [0.87.0]: https://github.com/Textualize/textual/compare/v0.86.4...v0.87.0
 [0.86.3]: https://github.com/Textualize/textual/compare/v0.86.2...v0.86.3
