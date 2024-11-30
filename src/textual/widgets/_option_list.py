@@ -306,7 +306,8 @@ class OptionList(ScrollView, can_focus=True):
         if tooltip is not None:
             self.tooltip = tooltip
 
-        self.action_first()
+        if self._options:
+            self.action_first()
 
     def _left_gutter_width(self) -> int:
         """Returns the size of any left gutter that should be taken into account.
