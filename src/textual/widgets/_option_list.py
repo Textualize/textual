@@ -366,8 +366,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def _populate(self) -> None:
         """Populate the lines data-structure."""
-        if self._lines is not None:
-            return
+
         self._lines = []
         self._spans = []
 
@@ -825,6 +824,8 @@ class OptionList(ScrollView, can_focus=True):
 
     def render_line(self, y: int) -> Strip:
         assert self._lines is not None
+        if not self._lines:
+            self._populate()
 
         _scroll_x, scroll_y = self.scroll_offset
         line_number = scroll_y + y
