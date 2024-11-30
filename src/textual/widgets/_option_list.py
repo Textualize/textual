@@ -195,7 +195,7 @@ class OptionList(ScrollView, can_focus=True):
     | `option-list--separator` | Target the separators. |
     """
 
-    highlighted: reactive[int | None] = reactive[int | None](None)
+    highlighted: reactive[int | None] = reactive(None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
 
     class OptionMessage(Message):
