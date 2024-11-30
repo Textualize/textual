@@ -362,6 +362,7 @@ class OptionList(ScrollView, can_focus=True):
                 self._lines.append(OptionLineSpan(-1, 0))
 
         self.virtual_size = Size(width, len(self._lines))
+        self.refresh(layout=self.styles.auto_dimensions)
 
     def _populate(self) -> None:
         """Populate the lines data-structure."""
@@ -374,7 +375,6 @@ class OptionList(ScrollView, can_focus=True):
             self._contents,
             self.scrollable_content_region.width - self._left_gutter_width(),
         )
-        self.refresh(layout=True)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
@@ -952,7 +952,6 @@ class OptionList(ScrollView, can_focus=True):
         # If we find ourselves in a position where we don't know where we're
         # going, we need a fallback location. Where we go will depend on the
         # direction.
-        self._populate()
         assert self._spans is not None
         assert self._lines is not None
 
