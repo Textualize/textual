@@ -3695,8 +3695,9 @@ class Widget(DOMNode):
             layout: Perform layout if required.
 
         Returns:
-            True if anything changed, or False if nothing changed.
+            True if a resize event should be sent, otherwise False.
         """
+
         self._layout_cache.clear()
         if (
             self._size != size
