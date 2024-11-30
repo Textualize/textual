@@ -414,7 +414,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     def _setup_options_renderables(self) -> None:
         """Sets up the `Option` renderables associated with the `Select` options."""
-        self._select_options: list[Option] = [
+        options: list[Option] = [
             (
                 Option(Text(self.prompt, style="dim"))
                 if value == self.BLANK
@@ -425,7 +425,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         option_list = self.query_one(SelectOverlay)
         option_list.clear_options()
-        option_list.add_options(self._select_options)
+        option_list.add_options(options)
 
     def _init_selected_option(self, hint: SelectType | NoSelection = BLANK) -> None:
         """Initialises the selected option for the `Select`."""

@@ -2744,7 +2744,7 @@ def test_select_width_auto(snap_compare):
             yield Select(
                 [("Extra long option here", 100)]
                 + [(f"Option {idx + 1}", idx) for idx in range(100)],
-                value=25,
+                value=100,
             )
 
     async def run_before(pilot: Pilot) -> None:
