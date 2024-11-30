@@ -66,7 +66,7 @@ class SelectOverlay(OptionList):
             index: Index of new selection.
         """
         self.highlighted = index
-        self.scroll_to_highlight(top=True)
+        self.scroll_to_highlight()
 
     def action_dismiss(self) -> None:
         """Dismiss the overlay."""
@@ -520,7 +520,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                 value = self.value
                 for index, (_prompt, prompt_value) in enumerate(self._options):
                     if value == prompt_value:
-                        overlay.select(index)
+                        self.call_after_refresh(overlay.select, index)
                         break
                 self.query_one(SelectCurrent).has_value = True
 

@@ -363,6 +363,7 @@ class OptionList(ScrollView, can_focus=True):
 
         self.virtual_size = Size(width, len(self._lines))
         self.refresh(layout=self.styles.auto_dimensions)
+        self._scroll_update(self.virtual_size)
 
     def _populate(self) -> None:
         """Populate the lines data-structure."""
@@ -879,8 +880,11 @@ class OptionList(ScrollView, can_focus=True):
             top: Scroll highlight to top of the list.
         """
         highlighted = self.highlighted
-        if highlighted is None or self._spans is None:
+        if highlighted is None or not self.is_mounted:
             return
+
+        if not self._spans:
+            self._populate()
 
         try:
             y, height = self._spans[highlighted]
@@ -894,6 +898,7 @@ class OptionList(ScrollView, can_focus=True):
             force=True,
             animate=False,
             top=top,
+            immediate=True,
         )
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
