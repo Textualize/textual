@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.88.0"
+version = "0.88.1"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -9,8 +9,8 @@ description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
 license = "MIT"
 readme = "README.md"
-classifiers = [
-    "Development Status :: 4 - Beta",
+classifiers = [    
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Operating System :: Microsoft :: Windows :: Windows 10",
