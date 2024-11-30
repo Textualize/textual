@@ -824,7 +824,6 @@ class OptionList(ScrollView, can_focus=True):
             ) from None
 
     def render_line(self, y: int) -> Strip:
-        self._populate()
         assert self._lines is not None
 
         _scroll_x, scroll_y = self.scroll_offset
