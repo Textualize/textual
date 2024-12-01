@@ -880,6 +880,7 @@ class OptionList(ScrollView, can_focus=True):
             top: Scroll highlight to top of the list.
         """
         highlighted = self.highlighted
+
         if highlighted is None or not self.is_mounted:
             return
 
