@@ -2744,7 +2744,7 @@ def test_select_width_auto(snap_compare):
             yield Select(
                 [("Extra long option here", 100)]
                 + [(f"Option {idx + 1}", idx) for idx in range(100)],
-                value=25,
+                value=100,
             )
 
     async def run_before(pilot: Pilot) -> None:
@@ -2841,3 +2841,20 @@ def test_add_remove_tabs(snap_compare):
             tabbed_content.add_pane(new_pane)
 
     snap_compare(ExampleApp(), press=["a", "r", "a"])
+
+
+def test_click_expand(snap_compare):
+    """Should show an expanded select with 15 highlighted."""
+
+    class SelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Select.from_values(
+                range(20),
+                value=15,
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(Select)
+
+    snap_compare(SelectApp(), run_before=run_before)
