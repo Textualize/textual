@@ -195,7 +195,7 @@ class OptionList(ScrollView, can_focus=True):
     | `option-list--separator` | Target the separators. |
     """
 
-    highlighted: reactive[int | None] = reactive["int | None"](None)
+    highlighted: reactive[int | None] = reactive(None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
 
     class OptionMessage(Message):
@@ -880,6 +880,7 @@ class OptionList(ScrollView, can_focus=True):
             top: Scroll highlight to top of the list.
         """
         highlighted = self.highlighted
+
         if highlighted is None or not self.is_mounted:
             return
 
@@ -900,6 +901,10 @@ class OptionList(ScrollView, can_focus=True):
             top=top,
             immediate=True,
         )
+
+    def on_show(self) -> None:
+        if self.highlighted is not None:
+            self.scroll_to_highlight()
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
         """Validate the `highlighted` property value on access."""
