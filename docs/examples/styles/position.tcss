@@ -1,0 +1,19 @@
+Screen {
+    align: center middle;
+}
+
+Label {
+    padding: 1;
+    background: $panel;
+    border: thick $border;
+}
+
+Label#label1 {
+    position: absolute;
+    offset: 2 1;
+}
+
+Label#label2 {
+    position: relative;
+    offset: 2 1;
+}

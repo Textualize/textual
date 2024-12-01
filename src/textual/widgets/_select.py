@@ -66,7 +66,7 @@ class SelectOverlay(OptionList):
             index: Index of new selection.
         """
         self.highlighted = index
-        self.scroll_to_highlight(top=True)
+        self.scroll_to_highlight()
 
     def action_dismiss(self) -> None:
         """Dismiss the overlay."""
@@ -378,6 +378,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             disabled=disabled,
         )
 
+    @property
+    def selection(self) -> SelectType | None:
+        """The currently selected item.
+
+        Unlike [value][textual.widgets.Select.value], this will not return Blanks.
+        If nothing is selected, this will return `None`.
+
+        """
+        value = self.value
+        assert not isinstance(value, NoSelection)
+        return value
+
     def _setup_variables_for_options(
         self,
         options: Iterable[tuple[RenderableType, SelectType]],
@@ -402,7 +414,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     def _setup_options_renderables(self) -> None:
         """Sets up the `Option` renderables associated with the `Select` options."""
-        self._select_options: list[Option] = [
+        options: list[Option] = [
             (
                 Option(Text(self.prompt, style="dim"))
                 if value == self.BLANK
@@ -413,8 +425,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         option_list = self.query_one(SelectOverlay)
         option_list.clear_options()
-        for option in self._select_options:
-            option_list.add_option(option)
+        option_list.add_options(options)
 
     def _init_selected_option(self, hint: SelectType | NoSelection = BLANK) -> None:
         """Initialises the selected option for the `Select`."""
@@ -509,7 +520,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                 value = self.value
                 for index, (_prompt, prompt_value) in enumerate(self._options):
                     if value == prompt_value:
-                        overlay.select(index)
+                        self.call_after_refresh(overlay.select, index)
                         break
                 self.query_one(SelectCurrent).has_value = True
 

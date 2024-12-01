@@ -37,6 +37,7 @@ nav:
           - "css_types/name.md"
           - "css_types/number.md"
           - "css_types/overflow.md"
+          - "css_types/position.md"
           - "css_types/percentage.md"
           - "css_types/scalar.md"
           - "css_types/text_align.md"
@@ -122,6 +123,7 @@ nav:
           - "styles/outline.md"
           - "styles/overflow.md"
           - "styles/padding.md"
+          - "styles/position.md"
           - Scrollbar colors:
               - "styles/scrollbar_colors/index.md"
               - "styles/scrollbar_colors/scrollbar_background.md"

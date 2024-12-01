@@ -6,6 +6,7 @@ from rich.align import Align, AlignMethod
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
+
 from textual.geometry import Size
 from textual.renderables.digits import Digits as DigitsRenderable
 from textual.widget import Widget
@@ -59,7 +60,7 @@ class Digits(Widget):
             value: New value to display.
 
         Raises:
-            ValueError: If the value isn't a `str`.
+            TypeError: If the value isn't a `str`.
         """
         if not isinstance(value, str):
             raise TypeError("value must be a str")

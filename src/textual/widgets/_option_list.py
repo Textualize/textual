@@ -195,7 +195,7 @@ class OptionList(ScrollView, can_focus=True):
     | `option-list--separator` | Target the separators. |
     """
 
-    highlighted: reactive[int | None] = reactive["int | None"](None)
+    highlighted: reactive[int | None] = reactive(None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
 
     class OptionMessage(Message):
@@ -295,7 +295,7 @@ class OptionList(ScrollView, can_focus=True):
         """A dictionary of option IDs and the option indexes they relate to."""
 
         self._content_render_cache: LRUCache[tuple[int, str, int], list[Strip]]
-        self._content_render_cache = LRUCache(256)
+        self._content_render_cache = LRUCache(1024)
 
         self._lines: list[tuple[int, int]] | None = None
         self._spans: list[OptionLineSpan] | None = None
@@ -361,14 +361,13 @@ class OptionList(ScrollView, can_focus=True):
             else:
                 self._lines.append(OptionLineSpan(-1, 0))
 
-        self._populate()
-
         self.virtual_size = Size(width, len(self._lines))
+        self.refresh(layout=self.styles.auto_dimensions)
+        self._scroll_update(self.virtual_size)
 
     def _populate(self) -> None:
         """Populate the lines data-structure."""
-        if self._lines is not None:
-            return
+
         self._lines = []
         self._spans = []
 
@@ -376,15 +375,19 @@ class OptionList(ScrollView, can_focus=True):
             self._contents,
             self.scrollable_content_region.width - self._left_gutter_width(),
         )
-        self.refresh()
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
         console = self.app.console
         options = console.options
-        return max(
-            Measurement.get(console, options, option.prompt).maximum
-            for option in self._options
+        padding = self.get_component_styles("option-list--option").padding
+        padding_width = padding.width
+        return (
+            max(
+                Measurement.get(console, options, option.prompt).maximum
+                for option in self._options
+            )
+            + padding_width
         )
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
@@ -548,7 +551,7 @@ class OptionList(ScrollView, can_focus=True):
                 self.scrollable_content_region.width - self._left_gutter_width(),
                 option_index=option_index,
             )
-            self.refresh()
+            self.refresh(layout=True)
         return self
 
     def add_option(self, item: NewOptionListContent = None) -> Self:
@@ -821,8 +824,9 @@ class OptionList(ScrollView, can_focus=True):
             ) from None
 
     def render_line(self, y: int) -> Strip:
-        self._populate()
         assert self._lines is not None
+        if not self._lines:
+            self._populate()
 
         _scroll_x, scroll_y = self.scroll_offset
         line_number = scroll_y + y
@@ -876,8 +880,12 @@ class OptionList(ScrollView, can_focus=True):
             top: Scroll highlight to top of the list.
         """
         highlighted = self.highlighted
-        if highlighted is None or self._spans is None:
+
+        if highlighted is None or not self.is_mounted:
             return
+
+        if not self._spans:
+            self._populate()
 
         try:
             y, height = self._spans[highlighted]
@@ -891,7 +899,12 @@ class OptionList(ScrollView, can_focus=True):
             force=True,
             animate=False,
             top=top,
+            immediate=True,
         )
+
+    def on_show(self) -> None:
+        if self.highlighted is not None:
+            self.scroll_to_highlight()
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
         """Validate the `highlighted` property value on access."""
@@ -950,7 +963,6 @@ class OptionList(ScrollView, can_focus=True):
         # If we find ourselves in a position where we don't know where we're
         # going, we need a fallback location. Where we go will depend on the
         # direction.
-        self._populate()
         assert self._spans is not None
         assert self._lines is not None
 
