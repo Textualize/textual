@@ -12,8 +12,8 @@ I've been thinking about [Semver](https://semver.org/) lately.
 Not only is Semver a great party conversation starter[^1], it influences a remarkable amount of the day-to-day decisions I make as a Python library author.
 
 Semver has received a lot of flack in the Python community, and I imagine tech in general.
-Much of the criticism is deserved, and I'm not going to argue against it.
-However, I would argue that the criticisms are largely overstated, and Semver is terrific.
+Much of the criticism is deserved, but, I would argue, overstated.
+I think Semver is terrific, and much of the problems can be mitigated.
 
 First, a quick recap.
 Semver is a versioning scheme &mdash; a way of identifying one release of a library from another.
@@ -36,11 +36,11 @@ When you release a new version of your library you must change one or more of th
 
     A `patch` number of `0` is a special designation that indicates the library is in *initial development*, and anything may change from one version to the next.
 
-The promise of this scheme is that we can know if an update is compatible with our app or library.
-If foo-lib increments only the `minor` or `major` numbers, then it will work with our project.
+The promise of this scheme is that we can know if a future release of a dependency is compatible with our project.
+If foo-lib increments only the `minor` or `major` numbers, then it will contain only new features and bug-fixes, and will still be compatible with our project.
 If the `major` number is incremented, then it won't.
 
-Beautiful!
+Beautiful.
 
 We can codify compatibility ahead of time, and our build tools will *just know* which versions of libraries will work together.
 
@@ -77,9 +77,11 @@ def calculate_speed(distance:float, time:float) -> float:
 We've add a runtime check for the `time` value.
 Thus avoiding the `ZeroDivisionError`.
 Problem solved.
+
 So this is a backwards compatible bugfix and thus requires bumping `patch`?
 
-It could break something if the caller added an exception handler for `ZeroDivisionError`, which now won't ever be invoked.
+It could still break something if the caller added an exception handler for `ZeroDivisionError`.
+Now, an `AssertionError` will be raised in place of a `ZeroDivisionError`, which
 An `AssertionError` will most likely bubble up and result in an unhandled exception. 
 
 So this would require a `major` bump? Maybe. But maybe not. Keep reading.
