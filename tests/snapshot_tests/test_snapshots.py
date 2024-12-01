@@ -2841,3 +2841,21 @@ def test_add_remove_tabs(snap_compare):
             tabbed_content.add_pane(new_pane)
 
     snap_compare(ExampleApp(), press=["a", "r", "a"])
+
+
+def test_click_expand_select(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5255
+    Should show a select with 15 highlighted."""
+
+    class SelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Select.from_values(
+                range(20),
+                value=15,
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(Select)
+
+    snap_compare(SelectApp(), run_before=run_before)
