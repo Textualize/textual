@@ -253,7 +253,9 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
     def on_mount(self) -> None:
         self.call_next(self.bindings_changed, self.screen)
-        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
+        self.screen.bindings_updated_signal.subscribe(
+            self, self.bindings_changed, immediate=True
+        )
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)
