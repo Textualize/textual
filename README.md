@@ -97,10 +97,6 @@ See [getting started](https://textual.textualize.io/getting_started/) for detail
 
 ## Demo
 
-Textual's demo app comes bundled with the library. Run it to see a little of what this library can do.
-
-<img width="100%" alt="textual-demo" src="https://github.com/user-attachments/assets/021acbc2-f4ad-4e4b-90b0-c9168fc7367e">
-
 
 Run the following command to see a little of what Textual can do:
 
@@ -117,7 +113,7 @@ uvx --python 3.12 textual-demo
 
 ## Textual ❤️ Web
 
-<img align="right" width="50%" alt="textual-serve" src="https://github.com/user-attachments/assets/a25820fb-87ae-433a-858b-ac3940169242">
+<img align="right" width="40%" alt="textual-serve" src="https://github.com/user-attachments/assets/a25820fb-87ae-433a-858b-ac3940169242">
 
 
 Textual apps are equally at home in the browser as they are the terminal.
