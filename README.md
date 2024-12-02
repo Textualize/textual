@@ -41,37 +41,6 @@ Textual's library of builtin [widgets](https://textual.textualize.io/widget_gall
   
 </tr>
 
-</table>
-
-Adding a widget to your project is straightforward for even the most complex of widgets.
-
-Here's an example that uses the [Tree](https://textual.textualize.io/widgets/tree/) widget:
-
-```python
-from textual.app import App, ComposeResult
-from textual.widgets import Tree
-
-
-class TreeApp(App):
-    def compose(self) -> ComposeResult:
-        tree: Tree[str] = Tree("Dune")
-        tree.root.expand()
-        characters = tree.root.add("Characters", expand=True)
-        characters.add_leaf("Paul")
-        characters.add_leaf("Jessica")
-        characters.add_leaf("Chani")
-        yield tree
-
-
-if __name__ == "__main__":
-    app = TreeApp()
-    app.run()
-```
-
-
-<table>
-
-
 
 <tr>
 
