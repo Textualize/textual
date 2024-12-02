@@ -2243,7 +2243,7 @@ files = [
 name = "tree-sitter"
 version = "0.23.2"
 description = "Python bindings to the Tree-sitter parsing library"
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "tree-sitter-0.23.2.tar.gz", hash = "sha256:66bae8dd47f1fed7bdef816115146d3a41c39b5c482d7bad36d9ba1def088450"},
@@ -2292,6 +2292,26 @@ files = [
 [package.extras]
 docs = ["sphinx (>=7.3,<8.0)", "sphinx-book-theme"]
 tests = ["tree-sitter-html (>=0.23.0)", "tree-sitter-javascript (>=0.23.0)", "tree-sitter-json (>=0.23.0)", "tree-sitter-python (>=0.23.0)", "tree-sitter-rust (>=0.23.0)"]
+
+[[package]]
+name = "tree-sitter-bash"
+version = "0.23.3"
+description = "Bash grammar for tree-sitter"
+optional = true
+python-versions = ">=3.9"
+files = [
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:c1ee7a46fcbfca9937d01056be756631762f53c5afdb8c4ab64eb9fed060896b"},
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:5a090118e887bf667d82ae445794906186216f5500e0d2cd58eb499f7502dc57"},
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:aa4b5dde719291eea3a81b1f9ece6afeee2deadc2b2f769bee92f955da7595cf"},
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2ff7bffc3d594e7f1054de051e19df1b24082963598a175dda64083c6b3eea1a"},
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:4427baccbd7549a2ebb1859b6d42cdab0739c05d53c2b3daad9cadc069a7b3f6"},
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-win_amd64.whl", hash = "sha256:525c5cce28a7c5624fb016ac8f3ae33d32968567b718f7878c6351229d2e8394"},
+    {file = "tree_sitter_bash-0.23.3-cp39-abi3-win_arm64.whl", hash = "sha256:1f703d1bf6235355f6c900be64bf9f61fc4b1d0cfed6829b4eeb74a6b41ea910"},
+    {file = "tree_sitter_bash-0.23.3.tar.gz", hash = "sha256:7b15ed89a1ea8e3e3c2399758746413e464d4c1c3a6d3b75d643ae2bc2fb356b"},
+]
+
+[package.extras]
+core = ["tree-sitter (>=0.22,<1.0)"]
 
 [[package]]
 name = "tree-sitter-css"
@@ -2605,31 +2625,6 @@ files = [
 ]
 
 [[package]]
-name = "types-tree-sitter"
-version = "0.20.1.20240311"
-description = "Typing stubs for tree-sitter"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "types-tree-sitter-0.20.1.20240311.tar.gz", hash = "sha256:a046e3da64efa68ac23dfeb7a6fbe10787294e802c5cad46d8b6daf765f5e409"},
-    {file = "types_tree_sitter-0.20.1.20240311-py3-none-any.whl", hash = "sha256:fb7babaad37c907fa11904f33bae7f8a99b1a288b3c3099ed01f527fc0073069"},
-]
-
-[[package]]
-name = "types-tree-sitter-languages"
-version = "1.10.0.20240612"
-description = "Typing stubs for tree-sitter-languages"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "types-tree-sitter-languages-1.10.0.20240612.tar.gz", hash = "sha256:e9e4e53e8a94cf1438051e85c92e0fb20470c6ec702a6faa424a9bb2022fb5cc"},
-    {file = "types_tree_sitter_languages-1.10.0.20240612-py3-none-any.whl", hash = "sha256:5d654de047f7e5f7e66fa39ae0bf13f78f981e74dda2afd4a9d178a3b1dc3fc4"},
-]
-
-[package.dependencies]
-tree-sitter = ">=0.20.3"
-
-[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -2881,9 +2876,9 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 type = ["pytest-mypy"]
 
 [extras]
-syntax = ["tree-sitter", "tree-sitter-css", "tree-sitter-go", "tree-sitter-html", "tree-sitter-java", "tree-sitter-javascript", "tree-sitter-json", "tree-sitter-kotlin", "tree-sitter-markdown", "tree-sitter-python", "tree-sitter-regex", "tree-sitter-rust", "tree-sitter-sql", "tree-sitter-toml", "tree-sitter-xml", "tree-sitter-yaml"]
+syntax = ["tree-sitter", "tree-sitter-bash", "tree-sitter-css", "tree-sitter-go", "tree-sitter-html", "tree-sitter-java", "tree-sitter-javascript", "tree-sitter-json", "tree-sitter-kotlin", "tree-sitter-markdown", "tree-sitter-python", "tree-sitter-regex", "tree-sitter-rust", "tree-sitter-sql", "tree-sitter-toml", "tree-sitter-xml", "tree-sitter-yaml"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "c73d14556d054e40866e5bc8faf1e92092a58692a743c67cf593d8e975a1be00"
+content-hash = "cf149e959eba0a60353e1975b824c2316cf04c2d6588f5e1849923b79128cbf2"

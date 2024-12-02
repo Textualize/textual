@@ -14,7 +14,7 @@ from rich.text import Text
 from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
-from textual._tree_sitter import TREE_SITTER
+from textual._tree_sitter import BUILTIN_LANGUAGES, TREE_SITTER
 from textual.color import Color
 from textual.document._document import (
     Document,
@@ -27,7 +27,6 @@ from textual.document._document import (
 from textual.document._document_navigator import DocumentNavigator
 from textual.document._edit import Edit
 from textual.document._history import EditHistory
-from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
@@ -36,7 +35,7 @@ from textual.document._wrapped_document import WrappedDocument
 from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
 
 if TYPE_CHECKING:
-    from tree_sitter import Language
+    from tree_sitter import Language, Query
 
 from textual import events, log
 from textual._cells import cell_len, cell_width_to_column_index
@@ -415,6 +414,13 @@ TextArea {
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to TextAreaLanguage."""
 
+        for language_name, language_object in BUILTIN_LANGUAGES.items():
+            self._languages[language_name] = TextAreaLanguage(
+                language_name,
+                language_object,
+                self._get_builtin_highlight_query(language_name),
+            )
+
         self._themes: dict[str, TextAreaTheme] = {}
         """Maps theme names to TextAreaTheme."""
 
@@ -583,26 +589,28 @@ TextArea {
             return
 
         captures = self.document.query_syntax_tree(self._highlight_query)
-        for capture in captures:
-            node, highlight_name = capture
-            node_start_row, node_start_column = node.start_point
-            node_end_row, node_end_column = node.end_point
+        for highlight_name, nodes in captures.items():
+            for node in nodes:
+                node_start_row, node_start_column = node.start_point
+                node_end_row, node_end_column = node.end_point
 
-            if node_start_row == node_end_row:
-                highlight = (node_start_column, node_end_column, highlight_name)
-                highlights[node_start_row].append(highlight)
-            else:
-                # Add the first line of the node range
-                highlights[node_start_row].append(
-                    (node_start_column, None, highlight_name)
-                )
+                if node_start_row == node_end_row:
+                    highlight = (node_start_column, node_end_column, highlight_name)
+                    highlights[node_start_row].append(highlight)
+                else:
+                    # Add the first line of the node range
+                    highlights[node_start_row].append(
+                        (node_start_column, None, highlight_name)
+                    )
 
-                # Add the middle lines - entire row of this node is highlighted
-                for node_row in range(node_start_row + 1, node_end_row):
-                    highlights[node_row].append((0, None, highlight_name))
+                    # Add the middle lines - entire row of this node is highlighted
+                    for node_row in range(node_start_row + 1, node_end_row):
+                        highlights[node_row].append((0, None, highlight_name))
 
-                # Add the last line of the node range
-                highlights[node_end_row].append((0, node_end_column, highlight_name))
+                    # Add the last line of the node range
+                    highlights[node_end_row].append(
+                        (0, node_end_column, highlight_name)
+                    )
 
     def _watch_has_focus(self, focus: bool) -> None:
         self._cursor_visible = focus
@@ -830,7 +838,8 @@ TextArea {
 
     def register_language(
         self,
-        language: "str | Language",
+        name: str,
+        language: "Language",
         highlight_query: str,
     ) -> None:
         """Register a language and corresponding highlight query.
@@ -845,34 +854,29 @@ TextArea {
         Registering a language only registers it to this instance of `TextArea`.
 
         Args:
-            language: A string referring to a builtin language or a tree-sitter `Language` object.
+            name: The name of the language.
+            language: A tree-sitter `Language` object.
             highlight_query: The highlight query to use for syntax highlighting this language.
         """
-
-        # If tree-sitter is unavailable, do nothing.
         if not TREE_SITTER:
             return
+        self._languages[name] = TextAreaLanguage(name, language, highlight_query)
 
-        from tree_sitter_languages import get_language
+    def update_highlight_query(self, name: str, highlight_query: str) -> None:
+        """Update the highlight query for an already registered language.
 
-        if isinstance(language, str):
-            language_name = language
-            language = get_language(language_name)
-        else:
-            language_name = language.name
-
-        # Update the custom languages. When changing the document,
-        # we should first look in here for a language specification.
-        # If nothing is found, then we can go to the builtin languages.
-        self._languages[language_name] = TextAreaLanguage(
-            name=language_name,
-            language=language,
-            highlight_query=highlight_query,
-        )
-        # If we updated the currently set language, rebuild the highlights
-        # using the newly updated highlights query.
-        if language_name == self.language:
-            self._set_document(self.text, language_name)
+        Args:
+            name: The name of the language.
+            highlight_query: The highlight query to use for syntax highlighting this language.
+        """
+        if name not in self._languages:
+            raise LanguageDoesNotExist(
+                f"{name!r} is not a registered language.\n"
+                f"To register a language, call `TextArea.register_language`."
+            )
+        self._languages[name].highlight_query = highlight_query
+        if name == self.language:
+            self._set_document(self.text, name)
 
     def _set_document(self, text: str, language: str | None) -> None:
         """Construct and return an appropriate document.
