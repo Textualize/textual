@@ -117,6 +117,9 @@ uvx --python 3.12 textual-demo
 
 ## Textual ❤️ Web
 
+<img align="right" width="50%" alt="textual-serve" src="https://github.com/user-attachments/assets/a25820fb-87ae-433a-858b-ac3940169242">
+
+
 Textual apps are equally at home in the browser as they are the terminal.
 
 Any Textual app may be served with "textual serve" &mdash; so you cah share your creations on the web.
