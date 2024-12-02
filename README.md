@@ -1,5 +1,4 @@
 
-![textual-splash](https://github.com/user-attachments/assets/4caeb77e-48c0-4cf7-b14d-c53ded855ffd)
 
 [![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/0.87.1)](https://pypi.org/project/textual/)
@@ -7,6 +6,8 @@
 ![OS support](https://img.shields.io/badge/OS-macOS%20Linux%20Windows-red)
 
 
+
+![textual-splash](https://github.com/user-attachments/assets/4caeb77e-48c0-4cf7-b14d-c53ded855ffd)
 
 # Textual
 
@@ -17,11 +18,9 @@ Run your apps in the terminal *or* a web browser.
 
 ## Widgets
 
-Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more…
+Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more… With it's flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can realize any User Interface you need with Textual.
 
-Textual's flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can build apps as easily as you can CLIs.
-
-Predefined themes means that your apps will look good out of the box. 
+Predefined themes ensure your apps will look good out of the box. 
 
 
 <table>
@@ -79,15 +78,6 @@ Predefined themes means that your apps will look good out of the box.
 
 
 
-
-## Testing
-
-Textual's [testing framework](https://textual.textualize.io/guide/testing/) automates keys and mouse clicks / movement, allowing you to write tests for user interactions.
-
-Additionally, [pytest-text-snapshot](https://github.com/Textualize/pytest-textual-snapshot) can catch visual regressions long before your code goes in to production.
-
-
-
 ## Installing
 
 Install Textual via pip:
@@ -122,7 +112,7 @@ uvx --python 3.12 textual-demo
 
 Textual apps are equally at home in the browser as they are the terminal.
 
-Any Textual app may be served with "textual serve" &mdash; so you cah share your creations on the web.
+Any Textual app may be served with "textual serve" &mdash; so you can share your creations on the web.
 
 Here's how to serve the demo app:
 
@@ -132,15 +122,14 @@ textual serve "python -m textual"
 
 In addition to serving your apps locally, you can serve apps with [Textual-Web](https://github.com/Textualize/textual-web).
 
-Textual Web's firewall-busting technology can serve an unlimited number of applications on the web.
-Turning any device in to a connected device.
+Textual Web's firewall-busting technology can serve an unlimited number of applications.
 
-Since Textual apps have low system requirements, you can install them anywhere Python also runs.
-No desktop required.
+Since Textual apps have low system requirements, you can install them anywhere Python also runs. Turning any device in to a connected device.
+No desktop required!
 
 ## Documentation
 
-Head over to the [Textual documentation](http://textual.textualize.io/) to start building!
+Head over to the [Textual documentation](http://textual.textualize.io/) to start building.
 
 ## Join us on Discord
 
