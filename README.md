@@ -80,6 +80,9 @@ https://github.com/user-attachments/assets/97ab8825-0af6-42e9-b7e5-f554303a2112
 
 Try the [textual demo](https://github.com/textualize/textual-demo) *without* installing.
 
+> [!NOTE]
+> You will need [uv](https://docs.astral.sh/uv/) to run this command.
+
 ```bash
 uvx --python 3.12 textual-demo
 ```
