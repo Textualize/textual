@@ -1,4 +1,7 @@
 
+![theme-splash](https://github.com/user-attachments/assets/cfa75080-f61b-4fd3-98f6-9fa5db9cc1d3)
+
+
 [![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/0.87.1)](https://pypi.org/project/textual/)
 [![PyPI version](https://badge.fury.io/py/textual.svg)](https://badge.fury.io/py/textual)
