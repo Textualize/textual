@@ -1,6 +1,5 @@
 
-![theme-splash](https://github.com/user-attachments/assets/cfa75080-f61b-4fd3-98f6-9fa5db9cc1d3)
-
+![textual-splash](https://github.com/user-attachments/assets/4caeb77e-48c0-4cf7-b14d-c53ded855ffd)
 
 [![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/0.87.1)](https://pypi.org/project/textual/)
@@ -11,15 +10,18 @@
 
 # Textual
 
-Build cross-platform user interfaces with a simple Python API. Run your apps in the **terminal** or a **web browser**.
+Build cross-platform user interfaces with a simple Python API.
+
+Run your apps in the terminal *or* a web browser.
 
 
 ## Widgets
 
-Textual's library of builtin [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more…
+Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more…
+
+Textual's flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can build apps as easily as you can CLIs.
 
 Predefined themes means that your apps will look good out of the box. 
-
 
 
 <table>
@@ -75,13 +77,12 @@ Predefined themes means that your apps will look good out of the box.
 
 </table>
 
-With a (growing) library of widgets and a flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can build apps as easily as you can CLIs.
+
 
 
 ## Testing
 
-Textual's [testing framework](https://textual.textualize.io/guide/testing/) automates keys and mouse clicks / movement.
-Allowing you to write tests for user interactions.
+Textual's [testing framework](https://textual.textualize.io/guide/testing/) automates keys and mouse clicks / movement, allowing you to write tests for user interactions.
 
 Additionally, [pytest-text-snapshot](https://github.com/Textualize/pytest-textual-snapshot) can catch visual regressions long before your code goes in to production.
 
