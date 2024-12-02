@@ -18,7 +18,7 @@ Run your apps in the terminal *or* a web browser.
 
 ## Widgets
 
-Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more… With it's flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can realize any User Interface you need with Textual.
+Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more… With its flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can realize any User Interface you need with Textual.
 
 Predefined themes ensure your apps will look good out of the box. 
 
@@ -112,7 +112,7 @@ uvx --python 3.12 textual-demo
 
 Textual apps are equally at home in the browser as they are the terminal.
 
-Any Textual app may be served with "textual serve" &mdash; so you can share your creations on the web.
+Any Textual app may be served with `textual serve` &mdash; so you can share your creations on the web.
 
 Here's how to serve the demo app:
 
