@@ -12,6 +12,112 @@ Build sophisticated, cross-platform, user interfaces with a simple Python API.
 
 Run your apps in the terminal or a web browser with [Textual Web](https://github.com/Textualize/textual-web) or [Textual Serve](https://github.com/Textualize/textual-serve).
 
+
+
+
+## Widgets
+
+Textual's library of builtin [widgets](https://textual.textualize.io/widget_gallery/) cover everything from buttons, tree controls, data tables, inputs, text areas, and more…
+
+
+
+
+
+<table>
+
+<tr>
+
+  <td>
+    
+  ![buttons](https://github.com/user-attachments/assets/2ac26387-aaa3-41ed-bc00-7d488600343c)
+    
+  </td>
+
+  <td>
+    
+![tree](https://github.com/user-attachments/assets/61ccd6e9-97ea-4918-8eda-3ee0f0d3770e)
+    
+  </td>
+  
+</tr>
+
+</table>
+
+Adding a widget to your project is straightforward for even the most complex of widgets.
+
+Here's an example that uses the [Tree](https://textual.textualize.io/widgets/tree/) widget:
+
+```python
+from textual.app import App, ComposeResult
+from textual.widgets import Tree
+
+
+class TreeApp(App):
+    def compose(self) -> ComposeResult:
+        tree: Tree[str] = Tree("Dune")
+        tree.root.expand()
+        characters = tree.root.add("Characters", expand=True)
+        characters.add_leaf("Paul")
+        characters.add_leaf("Jessica")
+        characters.add_leaf("Chani")
+        yield tree
+
+
+if __name__ == "__main__":
+    app = TreeApp()
+    app.run()
+```
+
+
+<table>
+
+
+
+<tr>
+
+  <td>
+    
+  ![datatables](https://github.com/user-attachments/assets/3e1f9f7a-f965-4901-a114-3c188bd17695)
+    
+  </td>
+
+  <td>
+    
+![inputs](https://github.com/user-attachments/assets/b02aa203-7c37-42da-a1bb-2cb244b7d0d3)
+    
+  </td>
+  
+</tr>
+<tr>
+
+<td>
+
+
+
+![listview](https://github.com/user-attachments/assets/963603bc-aa07-4688-bd24-379962ece871)
+
+
+
+
+</td>
+
+
+<td>
+
+
+![textarea](https://github.com/user-attachments/assets/cd4ba787-5519-40e2-8d86-8224e1b7e506)
+
+
+
+
+  
+</td>
+
+  
+</tr>
+
+</table>
+
 ## Videos
 
 <details>
@@ -36,45 +142,6 @@ https://github.com/user-attachments/assets/97ab8825-0af6-42e9-b7e5-f554303a2112
 
 
  </details>
-
-
-## Textual in Action
-
-<table>
-
-<tr>
-
-  <td>
-    
-  ![buttons](https://github.com/user-attachments/assets/2ac26387-aaa3-41ed-bc00-7d488600343c)
-    
-  </td>
-
-  <td>
-    
-![tree](https://github.com/user-attachments/assets/61ccd6e9-97ea-4918-8eda-3ee0f0d3770e)
-    
-  </td>
-  
-</tr>
-
-<tr>
-
-  <td>
-    
-  ![datatables](https://github.com/user-attachments/assets/3e1f9f7a-f965-4901-a114-3c188bd17695)
-    
-  </td>
-
-  <td>
-    
-![inputs](https://github.com/user-attachments/assets/b02aa203-7c37-42da-a1bb-2cb244b7d0d3)
-    
-  </td>
-  
-</tr>
-
-</table>
 
 ### Impatient?
 
