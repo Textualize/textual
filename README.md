@@ -8,18 +8,16 @@
 
 # Textual
 
-Build sophisticated, cross-platform, user interfaces with a simple Python API.
+Build cross-platform user interfaces with a simple Python API.
 
-Run your apps in the terminal or a web browser with [Textual Web](https://github.com/Textualize/textual-web) or [Textual Serve](https://github.com/Textualize/textual-serve).
-
-
+Run your apps in the terminal *or* a web browser.
 
 
 ## Widgets
 
-Textual's library of builtin [widgets](https://textual.textualize.io/widget_gallery/) cover everything from buttons, tree controls, data tables, inputs, text areas, and more…
+Textual's library of builtin [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more…
 
-
+Predefined themes means that your apps will look good out of the box. 
 
 
 
@@ -61,24 +59,13 @@ Textual's library of builtin [widgets](https://textual.textualize.io/widget_gall
 
 <td>
 
-
-
 ![listview](https://github.com/user-attachments/assets/963603bc-aa07-4688-bd24-379962ece871)
-
-
-
 
 </td>
 
-
 <td>
 
-
 ![textarea](https://github.com/user-attachments/assets/cd4ba787-5519-40e2-8d86-8224e1b7e506)
-
-
-
-
   
 </td>
 
@@ -87,43 +74,17 @@ Textual's library of builtin [widgets](https://textual.textualize.io/widget_gall
 
 </table>
 
-## Videos
+With a (growing) library of widgets and a flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can build apps as easily as you can CLIs.
 
-<details>
-  <summary> 🎬 Demonstration </summary>
-  <hr>
-
-https://github.com/user-attachments/assets/71afec49-fe89-4e8d-a8cf-148fa2601362
+Textual's intuitive Python API makes building gorgeous terminal / web interfaces a joy.
 
 
- </details>
+## Testing
 
+Textual's [testing framework](https://textual.textualize.io/guide/testing/) automates keys and mouse clicks / movement.
+Allowing you to write tests for user interactions.
 
-
-<details>
-  <summary> 🎬 Textual Serve </summary>
-  <hr>
-
-
-https://github.com/user-attachments/assets/97ab8825-0af6-42e9-b7e5-f554303a2112
-
-
-
-
- </details>
-
-### Impatient?
-
-Try the [textual demo](https://github.com/textualize/textual-demo) *without* installing.
-
-> [!NOTE]
-> You will need [uv](https://docs.astral.sh/uv/) to run this command.
-
-```bash
-uvx --python 3.12 textual-demo
-```
-
-![Textual supports themes](https://github.com/user-attachments/assets/3de1a991-1154-48b4-b547-21f98509f8c4)
+Additionally, [pytest-text-snapshot](https://github.com/Textualize/pytest-textual-snapshot) can catch visual regressions long before your code goes in to production.
 
 
 
@@ -135,15 +96,44 @@ Install Textual via pip:
 pip install textual textual-dev
 ```
 
-Check out the demo:
+See [getting started](https://textual.textualize.io/getting_started/) for details.
+
+
+
+## Demo
+
+Run the following command to see a little of what Textual can do:
 
 ```
 python -m textual
 ```
 
-See [getting started](https://textual.textualize.io/getting_started/) for details.
+Or try the [textual demo](https://github.com/textualize/textual-demo) *without* installing (requires [uv](https://docs.astral.sh/uv/)):
+
+```bash
+uvx --python 3.12 textual-demo
+```
 
 
+## Textual ❤️ Web
+
+Textual apps are equally at home in the browser as they are the terminal.
+
+Any Textual app may be served with "textual serve" &mdash; so you cah share your creations on the web.
+
+Here's how to serve the demo app:
+
+```
+textual serve "python -m textual"
+```
+
+In addition to serving your apps locally, you can serve apps with [Textual-Web](https://github.com/Textualize/textual-web).
+
+Textual Web's firewall-busting technology can serve an unlimited number of applications on the web.
+Turning any device in to a connected device.
+
+Since Textual apps have low system requirements, you can install them anywhere Python also runs.
+No desktop required.
 
 ## Documentation
 
