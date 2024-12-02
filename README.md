@@ -8,9 +8,7 @@
 
 # Textual
 
-Build cross-platform user interfaces with a simple Python API.
-
-Run your apps in the terminal *or* a web browser.
+Build cross-platform user interfaces with a simple Python API. Run your apps in the **terminal** or a **web browser**.
 
 
 ## Widgets
@@ -76,8 +74,6 @@ Predefined themes means that your apps will look good out of the box.
 
 With a (growing) library of widgets and a flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can build apps as easily as you can CLIs.
 
-Textual's intuitive Python API makes building gorgeous terminal / web interfaces a joy.
-
 
 ## Testing
 
@@ -99,8 +95,12 @@ pip install textual textual-dev
 See [getting started](https://textual.textualize.io/getting_started/) for details.
 
 
-
 ## Demo
+
+Textual's demo app comes bundled with the library. Run it to see a little of what this library can do.
+
+<img width="100%" alt="textual-demo" src="https://github.com/user-attachments/assets/021acbc2-f4ad-4e4b-90b0-c9168fc7367e">
+
 
 Run the following command to see a little of what Textual can do:
 
