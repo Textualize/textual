@@ -11,9 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added "tab" border style https://github.com/Textualize/textual/pull/5335
 
-## Changed
+## Fixed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
+- Fixed selection list wrapping https://github.com/Textualize/textual/pull/5331
+- Fixed CSS encoding issue on Windows https://github.com/Textualize/textual/pull/5324
 
 ## [0.88.1] - 2024-11-30
 
