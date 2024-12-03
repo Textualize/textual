@@ -276,7 +276,7 @@ class Stylesheet:
         """
         filename = os.path.expanduser(filename)
         try:
-            with open(filename, "rt") as css_file:
+            with open(filename, "rt", encoding="utf-8") as css_file:
                 css = css_file.read()
             path = os.path.abspath(filename)
         except Exception:

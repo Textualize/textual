@@ -50,7 +50,8 @@ class Selection(Generic[SelectionType], Option):
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         if isinstance(prompt, str):
-            prompt = Text.from_markup(prompt)
+            prompt = Text.from_markup(prompt, overflow="ellipsis")
+        prompt.no_wrap = True
         super().__init__(prompt.split()[0], id, disabled)
         self._value: SelectionType = value
         """The value associated with the selection."""

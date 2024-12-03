@@ -2858,3 +2858,33 @@ def test_click_expand(snap_compare):
         await pilot.click(Select)
 
     snap_compare(SelectApp(), run_before=run_before)
+
+
+def test_disable_command_palette(snap_compare):
+    """Test command palette may be disabled by check_action.
+    You should see a footer with an enabled binding, and the command palette binding greyed out."""
+
+    class FooterApp(App):
+        BINDINGS = [("b", "bell", "Bell")]
+
+        def compose(self) -> ComposeResult:
+            yield Footer()
+
+        def check_action(
+            self, action: str, parameters: tuple[object, ...]
+        ) -> bool | None:
+            if action == "command_palette":
+                return None
+            return True
+
+    snap_compare(FooterApp())
+
+
+def test_selection_list_wrap(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5326"""
+
+    class SelectionListApp(App):
+        def compose(self) -> ComposeResult:
+            yield SelectionList(("Hello World " * 100, 0))
+
+    snap_compare(SelectionListApp())
