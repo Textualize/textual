@@ -5,7 +5,7 @@ import re
 from functools import partial
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -800,7 +800,7 @@ class Markdown(Widget):
             await self.update(self._markdown)
 
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
-        if self._open_links:
+        if self.is_external_link(event.href) and self._open_links:
             self.app.open_url(event.href)
 
     def _watch_code_dark_theme(self) -> None:
@@ -814,6 +814,23 @@ class Markdown(Widget):
         if not self.app.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()
+
+    @staticmethod
+    def is_external_link(link: str) -> bool:
+        """Given a markdown href [text](link), determine if the link references a local disk resource.
+
+        Args:
+            link: The link to evaluate.
+
+        Returns:
+            A bool value True if the link points to external resource, i.e. not local file or anchor
+        """
+        parsed_url = urlparse(link)
+        if parsed_url.scheme == "file":
+            return False
+        if parsed_url.scheme:
+            return True
+        return False
 
     @staticmethod
     def sanitize_location(location: str) -> tuple[Path, str]:
@@ -1217,7 +1234,8 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
         message.stop()
-        await self.go(message.href)
+        if not self.document.is_external_link(message.href):
+            await self.go(message.href)
 
     def watch_show_table_of_contents(self, show_table_of_contents: bool) -> None:
         self.set_class(show_table_of_contents, "-show-table-of-contents")
