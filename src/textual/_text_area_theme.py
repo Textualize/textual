@@ -247,6 +247,7 @@ _MONOKAI = TextAreaTheme(
         "inline_code": Style(color="#E6DB74"),
         "punctuation.bracket": Style(color="#f8f8f2"),
         "punctuation.delimiter": Style(color="#f8f8f2"),
+        "punctuation.special": Style(color="#f8f8f2"),
     },
 )
 
@@ -306,6 +307,7 @@ _DRACULA = TextAreaTheme(
         "inline_code": Style(color="#f1fa8c"),
         "punctuation.bracket": Style(color="#f8f8f2"),
         "punctuation.delimiter": Style(color="#f8f8f2"),
+        "punctuation.special": Style(color="#f8f8f2"),
     },
 )
 
@@ -363,6 +365,7 @@ _DARK_VS = TextAreaTheme(
         "info_string": Style(color="#ce9178", bold=True, italic=True),
         "punctuation.bracket": Style(color="#CCCCCC"),
         "punctuation.delimiter": Style(color="#CCCCCC"),
+        "punctuation.special": Style(color="#CCCCCC"),
     },
 )
 
@@ -416,6 +419,7 @@ _GITHUB_LIGHT = TextAreaTheme(
         "inline_code": Style(color="#093069"),
         "punctuation.bracket": Style(color="#24292e"),
         "punctuation.delimiter": Style(color="#24292e"),
+        "punctuation.special": Style(color="#24292e"),
     },
 )
 
