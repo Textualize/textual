@@ -324,10 +324,10 @@ class Game(containers.Vertical, can_focus=True):
     """
 
     BINDINGS = [
-        Binding("up", "move('up')", "☝️", priority=True),
-        Binding("down", "move('down')", "👇", priority=True),
-        Binding("left", "move('left')", "👈", priority=True),
-        Binding("right", "move('right')", "👉", priority=True),
+        Binding("up", "move('up')", "up", priority=True),
+        Binding("down", "move('down')", "down", priority=True),
+        Binding("left", "move('left')", "left", priority=True),
+        Binding("right", "move('right')", "right", priority=True),
     ]
 
     state = reactive("waiting")
@@ -544,9 +544,8 @@ class GameScreen(PageScreen):
     }
     """
 
-    BINDINGS = [
-        ("s", "shuffle", "Shuffle"),
-        ("n", "new_game", "New Game"),
+    BINDINGS = [       
+        ("n", "new_game", "New Game")
     ]
 
     def compose(self) -> ComposeResult:
