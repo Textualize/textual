@@ -261,8 +261,6 @@ class Screen(Generic[ScreenResultType], Widget):
         )
         """The signal that is published when the screen's layout is refreshed."""
 
-        self._bindings_updated = False
-        """Indicates that a binding update was requested."""
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
 
@@ -315,8 +313,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
-        self._bindings_updated = True
-        self.check_idle()
+        self.bindings_updated_signal.publish(self)
 
     def _watch_maximized(
         self, previously_maximized: Widget | None, maximized: Widget | None
@@ -940,32 +937,22 @@ class Screen(Generic[ScreenResultType], Widget):
         self.screen_layout_refresh_signal.subscribe(
             self, self._maybe_clear_tooltip, immediate=True
         )
-        self.refresh_bindings()
-        # Send this signal so we don't get an initial frame with no bindings in the footer
-        self.bindings_updated_signal.publish(self)
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
+        if not self.app._batch_count and self.is_current:
+            if (
+                self._layout_required
+                or self._scroll_required
+                or self._repaint_required
+                or self._recompose_required
+                or self._dirty_widgets
+            ):
+                self._update_timer.resume()
+                return
 
-        try:
-            if not self.app._batch_count and self.is_current:
-                if (
-                    self._layout_required
-                    or self._scroll_required
-                    or self._repaint_required
-                    or self._recompose_required
-                    or self._dirty_widgets
-                ):
-                    self._update_timer.resume()
-                    return
-
-            await self._invoke_and_clear_callbacks()
-        finally:
-            if self._bindings_updated:
-                self._bindings_updated = False
-                if self.is_attached and not self.app._exit:
-                    self.app.call_later(self.bindings_updated_signal.publish, self)
+        await self._invoke_and_clear_callbacks()
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
