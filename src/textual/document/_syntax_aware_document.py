@@ -77,10 +77,6 @@ class SyntaxAwareDocument(Document):
         self._syntax_tree: Tree = self._parser.parse(self._read_callable)  # type: ignore
         """The tree-sitter Tree (syntax tree) built from the document."""
 
-    @property
-    def language_name(self) -> str | None:
-        return self.language.name if self.language else None
-
     def prepare_query(self, query: str) -> Query | None:
         """Prepare a tree-sitter tree query.
 

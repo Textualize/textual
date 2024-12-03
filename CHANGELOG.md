@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Added
 
 - Added "tab" border style https://github.com/Textualize/textual/pull/5335
+- Added support for XML syntax highlighting https://github.com/Textualize/textual/pull/5320
+- Added `TextArea.update_highlight_query` https://github.com/Textualize/textual/pull/5320
+
 
 ## Changed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
+- Upgraded tree-sitter to 0.23+ (`syntax` extras) https://github.com/Textualize/textual/pull/5320
+- Some syntax highlighting changes due to tree-sitter updates https://github.com/Textualize/textual/pull/5320
+- Breaking change: `Document.query_syntax_tree` signature changed https://github.com/Textualize/textual/pull/5320
+- Breaking change: `TextArea.register_language` signature changed https://github.com/Textualize/textual/pull/5320
+- Breaking change: `SyntaxAwareDocument.language_name` property removed https://github.com/Textualize/textual/pull/5320
 
 ## [0.88.1] - 2024-11-30
 
