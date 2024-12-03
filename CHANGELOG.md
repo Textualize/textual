@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## Added
+
+- Added "tab" border style
+
 ## Changed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
