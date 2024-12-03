@@ -52,7 +52,7 @@
  (property_name)
  (feature_name)
  (attribute_name)
- ] @property
+ ] @css.property
 
 (namespace_name) @namespace
 
