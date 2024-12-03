@@ -1525,6 +1525,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             will cause both an expand/collapse event to occur, as well as a
             selected event.
         """
+        if self.cursor_line < 0:
+            return
         try:
             line = self._tree_lines[self.cursor_line]
         except IndexError:
