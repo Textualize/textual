@@ -13,8 +13,8 @@ class DemoApp(App):
 
     CSS = """
     .column {          
-            align: center top;
-            &>*{ max-width: 100; }        
+        align: center top;
+        &>*{ max-width: 100; }        
     }
     Screen .-maximized {
         margin: 1 2;        
@@ -37,25 +37,25 @@ class DemoApp(App):
         Binding(
             "h",
             "app.switch_mode('home')",
-            "home",
+            "Home",
             tooltip="Show the home screen",
         ),
         Binding(
             "g",
             "app.switch_mode('game')",
-            "game",
+            "Game",
             tooltip="Unwind with a Textual game",
         ),
         Binding(
             "p",
             "app.switch_mode('projects')",
-            "projects",
+            "Projects",
             tooltip="A selection of Textual projects",
         ),
         Binding(
             "w",
             "app.switch_mode('widgets')",
-            "widgets",
+            "Widgets",
             tooltip="Test the builtin widgets",
         ),
         Binding(
