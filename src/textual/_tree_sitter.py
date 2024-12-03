@@ -8,7 +8,6 @@ try:
     import tree_sitter_java
     import tree_sitter_javascript
     import tree_sitter_json
-    import tree_sitter_kotlin
     import tree_sitter_markdown
     import tree_sitter_python
     import tree_sitter_regex
@@ -24,7 +23,6 @@ try:
     _languages = {
         "python": Language(tree_sitter_python.language()),
         "json": Language(tree_sitter_json.language()),
-        "kotlin": Language(tree_sitter_kotlin.language()),
         "markdown": Language(tree_sitter_markdown.language()),
         "yaml": Language(tree_sitter_yaml.language()),
         "toml": Language(tree_sitter_toml.language()),

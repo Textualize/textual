@@ -218,8 +218,10 @@ _MONOKAI = TextAreaTheme(
         "number": Style(color="#AE81FF"),
         "float": Style(color="#AE81FF"),
         "class": Style(color="#A6E22E"),
+        "type": Style(color="#A6E22E"),
         "type.class": Style(color="#A6E22E"),
         "type.builtin": Style(color="#F92672"),
+        "variable.builtin": Style(color="#f8f8f2"),
         "function": Style(color="#A6E22E"),
         "function.call": Style(color="#A6E22E"),
         "method": Style(color="#A6E22E"),
@@ -243,7 +245,6 @@ _MONOKAI = TextAreaTheme(
         "link.uri": Style(color="#66D9EF", underline=True),
         "list.marker": Style(color="#90908a"),
         "inline_code": Style(color="#E6DB74"),
-        "punctuation.delimiter": Style(color="#90908a"),
     },
 )
 
@@ -274,8 +275,10 @@ _DRACULA = TextAreaTheme(
         "number": Style(color="#bd93f9"),
         "float": Style(color="#bd93f9"),
         "class": Style(color="#50fa7b"),
+        "type": Style(color="#ff79c6"),
         "type.class": Style(color="#50fa7b"),
         "type.builtin": Style(color="#bd93f9"),
+        "variable.builtin": Style(color="#f8f8f2"),
         "function": Style(color="#50fa7b"),
         "function.call": Style(color="#50fa7b"),
         "method": Style(color="#50fa7b"),
@@ -299,7 +302,6 @@ _DRACULA = TextAreaTheme(
         "link.uri": Style(color="#bd93f9", underline=True),
         "list.marker": Style(color="#6272a4"),
         "inline_code": Style(color="#f1fa8c"),
-        "punctuation.delimiter": Style(color="#ff79c6"),
     },
 )
 
@@ -330,6 +332,7 @@ _DARK_VS = TextAreaTheme(
         "number": Style(color="#b5cea8"),
         "float": Style(color="#b5cea8"),
         "class": Style(color="#4EC9B0"),
+        "type": Style(color="#EFCB43"),
         "type.class": Style(color="#4EC9B0"),
         "type.builtin": Style(color="#9CDCFE"),
         "function": Style(color="#DCDCAA"),
@@ -353,7 +356,6 @@ _DARK_VS = TextAreaTheme(
         "list.marker": Style(color="#6E7681"),
         "inline_code": Style(color="#ce9178"),
         "info_string": Style(color="#ce9178", bold=True, italic=True),
-        "punctuation.delimiter": Style(color="#6E7681"),
     },
 )
 
@@ -371,6 +373,7 @@ _GITHUB_LIGHT = TextAreaTheme(
         "string.documentation": Style(color="#093069"),
         "comment": Style(color="#6a737d"),
         "heading.marker": Style(color="#A4A4A4"),
+        "type": Style(color="#A4A4A4"),
         "type.class": Style(color="#A4A4A4"),
         "type.builtin": Style(color="#7DAF9C"),
         "keyword": Style(color="#d73a49"),
@@ -404,7 +407,6 @@ _GITHUB_LIGHT = TextAreaTheme(
         "link.label": Style(color="#6639BB"),
         "list.marker": Style(color="#A4A4A4"),
         "inline_code": Style(color="#093069"),
-        "punctuation.delimiter": Style(color="#A4A4A4"),
     },
 )
 

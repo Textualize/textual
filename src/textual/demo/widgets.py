@@ -731,7 +731,6 @@ from textual import App, ComposeResult
                 "Java",
                 "Javascript",
                 "JSON",
-                "Kotlin",
                 "Markdown",
                 "Python",
                 "Rust",
