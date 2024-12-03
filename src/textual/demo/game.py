@@ -563,6 +563,7 @@ class GameScreen(PageScreen):
     async def new_game(self, new_game: NewGame | None) -> None:
         if new_game is None:
             return
+        self.query_one(GameInstructions).display = False
         game = self.query_one(Game)
         game.state = "waiting"
         game.code = new_game.code
