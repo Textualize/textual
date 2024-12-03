@@ -107,6 +107,11 @@ BORDER_CHARS: dict[
         ("▊", " ", "▎"),
         ("▊", "▁", "▎"),
     ),
+    "tab": (
+        ("▁", "▁", "▁"),
+        ("▎", " ", "▊"),
+        ("▔", "▔", "▔"),
+    ),
     "wide": (
         ("▁", "▁", "▁"),
         ("▎", " ", "▊"),
@@ -205,6 +210,11 @@ BORDER_LOCATIONS: dict[
         (2, 0, 1),
         (2, 0, 1),
     ),
+    "tab": (
+        (1, 1, 1),
+        (0, 1, 3),
+        (1, 1, 1),
+    ),
     "wide": (
         (1, 1, 1),
         (0, 1, 3),
@@ -215,7 +225,10 @@ BORDER_LOCATIONS: dict[
 # Some borders (such as panel) require that the title (and subtitle) be draw in reverse.
 # This is a mapping of the border type on to a tuple for the top and bottom borders, to indicate
 # reverse colors is required.
-BORDER_TITLE_FLIP: dict[str, tuple[bool, bool]] = {"panel": (True, False)}
+BORDER_TITLE_FLIP: dict[str, tuple[bool, bool]] = {
+    "panel": (True, False),
+    "tab": (True, True),
+}
 
 # In a similar fashion, we extract the border _label_ locations for easier access when
 # rendering a border label.
@@ -343,6 +356,7 @@ def render_border_label(
     cells_reserved = 2 * corners_needed
 
     text_label, label_style = label
+
     if not text_label.cell_len or width <= cells_reserved:
         return
 

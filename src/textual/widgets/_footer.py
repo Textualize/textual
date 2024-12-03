@@ -47,12 +47,7 @@ class FooterKey(Widget):
         }
 
         &.-disabled {
-            text-style: dim;
-            &:hover {
-                .footer-key--key {
-                    background: $foreground-disabled;
-                }
-            }
+            text-style: dim;            
         }
 
         &.-compact {
