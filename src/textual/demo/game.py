@@ -544,9 +544,7 @@ class GameScreen(PageScreen):
     }
     """
 
-    BINDINGS = [       
-        ("n", "new_game", "New Game")
-    ]
+    BINDINGS = [("n", "new_game", "New Game")]
 
     def compose(self) -> ComposeResult:
         yield GameInstructions()
