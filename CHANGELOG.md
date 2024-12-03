@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Added
 
-- Added "tab" border style
+- Added "tab" border style https://github.com/Textualize/textual/pull/5335
 
 ## Changed
 
