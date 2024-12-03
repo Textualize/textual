@@ -18,7 +18,8 @@ Run your apps in the terminal *or* a web browser.
 
 ## Widgets
 
-Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more… With its flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can realize any User Interface you need with Textual.
+Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more…
+Combined with a flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can realize any User Interface you need.
 
 Predefined themes ensure your apps will look good out of the box. 
 
