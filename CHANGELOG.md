@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `Document.query_syntax_tree` signature changed https://github.com/Textualize/textual/pull/5320
 - Breaking change: `TextArea.register_language` signature changed https://github.com/Textualize/textual/pull/5320
 - Breaking change: `SyntaxAwareDocument.language_name` property removed https://github.com/Textualize/textual/pull/5320
+- Breaking change: Kotlin syntax highlighting removed from `TextArea` https://github.com/Textualize/textual/pull/5320
 
 ## [0.88.1] - 2024-11-30
 
