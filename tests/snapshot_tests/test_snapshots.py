@@ -2888,3 +2888,28 @@ def test_selection_list_wrap(snap_compare):
             yield SelectionList(("Hello World " * 100, 0))
 
     snap_compare(SelectionListApp())
+
+
+def test_border_tab(snap_compare):
+    """Test tab border style. You should see a border with a left align tab
+    at the top and a right aligned tab at the bottom."""
+
+    class TabApp(App):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+        Label {
+            border: tab $border;
+            padding: 2 4;
+            border-title-align: left;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            label = Label("Hello, World")
+            label.border_title = "Tab Border"
+            label.border_subtitle = ":-)"
+            yield label
+
+    snap_compare(TabApp())

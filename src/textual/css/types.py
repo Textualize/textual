@@ -24,6 +24,7 @@ EdgeType = Literal[
     "hkey",
     "vkey",
     "tall",
+    "tab",
     "panel",
     "wide",
 ]
