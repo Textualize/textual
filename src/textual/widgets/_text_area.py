@@ -729,6 +729,9 @@ TextArea {
 
     def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
+        if not TREE_SITTER:
+            return
+
         if language is not None and language not in self.available_languages:
             raise LanguageDoesNotExist(
                 f"{language!r} is not a builtin language, or it has not been registered. "
