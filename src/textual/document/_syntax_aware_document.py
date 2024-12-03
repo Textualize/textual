@@ -52,7 +52,7 @@ class SyntaxAwareDocument(Document):
 
         self._parser: Parser | None = None
 
-        from textual._tree_sitter import Parser, get_language
+        from textual._tree_sitter import get_language
 
         # If the language is `None`, then avoid doing any parsing related stuff.
         if isinstance(language, str):

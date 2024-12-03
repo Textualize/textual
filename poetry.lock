@@ -2556,23 +2556,23 @@ core = ["tree-sitter (>=0.22,<1.0)"]
 
 [[package]]
 name = "tree-sitter-toml"
-version = "0.6.0"
+version = "0.7.0"
 description = "TOML grammar for tree-sitter"
 optional = true
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "tree-sitter-toml-0.6.0.tar.gz", hash = "sha256:b7fad4382760269a24d0368329cfb10764359acc1bb648598f0ef347b8cc3a61"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:0591b6672ab6289ac63f40b017e04cb514f5957d6b0b0c4dcfa06796b14db849"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:f63b84e255a1fb7e183dff492f461fa4e0c3e00edf29b7f7d710aba24195a30c"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4279a0296e04824e663640da9e6fd4d34273d943e77a731141f401ebf94d304d"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:272737a159752937f693b016409ddb2f3291f9f37a86484d6342850727d8440c"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:02b8bcd65ca23b66357b1ec2a9eac941224ad7c1212c2cea3005beefba46a152"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:d383674a1225ed244bbfcd58c7d9ca5e140beddc1f0993cf2844a73edb5f4cfd"},
-    {file = "tree_sitter_toml-0.6.0-cp38-abi3-win_amd64.whl", hash = "sha256:dad47b03c69f9d0894ecfca8682ac4cd22cc43c32670a8a3e784b27e4de6f7c2"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:b9ae5c3e7c5b6bb05299dd73452ceafa7fa0687d5af3012332afa7757653b676"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:18be09538e9775cddc0290392c4e2739de2201260af361473ca60b5c21f7bd22"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a045e0acfcf91b7065066f7e51ea038ed7385c1e35e7e8fae18f252d3f8adb8c"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7a2f8cf9d73f07b6628093b35e5c5fbac039247e32cb075eaa5289a5914e73af"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:860ffa4513b2dc3083d8e412bd815a350b0a9490624b37e7c8f6ed5c6f9ce63c"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-win_amd64.whl", hash = "sha256:2760a04f06937b01b1562a2135cd7e8207e399e73ef75bbebc77e37b1ad3b15d"},
+    {file = "tree_sitter_toml-0.7.0-cp39-abi3-win_arm64.whl", hash = "sha256:fd00fd8a51c65aa19c40539431cb1773d87c30af5757b4041fa6c229058420b4"},
+    {file = "tree_sitter_toml-0.7.0.tar.gz", hash = "sha256:29e257612fa8f0c1fcbc4e7e08ddc561169f1725265302e64d81086354144a70"},
 ]
 
 [package.extras]
-core = ["tree-sitter (>=0.21,<1.0)"]
+core = ["tree-sitter (>=0.22,<1.0)"]
 
 [[package]]
 name = "tree-sitter-xml"
