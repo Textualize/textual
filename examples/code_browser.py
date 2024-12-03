@@ -6,6 +6,8 @@ Run with:
     python code_browser.py PATH
 """
 
+from __future__ import annotations
+
 import sys
 
 from rich.syntax import Syntax
