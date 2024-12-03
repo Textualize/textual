@@ -10,6 +10,7 @@ import re
 import threading
 from functools import lru_cache, partial
 from inspect import getfile
+from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -1214,7 +1215,7 @@ class DOMNode(MessagePump):
         Returns:
             A list of nodes.
         """
-        return [child for child in self._nodes if child.display]
+        return list(filter(attrgetter("display"), self._nodes))
 
     def watch(
         self,
