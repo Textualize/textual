@@ -50,6 +50,7 @@ async def test_setting_language_to_none():
         assert text_area.language is None
 
 
+@pytest.mark.syntax
 async def test_setting_unknown_language():
     app = TextAreaApp()
     async with app.run_test():
