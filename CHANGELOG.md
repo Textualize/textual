@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TextArea.update_highlight_query` https://github.com/Textualize/textual/pull/5320
 
 
-## Changed
+## Fixed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
 - Upgraded tree-sitter to 0.23+ (`syntax` extras) https://github.com/Textualize/textual/pull/5320
@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `TextArea.register_language` signature changed https://github.com/Textualize/textual/pull/5320
 - Breaking change: `SyntaxAwareDocument.language_name` property removed https://github.com/Textualize/textual/pull/5320
 - Breaking change: Kotlin syntax highlighting removed from `TextArea` https://github.com/Textualize/textual/pull/5320
+- Fixed selection list wrapping https://github.com/Textualize/textual/pull/5331
+- Fixed CSS encoding issue on Windows https://github.com/Textualize/textual/pull/5324
 
 ## [0.88.1] - 2024-11-30
 
