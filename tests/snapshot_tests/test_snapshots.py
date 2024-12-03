@@ -2878,3 +2878,13 @@ def test_disable_command_palette(snap_compare):
             return True
 
     snap_compare(FooterApp())
+
+
+def test_selection_list_wrap(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5326"""
+
+    class SelectionListApp(App):
+        def compose(self) -> ComposeResult:
+            yield SelectionList(("Hello World " * 100, 0))
+
+    snap_compare(SelectionListApp())
