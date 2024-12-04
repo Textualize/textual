@@ -59,7 +59,7 @@ class PageScreen(Screen):
         Binding(
             "c",
             "show_code",
-            "Show code",
+            "Code",
             tooltip="Show the code used to generate this screen",
         )
     ]
