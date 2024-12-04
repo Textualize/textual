@@ -219,7 +219,14 @@ class Input(Widget, can_focus=True):
     input_scroll_offset = reactive(0)
 
     # TODO - remove and replace with selection. Change to property?
-    cursor_position: Reactive[int] = reactive(0)
+    # cursor_position: Reactive[int] = reactive(0)
+    @property
+    def cursor_position(self) -> int:
+        return self._cell_offset_to_index(self.selection.end)
+
+    @cursor_position.setter
+    def cursor_position(self, position: int) -> None:
+        self.selection = Selection.cursor(position)
 
     selection: Reactive[Selection] = reactive(Selection.cursor(0))
     """The currently selected range of text."""
