@@ -5,29 +5,28 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from rich.cells import cell_len, get_character_cell_size
-from rich.console import Console, ConsoleOptions, RenderableType
-from rich.console import RenderResult as RichRenderResult
+from rich.console import RenderableType
 from rich.highlighter import Highlighter
-from rich.segment import Segment
 from rich.text import Text
 from typing_extensions import Literal
 
 from textual import events
-from textual._segment_tools import line_crop
+from textual.expand_tabs import expand_tabs_inline
+from textual.scroll_view import ScrollView
+from textual.strip import Strip
 
 if TYPE_CHECKING:
-    from textual.app import RenderResult
+    pass
 
 from textual.binding import Binding, BindingType
 from textual.css._error_tools import friendly_list
 from textual.events import Blur, Focus, Mount
-from textual.geometry import Offset, Size, clamp
+from textual.geometry import Offset, Region, Size, clamp
 from textual.message import Message
 from textual.reactive import Reactive, reactive, var
 from textual.suggester import Suggester, SuggestionReady
 from textual.timer import Timer
 from textual.validation import ValidationResult, Validator
-from textual.widget import Widget
 
 InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
@@ -40,63 +39,6 @@ _RESTRICT_TYPES = {
     "text": None,
 }
 InputType = Literal["integer", "number", "text"]
-
-
-class _InputRenderable:
-    """Render the input content."""
-
-    def __init__(
-        self, input: Input, cursor_visible: bool, selection: Selection
-    ) -> None:
-        self.input = input
-        self.cursor_visible = cursor_visible
-        self.selection = selection
-
-    def __rich_console__(
-        self, console: "Console", options: "ConsoleOptions"
-    ) -> RichRenderResult:
-        input = self.input
-        result = input._value
-        width = input.content_size.width
-
-        # Add the completion with a faded style.
-        value = input.value
-        value_length = len(value)
-        suggestion = input._suggestion
-        show_suggestion = len(suggestion) > value_length and input.has_focus
-        if show_suggestion:
-            result += Text(
-                suggestion[value_length:],
-                input.get_component_rich_style("input--suggestion"),
-            )
-
-        if input.has_focus:
-            # TODO - use a component class
-            if not self.selection.empty:
-                start, end = sorted((self.selection.start, self.selection.end))
-                selection_style = input.get_component_rich_style("input--selection")
-                result.stylize(selection_style, start, end)
-
-            if self.cursor_visible:
-                if not show_suggestion and input._cursor_at_end:
-                    result.pad_right(1)
-                cursor_style = input.get_component_rich_style("input--cursor")
-                cursor = input.cursor_position
-                result.stylize(cursor_style, cursor, cursor + 1)
-
-        segments = list(result.render(console))
-        line_length = Segment.get_line_length(segments)
-        if line_length < width:
-            segments = Segment.adjust_line_length(segments, width)
-            line_length = width
-
-        line = line_crop(
-            list(segments),
-            input.view_position,
-            input.view_position + width,
-            line_length,
-        )
-        yield from line
 
 
 class Selection(NamedTuple):
@@ -123,7 +65,7 @@ class Selection(NamedTuple):
         return self.start == self.end
 
 
-class Input(Widget, can_focus=True):
+class Input(ScrollView):
     """A text input widget."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
@@ -212,6 +154,7 @@ class Input(Widget, can_focus=True):
         border: tall $border-blurred;
         width: 100%;
         height: 3;
+        scrollbar-size-horizontal: 0;
 
         &:focus {
             border: tall $border;
@@ -259,10 +202,7 @@ class Input(Widget, can_focus=True):
 
     cursor_blink = reactive(True, init=False)
     value = reactive("", layout=True, init=False)
-    input_scroll_offset = reactive(0)
 
-    # TODO - remove and replace with selection. Change to property?
-    # cursor_position: Reactive[int] = reactive(0)
     @property
     def cursor_position(self) -> int:
         return self._cell_offset_to_index(self.selection.end)
@@ -274,7 +214,6 @@ class Input(Widget, can_focus=True):
     selection: Reactive[Selection] = reactive(Selection.cursor(0))
     """The currently selected range of text."""
 
-    view_position = reactive(0)
     placeholder = reactive("")
     complete = reactive("")
     width = reactive(1)
@@ -447,8 +386,7 @@ class Input(Widget, can_focus=True):
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
-        cell_offset = cell_len(self.value[:position])
-        return cell_offset
+        return cell_len(expand_tabs_inline(self.value[:position], 4))
 
     @property
     def _cursor_offset(self) -> int:
@@ -482,27 +420,18 @@ class Input(Widget, can_focus=True):
         value_length = len(self.value)
         return Selection(clamp(start, 0, value_length), clamp(end, 0, value_length))
 
-    def validate_view_position(self, view_position: int) -> int:
-        return clamp(view_position, 0, self.cursor_width - self.content_size.width)
-
     def _watch_selection(self, selection: Selection) -> None:
         width = self.content_size.width
         if width == 0:
             # If the input has no width the view position can't be elsewhere.
-            self.view_position = 0
             return
 
-        view_start = self.view_position
-        view_end = view_start + width
-        cursor_offset = self._cursor_offset
-
-        if cursor_offset >= view_end or cursor_offset < view_start:
-            view_position = cursor_offset - width // 2
-            self.view_position = view_position
-        else:
-            self.view_position = self.view_position
-
         self.app.cursor_position = self.cursor_screen_offset
+        self.scroll_to_region(
+            Region(self.cursor_position, 0, width=3, height=1),
+            force=True,
+            animate=False,
+        )
 
     def _watch_cursor_blink(self, blink: bool) -> None:
         """Ensure we handle updating the cursor blink at runtime."""
@@ -517,7 +446,8 @@ class Input(Widget, can_focus=True):
     def cursor_screen_offset(self) -> Offset:
         """The offset of the cursor of this input in screen-space. (x, y)/(column, row)"""
         x, y, _width, _height = self.content_region
-        return Offset(x + self._cursor_offset - self.view_position, y)
+        scroll_x, _ = self.scroll_offset
+        return Offset(x + self._cursor_offset - scroll_x, y)
 
     def _watch_value(self, value: str) -> None:
         self._suggestion = ""
@@ -535,6 +465,8 @@ class Input(Widget, can_focus=True):
         if self._initial_value:
             self.cursor_position = len(self.value)
             self._initial_value = False
+
+        self.virtual_size = Size(self.cursor_width, 1)
 
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
@@ -593,8 +525,9 @@ class Input(Widget, can_focus=True):
             return cell_len(self.placeholder)
         return self._position_to_cell(len(self.value)) + 1
 
-    def render(self) -> RenderResult:
-        self.view_position = self.view_position
+    def render_line(self, y: int) -> Strip:
+        console = self.app.console
+        width = self.scrollable_content_region.size.width
         if not self.value:
             placeholder = Text(self.placeholder, justify="left")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
@@ -606,8 +539,56 @@ class Input(Widget, can_focus=True):
                     if len(placeholder) == 0:
                         placeholder = Text(" ")
                     placeholder.stylize(cursor_style, 0, 1)
-            return placeholder
-        return _InputRenderable(self, self._cursor_visible, self.selection)
+            strip = Strip(
+                console.render(placeholder, console.options.update_width(width))
+            )
+        else:
+            result = self._value
+
+            # Add the completion with a faded style.
+            value = self.value
+            value_length = len(value)
+            suggestion = self._suggestion
+            show_suggestion = len(suggestion) > value_length and self.has_focus
+            if show_suggestion:
+                result += Text(
+                    suggestion[value_length:],
+                    self.get_component_rich_style("input--suggestion"),
+                )
+
+            if self.has_focus:
+                if not self.selection.empty:
+                    start, end = self.selection
+                    start, end = sorted((start, end))
+                    selection_style = self.get_component_rich_style("input--selection")
+                    result.stylize(selection_style, start, end)
+
+                if self._cursor_visible:
+                    if not show_suggestion and self._cursor_at_end:
+                        result.pad_right(1)
+                    cursor_style = self.get_component_rich_style("input--cursor")
+                    cursor = self.cursor_position
+                    result.stylize(cursor_style, cursor, cursor + 1)
+
+            segments = list(
+                console.render(
+                    result,
+                    console.options.update_width(
+                        max(self.virtual_size.width, self.region.size.width)
+                    ),
+                )
+            )
+
+            strip = Strip(segments)
+            virtual_width = self.virtual_size.width
+            scroll_x, _ = self.scroll_offset
+            strip = strip.crop(
+                scroll_x, scroll_x + self.scrollable_content_region.size.width
+            )
+            strip = strip.adjust_cell_length(virtual_width)
+            strip = strip.simplify()
+
+        return strip.apply_style(self.rich_style)
 
     @property
     def _value(self) -> Text:
@@ -673,7 +654,8 @@ class Input(Widget, can_focus=True):
         """
         cell_offset = 0
         _cell_size = get_character_cell_size
-        offset += self.view_position
+        scroll_x, _ = self.scroll_offset
+        offset += scroll_x
         for index, char in enumerate(self.value):
             cell_width = _cell_size(char)
             if cell_offset <= offset < (cell_offset + cell_width):
@@ -681,10 +663,15 @@ class Input(Widget, can_focus=True):
             cell_offset += cell_width
         return clamp(offset, 0, len(self.value))
 
+    def _offset_to_index(self, offset: int) -> int:
+        """Convert an offset to a character index, accounting for view position."""
+        scroll_x, _ = self.scroll_offset
+        return self._cell_offset_to_index(offset - scroll_x)
+
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
         self._pause_blink(visible=True)
         offset_x, _ = event.get_content_offset_capture(self)
-        self.selection = Selection.cursor(self._cell_offset_to_index(offset_x))
+        self.selection = Selection.cursor(self._offset_to_index(offset_x))
         self._selecting = True
         self.capture_mouse()
 
@@ -700,9 +687,7 @@ class Input(Widget, can_focus=True):
             # keeping the start position fixed.
             offset = event.get_content_offset_capture(self)
             selection_start, _ = self.selection
-            self.selection = Selection(
-                selection_start, self._cell_offset_to_index(offset.x)
-            )
+            self.selection = Selection(selection_start, self._offset_to_index(offset.x))
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
