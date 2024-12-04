@@ -434,15 +434,18 @@ class Input(Widget, can_focus=True):
         """
         return character is not None and character.isprintable()
 
-    def validate_cursor_position(self, cursor_position: int) -> int:
-        return min(max(0, cursor_position), len(self.value))
+    def validate_selection(self, selection: Selection) -> Selection:
+        return Selection(
+            clamp(selection.start, 0, len(self.value)),
+            clamp(selection.end, 0, len(self.value)),
+        )
 
     def validate_view_position(self, view_position: int) -> int:
         width = self.content_size.width
         new_view_position = max(0, min(view_position, self.cursor_width - width))
         return new_view_position
 
-    def _watch_cursor_position(self) -> None:
+    def _watch_selection(self) -> None:
         width = self.content_size.width
         if width == 0:
             # If the input has no width the view position can't be elsewhere.
