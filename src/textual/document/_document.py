@@ -8,8 +8,7 @@ from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
 from typing_extensions import Literal, get_args
 
 if TYPE_CHECKING:
-    from tree_sitter import Node
-    from tree_sitter.binding import Query
+    from tree_sitter import Node, Query
 
 from textual._cells import cell_len
 from textual.geometry import Size
@@ -143,10 +142,10 @@ class DocumentBase(ABC):
 
     def query_syntax_tree(
         self,
-        query: Query,
+        query: "Query",
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
-    ) -> list[tuple[Node, str]]:
+    ) -> dict[str, list["Node"]]:
         """Query the tree-sitter syntax tree.
 
         The default implementation always returns an empty list.
@@ -159,11 +158,11 @@ class DocumentBase(ABC):
             end_point: The (row, column byte) to end the query at.
 
         Returns:
-            A tuple containing the nodes and text captured by the query.
+            A dict mapping captured node names to lists of Nodes with that name.
         """
-        return []
+        return {}
 
-    def prepare_query(self, query: str) -> Query | None:
+    def prepare_query(self, query: str) -> "Query | None":
         return None
 
     @property
@@ -206,7 +205,7 @@ class Document(DocumentBase):
     """A document which can be opened in a TextArea."""
 
     def __init__(self, text: str) -> None:
-        self._newline = _detect_newline_style(text)
+        self._newline: Newline = _detect_newline_style(text)
         """The type of newline used in the text."""
         self._lines: list[str] = text.splitlines(keepends=False)
         """The lines of the document, excluding newline characters.
@@ -371,14 +370,23 @@ class Document(DocumentBase):
         return index
 
     def get_location_from_index(self, index: int) -> Location:
-        """Given an index in the document's text, returns the corresponding location.
+        """Given a codepoint index in the document's text, returns the corresponding location.
 
         Args:
             index: The index in the document's text.
 
         Returns:
             The corresponding location.
+
+        Raises:
+            ValueError: If the index is doesn't correspond to a location in the document.
         """
+        error_message = (
+            f"Index {index!r} does not correspond to a location in the document."
+        )
+        if index < 0 or index > len(self.text):
+            raise ValueError(error_message)
+
         column_index = 0
         newline_length = len(self.newline)
         for line_index in range(self.line_count):
@@ -390,6 +398,8 @@ class Document(DocumentBase):
             elif index == next_column_index:
                 return (line_index + 1, 0)
             column_index = next_column_index
+
+        raise ValueError(error_message)
 
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.

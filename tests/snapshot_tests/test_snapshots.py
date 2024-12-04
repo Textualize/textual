@@ -38,8 +38,8 @@ from textual.widgets import (
     TabbedContent,
     TabPane,
 )
-from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 from textual.theme import Theme
+from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
