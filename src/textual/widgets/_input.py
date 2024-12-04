@@ -128,10 +128,34 @@ class Input(Widget, can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "cursor_left", "Move cursor left", show=False),
+        Binding(
+            "shift+left",
+            "cursor_left(True)",
+            "Move cursor left and select",
+            show=False,
+        ),
         Binding("ctrl+left", "cursor_left_word", "Move cursor left a word", show=False),
+        Binding(
+            "ctrl+shift+left",
+            "cursor_left_word(True)",
+            "Move cursor left a word and select",
+            show=False,
+        ),
         Binding("right", "cursor_right", "Move cursor right", show=False),
         Binding(
+            "shift+right",
+            "cursor_right(True)",
+            "Move cursor right and select",
+            show=False,
+        ),
+        Binding(
             "ctrl+right", "cursor_right_word", "Move cursor right a word", show=False
+        ),
+        Binding(
+            "ctrl+shift+right",
+            "cursor_right_word(True)",
+            "Move cursor right a word and select",
+            show=False,
         ),
         Binding("backspace", "delete_left", "Delete character left", show=False),
         Binding("home,ctrl+a", "home", "Go to start", show=False),
@@ -753,56 +777,107 @@ class Input(Widget, can_focus=True):
         """Clear the input."""
         self.value = ""
 
-    def action_cursor_left(self) -> None:
-        """Move the cursor one position to the left."""
-        self.cursor_position -= 1
+    def action_cursor_left(self, select: bool = False) -> None:
+        """Move the cursor one position to the left.
 
-    def action_cursor_right(self) -> None:
-        """Accept an auto-completion or move the cursor one position to the right."""
-        if self._cursor_at_end and self._suggestion:
-            self.value = self._suggestion
-            self.cursor_position = len(self.value)
+        Args:
+            select: If `True`, select the text to the left of the cursor.
+        """
+        if select:
+            start, end = self.selection
+            self.selection = Selection(start, end - 1)
         else:
-            self.cursor_position += 1
+            self.cursor_position -= 1
 
-    def action_home(self) -> None:
-        """Move the cursor to the start of the input."""
-        self.cursor_position = 0
+    def action_cursor_right(self, select: bool = False) -> None:
+        """Accept an auto-completion or move the cursor one position to the right.
 
-    def action_end(self) -> None:
-        """Move the cursor to the end of the input."""
-        self.cursor_position = len(self.value)
+        Args:
+            select: If `True`, select the text to the right of the cursor.
+        """
+        if select:
+            start, end = self.selection
+            self.selection = Selection(start, end + 1)
+        else:
+            if self._cursor_at_end and self._suggestion:
+                self.value = self._suggestion
+                self.cursor_position = len(self.value)
+            else:
+                self.cursor_position += 1
+
+    def action_home(self, select: bool = False) -> None:
+        """Move the cursor to the start of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        if select:
+            self.selection = Selection(0, self.cursor_position)
+        else:
+            self.cursor_position = 0
+
+    def action_end(self, select: bool = False) -> None:
+        """Move the cursor to the end of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        if select:
+            self.selection = Selection(self.cursor_position, len(self.value))
+        else:
+            self.cursor_position = len(self.value)
 
     _WORD_START = re.compile(r"(?<=\W)\w")
 
-    def action_cursor_left_word(self) -> None:
-        """Move the cursor left to the start of a word."""
+    def action_cursor_left_word(self, select: bool = False) -> None:
+        """Move the cursor left to the start of a word.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
         if self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during movement.
-            self.action_home()
+            self.action_home(select)
         else:
+            start, _ = self.selection
             try:
                 *_, hit = re.finditer(
                     self._WORD_START, self.value[: self.cursor_position]
                 )
             except ValueError:
-                self.cursor_position = 0
+                target = 0
             else:
-                self.cursor_position = hit.start()
+                target = hit.start()
 
-    def action_cursor_right_word(self) -> None:
-        """Move the cursor right to the start of a word."""
+            if select:
+                self.selection = Selection(start, target)
+            else:
+                self.cursor_position = target
+
+    def action_cursor_right_word(self, select: bool = False) -> None:
+        """Move the cursor right to the start of a word.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
         if self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during movement.
-            self.action_end()
+            self.action_end(select)
         else:
             hit = re.search(self._WORD_START, self.value[self.cursor_position :])
+
+            start, end = self.selection
             if hit is None:
-                self.cursor_position = len(self.value)
+                target = len(self.value)
             else:
-                self.cursor_position += hit.start()
+                target = end + hit.start()
+
+            if select:
+                self.selection = Selection(start, target)
+            else:
+                self.cursor_position = target
 
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
