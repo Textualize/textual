@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 from textual.binding import Binding, BindingType
 from textual.css._error_tools import friendly_list
 from textual.events import Blur, Focus, Mount
-from textual.geometry import Offset, Size
+from textual.geometry import Offset, Size, clamp
 from textual.message import Message
 from textual.reactive import Reactive, reactive, var
 from textual.suggester import Suggester, SuggestionReady
@@ -87,6 +87,26 @@ class _InputRenderable:
             line_length,
         )
         yield from line
+
+
+class Selection(NamedTuple):
+    """A range of selected text within the Input.
+
+    Text can be selected by clicking and dragging the mouse, or by pressing
+    shift+arrow keys.
+
+    Attributes:
+        start: The start index of the selection.
+        end: The end index of the selection.
+    """
+
+    start: int
+    end: int
+
+    @classmethod
+    def cursor(cls, cursor_position: int) -> Selection:
+        """Create a selection from a cursor position."""
+        return cls(cursor_position, cursor_position)
 
 
 class Input(Widget, can_focus=True):
@@ -197,7 +217,13 @@ class Input(Widget, can_focus=True):
     cursor_blink = reactive(True, init=False)
     value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
+
+    # TODO - remove and replace with selection. Change to property?
     cursor_position: Reactive[int] = reactive(0)
+
+    selection: Reactive[Selection] = reactive(Selection.cursor(0))
+    """The currently selected range of text."""
+
     view_position = reactive(0)
     placeholder = reactive("")
     complete = reactive("")
@@ -358,6 +384,9 @@ class Input(Widget, can_focus=True):
             elif self.type == "number":
                 self.validators.append(Number())
 
+        self._selecting = False
+        """True if the user is selecting text with the mouse."""
+
         self._initial_value = True
         """Indicates if the value has been set for the first time yet."""
         if value is not None:
@@ -431,7 +460,7 @@ class Input(Widget, can_focus=True):
             if blink:
                 self._blink_timer.resume()
             else:
-                self._pause_blink_cycle()
+                self._pause_blink()
                 self._cursor_visible = True
 
     @property
@@ -559,17 +588,17 @@ class Input(Widget, can_focus=True):
         )
 
     def _on_blur(self, event: Blur) -> None:
-        self._pause_blink_cycle()
+        self._pause_blink()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
     def _on_focus(self, event: Focus) -> None:
-        self._restart_blink_cycle()
+        self._restart_blink()
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
-        self._restart_blink_cycle()
+        self._restart_blink()
 
         if event.is_printable:
             event.stop()
@@ -584,9 +613,7 @@ class Input(Widget, can_focus=True):
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:
-        offset = event.get_content_offset(self)
-        if offset is None:
-            return
+        offset = event.get_content_offset_capture(self)
         event.stop()
         click_x = offset.x + self.view_position
         cell_offset = 0
@@ -600,26 +627,61 @@ class Input(Widget, can_focus=True):
         else:
             self.cursor_position = len(self.value)
 
+    def _cell_offset_to_index(self, offset: int) -> int:
+        """Convert a cell offset to a character index, accounting for character width.
+
+        Args:
+            offset: The cell offset to convert.
+
+        Returns:
+            The character index corresponding to the cell offset.
+        """
+        cell_offset = 0
+        _cell_size = get_character_cell_size
+        offset += self.view_position
+        for index, char in enumerate(self.value):
+            cell_width = _cell_size(char)
+            if cell_offset <= offset < (cell_offset + cell_width):
+                return index
+            cell_offset += cell_width
+        return clamp(offset, 0, len(self.value))
+
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
-        self._pause_blink_cycle()
+        self._pause_blink(visible=True)
+        offset_x, _ = event.get_content_offset_capture(self)
+        self.selection = Selection.cursor(self._cell_offset_to_index(offset_x))
+        self._selecting = True
+        self.capture_mouse()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        self._restart_blink_cycle()
+        self._restart_blink()
+        self._selecting = False
+        self.release_mouse()
+
+    async def _on_mouse_move(self, event: events.MouseMove) -> None:
+        offset = event.get_content_offset_capture(self)
+        if self._selecting:
+            # As we drag the mouse, we update the end position of the selection,
+            # keeping the start position fixed.
+            selection_start, _ = self.selection
+            self.selection = Selection(
+                selection_start, self._cell_offset_to_index(offset.x)
+            )
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
         if event.value == self.value:
             self._suggestion = event.suggestion
 
-    def _restart_blink_cycle(self) -> None:
+    def _restart_blink(self) -> None:
         """Restart the cursor blink cycle."""
         self._cursor_visible = True
         if self.cursor_blink and self._blink_timer:
             self._blink_timer.reset()
 
-    def _pause_blink_cycle(self) -> None:
+    def _pause_blink(self, visible: bool = False) -> None:
         """Hide the blinking cursor and pause the blink cycle."""
-        self._cursor_visible = False
+        self._cursor_visible = visible
         if self._blink_timer:
             self._blink_timer.pause()
 
