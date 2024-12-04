@@ -45,9 +45,12 @@ InputType = Literal["integer", "number", "text"]
 class _InputRenderable:
     """Render the input content."""
 
-    def __init__(self, input: Input, cursor_visible: bool) -> None:
+    def __init__(
+        self, input: Input, cursor_visible: bool, selection: Selection
+    ) -> None:
         self.input = input
         self.cursor_visible = cursor_visible
+        self.selection = selection
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
@@ -67,12 +70,19 @@ class _InputRenderable:
                 input.get_component_rich_style("input--suggestion"),
             )
 
-        if self.cursor_visible and input.has_focus:
-            if not show_suggestion and input._cursor_at_end:
-                result.pad_right(1)
-            cursor_style = input.get_component_rich_style("input--cursor")
-            cursor = input.cursor_position
-            result.stylize(cursor_style, cursor, cursor + 1)
+        if input.has_focus:
+            # TODO - use a component class
+            if not self.selection.empty:
+                start, end = sorted((self.selection.start, self.selection.end))
+                selection_style = input.get_component_rich_style("input--selection")
+                result.stylize(selection_style, start, end)
+
+            if self.cursor_visible:
+                if not show_suggestion and input._cursor_at_end:
+                    result.pad_right(1)
+                cursor_style = input.get_component_rich_style("input--cursor")
+                cursor = input.cursor_position
+                result.stylize(cursor_style, cursor, cursor + 1)
 
         segments = list(result.render(console))
         line_length = Segment.get_line_length(segments)
@@ -107,6 +117,10 @@ class Selection(NamedTuple):
     def cursor(cls, cursor_position: int) -> Selection:
         """Create a selection from a cursor position."""
         return cls(cursor_position, cursor_position)
+
+    @property
+    def empty(self) -> bool:
+        return self.start == self.end
 
 
 class Input(Widget, can_focus=True):
@@ -155,6 +169,7 @@ class Input(Widget, can_focus=True):
         "input--cursor",
         "input--placeholder",
         "input--suggestion",
+        "input--selection",
     }
     """
     | Class | Description |
@@ -162,6 +177,7 @@ class Input(Widget, can_focus=True):
     | `input--cursor` | Target the cursor. |
     | `input--placeholder` | Target the placeholder text (when it exists). |
     | `input--suggestion` | Target the auto-completion suggestion (when it exists). |
+    | `input--selection` | Target the selected text. |
     """
 
     DEFAULT_CSS = """
@@ -181,6 +197,9 @@ class Input(Widget, can_focus=True):
             background: $input-cursor-background;
             color: $input-cursor-foreground;
             text-style: $input-cursor-text-style;
+        }
+        &>.input--selection {
+            background: $input-selection-background;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;
@@ -435,17 +454,14 @@ class Input(Widget, can_focus=True):
         return character is not None and character.isprintable()
 
     def validate_selection(self, selection: Selection) -> Selection:
-        return Selection(
-            clamp(selection.start, 0, len(self.value)),
-            clamp(selection.end, 0, len(self.value)),
-        )
+        start, end = selection
+        value_length = len(self.value)
+        return Selection(clamp(start, 0, value_length), clamp(end, 0, value_length))
 
     def validate_view_position(self, view_position: int) -> int:
-        width = self.content_size.width
-        new_view_position = max(0, min(view_position, self.cursor_width - width))
-        return new_view_position
+        return clamp(view_position, 0, self.cursor_width - self.content_size.width)
 
-    def _watch_selection(self) -> None:
+    def _watch_selection(self, selection: Selection) -> None:
         width = self.content_size.width
         if width == 0:
             # If the input has no width the view position can't be elsewhere.
@@ -567,7 +583,7 @@ class Input(Widget, can_focus=True):
                         placeholder = Text(" ")
                     placeholder.stylize(cursor_style, 0, 1)
             return placeholder
-        return _InputRenderable(self, self._cursor_visible)
+        return _InputRenderable(self, self._cursor_visible, self.selection)
 
     @property
     def _value(self) -> Text:
@@ -622,21 +638,6 @@ class Input(Widget, can_focus=True):
             self.insert_text_at_cursor(line)
         event.stop()
 
-    async def _on_click(self, event: events.Click) -> None:
-        offset = event.get_content_offset_capture(self)
-        event.stop()
-        click_x = offset.x + self.view_position
-        cell_offset = 0
-        _cell_size = get_character_cell_size
-        for index, char in enumerate(self.value):
-            cell_width = _cell_size(char)
-            if cell_offset <= click_x < (cell_offset + cell_width):
-                self.cursor_position = index
-                break
-            cell_offset += cell_width
-        else:
-            self.cursor_position = len(self.value)
-
     def _cell_offset_to_index(self, offset: int) -> int:
         """Convert a cell offset to a character index, accounting for character width.
 
@@ -664,15 +665,16 @@ class Input(Widget, can_focus=True):
         self.capture_mouse()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        self._restart_blink()
-        self._selecting = False
-        self.release_mouse()
+        if self._selecting:
+            self._selecting = False
+            self.release_mouse()
+            self._restart_blink()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
-        offset = event.get_content_offset_capture(self)
         if self._selecting:
             # As we drag the mouse, we update the end position of the selection,
             # keeping the start position fixed.
+            offset = event.get_content_offset_capture(self)
             selection_start, _ = self.selection
             self.selection = Selection(
                 selection_start, self._cell_offset_to_index(offset.x)
