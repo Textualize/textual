@@ -215,8 +215,6 @@ class Input(ScrollView):
     """The currently selected range of text."""
 
     placeholder = reactive("")
-    complete = reactive("")
-    width = reactive(1)
     _cursor_visible = reactive(True)
     password = reactive(False)
     suggester: Suggester | None
@@ -421,11 +419,6 @@ class Input(ScrollView):
         return Selection(clamp(start, 0, value_length), clamp(end, 0, value_length))
 
     def _watch_selection(self, selection: Selection) -> None:
-        width = self.content_size.width
-        if width == 0:
-            # If the input has no width the view position can't be elsewhere.
-            return
-
         self.app.cursor_position = self.cursor_screen_offset
         self.scroll_to_region(
             Region(self.cursor_position, 0, width=3, height=1),
