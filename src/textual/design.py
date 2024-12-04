@@ -321,9 +321,6 @@ class ColorSystem:
             "input-selection-background",
             Color.parse(colors["primary-lighten-1"]).with_alpha(0.4).hex,
         )
-        colors["input-selection-foreground"] = get(
-            "input-selection-foreground", background.hex
-        )
 
         # Markdown header styles
         colors["markdown-h1-color"] = get("markdown-h1-color", primary.hex)
