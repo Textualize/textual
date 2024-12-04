@@ -800,7 +800,7 @@ class Markdown(Widget):
             await self.update(self._markdown)
 
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
-        if self.is_external_link(event.href) and self._open_links:
+        if self._open_links:
             self.app.open_url(event.href)
 
     def _watch_code_dark_theme(self) -> None:
