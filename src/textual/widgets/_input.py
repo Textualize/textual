@@ -201,11 +201,12 @@ class Input(ScrollView):
     """
 
     cursor_blink = reactive(True, init=False)
-    value = reactive("", layout=True, init=False)
+    # TODO - check with width: auto to see if layout=True is needed
+    value = reactive("", init=False)
 
     @property
     def cursor_position(self) -> int:
-        return self._cell_offset_to_index(self.selection.end)
+        return self.selection.end
 
     @cursor_position.setter
     def cursor_position(self, position: int) -> None:
@@ -383,7 +384,14 @@ class Input(ScrollView):
             self.tooltip = tooltip
 
     def _position_to_cell(self, position: int) -> int:
-        """Convert an index within the value to cell position."""
+        """Convert an index within the value to cell position.
+
+        Args:
+            position: The index within the value to convert.
+
+        Returns:
+            The cell position corresponding to the index.
+        """
         return cell_len(expand_tabs_inline(self.value[:position], 4))
 
     @property
@@ -397,7 +405,7 @@ class Input(ScrollView):
     @property
     def _cursor_at_end(self) -> bool:
         """Flag to indicate if the cursor is at the end"""
-        return self.cursor_position >= len(self.value)
+        return self.cursor_position == len(self.value)
 
     def check_consume_key(self, key: str, character: str | None) -> bool:
         """Check if the widget may consume the given key.
@@ -421,7 +429,7 @@ class Input(ScrollView):
     def _watch_selection(self, selection: Selection) -> None:
         self.app.cursor_position = self.cursor_screen_offset
         self.scroll_to_region(
-            Region(self.cursor_position, 0, width=3, height=1),
+            Region(self.cursor_position, 0, width=1, height=1),
             force=True,
             animate=False,
         )
@@ -443,6 +451,8 @@ class Input(ScrollView):
         return Offset(x + self._cursor_offset - scroll_x, y)
 
     def _watch_value(self, value: str) -> None:
+        """Update the virtual size and suggestion when the value changes."""
+        self.virtual_size = Size(self.content_width, 1)
         self._suggestion = ""
         if self.suggester and value:
             self.run_worker(self.suggester._get_suggestion(self, value))
@@ -458,8 +468,6 @@ class Input(ScrollView):
         if self._initial_value:
             self.cursor_position = len(self.value)
             self._initial_value = False
-
-        self.virtual_size = Size(self.cursor_width, 1)
 
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
@@ -511,18 +519,12 @@ class Input(ScrollView):
         """Check if the value has passed validation."""
         return self._valid
 
-    @property
-    def cursor_width(self) -> int:
-        """The width of the input (with extra space for cursor at the end)."""
-        if self.placeholder and not self.value:
-            return cell_len(self.placeholder)
-        return self._position_to_cell(len(self.value)) + 1
-
     def render_line(self, y: int) -> Strip:
         console = self.app.console
-        width = self.scrollable_content_region.size.width
+        max_content_width = self.scrollable_content_region.width
+
         if not self.value:
-            placeholder = Text(self.placeholder, justify="left")
+            placeholder = Text(self.placeholder, justify="left", end="")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
             if self.has_focus:
                 cursor_style = self.get_component_rich_style("input--cursor")
@@ -530,10 +532,13 @@ class Input(ScrollView):
                     # If the placeholder is empty, there's no characters to stylise
                     # to make the cursor flash, so use a single space character
                     if len(placeholder) == 0:
-                        placeholder = Text(" ")
+                        placeholder = Text(" ", end="")
                     placeholder.stylize(cursor_style, 0, 1)
+
             strip = Strip(
-                console.render(placeholder, console.options.update_width(width))
+                console.render(
+                    placeholder, console.options.update_width(max_content_width + 1)
+                )
             )
         else:
             result = self._value
@@ -547,6 +552,7 @@ class Input(ScrollView):
                 result += Text(
                     suggestion[value_length:],
                     self.get_component_rich_style("input--suggestion"),
+                    end="",
                 )
 
             if self.has_focus:
@@ -557,29 +563,20 @@ class Input(ScrollView):
                     result.stylize(selection_style, start, end)
 
                 if self._cursor_visible:
-                    if not show_suggestion and self._cursor_at_end:
-                        result.pad_right(1)
                     cursor_style = self.get_component_rich_style("input--cursor")
                     cursor = self.cursor_position
+                    if not show_suggestion and self._cursor_at_end:
+                        result.pad_right(1)
                     result.stylize(cursor_style, cursor, cursor + 1)
 
             segments = list(
-                console.render(
-                    result,
-                    console.options.update_width(
-                        max(self.virtual_size.width, self.region.size.width)
-                    ),
-                )
+                console.render(result, console.options.update_width(self.content_width))
             )
 
             strip = Strip(segments)
-            virtual_width = self.virtual_size.width
             scroll_x, _ = self.scroll_offset
-            strip = strip.crop(
-                scroll_x, scroll_x + self.scrollable_content_region.size.width
-            )
-            strip = strip.adjust_cell_length(virtual_width)
-            strip = strip.simplify()
+            strip = strip.crop(scroll_x, scroll_x + max_content_width + 1)
+            strip = strip.extend_cell_length(max_content_width + 1)
 
         return strip.apply_style(self.rich_style)
 
@@ -587,15 +584,25 @@ class Input(ScrollView):
     def _value(self) -> Text:
         """Value rendered as text."""
         if self.password:
-            return Text("•" * len(self.value), no_wrap=True, overflow="ignore")
+            return Text("•" * len(self.value), no_wrap=True, overflow="ignore", end="")
         else:
-            text = Text(self.value, no_wrap=True, overflow="ignore")
+            text = Text(self.value, no_wrap=True, overflow="ignore", end="")
             if self.highlighter is not None:
                 text = self.highlighter(text)
             return text
 
+    @property
+    def content_width(self) -> int:
+        """The width of the content."""
+        if self.placeholder and not self.value:
+            return cell_len(self.placeholder)
+
+        # Extra space for cursor at the end.
+        return self._value.cell_len + 1
+
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        return self.cursor_width
+        """Get the widget of the content."""
+        return self.content_width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
@@ -656,15 +663,10 @@ class Input(ScrollView):
             cell_offset += cell_width
         return clamp(offset, 0, len(self.value))
 
-    def _offset_to_index(self, offset: int) -> int:
-        """Convert an offset to a character index, accounting for view position."""
-        scroll_x, _ = self.scroll_offset
-        return self._cell_offset_to_index(offset - scroll_x)
-
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
         self._pause_blink(visible=True)
         offset_x, _ = event.get_content_offset_capture(self)
-        self.selection = Selection.cursor(self._offset_to_index(offset_x))
+        self.selection = Selection.cursor(self._cell_offset_to_index(offset_x))
         self._selecting = True
         self.capture_mouse()
 
@@ -680,7 +682,9 @@ class Input(ScrollView):
             # keeping the start position fixed.
             offset = event.get_content_offset_capture(self)
             selection_start, _ = self.selection
-            self.selection = Selection(selection_start, self._offset_to_index(offset.x))
+            self.selection = Selection(
+                selection_start, self._cell_offset_to_index(offset.x)
+            )
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
@@ -891,7 +895,8 @@ class Input(ScrollView):
         if self.cursor_position <= 0:
             # Cursor at the start, so nothing to delete
             return
-        if self.cursor_position == len(self.value):
+
+        if self._cursor_at_end:
             # Delete from end
             self.value = self.value[:-1]
             self.cursor_position = len(self.value)
