@@ -292,6 +292,7 @@ class Input(ScrollView):
         validators: Validator | Iterable[Validator] | None = None,
         validate_on: Iterable[InputValidationOn] | None = None,
         valid_empty: bool = False,
+        select_on_focus: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -315,6 +316,7 @@ class Input(ScrollView):
                 which determine when to do input validation. The default is to do
                 validation for all messages.
             valid_empty: Empty values are valid.
+            select_on_focus: Whether to select all text on focus.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -384,6 +386,8 @@ class Input(ScrollView):
 
         if tooltip is not None:
             self.tooltip = tooltip
+
+        self.select_on_focus = select_on_focus
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position.
@@ -630,6 +634,8 @@ class Input(ScrollView):
 
     def _on_focus(self, event: Focus) -> None:
         self._restart_blink()
+        if self.select_on_focus:
+            self.selection = Selection(0, len(self.value))
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
 
