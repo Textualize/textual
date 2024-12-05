@@ -62,6 +62,7 @@ class Selection(NamedTuple):
 
     @property
     def is_empty(self) -> bool:
+        """Return True if the selection is empty."""
         return self.start == self.end
 
 
@@ -209,10 +210,12 @@ class Input(ScrollView):
 
     @property
     def cursor_position(self) -> int:
+        """The current position of the cursor, corresponding to the end of the selection."""
         return self.selection.end
 
     @cursor_position.setter
     def cursor_position(self, position: int) -> None:
+        """Set the current position of the cursor."""
         self.selection = Selection.cursor(position)
 
     selection: Reactive[Selection] = reactive(Selection.cursor(0))
