@@ -150,7 +150,7 @@ class ToastRack(Container, inherit_css=False):
         layer: _toastrack;
         width: 1fr;
         height: auto;
-        dock: top;
+        dock: bottom;
         align: right bottom;
         visibility: hidden;
         layout: vertical;
