@@ -208,6 +208,19 @@ def test_input_scrolls_to_cursor(snap_compare):
     )
 
 
+def test_input_initial_scroll(snap_compare):
+    """When the input is smaller than its content, the start of the content should
+    be visible, not the end."""
+
+    class InputInitialScrollApp(App[None]):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield Input(value="the quick brown fox jumps over the lazy dog")
+
+    assert snap_compare(InputInitialScrollApp(), terminal_size=(20, 5))
+
+
 def test_input_selection(snap_compare):
     """BCDEF should be visible, and DEF should be selected. The cursor should be
     sitting above 'D'."""
