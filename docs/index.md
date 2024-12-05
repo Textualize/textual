@@ -77,7 +77,20 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 </div>
 
+
 ---
+
+The official [Textual demo](https://github.com/textualize/textual-demo).
+
+<div class="textual-web-demo" data-app="demo"></div>
+
+---
+
+## Toolong
+
+A terminal application to view, tail, merge, and search log files (plus JSONL).
+
+[Toolong Github Repository](https://github.com/textualize/toolong)
 
 <div>
 <a href="https://github.com/Textualize/toolong">
@@ -87,13 +100,12 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
-<div>
-<a href="https://github.com/textualize/frogmouth">
---8<-- "docs/images/screenshots/frogmouth.svg"
-</a>
-</div>
 
----
+## Memray
+
+Memray is a memory profiler for Python, built by Bloomberg.
+
+[Memray Github Repository](https://github.com/bloomberg/memray)
 
 <div>
 <a href="https://github.com/bloomberg/memray">
@@ -102,6 +114,12 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 </div>
 
 ---
+
+## Dolphie
+
+Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL
+
+[Dolphie Github Repository](https://github.com/charles-001/dolphie)
 
 
 <a href="https://github.com/charles-001/dolphie">
@@ -113,6 +131,12 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
+## Harlequin
+
+An easy, fast, and beautiful database client for the terminal.
+
+[Harlequin website](https://harlequin.sh/)
+
 <div>
 <a href="https://harlequin.sh">
 --8<-- "docs/images/screenshots/harlequin.svg"
@@ -123,26 +147,6 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
-
-=== "Stopwatch tutorial"
-
-    <div class="textual-web-demo" data-app="tutorial"></div>
-
-
-=== "stopwatch.py"
-
-    ```python 
-    --8<-- "docs/examples/tutorial/stopwatch.py"
-    ```
-
-=== "stopwatch.tcss"
-
-    ```css
-    --8<-- "docs/examples/tutorial/stopwatch.tcss"
-    ```
-
-
----
 
 
 === "Pride example"
