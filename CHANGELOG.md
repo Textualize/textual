@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added support for XML syntax highlighting https://github.com/Textualize/textual/pull/5320
 - Added `TextArea.update_highlight_query` https://github.com/Textualize/textual/pull/5320
 
-
 ## Fixed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
