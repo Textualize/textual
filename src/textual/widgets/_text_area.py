@@ -238,6 +238,7 @@ TextArea {
         ),
         Binding("ctrl+z", "undo", "Undo", show=False),
         Binding("ctrl+y", "redo", "Redo", show=False),
+        Binding("ctrl+c", "copy_selection", "Copy selected text", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -2278,6 +2279,10 @@ TextArea {
             to_location = (cursor_row, current_row_length)
 
         self._delete_via_keyboard(end, to_location)
+
+    def action_copy_selection(self) -> None:
+        """Copy the current selection to the clipboard."""
+        self.app.copy_to_clipboard(self.selected_text)
 
 
 @lru_cache(maxsize=128)

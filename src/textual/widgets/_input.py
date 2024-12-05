@@ -114,6 +114,7 @@ class Input(ScrollView):
             "ctrl+f", "delete_right_word", "Delete right to start of word", show=False
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
+        Binding("ctrl+c", "copy_selection", "Copy selected text", show=False),
     ]
     """
     | Key(s) | Description |
@@ -990,3 +991,7 @@ class Input(ScrollView):
             self.validate(self.value) if "submitted" in self.validate_on else None
         )
         self.post_message(self.Submitted(self, self.value, validation_result))
+
+    def action_copy_selection(self) -> None:
+        """Copy the current selection to the clipboard."""
+        self.app.copy_to_clipboard(self.selected_text)
