@@ -6,6 +6,7 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Input
+from textual.widgets.input import Selection
 
 
 class InputApp(App[None]):
@@ -61,3 +62,34 @@ async def test_input_height():
             input_widget.styles.height.value == input_widget.parent.styles.height.value
         )
         assert input_widget.parent.styles.height.value == 1
+
+
+async def test_input_selected_text():
+    async with InputApp().run_test() as pilot:
+        input_widget = pilot.app.query_one(Input)
+        input_widget.value = "Hello, world!"
+        input_widget.selection = Selection(0, 4)
+        assert input_widget.selected_text == "Hell"
+
+        # Reverse selection
+        input_widget.selection = Selection(4, 0)
+        assert input_widget.selected_text == "Hell"
+
+        # Empty selection
+        input_widget.selection = Selection(4, 4)
+        assert input_widget.selected_text == ""
+
+
+async def test_input_selection_deleted_programmatically():
+    async with InputApp().run_test() as pilot:
+        input_widget = pilot.app.query_one(Input)
+        input_widget.value = "Hello, world!"
+        input_widget.selection = Selection(0, 4)
+        input_widget.delete_selection()
+        assert input_widget.value == "o, world!"
+
+        # Reverse selection
+        input_widget.value = "Hello, world!"
+        input_widget.selection = Selection(4, 0)
+        input_widget.delete_selection()
+        assert input_widget.value == "o, world!"

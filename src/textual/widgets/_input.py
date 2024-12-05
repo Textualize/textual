@@ -743,6 +743,12 @@ class Input(ScrollView):
         """Clear the input."""
         self.value = ""
 
+    @property
+    def selected_text(self) -> str:
+        """The text between the start and end points of the current selection."""
+        start, end = sorted(self.selection)
+        return self.value[start:end]
+
     def action_cursor_left(self, select: bool = False) -> None:
         """Move the cursor one position to the left.
 
