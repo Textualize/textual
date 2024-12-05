@@ -872,20 +872,25 @@ class Input(ScrollView):
 
     def delete(self, start: int, end: int) -> None:
         """Delete the text between the start and end locations."""
-        start, end = sorted((start, end))
         self.replace("", start, end)
+
+    def delete_selection(self) -> None:
+        """Delete the current selection."""
+        self.delete(*self.selection)
 
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
         if self.selection.empty:
-            start, end = self.cursor_position, self.cursor_position + 1
+            self.delete(self.cursor_position, self.cursor_position + 1)
         else:
-            start, end = self.selection
-
-        self.delete(start, end)
+            self.delete_selection()
 
     def action_delete_right_word(self) -> None:
         """Delete the current character and all rightward to the start of the next word."""
+        if not self.selection.empty:
+            self.delete_selection()
+            return
+
         if self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during deletion.
@@ -902,16 +907,17 @@ class Input(ScrollView):
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
-        self.delete(self.cursor_position, len(self.value))
+        if self.selection.empty:
+            self.delete(self.cursor_position, len(self.value))
+        else:
+            self.delete_selection()
 
     def action_delete_left(self) -> None:
         """Delete one character to the left of the current cursor position."""
         if self.selection.empty:
-            start, end = self.cursor_position - 1, self.cursor_position
+            self.delete(self.cursor_position - 1, self.cursor_position)
         else:
-            start, end = self.selection
-
-        self.delete(start, end)
+            self.delete_selection()
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
