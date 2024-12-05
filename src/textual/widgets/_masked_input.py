@@ -5,17 +5,16 @@ from dataclasses import dataclass
 from enum import Flag, auto
 from typing import TYPE_CHECKING, Iterable, Pattern
 
-from rich.console import Console, ConsoleOptions, RenderableType
-from rich.console import RenderResult as RichRenderResult
+from rich.console import RenderableType
 from rich.segment import Segment
 from rich.text import Text
 from typing_extensions import Literal
 
 from textual import events
-from textual._segment_tools import line_crop
+from textual.strip import Strip
 
 if TYPE_CHECKING:
-    from textual.app import RenderResult
+    pass
 
 from textual.reactive import var
 from textual.validation import ValidationResult, Validator
@@ -61,55 +60,6 @@ _TEMPLATE_CHARACTERS = {
     "B": (r"[0-1]", _CharFlags.REQUIRED),
     "b": (r"[0-1]", None),
 }
-
-
-class _InputRenderable:
-    """Render the input content."""
-
-    def __init__(self, input: Input, cursor_visible: bool) -> None:
-        self.input = input
-        self.cursor_visible = cursor_visible
-
-    def __rich_console__(
-        self, console: "Console", options: "ConsoleOptions"
-    ) -> RichRenderResult:
-        input = self.input
-        result = input._value
-        width = input.content_size.width
-
-        # Add the completion with a faded style.
-        value = input.value
-        value_length = len(value)
-        template = input._template
-        style = input.get_component_rich_style("input--placeholder")
-        result += Text(
-            template.mask[value_length:],
-            style,
-        )
-        for index, (char, char_definition) in enumerate(zip(value, template.template)):
-            if char == " ":
-                result.stylize(style, index, index + 1)
-
-        if self.cursor_visible and input.has_focus:
-            if input._cursor_at_end:
-                result.pad_right(1)
-            cursor_style = input.get_component_rich_style("input--cursor")
-            cursor = input.cursor_position
-            result.stylize(cursor_style, cursor, cursor + 1)
-
-        segments = list(result.render(console))
-        line_length = Segment.get_line_length(segments)
-        if line_length < width:
-            segments = Segment.adjust_line_length(segments, width)
-            line_length = width
-
-        line = line_crop(
-            list(segments),
-            input.view_position,
-            input.view_position + width,
-            line_length,
-        )
-        yield from line
 
 
 class _Template(Validator):
@@ -596,14 +546,49 @@ class MaskedInput(Input, can_focus=True):
 
         return combined_result
 
-    def render(self) -> RenderResult:
-        return _InputRenderable(self, self._cursor_visible)
+    def render_line(self, y: int) -> Strip:
+        if y != 0:
+            return Strip.blank(self.size.width)
+
+        result = self._value
+        width = self.content_size.width
+
+        # Add the completion with a faded style.
+        value = self.value
+        value_length = len(value)
+        template = self._template
+        style = self.get_component_rich_style("input--placeholder")
+        result += Text(
+            template.mask[value_length:],
+            style,
+            end="",
+        )
+        for index, (char, char_definition) in enumerate(zip(value, template.template)):
+            if char == " ":
+                result.stylize(style, index, index + 1)
+
+        if self._cursor_visible and self.has_focus:
+            if self._cursor_at_end:
+                result.pad_right(1)
+            cursor_style = self.get_component_rich_style("input--cursor")
+            cursor = self.cursor_position
+            result.stylize(cursor_style, cursor, cursor + 1)
+
+        segments = list(result.render(self.app.console))
+        line_length = Segment.get_line_length(segments)
+        if line_length < width:
+            segments = Segment.adjust_line_length(segments, width)
+            line_length = width
+
+        strip = Strip(segments)
+        strip = strip.crop(self.scroll_offset.x, self.scroll_offset.x + width)
+        return strip.apply_style(self.rich_style)
 
     @property
     def _value(self) -> Text:
         """Value rendered as text."""
         value = self._template.display(self.value)
-        return Text(value, no_wrap=True, overflow="ignore")
+        return Text(value, no_wrap=True, overflow="ignore", end="")
 
     async def _on_click(self, event: events.Click) -> None:
         """Ensure clicking on value does not leave cursor on a separator."""
