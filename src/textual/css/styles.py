@@ -735,6 +735,7 @@ class StylesBase:
                 offset_x = (parent_width - width) // 2
             else:
                 offset_x = parent_width - width
+
         return offset_x
 
     def _align_height(self, height: int, parent_height: int) -> int:

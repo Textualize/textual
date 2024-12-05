@@ -2913,3 +2913,74 @@ def test_border_tab(snap_compare):
             yield label
 
     snap_compare(TabApp())
+
+
+def test_dock_align(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5345
+    You should see a blue panel aligned to the top right of the screen, with a centered button."""
+
+    class MainContainer(Static):
+        def compose(self):
+            yield Sidebar()
+
+    # ~~~~ Sidebar widget ~~~~
+    class Sidebar(Static):
+        def compose(self):
+            yield StartButtons()
+
+    # ~~~~ the two buttons inside the sidebar ~~~~
+    class StartButtons(Static):
+        def compose(self):
+            yield Button("Start", variant="primary", id="start")
+            yield Button("Stop", variant="error", id="stop")
+
+    # ~~~~ main ~~~~
+    class Test1(App):
+        CSS = """
+
+        Screen {
+            layout: horizontal;
+        }
+
+        MainContainer {    
+            width: 100%;
+            height: 100%;
+            background: red;
+            layout: horizontal;
+        }
+
+
+        Sidebar {
+            width: 40;
+            background: blue;
+            border: double green;
+            layout: vertical;
+
+        /* seems to be a weird interaction between these two */
+        /*    V V V V    */
+            dock: right;
+            align-horizontal: center;
+
+        }
+
+        StartButtons {
+            max-width: 18.5;
+            height: 5;
+            background: $boost;
+            padding: 1;
+            layout: horizontal;
+        }
+        #start {
+            dock: left;
+        }
+        #stop {
+            dock: left;
+        }
+
+
+"""
+
+        def compose(self):
+            yield MainContainer()
+
+    snap_compare(Test1())
