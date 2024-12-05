@@ -864,14 +864,25 @@ class Input(ScrollView):
             else:
                 self.cursor_position = target
 
+    def replace(self, text: str, start: int, end: int) -> None:
+        """Replace the text between the start and end locations with the given text."""
+        start, end = sorted((max(0, start), min(len(self.value), end)))
+        self.value = f"{self.value[:start]}{text}{self.value[end:]}"
+        self.cursor_position = start + len(text)
+
+    def delete(self, start: int, end: int) -> None:
+        """Delete the text between the start and end locations."""
+        start, end = sorted((start, end))
+        self.replace("", start, end)
+
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
-        value = self.value
-        delete_position = self.cursor_position
-        before = value[:delete_position]
-        after = value[delete_position + 1 :]
-        self.value = f"{before}{after}"
-        self.cursor_position = delete_position
+        if self.selection.empty:
+            start, end = self.cursor_position, self.cursor_position + 1
+        else:
+            start, end = self.selection
+
+        self.delete(start, end)
 
     def action_delete_right_word(self) -> None:
         """Delete the current character and all rightward to the start of the next word."""
@@ -883,34 +894,24 @@ class Input(ScrollView):
             after = self.value[self.cursor_position :]
             hit = re.search(self._WORD_START, after)
             if hit is None:
-                self.value = self.value[: self.cursor_position]
+                self.action_delete_right_all()
             else:
-                self.value = (
-                    f"{self.value[: self.cursor_position]}{after[hit.end() - 1:]}"
-                )
+                start = self.cursor_position
+                end = start + hit.end() - 1
+                self.delete(start, end)
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
-        self.value = self.value[: self.cursor_position]
+        self.delete(self.cursor_position, len(self.value))
 
     def action_delete_left(self) -> None:
         """Delete one character to the left of the current cursor position."""
-        if self.cursor_position <= 0:
-            # Cursor at the start, so nothing to delete
-            return
-
-        if self._cursor_at_end:
-            # Delete from end
-            self.value = self.value[:-1]
-            self.cursor_position = len(self.value)
+        if self.selection.empty:
+            start, end = self.cursor_position - 1, self.cursor_position
         else:
-            # Cursor in the middle
-            value = self.value
-            delete_position = self.cursor_position - 1
-            before = value[:delete_position]
-            after = value[delete_position + 1 :]
-            self.value = f"{before}{after}"
-            self.cursor_position = delete_position
+            start, end = self.selection
+
+        self.delete(start, end)
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
@@ -935,9 +936,7 @@ class Input(ScrollView):
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
-        if self.cursor_position > 0:
-            self.value = self.value[self.cursor_position :]
-            self.cursor_position = 0
+        self.delete(0, self.cursor_position)
 
     async def action_submit(self) -> None:
         """Handle a submit action.
