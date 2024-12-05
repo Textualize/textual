@@ -80,12 +80,21 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
+# Live Demo
+
 The official [Textual demo](https://github.com/textualize/textual-demo).
 
 <div class="textual-web-demo" data-app="demo"></div>
 
 
 ---
+
+# Built with Textual
+
+Textual has enabled an ecosystem of applications and tools for developers and non-developers alike.
+
+Here are a few examples.
+
 
 ## Posting
 
@@ -165,7 +174,11 @@ An easy, fast, and beautiful database client for the terminal.
 
 ---
 
+# Examples
 
+The following examples are taken from the [examples directory](https://github.com/Textualize/textual/tree/main/examples).
+
+Click the tabs to see the code behind the example. 
 
 === "Pride example"
 
@@ -179,8 +192,6 @@ An easy, fast, and beautiful database client for the terminal.
     ```
 
 
-
----
 
 === "Calculator example"
 
