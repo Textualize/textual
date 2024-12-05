@@ -61,7 +61,7 @@ class Selection(NamedTuple):
         return cls(cursor_position, cursor_position)
 
     @property
-    def empty(self) -> bool:
+    def is_empty(self) -> bool:
         return self.start == self.end
 
 
@@ -561,7 +561,7 @@ class Input(ScrollView):
                 )
 
             if self.has_focus:
-                if not self.selection.empty:
+                if not self.selection.is_empty:
                     start, end = self.selection
                     start, end = sorted((start, end))
                     selection_style = self.get_component_rich_style("input--selection")
@@ -640,7 +640,7 @@ class Input(ScrollView):
             event.stop()
             assert event.character is not None
             selection = self.selection
-            if selection.empty:
+            if selection.is_empty:
                 self.insert_text_at_cursor(event.character)
             else:
                 self.replace(event.character, *selection)
@@ -650,7 +650,7 @@ class Input(ScrollView):
         if event.text:
             line = event.text.splitlines()[0]
             selection = self.selection
-            if selection.empty:
+            if selection.is_empty:
                 self.insert_text_at_cursor(line)
             else:
                 self.replace(line, *selection)
@@ -900,14 +900,14 @@ class Input(ScrollView):
 
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
-        if self.selection.empty:
+        if self.selection.is_empty:
             self.delete(self.cursor_position, self.cursor_position + 1)
         else:
             self.delete_selection()
 
     def action_delete_right_word(self) -> None:
         """Delete the current character and all rightward to the start of the next word."""
-        if not self.selection.empty:
+        if not self.selection.is_empty:
             self.delete_selection()
             return
 
@@ -927,21 +927,21 @@ class Input(ScrollView):
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
-        if self.selection.empty:
+        if self.selection.is_empty:
             self.delete(self.cursor_position, len(self.value))
         else:
             self.delete_selection()
 
     def action_delete_left(self) -> None:
         """Delete one character to the left of the current cursor position."""
-        if self.selection.empty:
+        if self.selection.is_empty:
             self.delete(self.cursor_position - 1, self.cursor_position)
         else:
             self.delete_selection()
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
-        if not self.selection.empty:
+        if not self.selection.is_empty:
             self.delete_selection()
             return
 
@@ -963,7 +963,7 @@ class Input(ScrollView):
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
-        if self.selection.empty:
+        if self.selection.is_empty:
             self.delete(0, self.cursor_position)
         else:
             self.delete_selection()
