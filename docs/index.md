@@ -192,6 +192,7 @@ Click the tabs to see the code behind the example.
     ```
 
 
+---
 
 === "Calculator example"
 
