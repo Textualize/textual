@@ -429,7 +429,7 @@ class Input(ScrollView):
     def _watch_selection(self, selection: Selection) -> None:
         self.app.cursor_position = self.cursor_screen_offset
         self.scroll_to_region(
-            Region(self.cursor_position, 0, width=1, height=1),
+            Region(self._cursor_offset, 0, width=1, height=1),
             force=True,
             animate=False,
         )

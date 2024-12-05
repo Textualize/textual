@@ -580,8 +580,7 @@ class MaskedInput(Input, can_focus=True):
             segments = Segment.adjust_line_length(segments, width)
             line_length = width
 
-        strip = Strip(segments)
-        strip = strip.crop(self.scroll_offset.x, self.scroll_offset.x + width)
+        strip = Strip(segments).crop(self.scroll_offset.x, self.scroll_offset.x + width)
         return strip.apply_style(self.rich_style)
 
     @property
