@@ -637,13 +637,21 @@ class Input(ScrollView):
         if event.is_printable:
             event.stop()
             assert event.character is not None
-            self.insert_text_at_cursor(event.character)
+            selection = self.selection
+            if selection.empty:
+                self.insert_text_at_cursor(event.character)
+            else:
+                self.replace(event.character, *selection)
             event.prevent_default()
 
     def _on_paste(self, event: events.Paste) -> None:
         if event.text:
             line = event.text.splitlines()[0]
-            self.insert_text_at_cursor(line)
+            selection = self.selection
+            if selection.empty:
+                self.insert_text_at_cursor(line)
+            else:
+                self.replace(line, *selection)
         event.stop()
 
     def _cell_offset_to_index(self, offset: int) -> int:
