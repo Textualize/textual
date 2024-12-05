@@ -865,7 +865,13 @@ class Input(ScrollView):
                 self.cursor_position = target
 
     def replace(self, text: str, start: int, end: int) -> None:
-        """Replace the text between the start and end locations with the given text."""
+        """Replace the text between the start and end locations with the given text.
+
+        Args:
+            text: Text to replace the existing text with.
+            start: Start index to replace (inclusive).
+            end: End index to replace (inclusive).
+        """
         start, end = sorted((max(0, start), min(len(self.value), end)))
         self.value = f"{self.value[:start]}{text}{self.value[end:]}"
         self.cursor_position = start + len(text)
@@ -921,28 +927,32 @@ class Input(ScrollView):
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
-        if self.cursor_position <= 0:
+        if not self.selection.empty:
+            self.delete_selection()
             return
+
         if self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during deletion.
             self.action_delete_left_all()
         else:
-            after = self.value[self.cursor_position :]
             try:
                 *_, hit = re.finditer(
                     self._WORD_START, self.value[: self.cursor_position]
                 )
             except ValueError:
-                self.cursor_position = 0
+                target = 0
             else:
-                self.cursor_position = hit.start()
-            new_value = f"{self.value[: self.cursor_position]}{after}"
-            self.value = new_value
+                target = hit.start()
+
+            self.delete(target, self.cursor_position)
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
-        self.delete(0, self.cursor_position)
+        if self.selection.empty:
+            self.delete(0, self.cursor_position)
+        else:
+            self.delete_selection()
 
     async def action_submit(self) -> None:
         """Handle a submit action.
