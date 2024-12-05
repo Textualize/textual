@@ -144,6 +144,83 @@ def test_input_suggestions(snap_compare):
     )
 
 
+def test_input_setting_value(snap_compare):
+    """Test that Inputs with different values are rendered correctly.
+
+    The values of inputs should be (from top to bottom): "default", "set attribute in compose"
+    , "" (empty), a placeholder of 'Placeholder, no value', and "set in on_mount".
+    """
+
+    class InputApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Input(value="default")
+            input2 = Input()
+            input2.value = "set attribute in compose"
+            yield input2
+            yield Input()
+            yield Input(placeholder="Placeholder, no value")
+            yield Input(id="input3")
+
+        def on_mount(self) -> None:
+            input3 = self.query_one("#input3", Input)
+            input3.value = "set in on_mount"
+
+    assert snap_compare(InputApp())
+
+
+def test_input_cursor(snap_compare):
+    """The first input should say こんにちは.
+    The second input should say こんにちは, with a cursor on the final character (double width).
+    Note that this might render incorrectly in the SVG output - the letters may overlap."""
+
+    class InputApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Input(value="こんにちは")
+            input = Input(value="こんにちは")
+            input.focus()
+            input.action_cursor_left()
+            yield input
+
+    assert snap_compare(InputApp())
+
+
+def test_input_scrolls_to_cursor(snap_compare):
+    """The input widget should scroll the cursor into view when it moves,
+    and this should account for different cell widths.
+
+    Only the final two characters should be visible in the first input (ちは).
+    They might be overlapping in the SVG output.
+
+    In the second input, we should only see numbers 5-9 inclusive, plus the cursor.
+    The number of cells to the right of the cursor should equal the number of cells
+    to the left of the number '5'.
+    """
+
+    class InputScrollingApp(App[None]):
+        CSS = "Input { width: 12; }"
+
+        def compose(self) -> ComposeResult:
+            yield Input(id="input1")
+            yield Input(id="input2")
+
+    assert snap_compare(
+        InputScrollingApp(), press=[*"こんにちは", "tab", *"0123456789"]
+    )
+
+
+def test_input_selection(snap_compare):
+    """BCDEF should be visible, and DEF should be selected. The cursor should be
+    sitting above 'D'."""
+
+    class InputSelectionApp(App[None]):
+        CSS = "Input { width: 12; }"
+
+        def compose(self) -> ComposeResult:
+            yield Input(id="input1")
+
+    assert snap_compare(InputSelectionApp(), press=[*"ABCDEF", *("shift+left",) * 3])
+
+
 def test_masked_input(snap_compare):
     async def run_before(pilot):
         pilot.app.query(Input).first().cursor_blink = False
