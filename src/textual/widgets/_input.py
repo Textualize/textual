@@ -520,6 +520,9 @@ class Input(ScrollView):
         return self._valid
 
     def render_line(self, y: int) -> Strip:
+        if y != 0:
+            return Strip.blank(self.size.width)
+
         console = self.app.console
         max_content_width = self.scrollable_content_region.width
 
