@@ -176,7 +176,7 @@ def test_input_cursor(snap_compare):
     class InputApp(App[None]):
         def compose(self) -> ComposeResult:
             yield Input(value="こんにちは")
-            input = Input(value="こんにちは")
+            input = Input(value="こんにちは", select_on_focus=False)
             input.focus()
             input.action_cursor_left()
             yield input

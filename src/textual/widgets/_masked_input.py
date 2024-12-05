@@ -16,7 +16,7 @@ from textual.strip import Strip
 if TYPE_CHECKING:
     pass
 
-from textual.reactive import var
+from textual.reactive import Reactive, var
 from textual.validation import ValidationResult, Validator
 from textual.widgets._input import Input
 
@@ -443,7 +443,7 @@ class _Template(Validator):
 class MaskedInput(Input, can_focus=True):
     """A masked text input widget."""
 
-    template = var("")
+    template: Reactive[str] = var("")
     """Input template mask currently in use."""
 
     def __init__(
@@ -455,6 +455,7 @@ class MaskedInput(Input, can_focus=True):
         validators: Validator | Iterable[Validator] | None = None,
         validate_on: Iterable[InputValidationOn] | None = None,
         valid_empty: bool = False,
+        select_on_focus: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -484,6 +485,7 @@ class MaskedInput(Input, can_focus=True):
             validators=validators,
             validate_on=validate_on,
             valid_empty=valid_empty,
+            select_on_focus=select_on_focus,
             name=name,
             id=id,
             classes=classes,
