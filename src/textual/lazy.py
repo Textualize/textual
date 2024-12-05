@@ -83,7 +83,7 @@ class Reveal(Widget):
                 yield Logs()
                 yield Sparklines()
             yield Footer()
-    ```
+        ```
     """
 
     DEFAULT_CSS = """
