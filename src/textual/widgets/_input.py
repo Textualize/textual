@@ -202,7 +202,7 @@ class Input(ScrollView):
 
     cursor_blink = reactive(True, init=False)
     # TODO - check with width: auto to see if layout=True is needed
-    value = reactive("", init=False)
+    value: Reactive[str] = reactive("", init=False)
 
     @property
     def cursor_position(self) -> int:
@@ -712,43 +712,7 @@ class Input(ScrollView):
         Args:
             text: New text to insert.
         """
-
-        def check_allowed_value(value: str) -> bool:
-            """Check if new value is restricted."""
-            # Check max length
-            if self.max_length and len(value) > self.max_length:
-                return False
-            # Check explicit restrict
-            if self.restrict and re.fullmatch(self.restrict, value) is None:
-                return False
-            # Check type restrict
-            if self.type:
-                type_restrict = _RESTRICT_TYPES.get(self.type, None)
-                if (
-                    type_restrict is not None
-                    and re.fullmatch(type_restrict, value) is None
-                ):
-                    return False
-            # Character is allowed
-            return True
-
-        if self.cursor_position >= len(self.value):
-            new_value = self.value + text
-            if check_allowed_value(new_value):
-                self.value = new_value
-                self.cursor_position = len(self.value)
-            else:
-                self.restricted()
-        else:
-            value = self.value
-            before = value[: self.cursor_position]
-            after = value[self.cursor_position :]
-            new_value = f"{before}{text}{after}"
-            if check_allowed_value(new_value):
-                self.value = new_value
-                self.cursor_position += len(text)
-            else:
-                self.restricted()
+        self.insert(text, self.cursor_position)
 
     def restricted(self) -> None:
         """Called when a character has been restricted.
@@ -872,12 +836,52 @@ class Input(ScrollView):
             start: Start index to replace (inclusive).
             end: End index to replace (inclusive).
         """
-        start, end = sorted((max(0, start), min(len(self.value), end)))
-        self.value = f"{self.value[:start]}{text}{self.value[end:]}"
-        self.cursor_position = start + len(text)
+
+        def check_allowed_value(value: str) -> bool:
+            """Check if new value is restricted."""
+
+            # Check max length
+            if self.max_length and len(value) > self.max_length:
+                return False
+            # Check explicit restrict
+            if self.restrict and re.fullmatch(self.restrict, value) is None:
+                return False
+            # Check type restrict
+            if self.type:
+                type_restrict = _RESTRICT_TYPES.get(self.type, None)
+                if (
+                    type_restrict is not None
+                    and re.fullmatch(type_restrict, value) is None
+                ):
+                    return False
+            # Character is allowed
+            return True
+
+        value = self.value
+        start, end = sorted((max(0, start), min(len(value), end)))
+        new_value = f"{value[:start]}{text}{value[end:]}"
+        if check_allowed_value(new_value):
+            self.value = new_value
+            self.cursor_position = start + len(text)
+        else:
+            self.restricted()
+
+    def insert(self, text: str, index: int) -> None:
+        """Insert text at the given index.
+
+        Args:
+            text: Text to insert.
+            index: Index to insert the text at (inclusive).
+        """
+        self.replace(text, index, index)
 
     def delete(self, start: int, end: int) -> None:
-        """Delete the text between the start and end locations."""
+        """Delete the text between the start and end locations.
+
+        Args:
+            start: Start index to delete (inclusive).
+            end: End index to delete (inclusive).
+        """
         self.replace("", start, end)
 
     def delete_selection(self) -> None:
