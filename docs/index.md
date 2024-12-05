@@ -77,7 +77,47 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 </div>
 
+
 ---
+
+# Live Demo
+
+The official [Textual demo](https://github.com/textualize/textual-demo).
+
+<div class="textual-web-demo" data-app="demo"></div>
+
+
+---
+
+# Built with Textual
+
+Textual has enabled an ecosystem of applications and tools for developers and non-developers alike.
+
+Here are a few examples.
+
+
+## Posting
+
+The API client that lives in your terminal.
+Posting is a beautiful open-source terminal app for developing and testing APIs.
+
+[Posting Website](https://posting.sh/)
+
+[Posting Github Repository](https://github.com/darrenburns/posting)
+
+<div>
+<a href="https://posting.sh">
+--8<-- "docs/images/screenshots/posting.svg"
+</a>
+</div>
+
+---
+
+## Toolong
+
+A terminal application to view, tail, merge, and search log files (plus JSONL).
+
+[Toolong Github Repository](https://github.com/textualize/toolong)
 
 <div>
 <a href="https://github.com/Textualize/toolong">
@@ -87,13 +127,12 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
-<div>
-<a href="https://github.com/textualize/frogmouth">
---8<-- "docs/images/screenshots/frogmouth.svg"
-</a>
-</div>
 
----
+## Memray
+
+Memray is a memory profiler for Python, built by Bloomberg.
+
+[Memray Github Repository](https://github.com/bloomberg/memray)
 
 <div>
 <a href="https://github.com/bloomberg/memray">
@@ -102,6 +141,12 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 </div>
 
 ---
+
+## Dolphie
+
+Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL
+
+[Dolphie Github Repository](https://github.com/charles-001/dolphie)
 
 
 <a href="https://github.com/charles-001/dolphie">
@@ -113,6 +158,12 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
+## Harlequin
+
+An easy, fast, and beautiful database client for the terminal.
+
+[Harlequin website](https://harlequin.sh/)
+
 <div>
 <a href="https://harlequin.sh">
 --8<-- "docs/images/screenshots/harlequin.svg"
@@ -123,27 +174,11 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
+# Examples
 
-=== "Stopwatch tutorial"
+The following examples are taken from the [examples directory](https://github.com/Textualize/textual/tree/main/examples).
 
-    <div class="textual-web-demo" data-app="tutorial"></div>
-
-
-=== "stopwatch.py"
-
-    ```python 
-    --8<-- "docs/examples/tutorial/stopwatch.py"
-    ```
-
-=== "stopwatch.tcss"
-
-    ```css
-    --8<-- "docs/examples/tutorial/stopwatch.tcss"
-    ```
-
-
----
-
+Click the tabs to see the code behind the example. 
 
 === "Pride example"
 
@@ -155,7 +190,6 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
     ```py
     --8<-- "examples/pride.py"
     ```
-
 
 
 ---

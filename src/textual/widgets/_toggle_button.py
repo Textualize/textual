@@ -84,7 +84,7 @@ class ToggleButton(Static, can_focus=True):
             }
         }
     }
-    """  # TODO: https://github.com/Textualize/textual/issues/1780
+    """
 
     BUTTON_LEFT: str = "▐"
     """The character used for the left side of the toggle button."""
