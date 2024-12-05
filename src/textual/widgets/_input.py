@@ -102,6 +102,8 @@ class Input(ScrollView):
         Binding("backspace", "delete_left", "Delete character left", show=False),
         Binding("home,ctrl+a", "home", "Go to start", show=False),
         Binding("end,ctrl+e", "end", "Go to end", show=False),
+        Binding("shift+home", "home(True)", "Select line start", show=False),
+        Binding("shift+end", "end(True)", "Select line end", show=False),
         Binding("delete,ctrl+d", "delete_right", "Delete character right", show=False),
         Binding("enter", "submit", "Submit", show=False),
         Binding(
@@ -769,7 +771,7 @@ class Input(ScrollView):
             select: If `True`, select the text between the old and new cursor positions.
         """
         if select:
-            self.selection = Selection(0, self.cursor_position)
+            self.selection = Selection(self.cursor_position, 0)
         else:
             self.cursor_position = 0
 
