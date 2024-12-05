@@ -84,6 +84,24 @@ The official [Textual demo](https://github.com/textualize/textual-demo).
 
 <div class="textual-web-demo" data-app="demo"></div>
 
+
+---
+
+## Posting
+
+The API client that lives in your terminal.
+Posting is a beautiful open-source terminal app for developing and testing APIs.
+
+[Posting Website](https://posting.sh/)
+
+[Posting Github Repository](https://github.com/darrenburns/posting)
+
+<div>
+<a href="https://posting.sh">
+--8<-- "docs/images/screenshots/posting.svg"
+</a>
+</div>
+
 ---
 
 ## Toolong
