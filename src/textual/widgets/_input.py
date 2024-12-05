@@ -565,7 +565,7 @@ class Input(ScrollView):
                     start, end = self.selection
                     start, end = sorted((start, end))
                     selection_style = self.get_component_rich_style("input--selection")
-                    result.stylize(selection_style, start, end)
+                    result.stylize_before(selection_style, start, end)
 
                 if self._cursor_visible:
                     cursor_style = self.get_component_rich_style("input--cursor")
