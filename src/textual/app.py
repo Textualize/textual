@@ -446,7 +446,7 @@ class App(Generic[ReturnType], DOMNode):
             show=False,
             priority=True,
         ),
-        Binding("ctrl+c", "help_quit"),
+        Binding("ctrl+c", "help_quit", show=False, system=True),
     ]
     """The default key bindings."""
 

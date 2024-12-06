@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `App.clipboard`
 - Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea
+- Added `system` boolean to Binding, which hides the binding from the help panel
   
 ### Changed
 

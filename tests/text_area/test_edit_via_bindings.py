@@ -184,7 +184,7 @@ async def test_delete_line(selection, expected_result):
         text_area.load_text("0123456789")
         text_area.selection = selection
 
-        await pilot.press("ctrl+x")
+        await pilot.press("ctrl+shift+x")
 
         assert text_area.selection == Selection.cursor((0, 0))
         assert text_area.text == expected_result
@@ -219,7 +219,7 @@ async def test_delete_line_multiline_document(selection, expected_result):
         text_area.load_text("012\n345\n678\n9\n")
         text_area.selection = selection
 
-        await pilot.press("ctrl+x")
+        await pilot.press("ctrl+shift+x")
 
         cursor_row, cursor_column = text_area.cursor_location
         assert text_area.selection == Selection.cursor((cursor_row, cursor_column))
