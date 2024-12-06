@@ -2225,9 +2225,9 @@ TextArea {
         """Paste from local clipboard."""
         if self.read_only:
             return
-        clipboard = self.app._clipboard
-        start, end = self.selection
-        self._replace_via_keyboard(clipboard, start, end)
+        clipboard = self.app.clipboard
+        if result := self._replace_via_keyboard(clipboard, *self.selection):
+            self.move_cursor(result.end_location)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
