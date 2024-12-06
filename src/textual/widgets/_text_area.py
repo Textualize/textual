@@ -2223,6 +2223,8 @@ TextArea {
 
     def action_paste(self) -> None:
         """Paste from local clipboard."""
+        if self.read_only:
+            return
         clipboard = self.app._clipboard
         start, end = self.selection
         self._replace_via_keyboard(clipboard, start, end)
