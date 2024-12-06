@@ -71,7 +71,10 @@ class BindingsTable(Static):
             action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
             action_to_bindings = defaultdict(list)
             for _, binding, enabled, tooltip in table_bindings:
-                action_to_bindings[binding.action].append((binding, enabled, tooltip))
+                if not binding.system:
+                    action_to_bindings[binding.action].append(
+                        (binding, enabled, tooltip)
+                    )
 
             description_style = self.get_component_rich_style(
                 "bindings-table--description"

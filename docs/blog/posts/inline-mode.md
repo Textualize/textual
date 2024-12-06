@@ -16,7 +16,7 @@ You can see this in action if you run the [calculator example](https://github.co
 
 The application appears directly under the prompt, rather than occupying the full height of the screen&mdash;which is more typical of TUI applications.
 You can interact with this calculator using keys *or* the mouse.
-When you press ++ctrl+c++ the calculator disappears and returns you to the prompt.
+When you press ++ctrl+q++ the calculator disappears and returns you to the prompt.
 
 Here's another app that creates an inline code editor:
 

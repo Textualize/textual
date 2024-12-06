@@ -115,7 +115,9 @@ class Input(ScrollView):
             "ctrl+f", "delete_right_word", "Delete right to start of word", show=False
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
-        Binding("ctrl+c", "copy_selection", "Copy selected text", show=False),
+        Binding("ctrl+x", "cut", "Cut selected text", show=False),
+        Binding("ctrl+c", "copy", "Copy selected text", show=False),
+        Binding("ctrl+v", "paste", "Paste text from the clipboard", show=False),
     ]
     """
     | Key(s) | Description |
@@ -995,6 +997,17 @@ class Input(ScrollView):
         )
         self.post_message(self.Submitted(self, self.value, validation_result))
 
-    def action_copy_selection(self) -> None:
+    def action_cut(self) -> None:
+        """Cut the current selection (copy to clipboard and remove from input)."""
+        self.app.copy_to_clipboard(self.selected_text)
+        self.delete_selection()
+
+    def action_copy(self) -> None:
         """Copy the current selection to the clipboard."""
         self.app.copy_to_clipboard(self.selected_text)
+
+    def action_paste(self) -> None:
+        """Paste from the local clipboard."""
+        clipboard = self.app._clipboard
+        start, end = self.selection
+        self.replace(clipboard, start, end)
