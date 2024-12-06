@@ -9,14 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `App.clipboard`
-- Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea
-- Added `system` boolean to Binding, which hides the binding from the help panel
+- Added `App.clipboard` https://github.com/Textualize/textual/pull/5352
+- Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea https://github.com/Textualize/textual/pull/5352
+- Added `system` boolean to Binding, which hides the binding from the help panel https://github.com/Textualize/textual/pull/5352
   
 ### Changed
 
-- Change default quit key to `ctrl+q`
-- Changed delete line binding on TextArea to use `ctrl+shift+x`
+- Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
+- Changed delete line binding on TextArea to use `ctrl+shift+x` https://github.com/Textualize/textual/pull/5352
 
 ## [0.89.1] - 2024-11-05
 
