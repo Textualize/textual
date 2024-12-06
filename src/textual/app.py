@@ -877,6 +877,15 @@ class App(Generic[ReturnType], DOMNode):
         except StopIteration:
             return ()
 
+    @property
+    def clipboard(self) -> str:
+        """The value of the local clipboard.
+
+        Note, that this only contains text copied in the app, and not
+        text copied from elsewhere in the OS.
+        """
+        return self._clipboard
+
     @contextmanager
     def batch_update(self) -> Generator[None, None, None]:
         """A context manager to suspend all repaints until the end of the batch."""
