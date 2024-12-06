@@ -16,7 +16,7 @@ async def test_cut():
         await pilot.press(*"Hello, World")
         await pilot.press("left", "shift+left", "shift+left")
         await pilot.press("ctrl+x")
-        assert text_area.document.text == "Hello, Wod"
+        assert text_area.text == "Hello, Wod"
         assert app.clipboard == "rl"
 
 
@@ -29,7 +29,7 @@ async def test_copy():
         await pilot.press(*"Hello, World")
         await pilot.press("left", "shift+left", "shift+left")
         await pilot.press("ctrl+c")
-        assert text_area.document.text == "Hello, World"
+        assert text_area.text == "Hello, World"
         assert app.clipboard == "rl"
 
 
@@ -44,9 +44,9 @@ async def test_paste():
             "shift+left", "shift+left", "shift+left", "shift+left", "shift+left"
         )
         await pilot.press("ctrl+c")
-        assert text_area.document.text == "Hello, World"
+        assert text_area.text == "Hello, World"
         assert app.clipboard == "World"
         await pilot.press("ctrl+v")
-        assert text_area.document.text == "Hello, World"
+        assert text_area.text == "Hello, World"
         await pilot.press("ctrl+v")
-        assert text_area.document.text == "Hello, WorldWorld"
+        assert text_area.text == "Hello, WorldWorld"

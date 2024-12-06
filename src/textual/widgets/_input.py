@@ -999,9 +999,7 @@ class Input(ScrollView):
 
     def action_cut(self) -> None:
         """Cut the current selection (copy to clipboard and remove from input)."""
-        start, end = sorted(self.selection)
-        text = self.value[start:end]
-        self.app.copy_to_clipboard(text)
+        self.app.copy_to_clipboard(self.selected_text)
         self.delete_selection()
 
     def action_copy(self) -> None:
@@ -1012,6 +1010,4 @@ class Input(ScrollView):
         """Paste from the local clipboard."""
         clipboard = self.app._clipboard
         start, end = sorted(self.selection)
-        new_value = self.value[:start] + clipboard + self.value[end:]
-        self.value = new_value
-        self.cursor_position = start + len(clipboard)
+        self.replace(clipboard, start, end)
