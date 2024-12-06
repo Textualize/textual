@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unlrelease
+
+### Added
+
+- Added `App.clipboard`
+- Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea
+- 
+  
+### Changed
+
+- Change default quit key to `ctrl+q`
+- Changed delete line binding on TextArea to use `ctrl+shift+x`
+
 ## [0.89.1] - 2024-11-05
 
 ### Fixed
