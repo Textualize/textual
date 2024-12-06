@@ -77,8 +77,6 @@ and the [`hover_coordinate`][textual.widgets.DataTable.hover_coordinate] reactiv
 then emits the [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] and  [`CellSelected`][textual.widgets.DataTable.CellSelected]
 events. 
 
-A new table starts with no cell highlighted, i.e., row and column are zero.  You can force the first item to highlight with `move_cursor(row=1, column=1)`.  All row and column indexes start at one.
-
 === "Column Cursor"
 
     ```{.textual path="docs/examples/widgets/data_table_cursors.py"}
