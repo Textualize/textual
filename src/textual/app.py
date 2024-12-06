@@ -438,7 +438,14 @@ class App(Generic[ReturnType], DOMNode):
     """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
+        Binding(
+            "ctrl+q",
+            "quit",
+            "Quit",
+            tooltip="Quit the app and return to the command prompt.",
+            show=True,
+            priority=True,
+        )
     ]
     """The default key bindings."""
 
@@ -766,6 +773,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
+
+        self._clipboard: str = ""
+        """Contents of local clipboard."""
 
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
@@ -1497,6 +1507,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             text: Text you wish to copy to the clipboard.
         """
+        self._clipboard = text
         if self._driver is None:
             return
 

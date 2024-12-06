@@ -122,7 +122,7 @@ Hit the ++d++ key to toggle between light and dark themes.
 ```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="stopwatch01.py"}
 ```
 
-Hit ++ctrl+c++ to exit the app and return to the command prompt.
+Hit ++ctrl+q++ to exit the app and return to the command prompt.
 
 ### A closer look at the App class
 
@@ -157,7 +157,7 @@ Here's what the above app defines:
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The final three lines create an instance of the app and calls the [run()][textual.app.App.run] method which puts your terminal in to *application mode* and runs the app until you exit with ++ctrl+c++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
+The final three lines create an instance of the app and calls the [run()][textual.app.App.run] method which puts your terminal in to *application mode* and runs the app until you exit with ++ctrl+q++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
 
 ## Designing a UI with widgets
 

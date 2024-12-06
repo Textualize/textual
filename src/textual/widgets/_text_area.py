@@ -226,7 +226,10 @@ TextArea {
         Binding(
             "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
-        Binding("ctrl+x", "delete_line", "Delete line", show=False),
+        Binding("ctrl+shift+x", "delete_line", "Delete line", show=False),
+        Binding("ctrl+x", "cut", "Cut", show=False),
+        Binding("ctrl+c", "copy", "Copy", show=False),
+        Binding("ctrl+v", "paste", "Paste", show=False),
         Binding(
             "ctrl+u", "delete_to_start_of_line", "Delete to line start", show=False
         ),
@@ -2198,6 +2201,32 @@ TextArea {
         deletion = self._delete_via_keyboard(from_location, to_location)
         if deletion is not None:
             self.move_cursor_relative(columns=end_column, record_width=False)
+
+    def action_cut(self) -> None:
+        """Cut text (remove and copy to clipboard)."""
+        if self.read_only:
+            return
+        start, end = self.selection
+        if start == end:
+            return
+        copy_text = self.get_text_range(start, end)
+        self.notify(f"cut {copy_text!r}")
+        self.app.copy_to_clipboard(copy_text)
+        self._delete_via_keyboard(start, end)
+
+    def action_copy(self) -> None:
+        """Copy selection to clipboard."""
+        start, end = self.selection
+        if start == end:
+            return
+        copy_text = self.get_text_range(start, end)
+        self.app.copy_to_clipboard(copy_text)
+
+    def action_paste(self) -> None:
+        """Paste from local clipboard."""
+        clipboard = self.app._clipboard
+        start, end = self.selection
+        self._replace_via_keyboard(clipboard, start, end)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
