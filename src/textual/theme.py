@@ -171,7 +171,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-text-style": "b",
             "block-cursor-blurred-text-style": "i",
             "input-selection-background": "ansi_blue",
-            "input-selection-foreground": "ansi_white",
             "input-cursor-text-style": "reverse",
             "scrollbar": "ansi_blue",
             "border-blurred": "ansi_blue",
