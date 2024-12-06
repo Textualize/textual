@@ -1009,5 +1009,5 @@ class Input(ScrollView):
     def action_paste(self) -> None:
         """Paste from the local clipboard."""
         clipboard = self.app._clipboard
-        start, end = sorted(self.selection)
+        start, end = self.selection
         self.replace(clipboard, start, end)
