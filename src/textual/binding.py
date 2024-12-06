@@ -82,7 +82,7 @@ class Binding:
     and substitute the `key` property of the Binding with the key specified in the keymap.
     """
     system: bool = False
-    """Make this binding a system binding, and hide it from apps."""
+    """Make this binding a system binding, which removes it from the key panel."""
 
     def parse_key(self) -> tuple[list[str], str]:
         """Parse a key in to a list of modifiers, and the actual key.
