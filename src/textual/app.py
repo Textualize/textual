@@ -443,9 +443,10 @@ class App(Generic[ReturnType], DOMNode):
             "quit",
             "Quit",
             tooltip="Quit the app and return to the command prompt.",
-            show=True,
+            show=False,
             priority=True,
-        )
+        ),
+        Binding("ctrl+c", "help_quit"),
     ]
     """The default key bindings."""
 
@@ -3615,6 +3616,20 @@ class App(Generic[ReturnType], DOMNode):
                     if await self.run_action(binding.action, namespace):
                         return True
         return False
+
+    def action_help_quit(self) -> None:
+        """Bound to ctrl+C to alert the user that it no longer quits."""
+        # Doing this because users will reflexively hit ctrl+C to exit
+        # Ctrl+C is now bound to copy if an input / textarea is focused.
+        # This makes is possible, even likely, that a user may do it accidentally -- which would be maddening.
+        # Rather than do nothing, we can make an educated guess the user was trying
+        # to quit, and inform them how you really quit.
+        for key, active_binding in self.active_bindings.items():
+            if active_binding.binding.action in ("quit", "app.quit"):
+                self.notify(
+                    f"Press [b]{key}[/b] to quit the app", title="Do you want to quit?"
+                )
+                return
 
     def set_keymap(self, keymap: Keymap) -> None:
         """Set the keymap, a mapping of binding IDs to key strings.

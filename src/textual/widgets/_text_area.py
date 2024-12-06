@@ -2210,7 +2210,6 @@ TextArea {
         if start == end:
             return
         copy_text = self.get_text_range(start, end)
-        self.notify(f"cut {copy_text!r}")
         self.app.copy_to_clipboard(copy_text)
         self._delete_via_keyboard(start, end)
 

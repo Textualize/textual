@@ -1002,8 +1002,7 @@ class Input(ScrollView):
         start, end = sorted(self.selection)
         text = self.value[start:end]
         self.app.copy_to_clipboard(text)
-        new_value = self.value[:start] + self.value[end:]
-        self.value = new_value
+        self.delete_selection()
 
     def action_copy(self) -> None:
         """Copy the current selection to the clipboard."""
