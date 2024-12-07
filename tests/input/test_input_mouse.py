@@ -68,11 +68,12 @@ async def test_mouse_clicks_within(text, click_at, should_land):
         assert pilot.app.query_one(Input).cursor_position == should_land
 
 
-async def test_mouse_click_outwith():
-    """Mouse clicks outside the input should not affect cursor position."""
+async def test_mouse_click_outwith_moves_cursor_to_nearest_cell():
+    """Mouse clicks in the padding or border area should move the cursor as this makes
+    dragging and selecting text easier."""
     async with InputApp(TEXT_SINGLE).run_test() as pilot:
         pilot.app.query_one(Input).cursor_position = 3
         assert pilot.app.query_one(Input).cursor_position == 3
         await pilot.click(Input, Offset(0, 0))
         await pilot.pause()
-        assert pilot.app.query_one(Input).cursor_position == 3
+        assert pilot.app.query_one(Input).cursor_position == 0

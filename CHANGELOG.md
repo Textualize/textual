@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `App.clipboard` https://github.com/Textualize/textual/pull/5352
+- Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea https://github.com/Textualize/textual/pull/5352
+- Added `system` boolean to Binding, which hides the binding from the help panel https://github.com/Textualize/textual/pull/5352
+  
+### Changed
+
+- Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
+- Changed delete line binding on TextArea to use `ctrl+shift+x` https://github.com/Textualize/textual/pull/5352
+
 ## [0.89.1] - 2024-11-05
 
 ### Fixed
@@ -18,6 +31,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added "tab" border style https://github.com/Textualize/textual/pull/5335
 - Added support for XML syntax highlighting https://github.com/Textualize/textual/pull/5320
 - Added `TextArea.update_highlight_query` https://github.com/Textualize/textual/pull/5320
+- `Input` widget now supports text selection via mouse and keyboard https://github.com/Textualize/textual/pull/5340
+- Added new keybinds (hold shift) for text selection in `Input` https://github.com/Textualize/textual/pull/5340
+- Added `Input.selection` reactive attribute for reading and updating the current selection https://github.com/Textualize/textual/pull/5340
+- Added `Input.select_on_focus` (default `True`) to enable/disable selecting all text in an `Input` on focus https://github.com/Textualize/textual/pull/5340
+- Added methods `Input.replace`, `Input.insert`, `Input.delete`, `Input.delete_selection` for editing text https://github.com/Textualize/textual/pull/5340
+- Added `Input.selected_text` property for getting the currently selected text https://github.com/Textualize/textual/pull/5340
+- `Input` can now be scrolled independently of cursor position (hold shift and scroll with the mouse wheel in supported environments) https://github.com/Textualize/textual/pull/5340
+
+## Changed
+
+- Breaking change: Removed `Input` reactive attributes `view_position`, `cursor_position` (now exists as a property which proxies to the `Input.selection` reactive attribute), https://github.com/Textualize/textual/pull/5340
+- `Input.restrict` now checked on all edit operations (rather than just on `insert`) https://github.com/Textualize/textual/pull/5340
 
 ## Fixed
 

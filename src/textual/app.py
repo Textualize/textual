@@ -438,7 +438,15 @@ class App(Generic[ReturnType], DOMNode):
     """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
+        Binding(
+            "ctrl+q",
+            "quit",
+            "Quit",
+            tooltip="Quit the app and return to the command prompt.",
+            show=False,
+            priority=True,
+        ),
+        Binding("ctrl+c", "help_quit", show=False, system=True),
     ]
     """The default key bindings."""
 
@@ -767,6 +775,9 @@ class App(Generic[ReturnType], DOMNode):
         self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
 
+        self._clipboard: str = ""
+        """Contents of local clipboard."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -865,6 +876,15 @@ class App(Generic[ReturnType], DOMNode):
             )
         except StopIteration:
             return ()
+
+    @property
+    def clipboard(self) -> str:
+        """The value of the local clipboard.
+
+        Note, that this only contains text copied in the app, and not
+        text copied from elsewhere in the OS.
+        """
+        return self._clipboard
 
     @contextmanager
     def batch_update(self) -> Generator[None, None, None]:
@@ -1497,6 +1517,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             text: Text you wish to copy to the clipboard.
         """
+        self._clipboard = text
         if self._driver is None:
             return
 
@@ -3604,6 +3625,20 @@ class App(Generic[ReturnType], DOMNode):
                     if await self.run_action(binding.action, namespace):
                         return True
         return False
+
+    def action_help_quit(self) -> None:
+        """Bound to ctrl+C to alert the user that it no longer quits."""
+        # Doing this because users will reflexively hit ctrl+C to exit
+        # Ctrl+C is now bound to copy if an input / textarea is focused.
+        # This makes is possible, even likely, that a user may do it accidentally -- which would be maddening.
+        # Rather than do nothing, we can make an educated guess the user was trying
+        # to quit, and inform them how you really quit.
+        for key, active_binding in self.active_bindings.items():
+            if active_binding.binding.action in ("quit", "app.quit"):
+                self.notify(
+                    f"Press [b]{key}[/b] to quit the app", title="Do you want to quit?"
+                )
+                return
 
     def set_keymap(self, keymap: Keymap) -> None:
         """Set the keymap, a mapping of binding IDs to key strings.

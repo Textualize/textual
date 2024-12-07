@@ -2,32 +2,31 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from rich.cells import cell_len, get_character_cell_size
-from rich.console import Console, ConsoleOptions, RenderableType
-from rich.console import RenderResult as RichRenderResult
+from rich.console import RenderableType
 from rich.highlighter import Highlighter
-from rich.segment import Segment
 from rich.text import Text
 from typing_extensions import Literal
 
 from textual import events
-from textual._segment_tools import line_crop
+from textual.expand_tabs import expand_tabs_inline
+from textual.scroll_view import ScrollView
+from textual.strip import Strip
 
 if TYPE_CHECKING:
-    from textual.app import RenderResult
+    pass
 
 from textual.binding import Binding, BindingType
 from textual.css._error_tools import friendly_list
 from textual.events import Blur, Focus, Mount
-from textual.geometry import Offset, Size
+from textual.geometry import Offset, Region, Size, clamp
 from textual.message import Message
 from textual.reactive import Reactive, reactive, var
 from textual.suggester import Suggester, SuggestionReady
 from textual.timer import Timer
 from textual.validation import ValidationResult, Validator
-from textual.widget import Widget
 
 InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
@@ -42,66 +41,70 @@ _RESTRICT_TYPES = {
 InputType = Literal["integer", "number", "text"]
 
 
-class _InputRenderable:
-    """Render the input content."""
+class Selection(NamedTuple):
+    """A range of selected text within the Input.
 
-    def __init__(self, input: Input, cursor_visible: bool) -> None:
-        self.input = input
-        self.cursor_visible = cursor_visible
+    Text can be selected by clicking and dragging the mouse, or by pressing
+    shift+arrow keys.
 
-    def __rich_console__(
-        self, console: "Console", options: "ConsoleOptions"
-    ) -> RichRenderResult:
-        input = self.input
-        result = input._value
-        width = input.content_size.width
+    Attributes:
+        start: The start index of the selection.
+        end: The end index of the selection.
+    """
 
-        # Add the completion with a faded style.
-        value = input.value
-        value_length = len(value)
-        suggestion = input._suggestion
-        show_suggestion = len(suggestion) > value_length and input.has_focus
-        if show_suggestion:
-            result += Text(
-                suggestion[value_length:],
-                input.get_component_rich_style("input--suggestion"),
-            )
+    start: int
+    end: int
 
-        if self.cursor_visible and input.has_focus:
-            if not show_suggestion and input._cursor_at_end:
-                result.pad_right(1)
-            cursor_style = input.get_component_rich_style("input--cursor")
-            cursor = input.cursor_position
-            result.stylize(cursor_style, cursor, cursor + 1)
+    @classmethod
+    def cursor(cls, cursor_position: int) -> Selection:
+        """Create a selection from a cursor position."""
+        return cls(cursor_position, cursor_position)
 
-        segments = list(result.render(console))
-        line_length = Segment.get_line_length(segments)
-        if line_length < width:
-            segments = Segment.adjust_line_length(segments, width)
-            line_length = width
-
-        line = line_crop(
-            list(segments),
-            input.view_position,
-            input.view_position + width,
-            line_length,
-        )
-        yield from line
+    @property
+    def is_empty(self) -> bool:
+        """Return True if the selection is empty."""
+        return self.start == self.end
 
 
-class Input(Widget, can_focus=True):
+class Input(ScrollView):
     """A text input widget."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "cursor_left", "Move cursor left", show=False),
+        Binding(
+            "shift+left",
+            "cursor_left(True)",
+            "Move cursor left and select",
+            show=False,
+        ),
         Binding("ctrl+left", "cursor_left_word", "Move cursor left a word", show=False),
+        Binding(
+            "ctrl+shift+left",
+            "cursor_left_word(True)",
+            "Move cursor left a word and select",
+            show=False,
+        ),
         Binding("right", "cursor_right", "Move cursor right", show=False),
         Binding(
+            "shift+right",
+            "cursor_right(True)",
+            "Move cursor right and select",
+            show=False,
+        ),
+        Binding(
             "ctrl+right", "cursor_right_word", "Move cursor right a word", show=False
+        ),
+        Binding(
+            "ctrl+shift+right",
+            "cursor_right_word(True)",
+            "Move cursor right a word and select",
+            show=False,
         ),
         Binding("backspace", "delete_left", "Delete character left", show=False),
         Binding("home,ctrl+a", "home", "Go to start", show=False),
         Binding("end,ctrl+e", "end", "Go to end", show=False),
+        Binding("shift+home", "home(True)", "Select line start", show=False),
+        Binding("shift+end", "end(True)", "Select line end", show=False),
         Binding("delete,ctrl+d", "delete_right", "Delete character right", show=False),
         Binding("enter", "submit", "Submit", show=False),
         Binding(
@@ -112,6 +115,9 @@ class Input(Widget, can_focus=True):
             "ctrl+f", "delete_right_word", "Delete right to start of word", show=False
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
+        Binding("ctrl+x", "cut", "Cut selected text", show=False),
+        Binding("ctrl+c", "copy", "Copy selected text", show=False),
+        Binding("ctrl+v", "paste", "Paste text from the clipboard", show=False),
     ]
     """
     | Key(s) | Description |
@@ -135,6 +141,7 @@ class Input(Widget, can_focus=True):
         "input--cursor",
         "input--placeholder",
         "input--suggestion",
+        "input--selection",
     }
     """
     | Class | Description |
@@ -142,6 +149,7 @@ class Input(Widget, can_focus=True):
     | `input--cursor` | Target the cursor. |
     | `input--placeholder` | Target the placeholder text (when it exists). |
     | `input--suggestion` | Target the auto-completion suggestion (when it exists). |
+    | `input--selection` | Target the selected text. |
     """
 
     DEFAULT_CSS = """
@@ -152,6 +160,7 @@ class Input(Widget, can_focus=True):
         border: tall $border-blurred;
         width: 100%;
         height: 3;
+        scrollbar-size-horizontal: 0;
 
         &:focus {
             border: tall $border;
@@ -161,6 +170,9 @@ class Input(Widget, can_focus=True):
             background: $input-cursor-background;
             color: $input-cursor-foreground;
             text-style: $input-cursor-text-style;
+        }
+        &>.input--selection {
+            background: $input-selection-background;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;
@@ -195,13 +207,23 @@ class Input(Widget, can_focus=True):
     """
 
     cursor_blink = reactive(True, init=False)
-    value = reactive("", layout=True, init=False)
-    input_scroll_offset = reactive(0)
-    cursor_position: Reactive[int] = reactive(0)
-    view_position = reactive(0)
+    # TODO - check with width: auto to see if layout=True is needed
+    value: Reactive[str] = reactive("", init=False)
+
+    @property
+    def cursor_position(self) -> int:
+        """The current position of the cursor, corresponding to the end of the selection."""
+        return self.selection.end
+
+    @cursor_position.setter
+    def cursor_position(self, position: int) -> None:
+        """Set the current position of the cursor."""
+        self.selection = Selection.cursor(position)
+
+    selection: Reactive[Selection] = reactive(Selection.cursor(0))
+    """The currently selected range of text."""
+
     placeholder = reactive("")
-    complete = reactive("")
-    width = reactive(1)
     _cursor_visible = reactive(True)
     password = reactive(False)
     suggester: Suggester | None
@@ -276,6 +298,7 @@ class Input(Widget, can_focus=True):
         validators: Validator | Iterable[Validator] | None = None,
         validate_on: Iterable[InputValidationOn] | None = None,
         valid_empty: bool = False,
+        select_on_focus: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -299,6 +322,7 @@ class Input(Widget, can_focus=True):
                 which determine when to do input validation. The default is to do
                 validation for all messages.
             valid_empty: Empty values are valid.
+            select_on_focus: Whether to select all text on focus.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -358,6 +382,9 @@ class Input(Widget, can_focus=True):
             elif self.type == "number":
                 self.validators.append(Number())
 
+        self._selecting = False
+        """True if the user is selecting text with the mouse."""
+
         self._initial_value = True
         """Indicates if the value has been set for the first time yet."""
         if value is not None:
@@ -366,10 +393,18 @@ class Input(Widget, can_focus=True):
         if tooltip is not None:
             self.tooltip = tooltip
 
+        self.select_on_focus = select_on_focus
+
     def _position_to_cell(self, position: int) -> int:
-        """Convert an index within the value to cell position."""
-        cell_offset = cell_len(self.value[:position])
-        return cell_offset
+        """Convert an index within the value to cell position.
+
+        Args:
+            position: The index within the value to convert.
+
+        Returns:
+            The cell position corresponding to the index.
+        """
+        return cell_len(expand_tabs_inline(self.value[:position], 4))
 
     @property
     def _cursor_offset(self) -> int:
@@ -382,7 +417,7 @@ class Input(Widget, can_focus=True):
     @property
     def _cursor_at_end(self) -> bool:
         """Flag to indicate if the cursor is at the end"""
-        return self.cursor_position >= len(self.value)
+        return self.cursor_position == len(self.value)
 
     def check_consume_key(self, key: str, character: str | None) -> bool:
         """Check if the widget may consume the given key.
@@ -398,32 +433,19 @@ class Input(Widget, can_focus=True):
         """
         return character is not None and character.isprintable()
 
-    def validate_cursor_position(self, cursor_position: int) -> int:
-        return min(max(0, cursor_position), len(self.value))
+    def validate_selection(self, selection: Selection) -> Selection:
+        start, end = selection
+        value_length = len(self.value)
+        return Selection(clamp(start, 0, value_length), clamp(end, 0, value_length))
 
-    def validate_view_position(self, view_position: int) -> int:
-        width = self.content_size.width
-        new_view_position = max(0, min(view_position, self.cursor_width - width))
-        return new_view_position
-
-    def _watch_cursor_position(self) -> None:
-        width = self.content_size.width
-        if width == 0:
-            # If the input has no width the view position can't be elsewhere.
-            self.view_position = 0
-            return
-
-        view_start = self.view_position
-        view_end = view_start + width
-        cursor_offset = self._cursor_offset
-
-        if cursor_offset >= view_end or cursor_offset < view_start:
-            view_position = cursor_offset - width // 2
-            self.view_position = view_position
-        else:
-            self.view_position = self.view_position
-
+    def _watch_selection(self, selection: Selection) -> None:
         self.app.cursor_position = self.cursor_screen_offset
+        if not self._initial_value:
+            self.scroll_to_region(
+                Region(self._cursor_offset, 0, width=1, height=1),
+                force=True,
+                animate=False,
+            )
 
     def _watch_cursor_blink(self, blink: bool) -> None:
         """Ensure we handle updating the cursor blink at runtime."""
@@ -431,16 +453,19 @@ class Input(Widget, can_focus=True):
             if blink:
                 self._blink_timer.resume()
             else:
-                self._pause_blink_cycle()
+                self._pause_blink()
                 self._cursor_visible = True
 
     @property
     def cursor_screen_offset(self) -> Offset:
         """The offset of the cursor of this input in screen-space. (x, y)/(column, row)"""
         x, y, _width, _height = self.content_region
-        return Offset(x + self._cursor_offset - self.view_position, y)
+        scroll_x, _ = self.scroll_offset
+        return Offset(x + self._cursor_offset - scroll_x, y)
 
     def _watch_value(self, value: str) -> None:
+        """Update the virtual size and suggestion when the value changes."""
+        self.virtual_size = Size(self.content_width, 1)
         self._suggestion = ""
         if self.suggester and value:
             self.run_worker(self.suggester._get_suggestion(self, value))
@@ -507,17 +532,15 @@ class Input(Widget, can_focus=True):
         """Check if the value has passed validation."""
         return self._valid
 
-    @property
-    def cursor_width(self) -> int:
-        """The width of the input (with extra space for cursor at the end)."""
-        if self.placeholder and not self.value:
-            return cell_len(self.placeholder)
-        return self._position_to_cell(len(self.value)) + 1
+    def render_line(self, y: int) -> Strip:
+        if y != 0:
+            return Strip.blank(self.size.width)
 
-    def render(self) -> RenderResult:
-        self.view_position = self.view_position
+        console = self.app.console
+        max_content_width = self.scrollable_content_region.width
+
         if not self.value:
-            placeholder = Text(self.placeholder, justify="left")
+            placeholder = Text(self.placeholder, justify="left", end="")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
             if self.has_focus:
                 cursor_style = self.get_component_rich_style("input--cursor")
@@ -525,24 +548,77 @@ class Input(Widget, can_focus=True):
                     # If the placeholder is empty, there's no characters to stylise
                     # to make the cursor flash, so use a single space character
                     if len(placeholder) == 0:
-                        placeholder = Text(" ")
+                        placeholder = Text(" ", end="")
                     placeholder.stylize(cursor_style, 0, 1)
-            return placeholder
-        return _InputRenderable(self, self._cursor_visible)
+
+            strip = Strip(
+                console.render(
+                    placeholder, console.options.update_width(max_content_width + 1)
+                )
+            )
+        else:
+            result = self._value
+
+            # Add the completion with a faded style.
+            value = self.value
+            value_length = len(value)
+            suggestion = self._suggestion
+            show_suggestion = len(suggestion) > value_length and self.has_focus
+            if show_suggestion:
+                result += Text(
+                    suggestion[value_length:],
+                    self.get_component_rich_style("input--suggestion"),
+                    end="",
+                )
+
+            if self.has_focus:
+                if not self.selection.is_empty:
+                    start, end = self.selection
+                    start, end = sorted((start, end))
+                    selection_style = self.get_component_rich_style("input--selection")
+                    result.stylize_before(selection_style, start, end)
+
+                if self._cursor_visible:
+                    cursor_style = self.get_component_rich_style("input--cursor")
+                    cursor = self.cursor_position
+                    if not show_suggestion and self._cursor_at_end:
+                        result.pad_right(1)
+                    result.stylize(cursor_style, cursor, cursor + 1)
+
+            segments = list(
+                console.render(result, console.options.update_width(self.content_width))
+            )
+
+            strip = Strip(segments)
+            scroll_x, _ = self.scroll_offset
+            strip = strip.crop(scroll_x, scroll_x + max_content_width + 1)
+            strip = strip.extend_cell_length(max_content_width + 1)
+
+        return strip.apply_style(self.rich_style)
 
     @property
     def _value(self) -> Text:
         """Value rendered as text."""
         if self.password:
-            return Text("•" * len(self.value), no_wrap=True, overflow="ignore")
+            return Text("•" * len(self.value), no_wrap=True, overflow="ignore", end="")
         else:
-            text = Text(self.value, no_wrap=True, overflow="ignore")
+            text = Text(self.value, no_wrap=True, overflow="ignore", end="")
             if self.highlighter is not None:
                 text = self.highlighter(text)
             return text
 
+    @property
+    def content_width(self) -> int:
+        """The width of the content."""
+        if self.placeholder and not self.value:
+            return cell_len(self.placeholder)
+
+        # Extra space for cursor at the end.
+        return self._value.cell_len + 1
+
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        return self.cursor_width
+        """Get the widget of the content."""
+        return self.content_width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
@@ -559,67 +635,97 @@ class Input(Widget, can_focus=True):
         )
 
     def _on_blur(self, event: Blur) -> None:
-        self._pause_blink_cycle()
+        self._pause_blink()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
     def _on_focus(self, event: Focus) -> None:
-        self._restart_blink_cycle()
+        self._restart_blink()
+        if self.select_on_focus:
+            self.selection = Selection(0, len(self.value))
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
-        self._restart_blink_cycle()
+        self._restart_blink()
 
         if event.is_printable:
             event.stop()
             assert event.character is not None
-            self.insert_text_at_cursor(event.character)
+            selection = self.selection
+            if selection.is_empty:
+                self.insert_text_at_cursor(event.character)
+            else:
+                self.replace(event.character, *selection)
             event.prevent_default()
 
     def _on_paste(self, event: events.Paste) -> None:
         if event.text:
             line = event.text.splitlines()[0]
-            self.insert_text_at_cursor(line)
+            selection = self.selection
+            if selection.is_empty:
+                self.insert_text_at_cursor(line)
+            else:
+                self.replace(line, *selection)
         event.stop()
 
-    async def _on_click(self, event: events.Click) -> None:
-        offset = event.get_content_offset(self)
-        if offset is None:
-            return
-        event.stop()
-        click_x = offset.x + self.view_position
+    def _cell_offset_to_index(self, offset: int) -> int:
+        """Convert a cell offset to a character index, accounting for character width.
+
+        Args:
+            offset: The cell offset to convert.
+
+        Returns:
+            The character index corresponding to the cell offset.
+        """
         cell_offset = 0
         _cell_size = get_character_cell_size
+        scroll_x, _ = self.scroll_offset
+        offset += scroll_x
         for index, char in enumerate(self.value):
             cell_width = _cell_size(char)
-            if cell_offset <= click_x < (cell_offset + cell_width):
-                self.cursor_position = index
-                break
+            if cell_offset <= offset < (cell_offset + cell_width):
+                return index
             cell_offset += cell_width
-        else:
-            self.cursor_position = len(self.value)
+        return clamp(offset, 0, len(self.value))
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
-        self._pause_blink_cycle()
+        self._pause_blink(visible=True)
+        offset_x, _ = event.get_content_offset_capture(self)
+        self.selection = Selection.cursor(self._cell_offset_to_index(offset_x))
+        self._selecting = True
+        self.capture_mouse()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        self._restart_blink_cycle()
+        if self._selecting:
+            self._selecting = False
+            self.release_mouse()
+            self._restart_blink()
+
+    async def _on_mouse_move(self, event: events.MouseMove) -> None:
+        if self._selecting:
+            # As we drag the mouse, we update the end position of the selection,
+            # keeping the start position fixed.
+            offset = event.get_content_offset_capture(self)
+            selection_start, _ = self.selection
+            self.selection = Selection(
+                selection_start, self._cell_offset_to_index(offset.x)
+            )
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
         if event.value == self.value:
             self._suggestion = event.suggestion
 
-    def _restart_blink_cycle(self) -> None:
+    def _restart_blink(self) -> None:
         """Restart the cursor blink cycle."""
         self._cursor_visible = True
         if self.cursor_blink and self._blink_timer:
             self._blink_timer.reset()
 
-    def _pause_blink_cycle(self) -> None:
+    def _pause_blink(self, visible: bool = False) -> None:
         """Hide the blinking cursor and pause the blink cycle."""
-        self._cursor_visible = False
+        self._cursor_visible = visible
         if self._blink_timer:
             self._blink_timer.pause()
 
@@ -629,9 +735,140 @@ class Input(Widget, can_focus=True):
         Args:
             text: New text to insert.
         """
+        self.insert(text, self.cursor_position)
+
+    def restricted(self) -> None:
+        """Called when a character has been restricted.
+
+        The default behavior is to play the system bell.
+        You may want to override this method if you want to disable the bell or do something else entirely.
+        """
+        self.app.bell()
+
+    def clear(self) -> None:
+        """Clear the input."""
+        self.value = ""
+
+    @property
+    def selected_text(self) -> str:
+        """The text between the start and end points of the current selection."""
+        start, end = sorted(self.selection)
+        return self.value[start:end]
+
+    def action_cursor_left(self, select: bool = False) -> None:
+        """Move the cursor one position to the left.
+
+        Args:
+            select: If `True`, select the text to the left of the cursor.
+        """
+        if select:
+            start, end = self.selection
+            self.selection = Selection(start, end - 1)
+        else:
+            self.cursor_position -= 1
+
+    def action_cursor_right(self, select: bool = False) -> None:
+        """Accept an auto-completion or move the cursor one position to the right.
+
+        Args:
+            select: If `True`, select the text to the right of the cursor.
+        """
+        if select:
+            start, end = self.selection
+            self.selection = Selection(start, end + 1)
+        else:
+            if self._cursor_at_end and self._suggestion:
+                self.value = self._suggestion
+                self.cursor_position = len(self.value)
+            else:
+                self.cursor_position += 1
+
+    def action_home(self, select: bool = False) -> None:
+        """Move the cursor to the start of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        if select:
+            self.selection = Selection(self.cursor_position, 0)
+        else:
+            self.cursor_position = 0
+
+    def action_end(self, select: bool = False) -> None:
+        """Move the cursor to the end of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        if select:
+            self.selection = Selection(self.cursor_position, len(self.value))
+        else:
+            self.cursor_position = len(self.value)
+
+    _WORD_START = re.compile(r"(?<=\W)\w")
+
+    def action_cursor_left_word(self, select: bool = False) -> None:
+        """Move the cursor left to the start of a word.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        if self.password:
+            # This is a password field so don't give any hints about word
+            # boundaries, even during movement.
+            self.action_home(select)
+        else:
+            start, _ = self.selection
+            try:
+                *_, hit = re.finditer(
+                    self._WORD_START, self.value[: self.cursor_position]
+                )
+            except ValueError:
+                target = 0
+            else:
+                target = hit.start()
+
+            if select:
+                self.selection = Selection(start, target)
+            else:
+                self.cursor_position = target
+
+    def action_cursor_right_word(self, select: bool = False) -> None:
+        """Move the cursor right to the start of a word.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        if self.password:
+            # This is a password field so don't give any hints about word
+            # boundaries, even during movement.
+            self.action_end(select)
+        else:
+            hit = re.search(self._WORD_START, self.value[self.cursor_position :])
+
+            start, end = self.selection
+            if hit is None:
+                target = len(self.value)
+            else:
+                target = end + hit.start()
+
+            if select:
+                self.selection = Selection(start, target)
+            else:
+                self.cursor_position = target
+
+    def replace(self, text: str, start: int, end: int) -> None:
+        """Replace the text between the start and end locations with the given text.
+
+        Args:
+            text: Text to replace the existing text with.
+            start: Start index to replace (inclusive).
+            end: End index to replace (inclusive).
+        """
 
         def check_allowed_value(value: str) -> bool:
             """Check if new value is restricted."""
+
             # Check max length
             if self.max_length and len(value) > self.max_length:
                 return False
@@ -649,98 +886,50 @@ class Input(Widget, can_focus=True):
             # Character is allowed
             return True
 
-        if self.cursor_position >= len(self.value):
-            new_value = self.value + text
-            if check_allowed_value(new_value):
-                self.value = new_value
-                self.cursor_position = len(self.value)
-            else:
-                self.restricted()
+        value = self.value
+        start, end = sorted((max(0, start), min(len(value), end)))
+        new_value = f"{value[:start]}{text}{value[end:]}"
+        if check_allowed_value(new_value):
+            self.value = new_value
+            self.cursor_position = start + len(text)
         else:
-            value = self.value
-            before = value[: self.cursor_position]
-            after = value[self.cursor_position :]
-            new_value = f"{before}{text}{after}"
-            if check_allowed_value(new_value):
-                self.value = new_value
-                self.cursor_position += len(text)
-            else:
-                self.restricted()
+            self.restricted()
 
-    def restricted(self) -> None:
-        """Called when a character has been restricted.
+    def insert(self, text: str, index: int) -> None:
+        """Insert text at the given index.
 
-        The default behavior is to play the system bell.
-        You may want to override this method if you want to disable the bell or do something else entirely.
+        Args:
+            text: Text to insert.
+            index: Index to insert the text at (inclusive).
         """
-        self.app.bell()
+        self.replace(text, index, index)
 
-    def clear(self) -> None:
-        """Clear the input."""
-        self.value = ""
+    def delete(self, start: int, end: int) -> None:
+        """Delete the text between the start and end locations.
 
-    def action_cursor_left(self) -> None:
-        """Move the cursor one position to the left."""
-        self.cursor_position -= 1
+        Args:
+            start: Start index to delete (inclusive).
+            end: End index to delete (inclusive).
+        """
+        self.replace("", start, end)
 
-    def action_cursor_right(self) -> None:
-        """Accept an auto-completion or move the cursor one position to the right."""
-        if self._cursor_at_end and self._suggestion:
-            self.value = self._suggestion
-            self.cursor_position = len(self.value)
-        else:
-            self.cursor_position += 1
-
-    def action_home(self) -> None:
-        """Move the cursor to the start of the input."""
-        self.cursor_position = 0
-
-    def action_end(self) -> None:
-        """Move the cursor to the end of the input."""
-        self.cursor_position = len(self.value)
-
-    _WORD_START = re.compile(r"(?<=\W)\w")
-
-    def action_cursor_left_word(self) -> None:
-        """Move the cursor left to the start of a word."""
-        if self.password:
-            # This is a password field so don't give any hints about word
-            # boundaries, even during movement.
-            self.action_home()
-        else:
-            try:
-                *_, hit = re.finditer(
-                    self._WORD_START, self.value[: self.cursor_position]
-                )
-            except ValueError:
-                self.cursor_position = 0
-            else:
-                self.cursor_position = hit.start()
-
-    def action_cursor_right_word(self) -> None:
-        """Move the cursor right to the start of a word."""
-        if self.password:
-            # This is a password field so don't give any hints about word
-            # boundaries, even during movement.
-            self.action_end()
-        else:
-            hit = re.search(self._WORD_START, self.value[self.cursor_position :])
-            if hit is None:
-                self.cursor_position = len(self.value)
-            else:
-                self.cursor_position += hit.start()
+    def delete_selection(self) -> None:
+        """Delete the current selection."""
+        self.delete(*self.selection)
 
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
-        value = self.value
-        delete_position = self.cursor_position
-        before = value[:delete_position]
-        after = value[delete_position + 1 :]
-        self.value = f"{before}{after}"
-        self.cursor_position = delete_position
+        if self.selection.is_empty:
+            self.delete(self.cursor_position, self.cursor_position + 1)
+        else:
+            self.delete_selection()
 
     def action_delete_right_word(self) -> None:
         """Delete the current character and all rightward to the start of the next word."""
+        if not self.selection.is_empty:
+            self.delete_selection()
+            return
+
         if self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during deletion.
@@ -749,60 +938,54 @@ class Input(Widget, can_focus=True):
             after = self.value[self.cursor_position :]
             hit = re.search(self._WORD_START, after)
             if hit is None:
-                self.value = self.value[: self.cursor_position]
+                self.action_delete_right_all()
             else:
-                self.value = (
-                    f"{self.value[: self.cursor_position]}{after[hit.end() - 1:]}"
-                )
+                start = self.cursor_position
+                end = start + hit.end() - 1
+                self.delete(start, end)
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
-        self.value = self.value[: self.cursor_position]
+        if self.selection.is_empty:
+            self.delete(self.cursor_position, len(self.value))
+        else:
+            self.delete_selection()
 
     def action_delete_left(self) -> None:
         """Delete one character to the left of the current cursor position."""
-        if self.cursor_position <= 0:
-            # Cursor at the start, so nothing to delete
-            return
-        if self.cursor_position == len(self.value):
-            # Delete from end
-            self.value = self.value[:-1]
-            self.cursor_position = len(self.value)
+        if self.selection.is_empty:
+            self.delete(self.cursor_position - 1, self.cursor_position)
         else:
-            # Cursor in the middle
-            value = self.value
-            delete_position = self.cursor_position - 1
-            before = value[:delete_position]
-            after = value[delete_position + 1 :]
-            self.value = f"{before}{after}"
-            self.cursor_position = delete_position
+            self.delete_selection()
 
     def action_delete_left_word(self) -> None:
         """Delete leftward of the cursor position to the start of a word."""
-        if self.cursor_position <= 0:
+        if not self.selection.is_empty:
+            self.delete_selection()
             return
+
         if self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during deletion.
             self.action_delete_left_all()
         else:
-            after = self.value[self.cursor_position :]
             try:
                 *_, hit = re.finditer(
                     self._WORD_START, self.value[: self.cursor_position]
                 )
             except ValueError:
-                self.cursor_position = 0
+                target = 0
             else:
-                self.cursor_position = hit.start()
-            new_value = f"{self.value[: self.cursor_position]}{after}"
-            self.value = new_value
+                target = hit.start()
+
+            self.delete(target, self.cursor_position)
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
-        if self.cursor_position > 0:
-            self.value = self.value[self.cursor_position :]
-            self.cursor_position = 0
+        if self.selection.is_empty:
+            self.delete(0, self.cursor_position)
+        else:
+            self.delete_selection()
 
     async def action_submit(self) -> None:
         """Handle a submit action.
@@ -813,3 +996,18 @@ class Input(Widget, can_focus=True):
             self.validate(self.value) if "submitted" in self.validate_on else None
         )
         self.post_message(self.Submitted(self, self.value, validation_result))
+
+    def action_cut(self) -> None:
+        """Cut the current selection (copy to clipboard and remove from input)."""
+        self.app.copy_to_clipboard(self.selected_text)
+        self.delete_selection()
+
+    def action_copy(self) -> None:
+        """Copy the current selection to the clipboard."""
+        self.app.copy_to_clipboard(self.selected_text)
+
+    def action_paste(self) -> None:
+        """Paste from the local clipboard."""
+        clipboard = self.app.clipboard
+        start, end = self.selection
+        self.replace(clipboard, start, end)

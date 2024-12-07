@@ -276,7 +276,6 @@ Here's a comprehensive list of these variables, their purposes, and default valu
 | `$input-cursor-foreground` | Text color of the input cursor | `$background` |
 | `$input-cursor-text-style` | Text style of the input cursor | `"none"` |
 | `$input-selection-background` | Background color of selected text | `$primary-lighten-1` with 40% opacity |
-| `$input-selection-foreground` | Text color of selected text | `$background` |
 
 ### Scrollbar
 

@@ -32,7 +32,7 @@ If we run this app with `python simple02.py` you will see a blank terminal, some
 
 When you call [App.run()][textual.app.App.run] Textual puts the terminal in to a special state called *application mode*. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the *screen*).
 
-If you hit ++ctrl+c++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
+If you hit ++ctrl+q++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
 
 !!! tip
 

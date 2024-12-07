@@ -172,13 +172,11 @@ The tuple of three strings may be enough for simple bindings, but you can also r
 
 Individual bindings may be marked as a *priority*, which means they will be checked prior to the bindings of the focused widget. This feature is often used to create hot-keys on the app or screen. Such bindings can not be disabled by binding the same key on a widget.
 
-You can create priority key bindings by setting `priority=True` on the Binding object. Textual uses this feature to add a default binding for ++ctrl+c++ so there is always a way to exit the app. Here's the bindings from the App base class. Note the first binding is set as a priority:
+You can create priority key bindings by setting `priority=True` on the Binding object. Textual uses this feature to add a default binding for ++ctrl+q++ so there is always a way to exit the app. Here's the `BINDINGS` from the App base class. Note the quit binding is set as a priority:
 
 ```python
     BINDINGS = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("tab", "focus_next", "Focus Next", show=False),
-        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
+        Binding("ctrl+q", "quit", "Quit", show=False, priority=True)
     ]
 ```
 
