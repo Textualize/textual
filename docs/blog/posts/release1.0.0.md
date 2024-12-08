@@ -29,9 +29,9 @@ The 1.0 milestone we just passed makes this the perfect time.
 If you haven't followed along with Textual's development, here is a demo of what it can do.
 This is a Textual app, running remotely, served by your browser:
 
-??? textualize "Try in Textual-web"
-
-    <div class="textual-web-demo" data-app="demo"></div>
+<a href="https://textual-web.io/textualize/demo" target="_blank">
+Launch Textual Demo
+</a>
 
 I cheaped out on the VMs &mdash; so if the demo is down, you could run it locally (with [uv](https://docs.astral.sh/uv/)):
 
