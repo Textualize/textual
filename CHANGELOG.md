@@ -22,13 +22,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed issue with alignment in auto containers https://github.com/Textualize/textual/pull/5360
 
-## [0.89.1] - 2024-11-05
+## [0.89.1] - 2024-12-05
 
 ### Fixed
 
 - Fixed alignment of docked widgets https://github.com/Textualize/textual/pull/5347
 
-## [0.89.0] - 2024-11-05
+## [0.89.0] - 2024-12-05
 
 ## Added
 
