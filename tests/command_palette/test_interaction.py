@@ -19,13 +19,13 @@ class CommandPaletteApp(App[None]):
 
 
 async def test_initial_list_no_highlight() -> None:
-    """When the list initially appears, nothing will be highlighted."""
+    """When the list initially appears, the first item is highlghted."""
     async with CommandPaletteApp().run_test() as pilot:
         assert CommandPalette.is_open(pilot.app)
         assert pilot.app.screen.query_one(CommandList).visible is False
         await pilot.press("a")
         assert pilot.app.screen.query_one(CommandList).visible is True
-        assert pilot.app.screen.query_one(CommandList).highlighted is None
+        assert pilot.app.screen.query_one(CommandList).highlighted == 0
 
 
 async def test_down_arrow_selects_an_item() -> None:
@@ -35,32 +35,19 @@ async def test_down_arrow_selects_an_item() -> None:
         assert pilot.app.screen.query_one(CommandList).visible is False
         await pilot.press("a")
         assert pilot.app.screen.query_one(CommandList).visible is True
-        assert pilot.app.screen.query_one(CommandList).highlighted is None
+        assert pilot.app.screen.query_one(CommandList).highlighted == 0
         await pilot.press("down")
-        assert pilot.app.screen.query_one(CommandList).highlighted is not None
+        assert pilot.app.screen.query_one(CommandList).highlighted == 1
 
 
 async def test_enter_selects_an_item() -> None:
-    """Typing in a search value then pressing enter should select a command."""
+    """Typing in a search value then pressing enter should dismiss the command palette."""
     async with CommandPaletteApp().run_test() as pilot:
         assert CommandPalette.is_open(pilot.app)
         assert pilot.app.screen.query_one(CommandList).visible is False
         await pilot.press("a")
         assert pilot.app.screen.query_one(CommandList).visible is True
-        assert pilot.app.screen.query_one(CommandList).highlighted is None
-        await pilot.press("enter")
-        assert pilot.app.screen.query_one(CommandList).highlighted is not None
-
-
-async def test_selection_of_command_closes_command_palette() -> None:
-    """Selecting a command from the list should close the list."""
-    async with CommandPaletteApp().run_test() as pilot:
-        assert CommandPalette.is_open(pilot.app)
-        assert pilot.app.screen.query_one(CommandList).visible is False
-        await pilot.press("a")
-        assert pilot.app.screen.query_one(CommandList).visible is True
-        assert pilot.app.screen.query_one(CommandList).highlighted is None
-        await pilot.press("enter")
-        assert pilot.app.screen.query_one(CommandList).highlighted is not None
+        assert pilot.app.screen.query_one(CommandList).highlighted == 0
         await pilot.press("enter")
         assert not CommandPalette.is_open(pilot.app)
+        assert not pilot.app.screen.query(CommandList)
