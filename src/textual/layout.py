@@ -256,11 +256,11 @@ class Layout(ABC):
         Returns:
             Content height (in lines).
         """
-        if not widget._nodes:
-            height = 0
-        else:
+        if widget._nodes:
             arrangement = widget._arrange(Size(width, 0))
             height = arrangement.total_region.bottom
+        else:
+            height = 0
 
         return height
 
