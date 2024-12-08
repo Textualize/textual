@@ -20,6 +20,7 @@ from asyncio import (
 from dataclasses import dataclass
 from functools import total_ordering
 from inspect import isclass
+from operator import attrgetter
 from time import monotonic
 from typing import (
     TYPE_CHECKING,
@@ -455,9 +456,9 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option-highlighted {
-        color: $block-cursor-foreground;
-        background: $block-cursor-background;
-        text-style: $block-cursor-text-style;
+        color: $block-cursor-blurred-foreground;
+        background: $block-cursor-blurred-background;
+        text-style: $block-cursor-blurred-text-style;
     }
 
     CommandList:nocolor > .option-list--option-highlighted {       
@@ -1014,26 +1015,12 @@ class CommandPalette(SystemModalScreen[None]):
             commands: The commands to show in the widget.
             clear_current: Should the current content of the list be cleared first?
         """
-        # For the moment, this is a fairly naive approach to populating the
-        # command list with a list of commands. Every time we add a
-        # new one we're nuking the list of options and populating them
-        # again. If this turns out to not be a great approach, we may try
-        # and get a lot smarter with this (ideally OptionList will grow a
-        # method to sort its content in an efficient way; but for now we'll
-        # go with "worse is better" wisdom).
-        highlighted = (
-            command_list.get_option_at_index(command_list.highlighted)
-            if command_list.highlighted is not None and not clear_current
-            else None
-        )
 
-        def sort_key(command: Command) -> float:
-            return -command.hit.score
-
-        sorted_commands = sorted(commands, key=sort_key)
+        sorted_commands = sorted(commands, key=attrgetter("hit.score"), reverse=True)
         command_list.clear_options().add_options(sorted_commands)
-        if highlighted is not None and highlighted.id:
-            command_list.highlighted = command_list.get_option_index(highlighted.id)
+
+        if sorted_commands:
+            command_list.highlighted = 0
 
         self._list_visible = bool(command_list.option_count)
         self._hit_count = command_list.option_count
