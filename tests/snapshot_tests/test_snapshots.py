@@ -1385,7 +1385,7 @@ def test_vertical_max_height(snap_compare):
 
 
 def test_max_height_100(snap_compare):
-    """Test vertical max height takes border in to account."""
+    """Test a datatable with max height 100%."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
 
 
@@ -3074,3 +3074,40 @@ def test_dock_align(snap_compare):
             yield MainContainer()
 
     snap_compare(Test1())
+
+
+def test_auto_parent_with_alignment(snap_compare):
+    class Sidebar(Vertical):
+        DEFAULT_CSS = """
+        Sidebar {
+            dock: right;
+            width: auto;
+            height: auto;
+            background: blue;
+            align-vertical: bottom;
+
+            #contents {
+                width: auto;
+                height: auto;
+                background: red;
+                border: white;
+            }        
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="contents"):
+                yield Button("Start")
+                yield Button("Stop")
+
+    class FloatSidebarApp(App):
+        CSS = """
+        Screen {
+            layers: base sidebar;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Sidebar()
+
+    snap_compare(FloatSidebarApp())
