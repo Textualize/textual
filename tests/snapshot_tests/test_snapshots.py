@@ -3080,7 +3080,7 @@ def test_auto_parent_with_alignment(snap_compare):
     class Sidebar(Vertical):
         DEFAULT_CSS = """
         Sidebar {
-            dock: right;
+            dock: right;  # Not strictly required to replicate the issue
             width: auto;
             height: auto;
             background: blue;
