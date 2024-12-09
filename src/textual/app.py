@@ -590,6 +590,9 @@ class App(Generic[ReturnType], DOMNode):
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
 
+        self._click_chain_timer: Timer | None = None
+        """A timer which is used to measure the duration between mouse down and mouse up events, in order for Textual to generate the corresponding `SingleClick`, `DoubleClick`, or `TripleClick` events."""
+
         self._previous_cursor_position = Offset(0, 0)
         """The previous cursor position"""
 
