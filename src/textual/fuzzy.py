@@ -40,6 +40,10 @@ class Matcher:
             ".*?".join(f"({escape(character)})" for character in query),
             flags=0 if case_sensitive else IGNORECASE,
         )
+        self._first_word_regex = compile(
+            ".*?".join(f"(\\b{escape(character)})" for character in query),
+            flags=0 if case_sensitive else IGNORECASE,
+        )
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
 
     @property
@@ -90,6 +94,11 @@ class Matcher:
                 last_offset = offset
 
             score = 1.0 - ((group_count - 1) / len(candidate))
+
+            if first_words := self._first_word_regex.match(candidate):
+                multiplier = len(first_words.groups())
+                # boost if the query matches first words
+                score *= multiplier
         self._cache[candidate] = score
         return score
 
