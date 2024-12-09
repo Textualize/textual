@@ -124,12 +124,14 @@ This will produce smaller lists of segments, which in the compositor code we ref
 --8<-- "docs/blog/images/compositor/cuts2.excalidraw.svg"
 </div>
 
-These chops have the property that nothing overlaps, which is important for the next step.
+These chops have the property that nothing overlaps.
+If there is a chop below any give chop, then both will have the same size.
+This property makes the next step possible.
 
 ### Step 3. Discard chops.
 
 Only the top-most chops will actually be visible to the viewer.
-Anything not at the top can simply be thrown away.
+Anything not at the top will be occluded and can be thrown away.
 
 <div class="excalidraw">
 --8<-- "docs/blog/images/compositor/cuts3.excalidraw.svg"
@@ -155,3 +157,107 @@ Additionally, the compositor can do partial updates.
 In other words, if you click a button and it changes color the compositor can update just that button.
 
 The compositor does all of this fast enough to enable smooth scrolling, even with a metric tonne of widgets on screen.
+
+## Spatial map
+
+Textual apps typically contain many widgets of different sizes and at different locations within the terminal.
+Not all of which widgets may be visible in the final view (if they are within a scrolling container).
+
+
+!!! info "The smallest Widget"
+
+    While it is possible to have a widget as small as a single character, I've never found a need for one.
+    The closest we get in Textual is a [scrollbar corner](https://textual.textualize.io/api/scrollbar/#textual.scrollbar.ScrollBarCorner);
+    a widget which exists to fil the space made when a vertical scrollbar and a horizontal scrollbar meet.
+    It does nothing because it doesn't need to, but it is powered by an async task like all widgets and can receive input.
+    I have often wondered if there could be something useful in there.
+    A game perhaps?
+    If you can think of a game that can be played in 2 characters &mdash; let me know!
+
+The *spatial map*[^1] is a data structure used by the compositor to very quickly discard widgets that are not visible within a given region.
+The algorithm is uses may be familiar if you have done any classic game-dev.
+
+
+## The problem 
+
+Consider the following arrangement of widgets:
+
+<div class="excalidraw">
+--8<-- "docs/blog/images/compositor/spatial-map.excalidraw.svg"
+</div>
+
+Here we have 8 widgets, where only around 4 will be visible at any given time depending on the position of the scrollbar.
+We want to avoid doing any work on widgets which will not be seen in the next frame.
+
+A naive solution to this would be to check each widget's [Region][textual.geometry.Region] to see if it overlaps with the visible area.
+This is a perfectly reasonable solution, but it won't scale well.
+If we get in to the 1000s of widgets territory, it may become significant &mdash; and we may have to do this 30 times a second if we are scrolling.
+
+### The Grid
+
+The first step in the spatial map is associate every widget with a tile in a regular grid[^2].
+
+<div class="excalidraw">
+--8<-- "docs/blog/images/compositor/spatial-map-grid.excalidraw.svg"
+</div>
+
+The size of the grid is fairly arbitrary, but it should be large enough to cover the viewable area with a relatively small number of grid tiles.
+We use a grid size of 100 characters by 20 lines, which seems about right.
+
+When the spatial map is first created it places each widget in one or more grid tiles.
+At the end of that process we have a dict that maps every grid coordinate on to a list of widgets, which will look something like the following:
+
+```python
+{
+    (0, 0): [widget1, widget2, widget3],
+    (1, 0): [widget1, widget2, widget3],
+    (0, 1): [widget4, widget5, widget6],
+    (1, 1): [widget4, widget5, widget6],
+    (0, 2): [widget7, widget8],
+    (1, 2): [Widget7, widget8]
+}
+```
+
+This data is cacheable.
+If the widgets don't change position or size, such as the user is *scrolling*, then we can reuse the information.
+
+### Search the grid
+
+The speedups from the spatial map come when we want to know which widgets are visible.
+To do that, we first create a region that covers the area that is scrolling &mdash; which may be the entire screen, or a smaller scrollable container.
+
+In the following illustration we have scrolled the screen up[^3] a little so that Widget 3 is at the top of the screen:
+
+<div class="excalidraw">
+--8<-- "docs/blog/images/compositor/spatial-map-view1.excalidraw.svg"
+</div>
+
+We then determine which grid tiles are covered by the viewable area, which would be `(0,0)`, `(1,0)`, `(0,1)`, and `(1,1)`.
+Once we have that information, we can then then look up those coordinates in the spatial map data structure, which would retrieve 4 lists:
+
+```python
+[
+  [widget1, widget2, widget3],
+  [widget1, widget2, widget3],
+  [widget4, widget5, widget6],
+  [widget4, widget5, widget6],
+]
+```
+
+Combining those together and de-duplicating we get:
+
+```python
+[widget1, widget2, widget3, widget4, widget5, widget6]
+```
+
+These widgets are either within the viewable area, or close by.
+The widgets not included in the list (`widget7`, `widget8`) we can confidently conclude that they are not visible.
+If we need to know precisely which widgets are visible we can check their regions individually.
+
+The useful property of this algorithm is that as the number of widgets increases, the time it takes to figure out which are visible stays relatively constant.
+Scrolling a view of 8 widgets, takes about the same time has a view of 1000 widgets.
+
+
+[^1]: A term I coined for the structure in Textual. There may be other unconnected things known as spatial maps.
+[^2]: The [grid](https://www.youtube.com/watch?v=lILHEnz8fTk&ab_channel=DaftPunk-Topic).
+[^3]: If you scroll the screen up, it moves *down* relative to the widgets.
