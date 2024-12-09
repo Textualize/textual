@@ -437,6 +437,10 @@ class App(Generic[ReturnType], DOMNode):
     ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = "Footer"
     """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
 
+    CLICK_CHAIN_TIME_THRESHOLD: ClassVar[float] = 0.5
+    """The maximum number of seconds between clicks to upgrade a single click to a double click, 
+    a double click to a triple click, etc."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding(
             "ctrl+q",
@@ -3734,7 +3738,8 @@ class App(Generic[ReturnType], DOMNode):
                             )
                             within_time_threshold = (
                                 self._click_chain_last_time is not None
-                                and event.time - self._click_chain_last_time < 0.5
+                                and event.time - self._click_chain_last_time
+                                < self.CLICK_CHAIN_TIME_THRESHOLD
                             )
 
                             if same_offset and within_time_threshold:
