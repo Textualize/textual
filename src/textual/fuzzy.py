@@ -7,9 +7,8 @@ This class is used by the [command palette](/guide/command_palette) to match sea
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from re import IGNORECASE, compile, escape, finditer
-from typing import Iterable
+from typing import Iterable, NamedTuple
 
 import rich.repr
 from rich.style import Style
@@ -18,19 +17,21 @@ from rich.text import Text
 from textual.cache import LRUCache
 
 
-@dataclass
-class FuzzyMatch:
+class Search(NamedTuple):
     candidate_offset: int = 0
     query_offset: int = 0
-    offsets: list[int] = field(default_factory=list)
+    offsets: tuple[int, ...] = ()
 
-    def advance(self, new_offset: int) -> FuzzyMatch:
-        return FuzzyMatch(new_offset, self.query_offset, self.offsets.copy())
+    def branch(self, offset: int) -> tuple[Search, Search]:
+        return (
+            Search(offset + 1, self.query_offset + 1, self.offsets + (offset,)),
+            Search(offset + 1, self.query_offset, self.offsets),
+        )
 
 
 def match(
     query: str, candidate: str, case_sensitive: bool = False
-) -> Iterable[list[int]]:
+) -> Iterable[tuple[int, ...]]:
     if not case_sensitive:
         query = query.lower()
         candidate = candidate.lower()
@@ -49,45 +50,25 @@ def match(
             ]
         )
 
-    stack: list[FuzzyMatch] = [FuzzyMatch(0, 0, [])]
+    stack: list[Search] = [Search()]
+    push = stack.append
+    pop = stack.pop
+    query_size = len(query)
 
     while stack:
-        match = stack[-1]
-
-        if match.candidate_offset >= len(candidate) or match.query_offset >= len(query):
-            stack.pop()
-            continue
-
-        try:
-            offset = candidate.index(query[match.query_offset], match.candidate_offset)
-        except ValueError:
-            # Current math was unsuccessful
-            stack.pop()
-            continue
-
-        advance_match = match.advance(offset + 1)
-        match.offsets.append(offset)
-        match.candidate_offset = offset + 1
-        match.query_offset += 1
-
-        if match.query_offset == len(query):
-            # Full match
-            yield match.offsets.copy()
-            stack.pop()
-
-        stack.append(advance_match)
-
-        # else:
-        #     match.candidate_offset += 1
-        #     stack.append(match_copy)
-
-        # if query[match.query_offset] == candidate[match.candidate_offset]:
-        #     match_copy = match.copy()
-        #     match_copy.query_offset += 1
-        #     if match_copy.query_offset == len(query):
-        #         yield match_copy.offsets.copy()
-        #     match_copy.offsets.append(match.candidate_offset)
-        #     stack.append(match_copy)
+        search = stack[-1]
+        offset = candidate.find(
+            query[search.query_offset],
+            search.candidate_offset,
+        )
+        if offset == -1:
+            pop()
+        else:
+            advance_branch, stack[-1] = search.branch(offset)
+            if advance_branch.query_offset == query_size:
+                yield advance_branch.offsets
+            else:
+                push(advance_branch)
 
 
 @rich.repr.auto
@@ -214,7 +195,7 @@ if __name__ == "__main__":
     from rich import print
     from rich.text import Text
 
-    for offsets in match("ee", TEST):
+    for offsets in match("shot", TEST):
         text = Text(TEST)
         for offset in offsets:
             text.stylize("reverse", offset, offset + 1)
