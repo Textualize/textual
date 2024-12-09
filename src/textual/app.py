@@ -590,8 +590,14 @@ class App(Generic[ReturnType], DOMNode):
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
 
-        self._click_chain_timer: Timer | None = None
-        """A timer which is used to measure the duration between mouse down and mouse up events, in order for Textual to generate the corresponding `SingleClick`, `DoubleClick`, or `TripleClick` events."""
+        self._click_chain_last_offset: Offset | None = None
+        """The last offset at which a Click occurred, in screen-space."""
+
+        self._click_chain_last_time: float | None = None
+        """The last time at which a Click occurred."""
+
+        self._chained_clicks: int = 1
+        """Counter which tracks the number of clicks received in a row."""
 
         self._previous_cursor_position = Offset(0, 0)
         """The previous cursor position"""
@@ -3717,13 +3723,32 @@ class App(Generic[ReturnType], DOMNode):
                     and self._mouse_down_widget is not None
                 ):
                     try:
-                        if (
-                            self.get_widget_at(event.x, event.y)[0]
-                            is self._mouse_down_widget
-                        ):
-                            click_event = events.Click.from_event(
-                                self._mouse_down_widget, event
+                        screen_offset = event.screen_offset
+                        mouse_down_widget = self._mouse_down_widget
+                        mouse_up_widget, _ = self.get_widget_at(*screen_offset)
+
+                        if mouse_up_widget is mouse_down_widget:
+                            same_offset = (
+                                self._click_chain_last_offset is not None
+                                and self._click_chain_last_offset == screen_offset
                             )
+                            within_time_threshold = (
+                                self._click_chain_last_time is not None
+                                and event.time - self._click_chain_last_time < 0.5
+                            )
+
+                            if same_offset and within_time_threshold:
+                                self._chained_clicks += 1
+                            else:
+                                self._chained_clicks = 1
+
+                            click_event = events.Click.from_event(
+                                mouse_down_widget, event, count=self._chained_clicks
+                            )
+
+                            self._click_chain_last_time = event.time
+                            self._click_chain_last_offset = screen_offset
+
                             self.screen._forward_event(click_event)
                     except NoWidget:
                         pass

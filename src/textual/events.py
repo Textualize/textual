@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Type, TypeVar
+from typing import TYPE_CHECKING, Self, Type, TypeVar
 
 import rich.repr
 from rich.style import Style
@@ -557,6 +557,83 @@ class Click(MouseEvent, bubble=True):
     - [X] Bubbles
     - [ ] Verbose
     """
+
+    def __init__(
+        self,
+        widget: Widget | None,
+        x: int,
+        y: int,
+        delta_x: int,
+        delta_y: int,
+        button: int,
+        shift: bool,
+        meta: bool,
+        ctrl: bool,
+        screen_x: int | None = None,
+        screen_y: int | None = None,
+        style: Style | None = None,
+        count: int = 1,
+    ) -> None:
+        super().__init__(
+            widget,
+            x,
+            y,
+            delta_x,
+            delta_y,
+            button,
+            shift,
+            meta,
+            ctrl,
+            screen_x,
+            screen_y,
+            style,
+        )
+        self.count = count
+
+    @classmethod
+    def from_event(
+        cls: Type[Self],
+        widget: Widget,
+        event: MouseEvent,
+        count: int = 1,
+    ) -> Self:
+        new_event = cls(
+            widget,
+            event.x,
+            event.y,
+            event.delta_x,
+            event.delta_y,
+            event.button,
+            event.shift,
+            event.meta,
+            event.ctrl,
+            event.screen_x,
+            event.screen_y,
+            event._style,
+            count=count,
+        )
+        return new_event
+
+    def _apply_offset(self, x: int, y: int) -> Self:
+        return self.__class__(
+            self.widget,
+            x=self.x + x,
+            y=self.y + y,
+            delta_x=self.delta_x,
+            delta_y=self.delta_y,
+            button=self.button,
+            shift=self.shift,
+            meta=self.meta,
+            ctrl=self.ctrl,
+            screen_x=self.screen_x,
+            screen_y=self.screen_y,
+            style=self.style,
+            count=self.count,
+        )
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "count", self.count
 
 
 @rich.repr.auto
