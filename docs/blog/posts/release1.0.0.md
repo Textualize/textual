@@ -253,9 +253,9 @@ These widgets are either within the viewable area, or close by.
 The widgets not included in the list (`widget7`, `widget8`) we can confidently conclude that they are not visible.
 If we need to know precisely which widgets are visible we can check their regions individually.
 
-The useful property of this algorithm is that as the number of widgets increases, the time it takes to figure out which are visible stays relatively constant.
-Scrolling a view of 8 widgets, takes about the same time has a view of 1000 widgets.
+The useful property of this algorithm is that as the number of widgets increases, the time it takes to figure out which are visible stays relatively constant. Scrolling a view of 8 widgets, takes much the same time as a view of 1000 widgets or more.
 
+The code for our `SpatialMap` isn't part of the public API and therefore not in the docs, but if you are interested you can check it out here: [_spacial_map.py](https://github.com/Textualize/textual/blob/main/src/textual/_spatial_map.py).
 
 [^1]: A term I coined for the structure in Textual. There may be other unconnected things known as spatial maps.
 [^2]: The [grid](https://www.youtube.com/watch?v=lILHEnz8fTk&ab_channel=DaftPunk-Topic).
