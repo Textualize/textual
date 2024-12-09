@@ -1910,7 +1910,7 @@ class App(Generic[ReturnType], DOMNode):
             """Called when app is ready to process events."""
             app_ready_event.set()
 
-        async def run_app(app: App) -> None:
+        async def run_app(app: App[ReturnType]) -> None:
             """Run the apps message loop.
 
             Args:
