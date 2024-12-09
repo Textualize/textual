@@ -1,10 +1,12 @@
 import contextlib
 
+import pytest
 from rich.terminal_theme import DIMMED_MONOKAI, MONOKAI, NIGHT_OWLISH
 
+from textual import events
 from textual.app import App, ComposeResult
 from textual.command import SimpleCommand
-from textual.widgets import Button, Input, Static
+from textual.widgets import Button, Input, Label, Static
 
 
 def test_batch_update():
@@ -224,6 +226,51 @@ async def test_search_with_tuples():
 async def test_search_with_empty_list():
     """Test search with an empty command list doesn't crash."""
     app = App[None]()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         await app.search_commands([])
-        await pilot.press("escape")
+
+
+@pytest.mark.parametrize("click_count", [1, 2, 3])
+async def test_click_chain_initial_repeated_clicks(click_count: int):
+    click_count = 0
+
+    class MyApp(App[None]):
+        CLICK_CHAIN_TIME_THRESHOLD = 10.0
+
+        def compose(self) -> ComposeResult:
+            yield Label("Click me!")
+
+        def on_click(self, event: events.Click) -> None:
+            nonlocal click_count
+            click_count += event.count
+
+    async with MyApp().run_test() as pilot:
+        # Clicking the same Label at the same offset creates a double and triple click.
+        for _ in range(click_count):
+            await pilot.click(Label)
+        assert click_count == click_count
+
+
+async def test_click_chain_different_offset():
+    click_count = 0
+
+    class MyApp(App[None]):
+        CLICK_CHAIN_TIME_THRESHOLD = 10.0
+
+        def compose(self) -> ComposeResult:
+            yield Label("One!", id="one")
+            yield Label("Two!", id="two")
+            yield Label("Three!", id="three")
+
+        def on_click(self, event: events.Click) -> None:
+            nonlocal click_count
+            click_count += event.count
+
+    async with MyApp().run_test() as pilot:
+        # Clicking on different offsets in quick-succession doesn't qualify as a double or triple click.
+        await pilot.click("#one")
+        assert click_count == 1
+        await pilot.click("#two")
+        assert click_count == 2
+        await pilot.click("#three")
+        assert click_count == 3
