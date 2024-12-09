@@ -1984,7 +1984,7 @@ class App(Generic[ReturnType], DOMNode):
         if auto_pilot is None and constants.PRESS:
             keys = constants.PRESS.split(",")
 
-            async def press_keys(pilot: Pilot) -> None:
+            async def press_keys(pilot: Pilot[ReturnType]) -> None:
                 """Auto press keys."""
                 await pilot.press(*keys)
 
