@@ -25,6 +25,13 @@ def test_match():
     assert matcher.match("foo .ba egg r") == 1.0 - 2 / 13
 
 
+def test_boosted_matches():
+    matcher = Matcher("ss")
+
+    # First word matchers should score higher
+    assert matcher.match("Save Screenshot") > matcher.match("Show Keys abcde")
+
+
 def test_highlight():
     matcher = Matcher("foo.bar")
 
