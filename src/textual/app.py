@@ -3710,6 +3710,7 @@ class App(Generic[ReturnType], DOMNode):
 
                 self.screen._forward_event(event)
 
+                # If a MouseUp occurs at the same widget as a MouseDown, then we should consider it a click, and produce a Click event.
                 if (
                     isinstance(event, events.MouseUp)
                     and self._mouse_down_widget is not None
@@ -4325,9 +4326,11 @@ class App(Generic[ReturnType], DOMNode):
             # app, and we don't want to have the driver auto-restart
             # application mode when the application comes back to the
             # foreground, in this context.
-            with self._driver.no_automatic_restart(), redirect_stdout(
-                sys.__stdout__
-            ), redirect_stderr(sys.__stderr__):
+            with (
+                self._driver.no_automatic_restart(),
+                redirect_stdout(sys.__stdout__),
+                redirect_stderr(sys.__stderr__),
+            ):
                 yield
             # We're done with the dev's code so resume application mode.
             self._driver.resume_application_mode()
