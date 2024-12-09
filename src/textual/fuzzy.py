@@ -7,13 +7,87 @@ This class is used by the [command palette](/guide/command_palette) to match sea
 
 from __future__ import annotations
 
-from re import IGNORECASE, compile, escape
+from dataclasses import dataclass, field
+from re import IGNORECASE, compile, escape, finditer
+from typing import Iterable
 
 import rich.repr
 from rich.style import Style
 from rich.text import Text
 
 from textual.cache import LRUCache
+
+
+@dataclass
+class FuzzyMatch:
+    candidate_offset: int = 0
+    query_offset: int = 0
+    offsets: list[int] = field(default_factory=list)
+
+    def advance(self, new_offset: int) -> FuzzyMatch:
+        return FuzzyMatch(new_offset, self.query_offset, self.offsets.copy())
+
+
+def match(
+    query: str, candidate: str, case_sensitive: bool = False
+) -> Iterable[list[int]]:
+    if not case_sensitive:
+        query = query.lower()
+        candidate = candidate.lower()
+
+    query_letters: list[tuple[float, int, str]] = []
+    for word_match in finditer(r"\w+", candidate):
+        start, end = word_match.span()
+
+        query_letters.extend(
+            [
+                (True, start, candidate[start]),
+                *[
+                    (False, offset, candidate[offset])
+                    for offset in range(start + 1, end)
+                ],
+            ]
+        )
+
+    stack: list[FuzzyMatch] = [FuzzyMatch(0, 0, [])]
+
+    while stack:
+        match = stack[-1]
+
+        if match.candidate_offset >= len(candidate) or match.query_offset >= len(query):
+            stack.pop()
+            continue
+
+        try:
+            offset = candidate.index(query[match.query_offset], match.candidate_offset)
+        except ValueError:
+            # Current math was unsuccessful
+            stack.pop()
+            continue
+
+        advance_match = match.advance(offset + 1)
+        match.offsets.append(offset)
+        match.candidate_offset = offset + 1
+        match.query_offset += 1
+
+        if match.query_offset == len(query):
+            # Full match
+            yield match.offsets.copy()
+            stack.pop()
+
+        stack.append(advance_match)
+
+        # else:
+        #     match.candidate_offset += 1
+        #     stack.append(match_copy)
+
+        # if query[match.query_offset] == candidate[match.candidate_offset]:
+        #     match_copy = match.copy()
+        #     match_copy.query_offset += 1
+        #     if match_copy.query_offset == len(query):
+        #         yield match_copy.offsets.copy()
+        #     match_copy.offsets.append(match.candidate_offset)
+        #     stack.append(match_copy)
 
 
 @rich.repr.auto
@@ -133,3 +207,15 @@ class Matcher:
             text.stylize(self._match_style, offset, offset + 1)
 
         return text
+
+
+if __name__ == "__main__":
+    TEST = "Save Screenshot"
+    from rich import print
+    from rich.text import Text
+
+    for offsets in match("ee", TEST):
+        text = Text(TEST)
+        for offset in offsets:
+            text.stylize("reverse", offset, offset + 1)
+        print(text)
