@@ -17,13 +17,13 @@ I've had the fortune of being able to work fulltime on a FOSS project for the la
     [![Textual Demo](../images/textual-demo.svg)](https://github.com/textualize/textual-demo)
 
 
-Textual has been a constant source of programming challenges, often frustrating but never boring.
-The challenges arise because the terminal "specification" says nothing about how to build a modern User Interface on top of it.
+Textual has been a constant source of programming challenges.
+Often frustrating but never boring, the challenges arise because the terminal "specification" says nothing about how to build a modern User Interface.
 The building blocks are there.
 After some effort you can move the cursor, write colored text, read keys and mouse coordinates, but that's about it.
 Everything else we had to build from scratch: from the most basic [button](https://textual.textualize.io/widget_gallery/#button) to a syntax highlighted [TextArea](https://textual.textualize.io/widget_gallery/#textarea), and everything along the way.
 
-I wanted to write-up some of the more interesting solutions we came up with.
+I wanted to write-up some of the more interesting solutions we came up with for a while.
 The 1.0 milestone we just passed makes this the perfect time.
 
 If you haven't followed along with Textual's development, here is a demo of what it can do.
