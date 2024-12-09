@@ -36,14 +36,19 @@ class Matcher:
         """
         self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
+        self._case_sensitive = case_sensitive
         self._query_regex = compile(
             ".*?".join(f"({escape(character)})" for character in query),
             flags=0 if case_sensitive else IGNORECASE,
         )
+        _first_word_regex = ".*?".join(
+            f"(\\b{escape(character)})" for character in query
+        )
         self._first_word_regex = compile(
-            ".*?".join(f"(\\b{escape(character)})" for character in query),
+            _first_word_regex,
             flags=0 if case_sensitive else IGNORECASE,
         )
+
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
 
     @property
@@ -64,7 +69,7 @@ class Matcher:
     @property
     def case_sensitive(self) -> bool:
         """Is this matcher case sensitive?"""
-        return not bool(self._query_regex.flags & IGNORECASE)
+        return self._case_sensitive
 
     def match(self, candidate: str) -> float:
         """Match the candidate against the query.
@@ -83,6 +88,7 @@ class Matcher:
             score = 0.0
         else:
             assert match.lastindex is not None
+            multiplier = 1.0
             offsets = [
                 match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
             ]
@@ -95,10 +101,11 @@ class Matcher:
 
             score = 1.0 - ((group_count - 1) / len(candidate))
 
-            if first_words := self._first_word_regex.match(candidate):
-                multiplier = len(first_words.groups())
+            if first_words := self._first_word_regex.search(candidate):
+                multiplier = len(first_words.groups()) + 1
                 # boost if the query matches first words
-                score *= multiplier
+
+            score *= multiplier
         self._cache[candidate] = score
         return score
 
@@ -111,20 +118,18 @@ class Matcher:
         Returns:
             A [rich.text.Text][`Text`] object with highlighted matches.
         """
-        match = self._query_regex.search(candidate)
         text = Text.from_markup(candidate)
+        match = self._first_word_regex.search(candidate)
+        if match is None:
+            match = self._query_regex.search(candidate)
+
         if match is None:
             return text
         assert match.lastindex is not None
-        if self._query in text.plain:
-            # Favor complete matches
-            offset = text.plain.index(self._query)
-            text.stylize(self._match_style, offset, offset + len(self._query))
-        else:
-            offsets = [
-                match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
-            ]
-            for offset in offsets:
-                text.stylize(self._match_style, offset, offset + 1)
+        offsets = [
+            match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
+        ]
+        for offset in offsets:
+            text.stylize(self._match_style, offset, offset + 1)
 
         return text
