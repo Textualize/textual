@@ -3721,7 +3721,8 @@ class App(Generic[ReturnType], DOMNode):
 
                 self.screen._forward_event(event)
 
-                # If a MouseUp occurs at the same widget as a MouseDown, then we should consider it a click, and produce a Click event.
+                # If a MouseUp occurs at the same widget as a MouseDown, then we should
+                # consider it a click, and produce a Click event.
                 if (
                     isinstance(event, events.MouseUp)
                     and self._mouse_down_widget is not None
@@ -3731,6 +3732,8 @@ class App(Generic[ReturnType], DOMNode):
                         mouse_down_widget = self._mouse_down_widget
                         mouse_up_widget, _ = self.get_widget_at(*screen_offset)
 
+                        print(screen_offset, mouse_down_widget, mouse_up_widget)
+
                         if mouse_up_widget is mouse_down_widget:
                             same_offset = (
                                 self._click_chain_last_offset is not None
@@ -3739,8 +3742,10 @@ class App(Generic[ReturnType], DOMNode):
                             within_time_threshold = (
                                 self._click_chain_last_time is not None
                                 and event.time - self._click_chain_last_time
-                                < self.CLICK_CHAIN_TIME_THRESHOLD
+                                <= self.CLICK_CHAIN_TIME_THRESHOLD
                             )
+
+                            print(same_offset, within_time_threshold)
 
                             if same_offset and within_time_threshold:
                                 self._chained_clicks += 1

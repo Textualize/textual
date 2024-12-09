@@ -230,32 +230,46 @@ async def test_search_with_empty_list():
         await app.search_commands([])
 
 
-@pytest.mark.parametrize("click_count", [1, 2, 3])
-async def test_click_chain_initial_repeated_clicks(click_count: int):
+@pytest.mark.parametrize("number_of_clicks,final_count", [(1, 1), (2, 3), (3, 6)])
+async def test_click_chain_initial_repeated_clicks(
+    number_of_clicks: int, final_count: int
+):
     click_count = 0
 
     class MyApp(App[None]):
-        CLICK_CHAIN_TIME_THRESHOLD = 10.0
+        # Ensure clicks are always within the time threshold
+        CLICK_CHAIN_TIME_THRESHOLD = 1000.0
 
         def compose(self) -> ComposeResult:
-            yield Label("Click me!")
+            yield Label("Click me!", id="one")
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
             click_count += event.count
+            print("event.count", event.count)
+            print("click_count", click_count)
 
     async with MyApp().run_test() as pilot:
         # Clicking the same Label at the same offset creates a double and triple click.
-        for _ in range(click_count):
-            await pilot.click(Label)
-        assert click_count == click_count
+        for _ in range(number_of_clicks):
+            # TODO - we'll have to dispatch messages to the app directly here
+            # in order to test this properly, or rewrite pilot.click to dispatch
+            # only a mouseup and mousedown event to the *APP*. Right now it sends
+            # a fake message directly to a target widget.
+            # If we send the mouseup and mousedown events to the app, we'd be able
+            # to test the click chaining logic.
+            await pilot.click("#one")
+            await pilot.pause()
+
+        assert click_count == final_count
 
 
 async def test_click_chain_different_offset():
     click_count = 0
 
     class MyApp(App[None]):
-        CLICK_CHAIN_TIME_THRESHOLD = 10.0
+        # Ensure clicks are always within the time threshold
+        CLICK_CHAIN_TIME_THRESHOLD = 1000.0
 
         def compose(self) -> ComposeResult:
             yield Label("One!", id="one")
@@ -274,3 +288,54 @@ async def test_click_chain_different_offset():
         assert click_count == 2
         await pilot.click("#three")
         assert click_count == 3
+
+
+async def test_click_chain_offset_changes_mid_chain():
+    """If we're in the middle of a click chain (e.g. we've double clicked), and the third click
+    comes in at a different offset, that third click should be considered a single click.
+    """
+
+    click_count = 0
+
+    class MyApp(App[None]):
+        # Ensure clicks are always within the time threshold
+        CLICK_CHAIN_TIME_THRESHOLD = 1000.0
+
+        def compose(self) -> ComposeResult:
+            yield Label("Click me!", id="one")
+            yield Label("Another button!", id="two")
+
+        def on_click(self, event: events.Click) -> None:
+            nonlocal click_count
+            click_count = event.count
+            print(event.count)
+
+    async with MyApp().run_test() as pilot:
+        await pilot.click("#one")  # Single click
+        assert click_count == 1
+        await pilot.click("#one")  # Double click
+        assert click_count == 2
+        await pilot.click("#two")  # Single click (because different offset)
+        assert click_count == 1
+
+
+async def test_click_chain_time_outwith_threshold():
+    click_count = 0
+
+    class MyApp(App[None]):
+        # Intentionally set the threshold to 0.0 to ensure we always exceed it
+        # and can confirm that a click chain is never created
+        CLICK_CHAIN_TIME_THRESHOLD = 0.0
+
+        def compose(self) -> ComposeResult:
+            yield Label("Click me!")
+
+        def on_click(self, event: events.Click) -> None:
+            nonlocal click_count
+            click_count += event.count
+
+    async with MyApp().run_test() as pilot:
+        for i in range(1, 4):
+            # Each click is outwith the time threshold, so a click chain is never created.
+            await pilot.click(Label)
+            assert click_count == i
