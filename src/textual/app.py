@@ -437,6 +437,10 @@ class App(Generic[ReturnType], DOMNode):
     ALLOW_IN_MAXIMIZED_VIEW: ClassVar[str] = "Footer"
     """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
 
+    CLICK_CHAIN_TIME_THRESHOLD: ClassVar[float] = 0.5
+    """The maximum number of seconds between clicks to upgrade a single click to a double click, 
+    a double click to a triple click, etc."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding(
             "ctrl+q",
@@ -589,6 +593,15 @@ class App(Generic[ReturnType], DOMNode):
 
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
+
+        self._click_chain_last_offset: Offset | None = None
+        """The last offset at which a Click occurred, in screen-space."""
+
+        self._click_chain_last_time: float | None = None
+        """The last time at which a Click occurred."""
+
+        self._chained_clicks: int = 1
+        """Counter which tracks the number of clicks received in a row."""
 
         self._previous_cursor_position = Offset(0, 0)
         """The previous cursor position"""
@@ -766,8 +779,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self._previous_inline_height: int | None = None
         """Size of previous inline update."""
-
-        self._hover_effects_timer: Timer | None = None
 
         self._resize_event: events.Resize | None = None
         """A pending resize event, sent on idle."""
@@ -1912,7 +1923,7 @@ class App(Generic[ReturnType], DOMNode):
             """Called when app is ready to process events."""
             app_ready_event.set()
 
-        async def run_app(app: App) -> None:
+        async def run_app(app: App[ReturnType]) -> None:
             """Run the apps message loop.
 
             Args:
@@ -1986,7 +1997,7 @@ class App(Generic[ReturnType], DOMNode):
         if auto_pilot is None and constants.PRESS:
             keys = constants.PRESS.split(",")
 
-            async def press_keys(pilot: Pilot) -> None:
+            async def press_keys(pilot: Pilot[ReturnType]) -> None:
                 """Auto press keys."""
                 await pilot.press(*keys)
 
@@ -3710,18 +3721,44 @@ class App(Generic[ReturnType], DOMNode):
 
                 self.screen._forward_event(event)
 
+                # If a MouseUp occurs at the same widget as a MouseDown, then we should
+                # consider it a click, and produce a Click event.
                 if (
                     isinstance(event, events.MouseUp)
                     and self._mouse_down_widget is not None
                 ):
                     try:
-                        if (
-                            self.get_widget_at(event.x, event.y)[0]
-                            is self._mouse_down_widget
-                        ):
-                            click_event = events.Click.from_event(
-                                self._mouse_down_widget, event
+                        screen_offset = event.screen_offset
+                        mouse_down_widget = self._mouse_down_widget
+                        mouse_up_widget, _ = self.get_widget_at(*screen_offset)
+
+                        print(screen_offset, mouse_down_widget, mouse_up_widget)
+
+                        if mouse_up_widget is mouse_down_widget:
+                            same_offset = (
+                                self._click_chain_last_offset is not None
+                                and self._click_chain_last_offset == screen_offset
                             )
+                            within_time_threshold = (
+                                self._click_chain_last_time is not None
+                                and event.time - self._click_chain_last_time
+                                <= self.CLICK_CHAIN_TIME_THRESHOLD
+                            )
+
+                            print(same_offset, within_time_threshold)
+
+                            if same_offset and within_time_threshold:
+                                self._chained_clicks += 1
+                            else:
+                                self._chained_clicks = 1
+
+                            click_event = events.Click.from_event(
+                                mouse_down_widget, event, count=self._chained_clicks
+                            )
+
+                            self._click_chain_last_time = event.time
+                            self._click_chain_last_offset = screen_offset
+
                             self.screen._forward_event(click_event)
                     except NoWidget:
                         pass
@@ -4325,9 +4362,11 @@ class App(Generic[ReturnType], DOMNode):
             # app, and we don't want to have the driver auto-restart
             # application mode when the application comes back to the
             # foreground, in this context.
-            with self._driver.no_automatic_restart(), redirect_stdout(
-                sys.__stdout__
-            ), redirect_stderr(sys.__stderr__):
+            with (
+                self._driver.no_automatic_restart(),
+                redirect_stdout(sys.__stdout__),
+                redirect_stderr(sys.__stderr__),
+            ):
                 yield
             # We're done with the dev's code so resume application mode.
             self._driver.resume_application_mode()
