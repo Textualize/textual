@@ -767,8 +767,6 @@ class App(Generic[ReturnType], DOMNode):
         self._previous_inline_height: int | None = None
         """Size of previous inline update."""
 
-        self._hover_effects_timer: Timer | None = None
-
         self._resize_event: events.Resize | None = None
         """A pending resize event, sent on idle."""
 
