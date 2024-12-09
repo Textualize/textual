@@ -23,9 +23,10 @@ class Search(NamedTuple):
     offsets: tuple[int, ...] = ()
 
     def branch(self, offset: int) -> tuple[Search, Search]:
+        _, query_offset, offsets = self
         return (
-            Search(offset + 1, self.query_offset + 1, self.offsets + (offset,)),
-            Search(offset + 1, self.query_offset, self.offsets),
+            Search(offset + 1, query_offset + 1, offsets + (offset,)),
+            Search(offset + 1, query_offset, offsets),
         )
 
 
