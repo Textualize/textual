@@ -3,7 +3,7 @@ draft: true
 date: 2024-12-05
 categories:
   - Release
-title: "There can be only one (point zero)"
+title: "Three algorithms for a high performance terminal apps"
 authors:
   - willmcgugan
 ---
@@ -19,9 +19,8 @@ I've had the fortune of being able to work fulltime on a FOSS project for the la
 
 Textual has been a constant source of programming challenges.
 Often frustrating but never boring, the challenges arise because the terminal "specification" says nothing about how to build a modern User Interface.
-The building blocks are there.
-After some effort you can move the cursor, write colored text, read keys and mouse coordinates, but that's about it.
-Everything else we had to build from scratch: from the most basic [button](https://textual.textualize.io/widget_gallery/#button) to a syntax highlighted [TextArea](https://textual.textualize.io/widget_gallery/#textarea), and everything along the way.
+The building blocks are there: after some effort you can move the cursor, write colored text, read keys and mouse movements, but that's about it.
+Everything else we had to build from scratch, from the most basic [button](https://textual.textualize.io/widget_gallery/#button) to a syntax highlighted [TextArea](https://textual.textualize.io/widget_gallery/#textarea), and everything along the way.
 
 I wanted to write-up some of the more interesting solutions we came up with for a while.
 The 1.0 milestone we just passed makes this the perfect time.
@@ -62,7 +61,7 @@ If that were the case, we could use [painter's algorithm](https://en.wikipedia.o
 In other words, sort them back to front and render them as though they were bitmaps.
 
 Unfortunately the terminal is *not* a true grid.
-Some characters such as CJK (Chinese, Japanese, and Korean) and many emoji are double the width of latin alphabet characters &mdash; which complicates things (to put it mildly).
+Some characters such as those in Asian languages and many emoji are double the width of latin alphabet characters &mdash; which complicates things (to put it mildly).
 
 Textual's way of handling this is inherited from [Rich](https://github.com/Textualize/rich).
 Anything you print in Rich, first generates a list of [Segments](https://github.com/Textualize/rich/blob/master/rich/segment.py) which consist of a string and associated style.
@@ -168,7 +167,7 @@ Not all of which widgets may be visible in the final view (if they are within a 
 
     While it is possible to have a widget as small as a single character, I've never found a need for one.
     The closest we get in Textual is a [scrollbar corner](https://textual.textualize.io/api/scrollbar/#textual.scrollbar.ScrollBarCorner);
-    a widget which exists to fil the space made when a vertical scrollbar and a horizontal scrollbar meet.
+    a widget which exists to fill the space made when a vertical scrollbar and a horizontal scrollbar meet.
     It does nothing because it doesn't need to, but it is powered by an async task like all widgets and can receive input.
     I have often wondered if there could be something useful in there.
     A game perhaps?
@@ -219,7 +218,7 @@ At the end of that process we have a dict that maps every grid coordinate on to 
 ```
 
 This data is cacheable.
-If the widgets don't change position or size, such as the user is *scrolling*, then we can reuse the information.
+If the widgets don't change their position or size such as when user is *scrolling*, then we can reuse the information.
 
 ### Search the grid
 
