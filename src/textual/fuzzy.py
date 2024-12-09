@@ -55,13 +55,11 @@ def match(
     push = stack.append
     pop = stack.pop
     query_size = len(query)
+    find = candidate.find
 
     while stack:
         search = stack[-1]
-        offset = candidate.find(
-            query[search.query_offset],
-            search.candidate_offset,
-        )
+        offset = find(query[search.query_offset], search.candidate_offset)
         if offset == -1:
             pop()
         else:
