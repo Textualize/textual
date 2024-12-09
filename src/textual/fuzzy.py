@@ -7,13 +7,67 @@ This class is used by the [command palette](/guide/command_palette) to match sea
 
 from __future__ import annotations
 
-from re import IGNORECASE, compile, escape
+from re import IGNORECASE, compile, escape, finditer
+from typing import Iterable, NamedTuple
 
 import rich.repr
 from rich.style import Style
 from rich.text import Text
 
 from textual.cache import LRUCache
+
+
+class Search(NamedTuple):
+    candidate_offset: int = 0
+    query_offset: int = 0
+    offsets: tuple[int, ...] = ()
+
+    def branch(self, offset: int) -> tuple[Search, Search]:
+        _, query_offset, offsets = self
+        return (
+            Search(offset + 1, query_offset + 1, offsets + (offset,)),
+            Search(offset + 1, query_offset, offsets),
+        )
+
+
+def match(
+    query: str, candidate: str, case_sensitive: bool = False
+) -> Iterable[tuple[int, ...]]:
+    if not case_sensitive:
+        query = query.lower()
+        candidate = candidate.lower()
+
+    query_letters: list[tuple[float, int, str]] = []
+    for word_match in finditer(r"\w+", candidate):
+        start, end = word_match.span()
+
+        query_letters.extend(
+            [
+                (True, start, candidate[start]),
+                *[
+                    (False, offset, candidate[offset])
+                    for offset in range(start + 1, end)
+                ],
+            ]
+        )
+
+    stack: list[Search] = [Search()]
+    push = stack.append
+    pop = stack.pop
+    query_size = len(query)
+    find = candidate.find
+
+    while stack:
+        search = stack[-1]
+        offset = find(query[search.query_offset], search.candidate_offset)
+        if offset == -1:
+            pop()
+        else:
+            advance_branch, stack[-1] = search.branch(offset)
+            if advance_branch.query_offset == query_size:
+                yield advance_branch.offsets
+            else:
+                push(advance_branch)
 
 
 @rich.repr.auto
@@ -36,10 +90,19 @@ class Matcher:
         """
         self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
+        self._case_sensitive = case_sensitive
         self._query_regex = compile(
             ".*?".join(f"({escape(character)})" for character in query),
             flags=0 if case_sensitive else IGNORECASE,
         )
+        _first_word_regex = ".*?".join(
+            f"(\\b{escape(character)})" for character in query
+        )
+        self._first_word_regex = compile(
+            _first_word_regex,
+            flags=0 if case_sensitive else IGNORECASE,
+        )
+
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
 
     @property
@@ -60,7 +123,7 @@ class Matcher:
     @property
     def case_sensitive(self) -> bool:
         """Is this matcher case sensitive?"""
-        return not bool(self._query_regex.flags & IGNORECASE)
+        return self._case_sensitive
 
     def match(self, candidate: str) -> float:
         """Match the candidate against the query.
@@ -79,6 +142,7 @@ class Matcher:
             score = 0.0
         else:
             assert match.lastindex is not None
+            multiplier = 1.0
             offsets = [
                 match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
             ]
@@ -90,6 +154,12 @@ class Matcher:
                 last_offset = offset
 
             score = 1.0 - ((group_count - 1) / len(candidate))
+
+            if first_words := self._first_word_regex.search(candidate):
+                multiplier = len(first_words.groups()) + 1
+                # boost if the query matches first words
+
+            score *= multiplier
         self._cache[candidate] = score
         return score
 
@@ -102,20 +172,30 @@ class Matcher:
         Returns:
             A [rich.text.Text][`Text`] object with highlighted matches.
         """
-        match = self._query_regex.search(candidate)
         text = Text.from_markup(candidate)
+        match = self._first_word_regex.search(candidate)
+        if match is None:
+            match = self._query_regex.search(candidate)
+
         if match is None:
             return text
         assert match.lastindex is not None
-        if self._query in text.plain:
-            # Favor complete matches
-            offset = text.plain.index(self._query)
-            text.stylize(self._match_style, offset, offset + len(self._query))
-        else:
-            offsets = [
-                match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
-            ]
-            for offset in offsets:
-                text.stylize(self._match_style, offset, offset + 1)
+        offsets = [
+            match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
+        ]
+        for offset in offsets:
+            text.stylize(self._match_style, offset, offset + 1)
 
         return text
+
+
+if __name__ == "__main__":
+    TEST = "Save Screenshot"
+    from rich import print
+    from rich.text import Text
+
+    for offsets in match("shot", TEST):
+        text = Text(TEST)
+        for offset in offsets:
+            text.stylize("reverse", offset, offset + 1)
+        print(text)
