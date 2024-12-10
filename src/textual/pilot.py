@@ -231,7 +231,7 @@ class Pilot(Generic[ReturnType]):
                 widget, False otherwise.
         """
         try:
-            done = await self._post_mouse_events(
+            return await self._post_mouse_events(
                 [MouseDown, MouseUp, Click],
                 widget=widget,
                 offset=offset,
@@ -241,7 +241,6 @@ class Pilot(Generic[ReturnType]):
                 control=control,
                 times=times,
             )
-            return done
         except OutOfBounds as error:
             raise error from None
 
