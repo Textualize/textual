@@ -232,6 +232,8 @@ async def test_search_with_empty_list():
 
 
 async def raw_click(pilot: Pilot, selector: str, times: int = 1):
+    """A lower level click function that doesn't use the Pilot,
+    and so doesn't bypass the click chain logic in App.on_event."""
     app = pilot.app
     kwargs = _get_mouse_message_arguments(app.query_one(selector))
     for _ in range(times):
