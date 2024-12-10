@@ -40,6 +40,9 @@ include = [
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
+[tool.ruff]
+target-version = "py38"
+
 [tool.poetry.dependencies]
 python = "^3.8.1"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
