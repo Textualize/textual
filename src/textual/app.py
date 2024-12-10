@@ -3702,7 +3702,6 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(event, events.Compose):
             await self._init_mode(self._current_mode)
             await super().on_event(event)
-
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
             if not self.app_focus and isinstance(event, (events.Key, events.MouseDown)):
                 self.app_focus = True
@@ -3731,9 +3730,6 @@ class App(Generic[ReturnType], DOMNode):
                         screen_offset = event.screen_offset
                         mouse_down_widget = self._mouse_down_widget
                         mouse_up_widget, _ = self.get_widget_at(*screen_offset)
-
-                        print(screen_offset, mouse_down_widget, mouse_up_widget)
-
                         if mouse_up_widget is mouse_down_widget:
                             same_offset = (
                                 self._click_chain_last_offset is not None
@@ -3744,8 +3740,6 @@ class App(Generic[ReturnType], DOMNode):
                                 and event.time - self._click_chain_last_time
                                 <= self.CLICK_CHAIN_TIME_THRESHOLD
                             )
-
-                            print(same_offset, within_time_threshold)
 
                             if same_offset and within_time_threshold:
                                 self._chained_clicks += 1

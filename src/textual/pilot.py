@@ -227,7 +227,7 @@ class Pilot(Generic[ReturnType]):
                 widget, False otherwise.
         """
         try:
-            return await self._post_mouse_events(
+            done = await self._post_mouse_events(
                 [MouseDown, MouseUp],
                 widget=widget,
                 offset=offset,
@@ -236,6 +236,7 @@ class Pilot(Generic[ReturnType]):
                 meta=meta,
                 control=control,
             )
+            return done
         except OutOfBounds as error:
             raise error from None
 
@@ -350,7 +351,7 @@ class Pilot(Generic[ReturnType]):
             # that's useful to other things (tooltip handling, for example),
             # we patch the offset in there as well.
             app.mouse_position = offset
-            app.screen._forward_event(event)
+            app.post_message(event)
             await self.pause()
 
         return widget is None or widget_at is target_widget

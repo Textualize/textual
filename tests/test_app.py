@@ -246,18 +246,10 @@ async def test_click_chain_initial_repeated_clicks(
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
             click_count += event.count
-            print("event.count", event.count)
-            print("click_count", click_count)
 
     async with MyApp().run_test() as pilot:
         # Clicking the same Label at the same offset creates a double and triple click.
         for _ in range(number_of_clicks):
-            # TODO - we'll have to dispatch messages to the app directly here
-            # in order to test this properly, or rewrite pilot.click to dispatch
-            # only a mouseup and mousedown event to the *APP*. Right now it sends
-            # a fake message directly to a target widget.
-            # If we send the mouseup and mousedown events to the app, we'd be able
-            # to test the click chaining logic.
             await pilot.click("#one")
             await pilot.pause()
 
@@ -308,7 +300,6 @@ async def test_click_chain_offset_changes_mid_chain():
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
             click_count = event.count
-            print(event.count)
 
     async with MyApp().run_test() as pilot:
         await pilot.click("#one")  # Single click
