@@ -78,13 +78,9 @@ class FuzzySearch:
         cache_key = (query, candidate, self.case_sensitive)
         if cache_key in self.cache:
             return self.cache[cache_key]
-
-        matches = sorted(self._match(query, candidate), key=itemgetter(0))
-        result: tuple[float, tuple[int, ...]]
-        if not matches:
-            result = (0.0, ())
-        else:
-            result = matches[-1]
+        result = max(
+            self._match(query, candidate), key=itemgetter(0), default=(0.0, ())
+        )
         self.cache[cache_key] = result
         return result
 
