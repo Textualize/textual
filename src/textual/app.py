@@ -1955,7 +1955,6 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 pilot = Pilot(app)
                 await pilot._wait_for_screen()
-                await pilot.pause()
                 yield pilot
             finally:
                 # Shutdown the app cleanly
@@ -3709,13 +3708,11 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
-                print("mouse event (on_event)", event)
                 if isinstance(event, events.MouseDown):
                     try:
                         self._mouse_down_widget, _ = self.get_widget_at(
                             event.x, event.y
                         )
-                        print("mouse down widget (on_event)", self._mouse_down_widget)
                     except NoWidget:
                         # Shouldn't occur, since at the very least this will find the Screen
                         self._mouse_down_widget = None
@@ -3728,12 +3725,10 @@ class App(Generic[ReturnType], DOMNode):
                     isinstance(event, events.MouseUp)
                     and self._mouse_down_widget is not None
                 ):
-                    print("mouse up (on_event)", event)
                     try:
                         screen_offset = event.screen_offset
                         mouse_down_widget = self._mouse_down_widget
                         mouse_up_widget, _ = self.get_widget_at(*screen_offset)
-                        print("mouse up widget (on_event)", mouse_up_widget)
                         if mouse_up_widget is mouse_down_widget:
                             same_offset = (
                                 self._click_chain_last_offset is not None
@@ -3753,7 +3748,6 @@ class App(Generic[ReturnType], DOMNode):
                             click_event = events.Click.from_event(
                                 mouse_down_widget, event, chain=self._chained_clicks
                             )
-                            print("generated click event (on_event)", click_event)
 
                             self._click_chain_last_time = event.time
                             self._click_chain_last_offset = screen_offset
