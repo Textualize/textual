@@ -15,7 +15,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Self, Type, TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
+from typing_extensions import Self
 
 import rich.repr
 from rich.style import Style
