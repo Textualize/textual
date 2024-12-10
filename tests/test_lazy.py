@@ -20,12 +20,8 @@ async def test_lazy():
     app = LazyApp()
     async with app.run_test() as pilot:
         # No #foo on initial mount
-        print("before query #foo")
         assert len(app.query("#foo")) == 0
-        print("after query #foo")
-        print("before query #bar")
         assert len(app.query("#bar")) == 1
-        print("after query #bar")
         await pilot.pause()
         await pilot.pause()
         # #bar mounted after refresh
