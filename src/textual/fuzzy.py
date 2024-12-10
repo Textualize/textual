@@ -7,67 +7,143 @@ This class is used by the [command palette](/guide/command_palette) to match sea
 
 from __future__ import annotations
 
-from re import IGNORECASE, compile, escape, finditer
+from operator import itemgetter
+from re import finditer
 from typing import Iterable, NamedTuple
 
 import rich.repr
 from rich.style import Style
 from rich.text import Text
 
-from textual.cache import LRUCache
 
+class _Search(NamedTuple):
+    """Internal structure to keep track of a recursive search."""
 
-class Search(NamedTuple):
     candidate_offset: int = 0
     query_offset: int = 0
     offsets: tuple[int, ...] = ()
 
-    def branch(self, offset: int) -> tuple[Search, Search]:
+    def branch(self, offset: int) -> tuple[_Search, _Search]:
+        """Branch this search when an offset is found.
+
+        Args:
+            offset: Offset of a matching letter in the query.
+
+        Returns:
+            A pair of search objects.
+        """
         _, query_offset, offsets = self
         return (
-            Search(offset + 1, query_offset + 1, offsets + (offset,)),
-            Search(offset + 1, query_offset, offsets),
+            _Search(offset + 1, query_offset + 1, offsets + (offset,)),
+            _Search(offset + 1, query_offset, offsets),
         )
 
+    @property
+    def groups(self) -> int:
+        """Number of groups in offsets."""
+        groups = 1
+        last_offset = self.offsets[0]
+        for offset in self.offsets[1:]:
+            if offset != last_offset + 1:
+                groups += 1
+            last_offset = offset
+        return groups
 
-def match(
-    query: str, candidate: str, case_sensitive: bool = False
-) -> Iterable[tuple[int, ...]]:
-    if not case_sensitive:
-        query = query.lower()
-        candidate = candidate.lower()
 
-    query_letters: list[tuple[float, int, str]] = []
-    for word_match in finditer(r"\w+", candidate):
-        start, end = word_match.span()
+class FuzzySearch:
+    """Performs a fuzzy search.
 
-        query_letters.extend(
-            [
-                (True, start, candidate[start]),
-                *[
-                    (False, offset, candidate[offset])
-                    for offset in range(start + 1, end)
-                ],
-            ]
-        )
+    Unlike a regex solution, this will finds all possible matches.
+    """
 
-    stack: list[Search] = [Search()]
-    push = stack.append
-    pop = stack.pop
-    query_size = len(query)
-    find = candidate.find
+    def __init__(self, case_sensitive: bool = False) -> None:
+        """_summary_
 
-    while stack:
-        search = stack[-1]
-        offset = find(query[search.query_offset], search.candidate_offset)
-        if offset == -1:
-            pop()
+        Args:
+            case_sensitive: Is the match case sensitive?
+        """
+        self.cache: dict[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = {}
+        self.case_sensitive = case_sensitive
+
+    def match(self, query: str, candidate: str) -> tuple[float, tuple[int, ...]]:
+        """Match against a query.
+
+        Args:
+            query: The fuzzy query.
+            candidate: A candidate to check,.
+
+        Returns:
+            A pair of (score, tuple of offsets). `(0, ())` for no result.
+        """
+        cache_key = (query, candidate, self.case_sensitive)
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        matches = sorted(self._match(query, candidate), key=itemgetter(0))
+        result: tuple[float, tuple[int, ...]]
+        if not matches:
+            result = (0.0, ())
         else:
-            advance_branch, stack[-1] = search.branch(offset)
-            if advance_branch.query_offset == query_size:
-                yield advance_branch.offsets
-            else:
-                push(advance_branch)
+            result = matches[-1]
+        self.cache[cache_key] = result
+        return result
+
+    def _match(
+        self, query: str, candidate: str
+    ) -> Iterable[tuple[float, tuple[int, ...]]]:
+        """Generator to do the matching.
+
+        Args:
+            query: Query to match.
+            candidate: Candidate to check against.
+
+        Yields:
+            Pairs of score and tuple of offsets.
+        """
+        if not self.case_sensitive:
+            query = query.lower()
+            candidate = candidate.lower()
+
+        # We need this to give a bonus to first letters.
+        first_letters = {match.start() for match in finditer(r"\w+", candidate)}
+
+        def score(search: _Search) -> float:
+            """Sore a search.
+
+            Args:
+                search: Search object.
+
+            Returns:
+                Score.
+
+            """
+            # This is a heuristic, and can be tweaked for better results
+            # 2 points for a first letter, 1.0 for other letters
+            score: float = sum(
+                (2.0 if offset in first_letters else 1.0) for offset in search.offsets
+            )
+            # Divide by the number of groups
+            # 1 group no change, 2 groups score is halved etc
+            score /= search.groups
+            return score
+
+        stack: list[_Search] = [_Search()]
+        push = stack.append
+        pop = stack.pop
+        query_size = len(query)
+        find = candidate.find
+
+        while stack:
+            search = pop()
+            offset = find(query[search.query_offset], search.candidate_offset)
+            if offset != -1:
+                advance_branch, branch = search.branch(offset)
+                if advance_branch.query_offset == query_size:
+                    yield score(advance_branch), advance_branch.offsets
+                    push(branch)
+                else:
+                    push(advance_branch)
+                    push(branch)
 
 
 @rich.repr.auto
@@ -91,19 +167,7 @@ class Matcher:
         self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
         self._case_sensitive = case_sensitive
-        self._query_regex = compile(
-            ".*?".join(f"({escape(character)})" for character in query),
-            flags=0 if case_sensitive else IGNORECASE,
-        )
-        _first_word_regex = ".*?".join(
-            f"(\\b{escape(character)})" for character in query
-        )
-        self._first_word_regex = compile(
-            _first_word_regex,
-            flags=0 if case_sensitive else IGNORECASE,
-        )
-
-        self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
+        self.fuzzy_search = FuzzySearch()
 
     @property
     def query(self) -> str:
@@ -114,11 +178,6 @@ class Matcher:
     def match_style(self) -> Style:
         """The style that will be used to highlight hits in the matched text."""
         return self._match_style
-
-    @property
-    def query_pattern(self) -> str:
-        """The regular expression pattern built from the query."""
-        return self._query_regex.pattern
 
     @property
     def case_sensitive(self) -> bool:
@@ -134,34 +193,7 @@ class Matcher:
         Returns:
             Strength of the match from 0 to 1.
         """
-        cached = self._cache.get(candidate)
-        if cached is not None:
-            return cached
-        match = self._query_regex.search(candidate)
-        if match is None:
-            score = 0.0
-        else:
-            assert match.lastindex is not None
-            multiplier = 1.0
-            offsets = [
-                match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
-            ]
-            group_count = 0
-            last_offset = -2
-            for offset in offsets:
-                if offset > last_offset + 1:
-                    group_count += 1
-                last_offset = offset
-
-            score = 1.0 - ((group_count - 1) / len(candidate))
-
-            if first_words := self._first_word_regex.search(candidate):
-                multiplier = len(first_words.groups()) + 1
-                # boost if the query matches first words
-
-            score *= multiplier
-        self._cache[candidate] = score
-        return score
+        return self.fuzzy_search.match(self.query, candidate)[0]
 
     def highlight(self, candidate: str) -> Text:
         """Highlight the candidate with the fuzzy match.
@@ -173,29 +205,25 @@ class Matcher:
             A [rich.text.Text][`Text`] object with highlighted matches.
         """
         text = Text.from_markup(candidate)
-        match = self._first_word_regex.search(candidate)
-        if match is None:
-            match = self._query_regex.search(candidate)
-
-        if match is None:
+        score, offsets = self.fuzzy_search.match(self.query, candidate)
+        if not score:
             return text
-        assert match.lastindex is not None
-        offsets = [
-            match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
-        ]
         for offset in offsets:
             text.stylize(self._match_style, offset, offset + 1)
-
         return text
 
 
 if __name__ == "__main__":
-    TEST = "Save Screenshot"
+    TEST = "Savess Screens shot"
     from rich import print
     from rich.text import Text
 
-    for offsets in match("shot", TEST):
+    fuzzy = FuzzySearch()
+
+    for score, offsets in fuzzy._match("ss", TEST):
         text = Text(TEST)
         for offset in offsets:
             text.stylize("reverse", offset, offset + 1)
+        print("--")
+        print(score)
         print(text)
