@@ -17,14 +17,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
 - Changed delete line binding on TextArea to use `ctrl+shift+x` https://github.com/Textualize/textual/pull/5352
+- The command palette will now select the top item automatically https://github.com/Textualize/textual/pull/5361
 
-## [0.89.1] - 2024-11-05
+### Fixed
+
+- Fixed issue with alignment in auto containers https://github.com/Textualize/textual/pull/5360
+
+## [0.89.1] - 2024-12-05
 
 ### Fixed
 
 - Fixed alignment of docked widgets https://github.com/Textualize/textual/pull/5347
 
-## [0.89.0] - 2024-11-05
+## [0.89.0] - 2024-12-05
 
 ## Added
 
