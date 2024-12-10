@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `App.clipboard` https://github.com/Textualize/textual/pull/5352
 - Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea https://github.com/Textualize/textual/pull/5352
 - Added `system` boolean to Binding, which hides the binding from the help panel https://github.com/Textualize/textual/pull/5352
+- Added support for double/triple/etc clicks via `chain` attribute on `Click` events https://github.com/Textualize/textual/pull/5369
+- Added `times` parameter to `Pilot.click` method, for simulating rapid clicks https://github.com/Textualize/textual/pull/5369
   
 ### Changed
 
