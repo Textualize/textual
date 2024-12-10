@@ -118,13 +118,13 @@ class FuzzySearch:
 
             """
             # This is a heuristic, and can be tweaked for better results
-            # 2 points for a first letter, 1 for other letters
+            # Boost first letter matches
             score: float = sum(
                 (2.0 if offset in first_letters else 1.0) for offset in search.offsets
             )
-            # Divide by the number of groups
-            # 1 group no change, 2 groups score is halved etc.
-            score /= search.groups
+            # A single group gets a boost, as the user may be typing out an entire word
+            if search.groups == 1:
+                score *= 1.5
             return score
 
         stack: list[_Search] = [_Search()]
