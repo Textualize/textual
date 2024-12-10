@@ -123,7 +123,7 @@ class FuzzySearch:
                 (2.0 if offset in first_letters else 1.0) for offset in search.offsets
             )
             # Divide by the number of groups
-            # 1 group no change, 2 groups score is halved etc
+            # 1 group no change, 2 groups score is halved etc.
             score /= search.groups
             return score
 
