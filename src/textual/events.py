@@ -572,7 +572,7 @@ class Click(MouseEvent, bubble=True):
         screen_x: int | None = None,
         screen_y: int | None = None,
         style: Style | None = None,
-        count: int = 1,
+        chain: int = 1,
     ) -> None:
         super().__init__(
             widget,
@@ -588,14 +588,14 @@ class Click(MouseEvent, bubble=True):
             screen_y,
             style,
         )
-        self.count = count
+        self.chain = chain
 
     @classmethod
     def from_event(
         cls: Type[Self],
         widget: Widget,
         event: MouseEvent,
-        count: int = 1,
+        chain: int = 1,
     ) -> Self:
         new_event = cls(
             widget,
@@ -610,7 +610,7 @@ class Click(MouseEvent, bubble=True):
             event.screen_x,
             event.screen_y,
             event._style,
-            count=count,
+            chain=chain,
         )
         return new_event
 
@@ -628,12 +628,12 @@ class Click(MouseEvent, bubble=True):
             screen_x=self.screen_x,
             screen_y=self.screen_y,
             style=self.style,
-            count=self.count,
+            chain=self.chain,
         )
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
-        yield "count", self.count
+        yield "chain", self.chain
 
 
 @rich.repr.auto

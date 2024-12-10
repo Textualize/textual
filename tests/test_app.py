@@ -245,7 +245,7 @@ async def test_click_chain_initial_repeated_clicks(
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
-            click_count += event.count
+            click_count += event.chain
 
     async with MyApp().run_test() as pilot:
         # Clicking the same Label at the same offset creates a double and triple click.
@@ -270,7 +270,7 @@ async def test_click_chain_different_offset():
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
-            click_count += event.count
+            click_count += event.chain
 
     async with MyApp().run_test() as pilot:
         # Clicking on different offsets in quick-succession doesn't qualify as a double or triple click.
@@ -299,7 +299,7 @@ async def test_click_chain_offset_changes_mid_chain():
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
-            click_count = event.count
+            click_count = event.chain
 
     async with MyApp().run_test() as pilot:
         await pilot.click("#one")  # Single click
@@ -323,7 +323,7 @@ async def test_click_chain_time_outwith_threshold():
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
-            click_count += event.count
+            click_count += event.chain
 
     async with MyApp().run_test() as pilot:
         for i in range(1, 4):

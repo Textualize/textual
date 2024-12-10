@@ -3751,7 +3751,7 @@ class App(Generic[ReturnType], DOMNode):
                                 self._chained_clicks = 1
 
                             click_event = events.Click.from_event(
-                                mouse_down_widget, event, count=self._chained_clicks
+                                mouse_down_widget, event, chain=self._chained_clicks
                             )
                             print("generated click event (on_event)", click_event)
 

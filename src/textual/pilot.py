@@ -16,7 +16,7 @@ import rich.repr
 from textual._wait import wait_for_idle
 from textual.app import App, ReturnType
 from textual.drivers.headless_driver import HeadlessDriver
-from textual.events import MouseDown, MouseEvent, MouseMove, MouseUp, Resize
+from textual.events import Click, MouseDown, MouseEvent, MouseMove, MouseUp, Resize
 from textual.geometry import Offset, Size
 from textual.widget import Widget
 
@@ -194,11 +194,14 @@ class Pilot(Generic[ReturnType]):
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
+        times: int = 1,
     ) -> bool:
         """Simulate clicking with the mouse at a specified position.
 
         The final position to be clicked is computed based on the selector provided and
         the offset specified and it must be within the visible area of the screen.
+
+        Implementation note: This method bypasses the normal event processing in `App.on_event`.
 
         Example:
             The code below runs an app and clicks its only button right in the middle:
@@ -218,6 +221,7 @@ class Pilot(Generic[ReturnType]):
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
             control: Click with the control key held down.
+            times: The number of times to click. 2 will double-click, 3 will triple-click, etc.
 
         Raises:
             OutOfBounds: If the position to be clicked is outside of the (visible) screen.
@@ -228,13 +232,14 @@ class Pilot(Generic[ReturnType]):
         """
         try:
             done = await self._post_mouse_events(
-                [MouseDown, MouseUp],
+                [MouseDown, MouseUp, Click],
                 widget=widget,
                 offset=offset,
                 button=1,
                 shift=shift,
                 meta=meta,
                 control=control,
+                times=times,
             )
             return done
         except OutOfBounds as error:
@@ -283,6 +288,7 @@ class Pilot(Generic[ReturnType]):
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
+        times: int = 1,
     ) -> bool:
         """Simulate a series of mouse events to be fired at a given position.
 
@@ -303,7 +309,7 @@ class Pilot(Generic[ReturnType]):
             shift: Simulate the events with the shift key held down.
             meta: Simulate the events with the meta key held down.
             control: Simulate the events with the control key held down.
-
+            times: The number of times to click. 2 will double-click, 3 will triple-click, etc.
         Raises:
             OutOfBounds: If the position for the events is outside of the (visible) screen.
 
@@ -351,7 +357,7 @@ class Pilot(Generic[ReturnType]):
             # that's useful to other things (tooltip handling, for example),
             # we patch the offset in there as well.
             app.mouse_position = offset
-            app.post_message(event)
+            screen._forward_event(event)
             await self.pause()
 
         return widget is None or widget_at is target_widget
