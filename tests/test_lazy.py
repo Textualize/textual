@@ -12,9 +12,6 @@ class LazyApp(App):
             with Horizontal():
                 yield Label(id="bar")
 
-    def on_mount(self) -> None:
-        print("on_mount")
-
 
 async def test_lazy():
     app = LazyApp()
