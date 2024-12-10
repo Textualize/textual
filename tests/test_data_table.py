@@ -777,7 +777,6 @@ async def test_datatable_click_cell_cursor():
         column_key = table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
-        await pilot.pause()  # add_row happens on_idle
         await pilot.click(offset=Offset(1, 2))
         # There's two CellHighlighted events since a cell is highlighted on initial load,
         # then when we click, another cell is highlighted (and selected).
