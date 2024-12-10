@@ -138,6 +138,15 @@ Here's how you would click the line *above* a button.
 await pilot.click(Button, offset=(0, -1))
 ```
 
+### Double & triple clicks
+
+You can simulate double and triple clicks by setting the `times` parameter.
+
+```python
+await pilot.click(Button, times=2)  # Double click
+await pilot.click(Button, times=3)  # Triple click
+```
+
 ### Modifier keys
 
 You can simulate clicks in combination with modifier keys, by setting the `shift`, `meta`, or `control` parameters.
