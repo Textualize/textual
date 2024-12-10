@@ -4355,12 +4355,12 @@ class App(Generic[ReturnType], DOMNode):
             # app, and we don't want to have the driver auto-restart
             # application mode when the application comes back to the
             # foreground, in this context.
-            with (
-                self._driver.no_automatic_restart(),
-                redirect_stdout(sys.__stdout__),
-                redirect_stderr(sys.__stderr__),
-            ):
+            # fmt: off
+            with self._driver.no_automatic_restart(), redirect_stdout(
+                sys.__stdout__
+            ), redirect_stderr(sys.__stderr__):
                 yield
+            # fmt: on
             # We're done with the dev's code so resume application mode.
             self._driver.resume_application_mode()
             # ...and publish a resume signal.
