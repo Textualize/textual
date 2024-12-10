@@ -226,7 +226,6 @@ TextArea {
         Binding(
             "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
-        Binding("ctrl+shift+x", "delete_line", "Delete line", show=False),
         Binding("ctrl+x", "cut", "Cut", show=False),
         Binding("ctrl+c", "copy", "Copy", show=False),
         Binding("ctrl+v", "paste", "Paste", show=False),
@@ -2185,15 +2184,14 @@ TextArea {
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
+        self._delete_cursor_line()
+
+    def _delete_cursor_line(self) -> EditResult | None:
+        """Deletes the line (including the line terminator) that the cursor is on."""
         start, end = self.selection
         start, end = sorted((start, end))
         start_row, _start_column = start
         end_row, end_column = end
-
-        # Generally editors will only delete line the end line of the
-        # selection if the cursor is not at column 0 of that line.
-        if start_row != end_row and end_column == 0 and end_row >= 0:
-            end_row -= 1
 
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
@@ -2201,6 +2199,7 @@ TextArea {
         deletion = self._delete_via_keyboard(from_location, to_location)
         if deletion is not None:
             self.move_cursor_relative(columns=end_column, record_width=False)
+        return deletion
 
     def action_cut(self) -> None:
         """Cut text (remove and copy to clipboard)."""
@@ -2208,10 +2207,12 @@ TextArea {
             return
         start, end = self.selection
         if start == end:
-            return
-        copy_text = self.get_text_range(start, end)
-        self.app.copy_to_clipboard(copy_text)
-        self._delete_via_keyboard(start, end)
+            edit_result = self._delete_cursor_line()
+        else:
+            edit_result = self._delete_via_keyboard(start, end)
+
+        if edit_result is not None:
+            self.app.copy_to_clipboard(edit_result.replaced_text)
 
     def action_copy(self) -> None:
         """Copy selection to clipboard."""
