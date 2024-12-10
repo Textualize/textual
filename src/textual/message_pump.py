@@ -810,7 +810,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             message: A message (including Event).
 
         Returns:
-            `True` if the messages was processed, `False` if it wasn't.
+            `True` if the message was queued for processing, otherwise `False`.
         """
         _rich_traceback_omit = True
         if not hasattr(message, "_prevent"):

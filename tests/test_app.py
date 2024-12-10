@@ -6,6 +6,7 @@ from rich.terminal_theme import DIMMED_MONOKAI, MONOKAI, NIGHT_OWLISH
 from textual import events
 from textual.app import App, ComposeResult
 from textual.command import SimpleCommand
+from textual.pilot import Pilot, _get_mouse_message_arguments
 from textual.widgets import Button, Input, Label, Static
 
 
@@ -230,6 +231,15 @@ async def test_search_with_empty_list():
         await app.search_commands([])
 
 
+async def raw_click(pilot: Pilot, selector: str, times: int = 1):
+    app = pilot.app
+    kwargs = _get_mouse_message_arguments(app.query_one(selector))
+    for _ in range(times):
+        app.post_message(events.MouseDown(**kwargs))
+        app.post_message(events.MouseUp(**kwargs))
+        await pilot.pause()
+
+
 @pytest.mark.parametrize("number_of_clicks,final_count", [(1, 1), (2, 3), (3, 6)])
 async def test_click_chain_initial_repeated_clicks(
     number_of_clicks: int, final_count: int
@@ -245,13 +255,13 @@ async def test_click_chain_initial_repeated_clicks(
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
+            print(f"event: {event}")
             click_count += event.chain
 
     async with MyApp().run_test() as pilot:
         # Clicking the same Label at the same offset creates a double and triple click.
         for _ in range(number_of_clicks):
-            await pilot.click("#one")
-            await pilot.pause()
+            await raw_click(pilot, "#one")
 
         assert click_count == final_count
 
@@ -274,11 +284,11 @@ async def test_click_chain_different_offset():
 
     async with MyApp().run_test() as pilot:
         # Clicking on different offsets in quick-succession doesn't qualify as a double or triple click.
-        await pilot.click("#one")
+        await raw_click(pilot, "#one")
         assert click_count == 1
-        await pilot.click("#two")
+        await raw_click(pilot, "#two")
         assert click_count == 2
-        await pilot.click("#three")
+        await raw_click(pilot, "#three")
         assert click_count == 3
 
 
@@ -302,11 +312,9 @@ async def test_click_chain_offset_changes_mid_chain():
             click_count = event.chain
 
     async with MyApp().run_test() as pilot:
-        await pilot.click("#one")  # Single click
-        assert click_count == 1
-        await pilot.click("#one")  # Double click
+        await raw_click(pilot, "#one", times=2)  # Double click
         assert click_count == 2
-        await pilot.click("#two")  # Single click (because different offset)
+        await raw_click(pilot, "#two")  # Single click (because different widget)
         assert click_count == 1
 
 
@@ -319,7 +327,7 @@ async def test_click_chain_time_outwith_threshold():
         CLICK_CHAIN_TIME_THRESHOLD = 0.0
 
         def compose(self) -> ComposeResult:
-            yield Label("Click me!")
+            yield Label("Click me!", id="one")
 
         def on_click(self, event: events.Click) -> None:
             nonlocal click_count
@@ -328,5 +336,5 @@ async def test_click_chain_time_outwith_threshold():
     async with MyApp().run_test() as pilot:
         for i in range(1, 4):
             # Each click is outwith the time threshold, so a click chain is never created.
-            await pilot.click(Label)
+            await raw_click(pilot, "#one")
             assert click_count == i

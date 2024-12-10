@@ -556,6 +556,9 @@ class Click(MouseEvent, bubble=True):
 
     - [X] Bubbles
     - [ ] Verbose
+
+    Args:
+        chain: The number of clicks in the chain. 2 is a double click, 3 is a triple click, etc.
     """
 
     def __init__(

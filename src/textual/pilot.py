@@ -343,22 +343,26 @@ class Pilot(Generic[ReturnType]):
             )
 
         widget_at = None
-        for mouse_event_cls in events:
-            # Get the widget under the mouse before the event because the app might
-            # react to the event and move things around. We override on each iteration
-            # because we assume the final event in `events` is the actual event we care
-            # about and that all the preceding events are just setup.
-            # E.g., the click event is preceded by MouseDown/MouseUp to emulate how
-            # the driver works and emits a click event.
-            widget_at, _ = app.get_widget_at(*offset)
-            event = mouse_event_cls(**message_arguments)
-            # Bypass event processing in App.on_event. Because App.on_event
-            # is responsible for updating App.mouse_position, and because
-            # that's useful to other things (tooltip handling, for example),
-            # we patch the offset in there as well.
-            app.mouse_position = offset
-            screen._forward_event(event)
-            await self.pause()
+        for chain in range(1, times + 1):
+            for mouse_event_cls in events:
+                # Get the widget under the mouse before the event because the app might
+                # react to the event and move things around. We override on each iteration
+                # because we assume the final event in `events` is the actual event we care
+                # about and that all the preceding events are just setup.
+                # E.g., the click event is preceded by MouseDown/MouseUp to emulate how
+                # the driver works and emits a click event.
+                kwargs = message_arguments
+                if mouse_event_cls is Click:
+                    kwargs["chain"] = chain
+                widget_at, _ = app.get_widget_at(*offset)
+                event = mouse_event_cls(**kwargs)
+                # Bypass event processing in App.on_event. Because App.on_event
+                # is responsible for updating App.mouse_position, and because
+                # that's useful to other things (tooltip handling, for example),
+                # we patch the offset in there as well.
+                app.mouse_position = offset
+                screen._forward_event(event)
+                await self.pause()
 
         return widget is None or widget_at is target_widget
 
