@@ -118,7 +118,7 @@ class FuzzySearch:
 
             """
             # This is a heuristic, and can be tweaked for better results
-            # 2 points for a first letter, 1.0 for other letters
+            # 2 points for a first letter, 1 for other letters
             score: float = sum(
                 (2.0 if offset in first_letters else 1.0) for offset in search.offsets
             )
@@ -211,19 +211,3 @@ class Matcher:
         for offset in offsets:
             text.stylize(self._match_style, offset, offset + 1)
         return text
-
-
-if __name__ == "__main__":
-    TEST = "Savess Screens shot"
-    from rich import print
-    from rich.text import Text
-
-    fuzzy = FuzzySearch()
-
-    for score, offsets in fuzzy._match("ss", TEST):
-        text = Text(TEST)
-        for offset in offsets:
-            text.stylize("reverse", offset, offset + 1)
-        print("--")
-        print(score)
-        print(text)
