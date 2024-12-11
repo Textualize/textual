@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.1.0] - 2024-12-12
 
 ### Added
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   
 ### Changed
 
-- Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
+- Breaking change: Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
 - The command palette will now select the top item automatically https://github.com/Textualize/textual/pull/5361
 - `ctrl+shift+k` now deletes the current line in `TextArea`, and `ctrl+x` will cut
 the selection if there is one, otherwise it will cut the current line https://github.com/Textualize/textual/pull/5374
@@ -2668,6 +2668,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[1.0.0]: https://github.com/Textualize/textual/compare/v0.89.1...v1.0.0
 [0.89.1]: https://github.com/Textualize/textual/compare/v0.89.0...v0.89.1
 [0.89.0]: https://github.com/Textualize/textual/compare/v0.88.1...v0.89.0
 [0.88.1]: https://github.com/Textualize/textual/compare/v0.88.0...v0.88.1
