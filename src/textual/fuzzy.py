@@ -57,7 +57,7 @@ class FuzzySearch:
     """
 
     def __init__(self, case_sensitive: bool = False) -> None:
-        """_summary_
+        """Initialize fuzzy search.
 
         Args:
             case_sensitive: Is the match case sensitive?
