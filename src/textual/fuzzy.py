@@ -128,8 +128,11 @@ class FuzzySearch:
         pop = stack.pop
         query_size = len(query)
         find = candidate.find
+        # Limit the number of loops out of an abundance of caution.
+        # This would be hard to reach without contrived data.
+        remaining_loops = 50
 
-        while stack:
+        while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
             offset = find(query[search.query_offset], search.candidate_offset)
             if offset != -1:
@@ -205,5 +208,6 @@ class Matcher:
         if not score:
             return text
         for offset in offsets:
-            text.stylize(self._match_style, offset, offset + 1)
+            if not candidate[offset].isspace():
+                text.stylize(self._match_style, offset, offset + 1)
         return text
