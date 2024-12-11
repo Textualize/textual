@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue with alignment in auto containers https://github.com/Textualize/textual/pull/5360
+- Fixed issue with markdown viewer link click crash https://github.com/Textualize/textual/pull/5223
 
 ## [0.89.1] - 2024-12-05
 
