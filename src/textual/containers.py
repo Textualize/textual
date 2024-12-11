@@ -267,7 +267,7 @@ class ItemGrid(Widget, inherit_bindings=False):
         stretch_height: bool = True,
         regular: bool = False,
     ) -> None:
-        """Initialize a Widget.
+        """
 
         Args:
             *children: Child widgets.

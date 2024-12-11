@@ -1510,7 +1510,7 @@ def test_example_color_command(snap_compare):
     """Test the color_command example."""
     assert snap_compare(
         EXAMPLES_DIR / "color_command.py",
-        press=[App.COMMAND_PALETTE_BINDING, "r", "e", "d", "down", "enter"],
+        press=[App.COMMAND_PALETTE_BINDING, "r", "e", "d", "enter"],
     )
 
 
