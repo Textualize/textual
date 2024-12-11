@@ -131,16 +131,12 @@ It is easy to extend the command palette with [custom commands](https://textual.
 
 
 
-
-## Textual ❤️ Web
+# Textual ❤️ Web
 
 <img align="right" width="40%" alt="textual-serve" src="https://github.com/user-attachments/assets/a25820fb-87ae-433a-858b-ac3940169242">
 
 
-Textual apps are equally at home in the browser as they are the terminal.
-
-Any Textual app may be served with `textual serve` &mdash; so you can share your creations on the web.
-
+Textual apps are equally at home in the browser as they are the terminal. Any Textual app may be served with `textual serve` &mdash; so you can share your creations on the web.
 Here's how to serve the demo app:
 
 ```
