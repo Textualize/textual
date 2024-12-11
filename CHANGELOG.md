@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
 - The command palette will now select the top item automatically https://github.com/Textualize/textual/pull/5361
+- `ctrl+shift+k` now deletes the current line in `TextArea`, and `ctrl+x` will cut
+the selection if there is one, otherwise it will cut the current line https://github.com/Textualize/textual/pull/5374
 
 ### Fixed
 
