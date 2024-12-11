@@ -244,6 +244,96 @@ class Pilot(Generic[ReturnType]):
         except OutOfBounds as error:
             raise error from None
 
+    async def double_click(
+        self,
+        widget: Widget | type[Widget] | str | None = None,
+        offset: tuple[int, int] = (0, 0),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate double clicking with the mouse at a specified position.
+
+        Alias for `pilot.click(..., times=2)`.
+
+        The final position to be clicked is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        Implementation note: This method bypasses the normal event processing in `App.on_event`.
+
+        Example:
+            The code below runs an app and double-clicks its only button right in the middle:
+            ```py
+            async with SingleButtonApp().run_test() as pilot:
+                await pilot.double_click(Button, offset=(8, 1))
+            ```
+
+        Args:
+            widget: A widget or selector used as an origin
+                for the click offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to click on a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the click may not land on the widget you specified.
+            offset: The offset to click. The offset is relative to the widget / selector provided
+                or to the screen, if no selector is provided.
+            shift: Click with the shift key held down.
+            meta: Click with the meta key held down.
+            control: Click with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position to be clicked is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the clicks landed on the selected
+                widget, False otherwise.
+        """
+        await self.click(widget, offset, shift, meta, control, times=2)
+
+    async def triple_click(
+        self,
+        widget: Widget | type[Widget] | str | None = None,
+        offset: tuple[int, int] = (0, 0),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate triple clicking with the mouse at a specified position.
+
+        Alias for `pilot.click(..., times=3)`.
+
+        The final position to be clicked is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        Implementation note: This method bypasses the normal event processing in `App.on_event`.
+
+        Example:
+            The code below runs an app and triple-clicks its only button right in the middle:
+            ```py
+            async with SingleButtonApp().run_test() as pilot:
+                await pilot.triple_click(Button, offset=(8, 1))
+            ```
+
+        Args:
+            widget: A widget or selector used as an origin
+                for the click offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to click on a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the click may not land on the widget you specified.
+            offset: The offset to click. The offset is relative to the widget / selector provided
+                or to the screen, if no selector is provided.
+            shift: Click with the shift key held down.
+            meta: Click with the meta key held down.
+            control: Click with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position to be clicked is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the clicks landed on the selected
+                widget, False otherwise.
+        """
+        await self.click(widget, offset, shift, meta, control, times=3)
+
     async def hover(
         self,
         widget: Widget | type[Widget] | str | None | None = None,
