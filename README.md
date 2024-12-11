@@ -124,7 +124,7 @@ See [the guide](https://textual.textualize.io/guide/devtools/) for other helpful
 Textual apps have a *fuzzy search* command palette.
 Hit `ctrl+p` to open the command palette.
 
-Easily add your own commands to your applications.
+It is easy to extend the command palette with [custom commands](https://textual.textualize.io/guide/command_palette/) for your application.
 
 
 ![Command Palette](https://github.com/user-attachments/assets/94d8ec5d-b668-4033-a5cb-bf820e1b8d60)
