@@ -8,7 +8,7 @@ This class is used by the [command palette](/guide/command_palette) to match sea
 from __future__ import annotations
 
 from operator import itemgetter
-from re import finditer
+from re import IGNORECASE, escape, finditer, search
 from typing import Iterable, NamedTuple
 
 import rich.repr
@@ -75,6 +75,14 @@ class FuzzySearch:
         Returns:
             A pair of (score, tuple of offsets). `(0, ())` for no result.
         """
+
+        query_regex = ".*?".join(f"({escape(character)})" for character in query)
+        if not search(
+            query_regex, candidate, flags=0 if self.case_sensitive else IGNORECASE
+        ):
+            # Bail out early if there is no possibility of a match
+            return (0.0, ())
+
         cache_key = (query, candidate, self.case_sensitive)
         if cache_key in self.cache:
             return self.cache[cache_key]
@@ -131,7 +139,7 @@ class FuzzySearch:
         find = candidate.find
         # Limit the number of loops out of an abundance of caution.
         # This would be hard to reach without contrived data.
-        remaining_loops = 500
+        remaining_loops = 200
 
         while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
