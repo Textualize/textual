@@ -387,6 +387,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 - Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
 - Renamed `SystemCommands` to `SystemCommandsProvider` https://github.com/Textualize/textual/pull/4920
 - Breaking change: Removed `ClassicFooter` widget (please use new `Footer` widget) https://github.com/Textualize/textual/pull/4921
+- Breaking change: `App.get_key_display` now requires `textual.binding.Binding` instead of `str`.
 - Disallowed `Screen` instances in `App.SCREENS` and `App.MODES`
 
 ### Fixed
