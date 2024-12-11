@@ -11,10 +11,50 @@
 
 # Textual
 
-Build cross-platform user interfaces with a simple Python API.
+Build cross-platform user interfaces with a simple Python API. Run your apps in the terminal *or* a web browser.
 
-Run your apps in the terminal *or* a web browser.
+Textual's API combines modern Python with the best of developments from the web world, for a lean app development experience.
+De-coupled components and an advanced [testing](https://textual.textualize.io/guide/testing/) framework ensure you can maintain your app for the long-term.
 
+<img width="40%" align="right" alt="clock" src="https://github.com/user-attachments/assets/63e839c3-5b8e-478d-b78e-cf7647eb85e8" />
+
+
+```python
+"""
+An App to show the current time.
+"""
+
+from datetime import datetime
+
+from textual.app import App, ComposeResult
+from textual.widgets import Digits
+
+
+class ClockApp(App):
+    CSS = """
+    Screen { align: center middle; }
+    Digits { width: auto; }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Digits("")
+
+    def on_ready(self) -> None:
+        self.update_clock()
+        self.set_interval(1, self.update_clock)
+
+    def update_clock(self) -> None:
+        clock = datetime.now().time()
+        self.query_one(Digits).update(f"{clock:%T}")
+
+
+if __name__ == "__main__":
+    app = ClockApp()
+    app.run()
+```
+
+
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="64"/>
 
 ## Widgets
 
@@ -78,6 +118,7 @@ Predefined themes ensure your apps will look good out of the box.
 </table>
 
 
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Installing
 
@@ -89,6 +130,8 @@ pip install textual textual-dev
 
 See [getting started](https://textual.textualize.io/getting_started/) for details.
 
+
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Demo
 
@@ -105,6 +148,7 @@ Or try the [textual demo](https://github.com/textualize/textual-demo) *without* 
 uvx --python 3.12 textual-demo
 ```
 
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Dev Console
 
@@ -118,6 +162,8 @@ In addition to system messages and events, your logged messages and print statem
 
 See [the guide](https://textual.textualize.io/guide/devtools/) for other helpful tools provided by the `textual-dev` package.
 
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
+
 ## Command Palette
 
 
@@ -129,7 +175,7 @@ It is easy to extend the command palette with [custom commands](https://textual.
 
 ![Command Palette](https://github.com/user-attachments/assets/94d8ec5d-b668-4033-a5cb-bf820e1b8d60)
 
-
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 # Textual ❤️ Web
 
@@ -151,10 +197,8 @@ Since Textual apps have low system requirements, you can install them anywhere P
 No desktop required!
 
 
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
-## Documentation
-
-Head over to the [Textual documentation](http://textual.textualize.io/) to start building.
 
 ## Join us on Discord
 
