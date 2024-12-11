@@ -106,6 +106,31 @@ uvx --python 3.12 textual-demo
 ```
 
 
+## Dev Console
+
+<img align="right" width="40%" alt="devtools" src="https://github.com/user-attachments/assets/12c60d65-e342-4b2f-9372-bae0459a7552" />
+
+
+How do you debug an app in the terminal that is also running in the terminal?
+
+The `textual-dev` package supplies a dev console that connects to your application from another terminal.
+In addition to system messages and events, your logged messages and print statements will appear in the dev console.
+
+See [the guide](https://textual.textualize.io/guide/devtools/) for other helpful tools provided by the `textual-dev` package.
+
+## Command Palette
+
+
+Textual apps have a *fuzzy search* command palette.
+Hit `ctrl+p` to open the command palette.
+
+Easily add your own commands to your applications.
+
+![cp](https://github.com/user-attachments/assets/13cb9c3d-b9e7-40a6-93e0-6b5b58cc1be5)
+
+
+
+
 ## Textual ❤️ Web
 
 <img align="right" width="40%" alt="textual-serve" src="https://github.com/user-attachments/assets/a25820fb-87ae-433a-858b-ac3940169242">
@@ -121,12 +146,14 @@ Here's how to serve the demo app:
 textual serve "python -m textual"
 ```
 
-In addition to serving your apps locally, you can serve apps with [Textual-Web](https://github.com/Textualize/textual-web).
+In addition to serving your apps locally, you can serve apps with [Textual Web](https://github.com/Textualize/textual-web).
 
 Textual Web's firewall-busting technology can serve an unlimited number of applications.
 
 Since Textual apps have low system requirements, you can install them anywhere Python also runs. Turning any device in to a connected device.
 No desktop required!
+
+
 
 ## Documentation
 
