@@ -177,7 +177,7 @@ The *spatial map*[^1] is a data structure used by the compositor to very quickly
 The algorithm is uses may be familiar if you have done any classic game-dev.
 
 
-## The problem 
+### The problem 
 
 Consider the following arrangement of widgets:
 
