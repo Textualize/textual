@@ -222,8 +222,8 @@ At the end of that process we have a dict that maps every grid coordinate on to 
 }
 ```
 
-If the widgets don't change their position or size (such as when user is *scrolling*) then we can re-use this data.
 The up-front cost of [calculating](https://github.com/Textualize/textual/blob/main/src/textual/_spatial_map.py) this data is fairly low.
+It is also very cacheable &mdash; we *do not* need to recalculate it when the user is just scrolling.
 
 ### Search the grid
 
