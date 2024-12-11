@@ -149,11 +149,11 @@ Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL
 [Dolphie Github Repository](https://github.com/charles-001/dolphie)
 
 
+<div>
 <a href="https://github.com/charles-001/dolphie">
-
-![Dolphie](https://www.textualize.io/static/img/dolphie.png)
-
+--8<-- "docs/images/screenshots/dolphie.svg"
 </a>
+</div>
 
 
 ---
