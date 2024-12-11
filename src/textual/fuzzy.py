@@ -118,9 +118,10 @@ class FuzzySearch:
             score: float = sum(
                 (2.0 if offset in first_letters else 1.0) for offset in search.offsets
             )
-            # A single group gets a boost, as the user may be typing out an entire word
-            if search.groups == 1:
-                score *= 1.5
+            # Boost to favor less groups
+            offset_count = len(search.offsets)
+            normalized_groups = (offset_count - (search.groups - 1)) / offset_count
+            score *= 1 + (normalized_groups**2)
             return score
 
         stack: list[_Search] = [_Search()]
