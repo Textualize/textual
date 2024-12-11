@@ -331,9 +331,7 @@ class SimpleCommand(NamedTuple):
     """The description of the command."""
 
 
-CommandListItem: TypeAlias = (
-    "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
-)
+CommandListItem: TypeAlias = "SimpleCommand | tuple[str, IgnoreReturnCallbackType, str | None] | tuple[str, IgnoreReturnCallbackType]"
 
 
 class SimpleProvider(Provider):
@@ -776,7 +774,7 @@ class CommandPalette(SystemModalScreen[None]):
         with Vertical(id="--container"):
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder=self._placeholder)
+                yield CommandInput(placeholder=self._placeholder, select_on_focus=False)
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):
