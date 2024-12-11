@@ -238,6 +238,12 @@ TextArea {
             "Delete to line end",
             show=False,
         ),
+        Binding(
+            "ctrl+shift+k",
+            "delete_line",
+            "Delete line",
+            show=False,
+        ),
         Binding("ctrl+z", "undo", "Undo", show=False),
         Binding("ctrl+y", "redo", "Redo", show=False),
     ]
@@ -2194,6 +2200,11 @@ TextArea {
         start, end = sorted((start, end))
         start_row, _start_column = start
         end_row, end_column = end
+
+        # Generally editors will only delete line the end line of the
+        # selection if the cursor is not at column 0 of that line.
+        if start_row != end_row and end_column == 0 and end_row >= 0:
+            end_row -= 1
 
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
