@@ -54,6 +54,8 @@ if __name__ == "__main__":
     app.run()
 ```
 
+> [!TIP]
+> Textual is an asynchronous framework under the hood. Which means you can integrate your apps with async libraries &mdash; if you want to.
 
 
 
