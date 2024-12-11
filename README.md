@@ -11,13 +11,14 @@
 
 # Textual
 
+<img align="right" width="250" alt="clock" src="https://github.com/user-attachments/assets/63e839c3-5b8e-478d-b78e-cf7647eb85e8" />
+
 Build cross-platform user interfaces with a simple Python API. Run your apps in the terminal *or* a web browser.
 
 Textual's API combines modern Python with the best of developments from the web world, for a lean app development experience.
 De-coupled components and an advanced [testing](https://textual.textualize.io/guide/testing/) framework ensure you can maintain your app for the long-term.
 
-<img width="40%" align="right" alt="clock" src="https://github.com/user-attachments/assets/63e839c3-5b8e-478d-b78e-cf7647eb85e8" />
-
+Want some more examples? See the [examples](https://github.com/Textualize/textual/tree/main/examples) directory.
 
 ```python
 """
@@ -52,6 +53,8 @@ if __name__ == "__main__":
     app = ClockApp()
     app.run()
 ```
+
+
 
 
 <img src="https://img.spacergif.org/spacer.gif" width="1" height="64"/>
