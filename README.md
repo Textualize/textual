@@ -126,7 +126,8 @@ Hit `ctrl+p` to open the command palette.
 
 Easily add your own commands to your applications.
 
-![cp](https://github.com/user-attachments/assets/13cb9c3d-b9e7-40a6-93e0-6b5b58cc1be5)
+
+![Command Palette](https://github.com/user-attachments/assets/94d8ec5d-b668-4033-a5cb-bf820e1b8d60)
 
 
 
