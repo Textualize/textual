@@ -272,7 +272,7 @@ TextArea {
     | ctrl+w                 | Delete from cursor to start of the word.     |
     | delete,ctrl+d          | Delete character to the right of cursor.     |
     | ctrl+f                 | Delete from cursor to end of the word.       |
-    | ctrl+shift+x           | Delete the current line.                     |
+    | ctrl+shift+k           | Delete the current line.                     |
     | ctrl+u                 | Delete from cursor to the start of the line. |
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
