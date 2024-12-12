@@ -641,7 +641,7 @@ class Input(ScrollView):
 
     def _on_focus(self, event: Focus) -> None:
         self._restart_blink()
-        if self.select_on_focus:
+        if self.select_on_focus and not event.from_app_focus:
             self.selection = Selection(0, len(self.value))
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
