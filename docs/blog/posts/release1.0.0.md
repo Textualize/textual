@@ -263,7 +263,7 @@ If we need to know precisely which widgets are visible we can check their region
 
 The useful property of this algorithm is that as the number of widgets increases, the time it takes to figure out which are visible stays relatively constant. Scrolling a view of 8 widgets, takes much the same time as a view of 1000 widgets or more.
 
-The code for our `SpatialMap` isn't part of the public API and therefore not in the docs, but if you are interested you can check it out here: [_spacial_map.py](https://github.com/Textualize/textual/blob/main/src/textual/_spatial_map.py).
+The code for our `SpatialMap` isn't part of the public API and therefore not in the docs, but if you are interested you can check it out here: [_spatial_map.py](https://github.com/Textualize/textual/blob/main/src/textual/_spatial_map.py).
 
 ## Wrapping up
 
