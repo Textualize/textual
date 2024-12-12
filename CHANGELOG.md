@@ -10,14 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
-- 
+- The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
+
 ### Added
 
 - Added `Select.type_to_search` which allows you to type to move the cursor to a matching option https://github.com/Textualize/textual/pull/5403
 - Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
+- Added `from_app_focus` to `Focus` event to indicate if a widget is being focused because the app itself has regained focus or not https://github.com/Textualize/textual/pull/5379
+
 ### Fixed
 
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
+
 
 ## [1.0.0] - 2024-12-12
 
