@@ -724,7 +724,17 @@ class Focus(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
+
+    Args:
+        from_app_focus: True if this focus event has been sent because the app itself has
+            regained focus (via an AppFocus event). False if the focus came from within
+            the Textual app (e.g. via the user pressing tab or a programmatic setting
+            of the focused widget).
     """
+
+    def __init__(self, from_app_focus: bool = False) -> None:
+        self.from_app_focus = from_app_focus
+        super().__init__()
 
 
 class Blur(Event, bubble=False):
