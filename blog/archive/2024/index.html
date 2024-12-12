@@ -89,6 +89,8 @@
         src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Cascadia.woff2");
       }
 
+      
+
 </style>
 
 <script lang="js">
@@ -6495,6 +6497,62 @@ window.onload = async (event) => {
     <div class="md-post__meta md-meta">
       <ul class="md-meta__list">
         <li class="md-meta__item">
+          <time datetime="2024-12-12 00:00:00+00:00">December 12, 2024</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/release/" class="md-meta__link">Release</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              7 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="algorithms-for-high-performance-terminal-apps"><a class="toclink" href="../../2024/12/12/algorithms-for-high-performance-terminal-apps/">Algorithms for high performance terminal apps</a></h2>
+<p>I've had the fortune of being able to work fulltime on a FOSS project for the last three plus years.</p>
+<div class="admonition tip inline end">
+<p class="admonition-title">Textual Demo</p>
+<p><a href="https://github.com/textualize/textual-demo"><img alt="Textual Demo" src="../../images/textual-demo.svg" /></a></p>
+</div>
+<p>Textual has been a constant source of programming challenges.
+Often frustrating but never boring, the challenges arise because the terminal "specification" says nothing about how to build a modern User Interface.
+The building blocks are there: after some effort you can move the cursor, write colored text, read keys and mouse movements, but that's about it.
+Everything else we had to build from scratch. From the most basic <a href="https://textual.textualize.io/widget_gallery/#button">button</a> to a syntax highlighted <a href="https://textual.textualize.io/widget_gallery/#textarea">TextArea</a>, and everything along the way.</p>
+<p>I wanted to write-up some of the solutions we came up with, and the 1.0 milestone we just passed makes this a perfect time.</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2024/12/12/algorithms-for-high-performance-terminal-apps/">
+          Continue reading
+        </a>
+      </nav>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/willmcgugan.png" alt="Will McGugan">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
           <time datetime="2024-09-15 00:00:00+00:00">September 15, 2024</time></li>
         
           <li class="md-meta__item">
@@ -6625,7 +6683,7 @@ You can see this in action if you run the <a href="https://github.com/Textualize
 <p><img alt="Inline Calculator" src="../../images/calcinline.png" /></p>
 <p>The application appears directly under the prompt, rather than occupying the full height of the screen&mdash;which is more typical of TUI applications.
 You can interact with this calculator using keys <em>or</em> the mouse.
-When you press <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span> the calculator disappears and returns you to the prompt.</p>
+When you press <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> the calculator disappears and returns you to the prompt.</p>
 <p>Here's another app that creates an inline code editor:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Video</label><label for="__tabbed_2_2">inline.py</label></div>
 <div class="tabbed-content">

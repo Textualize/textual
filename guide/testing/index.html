@@ -89,6 +89,8 @@
         src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Cascadia.woff2");
       }
 
+      
+
 </style>
 
 <script lang="js">
@@ -1200,6 +1202,15 @@ window.onload = async (event) => {
   <a href="#click-offsets" class="md-nav__link">
     <span class="md-ellipsis">
       Click offsets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#double-triple-clicks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Double &amp; triple clicks
     </span>
   </a>
   
@@ -6757,6 +6768,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#double-triple-clicks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Double &amp; triple clicks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#modifier-keys" class="md-nav__link">
     <span class="md-ellipsis">
       Modifier keys
@@ -7220,18 +7240,23 @@ For example the following line would simulate a click at the coordinates (10, 5)
 Here's how you would click the line <em>above</em> a button.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="n">Button</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 </code></pre></div>
+<h3 id="double-triple-clicks">Double &amp; triple clicks<a class="headerlink" href="#double-triple-clicks" title="Permanent link">&para;</a></h3>
+<p>You can simulate double and triple clicks by setting the <code>times</code> parameter.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="n">Button</span><span class="p">,</span> <span class="n">times</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Double click</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="n">Button</span><span class="p">,</span> <span class="n">times</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># Triple click</span>
+</code></pre></div>
 <h3 id="modifier-keys">Modifier keys<a class="headerlink" href="#modifier-keys" title="Permanent link">&para;</a></h3>
 <p>You can simulate clicks in combination with modifier keys, by setting the <code>shift</code>, <code>meta</code>, or <code>control</code> parameters.
 Here's how you could simulate ctrl-clicking a widget with an ID of "slider":</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="s2">&quot;#slider&quot;</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="s2">&quot;#slider&quot;</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="changing-the-screen-size">Changing the screen size<a class="headerlink" href="#changing-the-screen-size" title="Permanent link">&para;</a></h2>
 <p>The default size of a simulated app is (80, 24).
 You may want to test what happens when the app has a different size.
 To do this, set the <code>size</code> parameter of <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run_test"><code>run_test</code></a> to a different size.
 For example, here is how you would simulate a terminal resized to 100 columns and 50 lines:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">run_test</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span> <span class="k">as</span> <span class="n">pilot</span><span class="p">:</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="o">...</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">run_test</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span> <span class="k">as</span> <span class="n">pilot</span><span class="p">:</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="o">...</span>
 </code></pre></div>
 <h2 id="pausing-the-pilot">Pausing the pilot<a class="headerlink" href="#pausing-the-pilot" title="Permanent link">&para;</a></h2>
 <p>Some actions in a Textual app won't change the state immediately.
@@ -7251,7 +7276,7 @@ We've made the pytest plugin we built available for public use.</p>
 If the screenshot changes in any test run, you will have the opportunity to visually compare the new output against previous runs.</p>
 <h3 id="installing-the-plugin">Installing the plugin<a class="headerlink" href="#installing-the-plugin" title="Permanent link">&para;</a></h3>
 <p>You can install <code>pytest-textual-snapshot</code> using your favorite package manager (<code>pip</code>, <code>poetry</code>, etc.).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pip install pytest-textual-snapshot
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pip install pytest-textual-snapshot
 </code></pre></div>
 <h3 id="creating-a-snapshot-test">Creating a snapshot test<a class="headerlink" href="#creating-a-snapshot-test" title="Permanent link">&para;</a></h3>
 <p>With the package installed, you now have access to the <code>snap_compare</code> pytest fixture.</p>
@@ -7489,11 +7514,11 @@ If the screenshot changes in any test run, you will have the opportunity to visu
 </p>
 <p>First, we need to create a new test and specify the path to the Python file containing the app.
 This path should be relative to the location of the test.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">test_calculator</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span> <span class="nf">test_calculator</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Let's run the test as normal using <code>pytest</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>pytest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pytest
 </code></pre></div>
 <p>When this test runs for the first time, an SVG screenshot of the calculator app is generated, and the test will fail.
 Snapshot tests always fail on the first run, since there's no previous version to compare the snapshot to.</p>
@@ -7508,7 +7533,7 @@ require you to hold <span class="keys"><kbd class="key-control">Ctrl</kbd></span
 <p>The report explains that there's "No history for this test".
 It's our job to validate that the initial snapshot looks correct before proceeding.
 Our calculator is rendering as we expect, so we'll save this snapshot:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pytest --snapshot-update
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>pytest --snapshot-update
 </code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -7538,23 +7563,23 @@ report is just an HTML file which can be exported as a build artifact.</p>
 </div>
 <h3 id="pressing-keys">Pressing keys<a class="headerlink" href="#pressing-keys" title="Permanent link">&para;</a></h3>
 <p>You can simulate pressing keys before the snapshot is captured using the <code>press</code> parameter.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span> <span class="nf">test_calculator_pressing_numbers</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">press</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">])</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">def</span> <span class="nf">test_calculator_pressing_numbers</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">press</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">])</span>
 </code></pre></div>
 <h3 id="changing-the-terminal-size">Changing the terminal size<a class="headerlink" href="#changing-the-terminal-size" title="Permanent link">&para;</a></h3>
 <p>To capture the snapshot with a different terminal size, pass a tuple <code>(width, height)</code> as the <code>terminal_size</code> parameter.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">def</span> <span class="nf">test_calculator</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">terminal_size</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">def</span> <span class="nf">test_calculator</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">terminal_size</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
 </code></pre></div>
 <h3 id="running-setup-code">Running setup code<a class="headerlink" href="#running-setup-code" title="Permanent link">&para;</a></h3>
 <p>You can also run arbitrary code before the snapshot is captured using the <code>run_before</code> parameter.</p>
 <p>In this example, we use <code>run_before</code> to hover the mouse cursor over the widget with ID <code>number-5</code>
 before taking the snapshot.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">def</span> <span class="nf">test_calculator_hover_number</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">run_before</span><span class="p">(</span><span class="n">pilot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>        <span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">hover</span><span class="p">(</span><span class="s2">&quot;#number-5&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">run_before</span><span class="o">=</span><span class="n">run_before</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">def</span> <span class="nf">test_calculator_hover_number</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">run_before</span><span class="p">(</span><span class="n">pilot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>        <span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">hover</span><span class="p">(</span><span class="s2">&quot;#number-5&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">run_before</span><span class="o">=</span><span class="n">run_before</span><span class="p">)</span>
 </code></pre></div>
 <p>For more information, visit the <a href="https://github.com/Textualize/pytest-textual-snapshot"><code>pytest-textual-snapshot</code> repo on GitHub</a>.</p>
 
@@ -7577,7 +7602,7 @@ before taking the snapshot.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 11, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 11, 2024</span>
   </span>
 
     

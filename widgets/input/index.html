@@ -89,6 +89,8 @@
         src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Cascadia.woff2");
       }
 
+      
+
 </style>
 
 <script lang="js">
@@ -4537,6 +4539,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Input(select_on_focus)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select_on_focus
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Input(name)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;name
@@ -4600,18 +4611,27 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.widgets.Input.cursor_screen_offset" class="md-nav__link">
+  <a href="#textual.widgets.Input.content_width" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_screen_offset
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;content_width
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.widgets.Input.cursor_width" class="md-nav__link">
+  <a href="#textual.widgets.Input.cursor_position" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_width
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_position
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.cursor_screen_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_screen_offset
     </span>
   </a>
   
@@ -4639,6 +4659,24 @@ window.onload = async (event) => {
   <a href="#textual.widgets.Input.restrict" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;restrict
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.selected_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;selected_text
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;selection
     </span>
   </a>
   
@@ -4783,11 +4821,35 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_copy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Input.action_cursor_left" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_cursor_left
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label=" action_cursor_left">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_left(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4798,6 +4860,21 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" action_cursor_left_word">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_left_word(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -4807,12 +4884,51 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" action_cursor_right">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_right(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#textual.widgets.Input.action_cursor_right_word" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_cursor_right_word
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" action_cursor_right_word">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_right_word(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cut" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_cut
     </span>
   </a>
   
@@ -4879,12 +4995,51 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" action_end">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_end(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#textual.widgets.Input.action_home" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_home
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" action_home">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_home(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_paste" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_paste
     </span>
   </a>
   
@@ -4942,6 +5097,81 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;delete
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" delete">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete(start)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete(end)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;end
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete_selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;delete_selection
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.insert" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;insert
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" insert">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.insert(text)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.insert(index)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;index
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Input.insert_text_at_cursor" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;insert_text_at_cursor
@@ -4955,6 +5185,48 @@ window.onload = async (event) => {
   <a href="#textual.widgets.Input.insert_text_at_cursor(text)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;text
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;replace
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" replace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace(text)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace(start)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace(end)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;end
     </span>
   </a>
   
@@ -7406,6 +7678,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Input(select_on_focus)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select_on_focus
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Input(name)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;name
@@ -7469,18 +7750,27 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.widgets.Input.cursor_screen_offset" class="md-nav__link">
+  <a href="#textual.widgets.Input.content_width" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_screen_offset
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;content_width
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.widgets.Input.cursor_width" class="md-nav__link">
+  <a href="#textual.widgets.Input.cursor_position" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_width
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_position
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.cursor_screen_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;cursor_screen_offset
     </span>
   </a>
   
@@ -7508,6 +7798,24 @@ window.onload = async (event) => {
   <a href="#textual.widgets.Input.restrict" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;restrict
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.selected_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;selected_text
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;selection
     </span>
   </a>
   
@@ -7652,11 +7960,35 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_copy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Input.action_cursor_left" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_cursor_left
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label=" action_cursor_left">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_left(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -7667,6 +7999,21 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" action_cursor_left_word">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_left_word(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -7676,12 +8023,51 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" action_cursor_right">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_right(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#textual.widgets.Input.action_cursor_right_word" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_cursor_right_word
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" action_cursor_right_word">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cursor_right_word(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_cut" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_cut
     </span>
   </a>
   
@@ -7748,12 +8134,51 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" action_end">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_end(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#textual.widgets.Input.action_home" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_home
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" action_home">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_home(select)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;select
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.action_paste" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_paste
     </span>
   </a>
   
@@ -7811,6 +8236,81 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;delete
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" delete">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete(start)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete(end)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;end
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.delete_selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;delete_selection
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.insert" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;insert
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" insert">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.insert(text)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.insert(index)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;index
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.Input.insert_text_at_cursor" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;insert_text_at_cursor
@@ -7824,6 +8324,48 @@ window.onload = async (event) => {
   <a href="#textual.widgets.Input.insert_text_at_cursor(text)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;text
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;replace
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" replace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace(text)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace(start)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets.Input.replace(end)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;end
     </span>
   </a>
   
@@ -7903,135 +8445,135 @@ window.onload = async (event) => {
         font-weight: 700;
     }
 
-    .terminal-2115952957-matrix {
+    .terminal-824955253-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-2115952957-title {
+    .terminal-824955253-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-2115952957-r1 { fill: #121212 }
-.terminal-2115952957-r2 { fill: #0178d4 }
-.terminal-2115952957-r3 { fill: #c5c8c6 }
-.terminal-2115952957-r4 { fill: #e0e0e0 }
-.terminal-2115952957-r5 { fill: #191919 }
-.terminal-2115952957-r6 { fill: #737373 }
+    .terminal-824955253-r1 { fill: #121212 }
+.terminal-824955253-r2 { fill: #0178d4 }
+.terminal-824955253-r3 { fill: #c5c8c6 }
+.terminal-824955253-r4 { fill: #e0e0e0 }
+.terminal-824955253-r5 { fill: #191919 }
+.terminal-824955253-r6 { fill: #737373 }
     </style>
 
     <defs>
-    <clipPath id="terminal-2115952957-clip-terminal">
+    <clipPath id="terminal-824955253-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-2115952957-line-0">
+    <clipPath id="terminal-824955253-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-1">
+<clipPath id="terminal-824955253-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-2">
+<clipPath id="terminal-824955253-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-3">
+<clipPath id="terminal-824955253-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-4">
+<clipPath id="terminal-824955253-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-5">
+<clipPath id="terminal-824955253-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-6">
+<clipPath id="terminal-824955253-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-7">
+<clipPath id="terminal-824955253-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-8">
+<clipPath id="terminal-824955253-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-9">
+<clipPath id="terminal-824955253-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-10">
+<clipPath id="terminal-824955253-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-11">
+<clipPath id="terminal-824955253-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-12">
+<clipPath id="terminal-824955253-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-13">
+<clipPath id="terminal-824955253-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-14">
+<clipPath id="terminal-824955253-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-15">
+<clipPath id="terminal-824955253-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-16">
+<clipPath id="terminal-824955253-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-17">
+<clipPath id="terminal-824955253-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-18">
+<clipPath id="terminal-824955253-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-19">
+<clipPath id="terminal-824955253-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-20">
+<clipPath id="terminal-824955253-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-21">
+<clipPath id="terminal-824955253-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2115952957-line-22">
+<clipPath id="terminal-824955253-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2115952957-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-824955253-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-2115952957-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-824955253-clip-terminal)">
     <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="12.2" y="1.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="12.2" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="36.6" y="25.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#e0e0e0" x="109.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="122" y="25.9" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="939.4" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="12.2" y="50.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="99.1" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="146.4" y="99.1" width="793" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-2115952957-matrix">
-    <text class="terminal-2115952957-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2115952957-line-0)">▊</text><text class="terminal-2115952957-r2" x="12.2" y="20" textLength="951.6" clip-path="url(#terminal-2115952957-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2115952957-r2" x="963.8" y="20" textLength="12.2" clip-path="url(#terminal-2115952957-line-0)">▎</text><text class="terminal-2115952957-r3" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2115952957-line-0)">
-</text><text class="terminal-2115952957-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-1)">▊</text><text class="terminal-2115952957-r4" x="36.6" y="44.4" textLength="73.2" clip-path="url(#terminal-2115952957-line-1)">Darren</text><text class="terminal-2115952957-r2" x="963.8" y="44.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-1)">▎</text><text class="terminal-2115952957-r3" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-1)">
-</text><text class="terminal-2115952957-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-2)">▊</text><text class="terminal-2115952957-r2" x="12.2" y="68.8" textLength="951.6" clip-path="url(#terminal-2115952957-line-2)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2115952957-r2" x="963.8" y="68.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-2)">▎</text><text class="terminal-2115952957-r3" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-2)">
-</text><text class="terminal-2115952957-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2115952957-line-3)">▊</text><text class="terminal-2115952957-r5" x="12.2" y="93.2" textLength="951.6" clip-path="url(#terminal-2115952957-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2115952957-r5" x="963.8" y="93.2" textLength="12.2" clip-path="url(#terminal-2115952957-line-3)">▎</text><text class="terminal-2115952957-r3" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2115952957-line-3)">
-</text><text class="terminal-2115952957-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-2115952957-line-4)">▊</text><text class="terminal-2115952957-r6" x="36.6" y="117.6" textLength="109.8" clip-path="url(#terminal-2115952957-line-4)">Last&#160;Name</text><text class="terminal-2115952957-r5" x="963.8" y="117.6" textLength="12.2" clip-path="url(#terminal-2115952957-line-4)">▎</text><text class="terminal-2115952957-r3" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2115952957-line-4)">
-</text><text class="terminal-2115952957-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-2115952957-line-5)">▊</text><text class="terminal-2115952957-r5" x="12.2" y="142" textLength="951.6" clip-path="url(#terminal-2115952957-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2115952957-r5" x="963.8" y="142" textLength="12.2" clip-path="url(#terminal-2115952957-line-5)">▎</text><text class="terminal-2115952957-r3" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2115952957-line-5)">
-</text><text class="terminal-2115952957-r3" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-6)">
-</text><text class="terminal-2115952957-r3" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-7)">
-</text><text class="terminal-2115952957-r3" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2115952957-line-8)">
-</text><text class="terminal-2115952957-r3" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2115952957-line-9)">
-</text><text class="terminal-2115952957-r3" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2115952957-line-10)">
-</text><text class="terminal-2115952957-r3" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-11)">
-</text><text class="terminal-2115952957-r3" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-12)">
-</text><text class="terminal-2115952957-r3" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2115952957-line-13)">
-</text><text class="terminal-2115952957-r3" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2115952957-line-14)">
-</text><text class="terminal-2115952957-r3" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2115952957-line-15)">
-</text><text class="terminal-2115952957-r3" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-16)">
-</text><text class="terminal-2115952957-r3" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-17)">
-</text><text class="terminal-2115952957-r3" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2115952957-line-18)">
-</text><text class="terminal-2115952957-r3" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2115952957-line-19)">
-</text><text class="terminal-2115952957-r3" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2115952957-line-20)">
-</text><text class="terminal-2115952957-r3" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2115952957-line-21)">
-</text><text class="terminal-2115952957-r3" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2115952957-line-22)">
+    <g class="terminal-824955253-matrix">
+    <text class="terminal-824955253-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-824955253-line-0)">▊</text><text class="terminal-824955253-r2" x="12.2" y="20" textLength="951.6" clip-path="url(#terminal-824955253-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-824955253-r2" x="963.8" y="20" textLength="12.2" clip-path="url(#terminal-824955253-line-0)">▎</text><text class="terminal-824955253-r3" x="976" y="20" textLength="12.2" clip-path="url(#terminal-824955253-line-0)">
+</text><text class="terminal-824955253-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-824955253-line-1)">▊</text><text class="terminal-824955253-r4" x="36.6" y="44.4" textLength="73.2" clip-path="url(#terminal-824955253-line-1)">Darren</text><text class="terminal-824955253-r2" x="963.8" y="44.4" textLength="12.2" clip-path="url(#terminal-824955253-line-1)">▎</text><text class="terminal-824955253-r3" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-824955253-line-1)">
+</text><text class="terminal-824955253-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-824955253-line-2)">▊</text><text class="terminal-824955253-r2" x="12.2" y="68.8" textLength="951.6" clip-path="url(#terminal-824955253-line-2)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-824955253-r2" x="963.8" y="68.8" textLength="12.2" clip-path="url(#terminal-824955253-line-2)">▎</text><text class="terminal-824955253-r3" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-824955253-line-2)">
+</text><text class="terminal-824955253-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-824955253-line-3)">▊</text><text class="terminal-824955253-r5" x="12.2" y="93.2" textLength="951.6" clip-path="url(#terminal-824955253-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-824955253-r5" x="963.8" y="93.2" textLength="12.2" clip-path="url(#terminal-824955253-line-3)">▎</text><text class="terminal-824955253-r3" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-824955253-line-3)">
+</text><text class="terminal-824955253-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-824955253-line-4)">▊</text><text class="terminal-824955253-r6" x="36.6" y="117.6" textLength="109.8" clip-path="url(#terminal-824955253-line-4)">Last&#160;Name</text><text class="terminal-824955253-r5" x="963.8" y="117.6" textLength="12.2" clip-path="url(#terminal-824955253-line-4)">▎</text><text class="terminal-824955253-r3" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-824955253-line-4)">
+</text><text class="terminal-824955253-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-824955253-line-5)">▊</text><text class="terminal-824955253-r5" x="12.2" y="142" textLength="951.6" clip-path="url(#terminal-824955253-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-824955253-r5" x="963.8" y="142" textLength="12.2" clip-path="url(#terminal-824955253-line-5)">▎</text><text class="terminal-824955253-r3" x="976" y="142" textLength="12.2" clip-path="url(#terminal-824955253-line-5)">
+</text><text class="terminal-824955253-r3" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-824955253-line-6)">
+</text><text class="terminal-824955253-r3" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-824955253-line-7)">
+</text><text class="terminal-824955253-r3" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-824955253-line-8)">
+</text><text class="terminal-824955253-r3" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-824955253-line-9)">
+</text><text class="terminal-824955253-r3" x="976" y="264" textLength="12.2" clip-path="url(#terminal-824955253-line-10)">
+</text><text class="terminal-824955253-r3" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-824955253-line-11)">
+</text><text class="terminal-824955253-r3" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-824955253-line-12)">
+</text><text class="terminal-824955253-r3" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-824955253-line-13)">
+</text><text class="terminal-824955253-r3" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-824955253-line-14)">
+</text><text class="terminal-824955253-r3" x="976" y="386" textLength="12.2" clip-path="url(#terminal-824955253-line-15)">
+</text><text class="terminal-824955253-r3" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-824955253-line-16)">
+</text><text class="terminal-824955253-r3" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-824955253-line-17)">
+</text><text class="terminal-824955253-r3" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-824955253-line-18)">
+</text><text class="terminal-824955253-r3" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-824955253-line-19)">
+</text><text class="terminal-824955253-r3" x="976" y="508" textLength="12.2" clip-path="url(#terminal-824955253-line-20)">
+</text><text class="terminal-824955253-r3" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-824955253-line-21)">
+</text><text class="terminal-824955253-r3" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-824955253-line-22)">
 </text>
     </g>
     </g>
@@ -8105,136 +8647,136 @@ You can set <code>type</code> to any of the following values:</p>
         font-weight: 700;
     }
 
-    .terminal-4076527992-matrix {
+    .terminal-2732839344-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-4076527992-title {
+    .terminal-2732839344-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-4076527992-r1 { fill: #121212 }
-.terminal-4076527992-r2 { fill: #0178d4 }
-.terminal-4076527992-r3 { fill: #c5c8c6 }
-.terminal-4076527992-r4 { fill: #797979 }
-.terminal-4076527992-r5 { fill: #e0e0e0 }
-.terminal-4076527992-r6 { fill: #191919 }
-.terminal-4076527992-r7 { fill: #737373 }
+    .terminal-2732839344-r1 { fill: #121212 }
+.terminal-2732839344-r2 { fill: #0178d4 }
+.terminal-2732839344-r3 { fill: #c5c8c6 }
+.terminal-2732839344-r4 { fill: #797979 }
+.terminal-2732839344-r5 { fill: #e0e0e0 }
+.terminal-2732839344-r6 { fill: #191919 }
+.terminal-2732839344-r7 { fill: #737373 }
     </style>
 
     <defs>
-    <clipPath id="terminal-4076527992-clip-terminal">
+    <clipPath id="terminal-2732839344-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-4076527992-line-0">
+    <clipPath id="terminal-2732839344-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-1">
+<clipPath id="terminal-2732839344-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-2">
+<clipPath id="terminal-2732839344-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-3">
+<clipPath id="terminal-2732839344-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-4">
+<clipPath id="terminal-2732839344-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-5">
+<clipPath id="terminal-2732839344-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-6">
+<clipPath id="terminal-2732839344-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-7">
+<clipPath id="terminal-2732839344-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-8">
+<clipPath id="terminal-2732839344-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-9">
+<clipPath id="terminal-2732839344-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-10">
+<clipPath id="terminal-2732839344-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-11">
+<clipPath id="terminal-2732839344-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-12">
+<clipPath id="terminal-2732839344-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-13">
+<clipPath id="terminal-2732839344-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-14">
+<clipPath id="terminal-2732839344-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-15">
+<clipPath id="terminal-2732839344-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-16">
+<clipPath id="terminal-2732839344-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-17">
+<clipPath id="terminal-2732839344-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-18">
+<clipPath id="terminal-2732839344-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-19">
+<clipPath id="terminal-2732839344-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-20">
+<clipPath id="terminal-2732839344-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-21">
+<clipPath id="terminal-2732839344-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4076527992-line-22">
+<clipPath id="terminal-2732839344-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-4076527992-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2732839344-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-4076527992-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2732839344-clip-terminal)">
     <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="12.2" y="1.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="12.2" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#e0e0e0" x="36.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="48.8" y="25.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="158.6" y="25.9" width="780.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="939.4" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="12.2" y="50.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="99.1" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="134.2" y="99.1" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-4076527992-matrix">
-    <text class="terminal-4076527992-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-4076527992-line-0)">▊</text><text class="terminal-4076527992-r2" x="12.2" y="20" textLength="951.6" clip-path="url(#terminal-4076527992-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-4076527992-r2" x="963.8" y="20" textLength="12.2" clip-path="url(#terminal-4076527992-line-0)">▎</text><text class="terminal-4076527992-r3" x="976" y="20" textLength="12.2" clip-path="url(#terminal-4076527992-line-0)">
-</text><text class="terminal-4076527992-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-1)">▊</text><text class="terminal-4076527992-r1" x="36.6" y="44.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-1)">A</text><text class="terminal-4076527992-r4" x="48.8" y="44.4" textLength="109.8" clip-path="url(#terminal-4076527992-line-1)">n&#160;integer</text><text class="terminal-4076527992-r2" x="963.8" y="44.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-1)">▎</text><text class="terminal-4076527992-r3" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-1)">
-</text><text class="terminal-4076527992-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-2)">▊</text><text class="terminal-4076527992-r2" x="12.2" y="68.8" textLength="951.6" clip-path="url(#terminal-4076527992-line-2)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-4076527992-r2" x="963.8" y="68.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-2)">▎</text><text class="terminal-4076527992-r3" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-2)">
-</text><text class="terminal-4076527992-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-4076527992-line-3)">▊</text><text class="terminal-4076527992-r6" x="12.2" y="93.2" textLength="951.6" clip-path="url(#terminal-4076527992-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-4076527992-r6" x="963.8" y="93.2" textLength="12.2" clip-path="url(#terminal-4076527992-line-3)">▎</text><text class="terminal-4076527992-r3" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-4076527992-line-3)">
-</text><text class="terminal-4076527992-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-4076527992-line-4)">▊</text><text class="terminal-4076527992-r7" x="36.6" y="117.6" textLength="97.6" clip-path="url(#terminal-4076527992-line-4)">A&#160;number</text><text class="terminal-4076527992-r6" x="963.8" y="117.6" textLength="12.2" clip-path="url(#terminal-4076527992-line-4)">▎</text><text class="terminal-4076527992-r3" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-4076527992-line-4)">
-</text><text class="terminal-4076527992-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-4076527992-line-5)">▊</text><text class="terminal-4076527992-r6" x="12.2" y="142" textLength="951.6" clip-path="url(#terminal-4076527992-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-4076527992-r6" x="963.8" y="142" textLength="12.2" clip-path="url(#terminal-4076527992-line-5)">▎</text><text class="terminal-4076527992-r3" x="976" y="142" textLength="12.2" clip-path="url(#terminal-4076527992-line-5)">
-</text><text class="terminal-4076527992-r3" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-6)">
-</text><text class="terminal-4076527992-r3" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-7)">
-</text><text class="terminal-4076527992-r3" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-4076527992-line-8)">
-</text><text class="terminal-4076527992-r3" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-4076527992-line-9)">
-</text><text class="terminal-4076527992-r3" x="976" y="264" textLength="12.2" clip-path="url(#terminal-4076527992-line-10)">
-</text><text class="terminal-4076527992-r3" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-11)">
-</text><text class="terminal-4076527992-r3" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-12)">
-</text><text class="terminal-4076527992-r3" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-4076527992-line-13)">
-</text><text class="terminal-4076527992-r3" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-4076527992-line-14)">
-</text><text class="terminal-4076527992-r3" x="976" y="386" textLength="12.2" clip-path="url(#terminal-4076527992-line-15)">
-</text><text class="terminal-4076527992-r3" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-16)">
-</text><text class="terminal-4076527992-r3" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-17)">
-</text><text class="terminal-4076527992-r3" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-4076527992-line-18)">
-</text><text class="terminal-4076527992-r3" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-4076527992-line-19)">
-</text><text class="terminal-4076527992-r3" x="976" y="508" textLength="12.2" clip-path="url(#terminal-4076527992-line-20)">
-</text><text class="terminal-4076527992-r3" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-4076527992-line-21)">
-</text><text class="terminal-4076527992-r3" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-4076527992-line-22)">
+    <g class="terminal-2732839344-matrix">
+    <text class="terminal-2732839344-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2732839344-line-0)">▊</text><text class="terminal-2732839344-r2" x="12.2" y="20" textLength="951.6" clip-path="url(#terminal-2732839344-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2732839344-r2" x="963.8" y="20" textLength="12.2" clip-path="url(#terminal-2732839344-line-0)">▎</text><text class="terminal-2732839344-r3" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2732839344-line-0)">
+</text><text class="terminal-2732839344-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-1)">▊</text><text class="terminal-2732839344-r1" x="36.6" y="44.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-1)">A</text><text class="terminal-2732839344-r4" x="48.8" y="44.4" textLength="109.8" clip-path="url(#terminal-2732839344-line-1)">n&#160;integer</text><text class="terminal-2732839344-r2" x="963.8" y="44.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-1)">▎</text><text class="terminal-2732839344-r3" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-1)">
+</text><text class="terminal-2732839344-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-2)">▊</text><text class="terminal-2732839344-r2" x="12.2" y="68.8" textLength="951.6" clip-path="url(#terminal-2732839344-line-2)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2732839344-r2" x="963.8" y="68.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-2)">▎</text><text class="terminal-2732839344-r3" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-2)">
+</text><text class="terminal-2732839344-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2732839344-line-3)">▊</text><text class="terminal-2732839344-r6" x="12.2" y="93.2" textLength="951.6" clip-path="url(#terminal-2732839344-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2732839344-r6" x="963.8" y="93.2" textLength="12.2" clip-path="url(#terminal-2732839344-line-3)">▎</text><text class="terminal-2732839344-r3" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2732839344-line-3)">
+</text><text class="terminal-2732839344-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-2732839344-line-4)">▊</text><text class="terminal-2732839344-r7" x="36.6" y="117.6" textLength="97.6" clip-path="url(#terminal-2732839344-line-4)">A&#160;number</text><text class="terminal-2732839344-r6" x="963.8" y="117.6" textLength="12.2" clip-path="url(#terminal-2732839344-line-4)">▎</text><text class="terminal-2732839344-r3" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2732839344-line-4)">
+</text><text class="terminal-2732839344-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-2732839344-line-5)">▊</text><text class="terminal-2732839344-r6" x="12.2" y="142" textLength="951.6" clip-path="url(#terminal-2732839344-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2732839344-r6" x="963.8" y="142" textLength="12.2" clip-path="url(#terminal-2732839344-line-5)">▎</text><text class="terminal-2732839344-r3" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2732839344-line-5)">
+</text><text class="terminal-2732839344-r3" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-6)">
+</text><text class="terminal-2732839344-r3" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-7)">
+</text><text class="terminal-2732839344-r3" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2732839344-line-8)">
+</text><text class="terminal-2732839344-r3" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2732839344-line-9)">
+</text><text class="terminal-2732839344-r3" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2732839344-line-10)">
+</text><text class="terminal-2732839344-r3" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-11)">
+</text><text class="terminal-2732839344-r3" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-12)">
+</text><text class="terminal-2732839344-r3" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2732839344-line-13)">
+</text><text class="terminal-2732839344-r3" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2732839344-line-14)">
+</text><text class="terminal-2732839344-r3" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2732839344-line-15)">
+</text><text class="terminal-2732839344-r3" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-16)">
+</text><text class="terminal-2732839344-r3" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-17)">
+</text><text class="terminal-2732839344-r3" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2732839344-line-18)">
+</text><text class="terminal-2732839344-r3" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2732839344-line-19)">
+</text><text class="terminal-2732839344-r3" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2732839344-line-20)">
+</text><text class="terminal-2732839344-r3" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2732839344-line-21)">
+</text><text class="terminal-2732839344-r3" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2732839344-line-22)">
 </text>
     </g>
     </g>
@@ -8392,135 +8934,135 @@ Click the tabs to see the output for validation failures and successes.</p>
         font-weight: 700;
     }
 
-    .terminal-2892351533-matrix {
+    .terminal-450215605-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-2892351533-title {
+    .terminal-450215605-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-2892351533-r1 { fill: #e0e0e0 }
-.terminal-2892351533-r2 { fill: #c5c8c6 }
-.terminal-2892351533-r3 { fill: #121212 }
-.terminal-2892351533-r4 { fill: #b93c5b }
-.terminal-2892351533-r5 { fill: #e0e0e0;font-weight: bold }
-.terminal-2892351533-r6 { fill: #98e024 }
+    .terminal-450215605-r1 { fill: #e0e0e0 }
+.terminal-450215605-r2 { fill: #c5c8c6 }
+.terminal-450215605-r3 { fill: #121212 }
+.terminal-450215605-r4 { fill: #b93c5b }
+.terminal-450215605-r5 { fill: #e0e0e0;font-weight: bold }
+.terminal-450215605-r6 { fill: #98e024 }
     </style>
 
     <defs>
-    <clipPath id="terminal-2892351533-clip-terminal">
+    <clipPath id="terminal-450215605-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-2892351533-line-0">
+    <clipPath id="terminal-450215605-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-1">
+<clipPath id="terminal-450215605-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-2">
+<clipPath id="terminal-450215605-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-3">
+<clipPath id="terminal-450215605-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-4">
+<clipPath id="terminal-450215605-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-5">
+<clipPath id="terminal-450215605-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-6">
+<clipPath id="terminal-450215605-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-7">
+<clipPath id="terminal-450215605-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-8">
+<clipPath id="terminal-450215605-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-9">
+<clipPath id="terminal-450215605-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-10">
+<clipPath id="terminal-450215605-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-11">
+<clipPath id="terminal-450215605-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-12">
+<clipPath id="terminal-450215605-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-13">
+<clipPath id="terminal-450215605-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-14">
+<clipPath id="terminal-450215605-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-15">
+<clipPath id="terminal-450215605-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-16">
+<clipPath id="terminal-450215605-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-17">
+<clipPath id="terminal-450215605-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-18">
+<clipPath id="terminal-450215605-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-19">
+<clipPath id="terminal-450215605-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-20">
+<clipPath id="terminal-450215605-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-21">
+<clipPath id="terminal-450215605-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2892351533-line-22">
+<clipPath id="terminal-450215605-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2892351533-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-450215605-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-2892351533-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-450215605-clip-terminal)">
     <rect fill="#121212" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="25.9" width="793" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="817.4" y="25.9" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="24.4" y="74.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="24.4" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="48.8" y="99.1" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#e0e0e0" x="85.4" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="97.6" y="99.1" width="829.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="927.2" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="24.4" y="123.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="36.6" y="172.3" width="915" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="196.7" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="73.2" y="196.7" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="414.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="427" y="196.7" width="524.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="221.1" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="73.2" y="221.1" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="317.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="329.4" y="221.1" width="622.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="245.5" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="73.2" y="245.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="414.8" y="245.5" width="536.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="36.6" y="269.9" width="915" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-2892351533-matrix">
-    <text class="terminal-2892351533-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2892351533-line-0)">
-</text><text class="terminal-2892351533-r1" x="24.4" y="44.4" textLength="793" clip-path="url(#terminal-2892351533-line-1)">Enter&#160;an&#160;even&#160;number&#160;between&#160;1&#160;and&#160;100&#160;that&#160;is&#160;also&#160;a&#160;palindrome.</text><text class="terminal-2892351533-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2892351533-line-1)">
-</text><text class="terminal-2892351533-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2892351533-line-2)">
-</text><text class="terminal-2892351533-r3" x="12.2" y="93.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-3)">▊</text><text class="terminal-2892351533-r4" x="24.4" y="93.2" textLength="927.2" clip-path="url(#terminal-2892351533-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2892351533-r4" x="951.6" y="93.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-3)">▎</text><text class="terminal-2892351533-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-3)">
-</text><text class="terminal-2892351533-r3" x="12.2" y="117.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-4)">▊</text><text class="terminal-2892351533-r1" x="48.8" y="117.6" textLength="36.6" clip-path="url(#terminal-2892351533-line-4)">-23</text><text class="terminal-2892351533-r4" x="951.6" y="117.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-4)">▎</text><text class="terminal-2892351533-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-4)">
-</text><text class="terminal-2892351533-r3" x="12.2" y="142" textLength="12.2" clip-path="url(#terminal-2892351533-line-5)">▊</text><text class="terminal-2892351533-r4" x="24.4" y="142" textLength="927.2" clip-path="url(#terminal-2892351533-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2892351533-r4" x="951.6" y="142" textLength="12.2" clip-path="url(#terminal-2892351533-line-5)">▎</text><text class="terminal-2892351533-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2892351533-line-5)">
-</text><text class="terminal-2892351533-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2892351533-line-6)">
-</text><text class="terminal-2892351533-r5" x="24.4" y="190.8" textLength="12.2" clip-path="url(#terminal-2892351533-line-7)">[</text><text class="terminal-2892351533-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2892351533-line-7)">
-</text><text class="terminal-2892351533-r6" x="73.2" y="215.2" textLength="341.6" clip-path="url(#terminal-2892351533-line-8)">&#x27;Must&#160;be&#160;between&#160;1&#160;and&#160;100.&#x27;</text><text class="terminal-2892351533-r1" x="414.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-8)">,</text><text class="terminal-2892351533-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-8)">
-</text><text class="terminal-2892351533-r6" x="73.2" y="239.6" textLength="244" clip-path="url(#terminal-2892351533-line-9)">&#x27;Value&#160;is&#160;not&#160;even.&#x27;</text><text class="terminal-2892351533-r1" x="317.2" y="239.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-9)">,</text><text class="terminal-2892351533-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-9)">
-</text><text class="terminal-2892351533-r6" x="73.2" y="264" textLength="341.6" clip-path="url(#terminal-2892351533-line-10)">&quot;That&#x27;s&#160;not&#160;a&#160;palindrome&#160;:/&quot;</text><text class="terminal-2892351533-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2892351533-line-10)">
-</text><text class="terminal-2892351533-r5" x="24.4" y="288.4" textLength="12.2" clip-path="url(#terminal-2892351533-line-11)">]</text><text class="terminal-2892351533-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2892351533-line-11)">
-</text><text class="terminal-2892351533-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2892351533-line-12)">
-</text><text class="terminal-2892351533-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-13)">
-</text><text class="terminal-2892351533-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-14)">
-</text><text class="terminal-2892351533-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2892351533-line-15)">
-</text><text class="terminal-2892351533-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2892351533-line-16)">
-</text><text class="terminal-2892351533-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2892351533-line-17)">
-</text><text class="terminal-2892351533-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2892351533-line-18)">
-</text><text class="terminal-2892351533-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2892351533-line-19)">
-</text><text class="terminal-2892351533-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2892351533-line-20)">
-</text><text class="terminal-2892351533-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2892351533-line-21)">
-</text><text class="terminal-2892351533-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2892351533-line-22)">
+    <g class="terminal-450215605-matrix">
+    <text class="terminal-450215605-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-450215605-line-0)">
+</text><text class="terminal-450215605-r1" x="24.4" y="44.4" textLength="793" clip-path="url(#terminal-450215605-line-1)">Enter&#160;an&#160;even&#160;number&#160;between&#160;1&#160;and&#160;100&#160;that&#160;is&#160;also&#160;a&#160;palindrome.</text><text class="terminal-450215605-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-450215605-line-1)">
+</text><text class="terminal-450215605-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-450215605-line-2)">
+</text><text class="terminal-450215605-r3" x="12.2" y="93.2" textLength="12.2" clip-path="url(#terminal-450215605-line-3)">▊</text><text class="terminal-450215605-r4" x="24.4" y="93.2" textLength="927.2" clip-path="url(#terminal-450215605-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-450215605-r4" x="951.6" y="93.2" textLength="12.2" clip-path="url(#terminal-450215605-line-3)">▎</text><text class="terminal-450215605-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-450215605-line-3)">
+</text><text class="terminal-450215605-r3" x="12.2" y="117.6" textLength="12.2" clip-path="url(#terminal-450215605-line-4)">▊</text><text class="terminal-450215605-r1" x="48.8" y="117.6" textLength="36.6" clip-path="url(#terminal-450215605-line-4)">-23</text><text class="terminal-450215605-r4" x="951.6" y="117.6" textLength="12.2" clip-path="url(#terminal-450215605-line-4)">▎</text><text class="terminal-450215605-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-450215605-line-4)">
+</text><text class="terminal-450215605-r3" x="12.2" y="142" textLength="12.2" clip-path="url(#terminal-450215605-line-5)">▊</text><text class="terminal-450215605-r4" x="24.4" y="142" textLength="927.2" clip-path="url(#terminal-450215605-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-450215605-r4" x="951.6" y="142" textLength="12.2" clip-path="url(#terminal-450215605-line-5)">▎</text><text class="terminal-450215605-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-450215605-line-5)">
+</text><text class="terminal-450215605-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-450215605-line-6)">
+</text><text class="terminal-450215605-r5" x="24.4" y="190.8" textLength="12.2" clip-path="url(#terminal-450215605-line-7)">[</text><text class="terminal-450215605-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-450215605-line-7)">
+</text><text class="terminal-450215605-r6" x="73.2" y="215.2" textLength="341.6" clip-path="url(#terminal-450215605-line-8)">&#x27;Must&#160;be&#160;between&#160;1&#160;and&#160;100.&#x27;</text><text class="terminal-450215605-r1" x="414.8" y="215.2" textLength="12.2" clip-path="url(#terminal-450215605-line-8)">,</text><text class="terminal-450215605-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-450215605-line-8)">
+</text><text class="terminal-450215605-r6" x="73.2" y="239.6" textLength="244" clip-path="url(#terminal-450215605-line-9)">&#x27;Value&#160;is&#160;not&#160;even.&#x27;</text><text class="terminal-450215605-r1" x="317.2" y="239.6" textLength="12.2" clip-path="url(#terminal-450215605-line-9)">,</text><text class="terminal-450215605-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-450215605-line-9)">
+</text><text class="terminal-450215605-r6" x="73.2" y="264" textLength="341.6" clip-path="url(#terminal-450215605-line-10)">&quot;That&#x27;s&#160;not&#160;a&#160;palindrome&#160;:/&quot;</text><text class="terminal-450215605-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-450215605-line-10)">
+</text><text class="terminal-450215605-r5" x="24.4" y="288.4" textLength="12.2" clip-path="url(#terminal-450215605-line-11)">]</text><text class="terminal-450215605-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-450215605-line-11)">
+</text><text class="terminal-450215605-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-450215605-line-12)">
+</text><text class="terminal-450215605-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-450215605-line-13)">
+</text><text class="terminal-450215605-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-450215605-line-14)">
+</text><text class="terminal-450215605-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-450215605-line-15)">
+</text><text class="terminal-450215605-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-450215605-line-16)">
+</text><text class="terminal-450215605-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-450215605-line-17)">
+</text><text class="terminal-450215605-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-450215605-line-18)">
+</text><text class="terminal-450215605-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-450215605-line-19)">
+</text><text class="terminal-450215605-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-450215605-line-20)">
+</text><text class="terminal-450215605-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-450215605-line-21)">
+</text><text class="terminal-450215605-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-450215605-line-22)">
 </text>
     </g>
     </g>
@@ -8549,134 +9091,134 @@ Click the tabs to see the output for validation failures and successes.</p>
         font-weight: 700;
     }
 
-    .terminal-312657092-matrix {
+    .terminal-2630138700-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-312657092-title {
+    .terminal-2630138700-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-312657092-r1 { fill: #e0e0e0 }
-.terminal-312657092-r2 { fill: #c5c8c6 }
-.terminal-312657092-r3 { fill: #121212 }
-.terminal-312657092-r4 { fill: #4ebf71 }
-.terminal-312657092-r5 { fill: #e0e0e0;font-weight: bold }
+    .terminal-2630138700-r1 { fill: #e0e0e0 }
+.terminal-2630138700-r2 { fill: #c5c8c6 }
+.terminal-2630138700-r3 { fill: #121212 }
+.terminal-2630138700-r4 { fill: #4ebf71 }
+.terminal-2630138700-r5 { fill: #e0e0e0;font-weight: bold }
     </style>
 
     <defs>
-    <clipPath id="terminal-312657092-clip-terminal">
+    <clipPath id="terminal-2630138700-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-312657092-line-0">
+    <clipPath id="terminal-2630138700-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-1">
+<clipPath id="terminal-2630138700-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-2">
+<clipPath id="terminal-2630138700-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-3">
+<clipPath id="terminal-2630138700-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-4">
+<clipPath id="terminal-2630138700-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-5">
+<clipPath id="terminal-2630138700-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-6">
+<clipPath id="terminal-2630138700-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-7">
+<clipPath id="terminal-2630138700-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-8">
+<clipPath id="terminal-2630138700-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-9">
+<clipPath id="terminal-2630138700-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-10">
+<clipPath id="terminal-2630138700-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-11">
+<clipPath id="terminal-2630138700-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-12">
+<clipPath id="terminal-2630138700-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-13">
+<clipPath id="terminal-2630138700-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-14">
+<clipPath id="terminal-2630138700-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-15">
+<clipPath id="terminal-2630138700-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-16">
+<clipPath id="terminal-2630138700-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-17">
+<clipPath id="terminal-2630138700-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-18">
+<clipPath id="terminal-2630138700-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-19">
+<clipPath id="terminal-2630138700-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-20">
+<clipPath id="terminal-2630138700-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-21">
+<clipPath id="terminal-2630138700-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-312657092-line-22">
+<clipPath id="terminal-2630138700-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-312657092-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2630138700-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">InputApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-312657092-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2630138700-clip-terminal)">
     <rect fill="#121212" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="25.9" width="793" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="817.4" y="25.9" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="24.4" y="74.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="24.4" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="48.8" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#e0e0e0" x="73.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="85.4" y="99.1" width="841.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="927.2" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="24.4" y="123.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="36.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="48.8" y="172.3" width="902.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-312657092-matrix">
-    <text class="terminal-312657092-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-312657092-line-0)">
-</text><text class="terminal-312657092-r1" x="24.4" y="44.4" textLength="793" clip-path="url(#terminal-312657092-line-1)">Enter&#160;an&#160;even&#160;number&#160;between&#160;1&#160;and&#160;100&#160;that&#160;is&#160;also&#160;a&#160;palindrome.</text><text class="terminal-312657092-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-312657092-line-1)">
-</text><text class="terminal-312657092-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-312657092-line-2)">
-</text><text class="terminal-312657092-r3" x="12.2" y="93.2" textLength="12.2" clip-path="url(#terminal-312657092-line-3)">▊</text><text class="terminal-312657092-r4" x="24.4" y="93.2" textLength="927.2" clip-path="url(#terminal-312657092-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-312657092-r4" x="951.6" y="93.2" textLength="12.2" clip-path="url(#terminal-312657092-line-3)">▎</text><text class="terminal-312657092-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-312657092-line-3)">
-</text><text class="terminal-312657092-r3" x="12.2" y="117.6" textLength="12.2" clip-path="url(#terminal-312657092-line-4)">▊</text><text class="terminal-312657092-r1" x="48.8" y="117.6" textLength="24.4" clip-path="url(#terminal-312657092-line-4)">44</text><text class="terminal-312657092-r4" x="951.6" y="117.6" textLength="12.2" clip-path="url(#terminal-312657092-line-4)">▎</text><text class="terminal-312657092-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-312657092-line-4)">
-</text><text class="terminal-312657092-r3" x="12.2" y="142" textLength="12.2" clip-path="url(#terminal-312657092-line-5)">▊</text><text class="terminal-312657092-r4" x="24.4" y="142" textLength="927.2" clip-path="url(#terminal-312657092-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-312657092-r4" x="951.6" y="142" textLength="12.2" clip-path="url(#terminal-312657092-line-5)">▎</text><text class="terminal-312657092-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-312657092-line-5)">
-</text><text class="terminal-312657092-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-312657092-line-6)">
-</text><text class="terminal-312657092-r5" x="24.4" y="190.8" textLength="12.2" clip-path="url(#terminal-312657092-line-7)">[</text><text class="terminal-312657092-r5" x="36.6" y="190.8" textLength="12.2" clip-path="url(#terminal-312657092-line-7)">]</text><text class="terminal-312657092-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-312657092-line-7)">
-</text><text class="terminal-312657092-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-312657092-line-8)">
-</text><text class="terminal-312657092-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-312657092-line-9)">
-</text><text class="terminal-312657092-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-312657092-line-10)">
-</text><text class="terminal-312657092-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-312657092-line-11)">
-</text><text class="terminal-312657092-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-312657092-line-12)">
-</text><text class="terminal-312657092-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-312657092-line-13)">
-</text><text class="terminal-312657092-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-312657092-line-14)">
-</text><text class="terminal-312657092-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-312657092-line-15)">
-</text><text class="terminal-312657092-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-312657092-line-16)">
-</text><text class="terminal-312657092-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-312657092-line-17)">
-</text><text class="terminal-312657092-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-312657092-line-18)">
-</text><text class="terminal-312657092-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-312657092-line-19)">
-</text><text class="terminal-312657092-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-312657092-line-20)">
-</text><text class="terminal-312657092-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-312657092-line-21)">
-</text><text class="terminal-312657092-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-312657092-line-22)">
+    <g class="terminal-2630138700-matrix">
+    <text class="terminal-2630138700-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2630138700-line-0)">
+</text><text class="terminal-2630138700-r1" x="24.4" y="44.4" textLength="793" clip-path="url(#terminal-2630138700-line-1)">Enter&#160;an&#160;even&#160;number&#160;between&#160;1&#160;and&#160;100&#160;that&#160;is&#160;also&#160;a&#160;palindrome.</text><text class="terminal-2630138700-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2630138700-line-1)">
+</text><text class="terminal-2630138700-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-2)">
+</text><text class="terminal-2630138700-r3" x="12.2" y="93.2" textLength="12.2" clip-path="url(#terminal-2630138700-line-3)">▊</text><text class="terminal-2630138700-r4" x="24.4" y="93.2" textLength="927.2" clip-path="url(#terminal-2630138700-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2630138700-r4" x="951.6" y="93.2" textLength="12.2" clip-path="url(#terminal-2630138700-line-3)">▎</text><text class="terminal-2630138700-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2630138700-line-3)">
+</text><text class="terminal-2630138700-r3" x="12.2" y="117.6" textLength="12.2" clip-path="url(#terminal-2630138700-line-4)">▊</text><text class="terminal-2630138700-r1" x="48.8" y="117.6" textLength="24.4" clip-path="url(#terminal-2630138700-line-4)">44</text><text class="terminal-2630138700-r4" x="951.6" y="117.6" textLength="12.2" clip-path="url(#terminal-2630138700-line-4)">▎</text><text class="terminal-2630138700-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2630138700-line-4)">
+</text><text class="terminal-2630138700-r3" x="12.2" y="142" textLength="12.2" clip-path="url(#terminal-2630138700-line-5)">▊</text><text class="terminal-2630138700-r4" x="24.4" y="142" textLength="927.2" clip-path="url(#terminal-2630138700-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2630138700-r4" x="951.6" y="142" textLength="12.2" clip-path="url(#terminal-2630138700-line-5)">▎</text><text class="terminal-2630138700-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2630138700-line-5)">
+</text><text class="terminal-2630138700-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2630138700-line-6)">
+</text><text class="terminal-2630138700-r5" x="24.4" y="190.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-7)">[</text><text class="terminal-2630138700-r5" x="36.6" y="190.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-7)">]</text><text class="terminal-2630138700-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-7)">
+</text><text class="terminal-2630138700-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2630138700-line-8)">
+</text><text class="terminal-2630138700-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2630138700-line-9)">
+</text><text class="terminal-2630138700-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2630138700-line-10)">
+</text><text class="terminal-2630138700-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2630138700-line-11)">
+</text><text class="terminal-2630138700-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-12)">
+</text><text class="terminal-2630138700-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2630138700-line-13)">
+</text><text class="terminal-2630138700-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2630138700-line-14)">
+</text><text class="terminal-2630138700-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2630138700-line-15)">
+</text><text class="terminal-2630138700-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2630138700-line-16)">
+</text><text class="terminal-2630138700-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-17)">
+</text><text class="terminal-2630138700-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2630138700-line-18)">
+</text><text class="terminal-2630138700-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2630138700-line-19)">
+</text><text class="terminal-2630138700-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2630138700-line-20)">
+</text><text class="terminal-2630138700-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2630138700-line-21)">
+</text><text class="terminal-2630138700-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2630138700-line-22)">
 </text>
     </g>
     </g>
@@ -8870,6 +9412,10 @@ as seen for <code>Palindrome</code> in the example above.</p>
 <td style="text-align: left;"><code>input--suggestion</code></td>
 <td style="text-align: left;">Target the auto-completion suggestion (when it exists).</td>
 </tr>
+<tr>
+<td style="text-align: left;"><code>input--selection</code></td>
+<td style="text-align: left;">Target the selected text.</td>
+</tr>
 </tbody>
 </table>
     </div>
@@ -8888,7 +9434,7 @@ as seen for <code>Palindrome</code> in the example above.</p>
 <a id="textual.widgets.Input"></a>
     <div class="doc doc-contents first">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../../api/widget/#textual.widget.Widget">Widget</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.scroll_view.ScrollView" href="../../api/scroll_view/#textual.scroll_view.ScrollView">ScrollView</a></code></p>
 
 
 
@@ -9088,6 +9634,22 @@ validation for all messages.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
+<h2 id="textual.widgets.Input(select_on_focus)" class="doc doc-heading doc-heading-parameter">                  <code>select_on_focus</code>
+<a href="#textual.widgets.Input(select_on_focus)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether to select all text on focus.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
 <h2 id="textual.widgets.Input(name)" class="doc doc-heading doc-heading-parameter">                  <code>name</code>
 <a href="#textual.widgets.Input(name)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
             <td>
@@ -9206,65 +9768,113 @@ validation for all messages.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">),</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="s2">&quot;ctrl+left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">&quot;cursor_left_word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="s2">&quot;Move cursor left a word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="s2">&quot;shift+left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">&quot;cursor_left(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="s2">&quot;Move cursor left and select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">),</span>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="s2">&quot;right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="s2">&quot;cursor_right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="s2">&quot;Move cursor right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="s2">&quot;ctrl+left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="s2">&quot;cursor_left_word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="s2">&quot;Move cursor left a word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="p">),</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="s2">&quot;ctrl+right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="s2">&quot;cursor_right_word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>        <span class="s2">&quot;Move cursor right a word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="s2">&quot;ctrl+shift+left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="s2">&quot;cursor_left_word(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>        <span class="s2">&quot;Move cursor left a word and select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    <span class="p">),</span>
 <a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="s2">&quot;backspace&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>        <span class="s2">&quot;delete_left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>        <span class="s2">&quot;Delete character left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="s2">&quot;right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>        <span class="s2">&quot;cursor_right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>        <span class="s2">&quot;Move cursor right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>    <span class="p">),</span>
 <a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>        <span class="s2">&quot;home,ctrl+a&quot;</span><span class="p">,</span> <span class="s2">&quot;home&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to start&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>    <span class="p">),</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;end,ctrl+e&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to end&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>        <span class="s2">&quot;delete,ctrl+d&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>        <span class="s2">&quot;delete_right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>        <span class="s2">&quot;Delete character right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>    <span class="p">),</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;enter&quot;</span><span class="p">,</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="s2">&quot;Submit&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>        <span class="s2">&quot;ctrl+w&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>        <span class="s2">&quot;delete_left_word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>        <span class="s2">&quot;Delete left to start of word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>    <span class="p">),</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>        <span class="s2">&quot;ctrl+u&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>        <span class="s2">&quot;delete_left_all&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>        <span class="s2">&quot;Delete all to the left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>    <span class="p">),</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>        <span class="s2">&quot;ctrl+f&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>        <span class="s2">&quot;delete_right_word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>        <span class="s2">&quot;Delete right to start of word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>    <span class="p">),</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>        <span class="s2">&quot;ctrl+k&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>        <span class="s2">&quot;delete_right_all&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a>        <span class="s2">&quot;Delete all to the right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>    <span class="p">),</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a><span class="p">]</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>        <span class="s2">&quot;shift+right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>        <span class="s2">&quot;cursor_right(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>        <span class="s2">&quot;Move cursor right and select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    <span class="p">),</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>        <span class="s2">&quot;ctrl+right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>        <span class="s2">&quot;cursor_right_word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>        <span class="s2">&quot;Move cursor right a word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    <span class="p">),</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>        <span class="s2">&quot;ctrl+shift+right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>        <span class="s2">&quot;cursor_right_word(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>        <span class="s2">&quot;Move cursor right a word and select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>    <span class="p">),</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>        <span class="s2">&quot;backspace&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>        <span class="s2">&quot;delete_left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>        <span class="s2">&quot;Delete character left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>    <span class="p">),</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>        <span class="s2">&quot;home,ctrl+a&quot;</span><span class="p">,</span> <span class="s2">&quot;home&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to start&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>    <span class="p">),</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;end,ctrl+e&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to end&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>        <span class="s2">&quot;shift+home&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>        <span class="s2">&quot;home(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>        <span class="s2">&quot;Select line start&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a>    <span class="p">),</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a>        <span class="s2">&quot;shift+end&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a>        <span class="s2">&quot;end(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a>        <span class="s2">&quot;Select line end&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a>    <span class="p">),</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a>        <span class="s2">&quot;delete,ctrl+d&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a>        <span class="s2">&quot;delete_right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a>        <span class="s2">&quot;Delete character right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76" href="#__codelineno-0-76"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77" href="#__codelineno-0-77"></a>    <span class="p">),</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;enter&quot;</span><span class="p">,</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="s2">&quot;Submit&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80" href="#__codelineno-0-80"></a>        <span class="s2">&quot;ctrl+w&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81" href="#__codelineno-0-81"></a>        <span class="s2">&quot;delete_left_word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82" href="#__codelineno-0-82"></a>        <span class="s2">&quot;Delete left to start of word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83" href="#__codelineno-0-83"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84" href="#__codelineno-0-84"></a>    <span class="p">),</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a>        <span class="s2">&quot;ctrl+u&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a>        <span class="s2">&quot;delete_left_all&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88" href="#__codelineno-0-88"></a>        <span class="s2">&quot;Delete all to the left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89" href="#__codelineno-0-89"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90" href="#__codelineno-0-90"></a>    <span class="p">),</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92" href="#__codelineno-0-92"></a>        <span class="s2">&quot;ctrl+f&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93" href="#__codelineno-0-93"></a>        <span class="s2">&quot;delete_right_word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94" href="#__codelineno-0-94"></a>        <span class="s2">&quot;Delete right to start of word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95" href="#__codelineno-0-95"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96" href="#__codelineno-0-96"></a>    <span class="p">),</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98" href="#__codelineno-0-98"></a>        <span class="s2">&quot;ctrl+k&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99" href="#__codelineno-0-99"></a>        <span class="s2">&quot;delete_right_all&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100" href="#__codelineno-0-100"></a>        <span class="s2">&quot;Delete all to the right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101" href="#__codelineno-0-101"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102" href="#__codelineno-0-102"></a>    <span class="p">),</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104" href="#__codelineno-0-104"></a>        <span class="s2">&quot;ctrl+x&quot;</span><span class="p">,</span> <span class="s2">&quot;cut&quot;</span><span class="p">,</span> <span class="s2">&quot;Cut selected text&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105" href="#__codelineno-0-105"></a>    <span class="p">),</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107" href="#__codelineno-0-107"></a>        <span class="s2">&quot;ctrl+c&quot;</span><span class="p">,</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span> <span class="s2">&quot;Copy selected text&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108" href="#__codelineno-0-108"></a>    <span class="p">),</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109" href="#__codelineno-0-109"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110" href="#__codelineno-0-110"></a>        <span class="s2">&quot;ctrl+v&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111" href="#__codelineno-0-111"></a>        <span class="s2">&quot;paste&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112" href="#__codelineno-0-112"></a>        <span class="s2">&quot;Paste text from the clipboard&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113" href="#__codelineno-0-113"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114" href="#__codelineno-0-114"></a>    <span class="p">),</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115" href="#__codelineno-0-115"></a><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9352,7 +9962,8 @@ validation for all messages.</p>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;input--cursor&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">&quot;input--placeholder&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">&quot;input--suggestion&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">&quot;input--selection&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9377,8 +9988,59 @@ validation for all messages.</p>
 <td style="text-align: left;"><code>input--suggestion</code></td>
 <td style="text-align: left;">Target the auto-completion suggestion (when it exists).</td>
 </tr>
+<tr>
+<td style="text-align: left;"><code>input--selection</code></td>
+<td style="text-align: left;">Target the selected text.</td>
+</tr>
 </tbody>
 </table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.widgets.Input.content_width" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">content_width</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets.Input.content_width" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">content_width</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The width of the content.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.widgets.Input.cursor_position" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">cursor_position</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+<a href="#textual.widgets.Input.cursor_position" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_position</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The current position of the cursor, corresponding to the end of the selection.</p>
     </div>
 
 </div>
@@ -9402,29 +10064,6 @@ validation for all messages.</p>
     <div class="doc doc-contents ">
 
         <p>The offset of the cursor of this input in screen-space. (x, y)/(column, row)</p>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h2 id="textual.widgets.Input.cursor_width" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">cursor_width</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets.Input.cursor_width" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_width</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>The width of the input (with extra space for cursor at the end).</p>
     </div>
 
 </div>
@@ -9496,6 +10135,53 @@ validation for all messages.</p>
     <div class="doc doc-contents ">
 
         <p>A regular expression to limit changes in value.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.widgets.Input.selected_text" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">selected_text</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets.Input.selected_text" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selected_text</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The text between the start and end points of the current selection.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.widgets.Input.selection" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">selection</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets.Input.selection" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selection</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.reactive" href="../../api/reactive/#textual.reactive.reactive">reactive</a></span><span class="p">(</span><span class="n"><span title="textual.widgets._input.Selection.cursor">cursor</span></span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The currently selected range of text.</p>
     </div>
 
 </div>
@@ -9905,17 +10591,67 @@ to the corresponding <code>Input</code> widget.</p>
 <div class="doc doc-object doc-function">
 
 
+<h2 id="textual.widgets.Input.action_copy" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">action_copy</span>
+
+
+<a href="#textual.widgets.Input.action_copy" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_copy</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Copy the current selection to the clipboard.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="textual.widgets.Input.action_cursor_left" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">action_cursor_left</span>
 
 
 <a href="#textual.widgets.Input.action_cursor_left" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left</span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_left(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Move the cursor one position to the left.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.action_cursor_left(select)" class="doc doc-heading doc-heading-parameter">                  <code>select</code>
+<a href="#textual.widgets.Input.action_cursor_left(select)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>True</code>, select the text to the left of the cursor.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
     </div>
 
@@ -9929,12 +10665,43 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_left_word" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left_word</span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left_word</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_left_word(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Move the cursor left to the start of a word.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.action_cursor_left_word(select)" class="doc doc-heading doc-heading-parameter">                  <code>select</code>
+<a href="#textual.widgets.Input.action_cursor_left_word(select)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>True</code>, select the text between the old and new cursor positions.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
     </div>
 
@@ -9948,12 +10715,43 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_right" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right</span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_right(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Accept an auto-completion or move the cursor one position to the right.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.action_cursor_right(select)" class="doc doc-heading doc-heading-parameter">                  <code>select</code>
+<a href="#textual.widgets.Input.action_cursor_right(select)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>True</code>, select the text to the right of the cursor.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
     </div>
 
@@ -9967,12 +10765,62 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_right_word" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right_word</span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right_word</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_right_word(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Move the cursor right to the start of a word.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.action_cursor_right_word(select)" class="doc doc-heading doc-heading-parameter">                  <code>select</code>
+<a href="#textual.widgets.Input.action_cursor_right_word(select)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>True</code>, select the text between the old and new cursor positions.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.widgets.Input.action_cut" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">action_cut</span>
+
+
+<a href="#textual.widgets.Input.action_cut" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cut</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Cut the current selection (copy to clipboard and remove from input).</p>
 
     </div>
 
@@ -10100,12 +10948,43 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_end" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_end</span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_end</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_end(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Move the cursor to the end of the input.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.action_end(select)" class="doc doc-heading doc-heading-parameter">                  <code>select</code>
+<a href="#textual.widgets.Input.action_end(select)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>True</code>, select the text between the old and new cursor positions.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
     </div>
 
@@ -10119,12 +10998,62 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_home" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_home</span><span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_home</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_home(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Move the cursor to the start of the input.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.action_home(select)" class="doc doc-heading doc-heading-parameter">                  <code>select</code>
+<a href="#textual.widgets.Input.action_home(select)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If <code>True</code>, select the text between the old and new cursor positions.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.widgets.Input.action_paste" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">action_paste</span>
+
+
+<a href="#textual.widgets.Input.action_paste" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_paste</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Paste from the local clipboard.</p>
 
     </div>
 
@@ -10266,6 +11195,157 @@ to the corresponding <code>Input</code> widget.</p>
 <div class="doc doc-object doc-function">
 
 
+<h2 id="textual.widgets.Input.delete" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">delete</span>
+
+
+<a href="#textual.widgets.Input.delete" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">delete</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.delete(start)">start</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.delete(end)">end</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Delete the text between the start and end locations.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.delete(start)" class="doc doc-heading doc-heading-parameter">                  <code>start</code>
+<a href="#textual.widgets.Input.delete(start)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Start index to delete (inclusive).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.delete(end)" class="doc doc-heading doc-heading-parameter">                  <code>end</code>
+<a href="#textual.widgets.Input.delete(end)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>End index to delete (inclusive).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.widgets.Input.delete_selection" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">delete_selection</span>
+
+
+<a href="#textual.widgets.Input.delete_selection" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">delete_selection</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Delete the current selection.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.widgets.Input.insert" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">insert</span>
+
+
+<a href="#textual.widgets.Input.insert" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">insert</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.insert(text)">text</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.insert(index)">index</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Insert text at the given index.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.insert(text)" class="doc doc-heading doc-heading-parameter">                  <code>text</code>
+<a href="#textual.widgets.Input.insert(text)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Text to insert.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.insert(index)" class="doc doc-heading doc-heading-parameter">                  <code>index</code>
+<a href="#textual.widgets.Input.insert(index)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Index to insert the text at (inclusive).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="textual.widgets.Input.insert_text_at_cursor" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">insert_text_at_cursor</span>
 
@@ -10300,6 +11380,88 @@ to the corresponding <code>Input</code> widget.</p>
             <td>
               <div class="doc-md-description">
                 <p>New text to insert.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.widgets.Input.replace" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">replace</span>
+
+
+<a href="#textual.widgets.Input.replace" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">replace</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.replace(text)">text</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.replace(start)">start</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.replace(end)">end</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Replace the text between the start and end locations with the given text.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.replace(text)" class="doc doc-heading doc-heading-parameter">                  <code>text</code>
+<a href="#textual.widgets.Input.replace(text)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Text to replace the existing text with.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.replace(start)" class="doc doc-heading doc-heading-parameter">                  <code>start</code>
+<a href="#textual.widgets.Input.replace(start)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Start index to replace (inclusive).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.widgets.Input.replace(end)" class="doc doc-heading doc-heading-parameter">                  <code>end</code>
+<a href="#textual.widgets.Input.replace(end)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>End index to replace (inclusive).</p>
               </div>
             </td>
             <td>

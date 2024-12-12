@@ -89,6 +89,8 @@
         src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Cascadia.woff2");
       }
 
+      
+
 </style>
 
 <script lang="js">
@@ -1786,17 +1788,6 @@ window.onload = async (event) => {
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Click
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1806,34 +1797,6 @@ window.onload = async (event) => {
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      See also
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -6505,23 +6468,6 @@ window.onload = async (event) => {
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      See also
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -6537,8 +6483,6 @@ window.onload = async (event) => {
   
   
 
-
-  <h1>Click</h1>
 
 <div class="doc doc-object doc-class">
 
@@ -6556,6 +6500,37 @@ window.onload = async (event) => {
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
 </ul>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h1 id="textual.events.Click(chain)" class="doc doc-heading doc-heading-parameter">                  <code>chain</code>
+<a href="#textual.events.Click(chain)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of clicks in the chain. 2 is a double click, 3 is a triple click, etc.</p>
+              </div>
+            </td>
+            <td>
+                  <code>1</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -6581,7 +6556,12 @@ window.onload = async (event) => {
 
     </div>
 
-</div><p>See <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a> for the full list of properties and methods.</p>
+</div><h2 id="double-triple-clicks">Double &amp; triple clicks<a class="headerlink" href="#double-triple-clicks" title="Permanent link">&para;</a></h2>
+<p>The <code>chain</code> attribute on the <code>Click</code> event can be used to determine the number of clicks that occurred in quick succession.
+A value of <code>1</code> indicates a single click, <code>2</code> indicates a double click, and so on.</p>
+<p>By default, clicks must occur within 500ms of each other for them to be considered a chain.
+You can change this value by setting the <code>CLICK_CHAIN_TIME_THRESHOLD</code> class variable on your <code>App</code> subclass.</p>
+<p>See <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a> for the list of properties and methods on the parent class.</p>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../enter/">Enter</a></li>
@@ -6613,7 +6593,7 @@ window.onload = async (event) => {
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 20, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 11, 2024</span>
   </span>
 
     

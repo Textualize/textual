@@ -89,6 +89,8 @@
         src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Cascadia.woff2");
       }
 
+      
+
 </style>
 
 <script lang="js">
@@ -5191,6 +5193,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.CLICK_CHAIN_TIME_THRESHOLD" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;CLICK_CHAIN_TIME_THRESHOLD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.CLOSE_TIMEOUT" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;CLOSE_TIMEOUT
@@ -5446,6 +5457,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.children" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;children
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.clipboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;clipboard
     </span>
   </a>
   
@@ -5782,6 +5802,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.action_focus_previous" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_focus_previous
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_help_quit" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_help_quit
     </span>
   </a>
   
@@ -9769,6 +9798,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.CLICK_CHAIN_TIME_THRESHOLD" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;CLICK_CHAIN_TIME_THRESHOLD
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.CLOSE_TIMEOUT" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;CLOSE_TIMEOUT
@@ -10024,6 +10062,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.children" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;children
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.clipboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;clipboard
     </span>
   </a>
   
@@ -10360,6 +10407,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.action_focus_previous" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_focus_previous
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_help_quit" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_help_quit
     </span>
   </a>
   
@@ -13163,9 +13219,15 @@ Setting to <code>None</code> or <code>""</code> disables auto focus.</p>
 <a href="#textual.app.App.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;ctrl+c&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(priority)">priority</span></span><span class="o">=</span><span class="kc">True</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">)</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;ctrl+q&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">&quot;quit&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="s2">&quot;Quit&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n"><span title="textual.binding.Binding(tooltip)">tooltip</span></span><span class="o">=</span><span class="s2">&quot;Quit the app and return to the command prompt.&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n"><span title="textual.binding.Binding(priority)">priority</span></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">),</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;ctrl+c&quot;</span><span class="p">,</span> <span class="s2">&quot;help_quit&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(system)">system</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -13195,6 +13257,30 @@ Setting to <code>None</code> or <code>""</code> disables auto focus.</p>
     <div class="doc doc-contents ">
 
         <p>Set to text to show in the key panel.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.CLICK_CHAIN_TIME_THRESHOLD" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">CLICK_CHAIN_TIME_THRESHOLD</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.app.App.CLICK_CHAIN_TIME_THRESHOLD" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CLICK_CHAIN_TIME_THRESHOLD</span> <span class="o">=</span> <span class="mf">0.5</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The maximum number of seconds between clicks to upgrade a single click to a double click, 
+a double click to a triple click, etc.</p>
     </div>
 
 </div>
@@ -13970,6 +14056,31 @@ be the currently active screen.</p>
           </tr>
       </tbody>
     </table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.clipboard" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">clipboard</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.clipboard" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">clipboard</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The value of the local clipboard.</p>
+<p>Note, that this only contains text copied in the app, and not
+text copied from elsewhere in the OS.</p>
     </div>
 
 </div>
@@ -15004,6 +15115,25 @@ on the stack.)</p>
     <div class="doc doc-contents ">
 
         <p>An <a href="/guide/actions">action</a> to focus the previous widget.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.app.App.action_help_quit" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">action_help_quit</span>
+
+
+<a href="#textual.app.App.action_help_quit" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_help_quit</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Bound to ctrl+C to alert the user that it no longer quits.</p>
 
     </div>
 
