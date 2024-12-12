@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `system` boolean to Binding, which hides the binding from the help panel https://github.com/Textualize/textual/pull/5352
 - Added support for double/triple/etc clicks via `chain` attribute on `Click` events https://github.com/Textualize/textual/pull/5369
 - Added `times` parameter to `Pilot.click` method, for simulating rapid clicks https://github.com/Textualize/textual/pull/5369
+- Text can now be select using mouse or keyboard in the Input widget https://github.com/Textualize/textual/pull/5340
+
   
 ### Changed
 
