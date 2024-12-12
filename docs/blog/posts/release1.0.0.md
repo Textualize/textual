@@ -1,6 +1,6 @@
 ---
-draft: true
-date: 2024-12-05
+draft: false
+date: 2024-12-12
 categories:
   - Release
 title: "Algorithms for high performance terminal apps"
