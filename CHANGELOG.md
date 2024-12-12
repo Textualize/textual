@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `times` parameter to `Pilot.click` method, for simulating rapid clicks https://github.com/Textualize/textual/pull/5369
 - Text can now be select using mouse or keyboard in the Input widget https://github.com/Textualize/textual/pull/5340
 
-  
 ### Changed
 
 - Breaking change: Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
