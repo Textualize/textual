@@ -5,19 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.0.0] - 2024-12-12
 
 ### Added
 
 - Added `App.clipboard` https://github.com/Textualize/textual/pull/5352
-- Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea https://github.com/Textualize/textual/pull/5352
+- Added standard cut/copy/paste (ctrl+x, ctrl+c, ctrl+v) bindings to Input / TextArea https://github.com/Textualize/textual/pull/5352 & https://github.com/Textualize/textual/pull/5374
 - Added `system` boolean to Binding, which hides the binding from the help panel https://github.com/Textualize/textual/pull/5352
+- Added support for double/triple/etc clicks via `chain` attribute on `Click` events https://github.com/Textualize/textual/pull/5369
+- Added `times` parameter to `Pilot.click` method, for simulating rapid clicks https://github.com/Textualize/textual/pull/5369
   
 ### Changed
 
-- Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
-- Changed delete line binding on TextArea to use `ctrl+shift+x` https://github.com/Textualize/textual/pull/5352
+- Breaking change: Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
 - The command palette will now select the top item automatically https://github.com/Textualize/textual/pull/5361
+- `ctrl+shift+k` now deletes the current line in `TextArea`, and `ctrl+x` will cut
+the selection if there is one, otherwise it will cut the current line https://github.com/Textualize/textual/pull/5374
 - Implemented a better matching algorithm for the command palette https://github.com/Textualize/textual/pull/5365
 
 ### Fixed
@@ -384,6 +387,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
 - Renamed `SystemCommands` to `SystemCommandsProvider` https://github.com/Textualize/textual/pull/4920
 - Breaking change: Removed `ClassicFooter` widget (please use new `Footer` widget) https://github.com/Textualize/textual/pull/4921
+- Breaking change: `App.get_key_display` now requires `textual.binding.Binding` instead of `str`.
 - Disallowed `Screen` instances in `App.SCREENS` and `App.MODES`
 
 ### Fixed
@@ -2664,6 +2668,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[1.0.0]: https://github.com/Textualize/textual/compare/v0.89.1...v1.0.0
 [0.89.1]: https://github.com/Textualize/textual/compare/v0.89.0...v0.89.1
 [0.89.0]: https://github.com/Textualize/textual/compare/v0.88.1...v0.89.0
 [0.88.1]: https://github.com/Textualize/textual/compare/v0.88.0...v0.88.1

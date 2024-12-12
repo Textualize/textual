@@ -226,7 +226,6 @@ TextArea {
         Binding(
             "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
-        Binding("ctrl+shift+x", "delete_line", "Delete line", show=False),
         Binding("ctrl+x", "cut", "Cut", show=False),
         Binding("ctrl+c", "copy", "Copy", show=False),
         Binding("ctrl+v", "paste", "Paste", show=False),
@@ -239,9 +238,14 @@ TextArea {
             "Delete to line end",
             show=False,
         ),
+        Binding(
+            "ctrl+shift+k",
+            "delete_line",
+            "Delete line",
+            show=False,
+        ),
         Binding("ctrl+z", "undo", "Undo", show=False),
         Binding("ctrl+y", "redo", "Redo", show=False),
-        Binding("ctrl+c", "copy_selection", "Copy selected text", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -268,13 +272,16 @@ TextArea {
     | ctrl+w                 | Delete from cursor to start of the word.     |
     | delete,ctrl+d          | Delete character to the right of cursor.     |
     | ctrl+f                 | Delete from cursor to end of the word.       |
-    | ctrl+shift+x           | Delete the current line.                     |
+    | ctrl+shift+k           | Delete the current line.                     |
     | ctrl+u                 | Delete from cursor to the start of the line. |
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
     | f7                     | Select all text in the document.             |
     | ctrl+z                 | Undo.                                        |
     | ctrl+y                 | Redo.                                        |
+    | ctrl+x                 | Cut selection or line if no selection.       |
+    | ctrl+c                 | Copy selection to clipboard.                 |
+    | ctrl+v                 | Paste from clipboard.                        |
     """
 
     language: Reactive[str | None] = reactive(None, always_update=True, init=False)
@@ -2185,6 +2192,10 @@ TextArea {
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
+        self._delete_cursor_line()
+
+    def _delete_cursor_line(self) -> EditResult | None:
+        """Deletes the line (including the line terminator) that the cursor is on."""
         start, end = self.selection
         start, end = sorted((start, end))
         start_row, _start_column = start
@@ -2201,6 +2212,7 @@ TextArea {
         deletion = self._delete_via_keyboard(from_location, to_location)
         if deletion is not None:
             self.move_cursor_relative(columns=end_column, record_width=False)
+        return deletion
 
     def action_cut(self) -> None:
         """Cut text (remove and copy to clipboard)."""
@@ -2208,18 +2220,18 @@ TextArea {
             return
         start, end = self.selection
         if start == end:
-            return
-        copy_text = self.get_text_range(start, end)
-        self.app.copy_to_clipboard(copy_text)
-        self._delete_via_keyboard(start, end)
+            edit_result = self._delete_cursor_line()
+        else:
+            edit_result = self._delete_via_keyboard(start, end)
+
+        if edit_result is not None:
+            self.app.copy_to_clipboard(edit_result.replaced_text)
 
     def action_copy(self) -> None:
         """Copy selection to clipboard."""
-        start, end = self.selection
-        if start == end:
-            return
-        copy_text = self.get_text_range(start, end)
-        self.app.copy_to_clipboard(copy_text)
+        selected_text = self.selected_text
+        if selected_text:
+            self.app.copy_to_clipboard(selected_text)
 
     def action_paste(self) -> None:
         """Paste from local clipboard."""
@@ -2309,10 +2321,6 @@ TextArea {
             to_location = (cursor_row, current_row_length)
 
         self._delete_via_keyboard(end, to_location)
-
-    def action_copy_selection(self) -> None:
-        """Copy the current selection to the clipboard."""
-        self.app.copy_to_clipboard(self.selected_text)
 
 
 @lru_cache(maxsize=128)

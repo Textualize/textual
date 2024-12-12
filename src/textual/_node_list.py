@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class DuplicateIds(Exception):
-    pass
+    """Raised when attempting to add a widget with an id that already exists."""
 
 
 @rich.repr.auto(angular=True)
@@ -138,6 +138,14 @@ class NodeList(Sequence["Widget"]):
             self.updated()
 
     def _ensure_unique_id(self, widget_id: str) -> None:
+        """Ensure a new widget ID would be unique.
+
+        Args:
+            widget_id: New widget ID.
+
+        Raises:
+            DuplicateIds: If the given ID is not unique.
+        """
         if widget_id in self._nodes_by_id:
             raise DuplicateIds(
                 f"Tried to insert a widget with ID {widget_id!r}, but a widget {self._nodes_by_id[widget_id]!r} "

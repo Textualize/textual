@@ -11,10 +11,56 @@
 
 # Textual
 
-Build cross-platform user interfaces with a simple Python API.
+<img align="right" width="250" alt="clock" src="https://github.com/user-attachments/assets/63e839c3-5b8e-478d-b78e-cf7647eb85e8" />
 
-Run your apps in the terminal *or* a web browser.
+Build cross-platform user interfaces with a simple Python API. Run your apps in the terminal *or* a web browser.
 
+Textual's API combines modern Python with the best of developments from the web world, for a lean app development experience.
+De-coupled components and an advanced [testing](https://textual.textualize.io/guide/testing/) framework ensure you can maintain your app for the long-term.
+
+Want some more examples? See the [examples](https://github.com/Textualize/textual/tree/main/examples) directory.
+
+```python
+"""
+An App to show the current time.
+"""
+
+from datetime import datetime
+
+from textual.app import App, ComposeResult
+from textual.widgets import Digits
+
+
+class ClockApp(App):
+    CSS = """
+    Screen { align: center middle; }
+    Digits { width: auto; }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Digits("")
+
+    def on_ready(self) -> None:
+        self.update_clock()
+        self.set_interval(1, self.update_clock)
+
+    def update_clock(self) -> None:
+        clock = datetime.now().time()
+        self.query_one(Digits).update(f"{clock:%T}")
+
+
+if __name__ == "__main__":
+    app = ClockApp()
+    app.run()
+```
+
+> [!TIP]
+> Textual is an asynchronous framework under the hood. Which means you can integrate your apps with async libraries &mdash; if you want to.
+> If you don't want or need to use async, Textual won't force it on you. 
+
+
+
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="64"/>
 
 ## Widgets
 
@@ -78,6 +124,7 @@ Predefined themes ensure your apps will look good out of the box.
 </table>
 
 
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Installing
 
@@ -89,6 +136,8 @@ pip install textual textual-dev
 
 See [getting started](https://textual.textualize.io/getting_started/) for details.
 
+
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Demo
 
@@ -105,32 +154,57 @@ Or try the [textual demo](https://github.com/textualize/textual-demo) *without* 
 uvx --python 3.12 textual-demo
 ```
 
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
-## Textual ❤️ Web
+## Dev Console
+
+<img align="right" width="40%" alt="devtools" src="https://github.com/user-attachments/assets/12c60d65-e342-4b2f-9372-bae0459a7552" />
+
+
+How do you debug an app in the terminal that is also running in the terminal?
+
+The `textual-dev` package supplies a dev console that connects to your application from another terminal.
+In addition to system messages and events, your logged messages and print statements will appear in the dev console.
+
+See [the guide](https://textual.textualize.io/guide/devtools/) for other helpful tools provided by the `textual-dev` package.
+
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
+
+## Command Palette
+
+
+Textual apps have a *fuzzy search* command palette.
+Hit `ctrl+p` to open the command palette.
+
+It is easy to extend the command palette with [custom commands](https://textual.textualize.io/guide/command_palette/) for your application.
+
+
+![Command Palette](https://github.com/user-attachments/assets/94d8ec5d-b668-4033-a5cb-bf820e1b8d60)
+
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
+
+# Textual ❤️ Web
 
 <img align="right" width="40%" alt="textual-serve" src="https://github.com/user-attachments/assets/a25820fb-87ae-433a-858b-ac3940169242">
 
 
-Textual apps are equally at home in the browser as they are the terminal.
-
-Any Textual app may be served with `textual serve` &mdash; so you can share your creations on the web.
-
+Textual apps are equally at home in the browser as they are the terminal. Any Textual app may be served with `textual serve` &mdash; so you can share your creations on the web.
 Here's how to serve the demo app:
 
 ```
 textual serve "python -m textual"
 ```
 
-In addition to serving your apps locally, you can serve apps with [Textual-Web](https://github.com/Textualize/textual-web).
+In addition to serving your apps locally, you can serve apps with [Textual Web](https://github.com/Textualize/textual-web).
 
 Textual Web's firewall-busting technology can serve an unlimited number of applications.
 
 Since Textual apps have low system requirements, you can install them anywhere Python also runs. Turning any device in to a connected device.
 No desktop required!
 
-## Documentation
 
-Head over to the [Textual documentation](http://textual.textualize.io/) to start building.
+<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
+
 
 ## Join us on Discord
 

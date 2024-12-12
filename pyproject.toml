@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.89.1"
+version = "1.0.0"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -39,6 +39,9 @@ include = [
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
+
+[tool.ruff]
+target-version = "py38"
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
