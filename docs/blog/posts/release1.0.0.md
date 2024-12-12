@@ -12,9 +12,11 @@ authors:
 I've had the fortune of being able to work fulltime on a FOSS project for the last three plus years.
 
 
-!!! tip inline end "Textual Demo"
-
-    [![Textual Demo](../images/textual-demo.svg)](https://github.com/textualize/textual-demo)
+<div style="width:250px;float:right;margin:10px;max-width:50%;">
+<a href="https://github.com/textualize/textual-demo">
+--8<-- "docs/blog/images/textual-demo.svg"
+</a>
+</div>
 
 
 Textual has been a constant source of programming challenges.
