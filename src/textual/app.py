@@ -584,7 +584,22 @@ class App(Generic[ReturnType], DOMNode):
         self.mouse_over: Widget | None = None
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
-        self._exit_renderables: list[RenderableType] = []
+
+        self._panicking: bool = False
+        """Set to True if the app panics (App.panic is called).
+        
+        If the App is panicking, exit output will be verbose.
+        """
+
+        self._panic_renderables: list[RenderableType] = []
+        """Renderables to print when panicking or when in debug mode.
+        
+        This will typically contain rendered stack traces and developer-centric messages
+        produced as part of a fatal panic.
+        """
+
+        self._exit_message: RenderableType = ""
+        """Message to print when the app exits gracefully via `App.exit`."""
 
         self._action_targets = {"app", "screen", "focused"}
         self._animator = Animator(self)
@@ -1063,7 +1078,7 @@ class App(Generic[ReturnType], DOMNode):
         self._return_code = return_code
         self.post_message(messages.ExitApp())
         if message:
-            self._exit_renderables.append(message)
+            self._exit_message = message
 
     @property
     def focused(self) -> Widget | None:
@@ -2920,6 +2935,7 @@ class App(Generic[ReturnType], DOMNode):
         assert all(
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
+        self._panicking = True
 
         def render(renderable: RenderableType) -> list[Segment]:
             """Render a panic renderables."""
@@ -2927,7 +2943,7 @@ class App(Generic[ReturnType], DOMNode):
             return segments
 
         pre_rendered = [Segments(render(renderable)) for renderable in renderables]
-        self._exit_renderables.extend(pre_rendered)
+        self._panic_renderables.extend(pre_rendered)
 
         self._close_messages_no_wait()
 
@@ -2961,30 +2977,38 @@ class App(Generic[ReturnType], DOMNode):
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
         )
-        self._exit_renderables.append(
+        self._panic_renderables.append(
             Segments(self.console.render(traceback, self.console.options))
         )
         self._close_messages_no_wait()
 
-    def _print_error_renderables(self) -> None:
-        """Print and clear exit renderables."""
-        error_count = len(self._exit_renderables)
+    def _print_exit_and_panic_renderables(self) -> None:
+        """Print and clear exit and panic renderables."""
+        error_count = len(self._panic_renderables)
         if "debug" in self.features:
-            for renderable in self._exit_renderables:
+            # In debug mode, we're always verbose regardless of whether we're panicking or not.
+            for renderable in self._panic_renderables:
                 self.error_console.print(renderable)
             if error_count > 1:
                 self.error_console.print(
                     f"\n[b]NOTE:[/b] {error_count} errors shown above.", markup=True
                 )
-        elif self._exit_renderables:
-            self.error_console.print(self._exit_renderables[0])
-            if error_count > 1:
-                self.error_console.print(
-                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]textual run --dev[/] to see all errors.",
-                    markup=True,
-                )
+        else:
+            # In production (debug=False) mode, we only print stack traces if there's a panic
+            # (fatal error) since this will be shown to end users of Textual apps.
+            if self._panicking and self._panic_renderables:
+                self.error_console.print(self._panic_renderables[0])
+                if error_count > 1:
+                    self.error_console.print(
+                        f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]textual run --dev[/] to see all errors.",
+                        markup=True,
+                    )
 
-        self._exit_renderables.clear()
+        if self._exit_message:
+            self.error_console.print(self._exit_message)
+            self._exit_message = ""
+
+        self._panic_renderables.clear()
 
     def _build_driver(
         self, headless: bool, inline: bool, mouse: bool, size: tuple[int, int] | None
@@ -3078,7 +3102,7 @@ class App(Generic[ReturnType], DOMNode):
                     )
             except Exception as error:
                 self._handle_exception(error)
-                self._print_error_renderables()
+                self._print_exit_and_panic_renderables()
                 return False
 
             if self.css_monitor:
@@ -3168,7 +3192,7 @@ class App(Generic[ReturnType], DOMNode):
                             self._driver.write(
                                 Control.move(-cursor_x, -cursor_y + 1).segment.text
                             )
-                            if inline_no_clear and not self.app._exit_renderables:
+                            if inline_no_clear and not self.app._panic_renderables:
                                 console = Console()
                                 try:
                                     console.print(self.screen._compositor)
@@ -3423,7 +3447,7 @@ class App(Generic[ReturnType], DOMNode):
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
 
-        self._print_error_renderables()
+        self._print_exit_and_panic_renderables()
 
         if constants.SHOW_RETURN:
             from rich.console import Console
