@@ -736,6 +736,10 @@ class Focus(Event, bubble=False):
         self.from_app_focus = from_app_focus
         super().__init__()
 
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "from_app_focus", self.from_app_focus
+
 
 class Blur(Event, bubble=False):
     """Sent when a widget is blurred (un-focussed).
