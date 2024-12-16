@@ -761,11 +761,14 @@ class Input(ScrollView):
         Args:
             select: If `True`, select the text to the left of the cursor.
         """
+        start, end = self.selection
         if select:
-            start, end = self.selection
             self.selection = Selection(start, end - 1)
         else:
-            self.cursor_position -= 1
+            if self.selection.is_empty:
+                self.cursor_position -= 1
+            else:
+                self.cursor_position = min(start, end)
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Accept an auto-completion or move the cursor one position to the right.
@@ -773,15 +776,18 @@ class Input(ScrollView):
         Args:
             select: If `True`, select the text to the right of the cursor.
         """
+        start, end = self.selection
         if select:
-            start, end = self.selection
             self.selection = Selection(start, end + 1)
         else:
             if self._cursor_at_end and self._suggestion:
                 self.value = self._suggestion
                 self.cursor_position = len(self.value)
             else:
-                self.cursor_position += 1
+                if self.selection.is_empty:
+                    self.cursor_position += 1
+                else:
+                    self.cursor_position = max(start, end)
 
     def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input.
