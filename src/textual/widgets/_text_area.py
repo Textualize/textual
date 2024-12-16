@@ -1838,12 +1838,12 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
-        if self.selection.is_empty:
-            target = self.get_cursor_left_location()
-            self.move_cursor(target, select=select)
-        else:
-            start, end = self.selection
-            self.move_cursor(min(start, end), select=select)
+        target = (
+            self.get_cursor_left_location()
+            if select or self.selection.is_empty
+            else min(*self.selection)
+        )
+        self.move_cursor(target, select=select)
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left.
@@ -1861,12 +1861,12 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
-        if self.selection.is_empty:
-            target = self.get_cursor_right_location()
-            self.move_cursor(target, select=select)
-        else:
-            start, end = self.selection
-            self.move_cursor(max(start, end), select=select)
+        target = (
+            self.get_cursor_right_location()
+            if select or self.selection.is_empty
+            else max(*self.selection)
+        )
+        self.move_cursor(target, select=select)
 
     def get_cursor_right_location(self) -> Location:
         """Get the location the cursor will move to if it moves right.
