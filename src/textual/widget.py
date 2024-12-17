@@ -120,8 +120,16 @@ class Selection(NamedTuple):
     start: Offset | None
     end: Offset | None
 
-    def get_selection(self, line_no: int) -> tuple[int, int]:
-        pass
+    def get_selection(self, line_no: int) -> tuple[int, int] | None:
+        start, end = self
+        if start is None and end is None:
+            # Selection covers everything
+            return 0, -1
+        if start is not None and end is not None:
+            if line_no < start.y or line_no >= end.y:
+                return None
+            # TODO
+        return None
 
 
 @rich.repr.auto
