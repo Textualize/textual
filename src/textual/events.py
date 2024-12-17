@@ -541,7 +541,7 @@ class MouseScrollDown(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *down*.
 
     - [X] Bubbles
-    - [ ] Verbose
+    - [X] Verbose
     """
 
 
@@ -550,7 +550,7 @@ class MouseScrollUp(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *up*.
 
     - [X] Bubbles
-    - [ ] Verbose
+    - [X] Verbose
     """
 
 

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import rich.repr
 from rich.text import Text
 
+from textual import events
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import ScrollableContainer
@@ -250,6 +251,20 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             return
         if self.is_attached and screen is self.screen:
             await self.recompose()
+
+    def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
+        if self.allow_horizontal_scroll:
+            self._clear_anchor()
+            if self._scroll_right_for_pointer(animate=False):
+                event.stop()
+                event.prevent_default()
+
+    def _on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
+        if self.allow_horizontal_scroll:
+            self._clear_anchor()
+            if self._scroll_left_for_pointer(animate=False):
+                event.stop()
+                event.prevent_default()
 
     def on_mount(self) -> None:
         self.call_next(self.bindings_changed, self.screen)
