@@ -69,7 +69,7 @@ class SelectOverlay(OptionList):
         def reset_query() -> None:
             self._search_query = ""
 
-        self._search_reset_timer = Timer(self, 1.0, callback=reset_query)
+        self._search_reset_timer = Timer(self, 0.7, callback=reset_query)
 
     def watch_has_focus(self, value: bool) -> None:
         self._search_query = ""
@@ -113,16 +113,27 @@ class SelectOverlay(OptionList):
         self.scroll_to_highlight()
 
     def _find_search_match(self, query: str) -> int | None:
-        """Find the first index"""
+        best_match: int | None = None
+        minimum_index: int | None = None
+
+        query = query.lower()
         for index, option in enumerate(self._options):
             prompt = option.prompt
             if isinstance(prompt, Text):
-                if query in prompt.plain:
-                    return index
+                lower_prompt = prompt.plain.lower()
             elif isinstance(prompt, str):
-                if query in prompt:
-                    return index
-        return None
+                lower_prompt = prompt.lower()
+            else:
+                continue
+
+            match_index = lower_prompt.find(query)
+            if match_index != -1 and (
+                minimum_index is None or match_index < minimum_index
+            ):
+                best_match = index
+                minimum_index = match_index
+
+        return best_match
 
     def action_dismiss(self) -> None:
         """Dismiss the overlay."""
