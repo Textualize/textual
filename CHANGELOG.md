@@ -10,10 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
+- 
 ### Added
 
 - Added `Select.type_to_search` which allows you to type to move the cursor to a matching option https://github.com/Textualize/textual/pull/5403
-
+- Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
 
 ## [1.0.0] - 2024-12-12
 
