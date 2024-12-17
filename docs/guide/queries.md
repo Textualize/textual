@@ -41,7 +41,7 @@ For instance, the following would return a `Button` instance (assuming there is 
 my_button = self.query_one(Button)
 ```
 
-`query_one` searches *below* the widget it is called on, so if you call `query_one` on a widget, it will only find widgets that are descendants of that widget.
+`query_one` searches the DOM *below* the widget it is called on, so if you call `query_one` on a widget, it will only find widgets that are descendants of that widget.
 
 If you wish to search the entire DOM, you should call `query_one` on the `App` or `Screen` instance.
 
