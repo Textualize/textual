@@ -1330,6 +1330,11 @@ TextArea {
 
     @contextmanager
     def cursor_scroll_disabled(self) -> Generator[None, None, None]:
+        """Temporarily disable the automatic scrolling of the cursor into view.
+
+        By default, the cursor will always scroll into view when it's moved, unless
+        the code which performs that movement is called inside this context manager.
+        """
         self._scroll_cursor_visible = False
         yield
         self._scroll_cursor_visible = True
