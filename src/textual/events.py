@@ -16,10 +16,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
-from typing_extensions import Self
 
 import rich.repr
 from rich.style import Style
+from typing_extensions import Self
 
 from textual._types import CallbackType
 from textual.geometry import Offset, Size
@@ -539,7 +539,7 @@ class MouseScrollDown(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *down*.
 
     - [X] Bubbles
-    - [ ] Verbose
+    - [X] Verbose
     """
 
 
@@ -548,7 +548,7 @@ class MouseScrollUp(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *up*.
 
     - [X] Bubbles
-    - [ ] Verbose
+    - [X] Verbose
     """
 
 
