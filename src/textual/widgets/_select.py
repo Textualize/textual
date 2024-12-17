@@ -113,6 +113,15 @@ class SelectOverlay(OptionList):
         self.scroll_to_highlight()
 
     def _find_search_match(self, query: str) -> int | None:
+        """A simple substring search which favors options containing the substring
+        earlier in the prompt.
+
+        Args:
+            query: The substring to search for.
+
+        Returns:
+            The index of the option that matches the query, or `None` if no match is found.
+        """
         best_match: int | None = None
         minimum_index: int | None = None
 
