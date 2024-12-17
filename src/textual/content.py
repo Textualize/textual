@@ -950,9 +950,11 @@ class Content(Visual):
         tab_size: int = 8,
     ) -> list[Content]:
         lines: list[Content] = []
-        for line in self.split(allow_blank=True):
+
+        for line_no, line in enumerate(self.split(allow_blank=True)):
             if "\t" in line._text:
                 line = line.expand_tabs(tab_size)
+            line = line.stylize(Style.from_meta({"offset": (line_no, 0)}))
             if no_wrap:
                 new_lines = [line]
             else:

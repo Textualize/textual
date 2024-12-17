@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from itertools import islice
-from marshal import loads
+from marshal import dumps, loads
 from typing import TYPE_CHECKING, Any, Iterable, Protocol, cast
 
 import rich.repr
@@ -123,6 +123,8 @@ class Style:
         yield "italic", self.italic, None
         yield "underline", self.underline, None
         yield "strike", self.strike, None
+        if self._meta is not None:
+            yield "meta", self.meta
 
     @lru_cache(maxsize=1024)
     def __add__(self, other: object) -> Style:
@@ -187,6 +189,10 @@ class Style:
             strike=text_style.strike,
             auto_color=styles.auto_color,
         )
+
+    @classmethod
+    def from_meta(cls, meta: dict[str, object]) -> Style:
+        return Style(_meta=dumps(meta))
 
     @cached_property
     def rich_style(self) -> RichStyle:

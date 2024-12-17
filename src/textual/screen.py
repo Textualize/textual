@@ -580,6 +580,20 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._compositor.get_style_at(x, y)
 
+    def get_style_and_offset_at(
+        self, x: int, y: int
+    ) -> tuple[Style, tuple[int, int] | None]:
+        """Get the style under a given coordinate, and an offset within the original content.
+
+        Args:
+            x: X Coordinate.
+            y: Y Coordinate.
+
+        Returns:
+            Tuple of Rich Style and Offset.
+        """
+        return self._compositor.get_style_and_offset_at(x, y)
+
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get the screen region of a Widget.
 
@@ -1405,7 +1419,10 @@ class Screen(Generic[ScreenResultType], Widget):
                     focusable_widget = self.get_focusable_widget_at(event.x, event.y)
                     if focusable_widget:
                         self.set_focus(focusable_widget, scroll_visible=False)
-                event.style = self.get_style_at(event.screen_x, event.screen_y)
+                event.style, offset = self.get_style_and_offset_at(
+                    event.screen_x, event.screen_y
+                )
+                print(offset)
                 if widget.loading:
                     return
                 if widget is self:

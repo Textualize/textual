@@ -16,10 +16,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
-from typing_extensions import Self
 
 import rich.repr
 from rich.style import Style
+from typing_extensions import Self
 
 from textual._types import CallbackType
 from textual.geometry import Offset, Size
@@ -431,6 +431,8 @@ class MouseEvent(InputEvent, bubble=True):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
+        if self.style:
+            yield "style", self.style
 
     @property
     def control(self) -> Widget | None:

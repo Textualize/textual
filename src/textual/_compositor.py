@@ -844,11 +844,11 @@ class Compositor:
         """Get the Style at the given cell or Style.null()
 
         Args:
-            x: X position within the Layout
-            y: Y position within the Layout
+            x: X position within the Layout.
+            y: Y position within the Layout.
 
         Returns:
-            The Style at the cell (x, y) within the Layout
+            The Style at the cell (x, y) within the Layout.
         """
         try:
             widget, region = self.get_widget_at(x, y)
@@ -866,11 +866,57 @@ class Compositor:
         if not lines:
             return Style.null()
         end = 0
+
         for segment in lines[0]:
             end += segment.cell_length
             if x < end:
                 return segment.style or Style.null()
+
         return Style.null()
+
+    def get_style_and_offset_at(
+        self, x: int, y: int
+    ) -> tuple[Style, tuple[int, int] | None]:
+        """Get the Style at the given cell, the offset within the content.
+
+        Args:
+            x: X position within the Layout.
+            y: Y position within the Layout.
+
+        Returns:
+            A tuple of the Style at the cell (x, y) and the offset within the widget.
+        """
+        try:
+            widget, region = self.get_widget_at(x, y)
+        except errors.NoWidget:
+            return Style.null(), None
+        if widget not in self.visible_widgets:
+            return Style.null(), None
+
+        x -= region.x
+        y -= region.y
+
+        visible_screen_stack.set(widget.app._background_screens)
+        lines = widget.render_lines(Region(0, y, region.width, 1))
+
+        if not lines:
+            return Style.null(), None
+        end = 0
+        start = 0
+        for segment in lines[0]:
+            end += segment.cell_length
+            if x < end:
+                style = segment.style
+                if style and style._meta is not None:
+                    meta = style.meta
+                    if "offset" in meta:
+                        line, column = style.meta["offset"]
+                        offset = (line, column + (x - start))
+                        return style, offset
+
+                return (style or Style.null()), None
+            start = end
+        return Style.null(), None
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.
