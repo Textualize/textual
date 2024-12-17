@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Double clicking on a word in `TextArea` now selects the word https://github.com/Textualize/textual/pull/5405
+- Triple clicking in `TextArea` now selects the clicked line (or paragraph if wrapping is enabled) https://github.com/Textualize/textual/pull/5405
+- Quadruple clicking in `TextArea` now selects the entire document without scrolling the cursor into view https://github.com/Textualize/textual/pull/5405
+- Added `TextArea.cursor_scroll_disabled` context manager to temporarily disable the automatic scrolling of the cursor into view https://github.com/Textualize/textual/pull/5405
+
 ## [1.0.0] - 2024-12-12
 
 ### Added
