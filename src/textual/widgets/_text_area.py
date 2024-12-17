@@ -1835,6 +1835,8 @@ TextArea {
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
 
+        If text is selected, move the cursor to the start of the selection.
+
         Args:
             select: If True, select the text while moving.
         """
@@ -1857,6 +1859,8 @@ TextArea {
         """Move the cursor one location to the right.
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
+
+        If text is selected, move the cursor to the end of the selection.
 
         Args:
             select: If True, select the text while moving.
