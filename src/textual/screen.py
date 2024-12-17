@@ -50,12 +50,12 @@ from textual.errors import NoWidget
 from textual.geometry import Offset, Region, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
-from textual.reactive import Reactive
+from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
 from textual.signal import Signal
 from textual.timer import Timer
-from textual.widget import Widget
+from textual.widget import Selection, Widget
 from textual.widgets import Tooltip
 from textual.widgets._toast import ToastRack
 
@@ -213,6 +213,8 @@ class Screen(Generic[ScreenResultType], Widget):
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
 
+    selections: var[dict[Widget, Selection]] = var(dict)
+
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
@@ -310,6 +312,16 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _watch_stack_updates(self):
         self.refresh_bindings()
+
+    def _watch_selections(
+        self,
+        old_selections: dict[Widget, Selection],
+        selections: dict[Widget, Selection],
+    ):
+        for widget in old_selections:
+            widget.refresh()
+        for widget in selections:
+            widget.refresh()
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""

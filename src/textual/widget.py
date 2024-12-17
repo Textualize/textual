@@ -114,6 +114,16 @@ _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Le
 _MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
+class Selection(NamedTuple):
+    """A selected range of lines."""
+
+    start: Offset | None
+    end: Offset | None
+
+    def get_selection(self, line_no: int) -> tuple[int, int]:
+        pass
+
+
 @rich.repr.auto
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
