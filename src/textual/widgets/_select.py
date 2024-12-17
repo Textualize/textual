@@ -13,6 +13,7 @@ from textual.containers import Horizontal, Vertical
 from textual.css.query import NoMatches
 from textual.message import Message
 from textual.reactive import var
+from textual.timer import Timer
 from textual.widgets import Static
 from textual.widgets._option_list import Option, OptionList
 
@@ -59,6 +60,49 @@ class SelectOverlay(OptionList):
         option_index: int
         """The index of the new selection."""
 
+    def __init__(self, type_to_search: bool = True) -> None:
+        super().__init__()
+        self._type_to_search = type_to_search
+        self._search_query: str = ""
+
+    def on_mount(self) -> None:
+        def reset_query() -> None:
+            self._search_query = ""
+
+        self._search_reset_timer = Timer(self, 1.0, callback=reset_query)
+
+    def watch_has_focus(self, value: bool) -> None:
+        self._search_query = ""
+        if value:
+            self._search_reset_timer._start()
+        else:
+            self._search_reset_timer.reset()
+            self._search_reset_timer.stop()
+        super().watch_has_focus(value)
+
+    async def _on_key(self, event: events.Key) -> None:
+        if not self._type_to_search:
+            return
+
+        self._search_reset_timer.reset()
+
+        if event.character is not None and event.is_printable:
+            event.time = 0
+            event.stop()
+            event.prevent_default()
+
+            # Update the search query and jump to the next option that matches.
+            self._search_query += event.character
+            index = self._find_search_match(self._search_query)
+            if index is not None:
+                self.select(index)
+
+    def check_consume_key(self, key: str, character: str | None = None) -> bool:
+        """Check if the widget may consume the given key."""
+        return (
+            self._type_to_search and character is not None and character.isprintable()
+        )
+
     def select(self, index: int | None) -> None:
         """Move selection.
 
@@ -67,6 +111,18 @@ class SelectOverlay(OptionList):
         """
         self.highlighted = index
         self.scroll_to_highlight()
+
+    def _find_search_match(self, query: str) -> int | None:
+        """Find the first index"""
+        for index, option in enumerate(self._options):
+            prompt = option.prompt
+            if isinstance(prompt, Text):
+                if query in prompt.plain:
+                    return index
+            elif isinstance(prompt, str):
+                if query in prompt:
+                    return index
+        return None
 
     def action_dismiss(self) -> None:
         """Dismiss the overlay."""
@@ -295,6 +351,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         prompt: str = "Select",
         allow_blank: bool = True,
         value: SelectType | NoSelection = BLANK,
+        type_to_search: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -313,6 +370,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             value: Initial value selected. Should be one of the values in `options`.
                 If no initial value is set and `allow_blank` is `False`, the widget
                 will auto-select the first available option.
+            type_to_search: If `True`, typing will search for options.
             name: The name of the select control.
             id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
@@ -327,6 +385,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self.prompt = prompt
         self._value = value
         self._setup_variables_for_options(options)
+        self._type_to_search = type_to_search
         if tooltip is not None:
             self.tooltip = tooltip
 
@@ -338,6 +397,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         prompt: str = "Select",
         allow_blank: bool = True,
         value: SelectType | NoSelection = BLANK,
+        type_to_search: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -357,6 +417,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             value: Initial value selected. Should be one of the values in `values`.
                 If no initial value is set and `allow_blank` is `False`, the widget
                 will auto-select the first available value.
+            type_to_search: If `True`, typing will search for options.
             name: The name of the select control.
             id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
@@ -372,6 +433,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             prompt=prompt,
             allow_blank=allow_blank,
             value=value,
+            type_to_search=type_to_search,
             name=name,
             id=id,
             classes=classes,
@@ -496,7 +558,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
         yield SelectCurrent(self.prompt)
-        yield SelectOverlay()
+        yield SelectOverlay(type_to_search=self._type_to_search)
 
     def _on_mount(self, _event: events.Mount) -> None:
         """Set initial values."""
