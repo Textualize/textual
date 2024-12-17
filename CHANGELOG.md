@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
+
 ## [1.0.0] - 2024-12-12
 
 ### Added
