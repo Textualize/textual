@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
+
 ## [1.0.0] - 2024-12-12
 
 ### Added
