@@ -16,10 +16,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
-from typing_extensions import Self
 
 import rich.repr
 from rich.style import Style
+from typing_extensions import Self
 
 from textual._types import CallbackType
 from textual.geometry import Offset, Size
@@ -722,7 +722,21 @@ class Focus(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
+
+    Args:
+        from_app_focus: True if this focus event has been sent because the app itself has
+            regained focus (via an AppFocus event). False if the focus came from within
+            the Textual app (e.g. via the user pressing tab or a programmatic setting
+            of the focused widget).
     """
+
+    def __init__(self, from_app_focus: bool = False) -> None:
+        self.from_app_focus = from_app_focus
+        super().__init__()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "from_app_focus", self.from_app_focus
 
 
 class Blur(Event, bubble=False):
