@@ -98,7 +98,6 @@ The `Select` widget has a `type_to_search` attribute which allows you to type to
 
 ## Reactive Attributes
 
-
 | Name       | Type                           | Default                                        | Description                         |
 |------------|--------------------------------|------------------------------------------------|-------------------------------------|
 | `expanded` | `bool`                         | `False`                                        | True to expand the options overlay. |
