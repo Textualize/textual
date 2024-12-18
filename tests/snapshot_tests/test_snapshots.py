@@ -7,9 +7,9 @@ from rich.panel import Panel
 from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual import events, on
+from textual import events
 from textual.app import App, ComposeResult
-from textual.binding import Binding, Keymap
+from textual.binding import Binding
 from textual.command import SimpleCommand
 from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
 from textual.pilot import Pilot
@@ -588,6 +588,34 @@ def test_select_set_options(snap_compare):
         WIDGET_EXAMPLES_DIR / "select_widget_no_blank.py",
         press=["s"],
     )
+
+
+def test_select_type_to_search(snap_compare):
+    """The select was expanded and the user typed "pi", which should match "Pigeon".
+
+    The "Pigeon" option should be highlighted and scrolled into view.
+    """
+
+    class SelectTypeToSearch(App[None]):
+        CSS = "SelectOverlay { height: 5; }"
+
+        def compose(self) -> ComposeResult:
+            values = [
+                "Ostrich",
+                "Penguin",
+                "Duck",
+                "Chicken",
+                "Goose",
+                "Pigeon",
+                "Turkey",
+            ]
+            yield Select[str].from_values(values, type_to_search=True)
+
+    async def run_before(pilot):
+        await pilot.press("enter")  # Expand the select
+        await pilot.press(*"pi")  # Search for "pi", which should match "Pigeon"
+
+    assert snap_compare(SelectTypeToSearch(), run_before=run_before)
 
 
 def test_sparkline_render(snap_compare):
