@@ -442,7 +442,8 @@ class Pilot(Generic[ReturnType]):
                 # the driver works and emits a click event.
                 kwargs = message_arguments
                 if mouse_event_cls is Click:
-                    kwargs["chain"] = chain
+                    kwargs = {**kwargs, "chain": chain}
+
                 widget_at, _ = app.get_widget_at(*offset)
                 event = mouse_event_cls(**kwargs)
                 # Bypass event processing in App.on_event. Because App.on_event
