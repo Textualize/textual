@@ -110,6 +110,7 @@ class Style:
     dim: bool | None = None
     italic: bool | None = None
     underline: bool | None = None
+    reverse: bool | None = None
     strike: bool | None = None
     link: str | None = None
     _meta: bytes | None = None
@@ -122,6 +123,7 @@ class Style:
         yield "dim", self.dim, None
         yield "italic", self.italic, None
         yield "underline", self.underline, None
+        yield "reverse", self.reverse, None
         yield "strike", self.strike, None
         if self._meta is not None:
             yield "meta", self.meta
@@ -137,6 +139,7 @@ class Style:
             self.dim if other.dim is None else other.dim,
             self.italic if other.italic is None else other.italic,
             self.underline if other.underline is None else other.underline,
+            self.reverse if other.reverse is None else other.reverse,
             self.strike if other.strike is None else other.strike,
             self.link if other.link is None else other.link,
             self._meta if other._meta is None else other._meta,
@@ -163,6 +166,7 @@ class Style:
             dim=rich_style.dim,
             italic=rich_style.italic,
             underline=rich_style.underline,
+            reverse=rich_style.reverse,
             strike=rich_style.strike,
         )
 
@@ -186,6 +190,7 @@ class Style:
             dim=text_style.italic,
             italic=text_style.italic,
             underline=text_style.underline,
+            reverse=text_style.reverse,
             strike=text_style.strike,
             auto_color=styles.auto_color,
         )
@@ -208,6 +213,7 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            reverse=self.reverse,
             strike=self.strike,
             link=self.link,
             meta=self.meta,
@@ -219,6 +225,7 @@ class Style:
             bold=self.bold,
             dim=self.dim,
             italic=self.italic,
+            reverse=self.reverse,
             strike=self.strike,
             link=self.link,
             _meta=self._meta,

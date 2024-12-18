@@ -53,9 +53,10 @@ from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
+from textual.selection import Selection
 from textual.signal import Signal
 from textual.timer import Timer
-from textual.widget import Selection, Widget
+from textual.widget import Widget
 from textual.widgets import Tooltip
 from textual.widgets._toast import ToastRack
 

@@ -27,6 +27,8 @@ from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
 from textual.css.types import TextAlign
+from textual.geometry import Offset
+from textual.selection import Selection
 from textual.strip import Strip
 from textual.visual import Style, Visual
 
@@ -270,7 +272,9 @@ class Content(Visual):
             ),
             no_wrap=False,
             tab_size=8,
+            selection=widget.selection,
         )
+
         if height is not None:
             lines = lines[:height]
 
@@ -948,13 +952,30 @@ class Content(Visual):
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,
+        selection: Selection | None = None,
     ) -> list[Content]:
         lines: list[Content] = []
+
+        selection = Selection(Offset(10, 0), Offset(20, 1))
+
+        if selection is not None:
+            get_span = selection.get_span
+        else:
+
+            def get_span(y: int) -> tuple[int, int] | None:
+                return None
 
         for line_no, line in enumerate(self.split(allow_blank=True)):
             if "\t" in line._text:
                 line = line.expand_tabs(tab_size)
             line = line.stylize(Style.from_meta({"offset": (line_no, 0)}))
+
+            if (span := get_span(line_no)) is not None:
+                start, end = span
+                if end == -1:
+                    end = len(line.plain)
+                line = line.stylize(Style(reverse=True), start, end)
+
             if no_wrap:
                 new_lines = [line]
             else:
@@ -964,6 +985,7 @@ class Content(Visual):
             new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
             new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
             lines.extend(new_lines)
+
         return lines
 
     def highlight_regex(

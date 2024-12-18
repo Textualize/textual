@@ -84,6 +84,7 @@ from textual.notifications import SeverityLevel
 from textual.reactive import Reactive
 from textual.renderables.blank import Blank
 from textual.rlock import RLock
+from textual.selection import Selection
 from textual.strip import Strip
 from textual.visual import Style as VisualStyle
 from textual.visual import Visual, visualize
@@ -109,27 +110,8 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
-_NULL_STYLE = Style()
 _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Leave)
 _MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
-
-
-class Selection(NamedTuple):
-    """A selected range of lines."""
-
-    start: Offset | None
-    end: Offset | None
-
-    def get_selection(self, line_no: int) -> tuple[int, int] | None:
-        start, end = self
-        if start is None and end is None:
-            # Selection covers everything
-            return 0, -1
-        if start is not None and end is not None:
-            if line_no < start.y or line_no >= end.y:
-                return None
-            # TODO
-        return None
 
 
 @rich.repr.auto
@@ -653,6 +635,10 @@ class Widget(DOMNode):
         """The widget the compositor should render."""
         # Will return the "cover widget" if one is set, otherwise self.
         return self._cover_widget if self._cover_widget is not None else self
+
+    @property
+    def selection(self) -> Selection | None:
+        return self.screen.selections.get(self, None)
 
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).
