@@ -437,7 +437,7 @@ class Stylesheet:
     # These shouldn't be used in a cache key
     _EXCLUDE_PSEUDO_CLASSES_FROM_CACHE: Final[set[str]] = {
         "first-of-type",
-        "last-of_type",
+        "last-of-type",
         "odd",
         "even",
         "focus-within",
