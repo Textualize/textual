@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `from_app_focus` to `Focus` event to indicate if a widget is being focused because the app itself has regained focus or not https://github.com/Textualize/textual/pull/5379
+
+### Changed
+
+- The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
+
 ## [1.0.0] - 2024-12-12
 
 ### Added
@@ -14,7 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `system` boolean to Binding, which hides the binding from the help panel https://github.com/Textualize/textual/pull/5352
 - Added support for double/triple/etc clicks via `chain` attribute on `Click` events https://github.com/Textualize/textual/pull/5369
 - Added `times` parameter to `Pilot.click` method, for simulating rapid clicks https://github.com/Textualize/textual/pull/5369
-  
+- Text can now be select using mouse or keyboard in the Input widget https://github.com/Textualize/textual/pull/5340
+
 ### Changed
 
 - Breaking change: Change default quit key to `ctrl+q` https://github.com/Textualize/textual/pull/5352
