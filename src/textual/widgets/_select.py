@@ -63,13 +63,21 @@ class SelectOverlay(OptionList):
     def __init__(self, type_to_search: bool = True) -> None:
         super().__init__()
         self._type_to_search = type_to_search
+        """If True (default), the user can type to search for a matching option and the cursor will jump to it."""
+
         self._search_query: str = ""
+        """The current search query used to find a matching option and jump to it."""
+
+        self._search_reset_delay: float = 0.7
+        """The number of seconds to wait after the most recent key press before resetting the search query."""
 
     def on_mount(self) -> None:
         def reset_query() -> None:
             self._search_query = ""
 
-        self._search_reset_timer = Timer(self, 0.7, callback=reset_query)
+        self._search_reset_timer = Timer(
+            self, self._search_reset_delay, callback=reset_query
+        )
 
     def watch_has_focus(self, value: bool) -> None:
         self._search_query = ""
