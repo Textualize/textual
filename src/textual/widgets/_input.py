@@ -641,7 +641,7 @@ class Input(ScrollView):
 
     def _on_focus(self, event: Focus) -> None:
         self._restart_blink()
-        if self.select_on_focus:
+        if self.select_on_focus and not event.from_app_focus:
             self.selection = Selection(0, len(self.value))
         self.app.cursor_position = self.cursor_screen_offset
         self._suggestion = ""
@@ -761,11 +761,14 @@ class Input(ScrollView):
         Args:
             select: If `True`, select the text to the left of the cursor.
         """
+        start, end = self.selection
         if select:
-            start, end = self.selection
             self.selection = Selection(start, end - 1)
         else:
-            self.cursor_position -= 1
+            if self.selection.is_empty:
+                self.cursor_position -= 1
+            else:
+                self.cursor_position = min(start, end)
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Accept an auto-completion or move the cursor one position to the right.
@@ -773,15 +776,18 @@ class Input(ScrollView):
         Args:
             select: If `True`, select the text to the right of the cursor.
         """
+        start, end = self.selection
         if select:
-            start, end = self.selection
             self.selection = Selection(start, end + 1)
         else:
             if self._cursor_at_end and self._suggestion:
                 self.value = self._suggestion
                 self.cursor_position = len(self.value)
             else:
-                self.cursor_position += 1
+                if self.selection.is_empty:
+                    self.cursor_position += 1
+                else:
+                    self.cursor_position = max(start, end)
 
     def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input.

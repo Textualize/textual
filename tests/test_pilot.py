@@ -1,8 +1,10 @@
 from string import punctuation
+from typing import Type
 
 import pytest
 
 from textual import events, work
+from textual._on import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
@@ -424,3 +426,27 @@ async def test_click_by_widget():
         assert not pressed
         await pilot.click(button)
         assert pressed
+
+
+@pytest.mark.parametrize("times", [1, 2, 3])
+async def test_click_times(times: int):
+    """Test that Pilot.click() can be called with a `times` argument."""
+
+    events_received: list[Type[events.Event]] = []
+
+    class TestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Label("Click counter")
+
+        @on(events.Click)
+        @on(events.MouseDown)
+        @on(events.MouseUp)
+        def on_label_clicked(self, event: events.Event):
+            events_received.append(event.__class__)
+
+    app = TestApp()
+    async with app.run_test() as pilot:
+        await pilot.click(Label, times=times)
+        assert (
+            events_received == [events.MouseDown, events.MouseUp, events.Click] * times
+        )
