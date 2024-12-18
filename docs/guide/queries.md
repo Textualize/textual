@@ -1,6 +1,6 @@
 # DOM Queries
 
-In the previous chapter we introduced the [DOM](../guide/CSS.md#the-dom) which is how Textual apps keep track of widgets. We saw how you can apply styles to the DOM with CSS [selectors](./CSS.md#selectors).
+In the [CSS chapter](./CSS.md) we introduced the [DOM](../guide/CSS.md#the-dom) which is how Textual apps keep track of widgets. We saw how you can apply styles to the DOM with CSS [selectors](./CSS.md#selectors).
 
 Selectors are a very useful idea and can do more than apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
 
@@ -19,7 +19,7 @@ We could do this with the following line of code:
 send_button = self.query_one("#send")
 ```
 
-This will retrieve a widget with an ID of `send`, if there is exactly one.
+This will retrieve the first widget discovered with an ID of `send`.
 If there are no matching widgets, Textual will raise a [NoMatches][textual.css.query.NoMatches] exception.
 
 You can also add a second parameter for the expected type, which will ensure that you get the type you are expecting.
@@ -39,6 +39,15 @@ For instance, the following would return a `Button` instance (assuming there is 
 
 ```python
 my_button = self.query_one(Button)
+```
+
+`query_one` searches the DOM *below* the widget it is called on, so if you call `query_one` on a widget, it will only find widgets that are descendants of that widget.
+
+If you wish to search the entire DOM, you should call `query_one` on the `App` or `Screen` instance.
+
+```python
+# Search the entire Screen for a widget with an ID of "send-email"
+self.screen.query_one("#send-email")
 ```
 
 ## Making queries
