@@ -50,9 +50,10 @@ from textual.errors import NoWidget
 from textual.geometry import Offset, Region, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
-from textual.reactive import Reactive
+from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
+from textual.selection import Selection
 from textual.signal import Signal
 from textual.timer import Timer
 from textual.widget import Widget
@@ -213,6 +214,8 @@ class Screen(Generic[ScreenResultType], Widget):
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
 
+    selections: var[dict[Widget, Selection]] = var(dict)
+
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
@@ -310,6 +313,16 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _watch_stack_updates(self):
         self.refresh_bindings()
+
+    def _watch_selections(
+        self,
+        old_selections: dict[Widget, Selection],
+        selections: dict[Widget, Selection],
+    ):
+        for widget in old_selections:
+            widget.refresh()
+        for widget in selections:
+            widget.refresh()
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
@@ -579,6 +592,20 @@ class Screen(Generic[ScreenResultType], Widget):
             Rich Style object.
         """
         return self._compositor.get_style_at(x, y)
+
+    def get_style_and_offset_at(
+        self, x: int, y: int
+    ) -> tuple[Style, tuple[int, int] | None]:
+        """Get the style under a given coordinate, and an offset within the original content.
+
+        Args:
+            x: X Coordinate.
+            y: Y Coordinate.
+
+        Returns:
+            Tuple of Rich Style and Offset.
+        """
+        return self._compositor.get_style_and_offset_at(x, y)
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get the screen region of a Widget.
@@ -1413,7 +1440,10 @@ class Screen(Generic[ScreenResultType], Widget):
                     focusable_widget = self.get_focusable_widget_at(event.x, event.y)
                     if focusable_widget:
                         self.set_focus(focusable_widget, scroll_visible=False)
-                event.style = self.get_style_at(event.screen_x, event.screen_y)
+                event.style, offset = self.get_style_and_offset_at(
+                    event.screen_x, event.screen_y
+                )
+                print(offset)
                 if widget.loading:
                     return
                 if widget is self:
