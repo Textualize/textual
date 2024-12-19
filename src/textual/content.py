@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence
+from typing import TYPE_CHECKING, Callable, Iterable, Literal, NamedTuple, Sequence
 
 import rich.repr
 from rich._wrap import divide_line
@@ -27,7 +27,6 @@ from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
 from textual.css.types import TextAlign
-from textual.geometry import Offset
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.visual import Style, Visual
@@ -146,6 +145,8 @@ class Content(Visual):
         align: TextAlign = "left",
         no_wrap: bool = False,
         ellipsis: bool = False,
+        x: int = 0,
+        y: int = 0,
     ) -> None:
         """
 
@@ -163,6 +164,11 @@ class Content(Visual):
         self._align = align
         self._no_wrap = no_wrap
         self._ellipsis = ellipsis
+        self._x = x
+        self._y = y
+
+    def _update_y(self, y: int):
+        self._y = y
 
     @classmethod
     def from_rich_text(
@@ -250,6 +256,12 @@ class Content(Visual):
         )
         return new_content
 
+    @property
+    def offset(self) -> tuple[int, int] | None:
+        if self._x is not None and self._y is not None:
+            return (self._x, self._y)
+        return None
+
     def get_optimal_width(self, container_width: int) -> int:
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
@@ -296,6 +308,7 @@ class Content(Visual):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._text
         yield "spans", self._spans, []
+        yield "offset", self.offset, None
 
     @property
     def cell_length(self) -> int:
@@ -516,7 +529,7 @@ class Content(Visual):
             text = f"{self.plain}{' ' * spaces}"
             length = len(self.plain)
         spans = self._trim_spans(text, self._spans)
-        return Content(text, spans)
+        return Content(text, spans, x=self._x, y=self._y)
 
     def pad_left(self, count: int, character: str = " ") -> Content:
         """Pad the left with a given character.
@@ -628,7 +641,7 @@ class Content(Visual):
         ]
         text = self.plain[:-amount]
         length = None if self._cell_length is None else self._cell_length - amount
-        return Content(text, spans, length)
+        return Content(text, spans, length, x=self._x, y=self._y)
 
     def stylize(
         self, style: Style | str, start: int = 0, end: int | None = None
@@ -655,6 +668,8 @@ class Content(Visual):
         return Content(
             self.plain,
             [*self._spans, Span(start, length if length < end else end, style)],
+            x=self._x,
+            y=self._y,
         )
 
     def stylize_before(
@@ -685,6 +700,8 @@ class Content(Visual):
         return Content(
             self.plain,
             [Span(start, length if length < end else end, style), *self._spans],
+            x=self._x,
+            y=self._y,
         )
 
     def render(
@@ -692,11 +709,11 @@ class Content(Visual):
         base_style: Style,
         end: str = "\n",
         parse_style: Callable[[str], Style] | None = None,
-    ) -> Iterable[tuple[str, Style]]:
+    ) -> Iterable[tuple[str, Style, tuple[int, int] | None]]:
         if not self._spans:
-            yield self._text, base_style
+            yield (self._text, base_style, self.offset)
             if end:
-                yield end, base_style
+                yield end, base_style, None
             return
 
         if parse_style is None:
@@ -750,25 +767,31 @@ class Content(Visual):
             style_cache[cache_key] = current_style
             return current_style
 
+        x = self._x or 0
+        y = self._y or 0
         for (offset, leaving, style_id), (next_offset, _, _) in zip(spans, spans[1:]):
             if leaving:
                 stack_pop(style_id)
             else:
                 stack_append(style_id)
             if next_offset > offset:
-                yield text[offset:next_offset], get_current_style()
+                yield text[offset:next_offset], get_current_style(), (x + offset, y)
         if end:
-            yield end, base_style
+            yield end, base_style, None
 
     def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
         _Segment = Segment
+        render = list(self.render(base_style, end))
+
         segments = [
-            _Segment(text, style.rich_style)
-            for text, style in self.render(base_style, end)
+            _Segment(text, style.get_rich_style(offset))
+            for text, style, offset in render
         ]
         return segments
 
-    def divide(self, offsets: Sequence[int]) -> list[Content]:
+    def divide(
+        self, offsets: Sequence[int], axis: Literal["x", "y"] | None = "y"
+    ) -> list[Content]:
         if not offsets:
             return [self]
 
@@ -777,7 +800,17 @@ class Content(Visual):
         divide_offsets = [0, *offsets, text_length]
         line_ranges = list(zip(divide_offsets, divide_offsets[1:]))
 
-        new_lines = [Content(text[start:end]) for start, end in line_ranges]
+        if axis == "x":
+            new_lines = [
+                Content(text[start:end], x=self._x + start, y=self._y)
+                for start, end in line_ranges
+            ]
+        elif axis == "y":
+            new_lines = [
+                Content(text[start:end], x=self._x, y=self._y + line_no)
+                for line_no, (start, end) in enumerate(line_ranges)
+            ]
+
         if not self._spans:
             return new_lines
 
@@ -831,6 +864,7 @@ class Content(Visual):
         *,
         include_separator: bool = False,
         allow_blank: bool = False,
+        axis: Literal["x", "y"] = "y",
     ) -> list[Content]:
         """Split rich text in to lines, preserving styles.
 
@@ -850,7 +884,8 @@ class Content(Visual):
 
         if include_separator:
             lines = self.divide(
-                [match.end() for match in re.finditer(re.escape(separator), text)]
+                [match.end() for match in re.finditer(re.escape(separator), text)],
+                axis=axis,
             )
         else:
 
@@ -860,9 +895,11 @@ class Content(Visual):
 
             lines = [
                 line
-                for line in self.divide(list(flatten_spans()))
+                for line in self.divide(list(flatten_spans()), axis=axis)
                 if line.plain != separator
             ]
+            for y, line in enumerate(lines):
+                line._update_y(self._y + y)
 
         if not allow_blank and text.endswith(separator):
             lines.pop()
@@ -956,8 +993,6 @@ class Content(Visual):
     ) -> list[Content]:
         lines: list[Content] = []
 
-        selection = Selection(Offset(10, 0), Offset(20, 1))
-
         if selection is not None:
             get_span = selection.get_span
         else:
@@ -965,10 +1000,9 @@ class Content(Visual):
             def get_span(y: int) -> tuple[int, int] | None:
                 return None
 
-        for line_no, line in enumerate(self.split(allow_blank=True)):
+        for line_no, line in enumerate(self.split(allow_blank=True, axis="y")):
             if "\t" in line._text:
                 line = line.expand_tabs(tab_size)
-            line = line.stylize(Style.from_meta({"offset": (line_no, 0)}))
 
             if (span := get_span(line_no)) is not None:
                 start, end = span
@@ -980,7 +1014,8 @@ class Content(Visual):
                 new_lines = [line]
             else:
                 offsets = divide_line(line._text, width, fold=overflow == "fold")
-                new_lines = line.divide(offsets)
+                new_lines = line.divide(offsets, axis="x")
+
             new_lines = [line.rstrip_end(width) for line in new_lines]
             new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
             new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]

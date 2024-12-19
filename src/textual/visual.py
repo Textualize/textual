@@ -125,6 +125,7 @@ class Style:
         yield "underline", self.underline, None
         yield "reverse", self.reverse, None
         yield "strike", self.strike, None
+
         if self._meta is not None:
             yield "meta", self.meta
 
@@ -218,6 +219,21 @@ class Style:
             link=self.link,
             meta=self.meta,
         )
+
+    def get_rich_style(self, offset: tuple[int, int] | None) -> RichStyle:
+        rich_style = RichStyle(
+            color=(self.background + self.foreground).rich_color,
+            bgcolor=self.background.rich_color,
+            bold=self.bold,
+            dim=self.dim,
+            italic=self.italic,
+            underline=self.underline,
+            reverse=self.reverse,
+            strike=self.strike,
+            link=self.link,
+            meta=self.meta if offset is None else {**self.meta, "offset": offset},
+        )
+        return rich_style
 
     @cached_property
     def without_color(self) -> Style:

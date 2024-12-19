@@ -216,6 +216,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     selections: var[dict[Widget, Selection]] = var(dict)
 
+    _select_start: Reactive[tuple[Widget, Offset] | None] = Reactive(None)
+    _select_end: Reactive[tuple[Widget, Offset] | None] = Reactive(None)
+
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
@@ -593,19 +596,19 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._compositor.get_style_at(x, y)
 
-    def get_style_and_offset_at(
+    def get_widget_and_offset_at(
         self, x: int, y: int
-    ) -> tuple[Style, tuple[int, int] | None]:
-        """Get the style under a given coordinate, and an offset within the original content.
+    ) -> tuple[Widget | None, Offset | None]:
+        """Get the widget under a given coordinate, and an offset within the original content.
 
         Args:
             x: X Coordinate.
             y: Y Coordinate.
 
         Returns:
-            Tuple of Rich Style and Offset.
+            Tuple of Widget and Offset, both of which may be None.
         """
-        return self._compositor.get_style_and_offset_at(x, y)
+        return self._compositor.get_widget_and_offset_at(x, y)
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get the screen region of a Widget.
@@ -1414,11 +1417,27 @@ class Screen(Generic[ScreenResultType], Widget):
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
+        if isinstance(event, events.MouseDown):
+            select_widget, select_offset = self.get_widget_and_offset_at(
+                event.x, event.y
+            )
+            if select_widget is not None and select_offset is not None:
+                self._select_start = (select_widget, select_offset)
+
+        elif isinstance(event, events.MouseUp):
+            pass
+
         elif isinstance(event, events.MouseMove):
-            event.style = self.get_style_at(event.screen_x, event.screen_y)
+            event.style = self.get_style_at(event.x, event.y)
             self._handle_mouse_move(event)
 
-        elif isinstance(event, events.MouseEvent):
+            select_widget, select_offset = self.get_widget_and_offset_at(
+                event.x, event.y
+            )
+            if select_widget is not None and select_offset is not None:
+                self._select_end = (select_widget, select_offset)
+
+        if isinstance(event, events.MouseEvent):
             try:
                 if self.app.mouse_captured:
                     widget = self.app.mouse_captured
@@ -1432,10 +1451,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     focusable_widget = self.get_focusable_widget_at(event.x, event.y)
                     if focusable_widget:
                         self.set_focus(focusable_widget, scroll_visible=False)
-                event.style, offset = self.get_style_and_offset_at(
-                    event.screen_x, event.screen_y
-                )
-                print(offset)
+                event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget.loading:
                     return
                 if widget is self:
@@ -1446,6 +1462,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
         else:
             self.post_message(event)
+
+    def watch__select_end(self, select_end: tuple[Widget, Offset] | None) -> None:
+        if select_end is None or self._select_start is None:
+            return
+
+        start_widget, start_offset = self._select_start
+        end_widget, end_offset = select_end
+        self.selections = {start_widget: Selection(start_offset, end_offset)}
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.

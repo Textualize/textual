@@ -35,8 +35,10 @@ class Selection(NamedTuple):
             if y == end.y:
                 # Last line
                 return 0, end.x
+            if y == start.y:
+                return start.x, -1
             # Remaining lines
-            return start.x, -1
+            return 0, -1
 
         if start is None and end is not None:
             if y == end.y:

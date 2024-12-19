@@ -874,9 +874,9 @@ class Compositor:
 
         return Style.null()
 
-    def get_style_and_offset_at(
+    def get_widget_and_offset_at(
         self, x: int, y: int
-    ) -> tuple[Style, tuple[int, int] | None]:
+    ) -> tuple[Widget | None, Offset | None]:
         """Get the Style at the given cell, the offset within the content.
 
         Args:
@@ -889,9 +889,9 @@ class Compositor:
         try:
             widget, region = self.get_widget_at(x, y)
         except errors.NoWidget:
-            return Style.null(), None
+            return None, None
         if widget not in self.visible_widgets:
-            return Style.null(), None
+            return None, None
 
         x -= region.x
         y -= region.y
@@ -900,7 +900,7 @@ class Compositor:
         lines = widget.render_lines(Region(0, y, region.width, 1))
 
         if not lines:
-            return Style.null(), None
+            return None, None
         end = 0
         start = 0
         for segment in lines[0]:
@@ -910,13 +910,14 @@ class Compositor:
                 if style and style._meta is not None:
                     meta = style.meta
                     if "offset" in meta:
-                        line, column = style.meta["offset"]
-                        offset = (line, column + (x - start))
-                        return style, offset
+                        print(segment)
+                        offset_x, offset_y = style.meta["offset"]
+                        offset = Offset(offset_x + (x - start), offset_y)
+                        return widget, offset
 
-                return (style or Style.null()), None
+                return None, None
             start = end
-        return Style.null(), None
+        return None, None
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.
