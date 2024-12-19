@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections import deque
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
@@ -118,6 +119,8 @@ class Input(ScrollView):
         Binding("ctrl+x", "cut", "Cut selected text", show=False),
         Binding("ctrl+c", "copy", "Copy selected text", show=False),
         Binding("ctrl+v", "paste", "Paste text from the clipboard", show=False),
+        Binding("up", "history_up", "Previous history item", show=False),
+        Binding("down", "history_down", "Next history item", show=False),
     ]
     """
     | Key(s) | Description |
@@ -299,6 +302,7 @@ class Input(ScrollView):
         validate_on: Iterable[InputValidationOn] | None = None,
         valid_empty: bool = False,
         select_on_focus: bool = True,
+        history: int = 0,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -323,6 +327,7 @@ class Input(ScrollView):
                 validation for all messages.
             valid_empty: Empty values are valid.
             select_on_focus: Whether to select all text on focus.
+            history: Maximum number of history items to store (0 for no history).
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -338,6 +343,14 @@ class Input(ScrollView):
         self.highlighter = highlighter
         self.password = password
         self.suggester = suggester
+
+        # History related attributes
+        self._history_size = max(0, history)
+        self._history = (
+            deque(maxlen=self._history_size) if self._history_size > 0 else None
+        )
+        self._history_position = None
+        self._current_value = ""  # Stores the current value when navigating history
 
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
@@ -476,6 +489,10 @@ class Input(ScrollView):
             self.validate(value) if "changed" in self.validate_on else None
         )
         self.post_message(self.Changed(self, value, validation_result))
+
+        # Reset history position when editing
+        if self._history_position is not None and value != self._current_value:
+            self._history_position = None
 
         # If this is the first time the value has been updated, set the cursor position to the end
         if self._initial_value:
@@ -1001,6 +1018,16 @@ class Input(ScrollView):
         validation_result = (
             self.validate(self.value) if "submitted" in self.validate_on else None
         )
+
+        # Add to history if enabled and not empty
+        if (
+            self._history is not None
+            and self.value
+            and (not self._history or self.value != self._history[-1])
+        ):
+            self._history.append(self.value)
+
+        self._history_position = None
         self.post_message(self.Submitted(self, self.value, validation_result))
 
     def action_cut(self) -> None:
@@ -1017,3 +1044,45 @@ class Input(ScrollView):
         clipboard = self.app.clipboard
         start, end = self.selection
         self.replace(clipboard, start, end)
+
+    @property
+    def history(self) -> list[str]:
+        """Get the input history as a list."""
+        return list(self._history) if self._history is not None else []
+
+    def action_history_up(self) -> None:
+        """Navigate up through history."""
+
+        if not self._history:
+            return
+
+        if self._history_position is None:
+            self.history.append(self.value)
+            self._history_position = len(self._history) - 1
+        elif self._history_position > 0:
+            self._history_position -= 1
+
+        if 0 <= self._history_position < len(self._history):
+            self.value = self._history[self._history_position]
+            self.cursor_position = len(self.value)
+
+        print("history:", self._history)
+        print("history position:", self._history_position)
+
+    def action_history_down(self) -> None:
+        """Navigate down through history."""
+
+        if not self._history or self._history_position is None:
+            return
+
+        if self._history_position < len(self._history) - 1:
+            self._history_position += 1
+            self.value = self._history[self._history_position]
+        else:
+            self._history_position = None
+            self.value = ""
+
+        self.cursor_position = len(self.value)
+
+        print("history:", self._history)
+        print("history position:", self._history_position)
