@@ -1886,10 +1886,16 @@ TextArea {
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
 
+        If text is selected, move the cursor to the start of the selection.
+
         Args:
             select: If True, select the text while moving.
         """
-        target = self.get_cursor_left_location()
+        target = (
+            self.get_cursor_left_location()
+            if select or self.selection.is_empty
+            else min(*self.selection)
+        )
         self.move_cursor(target, select=select)
 
     def get_cursor_left_location(self) -> Location:
@@ -1905,10 +1911,16 @@ TextArea {
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
 
+        If text is selected, move the cursor to the end of the selection.
+
         Args:
             select: If True, select the text while moving.
         """
-        target = self.get_cursor_right_location()
+        target = (
+            self.get_cursor_right_location()
+            if select or self.selection.is_empty
+            else max(*self.selection)
+        )
         self.move_cursor(target, select=select)
 
     def get_cursor_right_location(self) -> Location:
