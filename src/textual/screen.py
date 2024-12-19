@@ -1469,7 +1469,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         start_widget, start_offset = self._select_start
         end_widget, end_offset = select_end
-        self.selections = {start_widget: Selection(start_offset, end_offset)}
+        self.selections = {
+            start_widget: Selection.from_offsets(start_offset, end_offset)
+        }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.

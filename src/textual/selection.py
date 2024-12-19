@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import NamedTuple
 
 from textual.geometry import Offset
@@ -10,6 +12,20 @@ class Selection(NamedTuple):
     """Offset or None for `start`."""
     end: Offset | None
     """Offset or None for `end`."""
+
+    @classmethod
+    def from_offsets(cls, offset1: Offset, offset2: Offset) -> Selection:
+        """Create selection from 2 offsets.
+
+        Args:
+            offset1: First offset.
+            offset2: Second offset.
+
+        Returns:
+            New Selection.
+        """
+        offsets = sorted([offset1, offset2], key=(lambda offset: (offset.y, offset.x)))
+        return cls(*offsets)
 
     def get_span(self, y: int) -> tuple[int, int] | None:
         """Get the selected span in a given line.
