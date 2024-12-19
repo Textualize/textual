@@ -1781,9 +1781,11 @@ TextArea {
         # Search for the start and end of a word from the current location.
         # If we want the search to be inclusive of the current location, so start
         # the search for the left boundary from one character to the right.
-        left = self.get_word_left_location(self.navigator.get_location_right(location))
-        right = self.get_word_right_location(location)
-        self.selection = Selection(left, right)
+        left = self.get_word_right_location(
+            self.get_word_left_location(self.navigator.get_location_right(location))
+        )
+        right = self.get_word_left_location(self.get_word_right_location(location))
+        self.selection = Selection(*sorted((left, right)))
         self.record_cursor_width()
 
     def select_line(self, index: int) -> None:
