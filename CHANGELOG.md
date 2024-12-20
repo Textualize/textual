@@ -16,12 +16,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `from_app_focus` to `Focus` event to indicate if a widget is being focused because the app itself has regained focus or not https://github.com/Textualize/textual/pull/5379
 - - Added `Select.type_to_search` which allows you to type to move the cursor to a matching option https://github.com/Textualize/textual/pull/5403
+- Added `Blur` message to `Input` widget (matching `Submitted` and `Changed`) to make it easier to synchronize with `validate_on` parameter when set to 'blur'.
 
 ### Changed
 
 - The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
 - Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
+- Modified _on_blur method in `Input` to post a `Blur` message
 
 
 ## [1.0.0] - 2024-12-12
