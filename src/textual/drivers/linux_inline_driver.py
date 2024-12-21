@@ -75,15 +75,14 @@ class LinuxInlineDriver(Driver):
             try:
                 width, height = os.get_terminal_size(self._file.fileno())
             except (AttributeError, ValueError, OSError):
-                try:
-                    width, height = os.get_terminal_size(self._file.fileno())
-                except (AttributeError, ValueError, OSError):
-                    pass
+                pass
 
-            if width <= 0: 
-                width = size.columns or 80
-            if height <= 0:
-                height = size.lines or 25
+            try:
+                width = size.columns
+                height = size.lines
+            except NameError:
+                width = 80
+                height = 25
         return width, height
 
     def _enable_mouse_support(self) -> None:
