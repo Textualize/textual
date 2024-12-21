@@ -11,7 +11,15 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.command import SimpleCommand
-from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
+from textual.containers import (
+    Center,
+    Container,
+    Grid,
+    Middle,
+    Vertical,
+    VerticalScroll,
+    HorizontalGroup,
+)
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
@@ -22,6 +30,8 @@ from textual.widgets import (
     Header,
     Input,
     Label,
+    ListItem,
+    ListView,
     Log,
     OptionList,
     Placeholder,
@@ -3139,3 +3149,47 @@ def test_auto_parent_with_alignment(snap_compare):
             yield Sidebar()
 
     snap_compare(FloatSidebarApp())
+
+
+def test_select_refocus(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5416
+
+    The original bug was that the call to focus had no apparent effect as the Select
+    was re-focusing itself after the Changed message was processed.
+
+    You should see a list view with three items, where the second one is in focus.
+
+    """
+    opts = ["foo", "bar", "zoo"]
+
+    class MyListItem(ListItem):
+        def __init__(self, opts: list[str]) -> None:
+            self.opts = opts
+            self.lab = Label("Hello!")
+            self.sel = Select(options=[(opt, opt) for opt in self.opts])
+            super().__init__()
+
+        def compose(self):
+            with HorizontalGroup():
+                yield self.lab
+                yield self.sel
+
+        def on_select_changed(self, event: Select.Changed):
+            self.app.query_one(MyListView).focus()
+
+    class MyListView(ListView):
+        def compose(self):
+            yield MyListItem(opts)
+            yield MyListItem(opts)
+            yield MyListItem(opts)
+
+        def on_list_view_selected(self, event: ListView.Selected):
+            event.item.sel.focus()
+            event.item.sel.expanded = True
+
+    class TUI(App):
+        def compose(self):
+            with Container():
+                yield MyListView()
+
+    snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
