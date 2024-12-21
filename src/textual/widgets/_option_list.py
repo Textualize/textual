@@ -257,6 +257,17 @@ class OptionList(ScrollView, can_focus=True):
         wrap: bool = True,
         tooltip: RenderableType | None = None,
     ):
+        """Initialise the option list.
+
+        Args:
+            *content: The content for the option list.
+            name: The name of the option list.
+            id: The ID of the option list in the DOM.
+            classes: The CSS classes of the option list.
+            disabled: Whether the option list is disabled or not.
+            wrap: Should prompts be auto-wrapped?
+            tooltip: Optional tooltip.
+        """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         self._wrap = wrap
