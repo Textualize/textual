@@ -116,10 +116,7 @@ class LinuxDriver(Driver):
             try:
                 size = os.get_terminal_size(self._file.fileno())
             except (AttributeError, ValueError, OSError):
-                try:
-                    size = os.get_terminal_size(self._file.fileno())
-                except (AttributeError, ValueError, OSError):
-                    pass
+                pass
 
             try:
                 width = size.columns
