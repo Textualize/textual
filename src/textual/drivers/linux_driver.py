@@ -102,19 +102,26 @@ class LinuxDriver(Driver):
         Returns:
             The size of the terminal as a tuple of (WIDTH, HEIGHT).
         """
-        width: int | None = 80
-        height: int | None = 25
-        import shutil
+        try:
+            width = int(os.environ['COLUMNS'])
+        except (KeyError, ValueError):
+            width: int | None = 0
 
         try:
-            width, height = shutil.get_terminal_size()
-        except (AttributeError, ValueError, OSError):
+            height = int(os.environ['LINES'])
+        except (KeyError, ValueError):
+            height: int | None = 0
+
+        if width <= 0 or height <= 0:
             try:
-                width, height = shutil.get_terminal_size()
+                width, height = os.get_terminal_size(self._file.fileno())
             except (AttributeError, ValueError, OSError):
-                pass
-        width = width or 80
-        height = height or 25
+                try:
+                    width, height = os.get_terminal_size(self._file.fileno())
+                except (AttributeError, ValueError, OSError):
+                    pass
+            width = width or 80
+            height = height or 25
         return width, height
 
     def _enable_mouse_support(self) -> None:
