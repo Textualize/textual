@@ -129,7 +129,7 @@ class LinuxDriver(Driver):
             if height <= 0:
                 height = 25
 
-    return width, height
+        return width, height
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
