@@ -64,12 +64,12 @@ class LinuxInlineDriver(Driver):
         try:
             width = int(os.environ['COLUMNS'])
         except (KeyError, ValueError):
-            width: int | None = 0
+            width = 0
 
         try:
             height = int(os.environ['LINES'])
         except (KeyError, ValueError):
-            height: int | None = 0
+            height = 0
 
         if width <= 0 or height <= 0:
             try:
