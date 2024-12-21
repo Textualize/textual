@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
-- Fixed window resize within a bash command substitution https://github.com/Textualize/textual/pull/5417
+- Fixed terminal resize when standard output is not a tty: pipe (e.g. shell command substitution), regular file, /dev/null, etc https://github.com/Textualize/textual/pull/5417
 
 ### Added
 
