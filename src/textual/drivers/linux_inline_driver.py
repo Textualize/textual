@@ -80,9 +80,9 @@ class LinuxInlineDriver(Driver):
                 except (AttributeError, ValueError, OSError):
                     pass
 
-            if columns <= 0: 
+            if width <= 0: 
                 width = size.columns or 80
-            if lines <= 0:
+            if height <= 0:
                 height = size.lines or 25
         return width, height
 
