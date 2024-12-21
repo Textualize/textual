@@ -72,17 +72,22 @@ class LinuxInlineDriver(Driver):
             height = 0
 
         if width <= 0 or height <= 0:
+            # LINES and COLUMNS do not fully define terminal size: query the tty to get its actual size:
             try:
-                width, height = os.get_terminal_size(self._file.fileno())
+                size = os.get_terminal_size(self._file.fileno())
+                if width <= 0:
+                    width = size.columns
+                if height <= 0:
+                    height = size.lines
             except (AttributeError, ValueError, OSError):
                 pass
 
-            try:
-                width = size.columns
-                height = size.lines
-            except NameError:
+            # Default to the de facto standard terminal size:
+            if width <= 0:
                 width = 80
+            if height <= 0:
                 height = 25
+
         return width, height
 
     def _enable_mouse_support(self) -> None:
