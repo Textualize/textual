@@ -284,6 +284,29 @@ class Input(ScrollView):
             """Alias for self.input."""
             return self.input
 
+    @dataclass
+    class Blur(Message):
+        """Posted when the widget is blurred (loses focus).
+
+        Can be handled using `on_input_blur` in a subclass of `Input` or in a parent
+        widget in the DOM.
+        """
+
+        input: Input
+        """The `Input` widget that was changed."""
+
+        value: str
+        """The value that the input was changed to."""
+
+        validation_result: ValidationResult | None = None
+        """The result of validating the value (formed by combining the results from each validator), or None
+            if validation was not performed (for example when no validators are specified in the `Input`s init)"""
+
+        @property
+        def control(self) -> Input:
+            """Alias for self.input."""
+            return self.input
+
     def __init__(
         self,
         value: str | None = None,
@@ -636,8 +659,10 @@ class Input(ScrollView):
 
     def _on_blur(self, event: Blur) -> None:
         self._pause_blink()
-        if "blur" in self.validate_on:
-            self.validate(self.value)
+        validation_result = (
+            self.validate(self.value) if "blur" in self.validate_on else None
+        )
+        self.post_message(self.Blur(self, self.value, validation_result))
 
     def _on_focus(self, event: Focus) -> None:
         self._restart_blink()
