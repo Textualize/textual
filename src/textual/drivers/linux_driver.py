@@ -121,10 +121,12 @@ class LinuxDriver(Driver):
                 except (AttributeError, ValueError, OSError):
                     pass
 
-            if width <= 0: 
-                width = size.columns or 80
-            if height <= 0:
-                height = size.lines or 25
+            try:
+                width = size.columns
+                height = size.lines
+            except NameError:
+                width = 80
+                height = 25
         return width, height
 
     def _enable_mouse_support(self) -> None:
