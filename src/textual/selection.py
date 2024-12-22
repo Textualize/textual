@@ -45,7 +45,7 @@ class Selection(NamedTuple):
             if y < start.y or y > end.y:
                 # Outside
                 return None
-            if y == start.y == end.y:
+            if y == start.y and start.y == end.y:
                 # Same line
                 return start.x, end.x
             if y == end.y:
@@ -59,9 +59,14 @@ class Selection(NamedTuple):
         if start is None and end is not None:
             if y == end.y:
                 return 0, end.x
+            if y > end.y:
+                return None
             return 0, -1
 
         if end is None and start is not None:
             if y == start.y:
                 return start.x, -1
+            if y > start.y:
+                return 0, -1
+            return None
         return 0, -1

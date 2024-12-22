@@ -276,6 +276,14 @@ class Content(Visual):
         if not width:
             return []
 
+        selection = widget.selection
+        if selection is not None:
+            selection_style = Style.from_rich_style(
+                widget.screen.get_component_rich_style("screen--selection")
+            )
+
+        else:
+            selection_style = None
         lines = self.wrap(
             width,
             align=self._align,
@@ -285,6 +293,7 @@ class Content(Visual):
             no_wrap=False,
             tab_size=8,
             selection=widget.selection,
+            selection_style=selection_style,
         )
 
         if height is not None:
@@ -990,6 +999,7 @@ class Content(Visual):
         no_wrap: bool = False,
         tab_size: int = 8,
         selection: Selection | None = None,
+        selection_style: Style | None = None,
     ) -> list[Content]:
         lines: list[Content] = []
 
@@ -1004,11 +1014,11 @@ class Content(Visual):
             if "\t" in line._text:
                 line = line.expand_tabs(tab_size)
 
-            if (span := get_span(line_no)) is not None:
+            if selection_style is not None and (span := get_span(line_no)) is not None:
                 start, end = span
                 if end == -1:
                     end = len(line.plain)
-                line = line.stylize(Style(reverse=True), start, end)
+                line = line.stylize(selection_style, start, end)
 
             if no_wrap:
                 new_lines = [line]

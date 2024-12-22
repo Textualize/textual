@@ -39,6 +39,7 @@ from textual._path import (
     _css_path_type_as_list,
     _make_path_object_relative,
 )
+from textual._spatial_map import SpatialMap
 from textual._types import CallbackType
 from textual.await_complete import AwaitComplete
 from textual.binding import ActiveBinding, Binding, BindingsMap
@@ -47,7 +48,7 @@ from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, QueryType
 from textual.dom import DOMNode
 from textual.errors import NoWidget
-from textual.geometry import Offset, Region, Size
+from textual.geometry import NULL_OFFSET, Offset, Region, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
@@ -146,6 +147,8 @@ class Screen(Generic[ScreenResultType], Widget):
         This CSS applies to the whole app.
     """
 
+    COMPONENT_CLASSES = {"screen--selection"}
+
     DEFAULT_CSS = """
     Screen {
         layout: vertical;
@@ -169,6 +172,9 @@ class Screen(Generic[ScreenResultType], Widget):
                     text-style: not dim;
                 }
             }
+        }
+        .screen--selection {
+            background: $primary 50%;            
         }
     }
     """
@@ -215,9 +221,10 @@ class Screen(Generic[ScreenResultType], Widget):
     """The currently maximized widget, or `None` for no maximized widget."""
 
     selections: var[dict[Widget, Selection]] = var(dict)
+    _selecting = var(False)
 
-    _select_start: Reactive[tuple[Widget, Offset] | None] = Reactive(None)
-    _select_end: Reactive[tuple[Widget, Offset] | None] = Reactive(None)
+    _select_start: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
+    _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
 
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
@@ -317,14 +324,12 @@ class Screen(Generic[ScreenResultType], Widget):
     def _watch_stack_updates(self):
         self.refresh_bindings()
 
-    def _watch_selections(
+    async def _watch_selections(
         self,
         old_selections: dict[Widget, Selection],
         selections: dict[Widget, Selection],
     ):
-        for widget in old_selections:
-            widget.refresh()
-        for widget in selections:
+        for widget in old_selections.keys() | selections.keys():
             widget.refresh()
 
     def refresh_bindings(self) -> None:
@@ -623,6 +628,17 @@ class Screen(Generic[ScreenResultType], Widget):
             NoWidget: If the widget could not be found in this screen.
         """
         return self._compositor.find_widget(widget)
+
+    def clear_selection(self) -> None:
+        """Clear any selected text."""
+        self.selections = {}
+
+    def _select_all_in_widget(self, widget: Widget) -> None:
+        select_all = Selection(None, None)
+        self.selections = {
+            widget: select_all,
+            **{child: select_all for child in widget.query("*")},
+        }
 
     @property
     def focus_chain(self) -> list[Widget]:
@@ -1421,21 +1437,25 @@ class Screen(Generic[ScreenResultType], Widget):
             select_widget, select_offset = self.get_widget_and_offset_at(
                 event.x, event.y
             )
-            if select_widget is not None and select_offset is not None:
-                self._select_start = (select_widget, select_offset)
+            if select_widget is None or select_widget.ALLOW_SELECT:
+                self.selections = {}
+                self._selecting = True
+                if select_widget is not None and select_offset is not None:
+                    self._select_start = (select_widget, event.offset, select_offset)
 
         elif isinstance(event, events.MouseUp):
-            pass
+            self._selecting = False
 
         elif isinstance(event, events.MouseMove):
             event.style = self.get_style_at(event.x, event.y)
             self._handle_mouse_move(event)
 
-            select_widget, select_offset = self.get_widget_and_offset_at(
-                event.x, event.y
-            )
-            if select_widget is not None and select_offset is not None:
-                self._select_end = (select_widget, select_offset)
+            if self._selecting:
+                select_widget, select_offset = self.get_widget_and_offset_at(
+                    event.x, event.y
+                )
+                if select_widget is not None and select_offset is not None:
+                    self._select_end = (select_widget, event.offset, select_offset)
 
         if isinstance(event, events.MouseEvent):
             try:
@@ -1463,14 +1483,104 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             self.post_message(event)
 
-    def watch__select_end(self, select_end: tuple[Widget, Offset] | None) -> None:
+    def _key_escape(self) -> None:
+        self.clear_selection()
+
+    def watch__select_end(
+        self, select_end: tuple[Widget, Offset, Offset] | None
+    ) -> None:
         if select_end is None or self._select_start is None:
             return
 
-        start_widget, start_offset = self._select_start
-        end_widget, end_offset = select_end
+        select_start = self._select_start
+
+        start_widget, screen_start, start_offset = select_start
+        end_widget, screen_end, end_offset = select_end
+        if start_widget is end_widget:
+            # Simplest case, selection starts and ends on the same widget
+            self.selections = {
+                start_widget: Selection.from_offsets(start_offset, end_offset)
+            }
+            return
+
+        select_start, select_end = sorted(
+            [select_start, select_end], key=lambda selection: selection[1].transpose
+        )
+        start_widget, screen_start, start_offset = select_start
+        end_widget, screen_end, end_offset = select_end
+
+        select_regions: list[Region] = []
+        if screen_start.y == screen_end.y:
+            select_regions.append(
+                Region.from_corners(
+                    screen_start.x, screen_start.y, screen_end.x, screen_start.y
+                )
+            )
+        else:
+            select_regions.append(Region.union(start_widget.region, end_widget.region))
+
+            # select_regions.append(start_widget.region)
+            # select_regions.append(end_widget.region)
+            # x1, y1, x2, y2 = start_widget.region
+            # top_region = Region.from_corners(x1, y1, container_region.right, y2)
+
+            # x1, y1, x2, y2 = end_widget.region
+            # bottom_region = Region.from_corners(container_region.x, y1, x2, y2)
+
+            # if top_region.overlaps(bottom_region):
+            #     select_regions.append(top_region.union(bottom_region))
+            # else:
+            #     select_regions.append(top_region)
+            #     select_regions.append(bottom_region)
+
+            # # Top line
+            # select_regions.append(
+            #     Region.from_corners(
+            #         screen_start.x,
+            #         screen_start.y,
+            #         screen_end.x,
+            #         screen_start.y,
+            #     )
+            # )
+            # # bottom line
+            # select_regions.append(
+            #     Region.from_corners(
+            #         container_region.x, screen_end.y, screen_end.x, screen_end.y
+            #     )
+            # )
+            # if abs(screen_start.y - screen_end.y) > 1:
+            #     select_regions.append(
+            #         Region.from_corners(
+            #             container_region.x,
+            #             screen_start.y,
+            #             screen_end.x,
+            #             screen_end.y,
+            #         )
+            #     )
+
+        spatial_map: SpatialMap[Widget] = SpatialMap()
+        spatial_map.insert(
+            [
+                (widget.region, NULL_OFFSET, False, False, widget)
+                for widget in self._compositor.visible_widgets.keys()
+            ]
+        )
+
+        highlighted_widgets: set[Widget] = set()
+        for region in select_regions:
+            covered_widgets = spatial_map.get_values_in_region(region)
+            covered_widgets = [
+                widget for widget in covered_widgets if region.overlaps(widget.region)
+            ]
+            highlighted_widgets.update(covered_widgets)
+        highlighted_widgets.discard(start_widget)
+        highlighted_widgets.discard(end_widget)
+        highlighted_widgets.discard(self)
+
         self.selections = {
-            start_widget: Selection.from_offsets(start_offset, end_offset)
+            start_widget: Selection(start_offset, None),
+            **{widget: Selection(None, None) for widget in highlighted_widgets},
+            end_widget: Selection(None, end_offset),
         }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:

@@ -313,6 +313,9 @@ class Widget(DOMNode):
     
     """
 
+    ALLOW_SELECT: ClassVar[bool] = True
+    """Does this widget support automatic text selection?"""
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -2305,6 +2308,14 @@ class Widget(DOMNode):
         )
         return style
 
+    @property
+    def scrollable_container(self) -> Widget:
+        container: Widget = self
+        for widget in self.ancestors:
+            if isinstance(widget, Widget) and widget.is_scrollable:
+                container = widget
+        return container
+
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
 
@@ -4156,6 +4167,9 @@ class Widget(DOMNode):
         """
         self.app.capture_mouse(None)
 
+    def select_all(self) -> None:
+        self.screen._select_all_in_widget(self)
+
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
@@ -4213,6 +4227,12 @@ class Widget(DOMNode):
         await self.broker_event("mouse.up", event)
 
     async def _on_click(self, event: events.Click) -> None:
+        if event.widget is self:
+            if event.chain == 2:
+                self.select_all()
+            elif event.chain == 3 and self.parent is not None:
+                self.scrollable_container.select_all()
+
         await self.broker_event("click", event)
 
     async def _on_key(self, event: events.Key) -> None:

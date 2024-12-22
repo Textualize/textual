@@ -910,7 +910,6 @@ class Compositor:
                 if style and style._meta is not None:
                     meta = style.meta
                     if "offset" in meta:
-                        print(segment)
                         offset_x, offset_y = style.meta["offset"]
                         offset = Offset(offset_x + (x - start), offset_y)
                         return widget, offset

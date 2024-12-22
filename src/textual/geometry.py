@@ -105,6 +105,12 @@ class Offset(NamedTuple):
         x, y = self
         return Offset(0 if x < 0 else x, 0 if y < 0 else y)
 
+    @property
+    def transpose(self) -> tuple[int, int]:
+        """A tuple of x and y, in reverse order, i.e. (Y, X)."""
+        x, y = self
+        return y, x
+
     def __bool__(self) -> bool:
         return self != (0, 0)
 
