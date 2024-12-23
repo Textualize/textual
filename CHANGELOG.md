@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
 - Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
+- Fixed `Header` icon showing command palette tooltip when disabled https://github.com/Textualize/textual/pull/5427
 
 ### Added
 
