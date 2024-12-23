@@ -70,3 +70,6 @@ class Selection(NamedTuple):
                 return 0, -1
             return None
         return 0, -1
+
+
+SELECT_ALL = Selection(None, None)

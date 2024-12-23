@@ -107,7 +107,7 @@ class Offset(NamedTuple):
 
     @property
     def transpose(self) -> tuple[int, int]:
-        """A tuple of x and y, in reverse order, i.e. (Y, X)."""
+        """A tuple of x and y, in reverse order, i.e. (y, x)."""
         x, y = self
         return y, x
 

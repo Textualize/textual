@@ -900,7 +900,7 @@ class Compositor:
         lines = widget.render_lines(Region(0, y, region.width, 1))
 
         if not lines:
-            return None, None
+            return widget, None
         end = 0
         start = 0
         for segment in lines[0]:
@@ -914,9 +914,9 @@ class Compositor:
                         offset = Offset(offset_x + (x - start), offset_y)
                         return widget, offset
 
-                return None, None
+                return widget, None
             start = end
-        return None, None
+        return widget, None
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.

@@ -54,7 +54,7 @@ from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
-from textual.selection import Selection
+from textual.selection import SELECT_ALL, Selection
 from textual.signal import Signal
 from textual.timer import Timer
 from textual.widget import Widget
@@ -634,7 +634,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.selections = {}
 
     def _select_all_in_widget(self, widget: Widget) -> None:
-        select_all = Selection(None, None)
+        select_all = SELECT_ALL
         self.selections = {
             widget: select_all,
             **{child: select_all for child in widget.query("*")},
@@ -1437,7 +1437,7 @@ class Screen(Generic[ScreenResultType], Widget):
             select_widget, select_offset = self.get_widget_and_offset_at(
                 event.x, event.y
             )
-            if select_widget is None or select_widget.ALLOW_SELECT:
+            if select_widget is not None and select_widget.ALLOW_SELECT:
                 self.selections = {}
                 self._selecting = True
                 if select_widget is not None and select_offset is not None:
@@ -1486,14 +1486,19 @@ class Screen(Generic[ScreenResultType], Widget):
     def _key_escape(self) -> None:
         self.clear_selection()
 
-    def watch__select_end(
+    def _watch__select_end(
         self, select_end: tuple[Widget, Offset, Offset] | None
     ) -> None:
+        """When select_end changes, we need to compute which widgets and regions are selected.
+
+        Args:
+            select_end: The end selection.
+        """
         if select_end is None or self._select_start is None:
+            # Nothing to select
             return
 
         select_start = self._select_start
-
         start_widget, screen_start, start_offset = select_start
         end_widget, screen_end, end_offset = select_end
         if start_widget is end_widget:
@@ -1504,59 +1509,57 @@ class Screen(Generic[ScreenResultType], Widget):
             return
 
         select_start, select_end = sorted(
-            [select_start, select_end], key=lambda selection: selection[1].transpose
+            [select_start, select_end], key=lambda selection: selection[1].y
         )
+
         start_widget, screen_start, start_offset = select_start
         end_widget, screen_end, end_offset = select_end
+
+        selections = {
+            start_widget: Selection(start_offset, None),
+            end_widget: Selection(None, end_offset),
+        }
 
         select_regions: list[Region] = []
         if screen_start.y == screen_end.y:
             select_regions.append(
                 Region.from_corners(
-                    screen_start.x, screen_start.y, screen_end.x, screen_start.y
+                    screen_start.x,
+                    screen_start.y,
+                    screen_end.x,
+                    screen_start.y,
                 )
             )
         else:
-            select_regions.append(Region.union(start_widget.region, end_widget.region))
-
-            # select_regions.append(start_widget.region)
-            # select_regions.append(end_widget.region)
-            # x1, y1, x2, y2 = start_widget.region
-            # top_region = Region.from_corners(x1, y1, container_region.right, y2)
-
-            # x1, y1, x2, y2 = end_widget.region
-            # bottom_region = Region.from_corners(container_region.x, y1, x2, y2)
-
-            # if top_region.overlaps(bottom_region):
-            #     select_regions.append(top_region.union(bottom_region))
-            # else:
-            #     select_regions.append(top_region)
-            #     select_regions.append(bottom_region)
-
-            # # Top line
-            # select_regions.append(
-            #     Region.from_corners(
-            #         screen_start.x,
-            #         screen_start.y,
-            #         screen_end.x,
-            #         screen_start.y,
-            #     )
-            # )
-            # # bottom line
-            # select_regions.append(
-            #     Region.from_corners(
-            #         container_region.x, screen_end.y, screen_end.x, screen_end.y
-            #     )
-            # )
-            # if abs(screen_start.y - screen_end.y) > 1:
-            #     select_regions.append(
-            #         Region.from_corners(
-            #             container_region.x,
-            #             screen_start.y,
-            #             screen_end.x,
-            #             screen_end.y,
-            #         )
-            #     )
+            start_region = start_widget.content_region
+            end_region = end_widget.content_region
+            if end_region.y <= start_region.bottom:
+                select_regions.append(Region.union(start_region, end_region))
+            else:
+                container_region = start_widget.scrollable_container.content_region
+                start_region = Region.from_corners(
+                    start_region.x,
+                    start_region.y,
+                    container_region.right,
+                    start_region.bottom,
+                )
+                end_region = Region.from_corners(
+                    container_region.x,
+                    end_region.y,
+                    end_region.right,
+                    end_region.bottom,
+                )
+                select_regions.append(start_region)
+                select_regions.append(end_region)
+                mid_height = end_region.y - start_region.bottom
+                if mid_height > 0:
+                    mid_region = Region.from_corners(
+                        container_region.x,
+                        start_region.bottom,
+                        container_region.right,
+                        start_region.bottom + mid_height,
+                    )
+                    select_regions.append(mid_region)
 
         spatial_map: SpatialMap[Widget] = SpatialMap()
         spatial_map.insert(
@@ -1570,17 +1573,19 @@ class Screen(Generic[ScreenResultType], Widget):
         for region in select_regions:
             covered_widgets = spatial_map.get_values_in_region(region)
             covered_widgets = [
-                widget for widget in covered_widgets if region.overlaps(widget.region)
+                widget
+                for widget in covered_widgets
+                if region.overlaps(widget.content_region)
             ]
             highlighted_widgets.update(covered_widgets)
         highlighted_widgets.discard(start_widget)
         highlighted_widgets.discard(end_widget)
         highlighted_widgets.discard(self)
 
+        select_all = SELECT_ALL
         self.selections = {
-            start_widget: Selection(start_offset, None),
-            **{widget: Selection(None, None) for widget in highlighted_widgets},
-            end_widget: Selection(None, end_offset),
+            **selections,
+            **{widget: select_all for widget in highlighted_widgets},
         }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:

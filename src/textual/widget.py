@@ -2313,7 +2313,7 @@ class Widget(DOMNode):
         container: Widget = self
         for widget in self.ancestors:
             if isinstance(widget, Widget) and widget.is_scrollable:
-                container = widget
+                return widget
         return container
 
     def _set_dirty(self, *regions: Region) -> None:

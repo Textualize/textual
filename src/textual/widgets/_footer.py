@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class FooterKey(Widget):
+    ALLOW_SELECT = False
     COMPONENT_CLASSES = {
         "footer-key--key",
         "footer-key--description",
@@ -120,6 +121,7 @@ class FooterKey(Widget):
 
 @rich.repr.auto
 class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
+    ALLOW_SELECT = False
     DEFAULT_CSS = """
     Footer {
         layout: grid;

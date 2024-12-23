@@ -80,10 +80,18 @@ def visualize(widget: Widget, obj: object) -> Visual:
     visualize = getattr(obj, "visualize", None)
     if visualize is None:
         # Doesn't expose the textualize protocol
+        from textual.content import Content
+
         if is_renderable(obj):
             # If it is a string, render it to Text
             if isinstance(obj, str):
-                obj = widget.render_str(obj)
+                # obj = widget.render_str(obj)
+
+                print(obj)
+
+                return Content(obj)
+            if isinstance(obj, Text):
+                return Content.from_rich_text(obj)
 
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))
