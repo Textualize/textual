@@ -48,7 +48,7 @@ class FooterKey(Widget):
         }
 
         &.-disabled {
-            text-style: dim;            
+            text-style: dim;
         }
 
         &.-compact {
@@ -58,7 +58,7 @@ class FooterKey(Widget):
             .footer-key--description {
                 padding: 0 0 0 1;
             }
-        }        
+        }
     }
     """
 
@@ -134,20 +134,20 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             grid-gutter: 1;
         }
         FooterKey.-command-palette  {
-            dock: right;                        
+            dock: right;
             padding-right: 1;
-            border-left: vkey $foreground 20%;                            
+            border-left: vkey $foreground 20%;
         }
 
-        &:ansi {           
-            background: ansi_default;            
+        &:ansi {
+            background: ansi_default;
             .footer-key--key {
                 background: ansi_default;
-                color: ansi_magenta;                
+                color: ansi_magenta;
             }
             .footer-key--description {
                 background: ansi_default;
-                color: ansi_default;                
+                color: ansi_default;
             }
             FooterKey:hover {
                 text-style: underline;
@@ -156,7 +156,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 .footer-key--key {
                     background: ansi_default;
                 }
-            }        
+            }
             FooterKey.-command-palette {
                 background: ansi_default;
                 border-left: vkey ansi_black;
