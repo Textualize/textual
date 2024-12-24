@@ -189,7 +189,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
-            show_command_palette: Show key binding to command palette, on the right of the footer.
+            show_command_palette: Show key binding to invoke the command palette, on the right of the footer.
         """
         super().__init__(
             *children,
