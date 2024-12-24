@@ -188,7 +188,7 @@ Just a skeleton for now, we will add the rest of the features as we go.
 ```
 
 We've imported two new widgets in this code: [`Button`](widgets/button.md) for the buttons and [`Digits`](widgets/digits.md) for the time display.
-Additionally, we've imported [`Horizontal`][textual.containers.Horizontal] and [`VerticalScroll`][textual.containers.VerticalScroll] from `textual.containers` (as the name of the module suggests, *containers* are widgets which contain other widgets).
+Additionally, we've imported [`HorizontalGroup`][textual.containers.HorizontalGroup] and [`VerticalScroll`][textual.containers.VerticalScroll] from `textual.containers` (as the name of the module suggests, *containers* are widgets which contain other widgets).
 We will use these container widgets to define the general layout of our interface.
 
 The `TimeDisplay` is currently very simple, all it does is extend `Digits` without adding any new features. We will flesh this out later.
