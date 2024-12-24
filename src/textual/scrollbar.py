@@ -248,6 +248,9 @@ class ScrollBar(Widget):
 
     DEFAULT_CLASSES = "-textual-system"
 
+    # Nothing to select in scrollbars
+    ALLOW_SELECT = False
+
     def __init__(
         self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
     ) -> None:

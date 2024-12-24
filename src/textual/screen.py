@@ -39,6 +39,7 @@ from textual._path import (
     _css_path_type_as_list,
     _make_path_object_relative,
 )
+from textual._spatial_map import SpatialMap
 from textual._types import CallbackType
 from textual.await_complete import AwaitComplete
 from textual.binding import ActiveBinding, Binding, BindingsMap
@@ -47,12 +48,13 @@ from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, QueryType
 from textual.dom import DOMNode
 from textual.errors import NoWidget
-from textual.geometry import Offset, Region, Size
+from textual.geometry import NULL_OFFSET, Offset, Region, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
-from textual.reactive import Reactive
+from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
+from textual.selection import SELECT_ALL, Selection
 from textual.signal import Signal
 from textual.timer import Timer
 from textual.widget import Widget
@@ -145,6 +147,8 @@ class Screen(Generic[ScreenResultType], Widget):
         This CSS applies to the whole app.
     """
 
+    COMPONENT_CLASSES = {"screen--selection"}
+
     DEFAULT_CSS = """
     Screen {
         layout: vertical;
@@ -168,6 +172,9 @@ class Screen(Generic[ScreenResultType], Widget):
                     text-style: not dim;
                 }
             }
+        }
+        .screen--selection {
+            background: $primary 50%;            
         }
     }
     """
@@ -212,6 +219,12 @@ class Screen(Generic[ScreenResultType], Widget):
 
     maximized: Reactive[Widget | None] = Reactive(None, layout=True)
     """The currently maximized widget, or `None` for no maximized widget."""
+
+    selections: var[dict[Widget, Selection]] = var(dict)
+    _selecting = var(False)
+
+    _select_start: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
+    _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
 
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
@@ -310,6 +323,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _watch_stack_updates(self):
         self.refresh_bindings()
+
+    async def _watch_selections(
+        self,
+        old_selections: dict[Widget, Selection],
+        selections: dict[Widget, Selection],
+    ):
+        for widget in old_selections.keys() | selections.keys():
+            widget.refresh()
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
@@ -580,6 +601,20 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._compositor.get_style_at(x, y)
 
+    def get_widget_and_offset_at(
+        self, x: int, y: int
+    ) -> tuple[Widget | None, Offset | None]:
+        """Get the widget under a given coordinate, and an offset within the original content.
+
+        Args:
+            x: X Coordinate.
+            y: Y Coordinate.
+
+        Returns:
+            Tuple of Widget and Offset, both of which may be None.
+        """
+        return self._compositor.get_widget_and_offset_at(x, y)
+
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get the screen region of a Widget.
 
@@ -593,6 +628,17 @@ class Screen(Generic[ScreenResultType], Widget):
             NoWidget: If the widget could not be found in this screen.
         """
         return self._compositor.find_widget(widget)
+
+    def clear_selection(self) -> None:
+        """Clear any selected text."""
+        self.selections = {}
+
+    def _select_all_in_widget(self, widget: Widget) -> None:
+        select_all = SELECT_ALL
+        self.selections = {
+            widget: select_all,
+            **{child: select_all for child in widget.query("*")},
+        }
 
     @property
     def focus_chain(self) -> list[Widget]:
@@ -1395,11 +1441,31 @@ class Screen(Generic[ScreenResultType], Widget):
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
+        if isinstance(event, events.MouseDown):
+            select_widget, select_offset = self.get_widget_and_offset_at(
+                event.x, event.y
+            )
+            if select_widget is not None and select_widget.ALLOW_SELECT:
+                self.selections = {}
+                self._selecting = True
+                if select_widget is not None and select_offset is not None:
+                    self._select_start = (select_widget, event.offset, select_offset)
+
+        elif isinstance(event, events.MouseUp):
+            self._selecting = False
+
         elif isinstance(event, events.MouseMove):
-            event.style = self.get_style_at(event.screen_x, event.screen_y)
+            event.style = self.get_style_at(event.x, event.y)
             self._handle_mouse_move(event)
 
-        elif isinstance(event, events.MouseEvent):
+            if self._selecting:
+                select_widget, select_offset = self.get_widget_and_offset_at(
+                    event.x, event.y
+                )
+                if select_widget is not None and select_offset is not None:
+                    self._select_end = (select_widget, event.offset, select_offset)
+
+        if isinstance(event, events.MouseEvent):
             try:
                 if self.app.mouse_captured:
                     widget = self.app.mouse_captured
@@ -1424,6 +1490,109 @@ class Screen(Generic[ScreenResultType], Widget):
 
         else:
             self.post_message(event)
+
+    def _key_escape(self) -> None:
+        self.clear_selection()
+
+    def _watch__select_end(
+        self, select_end: tuple[Widget, Offset, Offset] | None
+    ) -> None:
+        """When select_end changes, we need to compute which widgets and regions are selected.
+
+        Args:
+            select_end: The end selection.
+        """
+        if select_end is None or self._select_start is None:
+            # Nothing to select
+            return
+
+        select_start = self._select_start
+        start_widget, screen_start, start_offset = select_start
+        end_widget, screen_end, end_offset = select_end
+        if start_widget is end_widget:
+            # Simplest case, selection starts and ends on the same widget
+            self.selections = {
+                start_widget: Selection.from_offsets(start_offset, end_offset)
+            }
+            return
+
+        select_start, select_end = sorted(
+            [select_start, select_end], key=lambda selection: (selection[1].transpose)
+        )
+
+        start_widget, screen_start, start_offset = select_start
+        end_widget, screen_end, end_offset = select_end
+
+        selections = {
+            start_widget: Selection(start_offset, None),
+            end_widget: Selection(None, end_offset),
+        }
+
+        select_regions: list[Region] = []
+        if screen_start.y == screen_end.y:
+            select_regions.append(
+                Region.from_corners(
+                    screen_start.x,
+                    screen_start.y,
+                    screen_end.x,
+                    screen_start.y,
+                )
+            )
+        else:
+            start_region = start_widget.content_region
+            end_region = end_widget.content_region
+            if end_region.y <= start_region.bottom:
+                select_regions.append(Region.union(start_region, end_region))
+            else:
+                container_region = start_widget.scrollable_container.content_region
+                start_region = Region.from_corners(
+                    start_region.x,
+                    start_region.y,
+                    container_region.right,
+                    start_region.bottom,
+                )
+                end_region = Region.from_corners(
+                    container_region.x,
+                    end_region.y,
+                    end_region.right,
+                    end_region.bottom,
+                )
+                select_regions.append(start_region)
+                select_regions.append(end_region)
+                mid_height = end_region.y - start_region.bottom
+                if mid_height > 0:
+                    mid_region = Region.from_corners(
+                        container_region.x,
+                        start_region.bottom,
+                        container_region.right,
+                        start_region.bottom + mid_height,
+                    )
+                    select_regions.append(mid_region)
+
+        spatial_map: SpatialMap[Widget] = SpatialMap()
+        spatial_map.insert(
+            [
+                (widget.region, NULL_OFFSET, False, False, widget)
+                for widget in self._compositor.visible_widgets.keys()
+            ]
+        )
+
+        highlighted_widgets: set[Widget] = set()
+        for region in select_regions:
+            covered_widgets = spatial_map.get_values_in_region(region)
+            covered_widgets = [
+                widget
+                for widget in covered_widgets
+                if region.overlaps(widget.content_region)
+            ]
+            highlighted_widgets.update(covered_widgets)
+        highlighted_widgets -= {self, start_widget, end_widget}
+
+        select_all = SELECT_ALL
+        self.selections = {
+            **selections,
+            **{widget: select_all for widget in highlighted_widgets},
+        }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
