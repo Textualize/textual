@@ -284,9 +284,11 @@ class Content(Visual):
 
         else:
             selection_style = None
+
+        align = self._align
         lines = self.wrap(
             width,
-            align=self._align,
+            align=align,
             overflow=(
                 ("ellipsis" if self._ellipsis else "crop") if self._no_wrap else "fold"
             ),
@@ -299,7 +301,17 @@ class Content(Visual):
         if height is not None:
             lines = lines[:height]
 
-        return [Strip(line.render_segments(style), line.cell_length) for line in lines]
+        strip_lines = [
+            Strip(line.render_segments(style), line.cell_length) for line in lines
+        ]
+
+        print("--")
+        print(width, [line.cell_length for line in strip_lines])
+        if align in ("left", "right", "center"):
+            strip_lines = [strip.text_align(width, align) for strip in strip_lines]
+            print(width, [line.cell_length for line in strip_lines])
+
+        return strip_lines
 
     def get_height(self, width: int) -> int:
         lines = self.wrap(width)
@@ -559,6 +571,8 @@ class Content(Visual):
                 text,
                 spans,
                 None if self._cell_length is None else self._cell_length + count,
+                x=self._x - count,
+                y=self._y,
             )
         return self
 
@@ -582,6 +596,8 @@ class Content(Visual):
                     for span in self._spans
                 ],
                 None if self._cell_length is None else self._cell_length + count,
+                x=self._x,
+                y=self._y,
             )
         return self
 
@@ -598,6 +614,8 @@ class Content(Visual):
                 f"{self.plain}{character * count}",
                 self._spans,
                 None if self._cell_length is None else self._cell_length + count,
+                x=self._x,
+                y=self._y,
             )
         return self
 
@@ -614,8 +632,8 @@ class Content(Visual):
         content = self.rstrip().truncate(
             width, overflow="ellipsis" if ellipsis else "fold"
         )
-        left = (content.cell_length - width) // 2
-        right = width = left
+        left = (width - content.cell_length) // 2
+        right = width - left
         content = content.pad_left(left).pad_right(right)
         return content
 
@@ -799,7 +817,9 @@ class Content(Visual):
         return segments
 
     def divide(
-        self, offsets: Sequence[int], axis: Literal["x", "y"] | None = "y"
+        self,
+        offsets: Sequence[int],
+        axis: Literal["x", "y"] | None = "y",
     ) -> list[Content]:
         if not offsets:
             return [self]
@@ -994,7 +1014,7 @@ class Content(Visual):
     def wrap(
         self,
         width: int,
-        align: TextAlign = "left",
+        align: TextAlign = "center",
         overflow: OverflowMethod = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,
@@ -1027,7 +1047,10 @@ class Content(Visual):
                 new_lines = line.divide(offsets, axis="x")
 
             new_lines = [line.rstrip_end(width) for line in new_lines]
-            new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
+            if align in ("left", "full"):
+                new_lines = _align_lines(
+                    new_lines, width, align=align, overflow=overflow
+                )
             new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
             lines.extend(new_lines)
 

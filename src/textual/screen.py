@@ -1509,7 +1509,7 @@ class Screen(Generic[ScreenResultType], Widget):
             return
 
         select_start, select_end = sorted(
-            [select_start, select_end], key=lambda selection: selection[1].y
+            [select_start, select_end], key=lambda selection: (selection[1].transpose)
         )
 
         start_widget, screen_start, start_offset = select_start
@@ -1578,9 +1578,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 if region.overlaps(widget.content_region)
             ]
             highlighted_widgets.update(covered_widgets)
-        highlighted_widgets.discard(start_widget)
-        highlighted_widgets.discard(end_widget)
-        highlighted_widgets.discard(self)
+        highlighted_widgets -= {self, start_widget, end_widget}
 
         select_all = SELECT_ALL
         self.selections = {

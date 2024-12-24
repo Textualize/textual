@@ -19,7 +19,6 @@ from rich.text import Text
 from textual._context import active_app
 from textual.color import TRANSPARENT, Color
 from textual.css.styles import StylesBase
-from textual.css.types import AlignHorizontal, AlignVertical
 from textual.geometry import Spacing
 from textual.render import measure
 from textual.strip import Strip
@@ -85,13 +84,10 @@ def visualize(widget: Widget, obj: object) -> Visual:
         if is_renderable(obj):
             # If it is a string, render it to Text
             if isinstance(obj, str):
-                # obj = widget.render_str(obj)
+                obj = widget.render_str(obj)
 
-                print(obj)
-
-                return Content(obj)
-            if isinstance(obj, Text):
-                return Content.from_rich_text(obj)
+            if isinstance(obj, Text) and widget.ALLOW_SELECT:
+                return Content.from_rich_text(obj, align=widget.styles.text_align)
 
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))
@@ -276,7 +272,11 @@ class Visual(ABC):
 
     @abstractmethod
     def render_strips(
-        self, widget: Widget, width: int, height: int | None, style: Style
+        self,
+        widget: Widget,
+        width: int,
+        height: int | None,
+        style: Style,
     ) -> list[Strip]:
         """Render the visual in to an iterable of strips.
 
@@ -320,7 +320,6 @@ class Visual(ABC):
         style: Style,
         *,
         pad: bool = False,
-        align: tuple[AlignHorizontal, AlignVertical] = ("left", "top"),
     ) -> list[Strip]:
         """High level function to render a visual to strips.
 
@@ -331,7 +330,6 @@ class Visual(ABC):
             height: Desired height (in lines) or `None` for no limit.
             style: A (Visual) Style instance.
             pad: Pad to desired width?
-            align: Tuple of horizontal and vertical alignment.
 
         Returns:
             A list of Strips containing the render.
@@ -342,8 +340,9 @@ class Visual(ABC):
         rich_style = style.rich_style
         if pad:
             strips = [strip.extend_cell_length(width, rich_style) for strip in strips]
-        if align != ("left", "top"):
-            align_horizontal, align_vertical = align
+        content_align = widget.styles.content_align
+        if content_align != ("left", "top"):
+            align_horizontal, align_vertical = content_align
             strips = list(
                 Strip.align(
                     strips,
@@ -440,6 +439,7 @@ class RichVisual(Visual):
                 height,
             )
         ]
+
         return strips
 
 
@@ -500,3 +500,19 @@ class Padding(Visual):
             ]
 
         return strips
+
+
+def pick_bool(*values: bool | None) -> bool:
+    """Pick the first non-none bool or return the last value.
+
+    Args:
+        *values (bool): Any number of boolean or None values.
+
+    Returns:
+        bool: First non-none boolean.
+    """
+    assert values, "1 or more values required"
+    for value in values:
+        if value is not None:
+            return value
+    return bool(value)

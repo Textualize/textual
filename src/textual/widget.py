@@ -3799,14 +3799,7 @@ class Widget(DOMNode):
         """Render all lines."""
         width, height = self.size
         visual = self._render()
-        strips = Visual.to_strips(
-            self,
-            visual,
-            width,
-            height,
-            self.visual_style,
-            align=self.styles.content_align,
-        )
+        strips = Visual.to_strips(self, visual, width, height, self.visual_style)
         self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
