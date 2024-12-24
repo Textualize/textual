@@ -205,7 +205,7 @@ The Button constructor takes a label to be displayed in the button (`"Start"`, `
 
 ### Composing the widgets
 
-The new line in `StopwatchApp.compose()` yields a single `VerticalScroll` which will scroll if the contents don't quite fit. This widget also takes care of key bindings required for scrolling, like ++up++, ++down++, ++pgdn++, ++pgup++, ++home++, ++end++, etc.
+The new line in `StopwatchApp.compose()` yields a single `VerticalScroll` which will scroll if the contents don't quite fit. This widget also takes care of key bindings required for scrolling, like ++up++, ++down++, ++page-down++, ++page-up++, ++home++, ++end++, etc.
 
 When widgets contain other widgets (like `VerticalScroll`) they will typically accept their child widgets as positional arguments.
 So the line `yield VerticalScroll(Stopwatch(), Stopwatch(), Stopwatch())` creates a `VerticalScroll` containing three `Stopwatch` widgets.
