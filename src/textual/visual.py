@@ -118,6 +118,8 @@ class Style:
     strike: bool | None = None
     link: str | None = None
     _meta: bytes | None = None
+    x: int | None = None
+    y: int | None = None
     auto_color: bool = False
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -132,6 +134,14 @@ class Style:
 
         if self._meta is not None:
             yield "meta", self.meta
+
+        yield "offset", self.offset, None
+
+    @property
+    def offset(self) -> tuple[int, int] | None:
+        if self.y is None:
+            return None
+        return (self.x or 0, self.y)
 
     @lru_cache(maxsize=1024)
     def __add__(self, other: object) -> Style:
@@ -148,6 +158,8 @@ class Style:
             self.strike if other.strike is None else other.strike,
             self.link if other.link is None else other.link,
             self._meta if other._meta is None else other._meta,
+            self.x if other.x is None else other.x,
+            self.y if other.y is None else other.y,
         )
         return new_style
 
@@ -224,7 +236,8 @@ class Style:
             meta=self.meta,
         )
 
-    def get_rich_style(self, offset: tuple[int, int] | None) -> RichStyle:
+    def get_rich_style(self) -> RichStyle:
+        offset = self.offset
         rich_style = RichStyle(
             color=(self.background + self.foreground).rich_color,
             bgcolor=self.background.rich_color,
@@ -235,7 +248,7 @@ class Style:
             reverse=self.reverse,
             strike=self.strike,
             link=self.link,
-            meta=self.meta if offset is None else {**self.meta, "offset": offset},
+            meta=(self.meta if offset is None else {**self.meta, "offset": offset}),
         )
         return rich_style
 
