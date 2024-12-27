@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
 - Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
+- Fixed layout of the keys in the help panel when a key has a tooltip but no description https://github.com/Textualize/textual/issues/5436
 
 ### Added
 
@@ -126,7 +127,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 - Added `Widget.set_scroll` https://github.com/Textualize/textual/pull/5278
 - Added `Select.selection` https://github.com/Textualize/textual/pull/5278
 
-### Fixed 
+### Fixed
 
 - Fixed offset applied to docked widgets https://github.com/Textualize/textual/pull/5264
 - Fixed loading widgets responding to input https://github.com/Textualize/textual/pull/5267
@@ -402,7 +403,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 
 ### Changed
 
-- Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861 
+- Removed caps_lock and num_lock modifiers https://github.com/Textualize/textual/pull/4861
 - Keys such as escape and space are now displayed in lower case in footer https://github.com/Textualize/textual/pull/4876
 - Changed default command palette binding to `ctrl+p` https://github.com/Textualize/textual/pull/4867
 - Removed `ctrl_to_caret` and `upper_case_keys` from Footer. These can be implemented in `App.get_key_display`.
@@ -609,7 +610,7 @@ when an expandable node is selected https://github.com/Textualize/textual/pull/4
 
 ### Added
 
-- Added `Screen.is_active` 
+- Added `Screen.is_active`
 - Added `icon` reactive to Header widget https://github.com/Textualize/textual/pull/4627
 - Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
 - Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625

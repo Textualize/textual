@@ -86,7 +86,8 @@ class BindingsTable(Static):
                     binding.description, end="", style=description_style
                 )
                 if binding.tooltip:
-                    text.append(" ")
+                    if binding.description:
+                        text.append(" ")
                     text.append(binding.tooltip, "dim")
                 return text
 
