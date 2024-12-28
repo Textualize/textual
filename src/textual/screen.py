@@ -224,6 +224,7 @@ class Screen(Generic[ScreenResultType], Widget):
     _selecting = var(False)
 
     _select_start: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
+    """Tuple of (widget, screen offset, text offset)"""
     _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
 
     BINDINGS = [
@@ -1494,6 +1495,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             select_end: The end selection.
         """
+
         if select_end is None or self._select_start is None:
             # Nothing to select
             return
@@ -1509,7 +1511,8 @@ class Screen(Generic[ScreenResultType], Widget):
             return
 
         select_start, select_end = sorted(
-            [select_start, select_end], key=lambda selection: (selection[1].transpose)
+            [select_start, select_end],
+            key=lambda selection: (selection[0].region.offset.transpose),
         )
 
         start_widget, screen_start, start_offset = select_start

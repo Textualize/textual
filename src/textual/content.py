@@ -253,6 +253,56 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
 
+    def wrap(
+        self,
+        width: int,
+        align: TextAlign = "left",
+        overflow: OverflowMethod = "fold",
+        no_wrap: bool = False,
+        tab_size: int = 8,
+        selection: Selection | None = None,
+        selection_style: Style | None = None,
+    ) -> list[ContentLine]:
+        # lines: list[Content] = []
+        output_lines: list[ContentLine] = []
+
+        if selection is not None:
+            get_span = selection.get_span
+        else:
+
+            def get_span(y: int) -> tuple[int, int] | None:
+                return None
+
+        for y, line in enumerate(self.split(allow_blank=True)):
+            if selection_style is not None and (span := get_span(y)) is not None:
+                start, end = span
+                if end == -1:
+                    end = len(line.plain)
+                line = line.stylize(selection_style, start, end)
+
+            content_line = ContentLine(line.expand_tabs(tab_size), width, y=y)
+
+            if no_wrap:
+                new_lines = [content_line]
+            else:
+                offsets = divide_line(line.plain, width, fold=overflow == "fold")
+                divided_lines = content_line.content.divide(offsets)
+                new_lines = [
+                    ContentLine(content.rstrip_end(width), width, offset, y)
+                    for content, offset in zip(divided_lines, [0, *offsets])
+                ]
+
+            # new_lines = [_line.rstrip_end(width) for _line in new_lines]
+            # if align in ("left", "justify"):
+            # new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
+            # new_lines = [
+            #     _line.truncate(width, overflow=overflow) for _line in new_lines
+            # ]
+            # lines.extend(new_lines)
+            output_lines.extend(new_lines)
+
+        return output_lines
+
     def render_strips(
         self,
         widget: Widget,
@@ -288,13 +338,11 @@ class Content(Visual):
         if height is not None:
             lines = lines[:height]
 
-        strip_lines = [
-            Strip(line.render_segments(style), line.cell_length) for line in lines
-        ]
-
-        if align in ("left", "right", "center"):
-            strip_lines = [strip.text_align(width, align) for strip in strip_lines]
-
+        # strip_lines = [
+        #     Strip(line.content.render_segments(style), line.content.cell_length)
+        #     for line in lines
+        # ]
+        strip_lines = [line.to_strip(style) for line in lines]
         return strip_lines
 
     def get_height(self, width: int) -> int:
@@ -550,11 +598,13 @@ class Content(Visual):
                 _Span(start + count, end + count, style)
                 for start, end, style in self._spans
             ]
-            return Content(
+            content = Content(
                 text,
                 spans,
                 None if self._cell_length is None else self._cell_length + count,
             )
+            return content
+
         return self
 
     def extend_right(self, count: int, character: str = " ") -> Content:
@@ -780,7 +830,6 @@ class Content(Visual):
     def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
         _Segment = Segment
         render = list(self.render(base_style, end))
-
         segments = [_Segment(text, style.get_rich_style()) for text, style in render]
         return segments
 
@@ -965,56 +1014,6 @@ class Content(Visual):
         content = Content("").join(new_text)
         return content
 
-    def wrap(
-        self,
-        width: int,
-        align: TextAlign = "center",
-        overflow: OverflowMethod = "fold",
-        no_wrap: bool = False,
-        tab_size: int = 8,
-        selection: Selection | None = None,
-        selection_style: Style | None = None,
-    ) -> list[Content]:
-        lines: list[Content] = []
-
-        if selection is not None:
-            get_span = selection.get_span
-        else:
-
-            def get_span(y: int) -> tuple[int, int] | None:
-                return None
-
-        for y, line in enumerate(self.split(allow_blank=True)):
-            line = line.stylize(Style(y=y))
-            if "\t" in line._text:
-                line = line.expand_tabs(tab_size)
-
-            if selection_style is not None and (span := get_span(y)) is not None:
-                start, end = span
-                if end == -1:
-                    end = len(line.plain)
-                line = line.stylize(selection_style, start, end)
-
-            if no_wrap:
-                new_lines = [line]
-            else:
-                offsets = divide_line(line._text, width, fold=overflow == "fold")
-                new_lines = line.divide(offsets)
-                new_lines = [
-                    line.stylize(Style(x=offset))
-                    for offset, line in zip([0, *offsets], lines)
-                ]
-
-            new_lines = [line.rstrip_end(width) for line in new_lines]
-            if align in ("left", "justify"):
-                new_lines = _align_lines(
-                    new_lines, width, align=align, overflow=overflow
-                )
-            new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
-            lines.extend(new_lines)
-
-        return lines
-
     def highlight_regex(
         self,
         re_highlight: re.Pattern[str] | str,
@@ -1031,6 +1030,65 @@ class Content(Visual):
             if end > start:
                 append_span(_Span(start, end, style))
         return Content(self._text, spans)
+
+
+class ContentLine:
+    def __init__(self, content: Content, width: int, x: int = 0, y: int = 0) -> None:
+        self.content = content
+        self.width = width
+        self.x = x
+        self.y = y
+        self.pad_left = 0
+        self.pad_right = 0
+        self.highlight_style: Style | None = None
+        self.highlight_range: tuple[int | None, int | None] | None = None
+
+    @property
+    def plain(self) -> str:
+        return self.content.plain
+
+    def center(self, width: int):
+        excess_space = width - self.content.cell_length
+        self.pad_left = excess_space // 2
+        self.pad_right = excess_space - self.pad_left
+
+    def left(self, width: int) -> None:
+        self.pad_left = 0
+        self.right_left = width - self.content.cell_length
+
+    def right(self, width: int) -> None:
+        self.pad_left = 0
+        self.pad_right = width - self.content.cell_length
+
+    def highlight(self, style: Style, start: int | None, end: int | None) -> None:
+        self.highlight_style = style
+        self.highlight_range = (start, end)
+
+    def to_strip(self, style: Style) -> Strip:
+        self.left(self.width)
+        content = self.content
+        if self.highlight_style is not None and self.highlight_range is not None:
+            start, end = self.highlight_range
+            content = content.stylize(self.highlight_style, start, end)
+        content = content.truncate(self.width)
+        _Segment = Segment
+        base_rich_style = style.rich_style
+        x = self.x
+        y = self.y
+        segments: list[Segment] = (
+            [Segment(" " * self.pad_left, base_rich_style)] if self.pad_left else []
+        )
+        add_segment = segments.append
+        for text, text_style in content.render(style, end=""):
+            add_segment(
+                _Segment(text, (style + text_style).rich_style_with_offset(x, y))
+            )
+            x += len(text)
+
+        if self.pad_right:
+            segments.append(Segment(" " * self.pad_right, base_rich_style))
+        strip = Strip(segments, content.cell_length + self.pad_left + self.pad_right)
+        return strip
 
 
 if __name__ == "__main__":
