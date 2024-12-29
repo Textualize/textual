@@ -1455,14 +1455,16 @@ class Widget(DOMNode):
         viewport: Size,
         width_fraction: Fraction,
         height_fraction: Fraction,
+        constrain_width: bool = False,
     ) -> BoxModel:
         """Process the box model for this widget.
 
         Args:
-            container: The size of the container widget (with a layout)
+            container: The size of the container widget (with a layout).
             viewport: The viewport size.
             width_fraction: A fraction used for 1 `fr` unit on the width dimension.
             height_fraction: A fraction used for 1 `fr` unit on the height dimension.
+            constrain_width: Restrict the width to the container width.
 
         Returns:
             The size and margin for this widget.
@@ -1533,6 +1535,9 @@ class Widget(DOMNode):
             content_width = min(content_width, max_width)
 
         content_width = max(Fraction(0), content_width)
+
+        if constrain_width:
+            content_width = min(Fraction(container.width - gutter.width), content_width)
 
         if styles.height is None:
             # No height specified, fill the available space
