@@ -17,6 +17,7 @@ from textual.containers import (
     Grid,
     Middle,
     Vertical,
+    VerticalGroup,
     VerticalScroll,
     HorizontalGroup,
 )
@@ -3193,3 +3194,39 @@ def test_select_refocus(snap_compare):
                 yield MyListView()
 
     snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
+
+
+def test_widgets_in_grid(snap_compare):
+    """You should see a 3x3 grid of labels where the text is wrapped, and there is no superfluous space."""
+    TEXT = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain."""
+
+    class MyApp(App):
+        CSS = """
+        VerticalGroup {
+            layout: grid;
+            grid-size: 3 3;
+            grid-columns: 1fr;
+            grid-rows: auto;
+            height: auto;
+            background: blue;
+        }
+        Label {        
+            border: heavy red;
+            text-align: left;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup():
+                for n in range(9):
+                    label = Label(TEXT, id=f"label{n}")
+                    label.border_title = str(n)
+                    yield label
+
+    snap_compare(MyApp(), terminal_size=(100, 50))
