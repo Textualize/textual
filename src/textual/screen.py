@@ -221,13 +221,18 @@ class Screen(Generic[ScreenResultType], Widget):
     """The currently maximized widget, or `None` for no maximized widget."""
 
     selections: var[dict[Widget, Selection]] = var(dict)
+    """Map of widgets and selected ranges."""
+
     _selecting = var(False)
+    """Indicates mouse selection is in progress."""
 
     _select_start: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
-    """Tuple of (widget, screen offset, text offset)"""
+    """Tuple of (widget, screen offset, text offset) where selection started."""
     _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
+    """Tuple of (widget, screen offset, text offset) where selection ends."""
 
     _mouse_down_offset: var[Offset | None] = var(None)
+    """Last mouse down screen offset, or `None` if the mouse is up."""
 
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
