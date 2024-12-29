@@ -227,6 +227,8 @@ class Screen(Generic[ScreenResultType], Widget):
     """Tuple of (widget, screen offset, text offset)"""
     _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
 
+    _mouse_down_offset: var[Offset | None] = var(None)
+
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
@@ -916,20 +918,12 @@ class Screen(Generic[ScreenResultType], Widget):
                 [widget for widget in widgets if widget._has_focus_within], animate=True
             )
 
-    def set_focus(
-        self,
-        widget: Widget | None,
-        scroll_visible: bool = True,
-        from_app_focus: bool = False,
-    ) -> None:
+    def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
 
         Args:
             widget: Widget to focus, or None to un-focus.
             scroll_visible: Scroll widget in to view.
-            from_app_focus: True if this focus is due to the app itself having regained
-                focus. False if the focus is being set because a widget within the app
-                regained focus.
         """
         if widget is self.focused:
             # Widget is already focused
@@ -954,7 +948,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 # Change focus
                 self.focused = widget
                 # Send focus event
-                widget.post_message(events.Focus(from_app_focus=from_app_focus))
+                widget.post_message(events.Focus())
                 focused = widget
 
                 if scroll_visible:
@@ -1443,16 +1437,28 @@ class Screen(Generic[ScreenResultType], Widget):
             self.post_message(event)
 
         if isinstance(event, events.MouseDown):
+            self._mouse_down_offset = event.screen_offset
             select_widget, select_offset = self.get_widget_and_offset_at(
-                event.x, event.y
+                event.screen_x, event.screen_y
             )
             if select_widget is not None and select_widget.ALLOW_SELECT:
-                self.selections = {}
                 self._selecting = True
                 if select_widget is not None and select_offset is not None:
-                    self._select_start = (select_widget, event.offset, select_offset)
+                    self._select_start = (
+                        select_widget,
+                        event.screen_offset,
+                        select_offset,
+                    )
+            else:
+                self._selection = False
 
         elif isinstance(event, events.MouseUp):
+            if (
+                self._mouse_down_offset is not None
+                and self._mouse_down_offset == event.screen_offset
+            ):
+                self.clear_selection()
+            self._mouse_down_offset = None
             self._selecting = False
 
         elif isinstance(event, events.MouseMove):
