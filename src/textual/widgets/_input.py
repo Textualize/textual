@@ -285,10 +285,10 @@ class Input(ScrollView):
             return self.input
 
     @dataclass
-    class Blur(Message):
+    class Blurred(Message):
         """Posted when the widget is blurred (loses focus).
 
-        Can be handled using `on_input_blur` in a subclass of `Input` or in a parent
+        Can be handled using `on_input_blurred` in a subclass of `Input` or in a parent
         widget in the DOM.
         """
 
@@ -662,7 +662,7 @@ class Input(ScrollView):
         validation_result = (
             self.validate(self.value) if "blur" in self.validate_on else None
         )
-        self.post_message(self.Blur(self, self.value, validation_result))
+        self.post_message(self.Blurred(self, self.value, validation_result))
 
     def _on_focus(self, event: Focus) -> None:
         self._restart_blink()
