@@ -299,8 +299,9 @@ def test_escape_sequence_resulting_in_multiple_keypresses(parser):
     assert events[1].key == "shift+insert"
 
 
-def test_terminal_mode_reporting_synchronized_output_supported(parser):
-    sequence = "\x1b[?2026;1$y"
+@pytest.mark.parametrize("parameter", range(1, 5))
+def test_terminal_mode_reporting_synchronized_output_supported(parser, parameter):
+    sequence = f"\x1b[?2026;{parameter}$y"
     events = list(parser.feed(sequence))
     assert len(events) == 1
     assert isinstance(events[0], TerminalSupportsSynchronizedOutput)
