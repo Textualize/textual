@@ -199,7 +199,7 @@ In addition to serving your apps locally, you can serve apps with [Textual Web](
 
 Textual Web's firewall-busting technology can serve an unlimited number of applications.
 
-Since Textual apps have low system requirements, you can install them anywhere Python also runs. Turning any device in to a connected device.
+Since Textual apps have low system requirements, you can install them anywhere Python also runs. Turning any device into a connected device.
 No desktop required!
 
 

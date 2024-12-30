@@ -91,7 +91,7 @@ Knowing which test has failed will help you quickly track down where your code w
 ## Simulating key presses
 
 We've seen how the [`press`][textual.pilot.Pilot] method simulates keys.
-You can also supply multiple keys to simulate the user typing in to the app.
+You can also supply multiple keys to simulate the user typing into the app.
 Here's an example of simulating the user typing the word "hello".
 
 ```python

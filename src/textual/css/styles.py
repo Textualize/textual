@@ -660,7 +660,7 @@ class StylesBase:
         """
 
     def merge_rules(self, rules: RulesMap) -> None:
-        """Merge rules in to Styles.
+        """Merge rules into Styles.
 
         Args:
             rules: A mapping of rules.

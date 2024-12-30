@@ -78,7 +78,7 @@ class InvokeLater(Message, verbose=True, bubble=False):
 
 @rich.repr.auto
 class ScrollToRegion(Message, bubble=False):
-    """Ask the parent to scroll a given region in to view."""
+    """Ask the parent to scroll a given region into view."""
 
     def __init__(self, region: Region) -> None:
         self.region = region

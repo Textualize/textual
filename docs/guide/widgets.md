@@ -407,7 +407,7 @@ Textual will call this method as required to get content for every row of charac
 --8<-- "docs/images/render_line.excalidraw.svg"
 </div>
 
-Let's look at an example before we go in to the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers game. Here's the code:
+Let's look at an example before we go into the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers game. Here's the code:
 
 === "checker01.py"
 

@@ -2344,7 +2344,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return y_offsets[y]
 
     def _render_line(self, y: int, x1: int, x2: int, base_style: Style) -> Strip:
-        """Render a (possibly cropped) line in to a Strip (a list of segments
+        """Render a (possibly cropped) line into a Strip (a list of segments
             representing a horizontal line).
 
         Args:

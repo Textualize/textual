@@ -246,7 +246,7 @@ class LinuxInlineDriver(Driver):
     def _request_terminal_sync_mode_support(self) -> None:
         """Writes an escape sequence to query the terminal support for the sync protocol."""
         # Terminals should ignore this sequence if not supported.
-        # Apple terminal doesn't, and writes a single 'p' in to the terminal,
+        # Apple terminal doesn't, and writes a single 'p' into the terminal,
         # so we will make a special case for Apple terminal (which doesn't support sync anyway).
         if os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
             self.write("\033[?2026$p")

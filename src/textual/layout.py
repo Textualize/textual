@@ -164,7 +164,7 @@ class WidgetPlacement(NamedTuple):
 
         Args:
             constrain_region: The container region when applying constrain rules.
-            absolute_offset: Default absolute offset that moves widget in to screen coordinates.
+            absolute_offset: Default absolute offset that moves widget into screen coordinates.
 
         Returns:
             Processes placement, may be the same instance.

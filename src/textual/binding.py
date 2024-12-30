@@ -85,7 +85,7 @@ class Binding:
     """Make this binding a system binding, which removes it from the key panel."""
 
     def parse_key(self) -> tuple[list[str], str]:
-        """Parse a key in to a list of modifiers, and the actual key.
+        """Parse a key into a list of modifiers, and the actual key.
 
         Returns:
             A tuple of (MODIFIER LIST, KEY).

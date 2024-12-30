@@ -12,7 +12,7 @@ This is H3 Content
 
 #### This is H4
 
-Header level 4 content. Drilling down in to finer headings.
+Header level 4 content. Drilling down into finer headings.
 
 ##### This is H5
 
@@ -85,7 +85,7 @@ In the future I think we could add controls to export the code, copy to the clip
 ```python
 @lru_cache(maxsize=1024)
 def split(self, cut_x: int, cut_y: int) -> tuple[Region, Region, Region, Region]:
-    """Split a region in to 4 from given x and y offsets (cuts).
+    """Split a region into 4 from given x and y offsets (cuts).
 
     ```
                 cut_x ↓

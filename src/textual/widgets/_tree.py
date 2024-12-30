@@ -1199,7 +1199,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Scroll to the given node.
 
         Args:
-            node: Node to scroll in to view.
+            node: Node to scroll into view.
             animate: Animate scrolling.
         """
         line = node._line

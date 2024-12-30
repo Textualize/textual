@@ -134,7 +134,7 @@ The following example modifies "refresh01.py" so that the greeting has an automa
     ```{.textual path="docs/examples/guide/reactivity/refresh02.py" press="n,a,m,e"}
     ```
 
-If you type in to the input now, the greeting will expand to fit the content. If you were to set `layout=False` on the reactive attribute, you should see that the box remains the same size when you type.
+If you type into the input now, the greeting will expand to fit the content. If you were to set `layout=False` on the reactive attribute, you should see that the box remains the same size when you type.
 
 ## Validation
 
@@ -171,7 +171,7 @@ Watch method names begin with `watch_` followed by the name of the attribute, an
 If the method accepts a single argument, it will be called with the new assigned value.
 If the method accepts *two* positional arguments, it will be called with both the *old* value and the *new* value.
 
-The following app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44"`.
+The following app will display any color you type into the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44"`.
 
 === "watch01.py"
 
@@ -311,7 +311,7 @@ Compute methods are the final superpower offered by the `reactive` descriptor. T
 
 You could be forgiven in thinking this sounds a lot like Python's property decorator. The difference is that Textual will cache the value of compute methods, and update them when any other reactive attribute changes.
 
-The following example uses a computed attribute. It displays three inputs for each color component (red, green, and blue). If you enter numbers in to these inputs, the background color of another widget changes.
+The following example uses a computed attribute. It displays three inputs for each color component (red, green, and blue). If you enter numbers into these inputs, the background color of another widget changes.
 
 === "computed01.py"
 
@@ -319,7 +319,7 @@ The following example uses a computed attribute. It displays three inputs for ea
     --8<-- "docs/examples/guide/reactivity/computed01.py"
     ```
 
-    1. Combines color components in to a Color object.
+    1. Combines color components into a Color object.
     2. The watch method is called when the _result_ of `compute_color` changes.
 
 === "computed01.tcss"

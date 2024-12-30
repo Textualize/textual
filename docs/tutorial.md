@@ -157,14 +157,14 @@ Here's what the above app defines:
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The final three lines create an instance of the app and calls the [run()][textual.app.App.run] method which puts your terminal in to *application mode* and runs the app until you exit with ++ctrl+q++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
+The final three lines create an instance of the app and calls the [run()][textual.app.App.run] method which puts your terminal into *application mode* and runs the app until you exit with ++ctrl+q++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
 
 ## Designing a UI with widgets
 
 Textual has a large number of [builtin widgets](./widget_gallery.md).
 For our app we will need new widgets, which we can create by extending and combining the builtin widgets.
 
-Before we dive in to building widgets, let's first sketch a design for the app &mdash; so we know what we're aiming for.
+Before we dive into building widgets, let's first sketch a design for the app &mdash; so we know what we're aiming for.
 
 
 <div class="excalidraw">

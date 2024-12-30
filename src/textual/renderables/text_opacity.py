@@ -33,7 +33,7 @@ def _get_blended_style_cached(
 
 
 class TextOpacity:
-    """Blend foreground in to background."""
+    """Blend foreground into background."""
 
     def __init__(self, renderable: RenderableType, opacity: float = 1.0) -> None:
         """Wrap a renderable to blend foreground color into the background color.
