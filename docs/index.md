@@ -196,7 +196,7 @@ Click the tabs to see the code behind the example.
 
 === "Calculator example"
 
-    ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
+    ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,1,5,9,2,wait:400"}
     ```
 
 === "calculator.py"
