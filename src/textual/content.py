@@ -37,58 +37,6 @@ if TYPE_CHECKING:
 _re_whitespace = re.compile(r"\s+$")
 
 
-def _align_lines(
-    lines: list[Content],
-    width: int,
-    align: TextAlign = "left",
-    overflow: "OverflowMethod" = "fold",
-) -> list[Content]:
-    """Align and overflow text.
-
-    Args:
-        width (int): Number of cells available per line.
-        align (str, optional): Desired text alignment.
-        overflow (str, optional): Default overflow for text: "crop", "fold", or "ellipsis". Defaults to "fold".
-
-    Returns:
-        List of new lines.
-
-    """
-
-    for line in lines:
-        assert isinstance(line._spans, list)
-
-    if align == "left":
-        lines = [line.truncate(width, overflow=overflow, pad=True) for line in lines]
-    elif align == "center":
-        lines = [line.center(width) for line in lines]
-    elif align == "right":
-        lines = [line.right(width) for line in lines]
-    elif align == "justify":
-        new_lines = lines.copy()
-        for line_index, line in enumerate(new_lines):
-            if line_index == len(lines) - 1:
-                break
-            words = line.split(" ", include_separator=True)
-            words_size = sum(cell_len(word.plain.rstrip(" ")) for word in words)
-            num_spaces = len(words) - 1
-            spaces = [0 for _ in range(num_spaces)]
-            index = 0
-            if spaces:
-                while words_size + num_spaces < width:
-                    spaces[len(spaces) - index - 1] += 1
-                    num_spaces += 1
-                    index = (index + 1) % len(spaces)
-            tokens = [
-                word.extend_right(spaces[index]) if index < len(spaces) else word
-                for index, word in enumerate(words)
-            ]
-            new_lines[line_index] = Content("").join(tokens)
-
-        return new_lines
-    return lines
-
-
 ANSI_DEFAULT = Style(
     background=Color(0, 0, 0, 0, ansi=-1), foreground=Color(0, 0, 0, 0, ansi=-1)
 )
@@ -280,7 +228,9 @@ class Content(Visual):
                     end = len(line.plain)
                 line = line.stylize(selection_style, start, end)
 
-            content_line = ContentLine(line.expand_tabs(tab_size), width, y=y)
+            content_line = ContentLine(
+                line.expand_tabs(tab_size), width, y=y, align=align
+            )
 
             if no_wrap:
                 new_lines = [content_line]
@@ -288,17 +238,13 @@ class Content(Visual):
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
                 divided_lines = content_line.content.divide(offsets)
                 new_lines = [
-                    ContentLine(content.rstrip_end(width), width, offset, y)
+                    ContentLine(
+                        content.rstrip_end(width), width, offset, y, align=align
+                    )
                     for content, offset in zip(divided_lines, [0, *offsets])
                 ]
+                new_lines[-1].line_end = True
 
-            # new_lines = [_line.rstrip_end(width) for _line in new_lines]
-            # if align in ("left", "justify"):
-            # new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
-            # new_lines = [
-            #     _line.truncate(width, overflow=overflow) for _line in new_lines
-            # ]
-            # lines.extend(new_lines)
             output_lines.extend(new_lines)
 
         return output_lines
@@ -1033,13 +979,21 @@ class Content(Visual):
 
 
 class ContentLine:
-    def __init__(self, content: Content, width: int, x: int = 0, y: int = 0) -> None:
+    def __init__(
+        self,
+        content: Content,
+        width: int,
+        x: int = 0,
+        y: int = 0,
+        align: TextAlign = "left",
+        line_end: bool = False,
+    ) -> None:
         self.content = content
         self.width = width
         self.x = x
         self.y = y
-        self.pad_left = 0
-        self.pad_right = 0
+        self.align = align
+        self.line_end = line_end
         self.highlight_style: Style | None = None
         self.highlight_range: tuple[int | None, int | None] | None = None
 
@@ -1047,36 +1001,66 @@ class ContentLine:
     def plain(self) -> str:
         return self.content.plain
 
-    def center(self, width: int):
-        excess_space = width - self.content.cell_length
-        self.pad_left = excess_space // 2
-        self.pad_right = excess_space - self.pad_left
-
-    def left(self, width: int) -> None:
-        self.pad_left = 0
-        self.right_left = width - self.content.cell_length
-
-    def right(self, width: int) -> None:
-        self.pad_left = 0
-        self.pad_right = width - self.content.cell_length
-
     def highlight(self, style: Style, start: int | None, end: int | None) -> None:
         self.highlight_style = style
         self.highlight_range = (start, end)
 
     def to_strip(self, style: Style) -> Strip:
-        self.left(self.width)
+        _Segment = Segment
+        align = self.align
+        width = self.width
+        pad_left = pad_right = 0
         content = self.content
+        x = self.x
+        y = self.y
+        base_rich_style = style.rich_style
+
         if self.highlight_style is not None and self.highlight_range is not None:
             start, end = self.highlight_range
             content = content.stylize(self.highlight_style, start, end)
-        content = content.truncate(self.width)
-        _Segment = Segment
-        base_rich_style = style.rich_style
-        x = self.x
-        y = self.y
+
+        if align in ("start", "left") or self.line_end:
+            pad_right = width - self.content.cell_length
+
+        elif align == "center":
+            excess_space = width - self.content.cell_length
+            pad_left = excess_space // 2
+            pad_right = excess_space - pad_left
+
+        elif align in ("end", "right"):
+            pad_left = width - self.content.cell_length
+
+        elif align == "justify":
+            words = content.split(" ", include_separator=False)
+            words_size = sum(cell_len(word.plain.rstrip(" ")) for word in words)
+            num_spaces = len(words) - 1
+            spaces = [1] * num_spaces
+            index = 0
+            if spaces:
+                while words_size + num_spaces < width:
+                    spaces[len(spaces) - index - 1] += 1
+                    num_spaces += 1
+                    index = (index + 1) % len(spaces)
+
+            segments: list[Segment] = []
+            add_segment = segments.append
+            x = self.x
+            for index, word in enumerate(words):
+                for text, text_style in word.render(style, end=""):
+                    add_segment(
+                        _Segment(
+                            text, (style + text_style).rich_style_with_offset(x, y)
+                        )
+                    )
+                    x += len(text) + 1
+                if index < len(spaces) and (pad := spaces[index]):
+                    add_segment(_Segment(" " * pad, (style + text_style).rich_style))
+
+            strip = Strip(segments, width)
+            return strip
+
         segments: list[Segment] = (
-            [Segment(" " * self.pad_left, base_rich_style)] if self.pad_left else []
+            [Segment(" " * pad_left, base_rich_style)] if pad_left else []
         )
         add_segment = segments.append
         for text, text_style in content.render(style, end=""):
@@ -1085,9 +1069,9 @@ class ContentLine:
             )
             x += len(text)
 
-        if self.pad_right:
-            segments.append(Segment(" " * self.pad_right, base_rich_style))
-        strip = Strip(segments, content.cell_length + self.pad_left + self.pad_right)
+        if pad_right:
+            segments.append(_Segment(" " * pad_right, base_rich_style))
+        strip = Strip(segments, content.cell_length + pad_left + pad_right)
         return strip
 
 
