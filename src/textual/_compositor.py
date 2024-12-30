@@ -1,6 +1,6 @@
 """
 
-The compositor handles combining widgets in to a single screen (i.e. compositing).
+The compositor handles combining widgets into a single screen (i.e. compositing).
 
 It also stores the results of that process, so that Textual knows the widgets on
 the screen and their locations. The compositor uses this information to answer

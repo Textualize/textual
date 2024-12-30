@@ -408,7 +408,7 @@ class Region(NamedTuple):
         """Calculate the smallest offset required to translate a window so that it contains
         another region.
 
-        This method is used to calculate the required offset to scroll something in to view.
+        This method is used to calculate the required offset to scroll something into view.
 
         Args:
             window_region: The window region.
@@ -433,7 +433,7 @@ class Region(NamedTuple):
             and (window_right > right >= window_left)
         ):
             # The region does not fit
-            # The window needs to scroll on the X axis to bring region in to view
+            # The window needs to scroll on the X axis to bring region into view
             delta_x = min(
                 left - window_left,
                 left - (window_right - region.width),
@@ -447,7 +447,7 @@ class Region(NamedTuple):
             (window_bottom > top_ >= window_top)
             and (window_bottom > bottom >= window_top)
         ):
-            # The window needs to scroll on the Y axis to bring region in to view
+            # The window needs to scroll on the Y axis to bring region into view
             delta_y = min(
                 top_ - window_top,
                 top_ - (window_bottom - region.height),
@@ -846,7 +846,7 @@ class Region(NamedTuple):
 
     @lru_cache(maxsize=1024)
     def split(self, cut_x: int, cut_y: int) -> tuple[Region, Region, Region, Region]:
-        """Split a region in to 4 from given x and y offsets (cuts).
+        """Split a region into 4 from given x and y offsets (cuts).
 
         ```
                    cut_x ↓
@@ -886,7 +886,7 @@ class Region(NamedTuple):
 
     @lru_cache(maxsize=1024)
     def split_vertical(self, cut: int) -> tuple[Region, Region]:
-        """Split a region in to two, from a given x offset.
+        """Split a region into two, from a given x offset.
 
         ```
                  cut ↓
@@ -915,7 +915,7 @@ class Region(NamedTuple):
 
     @lru_cache(maxsize=1024)
     def split_horizontal(self, cut: int) -> tuple[Region, Region]:
-        """Split a region in to two, from a given y offset.
+        """Split a region into two, from a given y offset.
 
         ```
                     ┌─────────┐

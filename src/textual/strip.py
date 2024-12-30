@@ -39,7 +39,7 @@ def get_line_length(segments: Iterable[Segment]) -> int:
 
 
 class StripRenderable:
-    """A renderable which renders a list of strips in to lines."""
+    """A renderable which renders a list of strips into lines."""
 
     def __init__(self, strips: list[Strip], width: int | None = None) -> None:
         self._strips = strips
@@ -276,7 +276,7 @@ class Strip:
 
     @classmethod
     def join(cls, strips: Iterable[Strip | None]) -> Strip:
-        """Join a number of strips in to one.
+        """Join a number of strips into one.
 
         Args:
             strips: An iterable of Strips.
@@ -516,7 +516,7 @@ class Strip:
         return strip
 
     def divide(self, cuts: Iterable[int]) -> Sequence[Strip]:
-        """Divide the strip in to multiple smaller strips by cutting at given (cell) indices.
+        """Divide the strip into multiple smaller strips by cutting at given (cell) indices.
 
         Args:
             cuts: An iterable of cell positions as ints.

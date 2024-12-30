@@ -2845,7 +2845,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             widget: Widget to focus.
-            scroll_visible: Scroll widget in to view.
+            scroll_visible: Scroll widget into view.
         """
         self.screen.set_focus(widget, scroll_visible)
 

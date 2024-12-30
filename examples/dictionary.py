@@ -48,7 +48,7 @@ class DictionaryApp(App):
             self.query_one("#results", Markdown).update(markdown)
 
     def make_word_markdown(self, results: object) -> str:
-        """Convert the results in to markdown."""
+        """Convert the results into markdown."""
         lines = []
         if isinstance(results, dict):
             lines.append(f"# {results['title']}")

@@ -9,7 +9,7 @@ A Select widget is a compact control to allow the user to select between a numbe
 - [ ] Container
 
 
-The options in a select control may be passed in to the constructor or set later with [set_options][textual.widgets.Select.set_options].
+The options in a select control may be passed into the constructor or set later with [set_options][textual.widgets.Select.set_options].
 Options should be given as a sequence of tuples consisting of two values: the first is the string (or [Rich Renderable](https://rich.readthedocs.io/en/latest/protocol.html)) to display in the control and list of options, the second is the value of option.
 
 The value of the currently selected option is stored in the `value` attribute of the widget, and the `value` attribute of the [Changed][textual.widgets.Select.Changed] message.
