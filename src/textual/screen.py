@@ -925,12 +925,20 @@ class Screen(Generic[ScreenResultType], Widget):
                 [widget for widget in widgets if widget._has_focus_within], animate=True
             )
 
-    def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
+    def set_focus(
+        self,
+        widget: Widget | None,
+        scroll_visible: bool = True,
+        from_app_focus: bool = False,
+    ) -> None:
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
 
         Args:
             widget: Widget to focus, or None to un-focus.
             scroll_visible: Scroll widget in to view.
+            from_app_focus: True if this focus is due to the app itself having regained
+                focus. False if the focus is being set because a widget within the app
+                regained focus.
         """
         if widget is self.focused:
             # Widget is already focused
@@ -955,7 +963,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 # Change focus
                 self.focused = widget
                 # Send focus event
-                widget.post_message(events.Focus())
+                widget.post_message(events.Focus(from_app_focus=from_app_focus))
                 focused = widget
 
                 if scroll_visible:
