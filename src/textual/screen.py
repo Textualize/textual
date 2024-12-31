@@ -640,6 +640,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def clear_selection(self) -> None:
         """Clear any selected text."""
         self.selections = {}
+        self._select_start = None
+        self._select_end = None
 
     def _select_all_in_widget(self, widget: Widget) -> None:
         select_all = SELECT_ALL

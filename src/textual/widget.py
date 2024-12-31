@@ -641,6 +641,7 @@ class Widget(DOMNode):
 
     @property
     def selection(self) -> Selection | None:
+        """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
     def _cover(self, widget: Widget) -> None:

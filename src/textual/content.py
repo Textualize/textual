@@ -1019,7 +1019,7 @@ class ContentLine:
             start, end = self.highlight_range
             content = content.stylize(self.highlight_style, start, end)
 
-        if align in ("start", "left") or self.line_end:
+        if align in ("start", "left") or (align == "justify" and self.line_end):
             pad_right = width - self.content.cell_length
 
         elif align == "center":
