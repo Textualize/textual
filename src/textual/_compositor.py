@@ -893,6 +893,10 @@ class Compositor:
         if widget not in self.visible_widgets:
             return None, None
 
+        if y >= widget.content_region.bottom:
+            # If y is below the content region, default to the offset on the next line
+            return widget, Offset(x - region.x, widget.content_region.bottom)
+
         x -= region.x
         y -= region.y
 
@@ -905,7 +909,7 @@ class Compositor:
         start = 0
         for segment in lines[0]:
             end += segment.cell_length
-            if x < end:
+            if x <= end:
                 style = segment.style
                 if style and style._meta is not None:
                     meta = style.meta
