@@ -88,7 +88,7 @@ def visualize(widget: Widget, obj: object) -> Visual:
 
             if isinstance(obj, Text) and widget.allow_select:
                 return Content.from_rich_text(
-                    obj, align=obj.align or widget.styles.text_align
+                    obj, align=obj.justify or widget.styles.text_align
                 )
 
             # If its is a Rich renderable, wrap it with a RichVisual
@@ -267,6 +267,11 @@ class Style:
             link=self.link,
             _meta=self._meta,
         )
+
+    @cached_property
+    def background_style(self) -> Style:
+        """Just the background color, with no other attributes."""
+        return Style(self.background)
 
     @classmethod
     def combine(cls, styles: Iterable[Style]) -> Style:

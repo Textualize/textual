@@ -220,7 +220,6 @@ class Content(Visual):
         selection: Selection | None = None,
         selection_style: Style | None = None,
     ) -> list[ContentLine]:
-        # lines: list[Content] = []
         output_lines: list[ContentLine] = []
 
         if selection is not None:
@@ -1065,7 +1064,9 @@ class ContentLine:
             return strip
 
         segments: list[Segment] = (
-            [Segment(" " * pad_left, base_rich_style)] if pad_left else []
+            [Segment(" " * pad_left, style.background_style.rich_style)]
+            if pad_left
+            else []
         )
         add_segment = segments.append
         for text, text_style in content.render(style, end=""):
@@ -1075,7 +1076,9 @@ class ContentLine:
             x += len(text)
 
         if pad_right:
-            segments.append(_Segment(" " * pad_right, base_rich_style))
+            segments.append(
+                _Segment(" " * pad_right, style.background_style.rich_style)
+            )
         strip = Strip(segments, content.cell_length + pad_left + pad_right)
         return strip
 
