@@ -402,15 +402,25 @@ class Strip:
         """
 
         def remove_meta_from_segment(segment: Segment) -> Segment:
-            if segment.style is None:
-                return segment
+            """Build a Segment with no meta.
+
+            Args:
+                segment: Segment.
+
+            Returns:
+                Segment, sans meta.
+            """
             text, style, control = segment
+            if style is None:
+                return segment
             style = style.copy()
             style._meta = None
-
             return Segment(text, style, control)
 
-        return Strip([segment for segment in self._segments], self._cell_length)
+        return Strip(
+            [remove_meta_from_segment(segment) for segment in self._segments],
+            self._cell_length,
+        )
 
     def apply_filter(self, filter: LineFilter, background: Color) -> Strip:
         """Apply a filter to all segments in the strip.

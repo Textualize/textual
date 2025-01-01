@@ -930,21 +930,6 @@ class Compositor:
 
         return widget, (None if offset_y is None else Offset(offset_x2, offset_y))
 
-        # for segment in lines[0]:
-        #     end += segment.cell_length
-        #     if x <= end:
-        #         style = segment.style
-        #         if style and style._meta is not None:
-        #             meta = style.meta
-        #             if "offset" in meta:
-        #                 offset_x, offset_y = style.meta["offset"]
-        #                 offset = Offset(offset_x + (x - start), offset_y)
-        #                 return widget, offset
-
-        #         return widget, None
-        #     start = end
-        return widget, None
-
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.
 
@@ -1129,11 +1114,9 @@ class Compositor:
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
         if simplify:
-            render_strips = [
-                Strip.join(chop.values()).discard_meta().simplify() for chop in chops
-            ]
+            render_strips = [Strip.join(chop.values()).simplify() for chop in chops]
         else:
-            render_strips = [Strip.join(chop.values()).discard_meta() for chop in chops]
+            render_strips = [Strip.join(chop.values()) for chop in chops]
 
         return LayoutUpdate(render_strips, screen_region)
 

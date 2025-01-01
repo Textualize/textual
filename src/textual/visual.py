@@ -272,7 +272,7 @@ class Style:
     @cached_property
     def background_style(self) -> Style:
         """Just the background color, with no other attributes."""
-        return Style(self.background)
+        return Style(self.background, _meta=self._meta)
 
     @classmethod
     def combine(cls, styles: Iterable[Style]) -> Style:
