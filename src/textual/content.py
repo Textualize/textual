@@ -1017,7 +1017,6 @@ class ContentLine:
         content = self.content
         x = self.x
         y = self.y
-        base_rich_style = style.rich_style
 
         if self.highlight_style is not None and self.highlight_range is not None:
             start, end = self.highlight_range
@@ -1025,6 +1024,7 @@ class ContentLine:
 
         if align in ("start", "left") or (align == "justify" and self.line_end):
             pad_right = width - self.content.cell_length
+            pad_right = 0
 
         elif align == "center":
             excess_space = width - self.content.cell_length

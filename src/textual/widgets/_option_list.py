@@ -119,6 +119,7 @@ content to the option list. This is a superset of [`OptionListContent`][textual.
 class OptionList(ScrollView, can_focus=True):
     """A vertical option list with bounce-bar highlighting."""
 
+    ALLOW_SELECT = False
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("down", "cursor_down", "Down", show=False),
         Binding("end", "last", "Last", show=False),

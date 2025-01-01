@@ -893,10 +893,8 @@ class Compositor:
         if widget not in self.visible_widgets:
             return None, None
 
-        # if y >= widget.content_region.bottom:
-        #     # If y is below the content region, default to the offset on the next line
-        #     # y = widget.content_region.bottom
-        #     return widget, Offset(x - region.x, widget.content_region.bottom)
+        if y >= widget.content_region.bottom:
+            x, y = widget.content_region.bottom_right - (1, 1)
 
         x -= region.x
         y -= region.y
