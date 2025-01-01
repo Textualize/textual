@@ -1456,7 +1456,7 @@ class Screen(Generic[ScreenResultType], Widget):
             select_widget, select_offset = self.get_widget_and_offset_at(
                 event.screen_x, event.screen_y
             )
-            if select_widget is not None and select_widget.ALLOW_SELECT:
+            if select_widget is not None and select_widget.allow_select:
                 self._selecting = True
                 if select_widget is not None and select_offset is not None:
                     self._select_start = (
@@ -1464,6 +1464,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         event.screen_offset,
                         select_offset,
                     )
+
             else:
                 self._selection = False
 
@@ -1484,7 +1485,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
-                if select_widget is not None and select_offset is not None:
+                if (
+                    select_widget is not None
+                    and select_widget.allow_select
+                    and select_offset is not None
+                ):
                     self._select_end = (select_widget, event.offset, select_offset)
 
         if isinstance(event, events.MouseEvent):

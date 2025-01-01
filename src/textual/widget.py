@@ -314,7 +314,7 @@ class Widget(DOMNode):
     """
 
     ALLOW_SELECT: ClassVar[bool] = True
-    """Does this widget support automatic text selection?"""
+    """Does this widget support automatic text selection? May be further refined with [Widget.allow_select][textual.widget.Widget.allow_select]"""
 
     can_focus: bool = False
     """Widget may receive focus."""
@@ -2455,6 +2455,15 @@ class Widget(DOMNode):
                 self.call_after_refresh(on_complete)
 
         return scrolled_x or scrolled_y
+
+    @property
+    def allow_select(self) -> bool:
+        """Check if this widget permits text selection.
+
+        Returns:
+            `True` if the widget supports text selection, otherwise `False`.
+        """
+        return self.ALLOW_SELECT and not self.is_container
 
     def pre_layout(self, layout: Layout) -> None:
         """This method id called prior to a layout operation.

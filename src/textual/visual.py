@@ -86,8 +86,10 @@ def visualize(widget: Widget, obj: object) -> Visual:
             if isinstance(obj, str):
                 obj = widget.render_str(obj)
 
-            if isinstance(obj, Text) and widget.ALLOW_SELECT:
-                return Content.from_rich_text(obj, align=widget.styles.text_align)
+            if isinstance(obj, Text) and widget.allow_select:
+                return Content.from_rich_text(
+                    obj, align=obj.align or widget.styles.text_align
+                )
 
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))
@@ -173,6 +175,7 @@ class Style:
             underline=rich_style.underline,
             reverse=rich_style.reverse,
             strike=rich_style.strike,
+            _meta=rich_style._meta,
         )
 
     @classmethod

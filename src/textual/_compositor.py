@@ -884,7 +884,7 @@ class Compositor:
             y: Y position within the Layout.
 
         Returns:
-            A tuple of the Style at the cell (x, y) and the offset within the widget.
+            A tuple of the widget at (x, y) and the offset within the widget.
         """
         try:
             widget, region = self.get_widget_at(x, y)
@@ -893,9 +893,10 @@ class Compositor:
         if widget not in self.visible_widgets:
             return None, None
 
-        if y >= widget.content_region.bottom:
-            # If y is below the content region, default to the offset on the next line
-            return widget, Offset(x - region.x, widget.content_region.bottom)
+        # if y >= widget.content_region.bottom:
+        #     # If y is below the content region, default to the offset on the next line
+        #     # y = widget.content_region.bottom
+        #     return widget, Offset(x - region.x, widget.content_region.bottom)
 
         x -= region.x
         y -= region.y
@@ -907,19 +908,43 @@ class Compositor:
             return widget, None
         end = 0
         start = 0
+
+        offset_y: int | None = None
+        offset_x = 0
+        offset_x2 = 0
+
         for segment in lines[0]:
             end += segment.cell_length
-            if x <= end:
-                style = segment.style
-                if style and style._meta is not None:
-                    meta = style.meta
-                    if "offset" in meta:
-                        offset_x, offset_y = style.meta["offset"]
-                        offset = Offset(offset_x + (x - start), offset_y)
-                        return widget, offset
+            style = segment.style
+            if style is not None and style._meta is not None:
+                meta = style.meta
+                if "offset" in meta:
+                    offset_x, offset_y = style.meta["offset"]
+                    offset_x2 = offset_x + segment.cell_length
 
-                return widget, None
+                    if x <= end:
+                        return widget, (
+                            None
+                            if offset_y is None
+                            else Offset(offset_x + (x - start), offset_y)
+                        )
             start = end
+
+        return widget, (None if offset_y is None else Offset(offset_x2, offset_y))
+
+        # for segment in lines[0]:
+        #     end += segment.cell_length
+        #     if x <= end:
+        #         style = segment.style
+        #         if style and style._meta is not None:
+        #             meta = style.meta
+        #             if "offset" in meta:
+        #                 offset_x, offset_y = style.meta["offset"]
+        #                 offset = Offset(offset_x + (x - start), offset_y)
+        #                 return widget, offset
+
+        #         return widget, None
+        #     start = end
         return widget, None
 
     def find_widget(self, widget: Widget) -> MapGeometry:
@@ -1106,9 +1131,11 @@ class Compositor:
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
         if simplify:
-            render_strips = [Strip.join(chop.values()).simplify() for chop in chops]
+            render_strips = [
+                Strip.join(chop.values()).discard_meta().simplify() for chop in chops
+            ]
         else:
-            render_strips = [Strip.join(chop.values()) for chop in chops]
+            render_strips = [Strip.join(chop.values()).discard_meta() for chop in chops]
 
         return LayoutUpdate(render_strips, screen_region)
 

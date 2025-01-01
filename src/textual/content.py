@@ -11,6 +11,7 @@ TBD: Is this a public facing API or an internal one?
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from operator import itemgetter
 from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence
 
@@ -132,6 +133,7 @@ class Content(Visual):
         """
         if isinstance(text, str):
             text = Text.from_markup(text)
+
         if text._spans:
             ansi_theme: TerminalTheme | None
             try:
@@ -153,13 +155,20 @@ class Content(Visual):
         else:
             spans = []
 
-        return cls(
+        content = cls(
             text.plain,
             spans,
             align=align,
             no_wrap=no_wrap,
             ellipsis=ellipsis,
         )
+        if text.style:
+            content = content.stylize_before(
+                text.style
+                if isinstance(text.style, str)
+                else Style.from_rich_style(text.style, ansi_theme)
+            )
+        return content
 
     @classmethod
     def styled(
@@ -284,10 +293,6 @@ class Content(Visual):
         if height is not None:
             lines = lines[:height]
 
-        # strip_lines = [
-        #     Strip(line.content.render_segments(style), line.content.cell_length)
-        #     for line in lines
-        # ]
         strip_lines = [line.to_strip(style) for line in lines]
         return strip_lines
 
@@ -716,12 +721,12 @@ class Content(Visual):
             app = active_app.get()
             # TODO: Update when we add Content.from_markup
 
+            @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
-                return (
-                    Style.from_rich_style(app.console.get_style(style), app.ansi_theme)
-                    if isinstance(style, str)
-                    else style
+                visual_style = Style.from_rich_style(
+                    app.console.get_style(style), app.ansi_theme
                 )
+                return visual_style
 
         else:
             get_style = parse_style

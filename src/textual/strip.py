@@ -394,6 +394,24 @@ class Strip:
         )
         return line
 
+    def discard_meta(self) -> Strip:
+        """Remove all meta from segments.
+
+        Returns:
+            New strip.
+        """
+
+        def remove_meta_from_segment(segment: Segment) -> Segment:
+            if segment.style is None:
+                return segment
+            text, style, control = segment
+            style = style.copy()
+            style._meta = None
+
+            return Segment(text, style, control)
+
+        return Strip([segment for segment in self._segments], self._cell_length)
+
     def apply_filter(self, filter: LineFilter, background: Color) -> Strip:
         """Apply a filter to all segments in the strip.
 
