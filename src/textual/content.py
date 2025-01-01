@@ -1064,7 +1064,7 @@ class ContentLine:
             strip = Strip(segments, width)
             return strip
 
-        segments: list[Segment] = (
+        segments = (
             [Segment(" " * pad_left, style.background_style.rich_style)]
             if pad_left
             else []
