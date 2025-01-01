@@ -258,6 +258,7 @@ class Style:
 
     @cached_property
     def without_color(self) -> Style:
+        """The style with no color."""
         return Style(
             bold=self.bold,
             dim=self.dim,
