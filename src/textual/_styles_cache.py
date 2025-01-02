@@ -152,6 +152,7 @@ class StylesCache:
                 and hover_style._meta
                 and "@click" in hover_style.meta
             ):
+                1 / 0
                 link_style_hover = widget.link_style_hover
                 if link_style_hover:
                     strips = [

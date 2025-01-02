@@ -403,7 +403,7 @@ class Color(NamedTuple):
         """
         if destination.auto:
             destination = self.get_contrast_text(destination.a)
-        if destination.ansi is not None or self.ansi:
+        if destination.ansi is not None:
             return destination
         if factor <= 0:
             return self

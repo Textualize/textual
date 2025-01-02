@@ -131,6 +131,7 @@ class Style:
         yield "underline", self.underline, None
         yield "reverse", self.reverse, None
         yield "strike", self.strike, None
+        yield "link", self.link, None
 
         if self._meta is not None:
             yield "meta", self.meta
@@ -175,6 +176,7 @@ class Style:
             underline=rich_style.underline,
             reverse=rich_style.reverse,
             strike=rich_style.strike,
+            link=rich_style.link,
             _meta=rich_style._meta,
         )
 
