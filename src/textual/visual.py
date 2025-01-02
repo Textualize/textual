@@ -504,6 +504,7 @@ class Padding(Visual):
         render_width = width - (left + right)
         if render_width <= 0:
             return []
+
         strips = self._visual.render_strips(
             widget,
             render_width,

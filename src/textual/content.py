@@ -210,7 +210,7 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
 
-    def wrap(
+    def _wrap_and_format(
         self,
         width: int,
         align: TextAlign = "left",
@@ -219,8 +219,22 @@ class Content(Visual):
         tab_size: int = 8,
         selection: Selection | None = None,
         selection_style: Style | None = None,
-    ) -> list[ContentLine]:
-        output_lines: list[ContentLine] = []
+    ) -> list[FormattedLine]:
+        """Wraps the text and applies formatting.
+
+        Args:
+            width: Desired width.
+            align: Text alignment.
+            overflow: Overflow method.
+            no_wrap: Disabled wrapping.
+            tab_size: Cell with of tabs.
+            selection: Selection information or `None` if no selection.
+            selection_style: Selection style, or `None` if no selection.
+
+        Returns:
+            List of formatted lines.
+        """
+        output_lines: list[FormattedLine] = []
 
         if selection is not None:
             get_span = selection.get_span
@@ -236,7 +250,7 @@ class Content(Visual):
                     end = len(line.plain)
                 line = line.stylize(selection_style, start, end)
 
-            content_line = ContentLine(
+            content_line = FormattedLine(
                 line.expand_tabs(tab_size), width, y=y, align=align
             )
 
@@ -246,7 +260,7 @@ class Content(Visual):
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
                 divided_lines = content_line.content.divide(offsets)
                 new_lines = [
-                    ContentLine(
+                    FormattedLine(
                         content.rstrip_end(width), width, offset, y, align=align
                     )
                     for content, offset in zip(divided_lines, [0, *offsets])
@@ -277,7 +291,7 @@ class Content(Visual):
             selection_style = None
 
         align = self._align
-        lines = self.wrap(
+        lines = self._wrap_and_format(
             width,
             align=align,
             overflow=(
@@ -292,11 +306,11 @@ class Content(Visual):
         if height is not None:
             lines = lines[:height]
 
-        strip_lines = [line.to_strip(style) for line in lines]
+        strip_lines = [line.to_strip(widget, style) for line in lines]
         return strip_lines
 
     def get_height(self, width: int) -> int:
-        lines = self.wrap(width)
+        lines = self._wrap_and_format(width)
         return len(lines)
 
     def __len__(self) -> int:
@@ -982,7 +996,9 @@ class Content(Visual):
         return Content(self._text, spans)
 
 
-class ContentLine:
+class FormattedLine:
+    """A line of content with additional formatting information."""
+
     def __init__(
         self,
         content: Content,
@@ -991,6 +1007,7 @@ class ContentLine:
         y: int = 0,
         align: TextAlign = "left",
         line_end: bool = False,
+        link_style: Style | None = None,
     ) -> None:
         self.content = content
         self.width = width
@@ -998,6 +1015,7 @@ class ContentLine:
         self.y = y
         self.align = align
         self.line_end = line_end
+        self.link_style = link_style
         self.highlight_style: Style | None = None
         self.highlight_range: tuple[int | None, int | None] | None = None
 
@@ -1009,7 +1027,7 @@ class ContentLine:
         self.highlight_style = style
         self.highlight_range = (start, end)
 
-    def to_strip(self, style: Style) -> Strip:
+    def to_strip(self, widget: Widget, style: Style) -> Strip:
         _Segment = Segment
         align = self.align
         width = self.width
@@ -1024,8 +1042,6 @@ class ContentLine:
 
         if align in ("start", "left") or (align == "justify" and self.line_end):
             pass
-            # pad_right = width - self.content.cell_length
-            # pad_right = 0
 
         elif align == "center":
             excess_space = width - self.content.cell_length
@@ -1061,7 +1077,7 @@ class ContentLine:
                 if index < len(spaces) and (pad := spaces[index]):
                     add_segment(_Segment(" " * pad, (style + text_style).rich_style))
 
-            strip = Strip(segments, width)
+            strip = Strip(self._apply_link_style(widget, segments), width)
             return strip
 
         segments = (
@@ -1080,8 +1096,31 @@ class ContentLine:
             segments.append(
                 _Segment(" " * pad_right, style.background_style.rich_style)
             )
-        strip = Strip(segments, content.cell_length + pad_left + pad_right)
+        strip = Strip(
+            self._apply_link_style(widget, segments),
+            content.cell_length + pad_left + pad_right,
+        )
         return strip
+
+    def _apply_link_style(
+        self, widget: Widget, segments: list[Segment]
+    ) -> list[Segment]:
+        link_style = widget.link_style
+        _Segment = Segment
+        segments = [
+            _Segment(
+                text,
+                (
+                    style
+                    if style._meta is None
+                    else (style + link_style if "@click" in style.meta else style)
+                ),
+                control,
+            )
+            for text, style, control in segments
+            if style is not None
+        ]
+        return segments
 
 
 if __name__ == "__main__":
@@ -1116,7 +1155,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
         "will", Style(background=Color.parse("rgba(255, 255, 20, 0.3)"))
     )
 
-    lines = content.wrap(40, align="full")
+    lines = content._wrap_and_format(40, align="full")
     print(lines)
     print("x" * 40)
     for line in lines:
