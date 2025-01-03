@@ -1481,23 +1481,6 @@ class Screen(Generic[ScreenResultType], Widget):
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
-        if isinstance(event, events.MouseDown):
-            self._mouse_down_offset = event.screen_offset
-            select_widget, select_offset = self.get_widget_and_offset_at(
-                event.screen_x, event.screen_y
-            )
-            if select_widget is not None and select_widget.allow_select:
-                self._selecting = True
-                if select_widget is not None and select_offset is not None:
-                    self._select_start = (
-                        select_widget,
-                        event.screen_offset,
-                        select_offset,
-                    )
-
-            else:
-                self._selecting = False
-
         elif isinstance(event, events.MouseUp):
             if (
                 self._mouse_down_offset is not None
@@ -1522,7 +1505,23 @@ class Screen(Generic[ScreenResultType], Widget):
                 ):
                     self._select_end = (select_widget, event.offset, select_offset)
 
-        if isinstance(event, events.MouseEvent):
+        elif isinstance(event, events.MouseEvent):
+            if isinstance(event, events.MouseDown) and not self.app.mouse_captured:
+                self._mouse_down_offset = event.screen_offset
+                select_widget, select_offset = self.get_widget_and_offset_at(
+                    event.screen_x, event.screen_y
+                )
+                if select_widget is not None and select_widget.allow_select:
+                    self._selecting = True
+                    if select_widget is not None and select_offset is not None:
+                        self._select_start = (
+                            select_widget,
+                            event.screen_offset,
+                            select_offset,
+                        )
+                else:
+                    self._selecting = False
+
             try:
                 if self.app.mouse_captured:
                     widget = self.app.mouse_captured
