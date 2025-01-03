@@ -137,8 +137,9 @@ class Content(Visual):
         if isinstance(text, str):
             text = Text.from_markup(text)
 
+        ansi_theme: TerminalTheme | None = None
+
         if text._spans:
-            ansi_theme: TerminalTheme | None
             try:
                 ansi_theme = active_app.get().ansi_theme
             except LookupError:
@@ -166,6 +167,10 @@ class Content(Visual):
             ellipsis=ellipsis,
         )
         if text.style:
+            try:
+                ansi_theme = active_app.get().ansi_theme
+            except LookupError:
+                ansi_theme = None
             content = content.stylize_before(
                 text.style
                 if isinstance(text.style, str)

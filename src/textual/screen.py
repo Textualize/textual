@@ -645,6 +645,11 @@ class Screen(Generic[ScreenResultType], Widget):
         self._select_end = None
 
     def _select_all_in_widget(self, widget: Widget) -> None:
+        """Select a widget and all it's children.
+
+        Args:
+            widget: Widget to select.
+        """
         select_all = SELECT_ALL
         self.selections = {
             widget: select_all,
@@ -1503,7 +1508,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self._selecting = False
 
         elif isinstance(event, events.MouseMove):
-            event.style = self.get_style_at(event.x, event.y)
+            event.style = self.get_style_at(event.screen_x, event.screen_y)
             self._handle_mouse_move(event)
 
             if self._selecting:

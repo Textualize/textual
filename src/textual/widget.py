@@ -2317,6 +2317,11 @@ class Widget(DOMNode):
 
     @property
     def scrollable_container(self) -> Widget:
+        """The widget's (user) scrollable container.
+
+        Returns:
+            A container widgets.
+        """
         container: Widget = self
         for widget in self.ancestors:
             if isinstance(widget, Widget) and widget.is_scrollable:
@@ -4193,6 +4198,7 @@ class Widget(DOMNode):
         self.app.capture_mouse(None)
 
     def select_all(self) -> None:
+        """Select the entire widget."""
         self.screen._select_all_in_widget(self)
 
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:

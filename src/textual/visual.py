@@ -207,6 +207,14 @@ class Style:
 
     @classmethod
     def from_meta(cls, meta: dict[str, object]) -> Style:
+        """Create a Visual Style containing meta information.
+
+        Args:
+            meta: A dictionary of meta information.
+
+        Returns:
+            A new Style.
+        """
         return Style(_meta=dumps(meta))
 
     @cached_property
