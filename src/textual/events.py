@@ -431,6 +431,8 @@ class MouseEvent(InputEvent, bubble=True):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
+        if self.style:
+            yield "style", self.style
 
     @property
     def control(self) -> Widget | None:

@@ -177,6 +177,7 @@ class Color(NamedTuple):
         return cls(0, 0, 0, alpha_percentage / 100.0, auto=True)
 
     @classmethod
+    @lru_cache(maxsize=1024)
     def from_rich_color(
         cls, rich_color: RichColor | None, theme: TerminalTheme | None = None
     ) -> Color:
@@ -192,7 +193,9 @@ class Color(NamedTuple):
         if rich_color is None:
             return TRANSPARENT
         r, g, b = rich_color.get_truecolor(theme)
-        return cls(r, g, b)
+        return cls(
+            r, g, b, ansi=rich_color.number if rich_color.is_system_defined else None
+        )
 
     @classmethod
     def from_hsl(cls, h: float, s: float, l: float) -> Color:

@@ -58,6 +58,7 @@ class TextOpacity:
         Returns:
             Segments with applied opacity.
         """
+
         _Segment = Segment
         _from_color = Style.from_color
         if opacity == 0:

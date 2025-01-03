@@ -1024,6 +1024,12 @@ class DOMNode(MessagePump):
         )
 
     @property
+    def selection_style(self) -> Style:
+        """The style of selected text."""
+        style = self.screen.get_component_rich_style("screen--selection")
+        return style
+
+    @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode.
 

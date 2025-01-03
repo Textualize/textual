@@ -164,7 +164,7 @@ class Strip:
         strips: list[Strip],
         style: Style,
         width: int,
-        height: int,
+        height: int | None,
         horizontal: AlignHorizontal,
         vertical: AlignVertical,
     ) -> Iterable[Strip]:
@@ -202,18 +202,19 @@ class Strip:
                 yield blank
 
         top_blank_lines = bottom_blank_lines = 0
-        vertical_excess_space = max(0, height - shape_height)
+        if height is not None:
+            vertical_excess_space = max(0, height - shape_height)
 
-        if vertical == "top":
-            bottom_blank_lines = vertical_excess_space
-        elif vertical == "middle":
-            top_blank_lines = vertical_excess_space // 2
-            bottom_blank_lines = vertical_excess_space - top_blank_lines
-        elif vertical == "bottom":
-            top_blank_lines = vertical_excess_space
+            if vertical == "top":
+                bottom_blank_lines = vertical_excess_space
+            elif vertical == "middle":
+                top_blank_lines = vertical_excess_space // 2
+                bottom_blank_lines = vertical_excess_space - top_blank_lines
+            elif vertical == "bottom":
+                top_blank_lines = vertical_excess_space
 
-        if top_blank_lines:
-            yield from blank_lines(top_blank_lines)
+            if top_blank_lines:
+                yield from blank_lines(top_blank_lines)
 
         if horizontal == "left":
             for strip in strips:
@@ -392,6 +393,34 @@ class Strip:
             self._cell_length,
         )
         return line
+
+    def discard_meta(self) -> Strip:
+        """Remove all meta from segments.
+
+        Returns:
+            New strip.
+        """
+
+        def remove_meta_from_segment(segment: Segment) -> Segment:
+            """Build a Segment with no meta.
+
+            Args:
+                segment: Segment.
+
+            Returns:
+                Segment, sans meta.
+            """
+            text, style, control = segment
+            if style is None:
+                return segment
+            style = style.copy()
+            style._meta = None
+            return Segment(text, style, control)
+
+        return Strip(
+            [remove_meta_from_segment(segment) for segment in self._segments],
+            self._cell_length,
+        )
 
     def apply_filter(self, filter: LineFilter, background: Color) -> Strip:
         """Apply a filter to all segments in the strip.
@@ -609,3 +638,37 @@ class Strip:
         if right:
             segments.append(Segment(" " * right, style))
         return Strip(segments, cell_length + left + right)
+
+    def text_align(self, width: int, align: AlignHorizontal) -> Strip:
+        if align == "left":
+            if self.cell_length == width:
+                return self
+            else:
+                return Strip(
+                    line_pad(self._segments, 0, width - self.cell_length, Style.null()),
+                    width,
+                )
+        elif align == "center":
+            left_space = max(0, width - self.cell_length) // 2
+
+            if self.cell_length == width:
+                return self
+            else:
+                return Strip(
+                    line_pad(
+                        self._segments,
+                        left_space,
+                        width - self.cell_length - left_space,
+                        Style.null(),
+                    ),
+                    width,
+                )
+
+        elif align == "right":
+            if self.cell_length == width:
+                return self
+            else:
+                return Strip(
+                    line_pad(self._segments, width - self.cell_length, 0, Style.null()),
+                    width,
+                )
