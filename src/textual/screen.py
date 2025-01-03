@@ -1491,7 +1491,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     )
 
             else:
-                self._selection = False
+                self._selecting = False
 
         elif isinstance(event, events.MouseUp):
             if (
@@ -1574,54 +1574,45 @@ class Screen(Generic[ScreenResultType], Widget):
             key=lambda selection: (selection[0].region.offset.transpose),
         )
 
-        start_widget, screen_start, start_offset = select_start
-        end_widget, screen_end, end_offset = select_end
-
-        selections = {
-            start_widget: Selection(start_offset, None),
-            end_widget: Selection(None, end_offset),
-        }
+        start_widget, _screen_start, start_offset = select_start
+        end_widget, _screen_end, end_offset = select_end
 
         select_regions: list[Region] = []
-        if screen_start.y == screen_end.y:
-            select_regions.append(
-                Region.from_corners(
-                    screen_start.x,
-                    screen_start.y,
-                    screen_end.x,
-                    screen_start.y,
-                )
-            )
+        start_region = start_widget.content_region
+        end_region = end_widget.content_region
+        if end_region.y <= start_region.bottom:
+            select_regions.append(Region.union(start_region, end_region))
         else:
-            start_region = start_widget.content_region
-            end_region = end_widget.content_region
-            if end_region.y <= start_region.bottom:
-                select_regions.append(Region.union(start_region, end_region))
-            else:
-                container_region = start_widget.scrollable_container.content_region
-                start_region = Region.from_corners(
-                    start_region.x,
-                    start_region.y,
-                    container_region.right,
-                    start_region.bottom,
-                )
-                end_region = Region.from_corners(
+            container_region = Region.from_union(
+                [
+                    start_widget.scrollable_container.content_region,
+                    end_widget.scrollable_container.content_region,
+                ]
+            )
+
+            start_region = Region.from_corners(
+                start_region.x,
+                start_region.y,
+                container_region.right,
+                start_region.bottom,
+            )
+            end_region = Region.from_corners(
+                container_region.x,
+                end_region.y,
+                end_region.right,
+                end_region.bottom,
+            )
+            select_regions.append(start_region)
+            select_regions.append(end_region)
+            mid_height = end_region.y - start_region.bottom
+            if mid_height > 0:
+                mid_region = Region.from_corners(
                     container_region.x,
-                    end_region.y,
-                    end_region.right,
-                    end_region.bottom,
+                    start_region.bottom,
+                    container_region.right,
+                    start_region.bottom + mid_height,
                 )
-                select_regions.append(start_region)
-                select_regions.append(end_region)
-                mid_height = end_region.y - start_region.bottom
-                if mid_height > 0:
-                    mid_region = Region.from_corners(
-                        container_region.x,
-                        start_region.bottom,
-                        container_region.right,
-                        start_region.bottom + mid_height,
-                    )
-                    select_regions.append(mid_region)
+                select_regions.append(mid_region)
 
         spatial_map: SpatialMap[Widget] = SpatialMap()
         spatial_map.insert(
@@ -1644,8 +1635,15 @@ class Screen(Generic[ScreenResultType], Widget):
 
         select_all = SELECT_ALL
         self.selections = {
-            **selections,
-            **{widget: select_all for widget in highlighted_widgets},
+            start_widget: Selection(start_offset, None),
+            **{
+                widget: select_all
+                for widget in sorted(
+                    highlighted_widgets,
+                    key=lambda widget: widget.content_region.offset.transpose,
+                )
+            },
+            end_widget: Selection(None, end_offset),
         }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
