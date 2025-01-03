@@ -112,6 +112,9 @@ class Content(Visual):
         self._no_wrap = no_wrap
         self._ellipsis = ellipsis
 
+    def __str__(self) -> str:
+        return self._text
+
     @classmethod
     def from_rich_text(
         cls,

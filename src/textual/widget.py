@@ -61,6 +61,7 @@ from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
 from textual.color import Color
+from textual.content import Content
 from textual.css.match import match
 from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, WrongType
@@ -3809,6 +3810,22 @@ class Widget(DOMNode):
             underline=style.underline,
             strike=style.strike,
         )
+
+    def get_selection(self, selection: Selection) -> str | None:
+        """Get the text under the selection.
+
+        Args:
+            selection: Selection information.
+
+        Returns:
+            Extracted text, or `None` if no text could be extracted.
+        """
+        visual = self._render()
+        if isinstance(visual, (Text, Content)):
+            text = str(visual)
+        else:
+            return None
+        return selection.extract(text)
 
     def _render_content(self) -> None:
         """Render all lines."""

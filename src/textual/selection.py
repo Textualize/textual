@@ -27,6 +27,38 @@ class Selection(NamedTuple):
         offsets = sorted([offset1, offset2], key=(lambda offset: (offset.y, offset.x)))
         return cls(*offsets)
 
+    def extract(self, text: str) -> str:
+        """Extract selection from text.
+
+        Args:
+            text: Raw text pulled from widget.
+
+        Returns:
+            Extracted text.
+        """
+        lines = text.splitlines()
+        if self.start is None:
+            start_line = 0
+            start_offset = 0
+        else:
+            start_line, start_offset = self.start.transpose
+
+        if self.end is None:
+            end_line = len(lines) - 1
+            end_offset = len(lines[end_line])
+        else:
+            end_line, end_offset = self.end.transpose
+
+        if start_line == end_line:
+            return lines[start_line][start_offset:end_offset]
+
+        selection: list[str] = []
+        first_line, *mid_lines, last_line = lines[start_line:end_line]
+        selection.append(first_line[start_offset:])
+        selection.extend(mid_lines)
+        selection.append(last_line[: end_offset + 1])
+        return "\n".join(selection)
+
     def get_span(self, y: int) -> tuple[int, int] | None:
         """Get the selected span in a given line.
 

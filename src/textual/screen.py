@@ -237,6 +237,7 @@ class Screen(Generic[ScreenResultType], Widget):
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
+        Binding("ctrl+c", "screen.copy_text", "Copy selected text", show=False),
     ]
 
     def __init__(
@@ -832,6 +833,30 @@ class Screen(Generic[ScreenResultType], Widget):
             self.call_after_refresh(
                 self.scroll_to_widget, self.focused, animate=False, center=True
             )
+
+    def get_selected_text(self) -> str | None:
+        """Get text under selection.
+
+        Returns:
+            Selected text, or `None` if no text was selected.
+        """
+        if not self.selections:
+            return None
+
+        widget_text: list[str] = []
+        for widget, selection in self.selections.items():
+            selected_text_in_widget = widget.get_selection(selection)
+            if selected_text_in_widget is not None:
+                widget_text.append(selected_text_in_widget)
+
+        selected_text = "\n".join(widget_text)
+        return selected_text
+
+    def action_copy_text(self) -> None:
+        """Copy selected text to clipboard."""
+        selection = self.get_selected_text()
+        if selection is not None:
+            self.app.copy_to_clipboard(selection)
 
     def action_maximize(self) -> None:
         """Action to maximize the currently focused widget."""
