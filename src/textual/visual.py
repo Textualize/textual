@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from itertools import islice
 from marshal import dumps, loads
-from typing import TYPE_CHECKING, Any, Iterable, Protocol, cast
+from typing import TYPE_CHECKING, Any, Iterable, Protocol
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -293,7 +293,7 @@ class Style:
     @property
     def meta(self) -> dict[str, Any]:
         """Get meta information (can not be changed after construction)."""
-        return {} if self._meta is None else cast(dict[str, Any], loads(self._meta))
+        return {} if self._meta is None else loads(self._meta)
 
 
 class Visual(ABC):
