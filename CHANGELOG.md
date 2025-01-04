@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.scrollable_container` property
 - Added `Widget.select_all`
 - Added `Region.bottom_right_inclusive`
+- Added double click to select, triple click to select all in container
+- Added arbitrary text selection
+- Added Widget.ALLOW_SELECT classvar for a per-widget switch to disable text selection
+- Added Widget.allow_select method for programmatic control of text selection
+- Added App.ALLOW_SELECT for a global switch to disable text selection
 
 ### Fixed
 

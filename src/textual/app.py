@@ -396,6 +396,12 @@ class App(Generic[ReturnType], DOMNode):
     Setting to `None` or `""` disables auto focus.
     """
 
+    ALLOW_SELECT: ClassVar[bool] = True
+    """A switch to toggle arbitrary text selection for the app.
+    
+    Note that this doesn't apply to Input and TextArea which have builtin support for selection.
+    """
+
     _BASE_PATH: str | None = None
     CSS_PATH: ClassVar[CSSPathType | None] = None
     """File paths to load CSS from."""

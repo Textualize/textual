@@ -511,6 +511,11 @@ class Screen(Generic[ScreenResultType], Widget):
         except Exception:
             return False
 
+    @property
+    def allow_select(self) -> bool:
+        """Check if this widget permits text selection."""
+        return self.ALLOW_SELECT
+
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
 
@@ -1520,7 +1525,12 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
                 )
-                if select_widget is not None and select_widget.allow_select:
+                if (
+                    select_widget is not None
+                    and select_widget.allow_select
+                    and self.screen.allow_select
+                    and self.app.ALLOW_SELECT
+                ):
                     self._selecting = True
                     if select_widget is not None and select_offset is not None:
                         self._select_start = (
