@@ -894,7 +894,7 @@ class Compositor:
             return None, None
 
         if y >= widget.content_region.bottom:
-            x, y = widget.content_region.bottom_right - (1, 1)
+            x, y = widget.content_region.bottom_right_inclusive
 
         x -= region.x
         y -= region.y

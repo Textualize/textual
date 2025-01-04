@@ -549,6 +549,12 @@ class Region(NamedTuple):
         return Offset(x + width, y + height)
 
     @property
+    def bottom_right_inclusive(self) -> Offset:
+        """Bottom right corner of the region, within its boundaries."""
+        x, y, width, height = self
+        return Offset(x + width - 1, y + height - 1)
+
+    @property
     def size(self) -> Size:
         """Get the size of the region."""
         return Size(*self[2:])

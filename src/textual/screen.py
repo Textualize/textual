@@ -1481,15 +1481,6 @@ class Screen(Generic[ScreenResultType], Widget):
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
-        elif isinstance(event, events.MouseUp):
-            if (
-                self._mouse_down_offset is not None
-                and self._mouse_down_offset == event.screen_offset
-            ):
-                self.clear_selection()
-            self._mouse_down_offset = None
-            self._selecting = False
-
         elif isinstance(event, events.MouseMove):
             event.style = self.get_style_at(event.screen_x, event.screen_y)
             self._handle_mouse_move(event)
@@ -1498,7 +1489,12 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
-                if (
+                if self._select_end is not None and select_offset is None:
+                    end_widget = self._select_end[0]
+                    select_offset = end_widget.content_region.bottom_right_inclusive
+                    self._select_end = (end_widget, event.offset, select_offset)
+
+                elif (
                     select_widget is not None
                     and select_widget.allow_select
                     and select_offset is not None
@@ -1506,7 +1502,16 @@ class Screen(Generic[ScreenResultType], Widget):
                     self._select_end = (select_widget, event.offset, select_offset)
 
         elif isinstance(event, events.MouseEvent):
-            if isinstance(event, events.MouseDown) and not self.app.mouse_captured:
+            if isinstance(event, events.MouseUp):
+                if (
+                    self._mouse_down_offset is not None
+                    and self._mouse_down_offset == event.screen_offset
+                ):
+                    self.clear_selection()
+                self._mouse_down_offset = None
+                self._selecting = False
+
+            elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
                 self._mouse_down_offset = event.screen_offset
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y

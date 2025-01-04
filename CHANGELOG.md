@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `screen--selection` component class to define style for selection
 - Added `Widget.scrollable_container` property
 - Added `Widget.select_all`
+- Added `Region.bottom_right_inclusive`
 
 ### Fixed
 

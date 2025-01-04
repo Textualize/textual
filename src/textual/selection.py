@@ -53,10 +53,14 @@ class Selection(NamedTuple):
             return lines[start_line][start_offset:end_offset]
 
         selection: list[str] = []
-        first_line, *mid_lines, last_line = lines[start_line:end_line]
-        selection.append(first_line[start_offset:])
-        selection.extend(mid_lines)
-        selection.append(last_line[: end_offset + 1])
+        selected_lines = lines[start_line:end_line]
+        if len(selected_lines) >= 2:
+            first_line, *mid_lines, last_line = selected_lines
+            selection.append(first_line[start_offset:])
+            selection.extend(mid_lines)
+            selection.append(last_line[: end_offset + 1])
+        else:
+            return lines[start_line][start_offset:end_offset]
         return "\n".join(selection)
 
     def get_span(self, y: int) -> tuple[int, int] | None:
