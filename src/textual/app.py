@@ -1531,7 +1531,6 @@ class App(Generic[ReturnType], DOMNode):
         self._clipboard = text
         if self._driver is None:
             return
-
         import base64
 
         base64_text = base64.b64encode(text.encode("utf-8")).decode("utf-8")

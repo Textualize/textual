@@ -256,7 +256,7 @@ class Content(Visual):
                 start, end = span
                 if end == -1:
                     end = len(line.plain)
-                line = line.stylize(selection_style, start, end + 1)
+                line = line.stylize(selection_style, start, end)
 
             content_line = FormattedLine(
                 line.expand_tabs(tab_size), width, y=y, align=align
