@@ -1024,16 +1024,10 @@ class FormattedLine:
         self.align = align
         self.line_end = line_end
         self.link_style = link_style
-        self.highlight_style: Style | None = None
-        self.highlight_range: tuple[int | None, int | None] | None = None
 
     @property
     def plain(self) -> str:
         return self.content.plain
-
-    def highlight(self, style: Style, start: int | None, end: int | None) -> None:
-        self.highlight_style = style
-        self.highlight_range = (start, end)
 
     def to_strip(self, widget: Widget, style: Style) -> Strip:
         _Segment = Segment
@@ -1043,10 +1037,6 @@ class FormattedLine:
         content = self.content
         x = self.x
         y = self.y
-
-        if self.highlight_style is not None and self.highlight_range is not None:
-            start, end = self.highlight_range
-            content = content.stylize(self.highlight_style, start, end)
 
         if align in ("start", "left") or (align == "justify" and self.line_end):
             pass

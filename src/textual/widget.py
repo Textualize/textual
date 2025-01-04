@@ -2290,7 +2290,7 @@ class Widget(DOMNode):
         )
         style = styles.link_style + Style.from_color(
             link_color.rich_color,
-            link_background.rich_color,
+            link_background.rich_color if styles.link_background.a else None,
         )
         return style
 

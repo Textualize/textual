@@ -1489,7 +1489,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
-                if self._select_end is not None and select_offset is None:
+                if (
+                    self._select_end is not None
+                    and select_offset is None
+                    and event.y > self._select_end[1].y
+                ):
                     end_widget = self._select_end[0]
                     select_offset = end_widget.content_region.bottom_right_inclusive
                     self._select_end = (end_widget, event.offset, select_offset)
