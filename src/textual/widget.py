@@ -3816,21 +3816,21 @@ class Widget(DOMNode):
             strike=style.strike,
         )
 
-    def get_selection(self, selection: Selection) -> str | None:
+    def get_selection(self, selection: Selection) -> tuple[str, str] | None:
         """Get the text under the selection.
 
         Args:
             selection: Selection information.
 
         Returns:
-            Extracted text, or `None` if no text could be extracted.
+            Tuple of extracted text and ending (typically "\n" or " "), or `None` if no text could be extracted.
         """
         visual = self._render()
         if isinstance(visual, (Text, Content)):
             text = str(visual)
         else:
             return None
-        return selection.extract(text)
+        return selection.extract(text), "\n"
 
     def _render_content(self) -> None:
         """Render all lines."""

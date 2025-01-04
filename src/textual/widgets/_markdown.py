@@ -566,6 +566,9 @@ class MarkdownBullet(Widget):
     symbol = reactive("\u25cf")
     """The symbol for the bullet."""
 
+    def get_selection(self, _selection) -> tuple[str, str] | None:
+        return self.symbol, " "
+
     def render(self) -> Text:
         return Text(self.symbol)
 
