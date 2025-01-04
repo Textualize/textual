@@ -2316,11 +2316,11 @@ class Widget(DOMNode):
         return style
 
     @property
-    def scrollable_container(self) -> Widget:
-        """The widget's (user) scrollable container.
+    def select_container(self) -> Widget:
+        """The widget's container used when selecting text..
 
         Returns:
-            A container widgets.
+            A widget which contains this widget.
         """
         container: Widget = self
         for widget in self.ancestors:
@@ -4262,7 +4262,7 @@ class Widget(DOMNode):
             if event.chain == 2:
                 self.select_all()
             elif event.chain == 3 and self.parent is not None:
-                self.scrollable_container.select_all()
+                self.select_container.select_all()
 
         await self.broker_event("click", event)
 

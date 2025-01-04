@@ -1608,8 +1608,8 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             container_region = Region.from_union(
                 [
-                    start_widget.scrollable_container.content_region,
-                    end_widget.scrollable_container.content_region,
+                    start_widget.select_container.content_region,
+                    end_widget.select_container.content_region,
                 ]
             )
 

@@ -1556,6 +1556,57 @@ class DOMNode(MessagePump):
 
         raise NoMatches(f"No nodes match {selector!r} on {self!r}")
 
+    if TYPE_CHECKING:
+
+        @overload
+        def query_ancestor(self, selector: str) -> DOMNode: ...
+
+        @overload
+        def query_ancestor(self, selector: type[QueryType]) -> QueryType: ...
+
+        @overload
+        def query_ancestor(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType: ...
+
+    def query_ancestor(
+        self,
+        selector: str | type[QueryType],
+        expect_type: type[QueryType] | None = None,
+    ) -> DOMNode | None:
+        """Get an ancestor which matches a query.
+
+        Args:
+            selector: A TCSS selector.
+            expect_type: Expected type, or `None` for any DOMNode.
+
+        Raises:
+            InvalidQueryFormat: If the selector is invalid.
+            NoMatches: If there are no matching ancestors.
+
+        Returns:
+            A DOMNode or subclass if `expect_type` is provided.
+        """
+        if isinstance(selector, str):
+            query_selector = selector
+        else:
+            query_selector = selector.__name__
+
+        try:
+            selector_set = parse_selectors(query_selector)
+        except TokenError:
+            raise InvalidQueryFormat(
+                f"Unable to parse {query_selector!r} as a query; check for syntax errors"
+            ) from None
+        if self.parent is not None:
+            for node in self.parent.ancestors_with_self:
+                if not match(selector_set, node):
+                    continue
+                if expect_type is not None and not isinstance(node, expect_type):
+                    continue
+                return node
+        raise NoMatches(f"No ancestor matches {selector!r} on {self!r}")
+
     def set_styles(self, css: str | None = None, **update_styles: Any) -> Self:
         """Set custom styles on this object.
 

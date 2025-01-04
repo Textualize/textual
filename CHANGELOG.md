@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `from_app_focus` to `Focus` event to indicate if a widget is being focused because the app itself has regained focus or not https://github.com/Textualize/textual/pull/5379
 - Added `Offset.transpose`
 - Added `screen--selection` component class to define style for selection
-- Added `Widget.scrollable_container` property
+- Added `Widget.select_container` property
 - Added `Widget.select_all`
 - Added `Region.bottom_right_inclusive`
 - Added double click to select, triple click to select all in container
@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Widget.ALLOW_SELECT classvar for a per-widget switch to disable text selection
 - Added Widget.allow_select method for programmatic control of text selection
 - Added App.ALLOW_SELECT for a global switch to disable text selection
+- Added `DOMNode.query_ancestor`
 
 ### Fixed
 

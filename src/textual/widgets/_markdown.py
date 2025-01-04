@@ -121,6 +121,10 @@ class MarkdownBlock(Static):
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
 
+    @property
+    def select_container(self) -> Widget:
+        return self.query_ancestor(Markdown)
+
     def compose(self) -> ComposeResult:
         yield from self._blocks
         self._blocks.clear()
