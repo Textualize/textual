@@ -189,6 +189,7 @@ class OptionList(ScrollView, can_focus=True):
     """
     | Class | Description |
     | :- | :- |
+    | `option-list--option` | Target options that are not disabled, highlighted or have the mouse over them. |
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
