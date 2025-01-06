@@ -27,7 +27,7 @@ class MyApp(App):
         padding: 2 4;        
         border: heavy red;
 
-	&.left {
+	    &.left {
             text-align: left;
         }
         &.center {
@@ -36,7 +36,7 @@ class MyApp(App):
         &.right {
             text-align: right;
         }       
-         &.right {
+         &.justify {
             text-align: justify;
         }   
     }
