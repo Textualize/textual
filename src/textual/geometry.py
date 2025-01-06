@@ -105,6 +105,12 @@ class Offset(NamedTuple):
         x, y = self
         return Offset(0 if x < 0 else x, 0 if y < 0 else y)
 
+    @property
+    def transpose(self) -> tuple[int, int]:
+        """A tuple of x and y, in reverse order, i.e. (y, x)."""
+        x, y = self
+        return y, x
+
     def __bool__(self) -> bool:
         return self != (0, 0)
 
@@ -541,6 +547,12 @@ class Region(NamedTuple):
         """
         x, y, width, height = self
         return Offset(x + width, y + height)
+
+    @property
+    def bottom_right_inclusive(self) -> Offset:
+        """Bottom right corner of the region, within its boundaries."""
+        x, y, width, height = self
+        return Offset(x + width - 1, y + height - 1)
 
     @property
     def size(self) -> Size:

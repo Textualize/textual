@@ -25,6 +25,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
     turned off.
     """
 
+    ALLOW_SELECT = False
     ALLOW_MAXIMIZE = True
 
     DEFAULT_CSS = """

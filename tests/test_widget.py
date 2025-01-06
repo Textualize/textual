@@ -7,11 +7,11 @@ from textual import events
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
 from textual.containers import Container
+from textual.content import Content
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
-from textual.visual import RichVisual
 from textual.widget import BadWidgetName, MountError, PseudoClasses, Widget
 from textual.widgets import (
     Button,
@@ -532,11 +532,8 @@ async def test_render_returns_text():
 
     widget = SimpleWidget()
     render_result = widget._render()
-    assert isinstance(render_result, RichVisual)
-    renderable = render_result._renderable
-    assert isinstance(renderable, Text)
-
-    assert renderable.plain == "Hello World!"
+    assert isinstance(render_result, Content)
+    assert render_result.plain == "Hello World!"
 
 
 async def test_sort_children() -> None:

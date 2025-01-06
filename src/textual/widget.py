@@ -61,6 +61,7 @@ from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
 from textual.color import Color
+from textual.content import Content
 from textual.css.match import match
 from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, WrongType
@@ -84,6 +85,7 @@ from textual.notifications import SeverityLevel
 from textual.reactive import Reactive
 from textual.renderables.blank import Blank
 from textual.rlock import RLock
+from textual.selection import Selection
 from textual.strip import Strip
 from textual.visual import Style as VisualStyle
 from textual.visual import Visual, visualize
@@ -109,7 +111,6 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
-_NULL_STYLE = Style()
 _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Leave)
 _MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
@@ -312,6 +313,9 @@ class Widget(DOMNode):
     - `True` Allow widget to be maximized
     
     """
+
+    ALLOW_SELECT: ClassVar[bool] = True
+    """Does this widget support automatic text selection? May be further refined with [Widget.allow_select][textual.widget.Widget.allow_select]"""
 
     can_focus: bool = False
     """Widget may receive focus."""
@@ -635,6 +639,11 @@ class Widget(DOMNode):
         """The widget the compositor should render."""
         # Will return the "cover widget" if one is set, otherwise self.
         return self._cover_widget if self._cover_widget is not None else self
+
+    @property
+    def selection(self) -> Selection | None:
+        """Text selection information, or `None` if no text is selected in this widget."""
+        return self.screen.selections.get(self, None)
 
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).
@@ -2281,7 +2290,7 @@ class Widget(DOMNode):
         )
         style = styles.link_style + Style.from_color(
             link_color.rich_color,
-            link_background.rich_color,
+            link_background.rich_color if styles.link_background.a else None,
         )
         return style
 
@@ -2305,6 +2314,19 @@ class Widget(DOMNode):
             hover_background.rich_color,
         )
         return style
+
+    @property
+    def select_container(self) -> Widget:
+        """The widget's container used when selecting text..
+
+        Returns:
+            A widget which contains this widget.
+        """
+        container: Widget = self
+        for widget in self.ancestors:
+            if isinstance(widget, Widget) and widget.is_scrollable:
+                return widget
+        return container
 
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
@@ -2439,6 +2461,15 @@ class Widget(DOMNode):
                 self.call_after_refresh(on_complete)
 
         return scrolled_x or scrolled_y
+
+    @property
+    def allow_select(self) -> bool:
+        """Check if this widget permits text selection.
+
+        Returns:
+            `True` if the widget supports text selection, otherwise `False`.
+        """
+        return self.ALLOW_SELECT and not self.is_container
 
     def pre_layout(self, layout: Layout) -> None:
         """This method id called prior to a layout operation.
@@ -3785,18 +3816,27 @@ class Widget(DOMNode):
             strike=style.strike,
         )
 
+    def get_selection(self, selection: Selection) -> tuple[str, str] | None:
+        """Get the text under the selection.
+
+        Args:
+            selection: Selection information.
+
+        Returns:
+            Tuple of extracted text and ending (typically "\n" or " "), or `None` if no text could be extracted.
+        """
+        visual = self._render()
+        if isinstance(visual, (Text, Content)):
+            text = str(visual)
+        else:
+            return None
+        return selection.extract(text), "\n"
+
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
         visual = self._render()
-        strips = Visual.to_strips(
-            self,
-            visual,
-            width,
-            height,
-            self.visual_style,
-            align=self.styles.content_align,
-        )
+        strips = Visual.to_strips(self, visual, width, height, self.visual_style)
         self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
@@ -4157,6 +4197,10 @@ class Widget(DOMNode):
         """
         self.app.capture_mouse(None)
 
+    def select_all(self) -> None:
+        """Select the entire widget."""
+        self.screen._select_all_in_widget(self)
+
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
@@ -4214,6 +4258,12 @@ class Widget(DOMNode):
         await self.broker_event("mouse.up", event)
 
     async def _on_click(self, event: events.Click) -> None:
+        if event.widget is self:
+            if event.chain == 2:
+                self.select_all()
+            elif event.chain == 3 and self.parent is not None:
+                self.select_container.select_all()
+
         await self.broker_event("click", event)
 
     async def _on_key(self, event: events.Key) -> None:
