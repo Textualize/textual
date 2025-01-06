@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
 - The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
 - `Pilot.mouse_down` and `Pilot.mouse_up` now issue a prior `MouseMove` event, to more closely reflect real mouse actions. https://github.com/Textualize/textual/pull/5409
+- Snapshots tests now discard meta, which should reduce test breaking with no visual differences https://github.com/Textualize/textual/pull/5409
 
 ### Added
 

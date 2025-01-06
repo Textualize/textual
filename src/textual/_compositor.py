@@ -1115,7 +1115,7 @@ class Compositor:
         chops = self._render_chops(crop, lambda y: True)
         if simplify:
             render_strips = [
-                Strip.join(chop.values()).discard_meta().simplify() for chop in chops
+                Strip.join(chop.values()).simplify().discard_meta() for chop in chops
             ]
         else:
             render_strips = [Strip.join(chop.values()) for chop in chops]
