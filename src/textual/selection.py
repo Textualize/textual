@@ -37,6 +37,8 @@ class Selection(NamedTuple):
             Extracted text.
         """
         lines = text.splitlines()
+        if not lines:
+            return ""
         if self.start is None:
             start_line = 0
             start_offset = 0

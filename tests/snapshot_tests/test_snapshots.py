@@ -3230,3 +3230,24 @@ Where the fear has gone there will be nothing. Only I will remain."""
                     yield label
 
     snap_compare(MyApp(), terminal_size=(100, 50))
+
+
+def test_arbitrary_selection(snap_compare):
+    """You should see 3x3 labels with different text alignments.
+
+    Text selection should start from somewhere in the first label, and
+    end somewhere in the right label.
+
+    """
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.mouse_down(pilot.app.query_one("#first"), offset=(10, 10))
+        await pilot.mouse_up(pilot.app.query_one("#last"), offset=(10, 10))
+        await pilot.pause()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_selection.py",
+        terminal_size=(175, 50),
+        run_before=run_before,
+    )
