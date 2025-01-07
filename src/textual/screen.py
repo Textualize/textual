@@ -973,7 +973,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Args:
             widget: Widget to focus, or None to un-focus.
-            scroll_visible: Scroll widget in to view.
+            scroll_visible: Scroll widget into view.
             from_app_focus: True if this focus is due to the app itself having regained
                 focus. False if the focus is being set because a widget within the app
                 regained focus.

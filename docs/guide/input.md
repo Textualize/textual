@@ -105,7 +105,7 @@ The following example shows how focus works in practice.
     ```{.textual path="docs/examples/guide/input/key03.py", press="H,e,l,l,o,tab,W,o,r,l,d,!"}
     ```
 
-The app splits the screen in to quarters, with a `RichLog` widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that the widget has focus. Key events will be sent to the focused widget only.
+The app splits the screen into quarters, with a `RichLog` widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that the widget has focus. Key events will be sent to the focused widget only.
 
 !!! tip
 
@@ -255,4 +255,4 @@ Most mice have a scroll wheel which you can use to scroll the window underneath 
 
 !!! information
 
-    Terminal emulators will typically convert trackpad gestures in to scroll events.
+    Terminal emulators will typically convert trackpad gestures into scroll events.

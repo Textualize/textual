@@ -267,7 +267,7 @@ class Log(ScrollView, can_focus=True):
         return strip
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
-        """Render a line in to a cropped strip.
+        """Render a line into a cropped strip.
 
         Args:
             y: Y offset of line.
@@ -287,7 +287,7 @@ class Log(ScrollView, can_focus=True):
         return line
 
     def _render_line_strip(self, y: int, rich_style: Style) -> Strip:
-        """Render a line in to a Strip.
+        """Render a line into a Strip.
 
         Args:
             y: Y offset of line.

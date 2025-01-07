@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class GridLayout(Layout):
-    """Used to layout Widgets in to a grid."""
+    """Used to layout Widgets into a grid."""
 
     name = "grid"
 

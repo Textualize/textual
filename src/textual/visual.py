@@ -41,7 +41,7 @@ class SupportsVisual(Protocol):
     """An object that supports the textualize protocol."""
 
     def visualize(self, widget: Widget, obj: object) -> Visual | None:
-        """Convert the result of a Widget.render() call in to a Visual, using the Visual protocol.
+        """Convert the result of a Widget.render() call into a Visual, using the Visual protocol.
 
         Args:
             widget: The widget that generated the render.
@@ -219,7 +219,7 @@ class Style:
 
     @cached_property
     def rich_style(self) -> RichStyle:
-        """Convert this Styles in to a Rich style.
+        """Convert this Styles into a Rich style.
 
         Returns:
             A Rich style object.
@@ -311,7 +311,7 @@ class Visual(ABC):
         height: int | None,
         style: Style,
     ) -> list[Strip]:
-        """Render the visual in to an iterable of strips.
+        """Render the visual into an iterable of strips.
 
         Args:
             base_style: The base style.

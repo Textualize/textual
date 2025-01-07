@@ -1094,7 +1094,7 @@ class Widget(DOMNode):
         return visual_style
 
     def render_str(self, text_content: str | Text) -> Text:
-        """Convert str in to a Text object.
+        """Convert str into a Text object.
 
         If you pass in an existing Text object it will be returned unaltered.
 
@@ -2091,7 +2091,7 @@ class Widget(DOMNode):
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:
-        """Key function to sort widgets in to focus order."""
+        """Key function to sort widgets into focus order."""
         x, y, _, _ = self.virtual_region
         top, _, _, left = self.styles.margin
         return y - top, x - left
@@ -3159,7 +3159,7 @@ class Widget(DOMNode):
         level: AnimationLevel = "basic",
         immediate: bool = False,
     ) -> bool:
-        """Scroll scrolling to bring a widget in to view.
+        """Scroll scrolling to bring a widget into view.
 
         Args:
             widget: A descendant widget.
@@ -3242,7 +3242,7 @@ class Widget(DOMNode):
         y_axis: bool = True,
         immediate: bool = False,
     ) -> Offset:
-        """Scrolls a given region in to view, if required.
+        """Scrolls a given region into view, if required.
 
         This method will scroll the least distance required to move `region` fully within
         the scrollable area.
@@ -3858,7 +3858,7 @@ class Widget(DOMNode):
         return line
 
     def render_lines(self, crop: Region) -> list[Strip]:
-        """Render the widget in to lines.
+        """Render the widget into lines.
 
         Args:
             crop: Region within visible area to render.

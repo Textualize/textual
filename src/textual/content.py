@@ -516,7 +516,7 @@ class Content(Visual):
         """Get the style of a character at give offset.
 
         Args:
-            offset (int): Offset in to text (negative indexing supported)
+            offset (int): Offset into text (negative indexing supported)
 
         Returns:
             Style: A Style instance.
@@ -873,7 +873,7 @@ class Content(Visual):
         include_separator: bool = False,
         allow_blank: bool = False,
     ) -> list[Content]:
-        """Split rich text in to lines, preserving styles.
+        """Split rich text into lines, preserving styles.
 
         Args:
             separator (str, optional): String to split on. Defaults to "\\\\n".
