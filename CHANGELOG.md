@@ -5,15 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## Unreleased - 2025
 
 ### Changed
 
-### Fixed
-
-- Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
-- Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
-- Fixed layout of the keys in the help panel when a key has a tooltip but no description https://github.com/Textualize/textual/issues/5436
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
 - The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
 - `Pilot.mouse_down` and `Pilot.mouse_up` now issue a prior `MouseMove` event, to more closely reflect real mouse actions. https://github.com/Textualize/textual/pull/5409
@@ -38,6 +33,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
+- Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
+- Fixed layout of the keys in the help panel when a key has a tooltip but no description https://github.com/Textualize/textual/issues/5436
 - The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
 - Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
