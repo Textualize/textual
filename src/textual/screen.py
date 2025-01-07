@@ -226,6 +226,9 @@ class Screen(Generic[ScreenResultType], Widget):
     _selecting = var(False)
     """Indicates mouse selection is in progress."""
 
+    _box_select = var(False)
+    """Should text selection be limited to a box?"""
+
     _select_start: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
     """Tuple of (widget, screen offset, text offset) where selection started."""
     _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
@@ -1491,6 +1494,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self._handle_mouse_move(event)
 
             if self._selecting:
+                self._box_select = event.shift
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
@@ -1521,6 +1525,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._selecting = False
 
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
+                self._box_select = event.shift
                 self._mouse_down_offset = event.screen_offset
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
@@ -1603,7 +1608,7 @@ class Screen(Generic[ScreenResultType], Widget):
         select_regions: list[Region] = []
         start_region = start_widget.content_region
         end_region = end_widget.content_region
-        if end_region.y <= start_region.bottom:
+        if end_region.y <= start_region.bottom or self._box_select:
             select_regions.append(Region.union(start_region, end_region))
         else:
             container_region = Region.from_union(
