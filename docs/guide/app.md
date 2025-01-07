@@ -1,6 +1,6 @@
 # App Basics
 
-In this chapter we will cover how to use Textual's App class to create an application. Just enough to get you up to speed. We will go in to more detail in the following chapters.
+In this chapter we will cover how to use Textual's App class to create an application. Just enough to get you up to speed. We will go into more detail in the following chapters.
 
 ## The App class
 
@@ -30,7 +30,7 @@ If we run this app with `python simple02.py` you will see a blank terminal, some
 ```{.textual path="docs/examples/app/simple02.py"}
 ```
 
-When you call [App.run()][textual.app.App.run] Textual puts the terminal in to a special state called *application mode*. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the *screen*).
+When you call [App.run()][textual.app.App.run] Textual puts the terminal into a special state called *application mode*. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the *screen*).
 
 If you hit ++ctrl+q++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
 
@@ -42,7 +42,7 @@ If you hit ++ctrl+q++ Textual will exit application mode and return you to the c
 
 !!! tip "Added in version 0.55.0"
 
-You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
+You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go into application mode).
 Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.
 
 To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run]. See [Style Inline Apps](../how-to/style-inline-apps.md) for how to apply additional styles to inline apps.

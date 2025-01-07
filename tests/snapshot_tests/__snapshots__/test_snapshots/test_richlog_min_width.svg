@@ -19,62 +19,62 @@
         font-weight: 700;
     }
 
-    .terminal-4160031070-matrix {
+    .terminal-3983136269-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-4160031070-title {
+    .terminal-3983136269-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-4160031070-r1 { fill: #e0e0e0 }
-.terminal-4160031070-r2 { fill: #c5c8c6 }
-.terminal-4160031070-r3 { fill: #272727 }
-.terminal-4160031070-r4 { fill: #003054 }
+    .terminal-3983136269-r1 { fill: #e0e0e0 }
+.terminal-3983136269-r2 { fill: #c5c8c6 }
+.terminal-3983136269-r3 { fill: #272727 }
+.terminal-3983136269-r4 { fill: #003054 }
     </style>
 
     <defs>
-    <clipPath id="terminal-4160031070-clip-terminal">
+    <clipPath id="terminal-3983136269-clip-terminal">
       <rect x="0" y="0" width="243.0" height="145.39999999999998" />
     </clipPath>
-    <clipPath id="terminal-4160031070-line-0">
+    <clipPath id="terminal-3983136269-line-0">
     <rect x="0" y="1.5" width="244" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4160031070-line-1">
+<clipPath id="terminal-3983136269-line-1">
     <rect x="0" y="25.9" width="244" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4160031070-line-2">
+<clipPath id="terminal-3983136269-line-2">
     <rect x="0" y="50.3" width="244" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4160031070-line-3">
+<clipPath id="terminal-3983136269-line-3">
     <rect x="0" y="74.7" width="244" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4160031070-line-4">
+<clipPath id="terminal-3983136269-line-4">
     <rect x="0" y="99.1" width="244" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="260" height="194.4" rx="8"/><text class="terminal-4160031070-title" fill="#c5c8c6" text-anchor="middle" x="130" y="27">RichLogMinWidth20</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="260" height="194.4" rx="8"/><text class="terminal-3983136269-title" fill="#c5c8c6" text-anchor="middle" x="130" y="27">RichLogMinWidth20</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-4160031070-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-3983136269-clip-terminal)">
     <rect fill="#f4005f" x="0" y="1.5" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="219.6" y="1.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="0" y="25.9" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="219.6" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="0" y="50.3" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="219.6" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="0" y="74.7" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="219.6" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272727" x="0" y="99.1" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="219.6" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#003054" x="0" y="123.5" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="195.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="207.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#000000" x="219.6" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-4160031070-matrix">
-    <text class="terminal-4160031070-r1" x="0" y="20" textLength="219.6" clip-path="url(#terminal-4160031070-line-0)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;01234567</text><text class="terminal-4160031070-r2" x="244" y="20" textLength="12.2" clip-path="url(#terminal-4160031070-line-0)">
-</text><text class="terminal-4160031070-r2" x="244" y="44.4" textLength="12.2" clip-path="url(#terminal-4160031070-line-1)">
-</text><text class="terminal-4160031070-r2" x="244" y="68.8" textLength="12.2" clip-path="url(#terminal-4160031070-line-2)">
-</text><text class="terminal-4160031070-r2" x="244" y="93.2" textLength="12.2" clip-path="url(#terminal-4160031070-line-3)">
-</text><text class="terminal-4160031070-r2" x="244" y="117.6" textLength="12.2" clip-path="url(#terminal-4160031070-line-4)">
-</text><text class="terminal-4160031070-r4" x="195.2" y="142" textLength="12.2" clip-path="url(#terminal-4160031070-line-5)">▎</text>
+    <g class="terminal-3983136269-matrix">
+    <text class="terminal-3983136269-r1" x="0" y="20" textLength="219.6" clip-path="url(#terminal-3983136269-line-0)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;01234567</text><text class="terminal-3983136269-r2" x="244" y="20" textLength="12.2" clip-path="url(#terminal-3983136269-line-0)">
+</text><text class="terminal-3983136269-r2" x="244" y="44.4" textLength="12.2" clip-path="url(#terminal-3983136269-line-1)">
+</text><text class="terminal-3983136269-r2" x="244" y="68.8" textLength="12.2" clip-path="url(#terminal-3983136269-line-2)">
+</text><text class="terminal-3983136269-r2" x="244" y="93.2" textLength="12.2" clip-path="url(#terminal-3983136269-line-3)">
+</text><text class="terminal-3983136269-r2" x="244" y="117.6" textLength="12.2" clip-path="url(#terminal-3983136269-line-4)">
+</text><text class="terminal-3983136269-r4" x="195.2" y="142" textLength="12.2" clip-path="url(#terminal-3983136269-line-5)">▎</text>
     </g>
     </g>
 </svg>

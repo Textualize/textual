@@ -14,7 +14,7 @@ class AnsiMappingApp(App[None]):
             "white",
             "black",
         ]
-        yield Label("[fg on bg]Foreground & background[/]")
+        yield Label("Foreground & background")
         for color in ansi_colors:
             yield Label(f"[{color}]{color}[/]")
             yield Label(f"[dim {color}]dim {color}[/]")

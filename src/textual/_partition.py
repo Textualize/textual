@@ -8,7 +8,7 @@ T = TypeVar("T")
 def partition(
     predicate: Callable[[T], object], iterable: Iterable[T]
 ) -> tuple[list[T], list[T]]:
-    """Partition a sequence in to two list from a given predicate. The first list will contain
+    """Partition a sequence into two list from a given predicate. The first list will contain
     the values where the predicate is False, the second list will contain the remaining values.
 
     Args:

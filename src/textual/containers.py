@@ -48,7 +48,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("up", "scroll_up", "Scroll Up", show=False),
         Binding("down", "scroll_down", "Scroll Down", show=False),
-        Binding("left", "scroll_left", "Scroll Up", show=False),
+        Binding("left", "scroll_left", "Scroll Left", show=False),
         Binding("right", "scroll_right", "Scroll Right", show=False),
         Binding("home", "scroll_home", "Scroll Home", show=False),
         Binding("end", "scroll_end", "Scroll End", show=False),

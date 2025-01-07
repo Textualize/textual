@@ -255,7 +255,7 @@ class ListViews(containers.VerticalGroup):
     LISTS_MD = """\
 ## List Views and Option Lists
 
-A List View turns any widget in to a user-navigable and selectable list.
+A List View turns any widget into a user-navigable and selectable list.
 An Option List for a field to present a list of strings to select from.
 
     """

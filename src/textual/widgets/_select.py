@@ -610,7 +610,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                 value = self.value
                 for index, (_prompt, prompt_value) in enumerate(self._options):
                     if value == prompt_value:
-                        self.call_after_refresh(overlay.select, index)
+                        overlay.select(index)
                         break
                 self.query_one(SelectCurrent).has_value = True
 
@@ -637,12 +637,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         if value != self.value:
             self.value = value
 
-        async def update_focus() -> None:
-            """Update focus and reset overlay."""
-            self.focus()
-            self.expanded = False
-
-        self.call_after_refresh(update_focus)  # Prevents a little flicker
+        self.focus()
+        self.expanded = False
 
     def action_show_overlay(self) -> None:
         """Show the overlay."""

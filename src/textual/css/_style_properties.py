@@ -1172,7 +1172,7 @@ class FractionalProperty:
 
 
 class AlignProperty:
-    """Combines the horizontal and vertical alignment properties in to a single property."""
+    """Combines the horizontal and vertical alignment properties into a single property."""
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.horizontal = f"{name}_horizontal"

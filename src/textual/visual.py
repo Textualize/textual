@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from itertools import islice
-from marshal import loads
-from typing import TYPE_CHECKING, Any, Iterable, Protocol, cast
+from marshal import dumps, loads
+from typing import TYPE_CHECKING, Any, Iterable, Protocol
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -19,7 +19,6 @@ from rich.text import Text
 from textual._context import active_app
 from textual.color import TRANSPARENT, Color
 from textual.css.styles import StylesBase
-from textual.css.types import AlignHorizontal, AlignVertical
 from textual.geometry import Spacing
 from textual.render import measure
 from textual.strip import Strip
@@ -42,7 +41,7 @@ class SupportsVisual(Protocol):
     """An object that supports the textualize protocol."""
 
     def visualize(self, widget: Widget, obj: object) -> Visual | None:
-        """Convert the result of a Widget.render() call in to a Visual, using the Visual protocol.
+        """Convert the result of a Widget.render() call into a Visual, using the Visual protocol.
 
         Args:
             widget: The widget that generated the render.
@@ -80,10 +79,17 @@ def visualize(widget: Widget, obj: object) -> Visual:
     visualize = getattr(obj, "visualize", None)
     if visualize is None:
         # Doesn't expose the textualize protocol
+        from textual.content import Content
+
         if is_renderable(obj):
             # If it is a string, render it to Text
             if isinstance(obj, str):
                 obj = widget.render_str(obj)
+
+            if isinstance(obj, Text) and widget.allow_select:
+                return Content.from_rich_text(
+                    obj, align=obj.justify or widget.styles.text_align
+                )
 
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))
@@ -110,19 +116,25 @@ class Style:
     dim: bool | None = None
     italic: bool | None = None
     underline: bool | None = None
+    reverse: bool | None = None
     strike: bool | None = None
     link: str | None = None
     _meta: bytes | None = None
     auto_color: bool = False
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield None, self.background
-        yield None, self.foreground
+        yield None, self.background, TRANSPARENT
+        yield None, self.foreground, TRANSPARENT
         yield "bold", self.bold, None
         yield "dim", self.dim, None
         yield "italic", self.italic, None
         yield "underline", self.underline, None
+        yield "reverse", self.reverse, None
         yield "strike", self.strike, None
+        yield "link", self.link, None
+
+        if self._meta is not None:
+            yield "meta", self.meta
 
     @lru_cache(maxsize=1024)
     def __add__(self, other: object) -> Style:
@@ -135,6 +147,7 @@ class Style:
             self.dim if other.dim is None else other.dim,
             self.italic if other.italic is None else other.italic,
             self.underline if other.underline is None else other.underline,
+            self.reverse if other.reverse is None else other.reverse,
             self.strike if other.strike is None else other.strike,
             self.link if other.link is None else other.link,
             self._meta if other._meta is None else other._meta,
@@ -161,7 +174,10 @@ class Style:
             dim=rich_style.dim,
             italic=rich_style.italic,
             underline=rich_style.underline,
+            reverse=rich_style.reverse,
             strike=rich_style.strike,
+            link=rich_style.link,
+            _meta=rich_style._meta,
         )
 
     @classmethod
@@ -184,13 +200,26 @@ class Style:
             dim=text_style.italic,
             italic=text_style.italic,
             underline=text_style.underline,
+            reverse=text_style.reverse,
             strike=text_style.strike,
             auto_color=styles.auto_color,
         )
 
+    @classmethod
+    def from_meta(cls, meta: dict[str, object]) -> Style:
+        """Create a Visual Style containing meta information.
+
+        Args:
+            meta: A dictionary of meta information.
+
+        Returns:
+            A new Style.
+        """
+        return Style(_meta=dumps(meta))
+
     @cached_property
     def rich_style(self) -> RichStyle:
-        """Convert this Styles in to a Rich style.
+        """Convert this Styles into a Rich style.
 
         Returns:
             A Rich style object.
@@ -202,21 +231,58 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            reverse=self.reverse,
             strike=self.strike,
             link=self.link,
             meta=self.meta,
         )
 
+    def rich_style_with_offset(self, x: int, y: int) -> RichStyle:
+        return RichStyle(
+            color=(self.background + self.foreground).rich_color,
+            bgcolor=self.background.rich_color,
+            bold=self.bold,
+            dim=self.dim,
+            italic=self.italic,
+            underline=self.underline,
+            reverse=self.reverse,
+            strike=self.strike,
+            link=self.link,
+            meta={**self.meta, "offset": (x, y)},
+        )
+
+    def get_rich_style(self) -> RichStyle:
+        rich_style = RichStyle(
+            color=(self.background + self.foreground).rich_color,
+            bgcolor=self.background.rich_color,
+            bold=self.bold,
+            dim=self.dim,
+            italic=self.italic,
+            underline=self.underline,
+            reverse=self.reverse,
+            strike=self.strike,
+            link=self.link,
+            meta=self.meta,
+        )
+        return rich_style
+
     @cached_property
     def without_color(self) -> Style:
+        """The style with no color."""
         return Style(
             bold=self.bold,
             dim=self.dim,
             italic=self.italic,
+            reverse=self.reverse,
             strike=self.strike,
             link=self.link,
             _meta=self._meta,
         )
+
+    @cached_property
+    def background_style(self) -> Style:
+        """Just the background color, with no other attributes."""
+        return Style(self.background, _meta=self._meta)
 
     @classmethod
     def combine(cls, styles: Iterable[Style]) -> Style:
@@ -227,7 +293,7 @@ class Style:
     @property
     def meta(self) -> dict[str, Any]:
         """Get meta information (can not be changed after construction)."""
-        return {} if self._meta is None else cast(dict[str, Any], loads(self._meta))
+        return {} if self._meta is None else loads(self._meta)
 
 
 class Visual(ABC):
@@ -239,9 +305,13 @@ class Visual(ABC):
 
     @abstractmethod
     def render_strips(
-        self, widget: Widget, width: int, height: int | None, style: Style
+        self,
+        widget: Widget,
+        width: int,
+        height: int | None,
+        style: Style,
     ) -> list[Strip]:
-        """Render the visual in to an iterable of strips.
+        """Render the visual into an iterable of strips.
 
         Args:
             base_style: The base style.
@@ -283,7 +353,6 @@ class Visual(ABC):
         style: Style,
         *,
         pad: bool = False,
-        align: tuple[AlignHorizontal, AlignVertical] = ("left", "top"),
     ) -> list[Strip]:
         """High level function to render a visual to strips.
 
@@ -294,7 +363,6 @@ class Visual(ABC):
             height: Desired height (in lines) or `None` for no limit.
             style: A (Visual) Style instance.
             pad: Pad to desired width?
-            align: Tuple of horizontal and vertical alignment.
 
         Returns:
             A list of Strips containing the render.
@@ -305,8 +373,9 @@ class Visual(ABC):
         rich_style = style.rich_style
         if pad:
             strips = [strip.extend_cell_length(width, rich_style) for strip in strips]
-        if align != ("left", "top"):
-            align_horizontal, align_vertical = align
+        content_align = widget.styles.content_align
+        if content_align != ("left", "top"):
+            align_horizontal, align_vertical = content_align
             strips = list(
                 Strip.align(
                     strips,
@@ -403,6 +472,7 @@ class RichVisual(Visual):
                 height,
             )
         ]
+
         return strips
 
 
@@ -442,6 +512,7 @@ class Padding(Visual):
         render_width = width - (left + right)
         if render_width <= 0:
             return []
+
         strips = self._visual.render_strips(
             widget,
             render_width,
@@ -463,3 +534,19 @@ class Padding(Visual):
             ]
 
         return strips
+
+
+def pick_bool(*values: bool | None) -> bool:
+    """Pick the first non-none bool or return the last value.
+
+    Args:
+        *values (bool): Any number of boolean or None values.
+
+    Returns:
+        bool: First non-none boolean.
+    """
+    assert values, "1 or more values required"
+    for value in values:
+        if value is not None:
+            return value
+    return bool(value)

@@ -543,16 +543,16 @@ class StylesBase:
         )
 
     @property
-    def is_relative_width(self) -> bool:
+    def is_relative_width(self, _relative_units={Unit.FRACTION, Unit.PERCENT}) -> bool:
         """Does the node have a relative width?"""
         width = self.width
-        return width is not None and width.unit in (Unit.FRACTION, Unit.PERCENT)
+        return width is not None and width.unit in _relative_units
 
     @property
-    def is_relative_height(self) -> bool:
+    def is_relative_height(self, _relative_units={Unit.FRACTION, Unit.PERCENT}) -> bool:
         """Does the node have a relative width?"""
         height = self.height
-        return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+        return height is not None and height.unit in _relative_units
 
     @property
     def is_auto_width(self) -> bool:
@@ -565,6 +565,14 @@ class StylesBase:
         """Does the node have automatic height?"""
         height = self.height
         return height is not None and height.unit == Unit.AUTO
+
+    @property
+    def is_dynamic_height(
+        self, _dynamic_units={Unit.AUTO, Unit.FRACTION, Unit.PERCENT}
+    ) -> bool:
+        """Does the node have a dynamic (not fixed) height?"""
+        height = self.height
+        return height is not None and height.unit in _dynamic_units
 
     @property
     def is_docked(self) -> bool:
@@ -660,7 +668,7 @@ class StylesBase:
         """
 
     def merge_rules(self, rules: RulesMap) -> None:
-        """Merge rules in to Styles.
+        """Merge rules into Styles.
 
         Args:
             rules: A mapping of rules.

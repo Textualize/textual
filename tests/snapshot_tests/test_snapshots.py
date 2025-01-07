@@ -11,7 +11,16 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.command import SimpleCommand
-from textual.containers import Center, Container, Grid, Middle, Vertical, VerticalScroll
+from textual.containers import (
+    Center,
+    Container,
+    Grid,
+    Middle,
+    Vertical,
+    VerticalGroup,
+    VerticalScroll,
+    HorizontalGroup,
+)
 from textual.pilot import Pilot
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
@@ -22,6 +31,8 @@ from textual.widgets import (
     Header,
     Input,
     Label,
+    ListItem,
+    ListView,
     Log,
     OptionList,
     Placeholder,
@@ -1403,12 +1414,12 @@ def test_missing_vertical_scroll(snap_compare):
 
 
 def test_vertical_min_height(snap_compare):
-    """Test vertical min height takes border in to account."""
+    """Test vertical min height takes border into account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_min_height.py")
 
 
 def test_vertical_max_height(snap_compare):
-    """Test vertical max height takes border in to account."""
+    """Test vertical max height takes border into account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
 
 
@@ -3139,3 +3150,104 @@ def test_auto_parent_with_alignment(snap_compare):
             yield Sidebar()
 
     snap_compare(FloatSidebarApp())
+
+
+def test_select_refocus(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5416
+
+    The original bug was that the call to focus had no apparent effect as the Select
+    was re-focusing itself after the Changed message was processed.
+
+    You should see a list view with three items, where the second one is in focus.
+
+    """
+    opts = ["foo", "bar", "zoo"]
+
+    class MyListItem(ListItem):
+        def __init__(self, opts: list[str]) -> None:
+            self.opts = opts
+            self.lab = Label("Hello!")
+            self.sel = Select(options=[(opt, opt) for opt in self.opts])
+            super().__init__()
+
+        def compose(self):
+            with HorizontalGroup():
+                yield self.lab
+                yield self.sel
+
+        def on_select_changed(self, event: Select.Changed):
+            self.app.query_one(MyListView).focus()
+
+    class MyListView(ListView):
+        def compose(self):
+            yield MyListItem(opts)
+            yield MyListItem(opts)
+            yield MyListItem(opts)
+
+        def on_list_view_selected(self, event: ListView.Selected):
+            event.item.sel.focus()
+            event.item.sel.expanded = True
+
+    class TUI(App):
+        def compose(self):
+            with Container():
+                yield MyListView()
+
+    snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
+
+
+def test_widgets_in_grid(snap_compare):
+    """You should see a 3x3 grid of labels where the text is wrapped, and there is no superfluous space."""
+    TEXT = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain."""
+
+    class MyApp(App):
+        CSS = """
+        VerticalGroup {
+            layout: grid;
+            grid-size: 3 3;
+            grid-columns: 1fr;
+            grid-rows: auto;
+            height: auto;
+            background: blue;
+        }
+        Label {        
+            border: heavy red;
+            text-align: left;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup():
+                for n in range(9):
+                    label = Label(TEXT, id=f"label{n}")
+                    label.border_title = str(n)
+                    yield label
+
+    snap_compare(MyApp(), terminal_size=(100, 50))
+
+
+def test_arbitrary_selection(snap_compare):
+    """You should see 3x3 labels with different text alignments.
+
+    Text selection should start from somewhere in the first label, and
+    end somewhere in the right label.
+
+    """
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.mouse_down(pilot.app.query_one("#first"), offset=(10, 10))
+        await pilot.mouse_up(pilot.app.query_one("#last"), offset=(10, 10))
+        await pilot.pause()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_selection.py",
+        terminal_size=(175, 50),
+        run_before=run_before,
+    )

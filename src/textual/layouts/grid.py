@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class GridLayout(Layout):
-    """Used to layout Widgets in to a grid."""
+    """Used to layout Widgets into a grid."""
 
     name = "grid"
 
@@ -253,6 +253,7 @@ class GridLayout(Layout):
                             + gutter_height,
                         )
                         height = max(height, widget_height)
+
                 row_scalars[row] = Scalar.from_number(height)
 
         rows = resolve(row_scalars, size.height, gutter_horizontal, size, viewport)
@@ -271,12 +272,15 @@ class GridLayout(Layout):
             x2, cell_width = columns[min(max_column, column + column_span)]
             y2, cell_height = rows[min(max_row, row + row_span)]
             cell_size = Size(cell_width + x2 - x, cell_height + y2 - y)
+
             box_width, box_height, margin = widget._get_box_model(
                 cell_size,
                 viewport,
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
+                constrain_width=True,
             )
+
             if self.stretch_height and len(children) > 1:
                 if box_height <= cell_size.height:
                     box_height = Fraction(cell_size.height)

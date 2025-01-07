@@ -29,13 +29,6 @@ def test_text_opacity_value_of_one_noop(text):
     assert render(TextOpacity(text, opacity=1)) == render(text)
 
 
-def test_ansi_colors_noop():
-    ansi_colored_text = Text("Hello, world!", style="red on green", end="")
-    assert render(TextOpacity(ansi_colored_text, opacity=0.5)) == render(
-        ansi_colored_text
-    )
-
-
 def test_text_opacity_no_style_noop():
     text_no_style = Text("Hello, world!", end="")
     assert render(TextOpacity(text_no_style, opacity=0.2)) == render(text_no_style)

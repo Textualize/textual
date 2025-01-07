@@ -396,6 +396,12 @@ class App(Generic[ReturnType], DOMNode):
     Setting to `None` or `""` disables auto focus.
     """
 
+    ALLOW_SELECT: ClassVar[bool] = True
+    """A switch to toggle arbitrary text selection for the app.
+    
+    Note that this doesn't apply to Input and TextArea which have builtin support for selection.
+    """
+
     _BASE_PATH: str | None = None
     CSS_PATH: ClassVar[CSSPathType | None] = None
     """File paths to load CSS from."""
@@ -802,7 +808,7 @@ class App(Generic[ReturnType], DOMNode):
                         show=False,
                         key_display=self.COMMAND_PALETTE_DISPLAY,
                         priority=True,
-                        tooltip="Open command palette",
+                        tooltip="Open the command palette",
                     )
                 )
 
@@ -1531,7 +1537,6 @@ class App(Generic[ReturnType], DOMNode):
         self._clipboard = text
         if self._driver is None:
             return
-
         import base64
 
         base64_text = base64.b64encode(text.encode("utf-8")).decode("utf-8")
@@ -2845,7 +2850,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             widget: Widget to focus.
-            scroll_visible: Scroll widget in to view.
+            scroll_visible: Scroll widget into view.
         """
         self.screen.set_focus(widget, scroll_visible)
 

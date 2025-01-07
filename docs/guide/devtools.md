@@ -62,7 +62,7 @@ textual run -c textual colors
 ## Serve
 
 The devtools can also serve your application in a browser.
-Effectively turning your terminal app in to a web application!
+Effectively turning your terminal app into a web application!
 
 The `serve` sub-command is similar to `run`. Here's how you can serve an app launched from a Python file:
 
@@ -144,7 +144,7 @@ textual console -v
 
 ### Decreasing verbosity
 
-Log messages are classififed in to groups, and the `-x` flag can be used to **exclude** all message from a group. The groups are: `EVENT`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `PRINT`, `SYSTEM`, `LOGGING` and `WORKER`. The group a message belongs to is printed after its timestamp.
+Log messages are classififed into groups, and the `-x` flag can be used to **exclude** all message from a group. The groups are: `EVENT`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `PRINT`, `SYSTEM`, `LOGGING` and `WORKER`. The group a message belongs to is printed after its timestamp.
 
 Multiple groups may be excluded, for example to exclude everything except warning, errors, and `print` statements:
 
