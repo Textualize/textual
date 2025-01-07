@@ -808,7 +808,7 @@ class App(Generic[ReturnType], DOMNode):
                         show=False,
                         key_display=self.COMMAND_PALETTE_DISPLAY,
                         priority=True,
-                        tooltip="Open command palette",
+                        tooltip="Open the command palette",
                     )
                 )
 
