@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
+from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 
 from textual import log
@@ -144,6 +145,7 @@ class StylesCache:
             crop=crop,
             filters=widget.app._filters,
             opacity=widget.opacity,
+            ansi_theme=widget.app.ansi_theme,
         )
         if widget.auto_links:
             hover_style = widget.hover_style
@@ -176,6 +178,7 @@ class StylesCache:
         crop: Region | None = None,
         filters: Sequence[LineFilter] | None = None,
         opacity: float = 1.0,
+        ansi_theme: TerminalTheme = DEFAULT_TERMINAL_THEME,
     ) -> list[Strip]:
         """Render a widget content plus CSS styles.
 
@@ -231,6 +234,7 @@ class StylesCache:
                     border_title,
                     border_subtitle,
                     opacity,
+                    ansi_theme,
                 )
                 self._cache[y] = strip
             else:
@@ -267,6 +271,7 @@ class StylesCache:
         border_title: tuple[Text, Color, Color, Style] | None,
         border_subtitle: tuple[Text, Color, Color, Style] | None,
         opacity: float,
+        ansi_theme: TerminalTheme,
     ) -> Strip:
         """Render a styled line.
 
@@ -447,7 +452,9 @@ class StylesCache:
             if inner:
                 line = Segment.apply_style(line, inner)
             if styles.text_opacity != 1.0:
-                line = TextOpacity.process_segments(line, styles.text_opacity)
+                line = TextOpacity.process_segments(
+                    line, styles.text_opacity, ansi_theme
+                )
             line = line_post(line_pad(line, pad_left, pad_right, inner))
 
             if border_left or border_right:

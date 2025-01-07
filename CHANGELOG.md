@@ -7,23 +7,45 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
 
 ### Fixed
 
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
 - Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
 - Fixed layout of the keys in the help panel when a key has a tooltip but no description https://github.com/Textualize/textual/issues/5436
+- Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
+- The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
+- `Pilot.mouse_down` and `Pilot.mouse_up` now issue a prior `MouseMove` event, to more closely reflect real mouse actions. https://github.com/Textualize/textual/pull/5409
+- Snapshots tests now discard meta, which should reduce test breaking with no visual differences https://github.com/Textualize/textual/pull/5409
 
 ### Added
 
+- Added `Select.type_to_search` which allows you to type to move the cursor to a matching option https://github.com/Textualize/textual/pull/5403
+- Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
 - Added `from_app_focus` to `Focus` event to indicate if a widget is being focused because the app itself has regained focus or not https://github.com/Textualize/textual/pull/5379
-- - Added `Select.type_to_search` which allows you to type to move the cursor to a matching option https://github.com/Textualize/textual/pull/5403
+- Added `Blurred` message to `Input` widget (matching `Submitted` and `Changed`) to make it easier to synchronize with `validate_on` parameter when set to 'blur'.
+- Added `Offset.transpose` https://github.com/Textualize/textual/pull/5409
+- Added `screen--selection` component class to define style for selection https://github.com/Textualize/textual/pull/5409
+- Added `Widget.select_container` property https://github.com/Textualize/textual/pull/5409
+- Added `Widget.select_all` https://github.com/Textualize/textual/pull/5409
+- Added `Region.bottom_right_inclusive` https://github.com/Textualize/textual/pull/5409
+- Added double click to select, triple click to select all in container https://github.com/Textualize/textual/pull/5409
+- Added arbitrary text selection https://github.com/Textualize/textual/pull/5409
+- Added Widget.ALLOW_SELECT classvar for a per-widget switch to disable text selection https://github.com/Textualize/textual/pull/5409
+- Added Widget.allow_select method for programmatic control of text selection https://github.com/Textualize/textual/pull/5409
+- Added App.ALLOW_SELECT for a global switch to disable text selection https://github.com/Textualize/textual/pull/5409
+- Added `DOMNode.query_ancestor` https://github.com/Textualize/textual/pull/5409
 
-### Changed
+### Fixed
 
 - The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
 - Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
+- Modified _on_blur method in `Input` to post a `Blurred` message
+- Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
+- Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
+- Fixed Log widget not refreshing on resize https://github.com/Textualize/textual/pull/5460
 
 
 ## [1.0.0] - 2024-12-12

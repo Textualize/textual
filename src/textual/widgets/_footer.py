@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class FooterKey(Widget):
+    ALLOW_SELECT = False
     COMPONENT_CLASSES = {
         "footer-key--key",
         "footer-key--description",
@@ -48,7 +49,7 @@ class FooterKey(Widget):
         }
 
         &.-disabled {
-            text-style: dim;            
+            text-style: dim;
         }
 
         &.-compact {
@@ -58,7 +59,7 @@ class FooterKey(Widget):
             .footer-key--description {
                 padding: 0 0 0 1;
             }
-        }        
+        }
     }
     """
 
@@ -121,6 +122,7 @@ class FooterKey(Widget):
 
 @rich.repr.auto
 class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
+    ALLOW_SELECT = False
     DEFAULT_CSS = """
     Footer {
         layout: grid;
@@ -134,20 +136,20 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             grid-gutter: 1;
         }
         FooterKey.-command-palette  {
-            dock: right;                        
+            dock: right;
             padding-right: 1;
-            border-left: vkey $foreground 20%;                            
+            border-left: vkey $foreground 20%;
         }
 
-        &:ansi {           
-            background: ansi_default;            
+        &:ansi {
+            background: ansi_default;
             .footer-key--key {
                 background: ansi_default;
-                color: ansi_magenta;                
+                color: ansi_magenta;
             }
             .footer-key--description {
                 background: ansi_default;
-                color: ansi_default;                
+                color: ansi_default;
             }
             FooterKey:hover {
                 text-style: underline;
@@ -156,7 +158,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 .footer-key--key {
                     background: ansi_default;
                 }
-            }        
+            }
             FooterKey.-command-palette {
                 background: ansi_default;
                 border-left: vkey ansi_black;
@@ -189,7 +191,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
-            show_command_palette: Show key binding to command palette, on the right of the footer.
+            show_command_palette: Show key binding to invoke the command palette, on the right of the footer.
         """
         super().__init__(
             *children,

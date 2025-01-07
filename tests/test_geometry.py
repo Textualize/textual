@@ -80,6 +80,11 @@ def test_offset_bool():
     assert not Offset(0, 0)
 
 
+def test_offset_transpose():
+    assert Offset(1, 2).transpose == (2, 1)
+    assert Offset(5, 10).transpose == (10, 5)
+
+
 def test_offset_is_origin():
     assert Offset(0, 0).is_origin
     assert not Offset(1, 0).is_origin
@@ -188,6 +193,7 @@ def test_region_top_right():
 
 def test_region_bottom_right():
     assert Region(1, 2, 3, 4).bottom_right == Offset(4, 6)
+    assert Region(1, 2, 3, 4).bottom_right_inclusive == Offset(3, 5)
 
 
 def test_region_add():

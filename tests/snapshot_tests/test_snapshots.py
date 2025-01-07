@@ -17,6 +17,7 @@ from textual.containers import (
     Grid,
     Middle,
     Vertical,
+    VerticalGroup,
     VerticalScroll,
     HorizontalGroup,
 )
@@ -1413,12 +1414,12 @@ def test_missing_vertical_scroll(snap_compare):
 
 
 def test_vertical_min_height(snap_compare):
-    """Test vertical min height takes border in to account."""
+    """Test vertical min height takes border into account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_min_height.py")
 
 
 def test_vertical_max_height(snap_compare):
-    """Test vertical max height takes border in to account."""
+    """Test vertical max height takes border into account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
 
 
@@ -3193,3 +3194,60 @@ def test_select_refocus(snap_compare):
                 yield MyListView()
 
     snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
+
+
+def test_widgets_in_grid(snap_compare):
+    """You should see a 3x3 grid of labels where the text is wrapped, and there is no superfluous space."""
+    TEXT = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain."""
+
+    class MyApp(App):
+        CSS = """
+        VerticalGroup {
+            layout: grid;
+            grid-size: 3 3;
+            grid-columns: 1fr;
+            grid-rows: auto;
+            height: auto;
+            background: blue;
+        }
+        Label {        
+            border: heavy red;
+            text-align: left;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup():
+                for n in range(9):
+                    label = Label(TEXT, id=f"label{n}")
+                    label.border_title = str(n)
+                    yield label
+
+    snap_compare(MyApp(), terminal_size=(100, 50))
+
+
+def test_arbitrary_selection(snap_compare):
+    """You should see 3x3 labels with different text alignments.
+
+    Text selection should start from somewhere in the first label, and
+    end somewhere in the right label.
+
+    """
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.mouse_down(pilot.app.query_one("#first"), offset=(10, 10))
+        await pilot.mouse_up(pilot.app.query_one("#last"), offset=(10, 10))
+        await pilot.pause()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_selection.py",
+        terminal_size=(175, 50),
+        run_before=run_before,
+    )

@@ -1,6 +1,6 @@
 """
 
-The compositor handles combining widgets in to a single screen (i.e. compositing).
+The compositor handles combining widgets into a single screen (i.e. compositing).
 
 It also stores the results of that process, so that Textual knows the widgets on
 the screen and their locations. The compositor uses this information to answer
@@ -844,11 +844,11 @@ class Compositor:
         """Get the Style at the given cell or Style.null()
 
         Args:
-            x: X position within the Layout
-            y: Y position within the Layout
+            x: X position within the Layout.
+            y: Y position within the Layout.
 
         Returns:
-            The Style at the cell (x, y) within the Layout
+            The Style at the cell (x, y) within the Layout.
         """
         try:
             widget, region = self.get_widget_at(x, y)
@@ -866,11 +866,69 @@ class Compositor:
         if not lines:
             return Style.null()
         end = 0
+
         for segment in lines[0]:
             end += segment.cell_length
             if x < end:
                 return segment.style or Style.null()
+
         return Style.null()
+
+    def get_widget_and_offset_at(
+        self, x: int, y: int
+    ) -> tuple[Widget | None, Offset | None]:
+        """Get the Style at the given cell, the offset within the content.
+
+        Args:
+            x: X position within the Layout.
+            y: Y position within the Layout.
+
+        Returns:
+            A tuple of the widget at (x, y) and the offset within the widget.
+        """
+        try:
+            widget, region = self.get_widget_at(x, y)
+        except errors.NoWidget:
+            return None, None
+        if widget not in self.visible_widgets:
+            return None, None
+
+        if y >= widget.content_region.bottom:
+            x, y = widget.content_region.bottom_right_inclusive
+
+        x -= region.x
+        y -= region.y
+
+        visible_screen_stack.set(widget.app._background_screens)
+        lines = widget.render_lines(Region(0, y, region.width, 1))
+
+        if not lines:
+            return widget, None
+        end = 0
+        start = 0
+
+        offset_y: int | None = None
+        offset_x = 0
+        offset_x2 = 0
+
+        for segment in lines[0]:
+            end += segment.cell_length
+            style = segment.style
+            if style is not None and style._meta is not None:
+                meta = style.meta
+                if "offset" in meta:
+                    offset_x, offset_y = style.meta["offset"]
+                    offset_x2 = offset_x + segment.cell_length
+
+                    if x <= end:
+                        return widget, (
+                            None
+                            if offset_y is None
+                            else Offset(offset_x + (x - start), offset_y)
+                        )
+            start = end
+
+        return widget, (None if offset_y is None else Offset(offset_x2, offset_y))
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.
@@ -1056,7 +1114,9 @@ class Compositor:
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
         if simplify:
-            render_strips = [Strip.join(chop.values()).simplify() for chop in chops]
+            render_strips = [
+                Strip.join(chop.values()).simplify().discard_meta() for chop in chops
+            ]
         else:
             render_strips = [Strip.join(chop.values()) for chop in chops]
 

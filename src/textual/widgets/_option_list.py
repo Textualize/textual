@@ -119,6 +119,7 @@ content to the option list. This is a superset of [`OptionListContent`][textual.
 class OptionList(ScrollView, can_focus=True):
     """A vertical option list with bounce-bar highlighting."""
 
+    ALLOW_SELECT = False
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("down", "cursor_down", "Down", show=False),
         Binding("end", "last", "Last", show=False),
@@ -410,6 +411,7 @@ class OptionList(ScrollView, can_focus=True):
             event: The mouse movement event.
         """
         self._mouse_hovering_over = event.style.meta.get("option")
+        self.refresh()
 
     def _on_leave(self, _: events.Leave) -> None:
         """React to the mouse leaving the widget."""
