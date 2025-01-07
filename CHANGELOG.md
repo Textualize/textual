@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
 - Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
+- Fixed Log widget not refreshing on resize https://github.com/Textualize/textual/pull/5460
 
 
 ## [1.0.0] - 2024-12-12
