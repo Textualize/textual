@@ -26,6 +26,7 @@ from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
+    Collapsible,
     DataTable,
     Footer,
     Header,
@@ -3251,6 +3252,38 @@ def test_arbitrary_selection(snap_compare):
         terminal_size=(175, 50),
         run_before=run_before,
     )
+
+
+def test_collapsible_datatable(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5407
+
+    You should see two collapsibles, where the first is expanded.
+    In the expanded coillapsible, you should see a DataTable filling the space,
+    with all borders and both scrollbars visible.
+    """
+
+    class MyApp(App):
+        CSS = """
+        DataTable {
+        
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Collapsible(DataTable(id="t1"), id="c1", collapsed=False)
+            yield Collapsible(Label("hello"), id="c2")
+
+        def on_mount(self) -> None:
+            self.query_one("#c1", Collapsible).styles.max_height = "50%"
+            self.query_one("#c2", Collapsible).styles.max_height = "50%"
+
+            t1 = self.query_one("#t1", DataTable)
+            t1.styles.border = "heavy", "black"
+            t1.add_column("A")
+            for number in range(1, 100):
+                t1.add_row(str(number) + " " * 200)
+
+    snap_compare(MyApp())
 
 
 def test_scrollbar_background_with_opacity(snap_compare):

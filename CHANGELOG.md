@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
 - Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
 - Fixed Log widget not refreshing on resize https://github.com/Textualize/textual/pull/5460
+- Fixed special case with calculating the height of a container where all children have dynamic heights https://github.com/Textualize/textual/pull/5463
 - Fixed scrollbars ignoring background opacity https://github.com/Textualize/textual/issues/5458
 
 
