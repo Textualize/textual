@@ -28,7 +28,9 @@ class GridLayout(Layout):
         parent.pre_layout(self)
         styles = parent.styles
         row_scalars = styles.grid_rows or (
-            [Scalar.parse("1fr")] if size.height else [Scalar.parse("auto")]
+            [Scalar.parse("1fr")]
+            if (size.height and not parent.styles.is_auto_height)
+            else [Scalar.parse("auto")]
         )
         column_scalars = styles.grid_columns or [Scalar.parse("1fr")]
         gutter_horizontal = styles.grid_gutter_horizontal
