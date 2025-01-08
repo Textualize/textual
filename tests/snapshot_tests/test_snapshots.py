@@ -3251,3 +3251,30 @@ def test_arbitrary_selection(snap_compare):
         terminal_size=(175, 50),
         run_before=run_before,
     )
+
+
+def test_scrollbar_background_with_opacity(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5458
+    The scrollbar background should match the background of the widget."""
+
+    class ScrollbarOpacityApp(App):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+
+        VerticalScroll {
+            width: 50%;
+            height: 50%;
+            background: blue 10%;
+            scrollbar-background: blue 10%;
+            scrollbar-color: cyan;
+            scrollbar-size-vertical: 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll():
+                yield Static("\n".join(f"This is some text {n}" for n in range(100)))
+
+    assert snap_compare(ScrollbarOpacityApp())
