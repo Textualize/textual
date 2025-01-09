@@ -272,6 +272,10 @@ class Log(ScrollView, can_focus=True):
         text = "\n".join(self._lines)
         return selection.extract(text), "\n"
 
+    def selection_updated(self, selection: Selection | None) -> None:
+        self._render_line_cache.clear()
+        self.refresh()
+
     def render_line(self, y: int) -> Strip:
         """Render a line of content.
 
@@ -322,7 +326,9 @@ class Log(ScrollView, can_focus=True):
 
         _line = self._process_line(self._lines[y])
 
-        line_text = Text(_line, style=rich_style, no_wrap=True)
+        line_text = Text(_line, no_wrap=True)
+        line_text.stylize(rich_style)
+
         if self.highlight:
             line_text = self.highlighter(line_text)
         if selection is not None:

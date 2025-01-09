@@ -3832,6 +3832,14 @@ class Widget(DOMNode):
             return None
         return selection.extract(text), "\n"
 
+    def selection_updated(self, selection: Selection | None) -> None:
+        """Called when the selection is updated.
+
+        Args:
+            selection: Selection information or `None` if no selection.
+        """
+        self.refresh()
+
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
