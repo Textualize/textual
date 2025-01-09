@@ -870,6 +870,7 @@ class Screen(Generic[ScreenResultType], Widget):
         selection = self.get_selected_text()
         if selection is not None:
             self.app.copy_to_clipboard(selection)
+            self.notify(selection)
 
     def action_maximize(self) -> None:
         """Action to maximize the currently focused widget."""
