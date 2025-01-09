@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Widget.allow_select method for programmatic control of text selection https://github.com/Textualize/textual/pull/5409
 - Added App.ALLOW_SELECT for a global switch to disable text selection https://github.com/Textualize/textual/pull/5409
 - Added `DOMNode.query_ancestor` https://github.com/Textualize/textual/pull/5409
+- Added selection to Log widget
 
 ### Fixed
 
