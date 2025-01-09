@@ -672,3 +672,24 @@ class Strip:
                     line_pad(self._segments, width - self.cell_length, 0, Style.null()),
                     width,
                 )
+
+    def apply_offsets(self, x: int, y: int) -> Strip:
+        """Apply offsets used in text selection.
+
+        Args:
+            x: Offset on X axis (column).
+            y: Offset on Y axis (row).
+
+        Returns:
+            New strip.
+        """
+        segments = self._segments
+        strip_segments: list[Segment] = []
+        for segment in segments:
+            text, style, _ = segment
+            offset_style = Style.from_meta({"offset": (x, y)})
+            strip_segments.append(
+                Segment(text, style + offset_style if style else offset_style)
+            )
+            x += len(segment.text)
+        return Strip(strip_segments, self._cell_length)

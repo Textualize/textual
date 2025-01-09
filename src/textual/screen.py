@@ -41,6 +41,7 @@ from textual._path import (
 )
 from textual._spatial_map import SpatialMap
 from textual._types import CallbackType
+from textual.actions import SkipAction
 from textual.await_complete import AwaitComplete
 from textual.binding import ActiveBinding, Binding, BindingsMap
 from textual.css.match import match
@@ -342,7 +343,7 @@ class Screen(Generic[ScreenResultType], Widget):
         selections: dict[Widget, Selection],
     ):
         for widget in old_selections.keys() | selections.keys():
-            widget.refresh()
+            widget.selection_updated(selections.get(widget, None))
 
     def refresh_bindings(self) -> None:
         """Call to request a refresh of bindings."""
@@ -868,8 +869,10 @@ class Screen(Generic[ScreenResultType], Widget):
     def action_copy_text(self) -> None:
         """Copy selected text to clipboard."""
         selection = self.get_selected_text()
-        if selection is not None:
-            self.app.copy_to_clipboard(selection)
+        if selection is None:
+            # No text selected
+            raise SkipAction()
+        self.app.copy_to_clipboard(selection)
 
     def action_maximize(self) -> None:
         """Action to maximize the currently focused widget."""

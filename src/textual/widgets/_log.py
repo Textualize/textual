@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Iterable, Optional, Sequence
 
 from rich.cells import cell_len
 from rich.highlighter import Highlighter, ReprHighlighter
-from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 
@@ -15,6 +14,7 @@ from textual.cache import LRUCache
 from textual.geometry import Size
 from textual.reactive import var
 from textual.scroll_view import ScrollView
+from textual.selection import Selection
 from textual.strip import Strip
 
 if TYPE_CHECKING:
@@ -26,6 +26,7 @@ _sub_escape = re.compile("[\u0000-\u0014]").sub
 class Log(ScrollView, can_focus=True):
     """A widget to log text."""
 
+    ALLOW_SELECT = True
     DEFAULT_CSS = """
     Log {
         background: $surface;
@@ -75,6 +76,11 @@ class Log(ScrollView, can_focus=True):
         self._render_line_cache: LRUCache[int, Strip] = LRUCache(1024)
         self.highlighter: Highlighter = ReprHighlighter()
         """The Rich Highlighter object to use, if `highlight=True`"""
+        self._clear_y = 0
+
+    @property
+    def allow_select(self) -> bool:
+        return True
 
     @property
     def lines(self) -> Sequence[str]:
@@ -251,7 +257,24 @@ class Log(ScrollView, can_focus=True):
         self._render_line_cache.clear()
         self._updates += 1
         self.virtual_size = Size(0, 0)
+        self._clear_y = 0
         return self
+
+    def get_selection(self, selection: Selection) -> tuple[str, str] | None:
+        """Get the text under the selection.
+
+        Args:
+            selection: Selection information.
+
+        Returns:
+            Tuple of extracted text and ending (typically "\n" or " "), or `None` if no text could be extracted.
+        """
+        text = "\n".join(self._lines)
+        return selection.extract(text), "\n"
+
+    def selection_updated(self, selection: Selection | None) -> None:
+        self._render_line_cache.clear()
+        self.refresh()
 
     def render_line(self, y: int) -> Strip:
         """Render a line of content.
@@ -284,6 +307,7 @@ class Log(ScrollView, can_focus=True):
         line = self._render_line_strip(y, rich_style)
         assert line._cell_length is not None
         line = line.crop_extend(scroll_x, scroll_x + width, rich_style)
+        line = line.apply_offsets(scroll_x, y)
         return line
 
     def _render_line_strip(self, y: int, rich_style: Style) -> Strip:
@@ -296,18 +320,32 @@ class Log(ScrollView, can_focus=True):
         Returns:
             An uncropped Strip.
         """
-        if y in self._render_line_cache:
+        selection = self.selection
+        if y in self._render_line_cache and self.selection is None:
             return self._render_line_cache[y]
 
         _line = self._process_line(self._lines[y])
 
-        if self.highlight:
-            line_text = self.highlighter(Text(_line, style=rich_style, no_wrap=True))
-            line = Strip(line_text.render(self.app.console), cell_len(_line))
-        else:
-            line = Strip([Segment(_line, rich_style)], cell_len(_line))
+        line_text = Text(_line, no_wrap=True)
+        line_text.stylize(rich_style)
 
-        self._render_line_cache[y] = line
+        if self.highlight:
+            line_text = self.highlighter(line_text)
+        if selection is not None:
+            if (select_span := selection.get_span(y - self._clear_y)) is not None:
+                start, end = select_span
+                if end == -1:
+                    end = len(line_text)
+
+                selection_style = self.screen.get_component_rich_style(
+                    "screen--selection"
+                )
+                line_text.stylize(selection_style, start, end)
+
+        line = Strip(line_text.render(self.app.console), cell_len(_line))
+
+        if selection is not None:
+            self._render_line_cache[y] = line
         return line
 
     def refresh_lines(self, y_start: int, line_count: int = 1) -> None:
