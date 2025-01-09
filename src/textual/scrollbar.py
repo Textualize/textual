@@ -286,7 +286,7 @@ class ScrollBar(Widget):
         else:
             background = styles.scrollbar_background
             color = styles.scrollbar_color
-        if background.a > 0:
+        if background.a < 1:
             base_background, _ = self.parent._opacity_background_colors
             background = base_background + background
         color = background + color
