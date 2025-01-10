@@ -131,7 +131,7 @@ class Pilot(Generic[ReturnType]):
         """
         try:
             return await self._post_mouse_events(
-                [MouseDown],
+                [MouseMove, MouseDown],
                 widget=widget,
                 offset=offset,
                 button=1,
@@ -176,7 +176,7 @@ class Pilot(Generic[ReturnType]):
         """
         try:
             return await self._post_mouse_events(
-                [MouseUp],
+                [MouseMove, MouseUp],
                 widget=widget,
                 offset=offset,
                 button=1,

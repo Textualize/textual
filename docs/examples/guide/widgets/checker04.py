@@ -52,7 +52,7 @@ class CheckerBoard(ScrollView):
             """Get region relative to widget from square coordinate."""
             x, y = square_offset
             region = Region(x * 8, y * 4, 8, 4)
-            # Move the region in to the widgets frame of reference
+            # Move the region into the widgets frame of reference
             region = region.translate(-self.scroll_offset)
             return region
 

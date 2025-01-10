@@ -543,40 +543,46 @@ class StylesBase:
         )
 
     @property
-    def is_relative_width(self) -> bool:
+    def is_relative_width(self, _relative_units={Unit.FRACTION, Unit.PERCENT}) -> bool:
         """Does the node have a relative width?"""
         width = self.width
-        return width is not None and width.unit in (Unit.FRACTION, Unit.PERCENT)
+        return width is not None and width.unit in _relative_units
 
     @property
-    def is_relative_height(self) -> bool:
+    def is_relative_height(self, _relative_units={Unit.FRACTION, Unit.PERCENT}) -> bool:
         """Does the node have a relative width?"""
         height = self.height
-        return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+        return height is not None and height.unit in _relative_units
 
     @property
-    def is_auto_width(self) -> bool:
+    def is_auto_width(self, _auto=Unit.AUTO) -> bool:
         """Does the node have automatic width?"""
         width = self.width
-        return width is not None and width.unit == Unit.AUTO
+        return width is not None and width.unit == _auto
 
     @property
-    def is_auto_height(self) -> bool:
+    def is_auto_height(self, _auto=Unit.AUTO) -> bool:
         """Does the node have automatic height?"""
         height = self.height
-        return height is not None and height.unit == Unit.AUTO
+        return height is not None and height.unit == _auto
+
+    @property
+    def is_dynamic_height(
+        self, _dynamic_units={Unit.AUTO, Unit.FRACTION, Unit.PERCENT}
+    ) -> bool:
+        """Does the node have a dynamic (not fixed) height?"""
+        height = self.height
+        return height is not None and height.unit in _dynamic_units
 
     @property
     def is_docked(self) -> bool:
         """Is the node docked?"""
-        dock = self.dock
-        return dock != "none"
+        return self.dock != "none"
 
     @property
     def is_split(self) -> bool:
         """Is the node split?"""
-        split = self.split
-        return split != "none"
+        return self.split != "none"
 
     def has_rule(self, rule_name: str) -> bool:
         """Check if a rule is set on this Styles object.
@@ -660,7 +666,7 @@ class StylesBase:
         """
 
     def merge_rules(self, rules: RulesMap) -> None:
-        """Merge rules in to Styles.
+        """Merge rules into Styles.
 
         Args:
             rules: A mapping of rules.

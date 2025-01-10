@@ -11,6 +11,7 @@ TBD: Is this a public facing API or an internal one?
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from operator import itemgetter
 from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence
 
@@ -18,6 +19,7 @@ import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import OverflowMethod
+from rich.errors import MissingStyle
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
@@ -27,6 +29,7 @@ from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
 from textual.css.types import TextAlign
+from textual.selection import Selection
 from textual.strip import Strip
 from textual.visual import Style, Visual
 
@@ -34,58 +37,6 @@ if TYPE_CHECKING:
     from textual.widget import Widget
 
 _re_whitespace = re.compile(r"\s+$")
-
-
-def _align_lines(
-    lines: list[Content],
-    width: int,
-    align: TextAlign = "left",
-    overflow: "OverflowMethod" = "fold",
-) -> list[Content]:
-    """Align and overflow text.
-
-    Args:
-        width (int): Number of cells available per line.
-        align (str, optional): Desired text alignment.
-        overflow (str, optional): Default overflow for text: "crop", "fold", or "ellipsis". Defaults to "fold".
-
-    Returns:
-        List of new lines.
-
-    """
-
-    for line in lines:
-        assert isinstance(line._spans, list)
-
-    if align == "left":
-        lines = [line.truncate(width, overflow=overflow, pad=True) for line in lines]
-    elif align == "center":
-        lines = [line.center(width) for line in lines]
-    elif align == "right":
-        lines = [line.right(width) for line in lines]
-    elif align == "full":
-        new_lines = lines.copy()
-        for line_index, line in enumerate(new_lines):
-            if line_index == len(lines) - 1:
-                break
-            words = line.split(" ", include_separator=True)
-            words_size = sum(cell_len(word.plain.rstrip(" ")) for word in words)
-            num_spaces = len(words) - 1
-            spaces = [0 for _ in range(num_spaces)]
-            index = 0
-            if spaces:
-                while words_size + num_spaces < width:
-                    spaces[len(spaces) - index - 1] += 1
-                    num_spaces += 1
-                    index = (index + 1) % len(spaces)
-            tokens = [
-                word.extend_right(spaces[index]) if index < len(spaces) else word
-                for index, word in enumerate(words)
-            ]
-            new_lines[line_index] = Content("").join(tokens)
-
-        return new_lines
-    return lines
 
 
 ANSI_DEFAULT = Style(
@@ -132,7 +83,7 @@ class Content(Visual):
 
     """
 
-    __slots__ = ["_text", "_spans", "_cell_length"]
+    __slots__ = ["_text", "_spans", "_cell_length", "_align", "_no_wrap", "_ellipsis"]
 
     _NORMALIZE_TEXT_ALIGN = {"start": "left", "end": "right", "justify": "full"}
 
@@ -162,6 +113,9 @@ class Content(Visual):
         self._no_wrap = no_wrap
         self._ellipsis = ellipsis
 
+    def __str__(self) -> str:
+        return self._text
+
     @classmethod
     def from_rich_text(
         cls,
@@ -183,8 +137,10 @@ class Content(Visual):
         """
         if isinstance(text, str):
             text = Text.from_markup(text)
+
+        ansi_theme: TerminalTheme | None = None
+
         if text._spans:
-            ansi_theme: TerminalTheme | None
             try:
                 ansi_theme = active_app.get().ansi_theme
             except LookupError:
@@ -204,13 +160,24 @@ class Content(Visual):
         else:
             spans = []
 
-        return cls(
+        content = cls(
             text.plain,
             spans,
             align=align,
             no_wrap=no_wrap,
             ellipsis=ellipsis,
         )
+        if text.style:
+            try:
+                ansi_theme = active_app.get().ansi_theme
+            except LookupError:
+                ansi_theme = None
+            content = content.stylize_before(
+                text.style
+                if isinstance(text.style, str)
+                else Style.from_rich_style(text.style, ansi_theme)
+            )
+        return content
 
     @classmethod
     def styled(
@@ -252,6 +219,67 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
 
+    def _wrap_and_format(
+        self,
+        width: int,
+        align: TextAlign = "left",
+        overflow: OverflowMethod = "fold",
+        no_wrap: bool = False,
+        tab_size: int = 8,
+        selection: Selection | None = None,
+        selection_style: Style | None = None,
+    ) -> list[FormattedLine]:
+        """Wraps the text and applies formatting.
+
+        Args:
+            width: Desired width.
+            align: Text alignment.
+            overflow: Overflow method.
+            no_wrap: Disabled wrapping.
+            tab_size: Cell with of tabs.
+            selection: Selection information or `None` if no selection.
+            selection_style: Selection style, or `None` if no selection.
+
+        Returns:
+            List of formatted lines.
+        """
+        output_lines: list[FormattedLine] = []
+
+        if selection is not None:
+            get_span = selection.get_span
+        else:
+
+            def get_span(y: int) -> tuple[int, int] | None:
+                return None
+
+        for y, line in enumerate(self.split(allow_blank=True)):
+            if selection_style is not None and (span := get_span(y)) is not None:
+                start, end = span
+                if end == -1:
+                    end = len(line.plain)
+                line = line.stylize(selection_style, start, end)
+
+            content_line = FormattedLine(
+                line.expand_tabs(tab_size), width, y=y, align=align
+            )
+
+            if no_wrap:
+                new_lines = [content_line]
+            else:
+                offsets = divide_line(line.plain, width, fold=overflow == "fold")
+                divided_lines = content_line.content.divide(offsets)
+                new_lines = [
+                    FormattedLine(
+                        content.rstrip_end(width), width, offset, y, align=align
+                    )
+                    for content, offset in zip(divided_lines, [0, *offsets])
+                ]
+                new_lines[-1].line_end = True
+
+            output_lines.extend(new_lines)
+
+        return output_lines
+
     def render_strips(
         self,
         widget: Widget,
@@ -262,22 +290,36 @@ class Content(Visual):
         if not width:
             return []
 
-        lines = self.wrap(
+        selection = widget.selection
+        if selection is not None:
+            selection_style = Style.from_rich_style(
+                widget.screen.get_component_rich_style("screen--selection")
+            )
+
+        else:
+            selection_style = None
+
+        align = self._align
+        lines = self._wrap_and_format(
             width,
-            align=self._align,
+            align=align,
             overflow=(
                 ("ellipsis" if self._ellipsis else "crop") if self._no_wrap else "fold"
             ),
             no_wrap=False,
             tab_size=8,
+            selection=widget.selection,
+            selection_style=selection_style,
         )
+
         if height is not None:
             lines = lines[:height]
 
-        return [Strip(line.render_segments(style), line.cell_length) for line in lines]
+        strip_lines = [line.to_strip(widget, style) for line in lines]
+        return strip_lines
 
     def get_height(self, width: int) -> int:
-        lines = self.wrap(width)
+        lines = self._wrap_and_format(width)
         return len(lines)
 
     def __len__(self) -> int:
@@ -475,7 +517,7 @@ class Content(Visual):
         """Get the style of a character at give offset.
 
         Args:
-            offset (int): Offset in to text (negative indexing supported)
+            offset (int): Offset into text (negative indexing supported)
 
         Returns:
             Style: A Style instance.
@@ -529,11 +571,13 @@ class Content(Visual):
                 _Span(start + count, end + count, style)
                 for start, end, style in self._spans
             ]
-            return Content(
+            content = Content(
                 text,
                 spans,
                 None if self._cell_length is None else self._cell_length + count,
             )
+            return content
+
         return self
 
     def extend_right(self, count: int, character: str = " ") -> Content:
@@ -588,8 +632,8 @@ class Content(Visual):
         content = self.rstrip().truncate(
             width, overflow="ellipsis" if ellipsis else "fold"
         )
-        left = (content.cell_length - width) // 2
-        right = width = left
+        left = (width - content.cell_length) // 2
+        right = width - left
         content = content.pad_left(left).pad_right(right)
         return content
 
@@ -690,7 +734,7 @@ class Content(Visual):
         parse_style: Callable[[str], Style] | None = None,
     ) -> Iterable[tuple[str, Style]]:
         if not self._spans:
-            yield self._text, base_style
+            yield (self._text, base_style)
             if end:
                 yield end, base_style
             return
@@ -699,12 +743,15 @@ class Content(Visual):
             app = active_app.get()
             # TODO: Update when we add Content.from_markup
 
+            @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
-                return (
-                    Style.from_rich_style(app.console.get_style(style), app.ansi_theme)
-                    if isinstance(style, str)
-                    else style
-                )
+                try:
+                    visual_style = Style.from_rich_style(
+                        app.console.get_style(style), app.ansi_theme
+                    )
+                except MissingStyle:
+                    visual_style = Style()
+                return visual_style
 
         else:
             get_style = parse_style
@@ -758,13 +805,14 @@ class Content(Visual):
 
     def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
         _Segment = Segment
-        segments = [
-            _Segment(text, style.rich_style)
-            for text, style in self.render(base_style, end)
-        ]
+        render = list(self.render(base_style, end))
+        segments = [_Segment(text, style.get_rich_style()) for text, style in render]
         return segments
 
-    def divide(self, offsets: Sequence[int]) -> list[Content]:
+    def divide(
+        self,
+        offsets: Sequence[int],
+    ) -> list[Content]:
         if not offsets:
             return [self]
 
@@ -774,6 +822,7 @@ class Content(Visual):
         line_ranges = list(zip(divide_offsets, divide_offsets[1:]))
 
         new_lines = [Content(text[start:end]) for start, end in line_ranges]
+
         if not self._spans:
             return new_lines
 
@@ -828,7 +877,7 @@ class Content(Visual):
         include_separator: bool = False,
         allow_blank: bool = False,
     ) -> list[Content]:
-        """Split rich text in to lines, preserving styles.
+        """Split rich text into lines, preserving styles.
 
         Args:
             separator (str, optional): String to split on. Defaults to "\\\\n".
@@ -846,7 +895,7 @@ class Content(Visual):
 
         if include_separator:
             lines = self.divide(
-                [match.end() for match in re.finditer(re.escape(separator), text)]
+                [match.end() for match in re.finditer(re.escape(separator), text)],
             )
         else:
 
@@ -941,29 +990,6 @@ class Content(Visual):
         content = Content("").join(new_text)
         return content
 
-    def wrap(
-        self,
-        width: int,
-        align: TextAlign = "left",
-        overflow: OverflowMethod = "fold",
-        no_wrap: bool = False,
-        tab_size: int = 8,
-    ) -> list[Content]:
-        lines: list[Content] = []
-        for line in self.split(allow_blank=True):
-            if "\t" in line._text:
-                line = line.expand_tabs(tab_size)
-            if no_wrap:
-                new_lines = [line]
-            else:
-                offsets = divide_line(line._text, width, fold=overflow == "fold")
-                new_lines = line.divide(offsets)
-            new_lines = [line.rstrip_end(width) for line in new_lines]
-            new_lines = _align_lines(new_lines, width, align=align, overflow=overflow)
-            new_lines = [line.truncate(width, overflow=overflow) for line in new_lines]
-            lines.extend(new_lines)
-        return lines
-
     def highlight_regex(
         self,
         re_highlight: re.Pattern[str] | str,
@@ -980,6 +1006,123 @@ class Content(Visual):
             if end > start:
                 append_span(_Span(start, end, style))
         return Content(self._text, spans)
+
+
+class FormattedLine:
+    """A line of content with additional formatting information."""
+
+    def __init__(
+        self,
+        content: Content,
+        width: int,
+        x: int = 0,
+        y: int = 0,
+        align: TextAlign = "left",
+        line_end: bool = False,
+        link_style: Style | None = None,
+    ) -> None:
+        self.content = content
+        self.width = width
+        self.x = x
+        self.y = y
+        self.align = align
+        self.line_end = line_end
+        self.link_style = link_style
+
+    @property
+    def plain(self) -> str:
+        return self.content.plain
+
+    def to_strip(self, widget: Widget, style: Style) -> Strip:
+        _Segment = Segment
+        align = self.align
+        width = self.width
+        pad_left = pad_right = 0
+        content = self.content
+        x = self.x
+        y = self.y
+
+        if align in ("start", "left") or (align == "justify" and self.line_end):
+            pass
+
+        elif align == "center":
+            excess_space = width - self.content.cell_length
+            pad_left = excess_space // 2
+            pad_right = excess_space - pad_left
+
+        elif align in ("end", "right"):
+            pad_left = width - self.content.cell_length
+
+        elif align == "justify":
+            words = content.split(" ", include_separator=False)
+            words_size = sum(cell_len(word.plain.rstrip(" ")) for word in words)
+            num_spaces = len(words) - 1
+            spaces = [1] * num_spaces
+            index = 0
+            if spaces:
+                while words_size + num_spaces < width:
+                    spaces[len(spaces) - index - 1] += 1
+                    num_spaces += 1
+                    index = (index + 1) % len(spaces)
+
+            segments: list[Segment] = []
+            add_segment = segments.append
+            x = self.x
+            for index, word in enumerate(words):
+                for text, text_style in word.render(style, end=""):
+                    add_segment(
+                        _Segment(
+                            text, (style + text_style).rich_style_with_offset(x, y)
+                        )
+                    )
+                    x += len(text) + 1
+                if index < len(spaces) and (pad := spaces[index]):
+                    add_segment(_Segment(" " * pad, (style + text_style).rich_style))
+
+            strip = Strip(self._apply_link_style(widget, segments), width)
+            return strip
+
+        segments = (
+            [Segment(" " * pad_left, style.background_style.rich_style)]
+            if pad_left
+            else []
+        )
+        add_segment = segments.append
+        for text, text_style in content.render(style, end=""):
+            add_segment(
+                _Segment(text, (style + text_style).rich_style_with_offset(x, y))
+            )
+            x += len(text)
+
+        if pad_right:
+            segments.append(
+                _Segment(" " * pad_right, style.background_style.rich_style)
+            )
+        strip = Strip(
+            self._apply_link_style(widget, segments),
+            content.cell_length + pad_left + pad_right,
+        )
+        return strip
+
+    def _apply_link_style(
+        self, widget: Widget, segments: list[Segment]
+    ) -> list[Segment]:
+        link_style = widget.link_style
+        _Segment = Segment
+        segments = [
+            _Segment(
+                text,
+                (
+                    style
+                    if style._meta is None
+                    else (style + link_style if "@click" in style.meta else style)
+                ),
+                control,
+            )
+            for text, style, control in segments
+            if style is not None
+        ]
+        return segments
 
 
 if __name__ == "__main__":
@@ -1014,7 +1157,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
         "will", Style(background=Color.parse("rgba(255, 255, 20, 0.3)"))
     )
 
-    lines = content.wrap(40, align="full")
+    lines = content._wrap_and_format(40, align="full")
     print(lines)
     print("x" * 40)
     for line in lines:

@@ -157,14 +157,14 @@ Here's what the above app defines:
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The final three lines create an instance of the app and calls the [run()][textual.app.App.run] method which puts your terminal in to *application mode* and runs the app until you exit with ++ctrl+q++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
+The final three lines create an instance of the app and calls the [run()][textual.app.App.run] method which puts your terminal into *application mode* and runs the app until you exit with ++ctrl+q++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
 
 ## Designing a UI with widgets
 
 Textual has a large number of [builtin widgets](./widget_gallery.md).
 For our app we will need new widgets, which we can create by extending and combining the builtin widgets.
 
-Before we dive in to building widgets, let's first sketch a design for the app &mdash; so we know what we're aiming for.
+Before we dive into building widgets, let's first sketch a design for the app &mdash; so we know what we're aiming for.
 
 
 <div class="excalidraw">
@@ -188,7 +188,7 @@ Just a skeleton for now, we will add the rest of the features as we go.
 ```
 
 We've imported two new widgets in this code: [`Button`](widgets/button.md) for the buttons and [`Digits`](widgets/digits.md) for the time display.
-Additionally, we've imported [`Horizontal`][textual.containers.Horizontal] and [`VerticalScroll`][textual.containers.VerticalScroll] from `textual.containers` (as the name of the module suggests, *containers* are widgets which contain other widgets).
+Additionally, we've imported [`HorizontalGroup`][textual.containers.HorizontalGroup] and [`VerticalScroll`][textual.containers.VerticalScroll] from `textual.containers` (as the name of the module suggests, *containers* are widgets which contain other widgets).
 We will use these container widgets to define the general layout of our interface.
 
 The `TimeDisplay` is currently very simple, all it does is extend `Digits` without adding any new features. We will flesh this out later.
@@ -205,7 +205,7 @@ The Button constructor takes a label to be displayed in the button (`"Start"`, `
 
 ### Composing the widgets
 
-The new line in `StopwatchApp.compose()` yields a single `VerticalScroll` which will scroll if the contents don't quite fit. This widget also takes care of key bindings required for scrolling, like ++up++, ++down++, ++pgdn++, ++pgup++, ++home++, ++end++, etc.
+The new line in `StopwatchApp.compose()` yields a single `VerticalScroll` which will scroll if the contents don't quite fit. This widget also takes care of key bindings required for scrolling, like ++up++, ++down++, ++page-down++, ++page-up++, ++home++, ++end++, etc.
 
 When widgets contain other widgets (like `VerticalScroll`) they will typically accept their child widgets as positional arguments.
 So the line `yield VerticalScroll(Stopwatch(), Stopwatch(), Stopwatch())` creates a `VerticalScroll` containing three `Stopwatch` widgets.

@@ -248,6 +248,9 @@ class ScrollBar(Widget):
 
     DEFAULT_CLASSES = "-textual-system"
 
+    # Nothing to select in scrollbars
+    ALLOW_SELECT = False
+
     def __init__(
         self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
     ) -> None:
@@ -283,6 +286,9 @@ class ScrollBar(Widget):
         else:
             background = styles.scrollbar_background
             color = styles.scrollbar_color
+        if background.a < 1:
+            base_background, _ = self.parent._opacity_background_colors
+            background = base_background + background
         color = background + color
         scrollbar_style = Style.from_color(color.rich_color, background.rich_color)
         if self.screen.styles.scrollbar_color.a == 0:

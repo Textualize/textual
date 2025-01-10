@@ -61,7 +61,7 @@ def arrange(
     layers = _build_layers(display_widgets)
 
     for widgets in layers.values():
-        # Partition widgets in to split widgets and non-split widgets
+        # Partition widgets into split widgets and non-split widgets
         non_split_widgets, split_widgets = partition(get_split, widgets)
         if split_widgets:
             _split_placements, dock_region = _arrange_split_widgets(

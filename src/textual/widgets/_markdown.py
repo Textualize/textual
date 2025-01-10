@@ -121,6 +121,10 @@ class MarkdownBlock(Static):
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
 
+    @property
+    def select_container(self) -> Widget:
+        return self.query_ancestor(Markdown)
+
     def compose(self) -> ComposeResult:
         yield from self._blocks
         self._blocks.clear()
@@ -561,6 +565,9 @@ class MarkdownBullet(Widget):
 
     symbol = reactive("\u25cf")
     """The symbol for the bullet."""
+
+    def get_selection(self, _selection) -> tuple[str, str] | None:
+        return self.symbol, " "
 
     def render(self) -> Text:
         return Text(self.symbol)

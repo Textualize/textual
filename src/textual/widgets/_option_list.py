@@ -119,6 +119,7 @@ content to the option list. This is a superset of [`OptionListContent`][textual.
 class OptionList(ScrollView, can_focus=True):
     """A vertical option list with bounce-bar highlighting."""
 
+    ALLOW_SELECT = False
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("down", "cursor_down", "Down", show=False),
         Binding("end", "last", "Last", show=False),
@@ -189,6 +190,7 @@ class OptionList(ScrollView, can_focus=True):
     """
     | Class | Description |
     | :- | :- |
+    | `option-list--option` | Target options that are not disabled, highlighted or have the mouse over them. |
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
@@ -410,6 +412,7 @@ class OptionList(ScrollView, can_focus=True):
             event: The mouse movement event.
         """
         self._mouse_hovering_over = event.style.meta.get("option")
+        self.refresh()
 
     def _on_leave(self, _: events.Leave) -> None:
         """React to the mouse leaving the widget."""

@@ -6,7 +6,12 @@ from rich.color import Color
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
 from rich.style import Style
+from rich.terminal_theme import TerminalTheme
 
+from textual._ansi_theme import DEFAULT_TERMINAL_THEME
+from textual._context import active_app
+from textual.color import TRANSPARENT
+from textual.filter import ANSIToTruecolor
 from textual.renderables._blend_colors import blend_colors
 
 
@@ -33,7 +38,7 @@ def _get_blended_style_cached(
 
 
 class TextOpacity:
-    """Blend foreground in to background."""
+    """Blend foreground into background."""
 
     def __init__(self, renderable: RenderableType, opacity: float = 1.0) -> None:
         """Wrap a renderable to blend foreground color into the background color.
@@ -47,17 +52,19 @@ class TextOpacity:
 
     @classmethod
     def process_segments(
-        cls, segments: Iterable[Segment], opacity: float
+        cls, segments: Iterable[Segment], opacity: float, ansi_theme: TerminalTheme
     ) -> Iterable[Segment]:
         """Apply opacity to segments.
 
         Args:
             segments: Incoming segments.
             opacity: Opacity to apply.
+            ansi_theme: Terminal theme.
 
         Returns:
             Segments with applied opacity.
         """
+
         _Segment = Segment
         _from_color = Style.from_color
         if opacity == 0:
@@ -69,7 +76,8 @@ class TextOpacity:
                 invisible_style = _from_color(bgcolor=style.bgcolor)
                 yield _Segment(cell_len(text) * " ", invisible_style)
         else:
-            for segment in segments:
+            filter = ANSIToTruecolor(ansi_theme)
+            for segment in filter.apply(list(segments), TRANSPARENT):
                 # use Tuple rather than tuple so Python 3.7 doesn't complain
                 text, style, control = cast(Tuple[str, Style, object], segment)
                 if not style:
@@ -87,5 +95,11 @@ class TextOpacity:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        try:
+            app = active_app.get()
+        except LookupError:
+            ansi_theme = DEFAULT_TERMINAL_THEME
+        else:
+            ansi_theme = app.ansi_theme
         segments = console.render(self.renderable, options)
-        return self.process_segments(segments, self.opacity)
+        return self.process_segments(segments, self.opacity, ansi_theme)

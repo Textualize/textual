@@ -110,11 +110,11 @@ hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOS
     re.VERBOSE,
 )
 
-# Fast way to split a string of 6 characters in to 3 pairs of 2 characters
+# Fast way to split a string of 6 characters into 3 pairs of 2 characters
 _split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
-# Fast way to split a string of 8 characters in to 4 pairs of 2 characters
+# Fast way to split a string of 8 characters into 4 pairs of 2 characters
 _split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6), slice(6, 8)
 )
@@ -177,6 +177,7 @@ class Color(NamedTuple):
         return cls(0, 0, 0, alpha_percentage / 100.0, auto=True)
 
     @classmethod
+    @lru_cache(maxsize=1024)
     def from_rich_color(
         cls, rich_color: RichColor | None, theme: TerminalTheme | None = None
     ) -> Color:
@@ -192,7 +193,9 @@ class Color(NamedTuple):
         if rich_color is None:
             return TRANSPARENT
         r, g, b = rich_color.get_truecolor(theme)
-        return cls(r, g, b)
+        return cls(
+            r, g, b, ansi=rich_color.number if rich_color.is_system_defined else None
+        )
 
     @classmethod
     def from_hsl(cls, h: float, s: float, l: float) -> Color:

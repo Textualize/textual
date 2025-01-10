@@ -17,6 +17,7 @@ from textual.containers import (
     Grid,
     Middle,
     Vertical,
+    VerticalGroup,
     VerticalScroll,
     HorizontalGroup,
 )
@@ -25,6 +26,7 @@ from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
     Button,
+    Collapsible,
     DataTable,
     Footer,
     Header,
@@ -1413,12 +1415,12 @@ def test_missing_vertical_scroll(snap_compare):
 
 
 def test_vertical_min_height(snap_compare):
-    """Test vertical min height takes border in to account."""
+    """Test vertical min height takes border into account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_min_height.py")
 
 
 def test_vertical_max_height(snap_compare):
-    """Test vertical max height takes border in to account."""
+    """Test vertical max height takes border into account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
 
 
@@ -3193,3 +3195,156 @@ def test_select_refocus(snap_compare):
                 yield MyListView()
 
     snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
+
+
+def test_widgets_in_grid(snap_compare):
+    """You should see a 3x3 grid of labels where the text is wrapped, and there is no superfluous space."""
+    TEXT = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain."""
+
+    class MyApp(App):
+        CSS = """
+        VerticalGroup {
+            layout: grid;
+            grid-size: 3 3;
+            grid-columns: 1fr;
+            grid-rows: auto;
+            height: auto;
+            background: blue;
+        }
+        Label {        
+            border: heavy red;
+            text-align: left;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup():
+                for n in range(9):
+                    label = Label(TEXT, id=f"label{n}")
+                    label.border_title = str(n)
+                    yield label
+
+    snap_compare(MyApp(), terminal_size=(100, 50))
+
+
+def test_arbitrary_selection(snap_compare):
+    """You should see 3x3 labels with different text alignments.
+
+    Text selection should start from somewhere in the first label, and
+    end somewhere in the right label.
+
+    """
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.mouse_down(pilot.app.query_one("#first"), offset=(10, 10))
+        await pilot.mouse_up(pilot.app.query_one("#last"), offset=(10, 10))
+        await pilot.pause()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_selection.py",
+        terminal_size=(175, 50),
+        run_before=run_before,
+    )
+
+
+def test_collapsible_datatable(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5407
+
+    You should see two collapsibles, where the first is expanded.
+    In the expanded coillapsible, you should see a DataTable filling the space,
+    with all borders and both scrollbars visible.
+    """
+
+    class MyApp(App):
+        CSS = """
+        DataTable {
+        
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Collapsible(DataTable(id="t1"), id="c1", collapsed=False)
+            yield Collapsible(Label("hello"), id="c2")
+
+        def on_mount(self) -> None:
+            self.query_one("#c1", Collapsible).styles.max_height = "50%"
+            self.query_one("#c2", Collapsible).styles.max_height = "50%"
+
+            t1 = self.query_one("#t1", DataTable)
+            t1.styles.border = "heavy", "black"
+            t1.add_column("A")
+            for number in range(1, 100):
+                t1.add_row(str(number) + " " * 200)
+
+    snap_compare(MyApp())
+
+
+def test_scrollbar_background_with_opacity(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5458
+    The scrollbar background should match the background of the widget."""
+
+    class ScrollbarOpacityApp(App):
+        CSS = """
+        Screen {
+            align: center middle;
+        }
+
+        VerticalScroll {
+            width: 50%;
+            height: 50%;
+            background: blue 10%;
+            scrollbar-background: blue 10%;
+            scrollbar-color: cyan;
+            scrollbar-size-vertical: 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll():
+                yield Static("\n".join(f"This is some text {n}" for n in range(100)))
+
+    assert snap_compare(ScrollbarOpacityApp())
+
+
+def test_static_markup(snap_compare):
+    """Check that markup may be disabled.
+
+    You should see 3 labels.
+
+    This first label contains an invalid style, and should have tags removed.
+    The second label should have the word "markup" boldened.
+    The third label has markup disabled, and should show tags without styles.
+    """
+
+    class LabelApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("There should be no [foo]tags or style[/foo]")
+            yield Label("This allows [bold]markup[/bold]")
+            yield Label("This does not allow [bold]markup[/bold]", markup=False)
+
+    snap_compare(LabelApp())
+
+
+def test_arbitrary_selection_double_cell(snap_compare):
+    """Check that selection understands double width cells.
+
+    You should see a smiley face followed by 'Hello World!', where Hello is highlighted."""
+
+    class LApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("😃Hello World!")
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.mouse_down(Label, offset=(2, 0))
+        await pilot.mouse_up(Label, offset=(7, 0))
+        await pilot.pause()
+
+    assert snap_compare(LApp(), run_before=run_before)
