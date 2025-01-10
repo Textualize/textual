@@ -3330,3 +3330,21 @@ def test_static_markup(snap_compare):
             yield Label("This does not allow [bold]markup[/bold]", markup=False)
 
     snap_compare(LabelApp())
+
+
+def test_arbitrary_selection_double_cell(snap_compare):
+    """Check that selection understands double width cells.
+
+    You should see a smiley face followed by 'Hello World!', where Hello is highlighted."""
+
+    class LApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("😃Hello World!")
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.mouse_down(Label, offset=(2, 0))
+        await pilot.mouse_up(Label, offset=(7, 0))
+        await pilot.pause()
+
+    assert snap_compare(LApp(), run_before=run_before)
