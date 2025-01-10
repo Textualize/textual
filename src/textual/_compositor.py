@@ -918,9 +918,9 @@ class Compositor:
                 meta = style.meta
                 if "offset" in meta:
                     offset_x, offset_y = style.meta["offset"]
-                    offset_x2 = offset_x + segment.cell_length
+                    offset_x2 = offset_x + len(segment.text)
 
-                    if x <= end:
+                    if x <= end and x >= start:
                         return widget, (
                             None
                             if offset_y is None
