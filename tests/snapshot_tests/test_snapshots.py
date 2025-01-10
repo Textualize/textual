@@ -3316,12 +3316,16 @@ def test_scrollbar_background_with_opacity(snap_compare):
 def test_static_markup(snap_compare):
     """Check that markup may be disabled.
 
-    You should see two labels, the first uses markup.
-    The second has markup disabled, and tags should be visible.
+    You should see 3 labels.
+
+    This first label contains an invalid style, and should have tags removed.
+    The second label should have the word "markup" boldened.
+    The third label has markup disabled, and should show tags without styles.
     """
 
     class LabelApp(App):
         def compose(self) -> ComposeResult:
+            yield Label("There should be no [foo]tags or style[/foo]")
             yield Label("This allows [bold]markup[/bold]")
             yield Label("This does not allow [bold]markup[/bold]", markup=False)
 
