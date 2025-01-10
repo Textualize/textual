@@ -19,6 +19,7 @@ import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import OverflowMethod
+from rich.errors import MissingStyle
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
@@ -744,9 +745,12 @@ class Content(Visual):
 
             @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
-                visual_style = Style.from_rich_style(
-                    app.console.get_style(style), app.ansi_theme
-                )
+                try:
+                    visual_style = Style.from_rich_style(
+                        app.console.get_style(style), app.ansi_theme
+                    )
+                except MissingStyle:
+                    visual_style = Style()
                 return visual_style
 
         else:
