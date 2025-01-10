@@ -125,8 +125,8 @@ class OptionList(ScrollView, can_focus=True):
         Binding("end", "last", "Last", show=False),
         Binding("enter", "select", "Select", show=False),
         Binding("home", "first", "First", show=False),
-        Binding("pagedown", "page_down", "Page down", show=False),
-        Binding("pageup", "page_up", "Page up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
         Binding("up", "cursor_up", "Up", show=False),
     ]
     """
