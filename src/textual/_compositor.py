@@ -920,12 +920,16 @@ class Compositor:
                     offset_x, offset_y = style.meta["offset"]
                     offset_x2 = offset_x + len(segment.text)
 
-                    if x <= end and x >= start:
-                        first, _ = segment.split_cells(x - start)
+                    if x < end and x >= start:
+                        if x == end - 1:
+                            segment_offset = len(segment.text)
+                        else:
+                            first, _ = segment.split_cells(x - start)
+                            segment_offset = len(first.text)
                         return widget, (
                             None
                             if offset_y is None
-                            else Offset(offset_x + len(first.text), offset_y)
+                            else Offset(offset_x + segment_offset, offset_y)
                         )
             start = end
 
