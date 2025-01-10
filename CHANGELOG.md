@@ -7,13 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased - 2025
 
-### Changed
-
-- Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
-- The content of an `Input` will now only be automatically selected when the widget is focused by the user, not when the app itself has regained focus (similar to web browsers). https://github.com/Textualize/textual/pull/5379
-- `Pilot.mouse_down` and `Pilot.mouse_up` now issue a prior `MouseMove` event, to more closely reflect real mouse actions. https://github.com/Textualize/textual/pull/5409
-- Snapshots tests now discard meta, which should reduce test breaking with no visual differences https://github.com/Textualize/textual/pull/5409
-
 ### Added
 
 - Added `Select.type_to_search` which allows you to type to move the cursor to a matching option https://github.com/Textualize/textual/pull/5403
@@ -46,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed Log widget not refreshing on resize https://github.com/Textualize/textual/pull/5460
 - Fixed special case with calculating the height of a container where all children have dynamic heights https://github.com/Textualize/textual/pull/5463
 - Fixed scrollbars ignoring background opacity https://github.com/Textualize/textual/issues/5458
+- Fixed `Header` icon showing command palette tooltip when disabled https://github.com/Textualize/textual/pull/5427
 
 
 ## [1.0.0] - 2024-12-12
