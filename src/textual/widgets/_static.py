@@ -74,7 +74,7 @@ class Static(Widget, inherit_bindings=False):
     @property
     def visual(self) -> Visual:
         if self._visual is None:
-            self._visual = visualize(self, self._content)
+            self._visual = visualize(self, self._content, markup=self.markup)
         return self._visual
 
     @property
@@ -109,5 +109,5 @@ class Static(Widget, inherit_bindings=False):
         """
 
         self._content = content
-        self._visual = visualize(self, content)
+        self._visual = visualize(self, content, markup=self.markup)
         self.refresh(layout=True)

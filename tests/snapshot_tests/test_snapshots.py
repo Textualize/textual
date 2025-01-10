@@ -3311,3 +3311,18 @@ def test_scrollbar_background_with_opacity(snap_compare):
                 yield Static("\n".join(f"This is some text {n}" for n in range(100)))
 
     assert snap_compare(ScrollbarOpacityApp())
+
+
+def test_static_markup(snap_compare):
+    """Check that markup may be disabled.
+
+    You should see two labels, the first uses markup.
+    The second has markup disabled, and tags should be visible.
+    """
+
+    class LabelApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("This allows [bold]markup[/bold]")
+            yield Label("This does not allow [bold]markup[/bold]", markup=False)
+
+    snap_compare(LabelApp())

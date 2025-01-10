@@ -60,14 +60,16 @@ class VisualError(Exception):
 VisualType: TypeAlias = "RenderableType | SupportsVisual | Visual"
 
 
-def visualize(widget: Widget, obj: object) -> Visual:
+def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
     """Get a visual instance from an object.
 
     If the object does not support the Visual protocol and is a Rich renderable, it
     will be wrapped in a [RichVisual][textual.visual.RichVisual].
 
     Args:
+        widget: The parent widget.
         obj: An object.
+        markup: Enable markup.
 
     Returns:
         A Visual instance to render the object, or `None` if there is no associated visual.
@@ -84,7 +86,7 @@ def visualize(widget: Widget, obj: object) -> Visual:
         if is_renderable(obj):
             # If it is a string, render it to Text
             if isinstance(obj, str):
-                obj = widget.render_str(obj)
+                obj = widget.render_str(obj) if markup else Text(obj)
 
             if isinstance(obj, Text) and widget.allow_select:
                 return Content.from_rich_text(
