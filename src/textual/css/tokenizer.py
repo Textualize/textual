@@ -127,9 +127,14 @@ class Expect:
         self.match = self._regex.match
         self.search = self._regex.search
         self._expect_eof = False
+        self._expect_semicolon = True
 
     def expect_eof(self, eof: bool) -> Expect:
         self._expect_eof = eof
+        return self
+
+    def expect_semicolon(self, semicolon: bool) -> Expect:
+        self._expect_semicolon = semicolon
         return self
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -252,7 +257,7 @@ class Tokenizer:
             error_message = (
                 f"{expect.description} (found {error_line.split(';')[0]!r})."
             )
-            if not error_line.endswith(";"):
+            if expect._expect_semicolon and not error_line.endswith(";"):
                 error_message += "; Did you forget a semicolon at the end of a line?"
             raise TokenError(
                 self.read_from, self.code, (line_no + 1, col_no + 1), error_message

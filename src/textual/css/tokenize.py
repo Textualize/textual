@@ -244,9 +244,26 @@ class ValueTokenizerState(TokenizerState):
     EXPECT = expect_declaration_content_solo
 
 
+class StyleTokenizerState(TokenizerState):
+    EXPECT = (
+        Expect(
+            "style token",
+            key_value_string=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=\"[0-9a-zA-Z_\-\/]+\"",
+            key_value=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+",
+            color=COLOR,
+            token=TOKEN,
+            variable_ref=VARIABLE_REF,
+            whitespace=r"\s+",
+        )
+        .expect_eof(True)
+        .expect_semicolon(False)
+    )
+
+
 tokenize = TokenizerState()
 tokenize_declarations = DeclarationTokenizerState()
 tokenize_value = ValueTokenizerState()
+tokenize_style = StyleTokenizerState()
 
 
 def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
