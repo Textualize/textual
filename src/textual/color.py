@@ -330,6 +330,8 @@ class Color(NamedTuple):
         r, g, b, a, ansi, auto = self
         if auto:
             alpha_percentage = clamp(a, 0.0, 1.0) * 100.0
+            if alpha_percentage == 100:
+                return "auto"
             if not alpha_percentage % 1:
                 return f"auto {int(alpha_percentage)}%"
             return f"auto {alpha_percentage:.1f}%"
