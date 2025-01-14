@@ -138,6 +138,24 @@ class Style:
         if self._meta is not None:
             yield "meta", self.meta
 
+    def __str__(self) -> str:
+        output: list[str] = []
+        if self.foreground.a:
+            output.append(self.foreground.css)
+        if self.background.a:
+            output.append(f"on {self.background.css}")
+        if self.bold is not None:
+            output.append("bold" if self.bold else "not bold")
+        if self.dim is not None:
+            output.append("dim" if self.dim else "not dim")
+        if self.italic is not None:
+            output.append("italic" if self.italic else "not italic")
+        if self.underline is not None:
+            output.append("underline" if self.underline else "not underline")
+        if self.strike is not None:
+            output.append("strike" if self.strike else "not strike")
+        return " ".join(output)
+
     @lru_cache(maxsize=1024)
     def __add__(self, other: object) -> Style:
         if not isinstance(other, Style):

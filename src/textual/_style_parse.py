@@ -4,6 +4,14 @@ from textual.css.tokenize import tokenize_style, tokenize_values
 from textual.visual import Style
 
 STYLES = {"bold", "dim", "italic", "underline", "reverse", "strike"}
+STYLE_ABBREVIATIONS = {
+    "b": "bold",
+    "d": "dim",
+    "i": "italic",
+    "u": "underline",
+    "r": "reverse",
+    "s": "strike",
+}
 
 
 def style_parse(style_text: str, variables: dict[str, str]) -> Style:
@@ -43,14 +51,16 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
                 is_background = True
             elif value in STYLES:
                 styles[value] = style_state
-                style_state = False
+                style_state = True
+            elif value in STYLE_ABBREVIATIONS:
+                styles[STYLE_ABBREVIATIONS[value]] = style_state
+                style_state = True
             else:
                 token_color = Color.parse(value)
                 if is_background:
                     background = token_color
                 else:
                     color = token_color
-
         elif name == "key_value":
             key, _, value = value.partition("=")
             if key.startswith("@"):
@@ -79,4 +89,4 @@ if __name__ == "__main__":
         )
     )
 
-    print(style_parse("auto on red 20% @click=app.bell('hello')", variables))
+    print(style_parse("auto on red s 20% @click=app.bell('hello')", variables))
