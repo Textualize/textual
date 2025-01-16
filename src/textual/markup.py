@@ -1,21 +1,28 @@
+from __future__ import annotations
+
 import re
 from ast import literal_eval
 from operator import attrgetter
-from typing import Callable, Iterable, List, Match, NamedTuple, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Iterable,
+    List,
+    Match,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
-from textual.content import Content, Span
-from textual.visual import Style
+if TYPE_CHECKING:
+    from textual.content import Content
+    from textual.visual import Style
 
 
 class MarkupError(Exception):
     """An error occurred parsing Textual markup."""
 
-
-# from ._emoji_replace import _emoji_replace
-# from .emoji import EmojiVariant
-# from .errors import MarkupError
-# from .style import Style
-# from .text import Span, Text
 
 RE_TAGS = re.compile(
     r"""((\\*)\[([a-z#/@][^[]*?)])""",
@@ -126,6 +133,8 @@ def to_content(markup: str, style: Union[str, Style] = "") -> Content:
     Returns:
         Text: A test instance.
     """
+
+    from textual.content import Content, Span
 
     if "[" not in markup:
         return Content(markup)

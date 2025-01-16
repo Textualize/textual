@@ -14,6 +14,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 
+from textual._style_parse import style_parse
 from textual.cache import LRUCache
 from textual.css.errors import StylesheetError
 from textual.css.match import _check_selectors
@@ -24,6 +25,7 @@ from textual.css.tokenize import Token, tokenize_values
 from textual.css.tokenizer import TokenError
 from textual.css.types import CSSLocation, Specificity3, Specificity6
 from textual.dom import DOMNode
+from textual.visual import Style
 from textual.widget import Widget
 
 _DEFAULT_STYLES = Styles()
@@ -149,6 +151,7 @@ class Stylesheet:
         self._require_parse = False
         self._invalid_css: set[str] = set()
         self._parse_cache: LRUCache[tuple, list[RuleSet]] = LRUCache(64)
+        self._style_parse_cache: LRUCache[str, Style] = LRUCache(1024 * 4)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
@@ -215,6 +218,21 @@ class Stylesheet:
         self.__variable_tokens = None
         self._invalid_css = set()
         self._parse_cache.clear()
+        self._style_parse_cache.clear()
+
+    def parse_style(self, style_text: str) -> Style:
+        """Parse a (visual) Style.
+
+        Args:
+            style_text: Visual style, such as "bold white 90% on $primary"
+
+        Returns:
+            New Style instance.
+        """
+        if style_text in self._style_parse_cache:
+            return self._style_parse_cache[style_text]
+        style = style_parse(style_text, self._variables)
+        return style
 
     def _parse_rules(
         self,

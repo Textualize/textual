@@ -248,9 +248,6 @@ class StyleTokenizerState(TokenizerState):
     EXPECT = (
         Expect(
             "style token",
-            # key_value_string_single=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=\".*?\"",
-            # key_value_string_double=r"[@a-zA-Z_-][a-zA-Z0-9_-]*='.*?'",
-            # key_value=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+",
             key_value=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=.*$",
             percent=PERCENT,
             color=COLOR,

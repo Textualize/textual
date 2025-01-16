@@ -28,7 +28,7 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
     reference_tokens = tokenize_values(variables)
 
     for token in substitute_references(
-        tokenize_style(style_text, read_from="foo"), reference_tokens
+        tokenize_style(style_text, read_from=("inline style", "")), reference_tokens
     ):
         name = token.name
         value = token.value
@@ -37,6 +37,7 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
             token_color = Color.parse(value)
             if is_background:
                 background = token_color
+                is_background = False
             else:
                 color = token_color
         elif name == "token":
@@ -56,11 +57,10 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
                 styles[STYLE_ABBREVIATIONS[value]] = style_state
                 style_state = True
             else:
-                token_color = Color.parse(value)
                 if is_background:
-                    background = token_color
+                    background = Color.parse(value)
                 else:
-                    color = token_color
+                    color = Color.parse(value)
         elif name == "key_value":
             key, _, value = value.partition("=")
             if key.startswith("@"):
@@ -89,4 +89,4 @@ if __name__ == "__main__":
         )
     )
 
-    print(style_parse("auto on red s 20% @click=app.bell('hello')", variables))
+    print(style_parse("auto on ansi_red s 20% @click=app.bell('hello')", variables))

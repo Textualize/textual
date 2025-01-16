@@ -34,7 +34,7 @@ class ModalApp(App):
     """An app with a modal dialog."""
 
     CSS_PATH = "modal01.tcss"
-    BINDINGS = [("q", "request_quit", "Quit")]
+    BINDINGS = [("q", "request_quit", "Quit"), ("f", "foo", "asd")]
 
     def compose(self) -> ComposeResult:
         yield Header()

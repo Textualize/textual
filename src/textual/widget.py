@@ -1093,23 +1093,26 @@ class Widget(DOMNode):
 
         return visual_style
 
-    def render_str(self, text_content: str | Text) -> Text:
-        """Convert str into a Text object.
+    @overload
+    def render_str(self, text_content: str) -> Content: ...
 
-        If you pass in an existing Text object it will be returned unaltered.
+    @overload
+    def render_str(self, text_content: Content) -> Content: ...
+
+    def render_str(self, text_content: str | Content) -> Content | Text:
+        """Convert str into a [Content][textual.content.Content] instance.
+
+        If you pass in an existing Content instance it will be returned unaltered.
 
         Args:
-            text_content: Text or str.
+            text_content: Content or str.
 
         Returns:
-            A text object.
+            Content object.
         """
-        text = (
-            Text.from_markup(text_content)
-            if isinstance(text_content, str)
-            else text_content
-        )
-        return text
+        if isinstance(text_content, Content):
+            return text_content
+        return Content.from_markup(text_content)
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.

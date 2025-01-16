@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from textual.app import RenderResult
 
 from textual.errors import RenderError
-from textual.visual import SupportsVisual, Visual, visualize
+from textual.visual import SupportsVisual, Visual, VisualType, visualize
 from textual.widget import Widget
 
 
@@ -101,7 +101,7 @@ class Static(Widget, inherit_bindings=False):
         """
         return self.visual
 
-    def update(self, content: RenderableType | SupportsVisual = "") -> None:
+    def update(self, content: VisualType = "") -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:

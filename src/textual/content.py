@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 from functools import lru_cache
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence
+from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence, Union
 
 import rich.repr
 from rich._wrap import divide_line
@@ -23,6 +23,7 @@ from rich.errors import MissingStyle
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
+from typing_extensions import TypeAlias
 
 from textual._cells import cell_len
 from textual._context import active_app
@@ -44,6 +45,8 @@ ANSI_DEFAULT = Style(
 )
 
 TRANSPARENT_STYLE = Style()
+
+ContentType: TypeAlias = Union["Content", str]
 
 
 class Span(NamedTuple):
@@ -115,6 +118,25 @@ class Content(Visual):
 
     def __str__(self) -> str:
         return self._text
+
+    @classmethod
+    def from_markup(cls, markup: str) -> Content:
+        """Create content from Textual markup.
+
+        !!! note
+            Textual markup is not the same as Rich markup. Use [Text.parse] to parse Rich Console markup.
+
+
+        Args:
+            markup: Textual Markup
+
+        Returns:
+            New Content instance.
+        """
+        from textual.markup import to_content
+
+        content = to_content(markup)
+        return content
 
     @classmethod
     def from_rich_text(

@@ -112,6 +112,7 @@ class Strip:
             assert get_line_length(self._segments) == cell_length
 
     def __rich_repr__(self) -> rich.repr.Result:
+        return
         yield self._segments
         yield self.cell_length
 

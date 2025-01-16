@@ -86,7 +86,7 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
         if is_renderable(obj):
             # If it is a string, render it to Text
             if isinstance(obj, str):
-                obj = widget.render_str(obj) if markup else Text(obj)
+                return Content.from_markup(obj)
 
             if isinstance(obj, Text) and widget.allow_select:
                 return Content.from_rich_text(
