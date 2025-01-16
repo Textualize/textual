@@ -358,11 +358,11 @@ class OptionList(ScrollView, can_focus=True):
         assert self._lines is not None
         assert self._spans is not None
 
-        for index, content in enumerate(new_content, len(self._lines)):
+        for content in new_content:
             if isinstance(content, Option):
                 height = len(
                     self._render_option_content(
-                        index, content, "", width - self._left_gutter_width()
+                        option_index, content, "", width - self._left_gutter_width()
                     )
                 )
 

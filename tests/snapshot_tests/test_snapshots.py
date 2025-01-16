@@ -22,6 +22,7 @@ from textual.containers import (
     HorizontalGroup,
 )
 from textual.pilot import Pilot
+from textual.reactive import var
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
@@ -3348,3 +3349,32 @@ def test_arbitrary_selection_double_cell(snap_compare):
         await pilot.pause()
 
     assert snap_compare(LApp(), run_before=run_before)
+
+
+def test_option_list_updating_with_separator_lines(snap_compare):
+    """You should see options with consecutive odd numbers, with separator
+    lines between each option.
+
+    Regression test for https://github.com/Textualize/textual/issues/5431"""
+
+    class OptionListApp(App):
+        BINDINGS = [("a", "add_option")]
+
+        CSS = """
+        OptionList {
+            height: 1fr;
+        }
+        """
+
+        counter: var[int] = var(0)
+
+        def compose(self) -> ComposeResult:
+            yield OptionList()
+
+        def action_add_option(self) -> None:
+            self.counter += 1
+            self.query_one(OptionList).add_option(
+                (f"This is option {self.counter}" if self.counter % 2 else None)
+            )
+
+    snap_compare(OptionListApp(), press=["a"] * 13)
