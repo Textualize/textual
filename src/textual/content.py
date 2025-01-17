@@ -119,6 +119,34 @@ class Content(Visual):
     def __str__(self) -> str:
         return self._text
 
+    @property
+    def markup(self) -> str:
+        """Get Content markup to render this Text.
+
+        Returns:
+            str: A string potentially creating markup tags.
+        """
+        from textual.markup import escape
+
+        output: list[str] = []
+
+        plain = self.plain
+        markup_spans = [
+            *((span.start, False, span.style) for span in self._spans),
+            *((span.end, True, span.style) for span in self._spans),
+        ]
+        markup_spans.sort(key=itemgetter(0, 1))
+        position = 0
+        append = output.append
+        for offset, closing, style in markup_spans:
+            if offset > position:
+                append(escape(plain[position:offset]))
+                position = offset
+            if style:
+                append(f"[/{style}]" if closing else f"[{style}]")
+        markup = "".join(output)
+        return markup
+
     @classmethod
     def from_markup(cls, markup: str) -> Content:
         """Create content from Textual markup.

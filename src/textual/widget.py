@@ -61,7 +61,7 @@ from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
 from textual.color import Color
-from textual.content import Content
+from textual.content import Content, ContentType
 from textual.css.match import match
 from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, WrongType
@@ -244,7 +244,7 @@ class _BorderTitle:
         # The private name where we store the real data.
         self._internal_name = f"_{name}"
 
-    def __set__(self, obj: Widget, title: str | Text | None) -> None:
+    def __set__(self, obj: Widget, title: ContentType | None) -> None:
         """Setting a title accepts a str, Text, or None."""
         if title is None:
             setattr(obj, self._internal_name, None)
@@ -364,9 +364,9 @@ class Widget(DOMNode):
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a horizontal scrollbar?"""
 
-    border_title: str | Text | None = _BorderTitle()  # type: ignore
+    border_title: ContentType | None = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""
-    border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
+    border_subtitle: ContentType | None = _BorderTitle()  # type: ignore
     """A title to show in the bottom border (if there is one)."""
 
     # Default sort order, incremented by constructor
