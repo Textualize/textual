@@ -252,8 +252,7 @@ class _BorderTitle:
             setattr(obj, self._internal_name, None)
         else:
             # We store the title as Text
-            new_title = obj.render_str(title)
-            new_title.expand_tabs(4)
+            new_title = obj.render_str(title).expand_tabs(4)
             new_title = new_title.split()[0]
             setattr(obj, self._internal_name, new_title)
         obj.refresh()

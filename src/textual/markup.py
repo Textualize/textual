@@ -15,9 +15,10 @@ from typing import (
     Union,
 )
 
+from textual.style import Style
+
 if TYPE_CHECKING:
     from textual.content import Content
-    from textual.style import Style
 
 
 class MarkupError(Exception):

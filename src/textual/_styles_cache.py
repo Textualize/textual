@@ -4,7 +4,6 @@ from functools import lru_cache
 from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
-from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
@@ -124,7 +123,6 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
-            widget.app.console,
             (
                 None
                 if border_title is None
@@ -171,7 +169,6 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
-        console: Console,
         border_title: tuple[Content, Color, Color, Style] | None,
         border_subtitle: tuple[Content, Color, Color, Style] | None,
         content_size: Size | None = None,
@@ -231,7 +228,6 @@ class StylesCache:
                     base_background,
                     background,
                     render_content_line,
-                    console,
                     border_title,
                     border_subtitle,
                     opacity,
@@ -268,7 +264,6 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: Callable[[int], Strip],
-        console: Console,
         border_title: tuple[Content, Color, Color, Style] | None,
         border_subtitle: tuple[Content, Color, Color, Style] | None,
         opacity: float,
@@ -419,7 +414,7 @@ class StylesCache:
         elif (pad_top and y < gutter.top) or (
             pad_bottom and y >= height - gutter.bottom
         ):
-            background_style = from_color(bgcolor=background.rich_color)
+            background_rich_style = from_color(bgcolor=background.rich_color)
             left_style = Style(
                 foreground=base_background + border_left_color.multiply_alpha(opacity)
             )
@@ -429,13 +424,13 @@ class StylesCache:
             )
             right = get_box(border_right, inner, outer, right_style)[1][2]
             if border_left and border_right:
-                line = [left, make_blank(width - 2, background_style), right]
+                line = [left, make_blank(width - 2, background_rich_style), right]
             elif border_left:
-                line = [left, make_blank(width - 1, background_style)]
+                line = [left, make_blank(width - 1, background_rich_style)]
             elif border_right:
-                line = [make_blank(width - 1, background_style), right]
+                line = [make_blank(width - 1, background_rich_style), right]
             else:
-                line = [make_blank(width, background_style)]
+                line = [make_blank(width, background_rich_style)]
             line = line_post(line)
         else:
             # Content with border and padding (C)
@@ -444,7 +439,7 @@ class StylesCache:
                 line = render_content_line(y - gutter.top)
                 line = line.adjust_cell_length(content_width)
             else:
-                line = [make_blank(content_width, inner)]
+                line = [make_blank(content_width, inner.rich_style)]
             if inner:
                 line = Segment.apply_style(line, inner.rich_style)
             if styles.text_opacity != 1.0:
@@ -481,7 +476,7 @@ class StylesCache:
                 outline_top if y == 0 else outline_bottom,
                 inner,
                 outer,
-                from_color(color=(base_background + outline_color).rich_color),
+                Style(foreground=base_background + outline_color),
             )
             line = render_row(
                 box_segments[0 if y == 0 else 2],

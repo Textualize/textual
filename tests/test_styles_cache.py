@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
 
@@ -41,7 +40,6 @@ def test_no_styles():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        Console(),
         "",
         "",
         content_size=Size(3, 3),
@@ -71,7 +69,6 @@ def test_border():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -105,7 +102,6 @@ def test_padding():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -140,7 +136,6 @@ def test_padding_border():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -176,7 +171,6 @@ def test_outline():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -207,7 +201,6 @@ def test_crop():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -246,7 +239,6 @@ def test_dirty_cache() -> None:
         Color.parse("blue"),
         Color.parse("green"),
         get_content_line,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -274,7 +266,6 @@ def test_dirty_cache() -> None:
         Color.parse("blue"),
         Color.parse("green"),
         get_content_line,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),
@@ -293,7 +284,6 @@ def test_dirty_cache() -> None:
         Color.parse("blue"),
         Color.parse("green"),
         get_content_line,
-        Console(),
         None,
         None,
         content_size=Size(3, 3),

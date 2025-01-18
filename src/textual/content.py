@@ -23,7 +23,7 @@ from rich.errors import MissingStyle
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
-from typing_extensions import TypeAlias
+from typing_extensions import Final, TypeAlias
 
 from textual._cells import cell_len
 from textual._context import active_app
@@ -40,6 +40,7 @@ if TYPE_CHECKING:
 
 _re_whitespace = re.compile(r"\s+$")
 
+ContentType: TypeAlias = Union["Content", str]
 
 ANSI_DEFAULT = Style(
     background=Color(0, 0, 0, 0, ansi=-1), foreground=Color(0, 0, 0, 0, ansi=-1)
@@ -47,7 +48,30 @@ ANSI_DEFAULT = Style(
 
 TRANSPARENT_STYLE = Style()
 
-ContentType: TypeAlias = Union["Content", str]
+_STRIP_CONTROL_CODES: Final = [
+    7,  # Bell
+    8,  # Backspace
+    11,  # Vertical tab
+    12,  # Form feed
+    13,  # Carriage return
+]
+_CONTROL_STRIP_TRANSLATE: Final = {
+    _codepoint: None for _codepoint in _STRIP_CONTROL_CODES
+}
+
+
+def strip_control_codes(
+    text: str, _translate_table: dict[int, None] = _CONTROL_STRIP_TRANSLATE
+) -> str:
+    """Remove control codes from text.
+
+    Args:
+        text (str): A string possibly contain control codes.
+
+    Returns:
+        str: String with control codes removed.
+    """
+    return text.translate(_translate_table)
 
 
 class Span(NamedTuple):
@@ -110,7 +134,7 @@ class Content(Visual):
             no_wrap: Disable wrapping.
             ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
         """
-        self._text: str = text
+        self._text: str = strip_control_codes(text)
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
         self._align = align
@@ -133,8 +157,10 @@ class Content(Visual):
 
         plain = self.plain
         markup_spans = [
+            (0, False, None),
             *((span.start, False, span.style) for span in self._spans),
             *((span.end, True, span.style) for span in self._spans),
+            (len(plain), True, None),
         ]
         markup_spans.sort(key=itemgetter(0, 1))
         position = 0
@@ -791,17 +817,20 @@ class Content(Visual):
             return
 
         if parse_style is None:
-            app = active_app.get()
+            try:
+                app = active_app.get()
+            except LookupError:
+                css_variables = {}
+            else:
+                css_variables = app.get_css_variables()
             # TODO: Update when we add Content.from_markup
 
             @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
                 try:
-                    visual_style = Style.from_rich_style(
-                        app.console.get_style(style), app.ansi_theme
-                    )
+                    visual_style = Style.parse(style, css_variables)
                 except MissingStyle:
-                    visual_style = Style()
+                    visual_style = Style.null()
                 return visual_style
 
         else:
@@ -857,7 +886,10 @@ class Content(Visual):
     def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
         _Segment = Segment
         render = list(self.render(base_style, end))
-        segments = [_Segment(text, style.get_rich_style()) for text, style in render]
+        segments = [
+            _Segment(text, (style.get_rich_style() if style else None))
+            for text, style in render
+        ]
         return segments
 
     def divide(
