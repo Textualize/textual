@@ -84,7 +84,12 @@ class Input(ScrollView):
             "Move cursor left a word and select",
             show=False,
         ),
-        Binding("right", "cursor_right", "Move cursor right", show=False),
+        Binding(
+            "right",
+            "cursor_right",
+            "Move cursor right or accept the completion suggestion",
+            show=False,
+        ),
         Binding(
             "shift+right",
             "cursor_right(True)",
