@@ -32,7 +32,8 @@ from textual.color import Color
 from textual.css.types import TextAlign
 from textual.selection import Selection
 from textual.strip import Strip
-from textual.visual import Style, Visual
+from textual.style import Style
+from textual.visual import Visual
 
 if TYPE_CHECKING:
     from textual.widget import Widget

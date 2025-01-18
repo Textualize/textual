@@ -87,7 +87,7 @@ from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.selection import Selection
 from textual.strip import Strip
-from textual.visual import Style as VisualStyle
+from textual.style import Style as VisualStyle
 from textual.visual import Visual, visualize
 
 if TYPE_CHECKING:
@@ -244,8 +244,10 @@ class _BorderTitle:
         # The private name where we store the real data.
         self._internal_name = f"_{name}"
 
-    def __set__(self, obj: Widget, title: ContentType | None) -> None:
+    def __set__(self, obj: Widget, title: Text | ContentType | None) -> None:
         """Setting a title accepts a str, Text, or None."""
+        if isinstance(title, Text):
+            title = Content.from_rich_text(title)
         if title is None:
             setattr(obj, self._internal_name, None)
         else:
@@ -364,9 +366,9 @@ class Widget(DOMNode):
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a horizontal scrollbar?"""
 
-    border_title: ContentType | None = _BorderTitle()  # type: ignore
+    border_title = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""
-    border_subtitle: ContentType | None = _BorderTitle()  # type: ignore
+    border_subtitle = _BorderTitle()
     """A title to show in the bottom border (if there is one)."""
 
     # Default sort order, incremented by constructor
@@ -425,8 +427,8 @@ class Widget(DOMNode):
         self._horizontal_scrollbar: ScrollBar | None = None
         self._scrollbar_corner: ScrollBarCorner | None = None
 
-        self._border_title: Text | None = None
-        self._border_subtitle: Text | None = None
+        self._border_title: Content | None = None
+        self._border_subtitle: Content | None = None
 
         self._layout_cache: dict[str, object] = {}
         """A dict that is refreshed when the widget is resized / refreshed."""

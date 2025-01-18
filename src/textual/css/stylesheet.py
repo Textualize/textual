@@ -25,7 +25,7 @@ from textual.css.tokenize import Token, tokenize_values
 from textual.css.tokenizer import TokenError
 from textual.css.types import CSSLocation, Specificity3, Specificity6
 from textual.dom import DOMNode
-from textual.visual import Style
+from textual.style import Style
 from textual.widget import Widget
 
 _DEFAULT_STYLES = Styles()

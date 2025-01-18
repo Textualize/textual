@@ -1,7 +1,7 @@
 from textual.color import TRANSPARENT, Color
 from textual.css.parse import substitute_references
 from textual.css.tokenize import tokenize_style, tokenize_values
-from textual.visual import Style
+from textual.style import Style
 
 STYLES = {"bold", "dim", "italic", "underline", "reverse", "strike"}
 STYLE_ABBREVIATIONS = {

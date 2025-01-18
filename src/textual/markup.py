@@ -17,7 +17,7 @@ from typing import (
 
 if TYPE_CHECKING:
     from textual.content import Content
-    from textual.visual import Style
+    from textual.style import Style
 
 
 class MarkupError(Exception):

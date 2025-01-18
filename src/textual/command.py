@@ -48,9 +48,9 @@ from textual.fuzzy import Matcher
 from textual.message import Message
 from textual.reactive import var
 from textual.screen import Screen, SystemModalScreen
+from textual.style import Style as VisualStyle
 from textual.timer import Timer
 from textual.types import IgnoreReturnCallbackType
-from textual.visual import Style as VisualStyle
 from textual.visual import VisualType
 from textual.widget import Widget
 from textual.widgets import Button, Input, LoadingIndicator, OptionList, Static
