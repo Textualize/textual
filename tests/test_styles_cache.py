@@ -40,16 +40,20 @@ def test_no_styles():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
     style = Style.from_color(bgcolor=Color.parse("green").rich_color)
+
     expected = [
         Strip([Segment("foo", style)], 3),
         Strip([Segment("bar", style)], 3),
         Strip([Segment("baz", style)], 3),
     ]
+
+    print(lines[0])
+    print(expected[0])
 
     assert lines == expected
 

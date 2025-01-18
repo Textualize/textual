@@ -488,9 +488,9 @@ class StylesCache:
 
         elif outline_left or outline_right:
             # Lines in side outline
-            left_style = Style(background=(base_background + outline_left_color))
+            left_style = Style(foreground=(base_background + outline_left_color))
             left = get_box(outline_left, inner, outer, left_style)[1][0]
-            right_style = Style(background=(base_background + outline_right_color))
+            right_style = Style(foreground=(base_background + outline_right_color))
             right = get_box(outline_right, inner, outer, right_style)[1][2]
             line = line_trim(list(line), outline_left != "", outline_right != "")
             if outline_left and outline_right:

@@ -112,7 +112,6 @@ class Strip:
             assert get_line_length(self._segments) == cell_length
 
     def __rich_repr__(self) -> rich.repr.Result:
-        return
         yield self._segments
         yield self.cell_length
 
@@ -341,6 +340,9 @@ class Strip:
         Returns:
             A new strip with the supplied cell length.
         """
+
+        if self.cell_length == cell_length:
+            return self
 
         cache_key = (cell_length, style)
         cached_strip = self._line_length_cache.get(cache_key)
