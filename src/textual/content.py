@@ -19,7 +19,6 @@ import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import OverflowMethod
-from rich.errors import MissingStyle
 from rich.segment import Segment, Segments
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
@@ -175,7 +174,13 @@ class Content(Visual):
         return markup
 
     @classmethod
-    def from_markup(cls, markup: str) -> Content:
+    def from_markup(
+        cls,
+        markup: str,
+        align: TextAlign = "left",
+        no_wrap: bool = False,
+        ellipsis: bool = False,
+    ) -> Content:
         """Create content from Textual markup.
 
         !!! note
@@ -184,13 +189,16 @@ class Content(Visual):
 
         Args:
             markup: Textual Markup
+            align: Align method.
+            no_wrap: Disable wrapping.
+            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
 
         Returns:
             New Content instance.
         """
         from textual.markup import to_content
 
-        content = to_content(markup)
+        content = to_content(markup, align=align, no_wrap=no_wrap, ellipsis=ellipsis)
         return content
 
     @classmethod
@@ -292,6 +300,13 @@ class Content(Visual):
         )
         return new_content
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return self.plain == other
+        elif isinstance(other, Content):
+            return self.plain == other.plain
+        return str(self) == str(other)
+
     def get_optimal_width(self, container_width: int) -> int:
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
@@ -376,7 +391,10 @@ class Content(Visual):
         else:
             selection_style = None
 
-        align = self._align
+        styles = widget.styles
+        align = (
+            widget.styles.text_align if styles.has_rule("text_align") else self._align
+        )
         lines = self._wrap_and_format(
             width,
             align=align,
@@ -829,7 +847,7 @@ class Content(Visual):
             def get_style(style: str, /) -> Style:
                 try:
                     visual_style = Style.parse(style, css_variables)
-                except MissingStyle:
+                except Exception:
                     visual_style = Style.null()
                 return visual_style
 
@@ -885,10 +903,9 @@ class Content(Visual):
 
     def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
         _Segment = Segment
-        render = list(self.render(base_style, end))
         segments = [
-            _Segment(text, (style.get_rich_style() if style else None))
-            for text, style in render
+            _Segment(text, (style.rich_style if style else None))
+            for text, style in self.render(base_style, end)
         ]
         return segments
 

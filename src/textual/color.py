@@ -250,7 +250,7 @@ class Color(NamedTuple):
         Returns:
             A color object as used by Rich.
         """
-        r, g, b, _a, ansi, _ = self
+        r, g, b, a, ansi, _ = self
         if ansi is not None:
             return RichColor.parse("default") if ansi < 0 else RichColor.from_ansi(ansi)
         return RichColor(
@@ -455,6 +455,15 @@ class Color(NamedTuple):
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
             return self.blend(other, other.a, 1.0)
+        elif other is None:
+            return self
+        return NotImplemented
+
+    def __radd__(self, other: object) -> Color:
+        if isinstance(other, Color):
+            return self.blend(other, other.a, 1.0)
+        elif other is None:
+            return self
         return NotImplemented
 
     @classmethod

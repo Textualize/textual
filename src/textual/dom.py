@@ -1111,7 +1111,7 @@ class DOMNode(MessagePump):
 
     def _get_subtitle_style_information(
         self, background: Color
-    ) -> tuple[Color, Color, Style]:
+    ) -> tuple[Color, Color, VisualStyle]:
         """Get a Rich Style object for for titles.
 
         Args:
@@ -1128,7 +1128,7 @@ class DOMNode(MessagePump):
         return (
             color,
             styles.border_subtitle_background,
-            styles.border_subtitle_style,
+            VisualStyle.from_rich_style(styles.border_subtitle_style),
         )
 
     @property

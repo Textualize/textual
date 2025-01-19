@@ -17,8 +17,8 @@ STYLE_ABBREVIATIONS = {
 def style_parse(style_text: str, variables: dict[str, str]) -> Style:
     styles: dict[str, bool | None] = {style: None for style in STYLES}
 
-    color: Color = TRANSPARENT
-    background: Color = TRANSPARENT
+    color: Color | None = None
+    background: Color | None = None
     is_background: bool = False
     style_state: bool = True
 
@@ -50,6 +50,9 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
                     color = Color.automatic()
             elif value == "on":
                 is_background = True
+            elif value == "link":
+                data["link"] = style_text[token.end[-1] :]
+                break
             elif value in STYLES:
                 styles[value] = style_state
                 style_state = True
@@ -61,14 +64,18 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
                     background = Color.parse(value)
                 else:
                     color = Color.parse(value)
-        elif name == "key_value":
+        elif name in ("key_value", "key_value_quote", "key_value_double_quote"):
             key, _, value = value.partition("=")
+            if name in ("key_value_quote", "key_value_double_quote"):
+                value = value[1:-1]
             if key.startswith("@"):
                 meta[key[1:]] = value
             else:
                 data[key] = value
         elif name == "percent":
             percent = int(value.rstrip("%")) / 100
+            if background is None:
+                background = TRANSPARENT
             if is_background:
                 background = background.multiply_alpha(percent)
             else:
@@ -82,11 +89,13 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
 
 if __name__ == "__main__":
     variables = {"accent": "red"}
-    print(
-        style_parse(
-            "bold not underline red $accent rgba(10,20,30,3) on black not italic link=https://www.willmcgugan.com",
-            variables,
-        )
-    )
+    print(style_parse("link=https://www.textualize.io", {}))
 
-    print(style_parse("auto on ansi_red s 20% @click=app.bell('hello')", variables))
+    # print(
+    #     style_parse(
+    #         "bold not underline red $accent rgba(10,20,30,3) on black not italic link=https://www.willmcgugan.com",
+    #         variables,
+    #     )
+    # )
+
+    # print(style_parse("auto on ansi_red s 20% @click=app.bell('hello')", variables))

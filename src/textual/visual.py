@@ -81,12 +81,10 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
         if is_renderable(obj):
             # If it is a string, render it to Text
             if isinstance(obj, str):
-                return Content.from_markup(obj)
+                return Content.from_markup(obj) if markup else Content(obj)
 
             if isinstance(obj, Text) and widget.allow_select:
-                return Content.from_rich_text(
-                    obj, align=obj.justify or widget.styles.text_align
-                )
+                return Content.from_rich_text(obj)
 
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))

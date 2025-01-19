@@ -9,7 +9,7 @@ import rich.repr
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
 
-from textual.color import TRANSPARENT, Color
+from textual.color import Color
 
 if TYPE_CHECKING:
     from textual.css.styles import StylesBase
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 class Style:
     """Represents a style in the Visual interface (color and other attributes)."""
 
-    background: Color = TRANSPARENT
-    foreground: Color = TRANSPARENT
+    background: Color | None = None
+    foreground: Color | None = None
     bold: bool | None = None
     dim: bool | None = None
     italic: bool | None = None
@@ -33,10 +33,8 @@ class Style:
     auto_color: bool = False
 
     def __rich_repr__(self) -> rich.repr.Result:
-        if self.background.a:
-            yield None, self.background
-        if self.foreground.a:
-            yield None, self.foreground, TRANSPARENT
+        yield "background", self.background, None
+        yield "foreground", self.foreground, None
         yield "bold", self.bold, None
         yield "dim", self.dim, None
         yield "italic", self.italic, None
@@ -51,8 +49,8 @@ class Style:
     @cached_property
     def _is_null(self) -> bool:
         return (
-            self.foreground.a == 0
-            and self.background.a == 0
+            self.foreground is None
+            and self.background is None
             and self.bold is None
             and self.dim is None
             and self.italic is None
@@ -68,9 +66,9 @@ class Style:
 
     def __str__(self) -> str:
         output: list[str] = []
-        if self.foreground.a:
+        if self.foreground is not None:
             output.append(self.foreground.css)
-        if self.background.a:
+        if self.background is not None:
             output.append(f"on {self.background.css}")
         if self.bold is not None:
             output.append("bold" if self.bold else "not bold")
@@ -82,25 +80,36 @@ class Style:
             output.append("underline" if self.underline else "not underline")
         if self.strike is not None:
             output.append("strike" if self.strike else "not strike")
+
         return " ".join(output)
 
     @lru_cache(maxsize=1024)
-    def __add__(self, other: object) -> Style:
-        if not isinstance(other, Style):
+    def __add__(self, other: object | None) -> Style:
+        if isinstance(other, Style):
+            new_style = Style(
+                (
+                    other.background
+                    if self.background is None
+                    else self.background + other.background
+                ),
+                # other.foreground if self.foreground is None else None,
+                self.foreground if other.foreground is None else other.foreground,
+                self.bold if other.bold is None else other.bold,
+                self.dim if other.dim is None else other.dim,
+                self.italic if other.italic is None else other.italic,
+                self.underline if other.underline is None else other.underline,
+                self.reverse if other.reverse is None else other.reverse,
+                self.strike if other.strike is None else other.strike,
+                self.link if other.link is None else other.link,
+                self._meta if other._meta is None else other._meta,
+            )
+            return new_style
+        elif other is None:
+            return self
+        else:
             return NotImplemented
-        new_style = Style(
-            self.background + other.background,
-            self.foreground if other.foreground.is_transparent else other.foreground,
-            self.bold if other.bold is None else other.bold,
-            self.dim if other.dim is None else other.dim,
-            self.italic if other.italic is None else other.italic,
-            self.underline if other.underline is None else other.underline,
-            self.reverse if other.reverse is None else other.reverse,
-            self.strike if other.strike is None else other.strike,
-            self.link if other.link is None else other.link,
-            self._meta if other._meta is None else other._meta,
-        )
-        return new_style
+
+    __radd__ = __add__
 
     @classmethod
     def null(cls) -> Style:
@@ -127,8 +136,16 @@ class Style:
             New Style.
         """
         return Style(
-            Color.from_rich_color(rich_style.bgcolor, theme),
-            Color.from_rich_color(rich_style.color, theme),
+            (
+                None
+                if rich_style.bgcolor is None
+                else Color.from_rich_color(rich_style.bgcolor, theme)
+            ),
+            (
+                None
+                if rich_style.color is None
+                else Color.from_rich_color(rich_style.color, theme)
+            ),
             bold=rich_style.bold,
             dim=rich_style.dim,
             italic=rich_style.italic,
@@ -183,10 +200,10 @@ class Style:
         Returns:
             A Rich style object.
         """
-        color = self.background + self.foreground
+        color = None if self.foreground is None else self.background + self.foreground
         return RichStyle(
-            color=color.rich_color if color.a else None,
-            bgcolor=self.background.rich_color if self.background.a else None,
+            color=None if color is None else color.rich_color,
+            bgcolor=None if self.background is None else self.background.rich_color,
             bold=self.bold,
             dim=self.dim,
             italic=self.italic,
@@ -194,13 +211,14 @@ class Style:
             reverse=self.reverse,
             strike=self.strike,
             link=self.link,
-            meta=self.meta,
+            meta=None if self._meta is None else self.meta,
         )
 
     def rich_style_with_offset(self, x: int, y: int) -> RichStyle:
+        color = None if self.foreground is None else self.background + self.foreground
         return RichStyle(
-            color=(self.background + self.foreground).rich_color,
-            bgcolor=self.background.rich_color,
+            color=None if color is None else color.rich_color,
+            bgcolor=None if self.background is None else self.background.rich_color,
             bold=self.bold,
             dim=self.dim,
             italic=self.italic,
@@ -210,21 +228,6 @@ class Style:
             link=self.link,
             meta={**self.meta, "offset": (x, y)},
         )
-
-    def get_rich_style(self) -> RichStyle:
-        rich_style = RichStyle(
-            color=(self.background + self.foreground).rich_color,
-            bgcolor=self.background.rich_color,
-            bold=self.bold,
-            dim=self.dim,
-            italic=self.italic,
-            underline=self.underline,
-            reverse=self.reverse,
-            strike=self.strike,
-            link=self.link,
-            meta=self.meta,
-        )
-        return rich_style
 
     @cached_property
     def without_color(self) -> Style:

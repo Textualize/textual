@@ -2097,7 +2097,7 @@ def test_ansi_command_palette(snap_compare):
         """
 
         def compose(self) -> ComposeResult:
-            yield Label("[red]Red[/] [magenta]Magenta[/] " * 200)
+            yield Label("[ansi_red]Red[/] [ansi_magenta]Magenta[/] " * 200)
 
         def on_mount(self) -> None:
             self.action_command_palette()
@@ -2895,7 +2895,9 @@ def test_markup_command_list(snap_compare):
             self.search_commands(
                 [
                     SimpleCommand(
-                        "Hello [u green]World", lambda: None, "Help [u red]text"
+                        "Hello [u ansi_green]World",
+                        lambda: None,
+                        "Help [u ansi_red]text",
                     )
                 ]
             )

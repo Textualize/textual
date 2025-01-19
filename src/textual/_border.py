@@ -367,7 +367,7 @@ def render_border_label(
         text_label = text_label.pad_left(1)
     if has_right_corner:
         text_label = text_label.pad_right(1)
-    text_label.stylize_before(label_style)
+    text_label = text_label.stylize_before(label_style)
 
     label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
     flip_top, flip_bottom = BORDER_TITLE_FLIP.get(name, (False, False))
@@ -388,12 +388,9 @@ def render_border_label(
         assert False
 
     if (flip_top and is_title) or (flip_bottom and not is_title):
-        base_style = base_style.without_color + Style(
-            base_style.foreground,
-            base_style.background,
-        )
+        base_style = base_style.without_color + Style(reverse=True)
 
-    segments = text_label.render_segments(base_style + label_style)
+    segments = text_label.render_segments(base_style)
     yield from segments
 
 

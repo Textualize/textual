@@ -4,6 +4,7 @@ from functools import lru_cache
 from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
+import rich.repr
 from rich.segment import Segment
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
@@ -47,6 +48,7 @@ def make_blank(width, style: RichStyle) -> Segment:
     return Segment(intern(" " * width), style)
 
 
+@rich.repr.auto(angular=True)
 class StylesCache:
     """Responsible for rendering CSS Styles and keeping a cache of rendered lines.
 
@@ -76,6 +78,11 @@ class StylesCache:
         self._cache: dict[int, Strip] = {}
         self._dirty_lines: set[int] = set()
         self._width = 1
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        if self._dirty_lines:
+            yield "dirty", self._dirty_lines
+        yield "width", self._width, 1
 
     def set_dirty(self, *regions: Region) -> None:
         """Add a dirty regions."""
@@ -350,6 +357,7 @@ class StylesCache:
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
+
             is_top = y == 0
             border_color = base_background + (
                 border_top_color if is_top else border_bottom_color
@@ -370,13 +378,10 @@ class StylesCache:
                         if label_background.a
                         else TRANSPARENT
                     ),
-                    (
-                        (base_label_background + label_color)
-                        if label_color.a
-                        else TRANSPARENT
-                    ),
+                    (base_label_background + border_color + label_color),
                 )
                 render_label = (label, style)
+
             # Try to save time with expensive call to `render_border_label`:
             if render_label:
                 label_segments = render_border_label(

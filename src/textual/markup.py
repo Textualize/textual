@@ -15,6 +15,7 @@ from typing import (
     Union,
 )
 
+from textual.css.types import TextAlign
 from textual.style import Style
 
 if TYPE_CHECKING:
@@ -119,7 +120,13 @@ def _parse(markup: str) -> Iterable[Tuple[int, Optional[str], Optional[Tag]]]:
         yield position, markup[position:], None
 
 
-def to_content(markup: str, style: Union[str, Style] = "") -> Content:
+def to_content(
+    markup: str,
+    style: Union[str, Style] = "",
+    align: TextAlign = "left",
+    no_wrap: bool = False,
+    ellipsis: bool = False,
+) -> Content:
     """Render console markup in to a Text instance.
 
     Args:
@@ -240,7 +247,13 @@ def to_content(markup: str, style: Union[str, Style] = "") -> Content:
         if style:
             append_span(_Span(start, text_length, style))
 
-    content = Content("".join(text), sorted(spans[::-1], key=attrgetter("start")))
+    content = Content(
+        "".join(text),
+        sorted(spans[::-1], key=attrgetter("start")),
+        align=align,
+        no_wrap=no_wrap,
+        ellipsis=ellipsis,
+    )
 
     return content
 
