@@ -465,9 +465,9 @@ class Content(Visual):
                 # For now, its not required
                 raise TypeError("slices with step!=1 are not supported")
 
-    def __add__(self, other: object) -> Content:
+    def __add__(self, other: Content | str) -> Content:
         if isinstance(other, str):
-            return Content(self._text + other, self._spans.copy())
+            return Content(self._text + other, self._spans)
         if isinstance(other, Content):
             offset = len(self.plain)
             content = Content(
@@ -487,6 +487,11 @@ class Content(Visual):
             )
             return content
         return NotImplemented
+
+    def __radd__(self, other: Content | str) -> Content:
+        if not isinstance(other, (Content, str)):
+            return NotImplemented
+        return self + other
 
     @classmethod
     def _trim_spans(cls, text: str, spans: list[Span]) -> list[Span]:
@@ -530,11 +535,11 @@ class Content(Visual):
     def append_text(self, text: str, style: Style | str = "") -> Content:
         return self.append(Content.styled(text, style))
 
-    def join(self, lines: Iterable[Content]) -> Content:
+    def join(self, lines: Iterable[Content | str]) -> Content:
         """Join an iterable of content.
 
         Args:
-            lines (_type_): An iterable of content instances.
+            lines: An iterable of other Content instances or or strings.
 
         Returns:
             A single Content instance, containing all of the lines.
@@ -547,11 +552,12 @@ class Content(Visual):
             """Iterate the lines, optionally inserting the separator."""
             if self.plain:
                 for last, line in loop_last(lines):
-                    yield line
+                    yield line if isinstance(line, Content) else Content(line)
                     if not last:
                         yield self
             else:
-                yield from lines
+                for line in lines:
+                    yield line if isinstance(line, Content) else Content(line)
 
         extend_text = text.extend
         extend_spans = spans.extend

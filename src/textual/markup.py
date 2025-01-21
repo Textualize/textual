@@ -249,14 +249,7 @@ def to_content(
         if style:
             append_span(_Span(start, text_length, style))
 
-    content = Content(
-        "".join(text),
-        sorted(spans[::-1], key=attrgetter("start")),
-        align=align,
-        no_wrap=no_wrap,
-        ellipsis=ellipsis,
-    )
-
+    content = Content("".join(text), sorted(spans[::-1], key=attrgetter("start")))
     return content
 
 
