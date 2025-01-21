@@ -118,6 +118,7 @@ class Visual(ABC):
         """Render the visual into an iterable of strips.
 
         Args:
+            widget: Parent widget.
             base_style: The base style.
             width: Width of desired render.
             height: Height of desired render or `None` for any height.
@@ -128,10 +129,14 @@ class Visual(ABC):
         """
 
     @abstractmethod
-    def get_optimal_width(self, container_width: int) -> int:
-        """Get ideal width of the renderable to display its content.
+    def get_optimal_width(self, widget: Widget, container_width: int) -> int:
+        """Get optimal width of the visual to display its content.
+
+        The exact definition of "optimal width" is highly dependant on the visual, but it
+        will typically be just wide enough to display output without wrapping.
 
         Args:
+            widget: Parent widget.
             container_size: The size of the container.
 
         Returns:
@@ -140,8 +145,12 @@ class Visual(ABC):
         """
 
     @abstractmethod
-    def get_height(self, width: int) -> int:
+    def get_height(self, widget: Widget, width: int) -> int:
         """Get the height of the visual if rendered with the given width.
+
+        Args:
+            widget: Parent widget.
+            width: Width of visual.
 
         Returns:
             A height in lines.
@@ -222,7 +231,7 @@ class RichVisual(Visual):
             )
         return self._measurement
 
-    def get_optimal_width(self, container_width: int) -> int:
+    def get_optimal_width(self, widget: Widget, container_width: int) -> int:
         console = active_app.get().console
         width = measure(
             console, self._renderable, container_width, container_width=container_width
@@ -230,7 +239,7 @@ class RichVisual(Visual):
 
         return width
 
-    def get_height(self, width: int) -> int:
+    def get_height(self, widget: Widget, width: int) -> int:
         console = active_app.get().console
         renderable = self._renderable
         if isinstance(renderable, Text):
@@ -298,11 +307,14 @@ class Padding(Visual):
         yield self._visual
         yield self._spacing
 
-    def get_optimal_width(self, container_width: int) -> int:
-        return self._visual.get_optimal_width(container_width) + self._spacing.width
+    def get_optimal_width(self, widget: Widget, container_width: int) -> int:
+        return (
+            self._visual.get_optimal_width(widget, container_width)
+            + self._spacing.width
+        )
 
-    def get_height(self, width: int) -> int:
-        return self._visual.get_height(width) + self._spacing.height
+    def get_height(self, widget: Widget, width: int) -> int:
+        return self._visual.get_height(widget, width) + self._spacing.height
 
     def render_strips(
         self,

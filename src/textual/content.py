@@ -73,6 +73,7 @@ def strip_control_codes(
     return text.translate(_translate_table)
 
 
+@rich.repr.auto
 class Span(NamedTuple):
     """A style applied to a range of character offsets."""
 
@@ -97,8 +98,7 @@ class Span(NamedTuple):
         if cells:
             start, end, style = self
             return Span(start, end + cells, style)
-        else:
-            return self
+        return self
 
 
 @rich.repr.auto
@@ -307,9 +307,32 @@ class Content(Visual):
             return self.plain == other.plain
         return str(self) == str(other)
 
-    def get_optimal_width(self, container_width: int) -> int:
+    def get_optimal_width(self, widget: Widget, container_width: int) -> int:
+        """Get optimal width of the visual to display its content. Part of the Textual Visual protocol.
+
+        Args:
+            widget: Parent widget.
+            container_size: The size of the container.
+
+        Returns:
+            A width in cells.
+
+        """
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
+
+    def get_height(self, widget: Widget, width: int) -> int:
+        """Get the height of the visual if rendered with the given width. Part of the Textual Visual protocol.
+
+        Args:
+            widget: Parent widget.
+            width: Width of visual.
+
+        Returns:
+            A height in lines.
+        """
+        lines = self._wrap_and_format(width)
+        return len(lines)
 
     def _wrap_and_format(
         self,
@@ -413,10 +436,6 @@ class Content(Visual):
         strip_lines = [line.to_strip(widget, style) for line in lines]
         return strip_lines
 
-    def get_height(self, width: int) -> int:
-        lines = self._wrap_and_format(width)
-        return len(lines)
-
     def __len__(self) -> int:
         return len(self.plain)
 
@@ -429,6 +448,11 @@ class Content(Visual):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._text
         yield "spans", self._spans, []
+
+    @property
+    def spans(self) -> Sequence[Span]:
+        """A sequence of spans used to markup regions of the content."""
+        return self._spans
 
     @property
     def cell_length(self) -> int:

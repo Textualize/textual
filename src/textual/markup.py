@@ -26,6 +26,8 @@ class MarkupError(Exception):
     """An error occurred parsing Textual markup."""
 
 
+__all__ = ["MarkupError", "escape", "to_content"]
+
 RE_TAGS = re.compile(
     r"""((\\*)\[([a-z#/@][^[]*?)])""",
     re.VERBOSE,
