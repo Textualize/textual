@@ -153,3 +153,12 @@ def test_join():
     content = Content(".").join(pieces)
     assert content.plain == "foo.bar.baz"
     assert content.spans == [Span(0, 3, "red"), Span(8, 11, "blue")]
+
+
+def test_sort():
+    """Test content may be sorted."""
+    # functools.total_ordering doing most of the heavy lifting here.
+    contents = sorted([Content("foo"), Content("bar"), Content("baz")])
+    assert contents[0].plain == "bar"
+    assert contents[1].plain == "baz"
+    assert contents[2].plain == "foo"

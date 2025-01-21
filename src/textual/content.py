@@ -11,7 +11,7 @@ TBD: Is this a public facing API or an internal one?
 from __future__ import annotations
 
 import re
-from functools import lru_cache
+from functools import lru_cache, total_ordering
 from operator import itemgetter
 from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence, Union
 
@@ -102,6 +102,7 @@ class Span(NamedTuple):
 
 
 @rich.repr.auto
+@total_ordering
 class Content(Visual):
     """Text content with marked up spans.
 
@@ -280,7 +281,14 @@ class Content(Visual):
             return self.plain == other
         elif isinstance(other, Content):
             return self.plain == other.plain
-        return str(self) == str(other)
+        return NotImplemented
+
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, str):
+            return self.plain < other
+        if isinstance(other, Content):
+            return self.plain < other.plain
+        return NotImplemented
 
     def get_optimal_width(self, widget: Widget, container_width: int) -> int:
         """Get optimal width of the visual to display its content. Part of the Textual Visual protocol.
@@ -536,7 +544,10 @@ class Content(Visual):
         return self.append(Content.styled(text, style))
 
     def join(self, lines: Iterable[Content | str]) -> Content:
-        """Join an iterable of content.
+        """Join an iterable of content or strings.
+
+        This works much like the join method on `str` objects.
+        Self is the separator (which maybe empty) placed between each string or Content.
 
         Args:
             lines: An iterable of other Content instances or or strings.
