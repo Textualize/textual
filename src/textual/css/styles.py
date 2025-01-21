@@ -437,7 +437,9 @@ class StylesBase:
     row_span = IntegerProperty(default=1, layout=True)
     column_span = IntegerProperty(default=1, layout=True)
 
-    text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
+    text_align: StringEnumProperty[TextAlign] = StringEnumProperty(
+        VALID_TEXT_ALIGN, "start"
+    )
 
     link_color = ColorProperty("transparent")
     auto_link_color = BooleanProperty(False)

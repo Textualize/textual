@@ -119,9 +119,6 @@ class Content(Visual):
         text: str,
         spans: list[Span] | None = None,
         cell_length: int | None = None,
-        align: TextAlign = "left",
-        no_wrap: bool = False,
-        ellipsis: bool = False,
     ) -> None:
         """
 
@@ -136,9 +133,6 @@ class Content(Visual):
         self._text: str = strip_control_codes(text)
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
-        self._align = align
-        self._no_wrap = no_wrap
-        self._ellipsis = ellipsis
 
     def __str__(self) -> str:
         return self._text
@@ -245,13 +239,7 @@ class Content(Visual):
         else:
             spans = []
 
-        content = cls(
-            text.plain,
-            spans,
-            align=align,
-            no_wrap=no_wrap,
-            ellipsis=ellipsis,
-        )
+        content = cls(text.plain, spans)
         if text.style:
             try:
                 ansi_theme = active_app.get().ansi_theme
@@ -270,9 +258,6 @@ class Content(Visual):
         text: str,
         style: Style | str = "",
         cell_length: int | None = None,
-        align: TextAlign = "left",
-        no_wrap: bool = False,
-        ellipsis: bool = False,
     ) -> Content:
         """Create a Content instance from a single styled piece of text.
 
@@ -280,24 +265,14 @@ class Content(Visual):
             text: String content.
             style: Desired style.
             cell_length: Cell length of text if known, otherwise `None`.
-            align: Text alignment.
-            no_wrap: Disable wrapping.
-            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
 
         Returns:
             New Content instance.
         """
         if not text:
-            return Content("", align=align, no_wrap=no_wrap, ellipsis=ellipsis)
+            return Content("")
         span_length = cell_len(text) if cell_length is None else cell_length
-        new_content = cls(
-            text,
-            [Span(0, span_length, style)],
-            span_length,
-            align=align,
-            no_wrap=no_wrap,
-            ellipsis=ellipsis,
-        )
+        new_content = cls(text, [Span(0, span_length, style)], span_length)
         return new_content
 
     def __eq__(self, other: object) -> bool:
@@ -414,16 +389,10 @@ class Content(Visual):
         else:
             selection_style = None
 
-        styles = widget.styles
-        align = (
-            widget.styles.text_align if styles.has_rule("text_align") else self._align
-        )
         lines = self._wrap_and_format(
             width,
-            align=align,
-            overflow=(
-                ("ellipsis" if self._ellipsis else "crop") if self._no_wrap else "fold"
-            ),
+            align=widget.styles.text_align,
+            overflow="ellipsis",
             no_wrap=False,
             tab_size=8,
             selection=widget.selection,
@@ -462,21 +431,6 @@ class Content(Visual):
         return self._cell_length
 
     @property
-    def align(self) -> TextAlign:
-        """Text alignment."""
-        return self._align
-
-    @property
-    def no_wrap(self) -> bool:
-        """Disable text wrapping?"""
-        return self._no_wrap
-
-    @property
-    def ellipsis(self) -> bool:
-        """Crop text with ellipsis?"""
-        return self._ellipsis
-
-    @property
     def plain(self) -> str:
         """Get the text as a single string."""
         return self._text
@@ -484,14 +438,7 @@ class Content(Visual):
     @property
     def without_spans(self) -> Content:
         """The content with no spans"""
-        return Content(
-            self.plain,
-            [],
-            self._cell_length,
-            align=self._align,
-            no_wrap=self._no_wrap,
-            ellipsis=self._ellipsis,
-        )
+        return Content(self.plain, [], self._cell_length)
 
     def __getitem__(self, slice: int | slice) -> Content:
         def get_text_at(offset: int) -> "Content":
@@ -577,9 +524,6 @@ class Content(Visual):
                     if self._cell_length is None
                     else self._cell_length + cell_len(content)
                 ),
-                align=self.align,
-                no_wrap=self.no_wrap,
-                ellipsis=self.ellipsis,
             )
         return Content("").join([self, content])
 
