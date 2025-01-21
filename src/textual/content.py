@@ -197,20 +197,11 @@ class Content(Visual):
         return content
 
     @classmethod
-    def from_rich_text(
-        cls,
-        text: str | Text,
-        align: TextAlign = "left",
-        no_wrap: bool = False,
-        ellipsis: bool = False,
-    ) -> Content:
+    def from_rich_text(cls, text: str | Text) -> Content:
         """Create equivalent Visual Content for str or Text.
 
         Args:
             text: String or Rich Text.
-            align: Align method.
-            no_wrap: Disable wrapping.
-            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
 
         Returns:
             New Content.

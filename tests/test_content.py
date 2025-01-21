@@ -108,6 +108,7 @@ def test_stylize_before() -> None:
 
 
 def test_eq() -> None:
+    """Test equality."""
     assert Content("foo") == Content("foo")
     assert Content("foo") == "foo"
     assert Content("foo") != Content("bar")
@@ -115,6 +116,7 @@ def test_eq() -> None:
 
 
 def test_add() -> None:
+    """Test addition."""
     # Simple cases
     assert Content("") + Content("") == Content("")
     assert Content("foo") + Content("") == Content("foo")
@@ -130,6 +132,7 @@ def test_add() -> None:
 
 
 def test_from_markup():
+    """Test simple parsing of Textual markup."""
     content = Content.from_markup("[red]Hello[/red] [blue]World[/blue]")
     assert len(content) == 11
     assert content.plain == "Hello World"
@@ -137,6 +140,13 @@ def test_from_markup():
         Span(start=0, end=5, style="red"),
         Span(start=6, end=11, style="blue"),
     ]
+
+
+def test_markup():
+    """Test markup round trip"""
+    content = Content.from_markup("[red]Hello[/red] [blue]World[/blue]")
+    assert content.plain == "Hello World"
+    assert content.markup == "[red]Hello[/red] [blue]World[/blue]"
 
 
 def test_join():

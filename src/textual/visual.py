@@ -78,11 +78,10 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
         # Doesn't expose the textualize protocol
         from textual.content import Content
 
-        if is_renderable(obj):
-            # If it is a string, render it to Text
-            if isinstance(obj, str):
-                return Content.from_markup(obj) if markup else Content(obj)
+        if isinstance(obj, str):
+            return Content.from_markup(obj) if markup else Content(obj)
 
+        if is_renderable(obj):
             if isinstance(obj, Text) and widget.allow_select:
                 return Content.from_rich_text(obj)
 
@@ -119,10 +118,9 @@ class Visual(ABC):
 
         Args:
             widget: Parent widget.
-            base_style: The base style.
             width: Width of desired render.
             height: Height of desired render or `None` for any height.
-            style: A Visual Style.
+            style: The base style to render on top of.
 
         Returns:
             An list of Strips.
