@@ -362,7 +362,7 @@ def render_border_label(
     if not text_label.cell_length or width <= cells_reserved:
         return
 
-    text_label = text_label.truncate(width - cells_reserved, overflow="ellipsis")
+    text_label = text_label.truncate(width - cells_reserved, ellipsis=True)
     if has_left_corner:
         text_label = text_label.pad_left(1)
     if has_right_corner:

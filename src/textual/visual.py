@@ -23,8 +23,6 @@ if TYPE_CHECKING:
 
     from textual.widget import Widget
 
-_NULL_RICH_STYLE = RichStyle()
-
 
 def is_visual(obj: object) -> bool:
     """Check if the given object is a Visual or supports the Visual protocol."""
@@ -130,12 +128,13 @@ class Visual(ABC):
     def get_optimal_width(self, widget: Widget, container_width: int) -> int:
         """Get optimal width of the visual to display its content.
 
-        The exact definition of "optimal width" is highly dependant on the visual, but it
-        will typically be just wide enough to display output without wrapping.
+        The exact definition of "optimal width" is dependant on the visual, but
+        will typically be wide enough to display output without cropping or wrapping,
+        and without superfluous space.
 
         Args:
             widget: Parent widget.
-            container_size: The size of the container.
+            container_width: The size of the container in cells.
 
         Returns:
             A width in cells.
@@ -148,7 +147,7 @@ class Visual(ABC):
 
         Args:
             widget: Parent widget.
-            width: Width of visual.
+            width: Width of visual in cells.
 
         Returns:
             A height in lines.
