@@ -305,7 +305,7 @@ class Content(Visual):
         Returns:
             A height in lines.
         """
-        lines = self._wrap_and_format(width)
+        lines = self.without_spans._wrap_and_format(width)
         return len(lines)
 
     def _wrap_and_format(
@@ -607,24 +607,35 @@ class Content(Visual):
         self,
         max_width: int,
         *,
-        overflow: OverflowMethod = "fold",
+        ellipsis=False,
         pad: bool = False,
     ) -> Content:
-        if overflow == "ignore":
+        """Truncate the content at a given cell width.
+
+        Args:
+            max_width: The maximum width in cells.
+            ellipsis: Insert an ellipsis when cropped.
+            pad: Pad the content if less than `max_width`.
+
+        Returns:
+            New Content.
+        """
+
+        length = self.cell_length
+        if length == max_width:
             return self
 
-        length = cell_len(self.plain)
         text = self.plain
-        if length > max_width:
-            if overflow == "ellipsis":
-                text = set_cell_size(self.plain, max_width - 1) + "…"
-            else:
-                text = set_cell_size(self.plain, max_width)
+        spans = self._spans
         if pad and length < max_width:
             spaces = max_width - length
             text = f"{self.plain}{' ' * spaces}"
-            length = len(self.plain)
-        spans = self._trim_spans(text, self._spans)
+        elif length > max_width:
+            if ellipsis and max_width:
+                text = set_cell_size(self.plain, max_width - 1) + "…"
+            else:
+                text = set_cell_size(self.plain, max_width)
+            spans = self._trim_spans(text, self._spans)
         return Content(text, spans)
 
     def pad_left(self, count: int, character: str = " ") -> Content:
@@ -700,9 +711,7 @@ class Content(Visual):
         Returns:
             New line Content.
         """
-        content = self.rstrip().truncate(
-            width, overflow="ellipsis" if ellipsis else "fold"
-        )
+        content = self.rstrip().truncate(width, ellipsis=True)
         left = (width - content.cell_length) // 2
         right = width - left
         content = content.pad_left(left).pad_right(right)
@@ -718,9 +727,7 @@ class Content(Visual):
         Returns:
             New line Content.
         """
-        content = self.rstrip().truncate(
-            width, overflow="ellipsis" if ellipsis else "fold"
-        )
+        content = self.rstrip().truncate(width, ellipsis=True)
         content = content.pad_left(width - content.cell_length)
         return content
 

@@ -172,3 +172,24 @@ def test_sort():
     assert contents[0].plain == "bar"
     assert contents[1].plain == "baz"
     assert contents[2].plain == "foo"
+
+
+def test_truncate():
+    """Test truncated method."""
+    content = Content.from_markup("[red]Hello World[/red]")
+    # Edge case of 0
+    assert content.truncate(0).markup == ""
+    # Edge case of 0 wil ellipsis
+    assert content.truncate(0, ellipsis=True).markup == ""
+    # Edge case of 1
+    assert content.truncate(1, ellipsis=True).markup == "[red]…[/red]"
+    # Truncate smaller
+    assert content.truncate(3).markup == "[red]Hel[/red]"
+    # Truncate to same size
+    assert content.truncate(11).markup == "[red]Hello World[/red]"
+    # Truncate smaller will ellipsis
+    assert content.truncate(5, ellipsis=True).markup == "[red]Hell…[/red]"
+    # Truncate larger results unchanged
+    assert content.truncate(15).markup == "[red]Hello World[/red]"
+    # Truncate larger with padding increases size
+    assert content.truncate(15, pad=True).markup == "[red]Hello World[/red]    "
