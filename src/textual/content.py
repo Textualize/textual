@@ -422,12 +422,19 @@ class Content(Visual):
 
     @property
     def spans(self) -> Sequence[Span]:
-        """A sequence of spans used to markup regions of the content."""
+        """A sequence of spans used to markup regions of the content.
+
+        !!! warning
+            Never attempt to mutate the spans, as this would certainly break the output--possibly
+            in quite subtle ways!
+
+        """
         return self._spans
 
     @property
     def cell_length(self) -> int:
         """The cell length of the content."""
+        # Calculated on demand
         if self._cell_length is None:
             self._cell_length = cell_len(self.plain)
         return self._cell_length
@@ -535,6 +542,15 @@ class Content(Visual):
         return Content("").join([self, content])
 
     def append_text(self, text: str, style: Style | str = "") -> Content:
+        """Append text give as a string, with an optional style.
+
+        Args:
+            text: Text to append.
+            style: Optional style for new text.
+
+        Returns:
+            New content.
+        """
         return self.append(Content.styled(text, style))
 
     def join(self, lines: Iterable[Content | str]) -> Content:
