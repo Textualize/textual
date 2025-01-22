@@ -1,10 +1,9 @@
 """
-Content is Textual's equivalent to Rich's Text object, with support for transparency.
+Content is a container for text, with spans marked up with color / style.
+If is equivalent to Rich's Text object, with support for more of Textual features.
 
-The interface is (will be) similar, with the major difference that is *immutable*.
-This will make some operations slower, but dramatically improve cache-ability.
-
-TBD: Is this a public facing API or an internal one?
+Unlike Rich Text, Content is *immutable* so you can't modify it in place, and most methods will return a new Content instance.
+This is more like the builtin str, and allows Textual to make some significant optimizations.
 
 """
 
@@ -37,16 +36,20 @@ from textual.visual import Visual
 if TYPE_CHECKING:
     from textual.widget import Widget
 
-_re_whitespace = re.compile(r"\s+$")
 
 ContentType: TypeAlias = Union["Content", str]
+"""Type alias used where content and a str are interchangeable in a function."""
 
 ANSI_DEFAULT = Style(
-    background=Color(0, 0, 0, 0, ansi=-1), foreground=Color(0, 0, 0, 0, ansi=-1)
+    background=Color(0, 0, 0, 0, ansi=-1),
+    foreground=Color(0, 0, 0, 0, ansi=-1),
 )
+"""A Style for ansi default background and foreground."""
 
 TRANSPARENT_STYLE = Style()
+"""A null style."""
 
+_re_whitespace = re.compile(r"\s+$")
 _STRIP_CONTROL_CODES: Final = [
     7,  # Bell
     8,  # Backspace
@@ -59,7 +62,7 @@ _CONTROL_STRIP_TRANSLATE: Final = {
 }
 
 
-def strip_control_codes(
+def _strip_control_codes(
     text: str, _translate_table: dict[int, None] = _CONTROL_STRIP_TRANSLATE
 ) -> str:
     """Remove control codes from text.
@@ -111,7 +114,7 @@ class Content(Visual):
 
     """
 
-    __slots__ = ["_text", "_spans", "_cell_length", "_align", "_no_wrap", "_ellipsis"]
+    __slots__ = ["_text", "_spans", "_cell_length"]
 
     _NORMALIZE_TEXT_ALIGN = {"start": "left", "end": "right", "justify": "full"}
 
@@ -131,7 +134,7 @@ class Content(Visual):
             no_wrap: Disable wrapping.
             ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
         """
-        self._text: str = strip_control_codes(text)
+        self._text: str = _strip_control_codes(text)
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
 
@@ -711,7 +714,7 @@ class Content(Visual):
         Returns:
             New line Content.
         """
-        content = self.rstrip().truncate(width, ellipsis=True)
+        content = self.rstrip().truncate(width, ellipsis=ellipsis)
         left = (width - content.cell_length) // 2
         right = width - left
         content = content.pad_left(left).pad_right(right)
@@ -727,12 +730,20 @@ class Content(Visual):
         Returns:
             New line Content.
         """
-        content = self.rstrip().truncate(width, ellipsis=True)
+        content = self.rstrip().truncate(width, ellipsis=ellipsis)
         content = content.pad_left(width - content.cell_length)
         return content
 
     def right_crop(self, amount: int = 1) -> Content:
-        """Remove a number of characters from the end of the text."""
+        """Remove a number of characters from the end of the text.
+
+        Args:
+            amount: Number of characters to crop.
+
+        Returns:
+            New Content
+
+        """
         max_offset = len(self.plain) - amount
         _Span = Span
         spans = [
