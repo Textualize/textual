@@ -3356,3 +3356,8 @@ def test_arbitrary_selection_double_cell(snap_compare):
         await pilot.pause()
 
     assert snap_compare(LApp(), run_before=run_before)
+
+
+def test_markup(snap_compare):
+    """Check markup rendering, text in test should match the markup."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markup.py")

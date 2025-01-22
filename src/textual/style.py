@@ -120,7 +120,7 @@ class Style:
     def parse(cls, text_style: str, variables: dict[str, str] | None = None) -> Style:
         from textual._style_parse import style_parse
 
-        return style_parse(text_style, {} if variables is None else variables)
+        return style_parse(text_style, variables)
 
     @classmethod
     def from_rich_style(

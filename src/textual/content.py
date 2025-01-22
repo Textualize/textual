@@ -845,18 +845,11 @@ class Content(Visual):
             return
 
         if parse_style is None:
-            try:
-                app = active_app.get()
-            except LookupError:
-                css_variables = {}
-            else:
-                css_variables = app.get_css_variables()
-            # TODO: Update when we add Content.from_markup
 
             @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
                 try:
-                    visual_style = Style.parse(style, css_variables)
+                    visual_style = Style.parse(style)
                 except Exception:
                     visual_style = Style.null()
                 return visual_style

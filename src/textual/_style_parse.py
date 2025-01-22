@@ -1,4 +1,5 @@
-from textual.color import TRANSPARENT, Color
+from textual._context import active_app
+from textual.color import Color
 from textual.css.parse import substitute_references
 from textual.css.tokenize import tokenize_style, tokenize_values
 from textual.style import Style
@@ -13,8 +14,11 @@ STYLE_ABBREVIATIONS = {
     "s": "strike",
 }
 
+from textual._profile import timer
 
-def style_parse(style_text: str, variables: dict[str, str]) -> Style:
+
+@timer("style parse")
+def style_parse(style_text: str, variables: dict[str, str] | None) -> Style:
     styles: dict[str, bool | None] = {style: None for style in STYLES}
 
     color: Color | None = None
@@ -25,11 +29,20 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
     data: dict[str, str] = {}
     meta: dict[str, object] = {}
 
-    reference_tokens = tokenize_values(variables)
+    if variables is None:
+        try:
+            app = active_app.get()
+        except LookupError:
+            pass
+        else:
+            reference_tokens = app.stylesheet._variable_tokens
+    else:
+        reference_tokens = tokenize_values(variables)
 
     for token in substitute_references(
         tokenize_style(style_text, read_from=("inline style", "")), reference_tokens
     ):
+
         name = token.name
         value = token.value
 
@@ -37,7 +50,6 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
             token_color = Color.parse(value)
             if is_background:
                 background = token_color
-                is_background = False
             else:
                 color = token_color
         elif name == "token":
@@ -72,14 +84,14 @@ def style_parse(style_text: str, variables: dict[str, str]) -> Style:
                 meta[key[1:]] = value
             else:
                 data[key] = value
-        elif name == "percent":
-            percent = int(value.rstrip("%")) / 100
-            if background is None:
-                background = TRANSPARENT
+        elif name == "percent" or (name == "scalar" and value.endswith("%")):
+            percent = int(value.rstrip("%")) / 100.0
             if is_background:
-                background = background.multiply_alpha(percent)
+                if background is not None:
+                    background = background.multiply_alpha(percent)
             else:
-                color = background.multiply_alpha(percent)
+                if color is not None:
+                    color = color.multiply_alpha(percent)
 
     parsed_style = Style(background, color, link=data.get("link", None), **styles)
     if meta:

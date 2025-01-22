@@ -29,7 +29,7 @@ class MarkupError(Exception):
 __all__ = ["MarkupError", "escape", "to_content"]
 
 RE_TAGS = re.compile(
-    r"""((\\*)\[([a-z#/@][^[]*?)])""",
+    r"""((\\*)\[([\$a-z#/@][^[]*?)])""",
     re.VERBOSE,
 )
 

@@ -382,8 +382,8 @@ class Color(NamedTuple):
         """
         if self.ansi is not None:
             return self
-        r, g, b, a, _, _ = self
-        return Color(r, g, b, a * alpha)
+        r, g, b, a, _ansi, auto = self
+        return Color(r, g, b, a * alpha, auto=auto)
 
     @lru_cache(maxsize=1024)
     def blend(
