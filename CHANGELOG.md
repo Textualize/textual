@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed special case with calculating the height of a container where all children have dynamic heights https://github.com/Textualize/textual/pull/5463
 - Fixed scrollbars ignoring background opacity https://github.com/Textualize/textual/issues/5458
 - Fixed `Header` icon showing command palette tooltip when disabled https://github.com/Textualize/textual/pull/5427
+- Fixed crash on empty `OptionList` with auto width https://github.com/Textualize/textual/issues/5489
 
 
 ## [1.0.0] - 2024-12-12

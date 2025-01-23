@@ -161,3 +161,21 @@ async def test_options_are_available_soon() -> None:
     option = Option("", id="some_id")
     option_list = OptionList(option)
     assert option_list.get_option("some_id") is option
+
+
+async def test_empty_option_list_with_auto_width_doesnt_crash() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/5489"""
+
+    class EmptyOptionListApp(App):
+        CSS = """
+        OptionList {
+            width: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield OptionList()
+
+    async with EmptyOptionListApp().run_test() as pilot:
+        # If no exception is raised, this test will pass.
+        option_list = pilot.app.query_one(OptionList)
