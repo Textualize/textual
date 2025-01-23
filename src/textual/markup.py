@@ -15,7 +15,6 @@ from typing import (
     Union,
 )
 
-from textual.css.types import TextAlign
 from textual.style import Style
 
 if TYPE_CHECKING:
@@ -125,17 +124,12 @@ def _parse(markup: str) -> Iterable[Tuple[int, Optional[str], Optional[Tag]]]:
 def to_content(
     markup: str,
     style: Union[str, Style] = "",
-    align: TextAlign = "left",
-    no_wrap: bool = False,
-    ellipsis: bool = False,
 ) -> Content:
     """Render console markup in to a Text instance.
 
     Args:
         markup (str): A string containing console markup.
-        style: (Union[str, Style]): The style to use.
-
-
+        style: (Union[str, Style]): Base style for entire content, or empty string for no base style.
 
     Raises:
         MarkupError: If there is a syntax error in the markup.

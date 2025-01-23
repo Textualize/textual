@@ -16,7 +16,7 @@ class ContentApp(App):
             "[on $boost]    [on $boost]    [on $boost]  Three layers of $boost  [/]    [/]    [/]"
         )
         yield Label("[on $primary 20%]On primary twenty percent")
-        yield Label("[$text 80% on primary]Hello")
+        yield Label("[$text 80% on $primary]Hello")
 
 
 if __name__ == "__main__":

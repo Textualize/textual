@@ -172,13 +172,7 @@ class Content(Visual):
         return markup
 
     @classmethod
-    def from_markup(
-        cls,
-        markup: str,
-        align: TextAlign = "left",
-        no_wrap: bool = False,
-        ellipsis: bool = False,
-    ) -> Content:
+    def from_markup(cls, markup: str) -> Content:
         """Create content from Textual markup.
 
         !!! note
@@ -187,16 +181,13 @@ class Content(Visual):
 
         Args:
             markup: Textual Markup
-            align: Align method.
-            no_wrap: Disable wrapping.
-            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
 
         Returns:
             New Content instance.
         """
         from textual.markup import to_content
 
-        content = to_content(markup, align=align, no_wrap=no_wrap, ellipsis=ellipsis)
+        content = to_content(markup)
         return content
 
     @classmethod
@@ -1145,6 +1136,8 @@ class FormattedLine:
         x = self.x
         y = self.y
 
+        parse_style = widget.app.stylesheet.parse_style
+
         if align in ("start", "left") or (align == "justify" and self.line_end):
             pass
 
@@ -1172,7 +1165,9 @@ class FormattedLine:
             add_segment = segments.append
             x = self.x
             for index, word in enumerate(words):
-                for text, text_style in word.render(style, end=""):
+                for text, text_style in word.render(
+                    style, end="", parse_style=parse_style
+                ):
                     add_segment(
                         _Segment(
                             text, (style + text_style).rich_style_with_offset(x, y)
@@ -1191,7 +1186,7 @@ class FormattedLine:
             else []
         )
         add_segment = segments.append
-        for text, text_style in content.render(style, end=""):
+        for text, text_style in content.render(style, end="", parse_style=parse_style):
             add_segment(
                 _Segment(text, (style + text_style).rich_style_with_offset(x, y))
             )

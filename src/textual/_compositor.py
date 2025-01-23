@@ -862,13 +862,14 @@ class Compositor:
 
         # TODO: This prompts a render, can we avoid that?
         visible_screen_stack.set(widget.app._background_screens)
-        lines = widget.render_lines(Region(0, y, region.width, 1))
+        line = widget.render_line(y)
+        # lines = widget.render_lines(Region(0, y, region.width, 1))
 
-        if not lines:
-            return Style.null()
+        # if not lines:
+        #     return Style.null()
         end = 0
 
-        for segment in lines[0]:
+        for segment in line:
             end += segment.cell_length
             if x < end:
                 return segment.style or Style.null()
@@ -901,10 +902,11 @@ class Compositor:
         y -= region.y
 
         visible_screen_stack.set(widget.app._background_screens)
-        lines = widget.render_lines(Region(0, y, region.width, 1))
+        # lines = widget.render_lines(Region(0, y, region.width, 1))
+        line = widget.render_line(y)
 
-        if not lines:
-            return widget, None
+        # if not lines:
+        #     return widget, None
         end = 0
         start = 0
 
@@ -912,7 +914,7 @@ class Compositor:
         offset_x = 0
         offset_x2 = 0
 
-        for segment in lines[0]:
+        for segment in line:
             end += len(segment.text)
             style = segment.style
             if style is not None and style._meta is not None:

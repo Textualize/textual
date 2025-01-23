@@ -14,11 +14,20 @@ STYLE_ABBREVIATIONS = {
     "s": "strike",
 }
 
-from textual._profile import timer
 
-
-@timer("style parse")
 def style_parse(style_text: str, variables: dict[str, str] | None) -> Style:
+    """Parse a Textual style definition.
+
+    Note that variables should be `None` when called within a running app. This is so that
+    this method can use a style cache from the app. Supply a variables dict only for testing.
+
+    Args:
+        style_text: String containing style definition.
+        variables: Variables to use, or `None` for variables from active app.
+
+    Returns:
+        Style instance.
+    """
     styles: dict[str, bool | None] = {style: None for style in STYLES}
 
     color: Color | None = None
@@ -33,16 +42,19 @@ def style_parse(style_text: str, variables: dict[str, str] | None) -> Style:
         try:
             app = active_app.get()
         except LookupError:
-            pass
+            reference_tokens = {}
         else:
             reference_tokens = app.stylesheet._variable_tokens
     else:
         reference_tokens = tokenize_values(variables)
 
     for token in substitute_references(
-        tokenize_style(style_text, read_from=("inline style", "")), reference_tokens
+        tokenize_style(
+            style_text,
+            read_from=("inline style", ""),
+        ),
+        reference_tokens,
     ):
-
         name = token.name
         value = token.value
 
@@ -101,7 +113,7 @@ def style_parse(style_text: str, variables: dict[str, str] | None) -> Style:
 
 if __name__ == "__main__":
     variables = {"accent": "red"}
-    print(style_parse("link=https://www.textualize.io", {}))
+    print(style_parse("blue 20%", None))
 
     # print(
     #     style_parse(

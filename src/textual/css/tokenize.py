@@ -251,6 +251,7 @@ class StyleTokenizerState(TokenizerState):
             key_value=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=.*",
             key_value_quote=r"[@a-zA-Z_-][a-zA-Z0-9_-]*='.*'",
             key_value_double_quote=r"""[@a-zA-Z_-][a-zA-Z0-9_-]*=".*\"""",
+            percent=PERCENT,
             color=COLOR,
             token=TOKEN,
             variable_ref=VARIABLE_REF,

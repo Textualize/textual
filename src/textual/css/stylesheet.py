@@ -231,7 +231,8 @@ class Stylesheet:
         """
         if style_text in self._style_parse_cache:
             return self._style_parse_cache[style_text]
-        style = style_parse(style_text, self._variables)
+        style = style_parse(style_text, None)
+        self._style_parse_cache[style_text] = style
         return style
 
     def _parse_rules(

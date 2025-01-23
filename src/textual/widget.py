@@ -1675,6 +1675,8 @@ class Widget(DOMNode):
     def watch_hover_style(
         self, previous_hover_style: Style, hover_style: Style
     ) -> None:
+        # TODO: This will cause the widget to refresh, even when there are no links
+        # Can we avoid this?
         if self.auto_links:
             self.highlight_link_id = hover_style.link_id
 
@@ -3867,6 +3869,7 @@ class Widget(DOMNode):
             line = self._render_cache.lines[y]
         except IndexError:
             line = Strip.blank(self.size.width, self.rich_style)
+
         return line
 
     def render_lines(self, crop: Region) -> list[Strip]:
