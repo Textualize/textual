@@ -610,6 +610,18 @@ class MaskedInput(Input, can_focus=True):
         else:
             self.restricted()
 
+    def replace(self, text: str, start: int, end: int):
+        """Replace the text between the start and end locations with the given text.
+
+        Args:
+            text: Text to replace the existing text with.
+            start: Start index to replace (inclusive).
+            end: End index to replace (inclusive).
+        """
+
+        self.cursor_position = start
+        self.insert_text_at_cursor(text)
+
     def clear(self) -> None:
         """Clear the masked input."""
         self.value, self.cursor_position = self._template.insert_separators("", 0)
