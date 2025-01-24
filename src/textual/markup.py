@@ -137,6 +137,7 @@ def to_content(
     Returns:
         Text: A test instance.
     """
+    _rich_traceback_omit = True
 
     from textual.content import Content, Span
 
