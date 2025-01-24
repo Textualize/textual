@@ -231,7 +231,10 @@ class Stylesheet:
         """
         if style_text in self._style_parse_cache:
             return self._style_parse_cache[style_text]
-        style = style_parse(style_text, None)
+        try:
+            style = style_parse(style_text, None)
+        except Exception:
+            style = Style.null()
         self._style_parse_cache[style_text] = style
         return style
 

@@ -3326,7 +3326,7 @@ def test_static_markup(snap_compare):
     You should see 3 labels.
 
     This first label contains an invalid style, and should have tags removed.
-    The second label should have the word "markup" boldened.
+    The second label should have the word "markup" emboldened.
     The third label has markup disabled, and should show tags without styles.
     """
 

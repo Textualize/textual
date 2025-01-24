@@ -385,7 +385,7 @@ class Content(Visual):
         lines = self._wrap_and_format(
             width,
             align=widget.styles.text_align,
-            overflow="ellipsis",
+            overflow="fold",
             no_wrap=False,
             tab_size=8,
             selection=widget.selection,
@@ -825,10 +825,11 @@ class Content(Visual):
 
     def render(
         self,
-        base_style: Style,
+        base_style: Style = Style.null(),
         end: str = "\n",
         parse_style: Callable[[str], Style] | None = None,
     ) -> Iterable[tuple[str, Style]]:
+
         if not self._spans:
             yield (self._text, base_style)
             if end:

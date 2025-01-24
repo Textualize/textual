@@ -860,16 +860,14 @@ class Compositor:
         x -= region.x
         y -= region.y
 
-        # TODO: This prompts a render, can we avoid that?
         visible_screen_stack.set(widget.app._background_screens)
-        line = widget.render_line(y)
-        # lines = widget.render_lines(Region(0, y, region.width, 1))
+        lines = widget.render_lines(Region(0, y, region.width, 1))
 
-        # if not lines:
-        #     return Style.null()
+        if not lines:
+            return Style.null()
         end = 0
 
-        for segment in line:
+        for segment in lines[0]:
             end += segment.cell_length
             if x < end:
                 return segment.style or Style.null()
@@ -898,18 +896,15 @@ class Compositor:
         if y >= widget.content_region.bottom:
             x, y = widget.content_region.bottom_right_inclusive
 
-        x -= region.x
-        y -= region.y
+        gutter_left, gutter_right = widget.gutter.top_left
+        x -= region.x + gutter_left
+        y -= region.y + gutter_right
 
         visible_screen_stack.set(widget.app._background_screens)
-        # lines = widget.render_lines(Region(0, y, region.width, 1))
         line = widget.render_line(y)
 
-        # if not lines:
-        #     return widget, None
         end = 0
         start = 0
-
         offset_y: int | None = None
         offset_x = 0
         offset_x2 = 0
