@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence, Unio
 import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
-from rich.console import OverflowMethod
+from rich.console import Console, OverflowMethod
 from rich.segment import Segment, Segments
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
@@ -193,7 +193,9 @@ class Content(Visual):
         return content
 
     @classmethod
-    def from_rich_text(cls, text: str | Text) -> Content:
+    def from_rich_text(
+        cls, text: str | Text, console: Console | None = None
+    ) -> Content:
         """Create equivalent Visual Content for str or Text.
 
         Args:
@@ -207,6 +209,11 @@ class Content(Visual):
 
         ansi_theme: TerminalTheme | None = None
 
+        if console is not None:
+            get_style = console.get_style
+        else:
+            get_style = RichStyle.parse
+
         if text._spans:
             try:
                 ansi_theme = active_app.get().ansi_theme
@@ -217,7 +224,7 @@ class Content(Visual):
                     start,
                     end,
                     (
-                        style
+                        Style.from_rich_style(get_style(style), ansi_theme)
                         if isinstance(style, str)
                         else Style.from_rich_style(style, ansi_theme)
                     ),

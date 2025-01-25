@@ -83,7 +83,7 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
 
         if is_renderable(obj):
             if isinstance(obj, Text) and widget.allow_select:
-                return Content.from_rich_text(obj)
+                return Content.from_rich_text(obj, console=widget.app.console)
 
             # If its is a Rich renderable, wrap it with a RichVisual
             return RichVisual(widget, rich_cast(obj))

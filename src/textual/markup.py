@@ -249,13 +249,57 @@ def to_content(
 
 
 if __name__ == "__main__":  # pragma: no cover
-    MARKUP = [
-        "[red]Hello World[/red]",
-        "[magenta]Hello [b]World[/b]",
-        "[bold]Bold[italic] bold and italic [/bold]italic[/italic]",
-        "Click [link=https://www.willmcgugan.com]here[/link] to visit my Blog",
-        ":warning-emoji: [bold red blink] DANGER![/]",
-    ]
+    from rich.highlighter import ReprHighlighter
 
-    for markup in MARKUP:
-        print(repr(to_content(markup)))
+    from textual import containers, on
+    from textual.app import App, ComposeResult
+    from textual.widgets import Static, TextArea
+
+    class MarkupApp(App):
+
+        CSS = """
+        Screen {
+            layout: horizontal;
+            #editor {
+                width: 1fr;
+                border: tab $primary;  
+                padding: 1;
+                margin: 1 1 0 1;
+            }
+            #results-container {
+                margin: 1 1 0 1;
+                border: tab $success;                
+                &.-error {
+                    border: tab $error;
+                }
+            }
+            #results {
+                width: 1fr;
+                padding: 1 1;
+                
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield (text_area := TextArea(id="editor"))
+            text_area.border_title = "Markup"
+
+            with (container := containers.VerticalScroll(id="results-container")):
+                yield Static(id="results")
+            container.border_title = "Output"
+
+        @on(TextArea.Changed)
+        def on_markup_changed(self, event: TextArea.Changed) -> None:
+            results = self.query_one("#results", Static)
+            try:
+                results.update(event.text_area.text)
+            except Exception as error:
+                highlight = ReprHighlighter()
+                results.update(highlight(str(error)))
+                self.query_one("#results-container").add_class("-error")
+            else:
+                self.query_one("#results-container").remove_class("-error")
+
+    app = MarkupApp()
+    app.run()

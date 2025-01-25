@@ -135,6 +135,7 @@ class Style:
         Returns:
             New Style.
         """
+
         return Style(
             (
                 None
