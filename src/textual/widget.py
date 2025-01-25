@@ -642,7 +642,7 @@ class Widget(DOMNode):
         return self._cover_widget if self._cover_widget is not None else self
 
     @property
-    def selection(self) -> Selection | None:
+    def text_selection(self) -> Selection | None:
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
@@ -3949,7 +3949,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-        self._layout_cache.clear()
+
         if layout:
             self._layout_required = True
             for ancestor in self.ancestors:
@@ -3967,6 +3967,7 @@ class Widget(DOMNode):
             self.check_idle()
             return self
 
+        self._layout_cache.clear()
         if repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()

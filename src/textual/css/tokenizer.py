@@ -130,10 +130,12 @@ class Expect:
         self._expect_semicolon = True
 
     def expect_eof(self, eof: bool) -> Expect:
+        """Expect an end of file."""
         self._expect_eof = eof
         return self
 
     def expect_semicolon(self, semicolon: bool) -> Expect:
+        """Tokenizer expects text to be terminated with a semi-colon."""
         self._expect_semicolon = semicolon
         return self
 

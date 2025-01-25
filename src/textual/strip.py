@@ -599,6 +599,27 @@ class Strip:
         self._style_cache[style] = styled_strip
         return styled_strip
 
+    def _apply_link_style(self, link_style: Style) -> Strip:
+        segments = self._segments
+        _Segment = Segment
+        segments = [
+            (
+                _Segment(
+                    text,
+                    (
+                        style
+                        if style._meta is None
+                        else (style + link_style if "@click" in style.meta else style)
+                    ),
+                    control,
+                )
+                if style
+                else _Segment(text)
+            )
+            for text, style, control in segments
+        ]
+        return Strip(segments, self._cell_length)
+
     def render(self, console: Console) -> str:
         """Render the strip into terminal sequences.
 

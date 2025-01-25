@@ -19,6 +19,7 @@ from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import OverflowMethod
 from rich.segment import Segment, Segments
+from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -27,6 +28,7 @@ from textual._cells import cell_len
 from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
+from textual.css.styles import RulesMap
 from textual.css.types import TextAlign
 from textual.selection import Selection
 from textual.strip import Strip
@@ -34,7 +36,7 @@ from textual.style import Style
 from textual.visual import Visual
 
 if TYPE_CHECKING:
-    from textual.widget import Widget
+    pass
 
 
 ContentType: TypeAlias = Union["Content", str]
@@ -275,7 +277,11 @@ class Content(Visual):
             return self.plain < other.plain
         return NotImplemented
 
-    def get_optimal_width(self, widget: Widget, container_width: int) -> int:
+    def get_optimal_width(
+        self,
+        rules: RulesMap,
+        container_width: int,
+    ) -> int:
         """Get optimal width of the visual to display its content. Part of the Textual Visual protocol.
 
         Args:
@@ -289,7 +295,7 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
 
-    def get_height(self, widget: Widget, width: int) -> int:
+    def get_height(self, rules: RulesMap, width: int) -> int:
         """Get the height of the visual if rendered with the given width. Part of the Textual Visual protocol.
 
         Args:
@@ -365,37 +371,30 @@ class Content(Visual):
 
     def render_strips(
         self,
-        widget: Widget,
+        rules: RulesMap,
         width: int,
         height: int | None,
         style: Style,
+        selection: Selection | None = None,
+        selection_style: Style | None = None,
     ) -> list[Strip]:
         if not width:
             return []
 
-        selection = widget.selection
-        if selection is not None:
-            selection_style = Style.from_rich_style(
-                widget.screen.get_component_rich_style("screen--selection")
-            )
-
-        else:
-            selection_style = None
-
         lines = self._wrap_and_format(
             width,
-            align=widget.styles.text_align,
+            align=rules.get("text_align", "left"),
             overflow="fold",
             no_wrap=False,
             tab_size=8,
-            selection=widget.selection,
+            selection=selection,
             selection_style=selection_style,
         )
 
         if height is not None:
             lines = lines[:height]
 
-        strip_lines = [line.to_strip(widget, style) for line in lines]
+        strip_lines = [Strip(*line.to_strip(style)) for line in lines]
         return strip_lines
 
     def __len__(self) -> int:
@@ -1128,7 +1127,7 @@ class FormattedLine:
     def plain(self) -> str:
         return self.content.plain
 
-    def to_strip(self, widget: Widget, style: Style) -> Strip:
+    def to_strip(self, style: Style) -> tuple[list[Segment], int]:
         _Segment = Segment
         align = self.align
         width = self.width
@@ -1136,8 +1135,6 @@ class FormattedLine:
         content = self.content
         x = self.x
         y = self.y
-
-        parse_style = widget.app.stylesheet.parse_style
 
         if align in ("start", "left") or (align == "justify" and self.line_end):
             pass
@@ -1166,9 +1163,7 @@ class FormattedLine:
             add_segment = segments.append
             x = self.x
             for index, word in enumerate(words):
-                for text, text_style in word.render(
-                    style, end="", parse_style=parse_style
-                ):
+                for text, text_style in word.render(style, end=""):
                     add_segment(
                         _Segment(
                             text, (style + text_style).rich_style_with_offset(x, y)
@@ -1178,8 +1173,7 @@ class FormattedLine:
                 if index < len(spaces) and (pad := spaces[index]):
                     add_segment(_Segment(" " * pad, (style + text_style).rich_style))
 
-            strip = Strip(self._apply_link_style(widget, segments), width)
-            return strip
+            return segments, width
 
         segments = (
             [Segment(" " * pad_left, style.background_style.rich_style)]
@@ -1187,7 +1181,7 @@ class FormattedLine:
             else []
         )
         add_segment = segments.append
-        for text, text_style in content.render(style, end="", parse_style=parse_style):
+        for text, text_style in content.render(style, end=""):
             add_segment(
                 _Segment(text, (style + text_style).rich_style_with_offset(x, y))
             )
@@ -1197,16 +1191,13 @@ class FormattedLine:
             segments.append(
                 _Segment(" " * pad_right, style.background_style.rich_style)
             )
-        strip = Strip(
-            self._apply_link_style(widget, segments),
-            content.cell_length + pad_left + pad_right,
-        )
-        return strip
+
+        return (segments, content.cell_length + pad_left + pad_right)
 
     def _apply_link_style(
-        self, widget: Widget, segments: list[Segment]
+        self, link_style: RichStyle, segments: list[Segment]
     ) -> list[Segment]:
-        link_style = widget.link_style
+
         _Segment = Segment
         segments = [
             _Segment(

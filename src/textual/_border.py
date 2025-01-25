@@ -271,9 +271,6 @@ def get_box(
     Returns:
         A tuple of 3 Segment triplets.
     """
-    assert isinstance(inner_style, Style)
-    assert isinstance(outer_style, Style)
-    assert isinstance(style, Style)
     _Segment = Segment
     (
         (top1, top2, top3),

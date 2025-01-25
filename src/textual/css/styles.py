@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections import abc
 from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Literal, cast
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Literal, cast
 
 import rich.repr
 from rich.style import Style
@@ -1245,7 +1246,7 @@ class Styles(StylesBase):
 
 
 @rich.repr.auto
-class RenderStyles(StylesBase):
+class RenderStyles(StylesBase, abc.Mapping):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
 
     def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
@@ -1264,6 +1265,35 @@ class RenderStyles(StylesBase):
                 and self._inline_styles._rules == other._inline_styles._rules
             )
         return NotImplemented
+
+    def __getitem__(self, key: str) -> object:
+        if key not in RULE_NAMES_SET:
+            raise KeyError(key)
+        return getattr(self, key)
+
+    def get(self, key: str, default: object | None = None) -> object:
+        return getattr(self, key) if key in RULE_NAMES_SET else default
+
+    def __len__(self) -> int:
+        return len(RULE_NAMES)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(RULE_NAMES)
+
+    def __contains__(self, key: object) -> bool:
+        return key in RULE_NAMES_SET
+
+    def keys(self) -> Iterable[str]:
+        return RULE_NAMES
+
+    def values(self) -> Iterable[object]:
+        for key in RULE_NAMES:
+            yield getattr(self, key)
+
+    def items(self) -> Iterable[tuple[str, object]]:
+        get_rule = self.get_rule
+        for key in RULE_NAMES:
+            yield (key, getattr(self, key))
 
     @property
     def _cache_key(self) -> int:
