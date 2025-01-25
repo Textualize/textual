@@ -200,7 +200,7 @@ class _Template(Validator):
             cursor_position += 1
         return value, cursor_position
 
-    def insert_text_at_cursor(self, text: str) -> str | None:
+    def insert_text_at_cursor(self, text: str) -> tuple[str, int] | None:
         """Inserts `text` at current cursor position. If not present in `text`, any expected separator is automatically
         inserted at the correct position.
 
