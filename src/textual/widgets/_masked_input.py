@@ -619,8 +619,14 @@ class MaskedInput(Input, can_focus=True):
             end: End index to replace (inclusive).
         """
 
+        old_cursor_position = self.cursor_position
         self.cursor_position = start
-        self.insert_text_at_cursor(text)
+        new_value = self._template.insert_text_at_cursor(text)
+        if new_value is not None:
+            self.value, self.cursor_position = new_value
+        else:
+            self.cursor_position = old_cursor_position
+            self.restricted()
 
     def clear(self) -> None:
         """Clear the masked input."""
