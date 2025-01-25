@@ -623,7 +623,9 @@ class MaskedInput(Input, can_focus=True):
         self.cursor_position = start
         new_value = self._template.insert_text_at_cursor(text)
         if new_value is not None:
-            self.value, self.cursor_position = new_value
+            value, cursor_position = new_value
+            self.value = value[:cursor_position] + value[end:]
+            self.cursor_position = cursor_position
         else:
             self.cursor_position = old_cursor_position
             self.restricted()
