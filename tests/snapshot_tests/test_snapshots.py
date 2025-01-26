@@ -3385,3 +3385,31 @@ def test_no_wrap(snap_compare):
             yield Label(TEXT, id="label2")
 
     assert snap_compare(NoWrapApp())
+
+
+def test_overflow(snap_compare):
+    """Test overflow. You should see two labels across 4 lines. The first with overflow clip,
+    the second with overflow ellipsis."""
+
+    TEXT = "FOO " + "FOOBARBAZ" * 100
+
+    class OverflowApp(App):
+        CSS = """
+        Label {
+            max-width: 100vw;            
+        }
+        #label1 {
+            text-overflow: clip;
+            background: blue 20%;
+        }
+        #label2 {
+            text-overflow: ellipsis;
+            background: green 20%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label(TEXT, id="label1")
+            yield Label(TEXT, id="label2")
+
+    assert snap_compare(OverflowApp())

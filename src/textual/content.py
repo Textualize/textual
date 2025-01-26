@@ -313,7 +313,9 @@ class Content(Visual):
             A height in lines.
         """
         lines = self.without_spans._wrap_and_format(
-            width, no_wrap=rules.get("text_wrap") == "nowrap"
+            width,
+            overflow=rules.get("text_overflow"),
+            no_wrap=rules.get("text_wrap") == "nowrap",
         )
         return len(lines)
 
@@ -368,6 +370,10 @@ class Content(Visual):
                 content_line = FormattedLine(line, width, y=y, align=align)
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
                 divided_lines = content_line.content.divide(offsets)
+                if overflow == "ellipsis":
+                    divided_lines = [
+                        line.truncate(width, ellipsis=True) for line in divided_lines
+                    ]
                 new_lines = [
                     FormattedLine(
                         content.rstrip_end(width), width, offset, y, align=align
