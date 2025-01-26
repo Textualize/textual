@@ -52,6 +52,8 @@ from textual.css.constants import (
     VALID_SCROLLBAR_GUTTER,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
+    VALID_TEXT_OVERFLOW,
+    VALID_TEXT_WRAP,
     VALID_VISIBILITY,
 )
 from textual.css.errors import DeclarationError, StyleValueError
@@ -67,7 +69,15 @@ from textual.css.scalar import (
 from textual.css.styles import Styles
 from textual.css.tokenize import Token
 from textual.css.transition import Transition
-from textual.css.types import BoxSizing, Display, EdgeType, Overflow, Visibility
+from textual.css.types import (
+    BoxSizing,
+    Display,
+    EdgeType,
+    Overflow,
+    TextOverflow,
+    TextWrap,
+    Visibility,
+)
 from textual.geometry import Spacing, SpacingDimensions, clamp
 from textual.suggestions import get_suggestion
 
@@ -351,6 +361,52 @@ class StylesBuilder:
             else:
                 string_enum_help_text(
                     "visibility", valid_values=list(VALID_VISIBILITY), context="css"
+                )
+
+    def process_text_wrap(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            name, value, _, _, location, _ = token
+            if name == "token":
+                value = value.lower()
+                if value in VALID_TEXT_WRAP:
+                    self.styles._rules["text_wrap"] = cast(TextWrap, value)
+                else:
+                    self.error(
+                        name,
+                        token,
+                        string_enum_help_text(
+                            "text-wrap",
+                            valid_values=list(VALID_TEXT_WRAP),
+                            context="css",
+                        ),
+                    )
+            else:
+                string_enum_help_text(
+                    "text-wrap", valid_values=list(VALID_TEXT_WRAP), context="css"
+                )
+
+    def process_text_overflow(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            name, value, _, _, location, _ = token
+            if name == "token":
+                value = value.lower()
+                if value in VALID_TEXT_OVERFLOW:
+                    self.styles._rules["text_overflow"] = cast(TextOverflow, value)
+                else:
+                    self.error(
+                        name,
+                        token,
+                        string_enum_help_text(
+                            "text-overflow",
+                            valid_values=list(VALID_TEXT_OVERFLOW),
+                            context="css",
+                        ),
+                    )
+            else:
+                string_enum_help_text(
+                    "text-overflow",
+                    valid_values=list(VALID_TEXT_OVERFLOW),
+                    context="css",
                 )
 
     def _process_fractional(self, name: str, tokens: list[Token]) -> None:

@@ -13,7 +13,7 @@ from rich.style import Style as RichStyle
 from rich.text import Text
 
 from textual._context import active_app
-from textual.css.styles import RulesMap
+from textual.css.styles import RulesMap, StylesBase
 from textual.geometry import Spacing
 from textual.render import measure
 from textual.selection import Selection
@@ -24,6 +24,9 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
     from textual.widget import Widget
+
+
+Rules = RulesMap | StylesBase
 
 
 def is_visual(obj: object) -> bool:
@@ -109,7 +112,7 @@ class Visual(ABC):
     @abstractmethod
     def render_strips(
         self,
-        rules: RulesMap,
+        rules: Rules,
         width: int,
         height: int | None,
         style: Style,
@@ -129,7 +132,7 @@ class Visual(ABC):
         """
 
     @abstractmethod
-    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
+    def get_optimal_width(self, rules: Rules, container_width: int) -> int:
         """Get optimal width of the visual to display its content.
 
         The exact definition of "optimal width" is dependant on the visual, but
@@ -146,7 +149,7 @@ class Visual(ABC):
         """
 
     @abstractmethod
-    def get_height(self, rules: RulesMap, width: int) -> int:
+    def get_height(self, rules: Rules, width: int) -> int:
         """Get the height of the visual if rendered with the given width.
 
         Args:
@@ -250,7 +253,7 @@ class RichVisual(Visual):
             )
         return self._measurement
 
-    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
+    def get_optimal_width(self, rules: Rules, container_width: int) -> int:
         console = active_app.get().console
         width = measure(
             console, self._renderable, container_width, container_width=container_width
@@ -258,7 +261,7 @@ class RichVisual(Visual):
 
         return width
 
-    def get_height(self, rules: RulesMap, width: int) -> int:
+    def get_height(self, rules: Rules, width: int) -> int:
         console = active_app.get().console
         renderable = self._renderable
         if isinstance(renderable, Text):
@@ -280,7 +283,7 @@ class RichVisual(Visual):
 
     def render_strips(
         self,
-        rules: RulesMap,
+        rules: Rules,
         width: int,
         height: int | None,
         style: Style,
@@ -328,17 +331,17 @@ class Padding(Visual):
         yield self._visual
         yield self._spacing
 
-    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
+    def get_optimal_width(self, rules: Rules, container_width: int) -> int:
         return (
             self._visual.get_optimal_width(rules, container_width) + self._spacing.width
         )
 
-    def get_height(self, rules: RulesMap, width: int) -> int:
+    def get_height(self, rules: Rules, width: int) -> int:
         return self._visual.get_height(rules, width) + self._spacing.height
 
     def render_strips(
         self,
-        rules: RulesMap,
+        rules: Rules,
         width: int,
         height: int | None,
         style: Style,

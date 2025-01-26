@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import abc
 from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
@@ -49,6 +48,8 @@ from textual.css.constants import (
     VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_TEXT_ALIGN,
+    VALID_TEXT_OVERFLOW,
+    VALID_TEXT_WRAP,
     VALID_VISIBILITY,
 )
 from textual.css.scalar import Scalar, ScalarOffset, Unit
@@ -66,6 +67,8 @@ from textual.css.types import (
     Specificity3,
     Specificity6,
     TextAlign,
+    TextOverflow,
+    TextWrap,
     Visibility,
 )
 from textual.geometry import Offset, Spacing
@@ -198,6 +201,9 @@ class RulesMap(TypedDict, total=False):
     constrain_x: Constrain
     constrain_y: Constrain
 
+    text_wrap: TextWrap
+    text_overflow: TextOverflow
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -235,6 +241,8 @@ class StylesBase:
         "link_background",
         "link_color_hover",
         "link_background_hover",
+        "text_wrap",
+        "text_overflow",
     }
 
     node: DOMNode | None = None
@@ -475,6 +483,12 @@ class StylesBase:
     constrain_y: StringEnumProperty[Constrain] = StringEnumProperty(
         VALID_CONSTRAIN, "none"
     )
+    text_wrap: StringEnumProperty[TextWrap] = StringEnumProperty(
+        VALID_TEXT_WRAP, "wrap"
+    )
+    text_overflow: StringEnumProperty[TextOverflow] = StringEnumProperty(
+        VALID_TEXT_OVERFLOW, "fold"
+    )
 
     def __textual_animation__(
         self,
@@ -527,6 +541,35 @@ class StylesBase:
         if not isinstance(styles, StylesBase):
             return NotImplemented
         return self.get_rules() == styles.get_rules()
+
+    def __getitem__(self, key: str) -> object:
+        if key not in RULE_NAMES_SET:
+            raise KeyError(key)
+        return getattr(self, key)
+
+    def get(self, key: str, default: object | None = None) -> object:
+        return getattr(self, key) if key in RULE_NAMES_SET else default
+
+    def __len__(self) -> int:
+        return len(RULE_NAMES)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(RULE_NAMES)
+
+    def __contains__(self, key: object) -> bool:
+        return key in RULE_NAMES_SET
+
+    def keys(self) -> Iterable[str]:
+        return RULE_NAMES
+
+    def values(self) -> Iterable[object]:
+        for key in RULE_NAMES:
+            yield getattr(self, key)
+
+    def items(self) -> Iterable[tuple[str, object]]:
+        get_rule = self.get_rule
+        for key in RULE_NAMES:
+            yield (key, getattr(self, key))
 
     @property
     def gutter(self) -> Spacing:
@@ -1237,6 +1280,10 @@ class Styles(StylesBase):
         if "hatch" in rules:
             hatch_character, hatch_color = self.hatch
             append_declaration("hatch", f'"{hatch_character}" {hatch_color.css}')
+        if "text_wrap" in rules:
+            append_declaration("text-wrap", self.text_wrap)
+        if "text_overflow" in rules:
+            append_declaration("text-overflow", self.text_overflow)
         lines.sort()
         return lines
 
@@ -1246,7 +1293,7 @@ class Styles(StylesBase):
 
 
 @rich.repr.auto
-class RenderStyles(StylesBase, abc.Mapping):
+class RenderStyles(StylesBase):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
 
     def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
@@ -1265,35 +1312,6 @@ class RenderStyles(StylesBase, abc.Mapping):
                 and self._inline_styles._rules == other._inline_styles._rules
             )
         return NotImplemented
-
-    def __getitem__(self, key: str) -> object:
-        if key not in RULE_NAMES_SET:
-            raise KeyError(key)
-        return getattr(self, key)
-
-    def get(self, key: str, default: object | None = None) -> object:
-        return getattr(self, key) if key in RULE_NAMES_SET else default
-
-    def __len__(self) -> int:
-        return len(RULE_NAMES)
-
-    def __iter__(self) -> Iterator[str]:
-        return iter(RULE_NAMES)
-
-    def __contains__(self, key: object) -> bool:
-        return key in RULE_NAMES_SET
-
-    def keys(self) -> Iterable[str]:
-        return RULE_NAMES
-
-    def values(self) -> Iterable[object]:
-        for key in RULE_NAMES:
-            yield getattr(self, key)
-
-    def items(self) -> Iterable[tuple[str, object]]:
-        get_rule = self.get_rule
-        for key in RULE_NAMES:
-            yield (key, getattr(self, key))
 
     @property
     def _cache_key(self) -> int:

@@ -1667,7 +1667,7 @@ class Widget(DOMNode):
                 return self._content_height_cache[1]
 
             visual = self._render()
-            height = visual.get_height(self, width)
+            height = visual.get_height(self.styles, width)
             self._content_height_cache = (cache_key, height)
 
         return height

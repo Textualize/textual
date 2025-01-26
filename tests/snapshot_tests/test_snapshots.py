@@ -3361,3 +3361,27 @@ def test_arbitrary_selection_double_cell(snap_compare):
 def test_markup(snap_compare):
     """Check markup rendering, text in test should match the markup."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "markup.py")
+
+
+def test_no_wrap(snap_compare):
+    """Test no wrap. You should see exactly two lines. The first is cropped, the second is
+    cropped with an ellipsis symbol."""
+
+    TEXT = """I must not fear. Fear is the mind-killer. Fear is the little-death that brings total obliteration. I will face my fear."""
+
+    class NoWrapApp(App):
+        CSS = """
+        Label {
+            max-width: 100vw;
+            text-wrap: nowrap;
+        }
+        #label2 {
+            text-overflow: ellipsis;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label(TEXT, id="label1")
+            yield Label(TEXT, id="label2")
+
+    assert snap_compare(NoWrapApp())

@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence, Unio
 import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
-from rich.console import Console, OverflowMethod
+from rich.console import Console
 from rich.segment import Segment, Segments
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
@@ -28,12 +28,11 @@ from textual._cells import cell_len
 from textual._context import active_app
 from textual._loop import loop_last
 from textual.color import Color
-from textual.css.styles import RulesMap
-from textual.css.types import TextAlign
+from textual.css.types import TextAlign, TextOverflow
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.style import Style
-from textual.visual import Visual
+from textual.visual import Rules, Visual
 
 if TYPE_CHECKING:
     pass
@@ -132,9 +131,6 @@ class Content(Visual):
             text: text content.
             spans: Optional list of spans.
             cell_length: Cell length of text if known, otherwise `None`.
-            align: Align method.
-            no_wrap: Disable wrapping.
-            ellipsis: Add ellipsis when wrapping is disabled and text is cropped.
         """
         self._text: str = _strip_control_codes(text)
         self._spans: list[Span] = [] if spans is None else spans
@@ -174,19 +170,23 @@ class Content(Visual):
         return markup
 
     @classmethod
-    def from_markup(cls, markup: str) -> Content:
+    def from_markup(cls, markup: str | Content) -> Content:
         """Create content from Textual markup.
+
+        If `markup` is already Content, return it unmodified.
 
         !!! note
             Textual markup is not the same as Rich markup. Use [Text.parse] to parse Rich Console markup.
 
 
         Args:
-            markup: Textual Markup
+            markup: Textual markup, or Content.
 
         Returns:
             New Content instance.
         """
+        if isinstance(markup, Content):
+            return markup
         from textual.markup import to_content
 
         content = to_content(markup)
@@ -286,7 +286,7 @@ class Content(Visual):
 
     def get_optimal_width(
         self,
-        rules: RulesMap,
+        rules: Rules,
         container_width: int,
     ) -> int:
         """Get optimal width of the visual to display its content. Part of the Textual Visual protocol.
@@ -302,7 +302,7 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
 
-    def get_height(self, rules: RulesMap, width: int) -> int:
+    def get_height(self, rules: Rules, width: int) -> int:
         """Get the height of the visual if rendered with the given width. Part of the Textual Visual protocol.
 
         Args:
@@ -312,14 +312,16 @@ class Content(Visual):
         Returns:
             A height in lines.
         """
-        lines = self.without_spans._wrap_and_format(width)
+        lines = self.without_spans._wrap_and_format(
+            width, no_wrap=rules.get("text_wrap") == "nowrap"
+        )
         return len(lines)
 
     def _wrap_and_format(
         self,
         width: int,
         align: TextAlign = "left",
-        overflow: OverflowMethod = "fold",
+        overflow: TextOverflow = "fold",
         no_wrap: bool = False,
         tab_size: int = 8,
         selection: Selection | None = None,
@@ -355,13 +357,15 @@ class Content(Visual):
                     end = len(line.plain)
                 line = line.stylize(selection_style, start, end)
 
-            content_line = FormattedLine(
-                line.expand_tabs(tab_size), width, y=y, align=align
-            )
+            line = line.expand_tabs(tab_size)
 
             if no_wrap:
+                if overflow == "ellipsis" and no_wrap:
+                    line = line.truncate(width, ellipsis=True)
+                content_line = FormattedLine(line, width, y=y, align=align)
                 new_lines = [content_line]
             else:
+                content_line = FormattedLine(line, width, y=y, align=align)
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
                 divided_lines = content_line.content.divide(offsets)
                 new_lines = [
@@ -378,7 +382,7 @@ class Content(Visual):
 
     def render_strips(
         self,
-        rules: RulesMap,
+        rules: Rules,
         width: int,
         height: int | None,
         style: Style,
@@ -391,8 +395,8 @@ class Content(Visual):
         lines = self._wrap_and_format(
             width,
             align=rules.get("text_align", "left"),
-            overflow="fold",
-            no_wrap=False,
+            overflow=rules.get("text_overflow", "fold"),
+            no_wrap=rules.get("text_wrap", "wrap") == "nowrap",
             tab_size=8,
             selection=selection,
             selection_style=selection_style,
@@ -414,8 +418,11 @@ class Content(Visual):
         return hash(self._text)
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._text
-        yield "spans", self._spans, []
+        try:
+            yield self._text
+            yield "spans", self._spans, []
+        except AttributeError:
+            pass
 
     @property
     def spans(self) -> Sequence[Span]:

@@ -40,6 +40,8 @@ TextAlign = Literal["left", "start", "center", "right", "end", "justify"]
 Constrain = Literal["none", "inflect", "inside"]
 Overlay = Literal["none", "screen"]
 Position = Literal["relative", "absolute"]
+TextWrap = Literal["wrap", "nowrap"]
+TextOverflow = Literal["clip", "fold", "ellipsis"]
 
 Specificity3 = Tuple[int, int, int]
 Specificity6 = Tuple[int, int, int, int, int, int]
