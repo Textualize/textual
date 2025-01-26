@@ -3388,8 +3388,8 @@ def test_no_wrap(snap_compare):
 
 
 def test_overflow(snap_compare):
-    """Test overflow. You should see two labels across 4 lines. The first with overflow clip,
-    the second with overflow ellipsis."""
+    """Test overflow. You should see three labels across 4 lines. The first with overflow clip,
+    the second with overflow ellipsis, and the last with overflow fold."""
 
     TEXT = "FOO " + "FOOBARBAZ" * 100
 
@@ -3399,17 +3399,25 @@ def test_overflow(snap_compare):
             max-width: 100vw;            
         }
         #label1 {
+            # Overflow will be cropped
             text-overflow: clip;
             background: blue 20%;
         }
         #label2 {
+            # Like clip, but last character will be an ellipsis
             text-overflow: ellipsis;
             background: green 20%;
+        }
+        #label3 {
+            # Overflow will fold on to subsequence lines
+            text-overflow: fold;
+            background: red 20%;
         }
         """
 
         def compose(self) -> ComposeResult:
             yield Label(TEXT, id="label1")
             yield Label(TEXT, id="label2")
+            yield Label(TEXT, id="label3")
 
     assert snap_compare(OverflowApp())
