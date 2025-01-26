@@ -32,7 +32,7 @@ from textual.css.types import TextAlign, TextOverflow
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.style import Style
-from textual.visual import Rules, Visual
+from textual.visual import RulesMap, Visual
 
 if TYPE_CHECKING:
     pass
@@ -286,7 +286,7 @@ class Content(Visual):
 
     def get_optimal_width(
         self,
-        rules: Rules,
+        rules: RulesMap,
         container_width: int,
     ) -> int:
         """Get optimal width of the visual to display its content. Part of the Textual Visual protocol.
@@ -302,7 +302,7 @@ class Content(Visual):
         lines = self.without_spans.split("\n")
         return max(line.cell_length for line in lines)
 
-    def get_height(self, rules: Rules, width: int) -> int:
+    def get_height(self, rules: RulesMap, width: int) -> int:
         """Get the height of the visual if rendered with the given width. Part of the Textual Visual protocol.
 
         Args:
@@ -314,7 +314,7 @@ class Content(Visual):
         """
         lines = self.without_spans._wrap_and_format(
             width,
-            overflow=rules.get("text_overflow"),
+            overflow=rules.get("text_overflow", "fold"),
             no_wrap=rules.get("text_wrap") == "nowrap",
         )
         return len(lines)
@@ -388,7 +388,7 @@ class Content(Visual):
 
     def render_strips(
         self,
-        rules: Rules,
+        rules: RulesMap,
         width: int,
         height: int | None,
         style: Style,
