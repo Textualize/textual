@@ -41,7 +41,9 @@ nav:
           - "css_types/percentage.md"
           - "css_types/scalar.md"
           - "css_types/text_align.md"
+          - "css_types/text_overflow.md"
           - "css_types/text_style.md"
+          - "css_types/text_wrap.md"
           - "css_types/vertical.md"
       - Events:
           - "events/index.md"
@@ -137,6 +139,8 @@ nav:
           - "styles/scrollbar_size.md"
           - "styles/text_align.md"
           - "styles/text_opacity.md"
+          - "styles/text_overflow.md"
+          - "styles/text_wrap.md"
           - "styles/text_style.md"
           - "styles/tint.md"
           - "styles/visibility.md"

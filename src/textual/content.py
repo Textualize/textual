@@ -361,7 +361,13 @@ class Content(Visual):
 
             line = line.expand_tabs(tab_size)
 
-            if no_wrap:
+            if no_wrap and overflow == "fold":
+                cuts = list(range(0, line.cell_length, width))[1:]
+                new_lines = [
+                    FormattedLine(line, width, y=y, align=align)
+                    for line in line.divide(cuts)
+                ]
+            elif no_wrap:
                 if overflow == "ellipsis" and no_wrap:
                     line = line.truncate(width, ellipsis=True)
                 content_line = FormattedLine(line, width, y=y, align=align)
@@ -923,10 +929,7 @@ class Content(Visual):
         ]
         return segments
 
-    def divide(
-        self,
-        offsets: Sequence[int],
-    ) -> list[Content]:
+    def divide(self, offsets: Sequence[int]) -> list[Content]:
         if not offsets:
             return [self]
 
