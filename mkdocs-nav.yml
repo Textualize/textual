@@ -41,9 +41,7 @@ nav:
           - "css_types/percentage.md"
           - "css_types/scalar.md"
           - "css_types/text_align.md"
-          - "css_types/text_overflow.md"
           - "css_types/text_style.md"
-          - "css_types/text_wrap.md"
           - "css_types/vertical.md"
       - Events:
           - "events/index.md"

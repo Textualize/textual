@@ -7,7 +7,7 @@ You can also set this style to "nowrap" which will disable wrapping entirely.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-text-wrap: <a href="../../css_types/text_wrap">&lt;text-wrap&gt;</a>;
+text-wrap: wrap | nowrap;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 
