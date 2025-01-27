@@ -376,10 +376,10 @@ class Content(Visual):
                 content_line = FormattedLine(line, width, y=y, align=align)
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
                 divided_lines = content_line.content.divide(offsets)
-                if overflow == "ellipsis":
-                    divided_lines = [
-                        line.truncate(width, ellipsis=True) for line in divided_lines
-                    ]
+                divided_lines = [
+                    line.truncate(width, ellipsis=overflow == "ellipsis")
+                    for line in divided_lines
+                ]
                 new_lines = [
                     FormattedLine(
                         content.rstrip_end(width), width, offset, y, align=align

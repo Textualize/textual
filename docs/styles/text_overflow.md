@@ -1,30 +1,29 @@
-# &lt;text-overflow&gt;
+# Text-overflow
 
-The `<text-overflow>` CSS type sets how Textual wraps text.
+The `text-overflow` style defines what happens when text *overflows*.
 
-## Syntax
+Text overflow occurs when there is no space on the vertical axis to fit the entire text.
+This may happen if wrapping is disabled (via [text-wrap](./text_wrap.md)) or if a single word is too large to fit within the width of its container.
 
-The [`<text-overflow>`](./text_overflow.md) type can take any of the following values:
+## Syntax 
 
-| Value      | Description                                                                         |
-| ---------- | ----------------------------------------------------------------------------------- |
-| `clip`     | Overflowing text will be clipped (the overflow portion is removed from the output). |
-| `fold`     | Overflowing text will fold on to the next line.                                     |
-| `ellipsis` | Overflowing text will be truncate and the last character replaced with an ellipsis. |
+--8<-- "docs/snippets/syntax_block_start.md"
+text-overflow: <a href="../../css_types/overflow">&lt;overflow&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-## Examples
+## Example
 
 In the following example we show the output of each of the values of `text_overflow`.
 
-The widgets all have [text wrapping][`text-wrap`](./text_wrap.md) disabled.
-Since the string is longer than the width, it will overflow.
+The widgets all have [text wrapping][`text-wrap`](./text_wrap.md) disabled, which will cause the
+example string to overflow as it is longer than the available width.
 
-In the first (top) widget, "text-overflow" is set to "clip" which clips any text that is overflowing, resulting in a single line.
+In the first (top) widget, `text-overflow` is set to "clip" which clips any text that is overflowing, resulting in a single line.
 
-In the second widget, "text-overflow" is set to "fold", which causes the overflowing text to *fold* on to the next line.
+In the second widget, `text-overflow` is set to "fold", which causes the overflowing text to *fold* on to the next line.
 When text folds like this, it won't respect word boundaries--so you may get words broken across lines.
 
-In the third widget, "text-overflow" is set to "ellipsis", which is similar to "clip", but with the last character set to an ellipsis.
+In the third widget, `text-overflow` is set to "ellipsis", which is similar to "clip", but with the last character set to an ellipsis.
 This option is useful to indicate to the user that there may be more text.
 
 === "Output"
@@ -62,4 +61,4 @@ widget.styles.text_overflow = "ellipsis"
 
 ## See also
 
- - [`text-wrap`](./text_wrap.md) is used to control wrapping.
+ - [`text-wrap`](./text_wrap.md) which is used to enable or disable wrapping.
