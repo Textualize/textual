@@ -128,15 +128,20 @@ class Expect:
         self.search = self._regex.search
         self._expect_eof = False
         self._expect_semicolon = True
+        self._extract_text = False
 
-    def expect_eof(self, eof: bool) -> Expect:
+    def expect_eof(self, eof: bool = True) -> Expect:
         """Expect an end of file."""
         self._expect_eof = eof
         return self
 
-    def expect_semicolon(self, semicolon: bool) -> Expect:
+    def expect_semicolon(self, semicolon: bool = True) -> Expect:
         """Tokenizer expects text to be terminated with a semi-colon."""
         self._expect_semicolon = semicolon
+        return self
+
+    def extract_text(self, extract: bool = True) -> Expect:
+        self._extract_text = extract
         return self
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -253,7 +258,30 @@ class Tokenizer:
                     "Unexpected end of file; did you forget a '}' ?",
                 )
         line = self.lines[line_no]
-        match = expect.match(line, col_no)
+        preceding_text: str = ""
+        if expect._extract_text:
+            match = expect.search(line, col_no)
+            if match is None:
+                preceding_text = line[self.col_no :]
+                self.line_no += 1
+            else:
+                col_no = match.start()
+                preceding_text = line[self.col_no : col_no]
+            if preceding_text:
+                token = Token(
+                    "text",
+                    preceding_text,
+                    self.read_from,
+                    self.code,
+                    (line_no, col_no),
+                    referenced_by=None,
+                )
+                self.col_no = col_no
+                return token
+
+        else:
+            match = expect.match(line, col_no)
+
         if match is None:
             error_line = line[col_no:].rstrip()
             error_message = (

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__all__ = ["MarkupError", "escape", "to_content"]
+
 import re
 from ast import literal_eval
 from operator import attrgetter
@@ -15,6 +17,14 @@ from typing import (
     Union,
 )
 
+from textual.css.tokenize import (
+    COLOR,
+    PERCENT,
+    TOKEN,
+    VARIABLE_REF,
+    Expect,
+    TokenizerState,
+)
 from textual.style import Style
 
 if TYPE_CHECKING:
@@ -25,7 +35,63 @@ class MarkupError(Exception):
     """An error occurred parsing Textual markup."""
 
 
-__all__ = ["MarkupError", "escape", "to_content"]
+expect_markup_tag = Expect(
+    "style token",
+    end_tag=r"(?<!\\)\]",
+    key=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=",
+    percent=PERCENT,
+    color=COLOR,
+    token=TOKEN,
+    variable_ref=VARIABLE_REF,
+    whitespace=r"\s+",
+)
+
+expect_markup = Expect(
+    "markup token",
+    open_closing_tag=r"(?<!\\)\[/",
+    open_tag=r"(?<!\\)\[",
+    end_tag=r"(?<!\\)\]",
+).extract_text()
+
+expect_markup_expression = Expect(
+    "markup",
+    end_tag=r"(?<!\\)\]",
+    word=r"\w+",
+    period=r"\.",
+    round_start=r"\(",
+    round_end=r"\)",
+    square_start=r"\[",
+    square_end=r"\]",
+    curly_start=r"\{",
+    curly_end=r"\}",
+    comma=",",
+    whitespace=r"\s+",
+    double_string=r"\".*?\"",
+    single_string=r"'.*?'",
+)
+
+
+class MarkupTokenizer(TokenizerState):
+    """Tokenizes Textual markup."""
+
+    EXPECT = expect_markup.expect_eof(True)
+    STATE_MAP = {
+        "open_tag": expect_markup_tag,
+        "open_closing_tag": expect_markup_tag,
+        "end_tag": expect_markup,
+        "key": expect_markup_expression,
+    }
+    STATE_PUSH = {
+        "round_start": expect_markup_expression,
+        "square_start": expect_markup_expression,
+        "curly_start": expect_markup_expression,
+    }
+    STATE_POP = {
+        "round_end": "round_start",
+        "square_end": "square_start",
+        "curly_end": "curly_start",
+    }
+
 
 RE_TAGS = re.compile(
     r"""((\\*)\[([\$a-z#/@][^[]*?)])""",
@@ -248,6 +314,68 @@ def to_content(
     return content
 
 
+def to_content(markup: str, style: str | Style = "") -> Content:
+
+    from textual.content import Content, Span
+
+    tokenizer = MarkupTokenizer()
+    text: list[str] = []
+    iter_tokens = iter(tokenizer(markup, ("inline", "")))
+
+    style_stack: list[tuple[int, str]] = []
+
+    spans: list[Span] = []
+
+    position = 0
+    tag_text: list[str]
+    for token in iter_tokens:
+        print(repr(token))
+        token_name = token.name
+        if token_name == "text":
+            text.append(token.value)
+            position += len(token.value)
+        elif token_name == "open_tag":
+            tag_text = []
+            print("open")
+            for token in iter_tokens:
+                print("  ", repr(token))
+                if token.name == "end_tag":
+                    break
+                tag_text.append(token.value)
+            opening_tag = "".join(tag_text)
+            style_stack.append((position, opening_tag))
+
+        elif token_name == "open_closing_tag":
+            tag_text = []
+            print("closing")
+            for token in iter_tokens:
+                print("  ", repr(token))
+                if token.name == "end_tag":
+                    break
+                tag_text.append(token.value)
+            closing_tag = "".join(tag_text)
+            if closing_tag:
+                for index, (tag_position, tag_body) in enumerate(reversed(style_stack)):
+                    if tag_body == closing_tag:
+                        style_stack.pop(-index)
+                        spans.append(Span(tag_position, position, tag_body))
+                        break
+
+            else:
+                open_position, tag = style_stack.pop()
+                spans.append(Span(open_position, position, tag))
+
+    content_text = "".join(text)
+    text_length = len(content_text)
+    while style_stack:
+        position, tag = style_stack.pop()
+        spans.append(Span(position, text_length, tag))
+
+    content = Content(content_text, spans)
+    print(repr(content))
+    return content
+
+
 if __name__ == "__main__":  # pragma: no cover
     from rich.highlighter import ReprHighlighter
 
@@ -296,7 +424,10 @@ if __name__ == "__main__":  # pragma: no cover
                 results.update(event.text_area.text)
             except Exception as error:
                 highlight = ReprHighlighter()
-                results.update(highlight(str(error)))
+                # results.update(highlight(str(error)))
+                from rich.traceback import Traceback
+
+                results.update(Traceback())
                 self.query_one("#results-container").add_class("-error")
             else:
                 self.query_one("#results-container").remove_class("-error")

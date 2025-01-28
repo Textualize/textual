@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable
 
 from textual.css.tokenizer import Expect, Token, Tokenizer
 
@@ -176,6 +176,43 @@ expect_declaration_content_solo = Expect(
 
 
 class TokenizerState:
+    EXPECT: ClassVar[Expect] = expect_root_scope
+    STATE_MAP: ClassVar[dict[str, Expect]] = {}
+    STATE_PUSH: ClassVar[dict[str, Expect]] = {}
+    STATE_POP: ClassVar[dict[str, str]] = {}
+
+    def __call__(self, code: str, read_from: CSSLocation) -> Iterable[Token]:
+        tokenizer = Tokenizer(code, read_from=read_from)
+        expect = self.EXPECT
+        get_token = tokenizer.get_token
+        get_state = self.STATE_MAP.get
+        state_stack: list[Expect] = []
+
+        skip_get_token = False
+        while True:
+            if not skip_get_token:
+                token = get_token(expect)
+            skip_get_token = False
+            name = token.name
+            if name in self.STATE_MAP:
+                expect = get_state(token.name, expect)
+            elif name in self.STATE_PUSH:
+                expect = self.STATE_PUSH[name]
+                state_stack.append(expect)
+            elif name in self.STATE_POP:
+                expect_pop = self.STATE_POP[name]
+                if state_stack:
+                    expect = state_stack.pop()
+                else:
+                    expect = self.EXPECT
+                    skip_get_token = True
+
+            yield token
+            if name == "eof":
+                break
+
+
+class TCSSTokenizerState:
     """State machine for the tokenizer.
 
     Attributes:
@@ -232,7 +269,7 @@ class TokenizerState:
             yield token
 
 
-class DeclarationTokenizerState(TokenizerState):
+class DeclarationTokenizerState(TCSSTokenizerState):
     EXPECT = expect_declaration_solo
     STATE_MAP = {
         "declaration_name": expect_declaration_content,
@@ -240,11 +277,11 @@ class DeclarationTokenizerState(TokenizerState):
     }
 
 
-class ValueTokenizerState(TokenizerState):
+class ValueTokenizerState(TCSSTokenizerState):
     EXPECT = expect_declaration_content_solo
 
 
-class StyleTokenizerState(TokenizerState):
+class StyleTokenizerState(TCSSTokenizerState):
     EXPECT = (
         Expect(
             "style token",
@@ -262,7 +299,7 @@ class StyleTokenizerState(TokenizerState):
     )
 
 
-tokenize = TokenizerState()
+tokenize = TCSSTokenizerState()
 tokenize_declarations = DeclarationTokenizerState()
 tokenize_value = ValueTokenizerState()
 tokenize_style = StyleTokenizerState()
@@ -283,3 +320,25 @@ def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
         for name, value in values.items()
     }
     return value_tokens
+
+
+if __name__ == "__main__":
+    text = "[@click=app.notify(['foo', 500])] Click me! [/] :-)"
+
+    # text = "[@click=hello]Click"
+    from rich.console import Console
+
+    c = Console(markup=False)
+
+    from textual._profile import timer
+
+    with timer("tokenize"):
+        list(tokenize_markup(text, read_from=("", "")))
+
+    from textual.markup import _parse
+
+    with timer("_parse"):
+        list(_parse(text))
+
+    for token in tokenize_markup(text, read_from=("", "")):
+        c.print(repr(token))
