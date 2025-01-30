@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from textual.css.parse import substitute_references
+
 __all__ = ["MarkupError", "escape", "to_content"]
 
 import re
@@ -17,6 +19,8 @@ from typing import (
     Union,
 )
 
+from textual._context import active_app
+from textual.color import Color
 from textual.css.tokenize import (
     COLOR,
     PERCENT,
@@ -24,6 +28,7 @@ from textual.css.tokenize import (
     VARIABLE_REF,
     Expect,
     TokenizerState,
+    tokenize_values,
 )
 from textual.style import Style
 
@@ -56,8 +61,7 @@ expect_markup = Expect(
 expect_markup_expression = Expect(
     "markup",
     end_tag=r"(?<!\\)\]",
-    word=r"\w+",
-    period=r"\.",
+    word=r"[\w\.]+",
     round_start=r"\(",
     round_end=r"\)",
     square_start=r"\[",
@@ -74,7 +78,7 @@ expect_markup_expression = Expect(
 class MarkupTokenizer(TokenizerState):
     """Tokenizes Textual markup."""
 
-    EXPECT = expect_markup.expect_eof(True)
+    EXPECT = expect_markup.expect_eof()
     STATE_MAP = {
         "open_tag": expect_markup_tag,
         "open_closing_tag": expect_markup_tag,
@@ -91,6 +95,142 @@ class MarkupTokenizer(TokenizerState):
         "square_end": "square_start",
         "curly_end": "curly_start",
     }
+
+
+expect_style = Expect(
+    "style token",
+    end_tag=r"(?<!\\)\]",
+    key=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=",
+    percent=PERCENT,
+    color=COLOR,
+    token=TOKEN,
+    variable_ref=VARIABLE_REF,
+    whitespace=r"\s+",
+    double_string=r"\".*?\"",
+    single_string=r"'.*?'",
+)
+
+
+class StyleTokenizer(TokenizerState):
+    """Tokenizes a style"""
+
+    EXPECT = expect_style.expect_eof()
+    STATE_MAP = {"key": expect_markup_expression.expect_eof()}
+    STATE_PUSH = {
+        "round_start": expect_markup_expression,
+        "square_start": expect_markup_expression,
+        "curly_start": expect_markup_expression,
+    }
+
+
+STYLES = {"bold", "dim", "italic", "underline", "reverse", "strike"}
+STYLE_ABBREVIATIONS = {
+    "b": "bold",
+    "d": "dim",
+    "i": "italic",
+    "u": "underline",
+    "r": "reverse",
+    "s": "strike",
+}
+
+
+def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
+
+    styles: dict[str, bool | None] = {}
+    color: Color | None = None
+    background: Color | None = None
+    is_background: bool = False
+    style_state: bool = True
+
+    tokenizer = StyleTokenizer()
+    meta = {}
+
+    if variables is None:
+        try:
+            app = active_app.get()
+        except LookupError:
+            reference_tokens = {}
+        else:
+            reference_tokens = app.stylesheet._variable_tokens
+    else:
+        reference_tokens = tokenize_values(variables)
+
+    iter_tokens = iter(
+        substitute_references(
+            tokenizer(style, ("inline style", "")),
+            reference_tokens,
+        )
+    )
+
+    for token in iter_tokens:
+        print(repr(token))
+        token_name = token.name
+        token_value = token.value
+        if token_name == "key":
+            key = token_value.rstrip("=")
+            parenthesis: list[str] = []
+            value_text: list[str] = []
+            first_token = next(iter_tokens)
+            if first_token.name in {"double_string", "single_string"}:
+                meta[key] = first_token.value[1:-1]
+            else:
+                for token in iter_tokens:
+                    print("\t", repr(token))
+                    if token.name == "whitespace" and not parenthesis:
+                        break
+                    value_text.append(token.value)
+                    if token.name in {"round_start", "square_start", "curly_start"}:
+                        parenthesis.append(token.value)
+                    elif token.name in {"round_end", "square_end", "curly_end"}:
+                        parenthesis.pop()
+                        if not parenthesis:
+                            break
+                tokenizer.expect(StyleTokenizer.EXPECT)
+
+                value = "".join(value_text)
+                meta[key] = value
+
+        elif token_name == "color":
+            if is_background:
+                background = Color.parse(token.value)
+            else:
+                color = Color.parse(token.value)
+
+        elif token_name == "token":
+            if token_value == "on":
+                is_background = True
+            elif token_value == "auto":
+                if is_background:
+                    background = Color.automatic()
+                else:
+                    color = Color.automatic()
+            elif token_value == "not":
+                style_state = False
+            elif token_value in STYLES:
+                styles[token_value] = style_state
+                style_state = True
+            elif token_value in STYLE_ABBREVIATIONS:
+                styles[STYLE_ABBREVIATIONS[token_value]] = style_state
+                style_state = True
+            else:
+                if is_background:
+                    background = Color.parse(token_value)
+                else:
+                    color = Color.parse(token_value)
+
+        elif token_name == "percent":
+            percent = int(token_value.rstrip("%")) / 100.0
+            if is_background:
+                if background is not None:
+                    background = background.multiply_alpha(percent)
+            else:
+                if color is not None:
+                    color = color.multiply_alpha(percent)
+
+    parsed_style = Style(background, color, link=meta.get("link", None), **styles)
+    if meta:
+        parsed_style += Style.from_meta(meta)
+    return parsed_style
 
 
 RE_TAGS = re.compile(
@@ -329,16 +469,16 @@ def to_content(markup: str, style: str | Style = "") -> Content:
     position = 0
     tag_text: list[str]
     for token in iter_tokens:
-        print(repr(token))
+
         token_name = token.name
         if token_name == "text":
             text.append(token.value)
             position += len(token.value)
         elif token_name == "open_tag":
             tag_text = []
-            print("open")
+
             for token in iter_tokens:
-                print("  ", repr(token))
+
                 if token.name == "end_tag":
                     break
                 tag_text.append(token.value)
@@ -347,9 +487,9 @@ def to_content(markup: str, style: str | Style = "") -> Content:
 
         elif token_name == "open_closing_tag":
             tag_text = []
-            print("closing")
+
             for token in iter_tokens:
-                print("  ", repr(token))
+
                 if token.name == "end_tag":
                     break
                 tag_text.append(token.value)
@@ -363,16 +503,16 @@ def to_content(markup: str, style: str | Style = "") -> Content:
 
             else:
                 open_position, tag = style_stack.pop()
-                spans.append(Span(open_position, position, tag))
+                spans.append(Span(open_position, position, Style.parse(tag)))
 
     content_text = "".join(text)
     text_length = len(content_text)
     while style_stack:
         position, tag = style_stack.pop()
-        spans.append(Span(position, text_length, tag))
+        spans.append(Span(position, text_length, Style.parse(tag)))
 
     content = Content(content_text, spans)
-    print(repr(content))
+
     return content
 
 

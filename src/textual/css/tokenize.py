@@ -181,31 +181,36 @@ class TokenizerState:
     STATE_PUSH: ClassVar[dict[str, Expect]] = {}
     STATE_POP: ClassVar[dict[str, str]] = {}
 
+    def __init__(self) -> None:
+        self._expect: Expect = self.EXPECT
+        super().__init__()
+
+    def expect(self, expect: Expect) -> None:
+        self._expect = expect
+
     def __call__(self, code: str, read_from: CSSLocation) -> Iterable[Token]:
         tokenizer = Tokenizer(code, read_from=read_from)
-        expect = self.EXPECT
         get_token = tokenizer.get_token
         get_state = self.STATE_MAP.get
         state_stack: list[Expect] = []
 
-        skip_get_token = False
         while True:
-            if not skip_get_token:
-                token = get_token(expect)
-            skip_get_token = False
+            expect = self._expect
+            token = get_token(expect)
             name = token.name
             if name in self.STATE_MAP:
-                expect = get_state(token.name, expect)
+                self._expect = get_state(token.name, expect)
             elif name in self.STATE_PUSH:
-                expect = self.STATE_PUSH[name]
+                self._expect = self.STATE_PUSH[name]
                 state_stack.append(expect)
             elif name in self.STATE_POP:
-                expect_pop = self.STATE_POP[name]
                 if state_stack:
-                    expect = state_stack.pop()
+                    self._expect = state_stack.pop()
                 else:
-                    expect = self.EXPECT
-                    skip_get_token = True
+                    self._expect = self.EXPECT
+                    token = token._replace(name="end_tag")
+                    yield token
+                    continue
 
             yield token
             if name == "eof":

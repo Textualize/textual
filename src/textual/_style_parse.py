@@ -93,7 +93,7 @@ def style_parse(style_text: str, variables: dict[str, str] | None) -> Style:
             if name in ("key_value_quote", "key_value_double_quote"):
                 value = value[1:-1]
             if key.startswith("@"):
-                meta[key[1:]] = value
+                meta[key] = value
             else:
                 data[key] = value
         elif name == "percent" or (name == "scalar" and value.endswith("%")):
