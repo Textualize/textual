@@ -271,6 +271,7 @@ class Content(Visual):
         return new_content
 
     def __eq__(self, other: object) -> bool:
+        """Compares text only, so that markup doesn't effect sorting."""
         if isinstance(other, str):
             return self.plain == other
         elif isinstance(other, Content):
@@ -283,6 +284,25 @@ class Content(Visual):
         if isinstance(other, Content):
             return self.plain < other.plain
         return NotImplemented
+
+    def is_same(self, content: Content) -> bool:
+        """Compare to another Content object.
+
+        Two Content objects are the same if their text and spans match.
+        Note that if you use the `==` operator to compare Content instances, it will only consider the plain text.
+
+
+        Args:
+            content: Content instance.
+
+        Returns:
+            `True` if this is identical to `content`, otherwise False
+        """
+        if self is content:
+            return True
+        if self.plain != content.plain:
+            return False
+        return self.spans == content.spans
 
     def get_optimal_width(
         self,

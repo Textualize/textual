@@ -213,17 +213,24 @@ def test_render_border_label():
     border_style = Style.parse("green on blue")
 
     # Implicit test on the number of segments returned:
-    blank1, what, is_up, with_you, blank2 = render_border_label(
-        (Content.from_markup(label), Style()),
-        True,
-        "round",
-        9999,
-        Style(),
-        Style(),
-        border_style,
-        True,
-        True,
+    segments = list(
+        render_border_label(
+            (Content.from_markup(label), Style.null()),
+            True,
+            "round",
+            9999,
+            Style(),
+            Style(),
+            border_style,
+            True,
+            True,
+        )
     )
+
+    for segment in segments:
+        print("!!", segment)
+
+    blank1, what, is_up, with_you, blank2 = segments
 
     expected_blank = Segment(" ", border_style.rich_style)
     assert blank1 == expected_blank

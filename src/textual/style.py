@@ -61,6 +61,31 @@ class Style:
             and self._meta is None
         )
 
+    @cached_property
+    def hash(self) -> int:
+        return hash(
+            (
+                self.background,
+                self.foreground,
+                self.bold,
+                self.italic,
+                self.underline,
+                self.reverse,
+                self.strike,
+                self.link,
+                self.auto_color,
+                self._meta,
+            )
+        )
+
+    def __hash__(self) -> int:
+        return self.hash
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Style):
+            return NotImplemented
+        return self.hash == other.hash
+
     def __bool__(self) -> bool:
         return not self._is_null
 
@@ -101,7 +126,11 @@ class Style:
                 self.reverse if other.reverse is None else other.reverse,
                 self.strike if other.strike is None else other.strike,
                 self.link if other.link is None else other.link,
-                self._meta if other._meta is None else other._meta,
+                (
+                    dumps({**self.meta, **other.meta})
+                    if self._meta is not None and other._meta is not None
+                    else (self._meta if other._meta is None else other._meta)
+                ),
             )
             return new_style
         elif other is None:
@@ -118,9 +147,9 @@ class Style:
 
     @classmethod
     def parse(cls, text_style: str, variables: dict[str, str] | None = None) -> Style:
-        from textual._style_parse import style_parse
+        from textual.markup import parse_style
 
-        return style_parse(text_style, variables)
+        return parse_style(text_style, variables)
 
     @classmethod
     def from_rich_style(
@@ -183,7 +212,7 @@ class Style:
         )
 
     @classmethod
-    def from_meta(cls, meta: dict[str, object]) -> Style:
+    def from_meta(cls, meta: dict[str, str]) -> Style:
         """Create a Visual Style containing meta information.
 
         Args:
@@ -192,7 +221,7 @@ class Style:
         Returns:
             A new Style.
         """
-        return Style(_meta=dumps(meta))
+        return Style(_meta=dumps({**meta}))
 
     @cached_property
     def rich_style(self) -> RichStyle:

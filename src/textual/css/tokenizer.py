@@ -283,7 +283,7 @@ class Tokenizer:
             match = expect.match(line, col_no)
 
         if match is None:
-            error_line = line[col_no:].rstrip()
+            error_line = line[col_no:]
             error_message = (
                 f"{expect.description} (found {error_line.split(';')[0]!r})."
             )
