@@ -200,7 +200,7 @@ class _Template(Validator):
             cursor_position += 1
         return value, cursor_position
 
-    def insert_text_at_cursor(self, text: str) -> tuple[str, int] | None:
+    def insert_text_at_cursor(self, text: str, value: str, cursor_position: int) -> tuple[str, int] | None:
         """Inserts `text` at current cursor position. If not present in `text`, any expected separator is automatically
         inserted at the correct position.
 
@@ -211,8 +211,6 @@ class _Template(Validator):
             A tuple in the form `(value, cursor_position)` with the new control value and current cursor position if
                 `text` matches the template, None otherwise.
         """
-        value = self.input.value
-        cursor_position = self.input.cursor_position
         separators = set(
             [
                 char_definition.char
@@ -604,7 +602,7 @@ class MaskedInput(Input, can_focus=True):
             text: New text to insert.
         """
 
-        new_value = self._template.insert_text_at_cursor(text)
+        new_value = self._template.insert_text_at_cursor(text, self.value, self.cursor_position)
         if new_value is not None:
             self.value, self.cursor_position = new_value
         else:
@@ -619,16 +617,33 @@ class MaskedInput(Input, can_focus=True):
             end: End index to replace (inclusive).
         """
 
-        old_cursor_position = self.cursor_position
-        self.cursor_position = start
-        new_value = self._template.insert_text_at_cursor(text)
-        if new_value is not None:
-            value, cursor_position = new_value
-            self.value = value[:cursor_position] + value[end:]
-            self.cursor_position = cursor_position
-        else:
-            self.cursor_position = old_cursor_position
-            self.restricted()
+        previous_cursor_position = self.cursor_position
+        value = self.value
+        cursor_position = start
+        for char in text:
+            new_value_cursor_position = self._template.insert_text_at_cursor(char, value, cursor_position)
+            if new_value_cursor_position is None:
+                self.value = value
+                self.cursor_position = previous_cursor_position
+                self.restricted()
+                return
+
+            new_value, new_cursor_position = new_value_cursor_position
+            if new_cursor_position >= end:
+                self.value = new_value[:end] + value[end:]
+                self.cursor_position = new_cursor_position
+                return
+
+            value = new_value
+            cursor_position = new_cursor_position
+
+        self.value = value
+        self.cursor_position = end
+        while self.cursor_position > cursor_position:
+            self._template.move_cursor(-1)
+            self._template.delete_at_position()
+
+        self.cursor_position = cursor_position
 
     def clear(self) -> None:
         """Clear the masked input."""
