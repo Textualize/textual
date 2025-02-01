@@ -264,9 +264,11 @@ class Tokenizer:
             if match is None:
                 preceding_text = line[self.col_no :]
                 self.line_no += 1
+                self.col_no = 0
             else:
                 col_no = match.start()
                 preceding_text = line[self.col_no : col_no]
+                self.col_no = col_no
             if preceding_text:
                 token = Token(
                     "text",
@@ -276,7 +278,7 @@ class Tokenizer:
                     (line_no, col_no),
                     referenced_by=None,
                 )
-                self.col_no = col_no
+
                 return token
 
         else:
@@ -292,11 +294,8 @@ class Tokenizer:
             raise TokenError(
                 self.read_from, self.code, (line_no + 1, col_no + 1), error_message
             )
-        iter_groups = iter(match.groups())
 
-        next(iter_groups)
-
-        for name, value in zip(expect.names, iter_groups):
+        for name, value in zip(expect.names, match.groups()[1:]):
             if value is not None:
                 break
         else:

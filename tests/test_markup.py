@@ -1,7 +1,7 @@
 import pytest
 
 from textual.content import Content, Span
-from textual.markup import to_content
+from textual.markup import MarkupError, to_content
 
 
 @pytest.mark.parametrize(
@@ -30,11 +30,32 @@ from textual.markup import to_content
         ),
         (
             "[b][on red]What [i]is up[/on red] with you?[/]",
-            Content("What is up with you?"),
+            Content(
+                "What is up with you?",
+                spans=[
+                    Span(0, 10, style="on red"),
+                    Span(5, 20, style="i"),
+                    Span(0, 20, style="b"),
+                ],
+            ),
         ),
         (
             "[b]Welcome to Textual[/b]\n\nI must not fear",
-            Content("Welcome to Textual\n\nI must not fear"),
+            Content(
+                "Welcome to Textual\n\nI must not fear",
+                spans=[
+                    Span(0, 18, style="b"),
+                ],
+            ),
+        ),
+        (
+            "[$accent]Hello",
+            Content(
+                "Hello",
+                spans=[
+                    Span(0, 5, "$accent"),
+                ],
+            ),
         ),
     ],
 )
@@ -43,3 +64,12 @@ def test_to_content(markup: str, content: Content):
     print(repr(markup_content))
     print(repr(content))
     assert markup_content.is_same(content)
+
+
+def test_content_parse_fail() -> None:
+    with pytest.raises(MarkupError):
+        to_content("[rgb(1,2,3,4)]foo")
+    with pytest.raises(MarkupError):
+        to_content("[foo]foo[/bar]")
+    with pytest.raises(MarkupError):
+        to_content("foo[/]")

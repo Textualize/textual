@@ -185,6 +185,7 @@ class Content(Visual):
         Returns:
             New Content instance.
         """
+        _rich_traceback_omit = True
         if isinstance(markup, Content):
             return markup
         from textual.markup import to_content

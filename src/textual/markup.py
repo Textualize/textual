@@ -28,39 +28,47 @@ class MarkupError(Exception):
     """An error occurred parsing Textual markup."""
 
 
-expect_markup_tag = Expect(
-    "style token",
-    end_tag=r"(?<!\\)\]",
-    key=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=",
-    percent=PERCENT,
-    color=COLOR,
-    token=TOKEN,
-    variable_ref=VARIABLE_REF,
-    whitespace=r"\s+",
-).expect_eof()
+expect_markup_tag = (
+    Expect(
+        "markup style value",
+        end_tag=r"(?<!\\)\]",
+        key=r"[@a-zA-Z_-][a-zA-Z0-9_-]*=",
+        percent=PERCENT,
+        color=COLOR,
+        token=TOKEN,
+        variable_ref=VARIABLE_REF,
+        whitespace=r"\s+",
+    )
+    .expect_eof()
+    .expect_semicolon(False)
+)
 
 expect_markup = Expect(
-    "markup token",
+    "markup tag",
     open_closing_tag=r"(?<!\\)\[/",
     open_tag=r"(?<!\\)\[",
     end_tag=r"(?<!\\)\]",
 ).extract_text()
 
-expect_markup_expression = Expect(
-    "markup",
-    end_tag=r"(?<!\\)\]",
-    word=r"[\w\.]+",
-    round_start=r"\(",
-    round_end=r"\)",
-    square_start=r"\[",
-    square_end=r"\]",
-    curly_start=r"\{",
-    curly_end=r"\}",
-    comma=",",
-    whitespace=r"\s+",
-    double_string=r"\".*?\"",
-    single_string=r"'.*?'",
-).expect_eof()
+expect_markup_expression = (
+    Expect(
+        "markup value",
+        end_tag=r"(?<!\\)\]",
+        word=r"[\w\.]+",
+        round_start=r"\(",
+        round_end=r"\)",
+        square_start=r"\[",
+        square_end=r"\]",
+        curly_start=r"\{",
+        curly_end=r"\}",
+        comma=",",
+        whitespace=r"\s+",
+        double_string=r"\".*?\"",
+        single_string=r"'.*?'",
+    )
+    .expect_eof()
+    .expect_semicolon(False)
+)
 
 
 class MarkupTokenizer(TokenizerState):
@@ -96,7 +104,7 @@ expect_style = Expect(
     whitespace=r"\s+",
     double_string=r"\".*?\"",
     single_string=r"'.*?'",
-)
+).expect_semicolon(False)
 
 
 class StyleTokenizer(TokenizerState):
@@ -180,7 +188,6 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
     )
 
     for token in iter_tokens:
-        print(repr(token))
         token_name = token.name
         token_value = token.value
         if token_name == "key":
@@ -188,14 +195,12 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
             parenthesis: list[str] = []
             value_text: list[str] = []
             first_token = next(iter_tokens)
-            print("\t", repr(first_token))
             if first_token.name in {"double_string", "single_string"}:
                 meta[key] = first_token.value[1:-1]
                 break
             else:
                 value_text.append(first_token.value)
                 for token in iter_tokens:
-                    print("\t", repr(token))
                     if token.name == "whitespace" and not parenthesis:
                         break
                     value_text.append(token.value)
@@ -255,6 +260,14 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
 
 
 def to_content(markup: str, style: str | Style = "") -> Content:
+    _rich_traceback_omit = True
+    try:
+        return _to_content(markup, style)
+    except Exception as error:
+        raise MarkupError(str(error)) from None
+
+
+def _to_content(markup: str, style: str | Style = "") -> Content:
 
     from textual.content import Content, Span
 
@@ -299,8 +312,14 @@ def to_content(markup: str, style: str | Style = "") -> Content:
                         style_stack.pop(-index)
                         spans.append(Span(tag_position, position, tag_body))
                         break
+                else:
+                    raise MarkupError(
+                        f"closing tag '[/{tag_body}]' does not match any open tag"
+                    )
 
             else:
+                if not style_stack:
+                    raise MarkupError("auto closing tag ('[/]') has nothing to close")
                 open_position, tag = style_stack.pop()
                 spans.append(Span(open_position, position, tag))
 
