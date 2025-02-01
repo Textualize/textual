@@ -620,6 +620,12 @@ class MaskedInput(Input, can_focus=True):
         """
 
         self.cursor_position = start
+        # Handle case where cursor start on a separator
+        self._template.move_cursor(1)
+        self._template.move_cursor(-1)
+        if self.cursor_position < start:
+            self._template.move_cursor(1)
+
         for char in text:
             if self.cursor_position >= end:
                 return
@@ -627,15 +633,12 @@ class MaskedInput(Input, can_focus=True):
             if new_value_cursor_position is None:
                 self.restricted()
                 return
-
             self.value, self.cursor_position = new_value_cursor_position
 
         last_cursor_position = self.cursor_position
-
         while self.cursor_position < end:
             self._template.delete_at_position()
             self._template.move_cursor(1)
-
         self.cursor_position = last_cursor_position
 
     def clear(self) -> None:
