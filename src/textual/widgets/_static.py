@@ -64,17 +64,18 @@ class Static(Widget, inherit_bindings=False):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        super().__init__(
+            name=name, id=id, classes=classes, disabled=disabled, markup=markup
+        )
         self.expand = expand
         self.shrink = shrink
-        self.markup = markup
         self._content = content
         self._visual: Visual | None = None
 
     @property
     def visual(self) -> Visual:
         if self._visual is None:
-            self._visual = visualize(self, self._content, markup=self.markup)
+            self._visual = visualize(self, self._content, markup=self._render_markup)
         return self._visual
 
     @property
@@ -84,7 +85,7 @@ class Static(Widget, inherit_bindings=False):
     @renderable.setter
     def renderable(self, renderable: RenderableType | SupportsVisual) -> None:
         if isinstance(renderable, str):
-            if self.markup:
+            if self._render_markup:
                 self._renderable = Text.from_markup(renderable)
             else:
                 self._renderable = Text(renderable)
@@ -109,5 +110,5 @@ class Static(Widget, inherit_bindings=False):
         """
 
         self._content = content
-        self._visual = visualize(self, content, markup=self.markup)
+        self._visual = visualize(self, content, markup=self._render_markup)
         self.refresh(layout=True)

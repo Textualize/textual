@@ -399,6 +399,7 @@ class Widget(DOMNode):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        markup: bool = True,
     ) -> None:
         """Initialize a Widget.
 
@@ -409,6 +410,7 @@ class Widget(DOMNode):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
+        self._render_markup = markup
         _null_size = NULL_SIZE
         self._size = _null_size
         self._container_size = _null_size
@@ -4034,22 +4036,23 @@ class Widget(DOMNode):
                 yield
 
     def render(self) -> RenderResult:
-        """Get text or Rich renderable for this widget.
+        """Get [content](./guide/content) for the widget.
 
         Implement this for custom widgets.
+        This method should return a string, a [Content][textual.content.Content] object, or a [Rich](https://github.com/Textualize/rich) renderable.
 
         Example:
             ```python
-            from textual.app import RenderableType
+            from textual.app import RenderResult
             from textual.widget import Widget
 
             class CustomWidget(Widget):
-                def render(self) -> RenderableType:
+                def render(self) -> RenderResult:
                     return "Welcome to [bold red]Textual[/]!"
             ```
 
         Returns:
-            Any renderable.
+            A string or object to render as the widget's content.
         """
 
         if self.is_container:
@@ -4070,7 +4073,7 @@ class Widget(DOMNode):
         if cached_visual is not None:
             assert isinstance(cached_visual, Visual)
             return cached_visual
-        visual = visualize(self, self.render())
+        visual = visualize(self, self.render(), markup=self._render_markup)
         self._layout_cache[cache_key] = visual
         return visual
 

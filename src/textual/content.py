@@ -845,7 +845,9 @@ class Content(Visual):
         start: int = 0,
         end: int | None = None,
     ) -> Content:
-        """Apply a style to the text, or a portion of the text. Styles will be applied before other styles already present.
+        """Apply a style to the text, or a portion of the text.
+
+        Styles applies with this method will be applied *before* other styles already present.
 
         Args:
             style (Union[str, Style]): Style instance or style definition to apply.
@@ -875,6 +877,20 @@ class Content(Visual):
         end: str = "\n",
         parse_style: Callable[[str], Style] | None = None,
     ) -> Iterable[tuple[str, Style]]:
+        """Render Content in to an iterable of strings and styles.
+
+        This is typically called by Textual when displaying Content, but may be used if you want to do more advanced
+        pricessing of the output.
+
+        Args:
+            base_style (_type_, optional): The style used as a base. This will typically be the style of the widget underneath the content.
+            end (_type_, optional): Text to end the output, such as a new line.
+            parse_style: Method to parse a style. Use App.parse_style to apply CSS variables in styles.
+
+        Returns:
+            An iterable of string and styles, which make up the content.
+
+        """
 
         if not self._spans:
             yield (self._text, base_style)
@@ -886,6 +902,7 @@ class Content(Visual):
 
             @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
+                """The default get_style method."""
                 try:
                     visual_style = Style.parse(style)
                 except Exception:
