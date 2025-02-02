@@ -23,9 +23,10 @@ class MarkupPlayground(App):
             &.-error {
                 border: tab $error;
             }
+            overflow-y: auto;
         }
         #results {            
-            height: 1fr;
+            
             padding: 1 1;            
         }
     }
@@ -50,6 +51,9 @@ class MarkupPlayground(App):
             from rich.traceback import Traceback
 
             results.update(Traceback())
-            self.query_one("#results-container").add_class("-error")
+
+            self.query_one("#results-container").add_class("-error").scroll_end(
+                animate=False
+            )
         else:
             self.query_one("#results-container").remove_class("-error")
