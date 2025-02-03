@@ -160,6 +160,15 @@ def escape(
 
 
 def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
+    """Parse an encoded style.
+
+    Args:
+        style: Style encoded in a string.
+        variables: Mapping of variables, or `None` to import from active app.
+
+    Returns:
+        A Style object.
+    """
 
     styles: dict[str, bool | None] = {}
     color: Color | None = None
@@ -222,7 +231,10 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
                 color = Color.parse(token.value)
 
         elif token_name == "token":
-            if token_value == "on":
+            if token_value == "link":
+                if "link" not in meta:
+                    meta["link"] = ""
+            elif token_value == "on":
                 is_background = True
             elif token_value == "auto":
                 if is_background:
@@ -252,7 +264,7 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
                 if color is not None:
                     color = color.multiply_alpha(percent)
 
-    parsed_style = Style(background, color, link=meta.get("link", None), **styles)
+    parsed_style = Style(background, color, link=meta.pop("link", None), **styles)
 
     if meta:
         parsed_style += Style.from_meta(meta)
@@ -260,14 +272,39 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
 
 
 def to_content(markup: str, style: str | Style = "") -> Content:
+    """Convert markup to Content.
+
+    Args:
+        markup: String containing markup.
+        style: Optional base style.
+
+    Raises:
+        MarkupError: If the markup is invalid.
+
+    Returns:
+        Content that renders the markup.
+    """
     _rich_traceback_omit = True
     try:
         return _to_content(markup, style)
     except Exception as error:
+        # Ensure all errors are wrapped in a MarkupError
         raise MarkupError(str(error)) from None
 
 
 def _to_content(markup: str, style: str | Style = "") -> Content:
+    """Internal function to convert markup to Content.
+
+    Args:
+        markup: String containing markup.
+        style: Optional base style.
+
+    Raises:
+        MarkupError: If the markup is invalid.
+
+    Returns:
+        Content that renders the markup.
+    """
 
     from textual.content import Content, Span
 
@@ -275,12 +312,15 @@ def _to_content(markup: str, style: str | Style = "") -> Content:
     text: list[str] = []
     iter_tokens = iter(tokenizer(markup, ("inline", "")))
 
-    style_stack: list[tuple[int, str]] = []
+    style_stack: list[tuple[int, str, str]] = []
 
     spans: list[Span] = []
 
     position = 0
     tag_text: list[str]
+
+    normalize_markup_tag = Style._normalize_markup_tag
+
     for token in iter_tokens:
 
         token_name = token.name
@@ -295,7 +335,9 @@ def _to_content(markup: str, style: str | Style = "") -> Content:
                     break
                 tag_text.append(token.value)
             opening_tag = "".join(tag_text).strip()
-            style_stack.append((position, opening_tag))
+            style_stack.append(
+                (position, opening_tag, normalize_markup_tag(opening_tag))
+            )
 
         elif token_name == "open_closing_tag":
             tag_text = []
@@ -304,30 +346,32 @@ def _to_content(markup: str, style: str | Style = "") -> Content:
                     break
                 tag_text.append(token.value)
             closing_tag = "".join(tag_text).strip()
-            if closing_tag:
-                for index, (tag_position, tag_body) in enumerate(
+            normalized_closing_tag = normalize_markup_tag(closing_tag)
+            if normalized_closing_tag:
+                for index, (tag_position, tag_body, normalized_tag_body) in enumerate(
                     reversed(style_stack), 1
                 ):
-                    if tag_body == closing_tag:
+                    if normalized_tag_body == normalized_closing_tag:
                         style_stack.pop(-index)
-                        spans.append(Span(tag_position, position, tag_body))
+                        if tag_position != position:
+                            spans.append(Span(tag_position, position, tag_body))
                         break
                 else:
                     raise MarkupError(
-                        f"closing tag '[/{tag_body}]' does not match any open tag"
+                        f"closing tag '[/{closing_tag}]' does not match any open tag"
                     )
 
             else:
                 if not style_stack:
                     raise MarkupError("auto closing tag ('[/]') has nothing to close")
-                open_position, tag = style_stack.pop()
-                spans.append(Span(open_position, position, tag))
+                open_position, tag_body, _ = style_stack.pop()
+                spans.append(Span(open_position, position, tag_body))
 
     content_text = "".join(text)
     text_length = len(content_text)
     while style_stack:
-        position, tag = style_stack.pop()
-        spans.append(Span(position, text_length, tag))
+        position, tag_body, _ = style_stack.pop()
+        spans.append(Span(position, text_length, tag_body))
 
     if style:
         content = Content(content_text, [Span(0, len(content_text), style), *spans])

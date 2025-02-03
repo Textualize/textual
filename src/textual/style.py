@@ -103,21 +103,71 @@ class Style:
         return not self._is_null
 
     def __str__(self) -> str:
+        return self.style_definition
+
+    @cached_property
+    def style_definition(self) -> str:
+        """Style encoded in a string (may be parsed from `Style.parse`)."""
         output: list[str] = []
+        output_append = output.append
         if self.foreground is not None:
-            output.append(self.foreground.css)
+            output_append(self.foreground.css)
         if self.background is not None:
-            output.append(f"on {self.background.css}")
+            output_append(f"on {self.background.css}")
         if self.bold is not None:
-            output.append("bold" if self.bold else "not bold")
+            output_append("bold" if self.bold else "not bold")
         if self.dim is not None:
-            output.append("dim" if self.dim else "not dim")
+            output_append("dim" if self.dim else "not dim")
         if self.italic is not None:
-            output.append("italic" if self.italic else "not italic")
+            output_append("italic" if self.italic else "not italic")
         if self.underline is not None:
-            output.append("underline" if self.underline else "not underline")
+            output_append("underline" if self.underline else "not underline")
         if self.strike is not None:
-            output.append("strike" if self.strike else "not strike")
+            output_append("strike" if self.strike else "not strike")
+        if self.link is not None:
+            if "'" not in self.link:
+                output_append(f"link='{self.link}'")
+            elif '"' not in self.link:
+                output_append(f'link="{self.link}"')
+        if self._meta is not None:
+            for key, value in self.meta.items():
+                if isinstance(value, str):
+                    if "'" not in key:
+                        output_append(f"{key}='{value}'")
+                    elif '"' not in key:
+                        output_append(f'{key}="{value}"')
+                    else:
+                        output_append(f"{key}={value!r}")
+                else:
+                    output_append(f"{key}={value!r}")
+
+        return " ".join(output)
+
+    @cached_property
+    def markup_tag(self) -> str:
+        """Identifier used to close tags in markup."""
+        output: list[str] = []
+        output_append = output.append
+        if self.foreground is not None:
+            output_append(self.foreground.css)
+        if self.background is not None:
+            output_append(f"on {self.background.css}")
+        if self.bold is not None:
+            output_append("bold" if self.bold else "not bold")
+        if self.dim is not None:
+            output_append("dim" if self.dim else "not dim")
+        if self.italic is not None:
+            output_append("italic" if self.italic else "not italic")
+        if self.underline is not None:
+            output_append("underline" if self.underline else "not underline")
+        if self.strike is not None:
+            output_append("strike" if self.strike else "not strike")
+        if self.link is not None:
+            output_append("link")
+        if self._meta is not None:
+            for key, value in self.meta.items():
+                if isinstance(value, str):
+                    output_append(f"{key}=")
 
         return " ".join(output)
 
@@ -175,6 +225,22 @@ class Style:
         except LookupError:
             return parse_style(text_style, variables)
         return app.stylesheet.parse_style(text_style)
+
+    @classmethod
+    def _normalize_markup_tag(cls, text_style: str) -> str:
+        """Produces a normalized from of a style, used to match closing tags with opening tags.
+
+        Args:
+            text_style: Style to normalize.
+
+        Returns:
+            Normalized markup tag.
+        """
+        try:
+            style = cls.parse(text_style)
+        except Exception:
+            return text_style.strip()
+        return style.markup_tag
 
     @classmethod
     def from_rich_style(

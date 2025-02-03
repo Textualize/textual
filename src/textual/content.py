@@ -878,7 +878,7 @@ class Content(Visual):
         """Render Content in to an iterable of strings and styles.
 
         This is typically called by Textual when displaying Content, but may be used if you want to do more advanced
-        pricessing of the output.
+        processing of the output.
 
         Args:
             base_style (_type_, optional): The style used as a base. This will typically be the style of the widget underneath the content.

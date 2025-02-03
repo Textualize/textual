@@ -69,6 +69,7 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
     Returns:
         A Visual instance to render the object, or `None` if there is no associated visual.
     """
+    _rich_traceback_omit = True
     if isinstance(obj, Visual):
         # Already a visual
         return obj

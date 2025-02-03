@@ -405,6 +405,7 @@ def substitute_references(
                                 )
                             )
                     else:
+                        1 / 0
                         _unresolved(ref_name, variables.keys(), token)
                 else:
                     variable_tokens.append(token)
@@ -422,6 +423,7 @@ def substitute_references(
                         ReferencedBy(variable_name, ref_location, ref_length, ref_code)
                     )
             else:
+                1 / 0
                 _unresolved(variable_name, variables.keys(), token)
         else:
             yield token
