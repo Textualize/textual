@@ -40,63 +40,61 @@ To launch the playground, run the following command:
 python -m textual.markup
 ```
 
-The interface looks something like this:
+You can experiment with markup by entering it in to the textarea at the top of the terminal, and seeing the results in the lower pane:
 
 ```{.textual path="docs/examples/guide/content/playground.py", type="[i]Hello!"] lines=15}
 ```
 
-If you are trying Textual Markup for the first time, it is worthwhile to test what you read with he Playground app!
+You might find it helpful to try out some of the examples from this guide in the playground.
 
 ### Tags
 
 There are two types of tag: an *opening* tag which starts a style change, and a *closing* tag which ends a style change.
-An opening tag looks something like the following:
+An opening tag looks like this:
 
 ```
 [bold]
 ```
 
-This will make following text bold. For instance, the following would result in the text "Hello, World!" in bold:
 
-
-```
-[bold]Hello, World!
-```
-
-The second type of tag, a *closing* tag, is almost identical, but starts with a forward slash inside the first square bracket.
-A closing tag ends a style, started by a previous opening tag.
-
-!!! note
-
-    Without a closing tag, the style will persist to the end of the string. This can be a convenient shortcut if you want to style the entire string.
-
-
-For instance, the following is a closing tag to end the bold style:
+The second type of tag, known as a *closing* tag, is almost identical, but starts with a forward slash inside the first square bracket.
+A closing tag looks like this:
 
 ```
 [/bold]
 ```
 
-A closing tag must match a previous opening tag, so that Textual knows which style is being closed.
-Let's use this to embolden just the first word in our example:
+A closing tag marks the end of a style from the corresponding opening tag.
+
+By wrapping text in an opening and closing tag, we can apply the style to just the characters we want.
+For example, the following makes just the first word in "Hello, World!" bold:
 
 ```
 [bold]Hello[/bold], World!
 ```
 
-This will make "Hello" bold, but the rest of the text will be non-bold.
+Note how the tags change the style but are removed from the output:
 
-You can use any number of tags, and they may overlap which combines their styles.
+```{.textual path="docs/examples/guide/content/playground.py", type="[bold]Hello[/bold], World!" lines=15}
+```
+
+You can use any number of tags. 
+If tags overlap their styles are combined.
 For instance, the following combines the bold and italic styles:
 
 ```
 [bold]Bold [italic]Bold and italic[/italic][/bold]
 ```
 
+Here's the output:
+
+```{.textual path="docs/examples/guide/content/playground.py", type="[bold]Bold [italic]Bold and italic[/italic][/bold]" lines=15}
+```
+
 #### Auto-closing tags
 
 A closing tag without any style information (i.e. `[/]`) is an *auto-closing* tag.
-Auto-closing tags will close the last tag, regardless of it's style.
+Auto-closing tags will close the last opened tag.
 
 The following uses an auto-closing tag to end the bold style:
 
@@ -135,7 +133,8 @@ Styles can also be combined within the same tag, so `[bold italic]` produces tex
 You can invert a style by preceding it with the word `not`. 
 This is useful if you have text with a given style, but you temporarily want to disable it.
 
-For instance, the following markup starts with `[bold]` which makes the text bold until it reaches `[not bold]` which disables the bold style, until the corresponding `[/not bold]`.
+For instance, the following starts with `[bold]`, which would normally make the rest of the text bold.
+However, the `[not bold]` tag disables bold until the corresponding `[/not bold]` tag:
 
 ```
 [bold]This is bold [not bold]This is not bold[/not bold] This is bold.
@@ -166,8 +165,8 @@ You can also any of the [named colors](/css_types/color).
 
 Colors may also include an *alpha* component, which makes the color fade in to the background.
 For instance, if we specify the color with `rgba(...)`, then we can add an alpha component between 0 and 1.
-An alpha of zero is fully transparent (and therefore invisible). An alpha of 1 is fully opaque, and equivalent to a color without an alpha component.
-A value between 0 and 1 results in a faded color. 
+An alpha of 0 is fully transparent (and therefore invisible). An alpha of 1 is fully opaque, and equivalent to a color without an alpha component.
+A value between 0 and 1 results in a faded color.
 
 In the following example we have an alpha of 0.5, which will produce a color half way between the background and solid green:
 
@@ -175,14 +174,19 @@ In the following example we have an alpha of 0.5, which will produce a color hal
 [rgba(0, 255, 0, 0.5)]Faded green (and probably hard to read)[/]
 ```
 
-!!! tip
+Here's the output:
+
+```{.textual path="docs/examples/guide/content/playground.py", type="[rgba(0, 255, 0, 0.5)]Faded green (and probably hard to read)[/]" lines=15}
+```
+
+!!! warning
 
     Be careful when using colors with an alpha component. Text that is blended too much with the background may become hard to read.
 
 
 #### Auto colors
 
-You can specify a color as "auto", which is a special value that tells Textual to pick either white or black text -- whichever has the best contrast.
+You can also specify a color as "auto", which is a special value that tells Textual to pick either white or black text -- whichever has the best contrast.
 
 For example, the following will produce either white or black text (I haven't checked) on a sienna background:
 
@@ -193,7 +197,7 @@ For example, the following will produce either white or black text (I haven't ch
 
 #### Opacity
 
-While you can set the opacity in the color itself, you can also add a percentage which will modify the alpha component of the previous color.
+While you can set the opacity in the color itself by adding an alpha component to the color, you can also modify the alpha of the previous color with a percentage.
 
 For example, the addition of `50%` will result in a color half way between the background and "red":
 
@@ -220,6 +224,7 @@ Here's an example that tints the background with 20% red:
 [on #ff0000 20%]The background has a red tint.[/]
 ```
 
+Here's the output:
 
 ```{.textual path="docs/examples/guide/content/playground.py" lines=15 type="[on #ff0000 20%]The background has a red tint.[/]"]}
 ```
@@ -243,6 +248,8 @@ The following displays text in the 'warning' style on a muted 'warning' backgrou
 [$warning on $warning-muted]This is a warning![/]
 ```
 
+Here's the result of that markup:
+
 ```{.textual path="docs/examples/guide/content/playground.py" lines=15 type="[$warning on $warning-muted]This is a warning![/]"]}
 ```
 
@@ -250,7 +257,7 @@ The following displays text in the 'warning' style on a muted 'warning' backgrou
 
 Styles may contain links which will create clickable links that launch your web browser, if supported by your terminal.
 
-To create a link add `link=` followed by your link in quotes.
+To create a link add `link=` followed by your link in quotes (single or double).
 For instance, the following create a clickable link:
 
 ```
@@ -259,6 +266,7 @@ For instance, the following create a clickable link:
 
 This will produce the following output:
 <code><pre><a href="https://www.willmcgugan.com">Visit my blog!</a></pre></code>
+
 
 
 
