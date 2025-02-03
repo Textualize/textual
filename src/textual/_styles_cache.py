@@ -153,6 +153,7 @@ class StylesCache:
             opacity=widget.opacity,
             ansi_theme=widget.app.ansi_theme,
         )
+
         if widget.auto_links:
             hover_style = widget.hover_style
             if (

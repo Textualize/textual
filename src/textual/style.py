@@ -1,3 +1,10 @@
+"""
+The Style class contains all the information needed to generate styled terminal output.
+
+You won't often need to create Style objects directly, if you are using [Content][textual.content.Content] for output.
+But you might want to use styles for more customized widgets.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,6 +16,7 @@ import rich.repr
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
 
+from textual._context import active_app
 from textual.color import Color
 
 if TYPE_CHECKING:
@@ -18,7 +26,11 @@ if TYPE_CHECKING:
 @rich.repr.auto(angular=True)
 @dataclass(frozen=True)
 class Style:
-    """Represents a style in the Visual interface (color and other attributes)."""
+    """Represents a style in the Visual interface (color and other attributes).
+
+    Styles may be added together, which combines their style attributes.
+
+    """
 
     background: Color | None = None
     foreground: Color | None = None
@@ -68,6 +80,7 @@ class Style:
                 self.background,
                 self.foreground,
                 self.bold,
+                self.dim,
                 self.italic,
                 self.underline,
                 self.reverse,
@@ -108,7 +121,7 @@ class Style:
 
         return " ".join(output)
 
-    @lru_cache(maxsize=1024)
+    @lru_cache(maxsize=1024 * 4)
     def __add__(self, other: object | None) -> Style:
         if isinstance(other, Style):
             new_style = Style(
@@ -117,7 +130,6 @@ class Style:
                     if self.background is None
                     else self.background + other.background
                 ),
-                # other.foreground if self.foreground is None else None,
                 self.foreground if other.foreground is None else other.foreground,
                 self.bold if other.bold is None else other.bold,
                 self.dim if other.dim is None else other.dim,
@@ -147,9 +159,22 @@ class Style:
 
     @classmethod
     def parse(cls, text_style: str, variables: dict[str, str] | None = None) -> Style:
+        """Parse a style from text.
+
+        Args:
+            text_style: A style encoded in a string.
+            variables: Optional mapping of CSS variables. `None` to get variables from the app.
+
+        Returns:
+            _type_: _description_
+        """
         from textual.markup import parse_style
 
-        return parse_style(text_style, variables)
+        try:
+            app = active_app.get()
+        except LookupError:
+            return parse_style(text_style, variables)
+        return app.stylesheet.parse_style(text_style)
 
     @classmethod
     def from_rich_style(
@@ -245,6 +270,17 @@ class Style:
         )
 
     def rich_style_with_offset(self, x: int, y: int) -> RichStyle:
+        """Get a Rich style with the given offset included in meta.
+
+        This is used in text seleciton.
+
+        Args:
+            x: X coordinate.
+            y: Y coordinate.
+
+        Returns:
+            A Rich Style object.
+        """
         color = None if self.foreground is None else self.background + self.foreground
         return RichStyle(
             color=None if color is None else color.rich_color,
@@ -261,7 +297,7 @@ class Style:
 
     @cached_property
     def without_color(self) -> Style:
-        """The style with no color."""
+        """The style without any colors."""
         return Style(
             bold=self.bold,
             dim=self.dim,

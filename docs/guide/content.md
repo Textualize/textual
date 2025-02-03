@@ -319,4 +319,3 @@ Textual supports Rich renderables, which means you can return any object that wo
 
 The Content class is generally preferred, as it supports more of Textual's features.
 If you already have a Text object and your code is working, there is no need to change it -- Textual won't be dropping Rich support.
-But we recommend the [Content class](#content-class) for newer code.

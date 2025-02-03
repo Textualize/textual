@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from rich.console import RenderableType
 from rich.protocol import is_renderable
-from rich.text import Text
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
@@ -84,13 +83,7 @@ class Static(Widget, inherit_bindings=False):
 
     @renderable.setter
     def renderable(self, renderable: RenderableType | SupportsVisual) -> None:
-        if isinstance(renderable, str):
-            if self._render_markup:
-                self._renderable = Text.from_markup(renderable)
-            else:
-                self._renderable = Text(renderable)
-        else:
-            self._renderable = renderable
+        self._renderable = renderable
         self._visual = None
         self.clear_cached_dimensions()
 

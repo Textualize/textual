@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from functools import lru_cache, total_ordering
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, Sequence, Union
+from typing import Callable, Iterable, NamedTuple, Sequence, Union
 
 import rich.repr
 from rich._wrap import divide_line
@@ -34,9 +34,7 @@ from textual.strip import Strip
 from textual.style import Style
 from textual.visual import RulesMap, Visual
 
-if TYPE_CHECKING:
-    pass
-
+__all__ = ["ContentType", "Content", "Span"]
 
 ContentType: TypeAlias = Union["Content", str]
 """Type alias used where content and a str are interchangeable in a function."""
@@ -959,7 +957,9 @@ class Content(Visual):
         if end:
             yield end, base_style
 
-    def render_segments(self, base_style: Style, end: str = "") -> list[Segment]:
+    def render_segments(
+        self, base_style: Style = Style.null(), end: str = ""
+    ) -> list[Segment]:
         _Segment = Segment
         segments = [
             _Segment(text, (style.rich_style if style else None))

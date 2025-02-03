@@ -14,7 +14,6 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 
-from textual._style_parse import style_parse
 from textual.cache import LRUCache
 from textual.css.errors import StylesheetError
 from textual.css.match import _check_selectors
@@ -25,6 +24,7 @@ from textual.css.tokenize import Token, tokenize_values
 from textual.css.tokenizer import TokenError
 from textual.css.types import CSSLocation, Specificity3, Specificity6
 from textual.dom import DOMNode
+from textual.markup import parse_style
 from textual.style import Style
 from textual.widget import Widget
 
@@ -232,7 +232,7 @@ class Stylesheet:
         if style_text in self._style_parse_cache:
             return self._style_parse_cache[style_text]
         try:
-            style = style_parse(style_text, None)
+            style = parse_style(style_text)
         except Exception:
             style = Style.null()
         self._style_parse_cache[style_text] = style
