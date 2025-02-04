@@ -73,3 +73,35 @@ def test_content_parse_fail() -> None:
         to_content("[foo]foo[/bar]")
     with pytest.raises(MarkupError):
         to_content("foo[/]")
+
+
+@pytest.mark.parametrize(
+    ["markup", "variables", "content"],
+    [
+        # Simple substitution
+        (
+            "Hello $name",
+            {"name": "Will"},
+            Content("Hello Will"),
+        ),
+        # Wrapped in tags
+        (
+            "Hello [bold]$name[/bold]",
+            {"name": "Will"},
+            Content("Hello Will", spans=[Span(6, 10, style="bold")]),
+        ),
+        # dollar in tags should not trigger substitution.
+        (
+            "Hello [link='$name']$name[/link]",
+            {"name": "Will"},
+            Content("Hello Will", spans=[Span(6, 10, style="link='$name'")]),
+        ),
+    ],
+)
+def test_template_variables(
+    markup: str, variables: dict[str, object], content: Content
+) -> None:
+    markup_content = Content.from_markup(markup, **variables)
+    print(repr(markup_content))
+    print(repr(content))
+    assert markup_content.is_same(content)

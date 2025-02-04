@@ -1,7 +1,9 @@
-from rich.highlighter import ReprHighlighter
+import json
 
 from textual import containers, on
 from textual.app import App, ComposeResult
+from textual.content import Content
+from textual.reactive import reactive
 from textual.widgets import Static, TextArea
 
 
@@ -10,15 +12,26 @@ class MarkupPlayground(App):
     TITLE = "Markup Playground"
     CSS = """
     Screen {
+        & > * {
+            margin: 0 1;
+        }
         layout: vertical;
         #editor {            
             height: 1fr;
             border: tab $primary;  
             padding: 1;
-            margin: 1 1 0 1;
+            margin: 1 1 0 0;
         }
-        #results-container {
-            margin: 0 1;
+        #variables {
+            height: 1fr;
+            border: tab $primary;  
+            padding: 1;
+            margin: 1 0 0 1;
+        }
+        #variables.-bad-json {
+            border: tab $error;
+        }
+        #results-container {           
             border: tab $success;                
             &.-error {
                 border: tab $error;
@@ -32,22 +45,30 @@ class MarkupPlayground(App):
     }
     """
 
+    variables: reactive[dict[str, object]] = reactive({})
+
     def compose(self) -> ComposeResult:
-        yield (text_area := TextArea(id="editor"))
-        text_area.border_title = "Markup"
+        with containers.HorizontalScroll():
+            yield (editor := TextArea(id="editor"))
+            yield (variables := TextArea(id="variables", language="json"))
+        editor.border_title = "Markup"
+        variables.border_title = "Variables (JSON)"
 
         with containers.VerticalScroll(id="results-container") as container:
             yield Static(id="results")
         container.border_title = "Output"
 
-    @on(TextArea.Changed)
+    @on(TextArea.Changed, "#editor")
     def on_markup_changed(self, event: TextArea.Changed) -> None:
+        self.update_markup()
+
+    def update_markup(self) -> None:
         results = self.query_one("#results", Static)
+        editor = self.query_one("#editor", TextArea)
         try:
-            results.update(event.text_area.text)
+            content = Content.from_markup(editor.text, **self.variables)
+            results.update(content)
         except Exception as error:
-            highlight = ReprHighlighter()
-            # results.update(highlight(str(error)))
             from rich.traceback import Traceback
 
             results.update(Traceback())
@@ -57,3 +78,21 @@ class MarkupPlayground(App):
             )
         else:
             self.query_one("#results-container").remove_class("-error")
+
+    def watch_variables(self, variables: dict[str, object]) -> None:
+        self.update_markup()
+
+    @on(TextArea.Changed, "#variables")
+    def on_variables_change(self, event: TextArea.Changed) -> None:
+        variables_text_area = self.query_one("#variables", TextArea)
+        try:
+            variables = json.loads(variables_text_area.text)
+        except Exception as error:
+            if not variables_text_area.has_class("-bad-json"):
+                self.notify(f"Bad JSON: ${error}", title="Variables", severity="error")
+                variables_text_area.add_class("-bad-json")
+        else:
+            if variables_text_area.has_class("-bad-json"):
+                variables_text_area.remove_class("-bad-json")
+                self.notify("JSON parsed correctly", title="Variables")
+            self.variables = variables

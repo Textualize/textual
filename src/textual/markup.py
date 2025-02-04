@@ -5,7 +5,8 @@ from textual.css.parse import substitute_references
 __all__ = ["MarkupError", "escape", "to_content"]
 
 import re
-from typing import TYPE_CHECKING, Callable, Match
+from string import Template
+from typing import TYPE_CHECKING, Callable, Mapping, Match
 
 from textual._context import active_app
 from textual.color import Color
@@ -271,12 +272,17 @@ def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
     return parsed_style
 
 
-def to_content(markup: str, style: str | Style = "") -> Content:
+def to_content(
+    markup: str,
+    style: str | Style = "",
+    template_variables: Mapping[str, object] | None = None,
+) -> Content:
     """Convert markup to Content.
 
     Args:
         markup: String containing markup.
         style: Optional base style.
+        template_variables: Mapping of string.Template variables
 
     Raises:
         MarkupError: If the markup is invalid.
@@ -286,18 +292,23 @@ def to_content(markup: str, style: str | Style = "") -> Content:
     """
     _rich_traceback_omit = True
     try:
-        return _to_content(markup, style)
+        return _to_content(markup, style, template_variables)
     except Exception as error:
         # Ensure all errors are wrapped in a MarkupError
         raise MarkupError(str(error)) from None
 
 
-def _to_content(markup: str, style: str | Style = "") -> Content:
+def _to_content(
+    markup: str,
+    style: str | Style = "",
+    template_variables: Mapping[str, object] | None = None,
+) -> Content:
     """Internal function to convert markup to Content.
 
     Args:
         markup: String containing markup.
         style: Optional base style.
+        template_variables: Mapping of string.Template variables
 
     Raises:
         MarkupError: If the markup is invalid.
@@ -310,6 +321,7 @@ def _to_content(markup: str, style: str | Style = "") -> Content:
 
     tokenizer = MarkupTokenizer()
     text: list[str] = []
+    text_append = text.append
     iter_tokens = iter(tokenizer(markup, ("inline", "")))
 
     style_stack: list[tuple[int, str, str]] = []
@@ -321,12 +333,23 @@ def _to_content(markup: str, style: str | Style = "") -> Content:
 
     normalize_markup_tag = Style._normalize_markup_tag
 
+    if template_variables is None:
+        process_text = lambda text: text
+
+    else:
+
+        def process_text(template_text: str, /) -> str:
+            if "$" in template_text:
+                return Template(template_text).safe_substitute(template_variables)
+            return template_text
+
     for token in iter_tokens:
 
         token_name = token.name
         if token_name == "text":
-            text.append(token.value)
-            position += len(token.value)
+            value = process_text(token.value.replace("\\[", "["))
+            text_append(value)
+            position += len(value)
 
         elif token_name == "open_tag":
             tag_text = []

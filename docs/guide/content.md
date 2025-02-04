@@ -112,7 +112,7 @@ Auto-closing tags recommended when it is clear which tag they are intended to cl
 
 ### Styles
 
-Tags may contain any number of the following tags:
+Tags may contain any number of the following values:
 
 | Style       | Abbreviation | Description                                                                                                                                               |
 | ----------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -266,9 +266,6 @@ For instance, the following create a clickable link:
 
 This will produce the following output:
 <code><pre><a href="https://www.willmcgugan.com">Visit my blog!</a></pre></code>
-
-
-
 
 ## Content class
 

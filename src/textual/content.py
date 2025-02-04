@@ -168,17 +168,18 @@ class Content(Visual):
         return markup
 
     @classmethod
-    def from_markup(cls, markup: str | Content) -> Content:
+    def from_markup(cls, markup: str | Content, **variables: object) -> Content:
         """Create content from Textual markup.
 
-        If `markup` is already Content, return it unmodified.
+        If `markup` is already a Content instance, return it unmodified.
 
         !!! note
-            Textual markup is not the same as Rich markup. Use [Text.parse] to parse Rich Console markup.
+            Textual markup is not the same as Rich markup. Use [Text.parse][rich.text.Text.parse] to parse Rich Console markup.
 
 
         Args:
             markup: Textual markup, or Content.
+            **variables: Optional template variables used
 
         Returns:
             New Content instance.
@@ -188,7 +189,7 @@ class Content(Visual):
             return markup
         from textual.markup import to_content
 
-        content = to_content(markup)
+        content = to_content(markup, template_variables=variables or None)
         return content
 
     @classmethod
