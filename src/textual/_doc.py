@@ -27,7 +27,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         _type = attrs.get("type", None)
         press = [*_press.split(",")] if _press else []
         if _type is not None:
-            press.extend(_type)
+            press.extend(_type.replace("\\t", "\t"))
         title = attrs.get("title")
 
         print(f"screenshotting {path!r}")

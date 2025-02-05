@@ -17,12 +17,15 @@ class MarkupPlayground(App):
         }
         layout: vertical;
         #editor {            
+            width: 2fr;
             height: 1fr;
             border: tab $primary;  
             padding: 1;
             margin: 1 1 0 0;
+            
         }
         #variables {
+            width: 1fr;
             height: 1fr;
             border: tab $primary;  
             padding: 1;
@@ -44,13 +47,14 @@ class MarkupPlayground(App):
         }
     }
     """
+    AUTO_FOCUS = "#editor"
 
     variables: reactive[dict[str, object]] = reactive({})
 
     def compose(self) -> ComposeResult:
         with containers.HorizontalScroll():
             yield (editor := TextArea(id="editor"))
-            yield (variables := TextArea(id="variables", language="json"))
+            yield (variables := TextArea("", id="variables", language="json"))
         editor.border_title = "Markup"
         variables.border_title = "Variables (JSON)"
 
@@ -92,7 +96,5 @@ class MarkupPlayground(App):
                 self.notify(f"Bad JSON: ${error}", title="Variables", severity="error")
                 variables_text_area.add_class("-bad-json")
         else:
-            if variables_text_area.has_class("-bad-json"):
-                variables_text_area.remove_class("-bad-json")
-                self.notify("JSON parsed correctly", title="Variables")
+            variables_text_area.remove_class("-bad-json")
             self.variables = variables

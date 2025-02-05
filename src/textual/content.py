@@ -18,7 +18,7 @@ import rich.repr
 from rich._wrap import divide_line
 from rich.cells import set_cell_size
 from rich.console import Console
-from rich.segment import Segment, Segments
+from rich.segment import Segment
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
@@ -169,13 +169,17 @@ class Content(Visual):
 
     @classmethod
     def from_markup(cls, markup: str | Content, **variables: object) -> Content:
-        """Create content from Textual markup.
+        """Create content from Textual markup, optionally combined with template variables.
 
-        If `markup` is already a Content instance, return it unmodified.
+        If `markup` is already a Content instance, it will be returned unmodified.
 
-        !!! note
-            Textual markup is not the same as Rich markup. Use [Text.parse][rich.text.Text.parse] to parse Rich Console markup.
+        See the guide on [Content](../guide/content.md#content-class) for more details.
 
+
+        Example:
+            ```python
+            content = Content.from_markup("Hello, [b]$name[/b]!", name="Will")
+            ```
 
         Args:
             markup: Textual markup, or Content.
@@ -186,6 +190,8 @@ class Content(Visual):
         """
         _rich_traceback_omit = True
         if isinstance(markup, Content):
+            if variables:
+                raise ValueError("A literal string is require to substitute variables.")
             return markup
         from textual.markup import to_content
 
@@ -289,14 +295,14 @@ class Content(Visual):
         """Compare to another Content object.
 
         Two Content objects are the same if their text and spans match.
-        Note that if you use the `==` operator to compare Content instances, it will only consider the plain text.
+        Note that if you use the `==` operator to compare Content instances, it will only consider the plain text portion of the content (and not the spans).
 
 
         Args:
             content: Content instance.
 
         Returns:
-            `True` if this is identical to `content`, otherwise False
+            `True` if this is identical to `content`, otherwise `False`.
         """
         if self is content:
             return True
@@ -348,7 +354,7 @@ class Content(Visual):
         tab_size: int = 8,
         selection: Selection | None = None,
         selection_style: Style | None = None,
-    ) -> list[FormattedLine]:
+    ) -> list[_FormattedLine]:
         """Wraps the text and applies formatting.
 
         Args:
@@ -363,7 +369,7 @@ class Content(Visual):
         Returns:
             List of formatted lines.
         """
-        output_lines: list[FormattedLine] = []
+        output_lines: list[_FormattedLine] = []
 
         if selection is not None:
             get_span = selection.get_span
@@ -384,16 +390,16 @@ class Content(Visual):
             if no_wrap and overflow == "fold":
                 cuts = list(range(0, line.cell_length, width))[1:]
                 new_lines = [
-                    FormattedLine(line, width, y=y, align=align)
+                    _FormattedLine(line, width, y=y, align=align)
                     for line in line.divide(cuts)
                 ]
             elif no_wrap:
                 if overflow == "ellipsis" and no_wrap:
                     line = line.truncate(width, ellipsis=True)
-                content_line = FormattedLine(line, width, y=y, align=align)
+                content_line = _FormattedLine(line, width, y=y, align=align)
                 new_lines = [content_line]
             else:
-                content_line = FormattedLine(line, width, y=y, align=align)
+                content_line = _FormattedLine(line, width, y=y, align=align)
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
                 divided_lines = content_line.content.divide(offsets)
                 divided_lines = [
@@ -401,7 +407,7 @@ class Content(Visual):
                     for line in divided_lines
                 ]
                 new_lines = [
-                    FormattedLine(
+                    _FormattedLine(
                         content.rstrip_end(width), width, offset, y, align=align
                     )
                     for content, offset in zip(divided_lines, [0, *offsets])
@@ -882,9 +888,9 @@ class Content(Visual):
         processing of the output.
 
         Args:
-            base_style (_type_, optional): The style used as a base. This will typically be the style of the widget underneath the content.
-            end (_type_, optional): Text to end the output, such as a new line.
-            parse_style: Method to parse a style. Use App.parse_style to apply CSS variables in styles.
+            base_style: The style used as a base. This will typically be the style of the widget underneath the content.
+            end: Text to end the output, such as a new line.
+            parse_style: Method to parse a style. Use `App.parse_style` to apply CSS variables in styles.
 
         Returns:
             An iterable of string and styles, which make up the content.
@@ -961,6 +967,15 @@ class Content(Visual):
     def render_segments(
         self, base_style: Style = Style.null(), end: str = ""
     ) -> list[Segment]:
+        """Render the Content in to a list of segments.
+
+        Args:
+            base_style: Base style for render (style under the content). Defaults to Style.null().
+            end: Character to end the segments with. Defaults to "".
+
+        Returns:
+            A list of segments.
+        """
         _Segment = Segment
         segments = [
             _Segment(text, (style.rich_style if style else None))
@@ -969,8 +984,21 @@ class Content(Visual):
         return segments
 
     def divide(self, offsets: Sequence[int]) -> list[Content]:
+        """Divide the content at the given offsets.
+
+        This will cut the content in to pieces, and return those pieces. Note that the number of pieces
+        return will be one greater than the number of cuts.
+
+        Args:
+            offsets: Sequence of offsets (in characters) of where to apply the cuts.
+
+        Returns:
+            List of Content instances which combined would be equal to the whole.
+        """
         if not offsets:
             return [self]
+
+        offsets = sorted(offsets)
 
         text = self.plain
         text_length = len(text)
@@ -1148,24 +1176,45 @@ class Content(Visual):
 
     def highlight_regex(
         self,
-        re_highlight: re.Pattern[str] | str,
+        highlight_regex: re.Pattern[str] | str,
+        *,
         style: Style,
+        maximum_highlights: int | None = None,
     ) -> Content:
+        """Apply a style to text that matches a regular expression.
+
+        Args:
+            highlight_regex: Regular expression as a string, or compiled.
+            style: Style to apply.
+            maximum_highlights: Maximum number of matches to highlight, or `None` for no maximum.
+
+        Returns:
+            new content.
+        """
         spans: list[Span] = self._spans.copy()
         append_span = spans.append
         _Span = Span
         plain = self.plain
-        if isinstance(re_highlight, str):
-            re_highlight = re.compile(re_highlight)
+        if isinstance(highlight_regex, str):
+            re_highlight = re.compile(highlight_regex)
+        count = 0
         for match in re_highlight.finditer(plain):
             start, end = match.span()
             if end > start:
                 append_span(_Span(start, end, style))
+            if (
+                maximum_highlights is not None
+                and (count := count + 1) >= maximum_highlights
+            ):
+                break
         return Content(self._text, spans)
 
 
-class FormattedLine:
-    """A line of content with additional formatting information."""
+class _FormattedLine:
+    """A line of content with additional formatting information.
+
+    This class is used internally within Content, and you are unlikely to need it an an app.
+    """
 
     def __init__(
         self,
@@ -1275,43 +1324,3 @@ class FormattedLine:
             if style is not None
         ]
         return segments
-
-
-if __name__ == "__main__":
-    from rich import print
-
-    TEXT = """I must not fear.
-Fear is the mind-killer.
-Fear is the little-death that brings total obliteration.
-I will face my fear.
-I will permit it to pass over me and through me.
-And when it has gone past, I will turn the inner eye to see its path.
-Where the fear has gone there will be nothing. Only I will remain."""
-
-    content = Content(TEXT)
-    content = content.stylize(
-        Style(Color.parse("rgb(50,50,80)"), Color.parse("rgba(255,255,255,0.7)"))
-    )
-
-    content = content.highlight_regex(
-        "F..r", Style(background=Color.parse("rgba(255, 255, 255, 0.3)"))
-    )
-
-    content = content.highlight_regex(
-        "is", Style(background=Color.parse("rgba(20, 255, 255, 0.3)"))
-    )
-
-    content = content.highlight_regex(
-        "the", Style(background=Color.parse("rgba(255, 20, 255, 0.3)"))
-    )
-
-    content = content.highlight_regex(
-        "will", Style(background=Color.parse("rgba(255, 255, 20, 0.3)"))
-    )
-
-    lines = content._wrap_and_format(40, align="full")
-    print(lines)
-    print("x" * 40)
-    for line in lines:
-        segments = Segments(line.render_segments(ANSI_DEFAULT, end="\n"))
-        print(segments)

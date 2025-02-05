@@ -29,8 +29,6 @@ Notice how the markup *tags* change the style in the first widget, but are left 
     1. With `markup=False`, tags have no effect and left in the output.
 
 
-
-
 ### Playground
 
 Textual comes with a markup playground where you can enter Textual markup and see the result's live.
@@ -42,10 +40,13 @@ python -m textual.markup
 
 You can experiment with markup by entering it in to the textarea at the top of the terminal, and seeing the results in the lower pane:
 
-```{.textual path="docs/examples/guide/content/playground.py", type="[i]Hello!"] lines=15}
+```{.textual path="docs/examples/guide/content/playground.py", type="[i]Hello!"] lines=16}
 ```
 
 You might find it helpful to try out some of the examples from this guide in the playground.
+
+!!! note "What are Variables?"
+    You may have noticed the "Variables" tab. This allows you to experiment with [variable substitution](#markup-variables).
 
 ### Tags
 
@@ -75,7 +76,7 @@ For example, the following makes just the first word in "Hello, World!" bold:
 
 Note how the tags change the style but are removed from the output:
 
-```{.textual path="docs/examples/guide/content/playground.py", type="[bold]Hello[/bold], World!" lines=15}
+```{.textual path="docs/examples/guide/content/playground.py", type="[bold]Hello[/bold], World!" lines=16}
 ```
 
 You can use any number of tags. 
@@ -88,7 +89,7 @@ For instance, the following combines the bold and italic styles:
 
 Here's the output:
 
-```{.textual path="docs/examples/guide/content/playground.py", type="[bold]Bold [italic]Bold and italic[/italic][/bold]" lines=15}
+```{.textual path="docs/examples/guide/content/playground.py", type="[bold]Bold [italic]Bold and italic[/italic][/bold]" lines=16}
 ```
 
 #### Auto-closing tags
@@ -142,7 +143,7 @@ However, the `[not bold]` tag disables bold until the corresponding `[/not bold]
 
 Here's what this markup will produce:
 
-```{.textual path="docs/examples/guide/content/playground.py" lines=15 type="[bold]This is bold [not bold]This is not bold[/not bold] This is bold."]}
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="[bold]This is bold [not bold]This is not bold[/not bold] This is bold."]}
 ```
 
 ### Colors
@@ -176,7 +177,7 @@ In the following example we have an alpha of 0.5, which will produce a color hal
 
 Here's the output:
 
-```{.textual path="docs/examples/guide/content/playground.py", type="[rgba(0, 255, 0, 0.5)]Faded green (and probably hard to read)[/]" lines=15}
+```{.textual path="docs/examples/guide/content/playground.py", type="[rgba(0, 255, 0, 0.5)]Faded green (and probably hard to read)[/]" lines=16}
 ```
 
 !!! warning
@@ -250,7 +251,7 @@ The following displays text in the 'warning' style on a muted 'warning' backgrou
 
 Here's the result of that markup:
 
-```{.textual path="docs/examples/guide/content/playground.py" lines=15 type="[$warning on $warning-muted]This is a warning![/]"]}
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="[$warning on $warning-muted]This is a warning![/]"]}
 ```
 
 ### Links
@@ -267,23 +268,61 @@ For instance, the following create a clickable link:
 This will produce the following output:
 <code><pre><a href="https://www.willmcgugan.com">Visit my blog!</a></pre></code>
 
+### Actions
+
+In addition to links, you can also markup content that runs [actions](./actions.md) when clicked.
+To do this create a style that starts with `@click=` and is followed by the action you wish to run.
+
+For instance, the following will highlight the word "bell", which plays the terminal bell sound when click:
+
+```
+Play the [@click=app.bell]bell[/]
+```
+
+Here's what it looks like:
+
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="Play the [@click=app.bell]bell[/]"]}
+```
+
+We've used an [auto-closing](#auto-closing-tags) to close the click action here. 
+If you do need to close the tag explicitly, you can omit the action:
+
+```
+Play the [@click=app.bell]bell[/@click=]
+```
+
+Actions may be combined with other styles, so you could set the style of the clickable link:
+
+```
+Play the [on $success 30% @click=app.bell]bell[/]
+```
+
+Here's what that looks like:
+
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="Play the [on $success 30% @click=app.bell]bell[/]"]}
+```
+
+
 ## Content class
 
 Under the hood, Textual will convert markup into a [Content][textual.content.Content] instance.
-You can also return Content directly from `render()`, which you may want to do if you require more advanced formatting beyond simple markup.
+You can also return a Content object directly from `render()`.
+This can give you more flexibility beyond the markup.
 
 To clarify, here's a render method that returns a string with markup:
 
 ```python
-def render(self) -> RenderResult:
-    return "[b]Hello, World![/b]"
+class WelcomeWidget(Widget):
+    def render(self) -> RenderResult:
+        return "[b]Hello, World![/b]"
 ```
 
 This is roughly the equivalent to the following code:
 
 ```python
-def render(self) -> RenderResult:
-    return Content.from_markup("[b]Hello, World![/b]")
+class WelcomeWidget(Widget):
+    def render(self) -> RenderResult:
+        return Content.from_markup("[b]Hello, World![/b]")
 ```
 
 ### Constructing content
@@ -318,9 +357,56 @@ content = content.stylize(7, 12, "bold")
 Note that `Content` is *immutable* and methods will return new instances rather than updating the current instance.
 
 
+### Markup variables
+
+You may be tempted to combine markup with Python's f-strings (or other string template system).
+Something along these lines:
+
+```python
+class WelcomeWidget(Widget):
+    def render(self) -> RenderResult:
+        name = "Will"
+        return f"Hello [bold]{name}[/bold]!"
+```
+
+While this is straightforward and intuitive, it can potentially break in subtle ways.
+If the 'name' variable contains square brackets, these may be interpreted as markup.
+For instance if the user entered their name at some point as "[magenta italic underline]Will is Cool!" then your app will display those styles where you didn't intend them to be.
+
+We can avoid this problem by relying on the [Content.from_markup][textual.content.Content.from_markup] method to insert the variables for us.
+If you supply variables as keyword arguments, these will be substituted in the markup using the same syntax as [string.Template](https://docs.python.org/3/library/string.html#template-strings).
+Any square brackets in the variables will be present in the output, but won't change the styles.
+
+Here's how we can fix the previous example:
+
+```python
+return Content.from_markup("hello [bold]$name[/bold]!", name=name)
+```
+
+You can experiment with this feature by entering a dictionary of variables in the variables text-area.
+
+Here's what that looks like:
+
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="hello [bold]$name[/bold]!\t{'name': '[magenta italic underline]Will is Cool!'}"]}
+```
+
 ## Rich renderables
 
-Textual supports Rich renderables, which means you can return any object that works with Rich, such as Rich's [Text](https://rich.readthedocs.io/en/latest/text.html) object.
+Textual supports Rich *renderables*, which means you can display any object that works with Rich, such as Rich's [Text](https://rich.readthedocs.io/en/latest/text.html) object.
 
-The Content class is generally preferred, as it supports more of Textual's features.
-If you already have a Text object and your code is working, there is no need to change it -- Textual won't be dropping Rich support.
+The Content class is preferred for simple text, as it supports more of Textual's features.
+But you can display any of the objects in the [Rich library](https://github.com/Textualize/rich) (or ecosystem) within a widget.
+
+Here's an example which displays its own code using Rich's [Syntax](https://rich.readthedocs.io/en/latest/syntax.html) object.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/content/renderables.py"}
+    ```
+
+=== "renderables.py"
+
+    ```python 
+    --8<-- "docs/examples/guide/content/renderables.py"
+    ```
+    

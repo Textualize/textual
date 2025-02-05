@@ -57,6 +57,24 @@ from textual.markup import MarkupError, to_content
                 ],
             ),
         ),
+        (
+            "[on red @click=app.bell]Click me",
+            Content(
+                "Click me",
+                spans=[
+                    Span(0, 8, "on red @click=app.bell"),
+                ],
+            ),
+        ),
+        (
+            "[on red @click=app.bell]Click me[/on red @click=]",
+            Content(
+                "Click me",
+                spans=[
+                    Span(0, 8, "on red @click=app.bell"),
+                ],
+            ),
+        ),
     ],
 )
 def test_to_content(markup: str, content: Content):
