@@ -24,7 +24,8 @@ Let's create a simple custom widget to display a greeting.
 --8<-- "docs/examples/guide/widgets/hello01.py"
 ```
 
-The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
+The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method.
+Textual will display whatever is returned from render in the [content](./content.md) area of your widget.
 
 Note that the text contains tags in square brackets, i.e. `[b]`.
 This is [Textual markup](./content.md#markup) which allows you to embed various styles within your content.
