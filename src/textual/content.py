@@ -10,7 +10,7 @@ This is more like the builtin str, and allows Textual to make some significant o
 from __future__ import annotations
 
 import re
-from functools import lru_cache, total_ordering
+from functools import cached_property, total_ordering
 from operator import itemgetter
 from typing import Callable, Iterable, NamedTuple, Sequence, Union
 
@@ -137,7 +137,7 @@ class Content(Visual):
     def __str__(self) -> str:
         return self._text
 
-    @property
+    @cached_property
     def markup(self) -> str:
         """Get Content markup to render this Text.
 
@@ -260,7 +260,7 @@ class Content(Visual):
         style: Style | str = "",
         cell_length: int | None = None,
     ) -> Content:
-        """Create a Content instance from a single styled piece of text.
+        """Create a Content instance from text and an optional style.
 
         Args:
             text: String content.
@@ -294,9 +294,9 @@ class Content(Visual):
     def is_same(self, content: Content) -> bool:
         """Compare to another Content object.
 
-        Two Content objects are the same if their text and spans match.
-        Note that if you use the `==` operator to compare Content instances, it will only consider the plain text portion of the content (and not the spans).
-
+        Two Content objects are the same if their text *and* spans match.
+        Note that if you use the `==` operator to compare Content instances, it will only consider
+        the plain text portion of the content (and not the spans).
 
         Args:
             content: Content instance.
@@ -427,6 +427,19 @@ class Content(Visual):
         selection: Selection | None = None,
         selection_style: Style | None = None,
     ) -> list[Strip]:
+        """Render the visual into an iterable of strips. Part of the Visual protocol.
+
+        Args:
+            rules: A mapping of style rules, such as the Widgets `styles` object.
+            width: Width of desired render.
+            height: Height of desired render or `None` for any height.
+            style: The base style to render on top of.
+            selection: Selection information, if applicable, otherwise `None`.
+            selection_style: Selection style if `selection` is not `None`.
+
+        Returns:
+            An list of Strips.
+        """
         if not width:
             return []
 
@@ -903,9 +916,9 @@ class Content(Visual):
                 yield end, base_style
             return
 
+        get_style: Callable[[str], Style]
         if parse_style is None:
 
-            @lru_cache(maxsize=1024)
             def get_style(style: str, /) -> Style:
                 """The default get_style method."""
                 try:

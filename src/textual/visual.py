@@ -124,6 +124,8 @@ class Visual(ABC):
             width: Width of desired render.
             height: Height of desired render or `None` for any height.
             style: The base style to render on top of.
+            selection: Selection information, if applicable, otherwise `None`.
+            selection_style: Selection style if `selection` is not `None`.
 
         Returns:
             An list of Strips.

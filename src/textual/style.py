@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from marshal import dumps, loads
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable, Mapping
 
 import rich.repr
 from rich.style import Style as RichStyle
@@ -216,7 +216,7 @@ class Style:
             variables: Optional mapping of CSS variables. `None` to get variables from the app.
 
         Returns:
-            _type_: _description_
+            New style.
         """
         from textual.markup import parse_style
 
@@ -385,8 +385,8 @@ class Style:
         iter_styles = iter(styles)
         return sum(iter_styles, next(iter_styles))
 
-    @property
-    def meta(self) -> dict[str, Any]:
+    @cached_property
+    def meta(self) -> Mapping[str, Any]:
         """Get meta information (can not be changed after construction)."""
         return {} if self._meta is None else loads(self._meta)
 
