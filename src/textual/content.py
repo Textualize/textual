@@ -1136,6 +1136,9 @@ class Content(Visual):
 
         Args:
             spaces (int): Number of spaces to add to the Text.
+
+        Returns:
+            New content with additional spaces at the end.
         """
         if spaces <= 0:
             return self
