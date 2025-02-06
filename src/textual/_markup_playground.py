@@ -1,6 +1,6 @@
 import json
 
-from textual import containers, on
+from textual import containers, events, on
 from textual.app import App, ComposeResult
 from textual.content import Content
 from textual.reactive import reactive
@@ -14,22 +14,29 @@ class MarkupPlayground(App):
     Screen {
         & > * {
             margin: 0 1;
+            height: 1fr;
         }
         layout: vertical;
         #editor {            
             width: 2fr;
             height: 1fr;
-            border: tab $primary;  
+            border: tab $foreground 50%;  
             padding: 1;
             margin: 1 1 0 0;
+            &:focus {
+                border: tab $primary;  
+            }
             
         }
         #variables {
             width: 1fr;
             height: 1fr;
-            border: tab $primary;  
+            border: tab $foreground 50%;  
             padding: 1;
             margin: 1 0 0 1;
+            &:focus {
+                border: tab $primary;  
+            }
         }
         #variables.-bad-json {
             border: tab $error;
@@ -52,13 +59,15 @@ class MarkupPlayground(App):
     variables: reactive[dict[str, object]] = reactive({})
 
     def compose(self) -> ComposeResult:
-        with containers.HorizontalScroll():
+        with containers.HorizontalGroup():
             yield (editor := TextArea(id="editor"))
             yield (variables := TextArea("", id="variables", language="json"))
         editor.border_title = "Markup"
         variables.border_title = "Variables (JSON)"
 
-        with containers.VerticalScroll(id="results-container") as container:
+        with containers.VerticalScroll(
+            id="results-container", can_focus=False
+        ) as container:
             yield Static(id="results")
         container.border_title = "Output"
 
@@ -92,9 +101,22 @@ class MarkupPlayground(App):
         try:
             variables = json.loads(variables_text_area.text)
         except Exception as error:
+            variables_text_area.add_class("-bad-json")
+            self.variables = {}
+        else:
+            variables_text_area.remove_class("-bad-json")
+            self.variables = variables
+
+    @on(events.DescendantBlur, "#variables")
+    def on_variables_blur(self) -> None:
+        variables_text_area = self.query_one("#variables", TextArea)
+        try:
+            variables = json.loads(variables_text_area.text)
+        except Exception as error:
             if not variables_text_area.has_class("-bad-json"):
                 self.notify(f"Bad JSON: ${error}", title="Variables", severity="error")
                 variables_text_area.add_class("-bad-json")
         else:
             variables_text_area.remove_class("-bad-json")
+            variables_text_area.text = json.dumps(variables, indent=4)
             self.variables = variables

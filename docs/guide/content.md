@@ -1,7 +1,7 @@
 # Content
 
-Custom widgets will typically implement a [`render()`][textual.widget.Widget.render] method which returns the *content* of the widget.
-In other words, the output that will be displayed within the widget's borders.
+The *content* of widget (displayed within the widget's borders) is typically specified in a call to [`Static.update`][textual.widgets.static.Static.update] or returned from [`render()`][textual.widget.Widget.render] in the case of [custom widgets](./widgets.md#custom-widgets).
+
 There are a few ways for you to specify this content.
 
 - Text &mdash; either plain text, or [markup](#markup).
@@ -13,6 +13,7 @@ In this chapter, we will cover all these methods.
 ## Markup
 
 When building a custom widget you can embed color and style information in the string returned from the Widget's [`render()`][textual.widget.Widget.render] method.
+Markup is specified as a string which contains 
 Text enclosed in square brackets (`[]`) won't appear in the output, but will modify the style of the text that follows.
 This is known as *Textual markup*.
 
@@ -380,7 +381,7 @@ class WelcomeWidget(Widget):
 
 While this is straightforward and intuitive, it can potentially break in subtle ways.
 If the 'name' variable contains square brackets, these may be interpreted as markup.
-For instance if the user entered their name at some point as "[magenta italic underline]Will is Cool!" then your app will display those styles where you didn't intend them to be.
+For instance if the user entered their name at some point as "[magenta italic]Will" then your app will display those styles where you didn't intend them to be.
 
 We can avoid this problem by relying on the [Content.from_markup][textual.content.Content.from_markup] method to insert the variables for us.
 If you supply variables as keyword arguments, these will be substituted in the markup using the same syntax as [string.Template](https://docs.python.org/3/library/string.html#template-strings).
@@ -396,7 +397,7 @@ You can experiment with this feature by entering a dictionary of variables in th
 
 Here's what that looks like:
 
-```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="hello [bold]$name[/bold]!\t{'name': '[magenta italic underline]Will is Cool!'}"]}
+```{.textual path="docs/examples/guide/content/playground.py" lines=20 columns=100 type='hello [bold]$name[/bold]!\t{"name": "[magenta italic]Will"}\t']}
 ```
 
 ## Rich renderables
