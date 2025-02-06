@@ -49,7 +49,7 @@ jobs:
         if: ${{ matrix.python-version == '3.8' }}
       - name: Upload snapshot report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: snapshot-report-textual
           path: snapshot_report.html
