@@ -1,6 +1,14 @@
 # Content
 
-Content may be returned from 
+Custom widgets will typically implement a [`render()`][textual.widget.Widget.render] method which returns the *content* of the widget.
+In other words, the output that will be displayed within the widget's borders.
+There are a few ways for you to specify this content.
+
+- Text &mdash; either plain text, or [markup](#markup).
+- [Content](#content-class) objects &mdash; for more advanced control over output.
+- Rich renderables &mdash; any object that may be printed with [Rich](https://rich.readthedocs.io/en/latest/).
+
+In this chapter, we will cover all these methods. 
 
 ## Markup
 
@@ -10,7 +18,7 @@ This is known as *Textual markup*.
 
 Before we explore Textual markup in detail, let's first demonstrate some of what it can do.
 In the following example, we have two widgets.
-The top has Textual markup enabled, and the bottom has Textual markup *disabled*.
+The top has Textual markup enabled, while the bottom widget has Textual markup *disabled*.
 
 Notice how the markup *tags* change the style in the first widget, but are left unaltered in the second:
 
@@ -46,6 +54,7 @@ You can experiment with markup by entering it in to the textarea at the top of t
 You might find it helpful to try out some of the examples from this guide in the playground.
 
 !!! note "What are Variables?"
+
     You may have noticed the "Variables" tab. This allows you to experiment with [variable substitution](#markup-variables).
 
 ### Tags
