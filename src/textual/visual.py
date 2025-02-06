@@ -66,6 +66,9 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
         obj: An object.
         markup: Enable markup.
 
+    Raises:
+        VisualError: If there is no Visual could be returned to render `obj`.
+
     Returns:
         A Visual instance to render the object, or `None` if there is no associated visual.
     """
@@ -101,7 +104,7 @@ def visualize(widget: Widget, obj: object, markup: bool = True) -> Visual:
 
 
 class Visual(ABC):
-    """A Textual 'visual' object.
+    """A Textual 'Visual' object.
 
     Analogous to a Rich renderable, but with support for transparency.
 
@@ -117,7 +120,7 @@ class Visual(ABC):
         selection: Selection | None = None,
         selection_style: Style | None = None,
     ) -> list[Strip]:
-        """Render the visual into an iterable of strips.
+        """Render the Visual into an iterable of strips.
 
         Args:
             rules: A mapping of style rules, such as the Widgets `styles` object.
@@ -133,9 +136,9 @@ class Visual(ABC):
 
     @abstractmethod
     def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
-        """Get optimal width of the visual to display its content.
+        """Get optimal width of the Visual to display its content.
 
-        The exact definition of "optimal width" is dependant on the visual, but
+        The exact definition of "optimal width" is dependant on the Visual, but
         will typically be wide enough to display output without cropping or wrapping,
         and without superfluous space.
 
@@ -150,7 +153,7 @@ class Visual(ABC):
 
     @abstractmethod
     def get_height(self, rules: RulesMap, width: int) -> int:
-        """Get the height of the visual if rendered with the given width.
+        """Get the height of the Visual if rendered at the given width.
 
         Args:
             rules: A mapping of style rules, such as the Widgets `styles` object.
@@ -317,7 +320,7 @@ class RichVisual(Visual):
 class Padding(Visual):
     """A Visual to pad another visual."""
 
-    def __init__(self, visual: Visual, spacing: Spacing):
+    def __init__(self, visual: Visual, spacing: Spacing) -> None:
         """
 
         Args:
