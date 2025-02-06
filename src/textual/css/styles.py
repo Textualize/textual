@@ -487,7 +487,7 @@ class StylesBase:
         VALID_TEXT_WRAP, "wrap"
     )
     text_overflow: StringEnumProperty[TextOverflow] = StringEnumProperty(
-        VALID_TEXT_OVERFLOW, "clip"
+        VALID_TEXT_OVERFLOW, "fold"
     )
 
     def __textual_animation__(

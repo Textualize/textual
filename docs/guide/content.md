@@ -1,10 +1,10 @@
 # Content
 
-The *content* of widget (displayed within the widget's borders) is typically specified in a call to [`Static.update`][textual.widgets.static.Static.update] or returned from [`render()`][textual.widget.Widget.render] in the case of [custom widgets](./widgets.md#custom-widgets).
+The *content* of widget (displayed within the widget's borders) is typically specified in a call to [`Static.update`][textual.widgets.Static.update] or returned from [`render()`][textual.widget.Widget.render] in the case of [custom widgets](./widgets.md#custom-widgets).
 
 There are a few ways for you to specify this content.
 
-- Text &mdash; either plain text, or [markup](#markup).
+- Text &mdash; a string containing [markup](#markup).
 - [Content](#content-class) objects &mdash; for more advanced control over output.
 - Rich renderables &mdash; any object that may be printed with [Rich](https://rich.readthedocs.io/en/latest/).
 
@@ -397,7 +397,7 @@ You can experiment with this feature by entering a dictionary of variables in th
 
 Here's what that looks like:
 
-```{.textual path="docs/examples/guide/content/playground.py" lines=20 columns=100 type='hello [bold]$name[/bold]!\t{"name": "[magenta italic]Will"}\t']}
+```{.textual path="docs/examples/guide/content/playground.py" lines=20 columns=110 type='hello [bold]$name[/bold]!\t{"name": "[magenta italic]Will"}\t']}
 ```
 
 ## Rich renderables
