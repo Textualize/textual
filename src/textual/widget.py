@@ -61,7 +61,7 @@ from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
 from textual.color import Color
-from textual.content import Content
+from textual.content import Content, ContentType
 from textual.css.match import match
 from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, WrongType
@@ -87,7 +87,7 @@ from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.selection import Selection
 from textual.strip import Strip
-from textual.visual import Style as VisualStyle
+from textual.style import Style as VisualStyle
 from textual.visual import Visual, visualize
 
 if TYPE_CHECKING:
@@ -244,14 +244,15 @@ class _BorderTitle:
         # The private name where we store the real data.
         self._internal_name = f"_{name}"
 
-    def __set__(self, obj: Widget, title: str | Text | None) -> None:
+    def __set__(self, obj: Widget, title: Text | ContentType | None) -> None:
         """Setting a title accepts a str, Text, or None."""
+        if isinstance(title, Text):
+            title = Content.from_rich_text(title)
         if title is None:
             setattr(obj, self._internal_name, None)
         else:
             # We store the title as Text
-            new_title = obj.render_str(title)
-            new_title.expand_tabs(4)
+            new_title = obj.render_str(title).expand_tabs(4)
             new_title = new_title.split()[0]
             setattr(obj, self._internal_name, new_title)
         obj.refresh()
@@ -364,9 +365,9 @@ class Widget(DOMNode):
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a horizontal scrollbar?"""
 
-    border_title: str | Text | None = _BorderTitle()  # type: ignore
+    border_title = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""
-    border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
+    border_subtitle = _BorderTitle()
     """A title to show in the bottom border (if there is one)."""
 
     # Default sort order, incremented by constructor
@@ -398,6 +399,7 @@ class Widget(DOMNode):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        markup: bool = True,
     ) -> None:
         """Initialize a Widget.
 
@@ -408,6 +410,7 @@ class Widget(DOMNode):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
+        self._render_markup = markup
         _null_size = NULL_SIZE
         self._size = _null_size
         self._container_size = _null_size
@@ -425,8 +428,8 @@ class Widget(DOMNode):
         self._horizontal_scrollbar: ScrollBar | None = None
         self._scrollbar_corner: ScrollBarCorner | None = None
 
-        self._border_title: Text | None = None
-        self._border_subtitle: Text | None = None
+        self._border_title: Content | None = None
+        self._border_subtitle: Content | None = None
 
         self._layout_cache: dict[str, object] = {}
         """A dict that is refreshed when the widget is resized / refreshed."""
@@ -641,7 +644,7 @@ class Widget(DOMNode):
         return self._cover_widget if self._cover_widget is not None else self
 
     @property
-    def selection(self) -> Selection | None:
+    def text_selection(self) -> Selection | None:
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
@@ -1093,23 +1096,26 @@ class Widget(DOMNode):
 
         return visual_style
 
-    def render_str(self, text_content: str | Text) -> Text:
-        """Convert str into a Text object.
+    @overload
+    def render_str(self, text_content: str) -> Content: ...
 
-        If you pass in an existing Text object it will be returned unaltered.
+    @overload
+    def render_str(self, text_content: Content) -> Content: ...
+
+    def render_str(self, text_content: str | Content) -> Content | Text:
+        """Convert str into a [Content][textual.content.Content] instance.
+
+        If you pass in an existing Content instance it will be returned unaltered.
 
         Args:
-            text_content: Text or str.
+            text_content: Content or str.
 
         Returns:
-            A text object.
+            Content object.
         """
-        text = (
-            Text.from_markup(text_content)
-            if isinstance(text_content, str)
-            else text_content
-        )
-        return text
+        if isinstance(text_content, Content):
+            return text_content
+        return Content.from_markup(text_content)
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -1624,7 +1630,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         visual = self._render()
-        width = visual.get_optimal_width(container.width)
+        width = visual.get_optimal_width(self, container.width)
 
         if self.expand:
             width = max(container.width, width)
@@ -1663,7 +1669,7 @@ class Widget(DOMNode):
                 return self._content_height_cache[1]
 
             visual = self._render()
-            height = visual.get_height(width)
+            height = visual.get_height(self.styles, width)
             self._content_height_cache = (cache_key, height)
 
         return height
@@ -1671,6 +1677,8 @@ class Widget(DOMNode):
     def watch_hover_style(
         self, previous_hover_style: Style, hover_style: Style
     ) -> None:
+        # TODO: This will cause the widget to refresh, even when there are no links
+        # Can we avoid this?
         if self.auto_links:
             self.highlight_link_id = hover_style.link_id
 
@@ -3863,6 +3871,7 @@ class Widget(DOMNode):
             line = self._render_cache.lines[y]
         except IndexError:
             line = Strip.blank(self.size.width, self.rich_style)
+
         return line
 
     def render_lines(self, crop: Region) -> list[Strip]:
@@ -3942,7 +3951,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-        self._layout_cache.clear()
+
         if layout:
             self._layout_required = True
             for ancestor in self.ancestors:
@@ -3960,6 +3969,7 @@ class Widget(DOMNode):
             self.check_idle()
             return self
 
+        self._layout_cache.clear()
         if repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()
@@ -4026,22 +4036,24 @@ class Widget(DOMNode):
                 yield
 
     def render(self) -> RenderResult:
-        """Get text or Rich renderable for this widget.
+        """Get [content](/guide/content) for the widget.
 
-        Implement this for custom widgets.
+        Implement this method in a subclass for custom widgets.
+
+        This method should return [markup](/guide/content#markup), a [Content][textual.content.Content] object, or a [Rich](https://github.com/Textualize/rich) renderable.
 
         Example:
             ```python
-            from textual.app import RenderableType
+            from textual.app import RenderResult
             from textual.widget import Widget
 
             class CustomWidget(Widget):
-                def render(self) -> RenderableType:
+                def render(self) -> RenderResult:
                     return "Welcome to [bold red]Textual[/]!"
             ```
 
         Returns:
-            Any renderable.
+            A string or object to render as the widget's content.
         """
 
         if self.is_container:
@@ -4062,7 +4074,7 @@ class Widget(DOMNode):
         if cached_visual is not None:
             assert isinstance(cached_visual, Visual)
             return cached_visual
-        visual = visualize(self, self.render())
+        visual = visualize(self, self.render(), markup=self._render_markup)
         self._layout_cache[cache_key] = visual
         return visual
 

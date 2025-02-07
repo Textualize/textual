@@ -48,9 +48,9 @@ from textual.fuzzy import Matcher
 from textual.message import Message
 from textual.reactive import var
 from textual.screen import Screen, SystemModalScreen
+from textual.style import Style as VisualStyle
 from textual.timer import Timer
 from textual.types import IgnoreReturnCallbackType
-from textual.visual import Style as VisualStyle
 from textual.visual import VisualType
 from textual.widget import Widget
 from textual.widgets import Button, Input, LoadingIndicator, OptionList, Static
@@ -1101,13 +1101,16 @@ class CommandPalette(SystemModalScreen[None]):
             def build_prompt() -> Iterable[Content]:
                 """Generator for prompt content."""
                 assert hit is not None
-                yield Content.from_rich_text(hit.prompt)
+                if isinstance(hit.prompt, Text):
+                    yield Content.from_rich_text(hit.prompt)
+                else:
+                    yield Content.from_markup(hit.prompt)
                 # Optional help text
                 if hit.help:
                     help_style = VisualStyle.from_styles(
                         self.get_component_styles("command-palette--help-text")
                     )
-                    yield Content.from_rich_text(hit.help).stylize_before(help_style)
+                    yield Content.from_markup(hit.help).stylize_before(help_style)
 
             prompt = Content("\n").join(build_prompt())
 

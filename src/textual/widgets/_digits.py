@@ -77,7 +77,7 @@ class Digits(Widget):
     def render(self) -> RenderResult:
         """Render digits."""
         rich_style = self.rich_style
-        if self.selection:
+        if self.text_selection:
             rich_style += self.selection_style
         digits = DigitsRenderable(self._value, rich_style)
         text_align = self.styles.text_align

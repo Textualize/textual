@@ -134,7 +134,7 @@ This code produces the following result.
 ```{.textual path="docs/examples/guide/styles/dimensions01.py"}
 ```
 
-Note how the text wraps in the widget, and is cropped because it doesn't fit in the space provided.
+Note how the text wraps, but doesn't fit in the 10 lines provided, resulting in the last line being omitted entirely.
 
 #### Auto dimensions
 
@@ -189,7 +189,7 @@ With the width set to `"50%"` and the height set to `"80%"`, the widget will kee
 
 Percentage units can be problematic for some relative values. For instance, if we want to divide the screen into thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which are often better than percentage-based units for these situations.
 
-When specifying `fr` units for a given dimension, Textual will divide the available space by the sum of the `fr` units on that dimension. That space will then be divided amongst the widgets as a proportion of their individual `fr` values.
+When specifying `fr` units for a given dimension, Textual will divide the available space by the sum of the `fr` units for that dimension. That space is then assigned according to each widget's `fr` values.
 
 Let's look at an example. We will create two widgets, one with a height of `"2fr"` and one with a height of `"1fr"`.
 
@@ -197,14 +197,18 @@ Let's look at an example. We will create two widgets, one with a height of `"2fr
 --8<-- "docs/examples/guide/styles/dimensions04.py"
 ```
 
-The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height style is `1fr` so its screen height will be one third. Here's what that looks like.
+The total `fr` units for height is 3.
+The first widget has a height ot `2fr`, which results in the height being two thirds of the total height.
+The second widget has a height of `1fr` which makes it take up the remaining third of the height.
+Here's what that looks like.
 
 ```{.textual path="docs/examples/guide/styles/dimensions04.py"}
 ```
 
 ### Maximum and minimums
 
-The same units may also be used to set limits on a dimension. The following styles set minimum and maximum sizes and can accept any of the values used in width and height.
+The same units may also be used to set limits on a dimension.
+The following styles set minimum and maximum sizes and can accept any of the values used in width and height.
 
 - [min-width](../styles/min_width.md) sets a minimum width.
 - [max-width](../styles/max_width.md) sets a maximum width.
@@ -345,12 +349,12 @@ Notice how each widget has an additional two rows and columns around the border.
 ```{.textual path="docs/examples/guide/styles/margin01.py"}
 ```
 
-!!! note
+!!! note "Margins overlap"
 
     In the above example both widgets have a margin of 2, but there are only 2 lines of space between the widgets. This is because margins of consecutive widgets *overlap*. In other words when there are two widgets next to each other Textual picks the greater of the two margins.
 
 ## More styles
 
-We've covered the most fundamental styles used by Textual apps, but there are many more which you can use to customize many aspects of how your app looks. See the [Styles reference](../styles/index.md) for a comprehensive list.
+We've covered some fundamental styles used by Textual apps, but there are many more which you can use to customize all aspects of how your app looks. See the [Styles reference](../styles/index.md) for a comprehensive list.
 
 In the next chapter we will discuss Textual CSS which is a powerful way of applying styles to widgets that keeps your code free of style attributes.

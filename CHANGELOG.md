@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added App.ALLOW_SELECT for a global switch to disable text selection https://github.com/Textualize/textual/pull/5409
 - Added `DOMNode.query_ancestor` https://github.com/Textualize/textual/pull/5409
 - Added selection to Log widget https://github.com/Textualize/textual/pull/5467
+- Added `text-wrap` and `text-overflow` CSS values https://github.com/Textualize/textual/pull/5485
+- Added Textual markup to replace Rich markup https://github.com/Textualize/textual/pull/5485
+- Added `Content.from_markup` https://github.com/Textualize/textual/pull/5485
 
 ### Fixed
 

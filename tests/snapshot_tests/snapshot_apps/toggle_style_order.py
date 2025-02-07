@@ -12,7 +12,7 @@ class CheckboxApp(App):
 
     def compose(self):
         yield Checkbox("[red bold]This is just[/] some text.")
-        yield Label("[red bold]This is just[/] some text.")
+        yield Label("[bold red]This is just[/] some text.")
 
 
 if __name__ == "__main__":

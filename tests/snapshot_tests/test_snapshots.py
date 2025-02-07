@@ -183,7 +183,8 @@ def test_input_setting_value(snap_compare):
 def test_input_cursor(snap_compare):
     """The first input should say こんにちは.
     The second input should say こんにちは, with a cursor on the final character (double width).
-    Note that this might render incorrectly in the SVG output - the letters may overlap."""
+    Note that this might render incorrectly in the SVG output - the letters may overlap.
+    """
 
     class InputApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -2078,7 +2079,7 @@ def test_ansi(snap_compare):
         """
 
         def compose(self) -> ComposeResult:
-            yield Label("[red]Red[/] [magenta]Magenta[/]")
+            yield Label("[ansi_red]Red[/] [ansi_magenta]Magenta[/]")
 
     app = ANSIApp(ansi_color=True)
     assert snap_compare(app)
@@ -2096,7 +2097,7 @@ def test_ansi_command_palette(snap_compare):
         """
 
         def compose(self) -> ComposeResult:
-            yield Label("[red]Red[/] [magenta]Magenta[/] " * 200)
+            yield Label("[ansi_red]Red[/] [ansi_magenta]Magenta[/] " * 200)
 
         def on_mount(self) -> None:
             self.action_command_palette()
@@ -2886,14 +2887,17 @@ def test_select_width_auto(snap_compare):
 
 def test_markup_command_list(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5276
-    You should see a command list, with console markup applied to the action name and help text."""
+    You should see a command list, with console markup applied to the action name and help text.
+    """
 
     class MyApp(App):
         def on_mount(self) -> None:
             self.search_commands(
                 [
                     SimpleCommand(
-                        "Hello [u green]World", lambda: None, "Help [u red]text"
+                        "Hello [u ansi_green]World",
+                        lambda: None,
+                        "Help [u ansi_red]text",
                     )
                 ]
             )
@@ -2945,7 +2949,8 @@ def test_app_resize_order(snap_compare):
 
 def test_add_remove_tabs(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5215
-    You should see a TabbedContent with three panes, entitled 'tab-2', 'New tab' and 'New tab'"""
+    You should see a TabbedContent with three panes, entitled 'tab-2', 'New tab' and 'New tab'
+    """
 
     class ExampleApp(App):
         BINDINGS = [
@@ -2992,7 +2997,8 @@ def test_click_expand(snap_compare):
 
 def test_disable_command_palette(snap_compare):
     """Test command palette may be disabled by check_action.
-    You should see a footer with an enabled binding, and the command palette binding greyed out."""
+    You should see a footer with an enabled binding, and the command palette binding greyed out.
+    """
 
     class FooterApp(App):
         BINDINGS = [("b", "bell", "Bell")]
@@ -3047,7 +3053,8 @@ def test_border_tab(snap_compare):
 
 def test_dock_align(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5345
-    You should see a blue panel aligned to the top right of the screen, with a centered button."""
+    You should see a blue panel aligned to the top right of the screen, with a centered button.
+    """
 
     class MainContainer(Static):
         def compose(self):
@@ -3319,7 +3326,7 @@ def test_static_markup(snap_compare):
     You should see 3 labels.
 
     This first label contains an invalid style, and should have tags removed.
-    The second label should have the word "markup" boldened.
+    The second label should have the word "markup" emboldened.
     The third label has markup disabled, and should show tags without styles.
     """
 
@@ -3335,7 +3342,8 @@ def test_static_markup(snap_compare):
 def test_arbitrary_selection_double_cell(snap_compare):
     """Check that selection understands double width cells.
 
-    You should see a smiley face followed by 'Hello World!', where Hello is highlighted."""
+    You should see a smiley face followed by 'Hello World!', where Hello is highlighted.
+    """
 
     class LApp(App):
         def compose(self) -> ComposeResult:
@@ -3348,3 +3356,68 @@ def test_arbitrary_selection_double_cell(snap_compare):
         await pilot.pause()
 
     assert snap_compare(LApp(), run_before=run_before)
+
+
+def test_markup(snap_compare):
+    """Check markup rendering, text in test should match the markup."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markup.py")
+
+
+def test_no_wrap(snap_compare):
+    """Test no wrap. You should see exactly two lines. The first is cropped, the second is
+    cropped with an ellipsis symbol."""
+
+    TEXT = """I must not fear. Fear is the mind-killer. Fear is the little-death that brings total obliteration. I will face my fear."""
+
+    class NoWrapApp(App):
+        CSS = """
+        Label {
+            max-width: 100vw;
+            text-wrap: nowrap;
+        }
+        #label2 {
+            text-overflow: ellipsis;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label(TEXT, id="label1")
+            yield Label(TEXT, id="label2")
+
+    assert snap_compare(NoWrapApp())
+
+
+def test_overflow(snap_compare):
+    """Test overflow. You should see three labels across 4 lines. The first with overflow clip,
+    the second with overflow ellipsis, and the last with overflow fold."""
+
+    TEXT = "FOO " + "FOOBARBAZ" * 100
+
+    class OverflowApp(App):
+        CSS = """
+        Label {
+            max-width: 100vw;            
+        }
+        #label1 {
+            # Overflow will be cropped
+            text-overflow: clip;
+            background: blue 20%;
+        }
+        #label2 {
+            # Like clip, but last character will be an ellipsis
+            text-overflow: ellipsis;
+            background: green 20%;
+        }
+        #label3 {
+            # Overflow will fold on to subsequence lines
+            text-overflow: fold;
+            background: red 20%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label(TEXT, id="label1")
+            yield Label(TEXT, id="label2")
+            yield Label(TEXT, id="label3")
+
+    assert snap_compare(OverflowApp())

@@ -320,8 +320,8 @@ class Log(ScrollView, can_focus=True):
         Returns:
             An uncropped Strip.
         """
-        selection = self.selection
-        if y in self._render_line_cache and self.selection is None:
+        selection = self.text_selection
+        if y in self._render_line_cache and selection is None:
             return self._render_line_cache[y]
 
         _line = self._process_line(self._lines[y])

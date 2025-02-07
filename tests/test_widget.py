@@ -1,7 +1,6 @@
 from operator import attrgetter
 
 import pytest
-from rich.text import Text
 
 from textual import events
 from textual._node_list import DuplicateIds
@@ -317,11 +316,11 @@ async def test_remove_unmounted():
 
 def test_render_str() -> None:
     widget = Label()
-    assert widget.render_str("foo") == Text("foo")
-    assert widget.render_str("[b]foo") == Text.from_markup("[b]foo")
+    assert widget.render_str("foo") == Content("foo")
+    assert widget.render_str("[b]foo") == Content.from_markup("[b]foo")
     # Text objects are passed unchanged
-    text = Text("bar")
-    assert widget.render_str(text) is text
+    content = Content("bar")
+    assert widget.render_str(content) is content
 
 
 async def test_compose_order() -> None:

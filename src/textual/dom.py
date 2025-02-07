@@ -47,6 +47,7 @@ from textual.css.tokenize import IDENTIFIER
 from textual.css.tokenizer import TokenError
 from textual.message_pump import MessagePump
 from textual.reactive import Reactive, ReactiveError, _Mutated, _watch
+from textual.style import Style as VisualStyle
 from textual.timer import Timer
 from textual.walk import walk_breadth_first, walk_depth_first
 from textual.worker_manager import WorkerManager
@@ -1087,8 +1088,8 @@ class DOMNode(MessagePump):
 
     def _get_title_style_information(
         self, background: Color
-    ) -> tuple[Color, Color, Style]:
-        """Get a Rich Style object for for titles.
+    ) -> tuple[Color, Color, VisualStyle]:
+        """Get a Visual Style object for for titles.
 
         Args:
             background: The background color.
@@ -1096,6 +1097,7 @@ class DOMNode(MessagePump):
         Returns:
             A Rich style.
         """
+
         styles = self.styles
         if styles.auto_border_title_color:
             color = background.get_contrast_text(styles.border_title_color.a)
@@ -1104,12 +1106,12 @@ class DOMNode(MessagePump):
         return (
             color,
             styles.border_title_background,
-            styles.border_title_style,
+            VisualStyle.from_rich_style(styles.border_title_style),
         )
 
     def _get_subtitle_style_information(
         self, background: Color
-    ) -> tuple[Color, Color, Style]:
+    ) -> tuple[Color, Color, VisualStyle]:
         """Get a Rich Style object for for titles.
 
         Args:
@@ -1126,7 +1128,7 @@ class DOMNode(MessagePump):
         return (
             color,
             styles.border_subtitle_background,
-            styles.border_subtitle_style,
+            VisualStyle.from_rich_style(styles.border_subtitle_style),
         )
 
     @property

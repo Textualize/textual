@@ -195,6 +195,9 @@ The `TimeDisplay` is currently very simple, all it does is extend `Digits` witho
 
 The `Stopwatch` widget class extends the `HorizontalGroup` container class, which will arrange its children into a horizontal row. The Stopwatch's `compose()` adds those children, which correspond to the components from the sketch above.
 
+!!! tip "Coordinating widgets"
+
+    If you are building custom widgets of your own, be sure to see guide on [coordinating widgets](./guide/widgets.md#coordinating-widgets).
 
 #### The buttons
 

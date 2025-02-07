@@ -4198,6 +4198,12 @@ class App(Generic[ReturnType], DOMNode):
         except NoMatches:
             self.mount(HelpPanel())
 
+    def action_notify(
+        self, message: str, title: str = "", severity: str = "information"
+    ) -> None:
+        """Show a notification."""
+        self.notify(message, title=title, severity=severity)
+
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:

@@ -3,16 +3,16 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import TYPE_CHECKING, Iterable, Tuple, cast
 
-from rich.console import Console
 from rich.segment import Segment
-from rich.style import Style
-from rich.text import Text
 
 from textual.color import Color
 from textual.css.types import AlignHorizontal, EdgeStyle, EdgeType
+from textual.style import Style
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
+
+    from textual.content import Content
 
 INNER = 1
 OUTER = 2
@@ -288,10 +288,10 @@ def get_box(
     outer = outer_style + style
 
     styles = (
-        inner,
-        outer,
-        Style.from_color(inner.color, outer.bgcolor) + REVERSE_STYLE,
-        Style.from_color(outer.color, inner.bgcolor) + REVERSE_STYLE,
+        inner.rich_style,
+        outer.rich_style,
+        Style(outer.background, inner.foreground, reverse=True).rich_style,
+        Style(inner.background, outer.foreground, reverse=True).rich_style,
     )
 
     return (
@@ -314,14 +314,13 @@ def get_box(
 
 
 def render_border_label(
-    label: tuple[Text, Style],
+    label: tuple[Content, Style],
     is_title: bool,
     name: EdgeType,
     width: int,
     inner_style: Style,
     outer_style: Style,
     style: Style,
-    console: Console,
     has_left_corner: bool,
     has_right_corner: bool,
 ) -> Iterable[Segment]:
@@ -357,16 +356,15 @@ def render_border_label(
 
     text_label, label_style = label
 
-    if not text_label.cell_len or width <= cells_reserved:
+    if not text_label.cell_length or width <= cells_reserved:
         return
 
-    text_label = text_label.copy()
-    text_label.truncate(width - cells_reserved, overflow="ellipsis")
+    text_label = text_label.truncate(width - cells_reserved, ellipsis=True)
     if has_left_corner:
-        text_label.pad_left(1)
+        text_label = text_label.pad_left(1)
     if has_right_corner:
-        text_label.pad_right(1)
-    text_label.stylize_before(label_style)
+        text_label = text_label.pad_right(1)
+    text_label = text_label.stylize_before(label_style)
 
     label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
     flip_top, flip_bottom = BORDER_TITLE_FLIP.get(name, (False, False))
@@ -380,19 +378,16 @@ def render_border_label(
     elif label_style_location == 1:
         base_style = outer
     elif label_style_location == 2:
-        base_style = Style.from_color(inner.color, outer.bgcolor) + REVERSE_STYLE
+        base_style = Style(outer.background, inner.foreground, reverse=True)
     elif label_style_location == 3:
-        base_style = Style.from_color(outer.color, inner.bgcolor) + REVERSE_STYLE
+        base_style = Style(inner.background, outer.foreground, reverse=True)
     else:
         assert False
 
     if (flip_top and is_title) or (flip_bottom and not is_title):
-        base_style = base_style.without_color + Style.from_color(
-            base_style.bgcolor, base_style.color
-        )
+        base_style = base_style.without_color + Style(reverse=True)
 
-    text_label.stylize_before(base_style + label_style)
-    segments = text_label.render(console)
+    segments = text_label.render_segments(base_style)
     yield from segments
 
 

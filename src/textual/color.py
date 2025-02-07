@@ -250,7 +250,7 @@ class Color(NamedTuple):
         Returns:
             A color object as used by Rich.
         """
-        r, g, b, _a, ansi, _ = self
+        r, g, b, a, ansi, _ = self
         if ansi is not None:
             return RichColor.parse("default") if ansi < 0 else RichColor.from_ansi(ansi)
         return RichColor(
@@ -330,6 +330,8 @@ class Color(NamedTuple):
         r, g, b, a, ansi, auto = self
         if auto:
             alpha_percentage = clamp(a, 0.0, 1.0) * 100.0
+            if alpha_percentage == 100:
+                return "auto"
             if not alpha_percentage % 1:
                 return f"auto {int(alpha_percentage)}%"
             return f"auto {alpha_percentage:.1f}%"
@@ -380,8 +382,8 @@ class Color(NamedTuple):
         """
         if self.ansi is not None:
             return self
-        r, g, b, a, _, _ = self
-        return Color(r, g, b, a * alpha)
+        r, g, b, a, _ansi, auto = self
+        return Color(r, g, b, a * alpha, auto=auto)
 
     @lru_cache(maxsize=1024)
     def blend(
@@ -453,6 +455,15 @@ class Color(NamedTuple):
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
             return self.blend(other, other.a, 1.0)
+        elif other is None:
+            return self
+        return NotImplemented
+
+    def __radd__(self, other: object) -> Color:
+        if isinstance(other, Color):
+            return self.blend(other, other.a, 1.0)
+        elif other is None:
+            return self
         return NotImplemented
 
     @classmethod
