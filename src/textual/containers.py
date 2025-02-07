@@ -85,6 +85,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
         can_maximize: bool | None = None,
     ) -> None:
         """
+        Construct a scrollable container.
 
         Args:
             *children: Child widgets.
@@ -242,7 +243,7 @@ class Grid(Widget, inherit_bindings=False):
 
 
 class ItemGrid(Widget, inherit_bindings=False):
-    """A container with grid layout."""
+    """A container with grid layout and automatic columns."""
 
     DEFAULT_CSS = """
     ItemGrid {
@@ -268,6 +269,7 @@ class ItemGrid(Widget, inherit_bindings=False):
         regular: bool = False,
     ) -> None:
         """
+        Construct a ItemGrid.
 
         Args:
             *children: Child widgets.
