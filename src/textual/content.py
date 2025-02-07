@@ -320,7 +320,7 @@ class Content(Visual):
                 if part.spans:
                     spans.extend(
                         [
-                            Span(start + position, end + position, style)
+                            _Span(start + position, end + position, style)
                             for start, end, style in part.spans
                         ]
                     )
