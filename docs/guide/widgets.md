@@ -125,7 +125,7 @@ Text in a widget may be marked up with links which perform an action when clicke
 Links in markup use the following format:
 
 ```
-"Click [@click='app.bell']Me[/]"
+"Click [@click=app.bell]Me[/]"
 ```
 
 The `@click` tag introduces a click handler, which runs the `app.bell` action.

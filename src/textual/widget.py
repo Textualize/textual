@@ -4036,10 +4036,11 @@ class Widget(DOMNode):
                 yield
 
     def render(self) -> RenderResult:
-        """Get [content](./guide/content) for the widget.
+        """Get [content](/guide/content) for the widget.
 
-        Implement this for custom widgets.
-        This method should return a string, a [Content][textual.content.Content] object, or a [Rich](https://github.com/Textualize/rich) renderable.
+        Implement this method in a subclass for custom widgets.
+
+        This method should return [markup](/guide/content#markup), a [Content][textual.content.Content] object, or a [Rich](https://github.com/Textualize/rich) renderable.
 
         Example:
             ```python
