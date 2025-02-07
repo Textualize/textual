@@ -51,5 +51,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: snapshot-report-textual
+          name: snapshot-report-textual2
           path: snapshot_report.html
