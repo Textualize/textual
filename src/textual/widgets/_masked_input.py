@@ -636,7 +636,7 @@ class MaskedInput(Input, can_focus=True):
             self.value, self.cursor_position = new_value_cursor_position
 
         last_cursor_position = self.cursor_position
-        while self.cursor_position < end:
+        while self.cursor_position < min(end, len(self.value)):
             self._template.delete_at_position()
             self._template.move_cursor(1)
         self.cursor_position = last_cursor_position
