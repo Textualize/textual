@@ -195,3 +195,24 @@ def test_truncate():
     assert content.truncate(15).markup == "[red]Hello World[/red]"
     # Truncate larger with padding increases size
     assert content.truncate(15, pad=True).markup == "[red]Hello World[/red]    "
+
+
+def test_assemble():
+    """Test Content.assemble constructor."""
+    content = Content.assemble(
+        "Assemble: ",  # Simple text
+        Content.from_markup(
+            "pieces of [red]text[/red] or [blue]content[/blue] into "
+        ),  # Other Content
+        ("a single Content instance", "underline"),  # A tuple of text and a style
+    )
+    assert (
+        content.plain
+        == "Assemble: pieces of text or content into a single Content instance"
+    )
+    print(content.spans)
+    assert content.spans == [
+        Span(20, 24, style="red"),
+        Span(28, 35, style="blue"),
+        Span(41, 66, style="underline"),
+    ]

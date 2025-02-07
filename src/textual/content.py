@@ -276,6 +276,59 @@ class Content(Visual):
         new_content = cls(text, [Span(0, span_length, style)], span_length)
         return new_content
 
+    @classmethod
+    def assemble(
+        cls, *parts: str | Content | tuple[str, str], end: str = ""
+    ) -> Content:
+        """Construct new content from string, content, or tuples of (TEXT, STYLE).
+
+        This is an efficient way of constructing Content composed of smaller pieces of
+        text and / or other Content objects.
+
+        Example:
+            ```python
+            content = Content.assemble(
+                Content.from_markup("[b]assemble[/b]: "),  # Other content
+                "pieces of text or content into a",  # Simple string of text
+                ("a single Content instance", "underline"),  # A tuple of text and a style
+            )
+            ```
+
+        Args:
+            *parts: Parts to join to gether. A *part* may be a simple string, another Content
+            instance, or tuple containing text and a style.
+            end: Optional end to the Content.
+        """
+        text: list[str] = []
+        spans: list[Span] = []
+        _Span = Span
+        text_append = text.append
+
+        position: int = 0
+        for part in parts:
+            if isinstance(part, str):
+                text_append(part)
+                position += len(part)
+            elif isinstance(part, tuple):
+                part_text, part_style = part
+                text_append(part_text)
+                if part_style:
+                    spans.append(_Span(position, position + len(part_text), part_style))
+                position += len(part_text)
+            elif isinstance(part, Content):
+                text_append(part.plain)
+                if part.spans:
+                    spans.extend(
+                        [
+                            Span(start + position, end + position, style)
+                            for start, end, style in part.spans
+                        ]
+                    )
+                position += len(part.plain)
+        if end:
+            text_append(end)
+        return cls("".join(text), spans)
+
     def __eq__(self, other: object) -> bool:
         """Compares text only, so that markup doesn't effect sorting."""
         if isinstance(other, str):
