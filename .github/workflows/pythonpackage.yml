@@ -53,3 +53,4 @@ jobs:
         with:
           name: snapshot_report_textual
           path: snapshot_report.html
+          overwrite: true
