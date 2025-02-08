@@ -313,7 +313,9 @@ class Content(Visual):
                 part_text, part_style = part
                 text_append(part_text)
                 if part_style:
-                    spans.append(_Span(position, position + len(part_text), part_style))
+                    spans.append(
+                        _Span(position, position + len(part_text), part_style),
+                    )
                 position += len(part_text)
             elif isinstance(part, Content):
                 text_append(part.plain)

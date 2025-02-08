@@ -341,6 +341,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def notify_style_update(self) -> None:
         self._content_render_cache.clear()
+        super().notify_style_update()
 
     def _on_resize(self):
         self._refresh_lines()
@@ -486,7 +487,7 @@ class OptionList(ScrollView, can_focus=True):
         if component_class:
             component_class_list.append(component_class)
 
-        visual_style = self.get_visual_style(component_class_list)
+        visual_style = self.get_visual_style(*component_class_list)
 
         strips = Visual.to_strips(self, visual, width, None, visual_style, pad=True)
         style_meta = Style.from_meta({"option": option_index})

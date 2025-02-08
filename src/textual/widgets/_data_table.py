@@ -1107,6 +1107,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.rows[row_key].height
 
     def notify_style_update(self) -> None:
+        super().notify_style_update()
         self._row_render_cache.clear()
         self._cell_render_cache.clear()
         self._line_cache.clear()

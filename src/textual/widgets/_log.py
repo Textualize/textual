@@ -94,6 +94,7 @@ class Log(ScrollView, can_focus=True):
 
     def notify_style_update(self) -> None:
         """Called by Textual when styles update."""
+        super().notify_style_update()
         self._render_line_cache.clear()
 
     def _update_maximum_width(self, updates: int, size: int) -> None:

@@ -126,6 +126,7 @@ class RichLog(ScrollView, can_focus=True):
         indicating we can proceed with rendering deferred writes."""
 
     def notify_style_update(self) -> None:
+        super().notify_style_update()
         self._line_cache.clear()
 
     def on_resize(self, event: Resize) -> None:

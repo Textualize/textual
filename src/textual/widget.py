@@ -450,6 +450,7 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
+        self._visual_style_cache: dict[tuple[str, ...], VisualStyle] = {}
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
@@ -1043,7 +1044,7 @@ class Widget(DOMNode):
 
         return partial_style if partial else style
 
-    def get_visual_style(self, component_classes: Iterable[str]) -> VisualStyle:
+    def get_visual_style(self, *component_classes: str) -> VisualStyle:
         """Get the visual style for the widget, including any component styles.
 
         Args:
@@ -1053,46 +1054,51 @@ class Widget(DOMNode):
             A Visual style instance.
 
         """
-        background = Color(0, 0, 0, 0)
-        color = Color(255, 255, 255, 0)
+        if (
+            visual_style := self._visual_style_cache.get(component_classes, None)
+        ) is None:
+            # TODO: cache this?
+            background = Color(0, 0, 0, 0)
+            color = Color(255, 255, 255, 0)
 
-        style = Style()
-        opacity = 1.0
+            style = Style()
+            opacity = 1.0
 
-        def iter_styles() -> Iterable[StylesBase]:
-            """Iterate over the styles from the DOM and additional components styles."""
-            for node in reversed(self.ancestors_with_self):
-                yield node.styles
-            for name in component_classes:
-                yield node.get_component_styles(name)
+            def iter_styles() -> Iterable[StylesBase]:
+                """Iterate over the styles from the DOM and additional components styles."""
+                for node in reversed(self.ancestors_with_self):
+                    yield node.styles
+                for name in component_classes:
+                    yield node.get_component_styles(name)
 
-        for styles in iter_styles():
-            has_rule = styles.has_rule
-            opacity *= styles.opacity
-            if has_rule("background"):
-                text_background = background + styles.background.tint(
-                    styles.background_tint
-                )
-                background += (
-                    styles.background.tint(styles.background_tint)
-                ).multiply_alpha(opacity)
-            else:
-                text_background = background
-            if has_rule("color"):
-                color = styles.color
-            style += styles.text_style
-            if has_rule("auto_color") and styles.auto_color:
-                color = text_background.get_contrast_text(color.a)
+            for styles in iter_styles():
+                has_rule = styles.has_rule
+                opacity *= styles.opacity
+                if has_rule("background"):
+                    text_background = background + styles.background.tint(
+                        styles.background_tint
+                    )
+                    background += (
+                        styles.background.tint(styles.background_tint)
+                    ).multiply_alpha(opacity)
+                else:
+                    text_background = background
+                if has_rule("color"):
+                    color = styles.color
+                style += styles.text_style
+                if has_rule("auto_color") and styles.auto_color:
+                    color = text_background.get_contrast_text(color.a)
 
-        visual_style = VisualStyle(
-            background,
-            color,
-            bold=style.bold,
-            dim=style.dim,
-            italic=style.italic,
-            underline=style.underline,
-            strike=style.strike,
-        )
+            visual_style = VisualStyle(
+                background,
+                color,
+                bold=style.bold,
+                dim=style.dim,
+                italic=style.italic,
+                underline=style.underline,
+                strike=style.strike,
+            )
+            self._visual_style_cache[component_classes] = visual_style
 
         return visual_style
 
@@ -4270,6 +4276,8 @@ class Widget(DOMNode):
 
     def notify_style_update(self) -> None:
         self._rich_style_cache.clear()
+        self._visual_style_cache.clear()
+        super().notify_style_update()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
         await self.broker_event("mouse.down", event)
