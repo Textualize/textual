@@ -3,7 +3,10 @@ from __future__ import annotations
 from typing import ClassVar
 
 import rich.repr
+from rich.segment import Segment
+from rich.style import Style as RichStyle
 
+from textual import _widget_navigation
 from textual.binding import Binding, BindingType
 from textual.cache import LRUCache
 from textual.geometry import Size
@@ -145,8 +148,6 @@ class OptionList(ScrollView, can_focus=True):
                 add_option(Option(prompt))
 
         self._visuals: dict[int, Visual] = {}
-        self._option_heights: dict[int, int] = {}
-        self._visual_renders: dict[int, list[Strip]] = {}
         self._option_render_cache: LRUCache[tuple[Style, int], list[Strip]] = LRUCache(
             maxsize=1024
         )
@@ -154,6 +155,10 @@ class OptionList(ScrollView, can_focus=True):
 
         if tooltip is not None:
             self.tooltip = tooltip
+
+    def _on_resize(self):
+        self._option_render_cache.clear()
+        self._lines.clear()
 
     def _get_option_visual(self, index: int) -> Visual:
         visual = self._visuals.get(index, None)
@@ -169,7 +174,19 @@ class OptionList(ScrollView, can_focus=True):
             visual = self._get_option_visual(index)
             width = self.content_region.width
             strips = visual.to_strips(self, visual, width, None, style)
-            self._visual_renders[index] = strips
+            strips = [
+                strip.adjust_cell_length(width, style.rich_style).apply_style(
+                    RichStyle.from_meta({"option": index})
+                )
+                for strip in strips
+            ]
+            option = self.options[index]
+            if option._divider:
+                style = self.get_visual_style("option-list--separator")
+                rule_segments = [Segment("─" * width, style.rich_style)]
+                strips.append(Strip(rule_segments, width))
+
+            self._option_render_cache[cache_key] = strips
         return strips
 
     def _update_lines(self, y: int = 0) -> None:
@@ -241,6 +258,38 @@ class OptionList(ScrollView, can_focus=True):
         strip = strips[line_offset]
 
         return strip
+
+    def validate_highlighted(self, highlighted: int | None) -> int | None:
+        """Validate the `highlighted` property value on access."""
+        if highlighted is None or not self.options:
+            return None
+        elif highlighted < 0:
+            return 0
+        elif highlighted >= len(self.options):
+            return len(self.options) - 1
+        return highlighted
+
+    # def watch_highlighted(self, highlighted: int | None) -> None:
+    #     """React to the highlighted option having changed."""
+    #     if highlighted is not None and not self._options[highlighted].disabled:
+    #         self.scroll_to_highlight()
+    # self.post_message(self.OptionHighlighted(self, highlighted))
+
+    def action_cursor_up(self) -> None:
+        """Move the highlight up to the previous enabled option."""
+        self.highlighted = _widget_navigation.find_next_enabled(
+            self.options,
+            anchor=self.highlighted,
+            direction=-1,
+        )
+
+    def action_cursor_down(self) -> None:
+        """Move the highlight down to the next enabled option."""
+        self.highlighted = _widget_navigation.find_next_enabled(
+            self.options,
+            anchor=self.highlighted,
+            direction=1,
+        )
 
 
 if __name__ == "__main__":
