@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import ClassVar, Sequence
+from typing import TYPE_CHECKING, ClassVar, Iterable, Sequence
 
 import rich.repr
 from rich.segment import Segment
-from rich.style import Style as RichStyle
 
 from textual import _widget_navigation, events
 from textual.binding import Binding, BindingType
@@ -18,12 +17,25 @@ from textual.strip import Strip
 from textual.style import Style
 from textual.visual import Visual, VisualType, visualize
 
+if TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 @rich.repr.auto
 class Option:
+    """This class holds details of options in the list."""
+
     def __init__(
         self, prompt: VisualType, id: str | None = None, disabled: bool = False
     ) -> None:
+        """Initialise the option.
+
+        Args:
+            prompt: The prompt (text displayed) for the option.
+            id: An option ID for the option.
+            disabled: Disable the option (will be shown grayed out, and will not be selectable).
+
+        """
         self._prompt = prompt
         self._visual: Visual | None = None
         self._id = id
@@ -32,10 +44,12 @@ class Option:
 
     @property
     def prompt(self) -> VisualType:
+        """The original prompt."""
         return self._prompt
 
     @property
     def id(self) -> str | None:
+        """Optional ID for the option."""
         return self._id
 
     @property
@@ -215,9 +229,27 @@ class OptionList(ScrollView, can_focus=True):
         self._wrap = wrap
         self._markup = markup
         self._options: list[Option] = []
+        self.add_options(content)
+
+        self._visuals: dict[int, Visual] = {}
+        self._option_render_cache: LRUCache[tuple[Style, int], list[Strip]]
+        self._option_render_cache = LRUCache(maxsize=1024)
+
+        self._line_cache = _LineCache()
+
+        if tooltip is not None:
+            self.tooltip = tooltip
+
+    def add_options(self, new_options: Iterable[Option | VisualType | None]) -> Self:
+        """Add new options.
+
+        Args:
+            new_options: Content of new options.
+        """
+
         options = self._options
         add_option = self._options.append
-        for prompt in content:
+        for prompt in new_options:
             if isinstance(prompt, Option):
                 add_option(prompt)
             elif prompt is None:
@@ -225,22 +257,7 @@ class OptionList(ScrollView, can_focus=True):
                     options[-1]._divider = True
             else:
                 add_option(Option(prompt))
-
-        self._visuals: dict[int, Visual] = {}
-        self._option_render_cache: LRUCache[tuple[Style, int], list[Strip]] = LRUCache(
-            maxsize=1024
-        )
-        # self._lines: list[tuple[int, int]] = []
-        # """One entry per line, (OPTION_INDEX, LINE_OFFSET)"""
-        # self._heights: dict[int, int] = {}
-        # """Maps option index on to it's height."""
-        # self._index_to_line: dict[int, int] = {}
-        # """Maps option index on to y offset."""
-
-        self._line_cache = _LineCache()
-
-        if tooltip is not None:
-            self.tooltip = tooltip
+        return self
 
     @property
     def options(self) -> Sequence[Option]:
@@ -279,9 +296,23 @@ class OptionList(ScrollView, can_focus=True):
         self._option_render_cache.clear()
         self._line_cache.clear()
 
+    def notify_style_update(self) -> None:
+        self._clear_caches()
+
     def _on_resize(self):
         self._clear_caches()
         self.refresh()
+
+    def on_show(self) -> None:
+        self.scroll_to_highlight()
+
+    def _left_gutter_width(self) -> int:
+        """Returns the size of any left gutter that should be taken into account.
+
+        Returns:
+            The width of the left gutter.
+        """
+        return 0
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
         """React to the mouse moving.
@@ -305,10 +336,9 @@ class OptionList(ScrollView, can_focus=True):
             visual = self._get_option_visual(index)
             width = self.content_region.width
             strips = visual.to_strips(self, visual, width, None, style)
+            meta = {"option": index}
             strips = [
-                strip.adjust_cell_length(width, style.rich_style).apply_style(
-                    RichStyle.from_meta({"option": index})
-                )
+                strip.extend_cell_length(width, style.rich_style).apply_meta(meta)
                 for strip in strips
             ]
             option = self.options[index]
@@ -336,7 +366,10 @@ class OptionList(ScrollView, can_focus=True):
                     [(index, line_no) for line_no in range(0, line_count)]
                 )
 
-        self.virtual_size = Size(self.content_region.width, len(lines))
+        last_divider = self.options and self.options[-1]._divider
+        self.virtual_size = Size(
+            self.content_region.width, len(lines) - (1 if last_divider else 0)
+        )
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
@@ -471,7 +504,10 @@ class OptionList(ScrollView, can_focus=True):
 
         option_index = self.highlighted or 0
 
-        y = self._index_to_line[option_index] + direction * height
+        y = min(
+            self._index_to_line[option_index] + direction * height,
+            len(self._lines) - 1,
+        )
         option_index = self._lines[y][0]
 
         target_option = _widget_navigation.find_next_enabled_no_wrap(
@@ -482,6 +518,27 @@ class OptionList(ScrollView, can_focus=True):
         )
         if target_option is not None:
             self.highlighted = target_option
+
+    def action_page_up(self):
+        """Move the highlight up one page."""
+        self._move_page(-1)
+
+    def action_page_down(self):
+        """Move the highlight down one page."""
+        self._move_page(1)
+
+    def action_select(self) -> None:
+        """Select the currently highlighted option.
+
+        If an option is selected then a
+        [OptionList.OptionSelected][textual.widgets.OptionList.OptionSelected] will be posted.
+        """
+        if self.highlighted is None:
+            return
+        highlighted = self.highlighted
+        option = self._options[highlighted]
+        if highlighted is not None and not option.disabled:
+            self.post_message(self.OptionSelected(self, option, highlighted))
 
 
 if __name__ == "__main__":
@@ -499,7 +556,10 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
         def compose(self) -> ComposeResult:
             yield OptionList(
-                *(["Hello", "World!", None, TEXT, None, "Foo", "Bar", "Baz", None] * 10)
+                *(
+                    ["Hello", "World!", None, TEXT, None, "Foo", "Bar", "Baz", None]
+                    * 100
+                )
             )
 
     app = OLApp()

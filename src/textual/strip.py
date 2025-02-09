@@ -599,6 +599,19 @@ class Strip:
         self._style_cache[style] = styled_strip
         return styled_strip
 
+    def apply_meta(self, meta: dict[str, object]) -> Strip:
+        """Apply meta to all segments.
+
+        Args:
+            meta: A dict of meta information.
+
+        Returns:
+            A new strip.
+
+        """
+        meta_style = Style.from_meta(meta)
+        return self.apply_style(meta_style)
+
     def _apply_link_style(self, link_style: Style) -> Strip:
         segments = self._segments
         _Segment = Segment
