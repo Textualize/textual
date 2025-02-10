@@ -220,7 +220,7 @@ class Stylesheet:
         self._parse_cache.clear()
         self._style_parse_cache.clear()
 
-    def parse_style(self, style_text: str) -> Style:
+    def parse_style(self, style_text: str | Style) -> Style:
         """Parse a (visual) Style.
 
         Args:
@@ -229,6 +229,8 @@ class Stylesheet:
         Returns:
             New Style instance.
         """
+        if isinstance(style_text, Style):
+            return style_text
         if style_text in self._style_parse_cache:
             return self._style_parse_cache[style_text]
         style = parse_style(style_text)

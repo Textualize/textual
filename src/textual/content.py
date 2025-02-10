@@ -948,7 +948,7 @@ class Content(Visual):
         self,
         base_style: Style = Style.null(),
         end: str = "\n",
-        parse_style: Callable[[str], Style] | None = None,
+        parse_style: Callable[[str | Style], Style] | None = None,
     ) -> Iterable[tuple[str, Style]]:
         """Render Content in to an iterable of strings and styles.
 
@@ -971,11 +971,13 @@ class Content(Visual):
                 yield end, base_style
             return
 
-        get_style: Callable[[str], Style]
+        get_style: Callable[[str | Style], Style]
         if parse_style is None:
 
-            def get_style(style: str, /) -> Style:
+            def get_style(style: str | Style) -> Style:
                 """The default get_style method."""
+                if isinstance(style, Style):
+                    return style
                 try:
                     visual_style = Style.parse(style)
                 except Exception:

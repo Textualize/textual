@@ -15,7 +15,12 @@ from textual import events
 from textual.binding import Binding
 from textual.messages import Message
 from textual.strip import Strip
-from textual.widgets._option_list import Option, OptionList, OptionListContent
+from textual.widgets._option_list import (
+    Option,
+    OptionDoesNotExist,
+    OptionList,
+    OptionListContent,
+)
 from textual.widgets._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
@@ -229,6 +234,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         self._send_messages = False
         """Keep track of when we're ready to start sending messages."""
         options = [self._make_selection(selection) for selection in selections]
+        self._values: dict[SelectionType, int] = {
+            option.value: index for index, option in enumerate(options)
+        }
+        """Keeps track of which value relates to which option."""
         super().__init__(
             *options,
             name=name,
@@ -237,10 +246,6 @@ class SelectionList(Generic[SelectionType], OptionList):
             disabled=disabled,
             wrap=False,
         )
-        self._values: dict[SelectionType, int] = {
-            option.value: index for index, option in enumerate(options)
-        }
-        """Keeps track of which value relates to which option."""
 
     @property
     def selected(self) -> list[SelectionType]:
@@ -510,20 +515,25 @@ class SelectionList(Generic[SelectionType], OptionList):
             A [`Strip`][textual.strip.Strip] that is the line to render.
         """
 
-        # First off, get the underlying prompt from OptionList.
-        prompt = super().render_line(y)
+        # TODO: This is rather crufty and hard to fathom. Candidate for a rewrite.
 
-        # If it looks like the prompt itself is actually an empty line...
-        if not prompt:
-            # ...get out with that. We don't need to do any more here.
-            return prompt
+        # First off, get the underlying prompt from OptionList.
+        line = super().render_line(y)
+
+        # # If it looks like the prompt itself is actually an empty line...
+        # if not prompt:
+        #     # ...get out with that. We don't need to do any more here.
+        #     return prompt
 
         # We know the prompt we're going to display, what we're going to do
         # is place a CheckBox-a-like button next to it. So to start with
         # let's pull out the actual Selection we're looking at right now.
         _, scroll_y = self.scroll_offset
         selection_index = scroll_y + y
-        selection = self.get_option_at_index(selection_index)
+        try:
+            selection = self.get_option_at_index(selection_index)
+        except OptionDoesNotExist:
+            return line
 
         # Figure out which component style is relevant for a checkbox on
         # this particular line.
@@ -533,9 +543,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self.highlighted == selection_index:
             component_style += "-highlighted"
 
-        # Get the underlying style used for the prompt.
-        underlying_style = next(iter(prompt)).style
+        # # # Get the underlying style used for the prompt.
+        underlying_style = next(iter(line)).style or self.rich_style
         assert underlying_style is not None
+
+        # underlying_style = self.rich_style
 
         # Get the style for the button.
         button_style = self.get_component_rich_style(component_style)
@@ -565,7 +577,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                 Segment(ToggleButton.BUTTON_INNER, style=button_style),
                 Segment(ToggleButton.BUTTON_RIGHT, style=side_style),
                 Segment(" ", style=underlying_style),
-                *prompt,
+                *line,
             ]
         )
 
@@ -617,24 +629,17 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         return cast("Selection[SelectionType]", super().get_option(option_id))
 
-    def _remove_option(self, index: int) -> None:
-        """Remove a selection option from the selection option list.
-
-        Args:
-            index: The index of the selection option to remove.
-
-        Raises:
-            IndexError: If there is no selection option of the given index.
-        """
-        option = self.get_option_at_index(index)
+    def _pre_remove_option(self, option: Option, index: int) -> None:
+        """Hook called prior to removing an option."""
+        assert isinstance(option, Selection)
         self._deselect(option.value)
         del self._values[option.value]
+
         # Decrement index of options after the one we just removed.
         self._values = {
             option_value: option_index - 1 if option_index > index else option_index
             for option_value, option_index in self._values.items()
         }
-        return super()._remove_option(index)
 
     def add_options(
         self,

@@ -12,8 +12,9 @@ from re import IGNORECASE, escape, finditer, search
 from typing import Iterable, NamedTuple
 
 import rich.repr
-from rich.style import Style
-from rich.text import Text
+
+from textual.content import Content
+from textual.visual import Style
 
 
 class _Search(NamedTuple):
@@ -203,7 +204,7 @@ class Matcher:
         """
         return self.fuzzy_search.match(self.query, candidate)[0]
 
-    def highlight(self, candidate: str) -> Text:
+    def highlight(self, candidate: str) -> Content:
         """Highlight the candidate with the fuzzy match.
 
         Args:
@@ -212,11 +213,11 @@ class Matcher:
         Returns:
             A [rich.text.Text][`Text`] object with highlighted matches.
         """
-        text = Text.from_markup(candidate)
+        content = Content.from_markup(candidate)
         score, offsets = self.fuzzy_search.match(self.query, candidate)
         if not score:
-            return text
+            return content
         for offset in offsets:
             if not candidate[offset].isspace():
-                text.stylize(self._match_style, offset, offset + 1)
-        return text
+                content = content.stylize(self._match_style, offset, offset + 1)
+        return content
