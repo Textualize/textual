@@ -1054,10 +1054,8 @@ class Widget(DOMNode):
             A Visual style instance.
 
         """
-        if (
-            visual_style := self._visual_style_cache.get(component_classes, None)
-        ) is None:
-            # TODO: cache this?
+        cache_key = (self._pseudo_classes_cache_key, component_classes)
+        if (visual_style := self._visual_style_cache.get(cache_key, None)) is None:
             background = Color(0, 0, 0, 0)
             color = Color(255, 255, 255, 0)
 
@@ -1098,7 +1096,7 @@ class Widget(DOMNode):
                 underline=style.underline,
                 strike=style.strike,
             )
-            self._visual_style_cache[component_classes] = visual_style
+            self._visual_style_cache[cache_key] = visual_style
 
         return visual_style
 

@@ -416,6 +416,9 @@ class Command(Option):
         self.hit = hit
         """The details of the hit associated with the option."""
 
+    def __hash__(self) -> int:
+        return id(self)
+
     def __lt__(self, other: object) -> bool:
         if isinstance(other, Command):
             return self.hit < other.hit

@@ -20,7 +20,6 @@ from textual.widgets._directory_tree import DirEntry
 from textual.widgets._input import InputValidationOn
 from textual.widgets._option_list import (
     DuplicateID,
-    NewOptionListContent,
     OptionDoesNotExist,
     OptionListContent,
 )
@@ -41,7 +40,6 @@ __all__ = [
     "IgnoreReturnCallbackType",
     "InputValidationOn",
     "MessageTarget",
-    "NewOptionListContent",
     "NoActiveAppError",
     "NoSelection",
     "OptionDoesNotExist",

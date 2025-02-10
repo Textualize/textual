@@ -15,7 +15,7 @@ from textual import events
 from textual.binding import Binding
 from textual.messages import Message
 from textual.strip import Strip
-from textual.widgets._option_list import NewOptionListContent, Option, OptionList
+from textual.widgets._option_list import Option, OptionList, OptionListContent
 from textual.widgets._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
@@ -487,7 +487,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self.highlighted is not None:
             self.toggle(self.get_option_at_index(self.highlighted))
 
-    def _left_gutter_width(self) -> int:
+    def _get_left_gutter_width(self) -> int:
         """Returns the size of any left gutter that should be taken into account.
 
         Returns:
@@ -639,7 +639,7 @@ class SelectionList(Generic[SelectionType], OptionList):
     def add_options(
         self,
         items: Iterable[
-            NewOptionListContent
+            OptionListContent
             | Selection[SelectionType]
             | tuple[TextType, SelectionType]
             | tuple[TextType, SelectionType, bool]
@@ -694,7 +694,7 @@ class SelectionList(Generic[SelectionType], OptionList):
     def add_option(
         self,
         item: (
-            NewOptionListContent
+            OptionListContent
             | Selection
             | tuple[TextType, SelectionType]
             | tuple[TextType, SelectionType, bool]
