@@ -162,7 +162,7 @@ class OptionList(ScrollView, can_focus=True):
         }
         & > .option-list--option-hover {
             background: $block-hover-background;
-        }
+        }        
     }
     """
 
@@ -335,6 +335,8 @@ class OptionList(ScrollView, can_focus=True):
                     raise DuplicateID(f"Unable to add {option!r} due to duplicate ID")
                 self._id_to_option[option._id] = option
             add_option(option)
+        if self.is_mounted:
+            self._update_lines()
         return self
 
     def add_option(self, option: Option | VisualType | None = None) -> Self:
@@ -636,10 +638,6 @@ class OptionList(ScrollView, can_focus=True):
 
     def _on_resize(self):
         self._clear_caches()
-        self.refresh()
-
-    def _on_mount(self) -> None:
-        self._update_lines()
 
     def on_show(self) -> None:
         self.scroll_to_highlight()
@@ -713,18 +711,17 @@ class OptionList(ScrollView, can_focus=True):
             A list of strips.
         """
         padding = self.get_component_styles("option-list--option").padding
-        width = self.scrollable_content_region.width - self._get_left_gutter_width()
+        render_width = self.scrollable_content_region.width
+        width = render_width - self._get_left_gutter_width()
         cache_key = (option, style)
         if (strips := self._option_render_cache.get(cache_key)) is None:
             visual = self._get_visual(option)
             if padding:
                 visual = Padding(visual, padding)
-            index = self._option_to_index[option]
             strips = visual.to_strips(self, visual, width, None, style)
+            meta = {"option": self._option_to_index[option]}
             strips = [
-                strip.extend_cell_length(width, style.rich_style).apply_meta(
-                    {"option": index}
-                )
+                strip.extend_cell_length(width, style.rich_style).apply_meta(meta)
                 for strip in strips
             ]
             if option._divider:
@@ -735,21 +732,25 @@ class OptionList(ScrollView, can_focus=True):
         return strips
 
     def _update_lines(self) -> None:
-        line_cache = self._line_cache
-        lines = line_cache.lines
-        if not self.options:
+        """Update internal structures when new lines are added."""
+        if not self.options or not self.scrollable_content_region:
+            # No options -- nothing to
             return
 
+        line_cache = self._line_cache
+        lines = line_cache.lines
         next_index = lines[-1][0] + 1 if lines else 0
         get_visual = self._get_visual
-        width = self.scrollable_content_region.width
+        width = self.scrollable_content_region.width - self._get_left_gutter_width()
 
         if next_index < len(self.options):
             styles = self.get_component_styles("option-list--option")
+            padding = styles.padding
             for index, option in enumerate(self.options[next_index:], next_index):
                 line_cache.index_to_line[index] = len(line_cache.lines)
                 line_count = (
-                    get_visual(option).get_height(styles, width) + option._divider
+                    get_visual(option).get_height(styles, width - padding.width)
+                    + option._divider
                 )
                 line_cache.heights[index] = line_count
                 line_cache.lines.extend(
@@ -757,9 +758,8 @@ class OptionList(ScrollView, can_focus=True):
                 )
 
         last_divider = self.options and self.options[-1]._divider
-        self.virtual_size = Size(
-            self.content_region.width, len(lines) - (1 if last_divider else 0)
-        )
+        self.virtual_size = Size(width, len(lines) - (1 if last_divider else 0))
+        self._scroll_update(self.virtual_size)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
@@ -781,11 +781,13 @@ class OptionList(ScrollView, can_focus=True):
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         """Get height for the given width."""
-        styles = cast(RulesMap, self.get_component_styles("option-list--option"))
+        styles = self.get_component_styles("option-list--option")
+        rules = cast(RulesMap, styles)
+        padding_width = styles.padding.width
         get_visual = self._get_visual
         height = sum(
             (
-                get_visual(option).get_height(styles, width)
+                get_visual(option).get_height(rules, width - padding_width)
                 + (1 if option._divider and not last else 0)
             )
             for last, option in loop_last(self.options)
