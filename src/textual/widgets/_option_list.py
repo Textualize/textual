@@ -635,6 +635,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def notify_style_update(self) -> None:
         self._clear_caches()
+        super().notify_style_update()
 
     def _on_resize(self):
         self._clear_caches()

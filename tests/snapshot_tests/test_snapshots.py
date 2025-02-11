@@ -3442,3 +3442,47 @@ def test_empty_option_list(snap_compare):
             yield OptionList()
 
     snap_compare(OptionListAutoCrash())
+
+
+def test_focus_within_transparent(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5488
+
+    You should see the right 50% in yellow, with a yellow OptionList and a black TextArea
+    """
+
+    class Panel(Vertical, can_focus=True):
+        pass
+
+    class FocusWithinTransparentApp(App[None]):
+
+        CSS = """
+        Screen {
+            layout: horizontal;
+        }
+
+        Input {
+            width: 1fr;
+            height: 1fr;
+        }
+
+        Panel {
+            padding: 5 10;
+            background: red;
+            &:focus, &:focus-within {
+                background: yellow;
+            }
+
+            OptionList, OptionList:focus {
+                height: 1fr;
+                background: transparent;
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Input(placeholder="This is here to escape to")
+            with Panel():
+                yield OptionList(*["This is an option" for _ in range(30)])
+                yield Input(placeholder="Escape out via here for the bug")
+
+    snap_compare(FocusWithinTransparentApp(), press=["tab"])
