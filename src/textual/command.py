@@ -231,12 +231,9 @@ class Provider(ABC):
         Returns:
             A [fuzzy matcher][textual.fuzzy.Matcher] object for matching against candidate hits.
         """
-        match_style = self.match_style
-        # match_style = Style(bold=True, underline=True)
-
         return Matcher(
             user_input,
-            match_style=match_style,
+            match_style=self.match_style,
             case_sensitive=case_sensitive,
         )
 

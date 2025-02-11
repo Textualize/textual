@@ -520,11 +520,6 @@ class SelectionList(Generic[SelectionType], OptionList):
         # First off, get the underlying prompt from OptionList.
         line = super().render_line(y)
 
-        # # If it looks like the prompt itself is actually an empty line...
-        # if not prompt:
-        #     # ...get out with that. We don't need to do any more here.
-        #     return prompt
-
         # We know the prompt we're going to display, what we're going to do
         # is place a CheckBox-a-like button next to it. So to start with
         # let's pull out the actual Selection we're looking at right now.
@@ -544,20 +539,12 @@ class SelectionList(Generic[SelectionType], OptionList):
             component_style += "-highlighted"
 
         # # # Get the underlying style used for the prompt.
+        # TODO: This is not a reliable way of getting the base style
         underlying_style = next(iter(line)).style or self.rich_style
         assert underlying_style is not None
 
-        # underlying_style = self.rich_style
-
         # Get the style for the button.
         button_style = self.get_component_rich_style(component_style)
-
-        # If the button is in the unselected state, we're going to do a bit
-        # of a switcharound to make it look like it's a "cutout".
-        # if selection.value not in self._selected:
-        #     button_style += Style.from_color(
-        #         self.background_colors[1].rich_color, button_style.bgcolor
-        #     )
 
         # Build the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
