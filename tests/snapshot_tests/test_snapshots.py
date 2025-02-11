@@ -3421,3 +3421,24 @@ def test_overflow(snap_compare):
             yield Label(TEXT, id="label3")
 
     assert snap_compare(OverflowApp())
+
+
+def test_empty_option_list(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5489
+
+    You should see an OptionList with no options, resulting in a small square at the top left.
+
+    """
+
+    class OptionListAutoCrash(App[None]):
+
+        CSS = """
+        OptionList {
+            width: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield OptionList()
+
+    snap_compare(OptionListAutoCrash())
