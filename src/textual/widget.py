@@ -2410,7 +2410,6 @@ class Widget(DOMNode):
         Returns:
             `True` if the scroll position changed, otherwise `False`.
         """
-
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
@@ -3199,6 +3198,9 @@ class Widget(DOMNode):
         # Grow the region by the margin so to keep the margin in view.
         region = widget.virtual_region_with_margin
         scrolled = False
+
+        if not region.size:
+            return False
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent

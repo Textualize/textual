@@ -652,6 +652,9 @@ class OptionList(ScrollView, can_focus=True):
     def on_show(self) -> None:
         self.scroll_to_highlight()
 
+    def on_mount(self) -> None:
+        self._update_lines()
+
     async def _on_click(self, event: events.Click) -> None:
         """React to the mouse being clicked on an item.
 
