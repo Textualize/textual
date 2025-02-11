@@ -8,6 +8,7 @@ from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events
+from textual._on import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.command import SimpleCommand
@@ -15,6 +16,7 @@ from textual.containers import (
     Center,
     Container,
     Grid,
+    Horizontal,
     Middle,
     Vertical,
     VerticalGroup,
@@ -22,6 +24,7 @@ from textual.containers import (
     HorizontalGroup,
 )
 from textual.pilot import Pilot
+from textual.reactive import var
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
@@ -3506,3 +3509,41 @@ def test_option_list_wrapping(snap_compare):
             )
 
     snap_compare(OLApp())
+
+
+def test_add_separator(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5431
+
+    You should see a button on the left. On the right an option list with Option 1, separator, Option 3
+
+    """
+
+    class FocusTest(App[None]):
+
+        CSS = """
+        OptionList {
+            height: 1fr;
+        }
+        """
+
+        counter: var[int] = var(0)
+
+        def compose(self) -> ComposeResult:
+            with Horizontal():
+                yield Button("Add")
+                yield OptionList()
+
+        @on(Button.Pressed)
+        def add_more_stuff(self) -> None:
+            self.counter += 1
+            self.query_one(OptionList).add_option(
+                (f"This is option {self.counter}" if self.counter % 2 else None)
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        for _ in range(3):
+            await pilot.click(Button)
+            await pilot.pause(0.4)
+
+    snap_compare(FocusTest(), run_before=run_before)

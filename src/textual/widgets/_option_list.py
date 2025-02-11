@@ -318,8 +318,17 @@ class OptionList(ScrollView, can_focus=True):
                 "New options contain duplicated IDs; Ensure that the IDs are unique."
             )
 
+        new_options = list(new_options)
+        if not new_options:
+            return self
+        if new_options[0] is None:
+            # Handle the case where the first new option is None,
+            # which would update the previous option.
+            # This is sub-optimal, but hopefully not a common occurrence
+            self._clear_caches()
         options = self._options
         add_option = self._options.append
+
         for prompt in new_options:
             if isinstance(prompt, Option):
                 option = prompt
@@ -867,8 +876,7 @@ class OptionList(ScrollView, can_focus=True):
             y = self._index_to_line[highlighted]
         except KeyError:
             return
-        option = self.options[highlighted]
-        height = self._heights[highlighted] - option._divider
+        height = self._heights[highlighted]
 
         self.scroll_to_region(
             Region(0, y, self.scrollable_content_region.width, height),
