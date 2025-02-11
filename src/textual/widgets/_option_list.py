@@ -745,12 +745,11 @@ class OptionList(ScrollView, can_focus=True):
         width = self.scrollable_content_region.width - self._get_left_gutter_width()
 
         if next_index < len(self.options):
-            styles = self.get_component_styles("option-list--option")
-            padding = styles.padding
+            padding = self.get_component_styles("option-list--option").padding
             for index, option in enumerate(self.options[next_index:], next_index):
                 line_cache.index_to_line[index] = len(line_cache.lines)
                 line_count = (
-                    get_visual(option).get_height(styles, width - padding.width)
+                    get_visual(option).get_height(self.styles, width - padding.width)
                     + option._divider
                 )
                 line_cache.heights[index] = line_count
@@ -812,6 +811,7 @@ class OptionList(ScrollView, can_focus=True):
             option_index, line_offset = self._lines[line_number]
         except IndexError:
             return Strip.blank(self.scrollable_content_region.width)
+
         option = self.options[option_index]
         mouse_over = self._mouse_hovering_over == option_index
         component_class = ""
