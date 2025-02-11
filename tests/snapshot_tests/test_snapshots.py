@@ -3486,3 +3486,23 @@ def test_focus_within_transparent(snap_compare):
                 yield Input(placeholder="Escape out via here for the bug")
 
     snap_compare(FocusWithinTransparentApp(), press=["tab"])
+
+
+def test_option_list_wrapping(snap_compare):
+    """You should see a 40 cell wide Option list with a single line, ending in an ellipsis."""
+
+    class OLApp(App):
+        CSS = """
+        OptionList { 
+            width: 40;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(
+                "This is a very long option that is too wide to fit within the space provided and will overflow."
+            )
+
+    snap_compare(OLApp())
