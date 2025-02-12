@@ -1309,8 +1309,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
         if self.stack_updates:
-            self._compositor_refresh()
             self._refresh_layout(size)
+            self._compositor_refresh()
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
@@ -1320,8 +1320,6 @@ class Screen(Generic[ScreenResultType], Widget):
         self.app._refresh_notifications()
         size = self.app.size
 
-        self._refresh_layout(size)
-        self.refresh()
         # Only auto-focus when the app has focus (textual-web only)
         if self.app.app_focus:
             auto_focus = (
@@ -1332,6 +1330,9 @@ class Screen(Generic[ScreenResultType], Widget):
                     if widget.focusable:
                         self.set_focus(widget)
                         break
+
+        self.app.stylesheet.update(self)
+        self._refresh_layout(size)
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
