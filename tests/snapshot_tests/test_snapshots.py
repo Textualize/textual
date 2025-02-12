@@ -23,6 +23,7 @@ from textual.containers import (
     VerticalScroll,
     HorizontalGroup,
 )
+from textual.content import Content
 from textual.pilot import Pilot
 from textual.reactive import var
 from textual.renderables.gradient import LinearGradient
@@ -3549,3 +3550,30 @@ def test_add_separator(snap_compare):
             await pilot.pause(0.4)
 
     snap_compare(FocusTest(), run_before=run_before)
+
+
+def test_visual_tooltip(snap_compare):
+    """Test Visuals such as Content work in tooltips.
+
+    You should see a tooltip under a label.
+    The tooltip should have the word "Tooltip" highlighted in the accent color.
+
+    """
+
+    class TooltipApp(App[None]):
+        TOOLTIP_DELAY = 0.4
+
+        def compose(self) -> ComposeResult:
+            progress_bar = Label("Hello, World")
+            progress_bar.tooltip = Content.from_markup(
+                "Hello, [bold $accent]Tooltip[/]!"
+            )
+            yield progress_bar
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.hover(Label)
+        await pilot.pause(0.4)
+        await pilot.pause()
+
+    snap_compare(TooltipApp(), run_before=run_before)
