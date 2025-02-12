@@ -192,7 +192,7 @@ class Provider(ABC):
         if match_style is not None:
             assert isinstance(
                 match_style, Style
-            ), "match_style must be a Visual style if given"
+            ), "match_style must be a Visual style (from textual.style import Style)"
         self.__screen = screen
         self.__match_style = match_style
         self._init_task: Task | None = None
