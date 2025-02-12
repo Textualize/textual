@@ -3585,4 +3585,4 @@ def test_newly_created_snapshot_test(snap_compare):
         def compose(self) -> ComposeResult:
             yield Static("Does this fail?")
 
-    snap_compare(TestApp())
+    assert snap_compare(TestApp())
