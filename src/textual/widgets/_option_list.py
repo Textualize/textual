@@ -806,9 +806,9 @@ class OptionList(ScrollView, can_focus=True):
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         """Get height for the given width."""
-        styles = self.get_component_styles("option-list--option")
+        styles = self.styles
         rules = cast(RulesMap, styles)
-        padding_width = styles.padding.width
+        padding_width = self.get_component_styles("option-list--option").padding.width
         get_visual = self._get_visual
         height = sum(
             (
