@@ -238,14 +238,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             option.value: index for index, option in enumerate(options)
         }
         """Keeps track of which value relates to which option."""
-        super().__init__(
-            *options,
-            name=name,
-            id=id,
-            classes=classes,
-            disabled=disabled,
-            wrap=False,
-        )
+        super().__init__(*options, name=name, id=id, classes=classes, disabled=disabled)
 
     @property
     def selected(self) -> list[SelectionType]:

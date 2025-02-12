@@ -99,12 +99,15 @@ class _LineCache:
     index_to_line: dict[int, int] = field(default_factory=dict)
 
     def clear(self) -> None:
+        """Reset all caches."""
         self.lines.clear()
         self.heights.clear()
         self.index_to_line.clear()
 
 
 class OptionList(ScrollView, can_focus=True):
+    """A navigable list of options."""
+
     ALLOW_SELECT = False
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("down", "cursor_down", "Down", show=False),
@@ -248,24 +251,33 @@ class OptionList(ScrollView, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        wrap: bool = True,
         markup: bool = True,
-        tooltip: VisualType | None = None,
     ):
+        """Initialize an OptionList.
+
+        Args:
+            *content: Positional arguments become the options.
+            name: Name of the OptionList.
+            id: The ID of the OptionList in the DOM.
+            classes: Initial CSS classes.
+            disabled: Disable the widget?
+            markup: Strips should be rendered as Textual markup if `True`, or plain text if `False`.
+        """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._wrap = wrap
         self._markup = markup
         self._options: list[Option] = []
+        """List of options."""
         self._id_to_option: dict[str, Option] = {}
+        """Maps an Options's ID on to the option itself."""
         self._option_to_index: dict[Option, int] = {}
+        """Maps an Option to it's index in self._options."""
 
         self._option_render_cache: LRUCache[tuple[Option, Style], list[Strip]]
-        self._option_render_cache = LRUCache(maxsize=1024)
+        self._option_render_cache = LRUCache(maxsize=1024 * 2)
+        """Caches rendered options."""
 
         self._line_cache = _LineCache()
-
-        if tooltip is not None:
-            self.tooltip = tooltip
+        """Used to cache additional information that can be recomputed."""
 
         self.add_options(content)
         if self._options:

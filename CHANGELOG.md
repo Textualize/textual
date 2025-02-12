@@ -48,6 +48,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - OptionList no longer supports `Separator`, a separator may be specified with `None`
 
+### Removed
+
+- Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
+
 ## [1.0.0] - 2024-12-12
 
 ### Added
