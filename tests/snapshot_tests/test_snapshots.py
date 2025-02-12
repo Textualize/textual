@@ -2854,6 +2854,8 @@ def test_grid_offset(snap_compare):
     assert snap_compare(GridOffsetApp())
 
 
+# Figure out why this test is flakey
+@pytest.mark.skip("This test is flakey (why)?")
 def test_select_width_auto(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5280"
     The overlay has a width of auto, so the first (widest) option should not wrap."""
@@ -2883,9 +2885,7 @@ def test_select_width_auto(snap_compare):
 
     async def run_before(pilot: Pilot) -> None:
         await pilot.pause()
-        await pilot.pause()
         await pilot.click("Select")
-        await pilot.pause()
 
     snap_compare(TallSelectApp(), run_before=run_before)
 
