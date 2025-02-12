@@ -2883,7 +2883,9 @@ def test_select_width_auto(snap_compare):
 
     async def run_before(pilot: Pilot) -> None:
         await pilot.pause()
+        await pilot.pause()
         await pilot.click("Select")
+        await pilot.pause()
 
     snap_compare(TallSelectApp(), run_before=run_before)
 
