@@ -177,10 +177,14 @@ class Style:
             new_style = Style(
                 (
                     other.background
-                    if self.background is None
+                    if (self.background is None or self.background.a == 0)
                     else self.background + other.background
                 ),
-                self.foreground if other.foreground is None else other.foreground,
+                (
+                    self.foreground
+                    if (other.foreground is None or other.foreground.a == 0)
+                    else other.foreground
+                ),
                 self.bold if other.bold is None else other.bold,
                 self.dim if other.dim is None else other.dim,
                 self.italic if other.italic is None else other.italic,
@@ -368,6 +372,7 @@ class Style:
             bold=self.bold,
             dim=self.dim,
             italic=self.italic,
+            underline=self.underline,
             reverse=self.reverse,
             strike=self.strike,
             link=self.link,

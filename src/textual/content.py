@@ -396,7 +396,7 @@ class Content(Visual):
         lines = self.without_spans._wrap_and_format(
             width,
             overflow=rules.get("text_overflow", "fold"),
-            no_wrap=rules.get("text_wrap") == "nowrap",
+            no_wrap=rules.get("text_wrap", "wrap") == "nowrap",
         )
         return len(lines)
 
@@ -442,17 +442,17 @@ class Content(Visual):
 
             line = line.expand_tabs(tab_size)
 
-            if no_wrap and overflow == "fold":
-                cuts = list(range(0, line.cell_length, width))[1:]
-                new_lines = [
-                    _FormattedLine(line, width, y=y, align=align)
-                    for line in line.divide(cuts)
-                ]
-            elif no_wrap:
-                if overflow == "ellipsis" and no_wrap:
-                    line = line.truncate(width, ellipsis=True)
-                content_line = _FormattedLine(line, width, y=y, align=align)
-                new_lines = [content_line]
+            if no_wrap:
+                if overflow == "fold":
+                    cuts = list(range(0, line.cell_length, width))[1:]
+                    new_lines = [
+                        _FormattedLine(line, width, y=y, align=align)
+                        for line in line.divide(cuts)
+                    ]
+                else:
+                    line = line.truncate(width, ellipsis=overflow == "ellipsis")
+                    content_line = _FormattedLine(line, width, y=y, align=align)
+                    new_lines = [content_line]
             else:
                 content_line = _FormattedLine(line, width, y=y, align=align)
                 offsets = divide_line(line.plain, width, fold=overflow == "fold")
@@ -495,6 +495,7 @@ class Content(Visual):
         Returns:
             An list of Strips.
         """
+
         if not width:
             return []
 
@@ -948,7 +949,7 @@ class Content(Visual):
         self,
         base_style: Style = Style.null(),
         end: str = "\n",
-        parse_style: Callable[[str], Style] | None = None,
+        parse_style: Callable[[str | Style], Style] | None = None,
     ) -> Iterable[tuple[str, Style]]:
         """Render Content in to an iterable of strings and styles.
 
@@ -971,11 +972,13 @@ class Content(Visual):
                 yield end, base_style
             return
 
-        get_style: Callable[[str], Style]
+        get_style: Callable[[str | Style], Style]
         if parse_style is None:
 
-            def get_style(style: str, /) -> Style:
+            def get_style(style: str | Style) -> Style:
                 """The default get_style method."""
+                if isinstance(style, Style):
+                    return style
                 try:
                     visual_style = Style.parse(style)
                 except Exception:

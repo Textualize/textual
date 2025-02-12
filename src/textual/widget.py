@@ -1044,20 +1044,21 @@ class Widget(DOMNode):
 
         return partial_style if partial else style
 
-    def get_visual_style(self, *component_classes: str) -> VisualStyle:
+    def get_visual_style(
+        self, *component_classes: str, partial: bool = False
+    ) -> VisualStyle:
         """Get the visual style for the widget, including any component styles.
 
         Args:
             component_classes: Optional component styles.
+            partial: Return a partial style (not combined with parent).
 
         Returns:
             A Visual style instance.
 
         """
-        if (
-            visual_style := self._visual_style_cache.get(component_classes, None)
-        ) is None:
-            # TODO: cache this?
+        cache_key = (self._pseudo_classes_cache_key, component_classes, partial)
+        if (visual_style := self._visual_style_cache.get(cache_key, None)) is None:
             background = Color(0, 0, 0, 0)
             color = Color(255, 255, 255, 0)
 
@@ -1066,8 +1067,11 @@ class Widget(DOMNode):
 
             def iter_styles() -> Iterable[StylesBase]:
                 """Iterate over the styles from the DOM and additional components styles."""
-                for node in reversed(self.ancestors_with_self):
-                    yield node.styles
+                if partial:
+                    node = self
+                else:
+                    for node in reversed(self.ancestors_with_self):
+                        yield node.styles
                 for name in component_classes:
                     yield node.get_component_styles(name)
 
@@ -1098,7 +1102,7 @@ class Widget(DOMNode):
                 underline=style.underline,
                 strike=style.strike,
             )
-            self._visual_style_cache[component_classes] = visual_style
+            self._visual_style_cache[cache_key] = visual_style
 
         return visual_style
 
@@ -2406,7 +2410,6 @@ class Widget(DOMNode):
         Returns:
             `True` if the scroll position changed, otherwise `False`.
         """
-
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
@@ -3195,6 +3198,9 @@ class Widget(DOMNode):
         # Grow the region by the margin so to keep the margin in view.
         region = widget.virtual_region_with_margin
         scrolled = False
+
+        if not region.size:
+            return False
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
@@ -4223,7 +4229,7 @@ class Widget(DOMNode):
         """
         self.app.capture_mouse(None)
 
-    def select_all(self) -> None:
+    def text_select_all(self) -> None:
         """Select the entire widget."""
         self.screen._select_all_in_widget(self)
 
@@ -4288,9 +4294,9 @@ class Widget(DOMNode):
     async def _on_click(self, event: events.Click) -> None:
         if event.widget is self:
             if event.chain == 2:
-                self.select_all()
+                self.text_select_all()
             elif event.chain == 3 and self.parent is not None:
-                self.select_container.select_all()
+                self.select_container.text_select_all()
 
         await self.broker_event("click", event)
 

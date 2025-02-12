@@ -6,12 +6,7 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList
-from textual.widgets.option_list import (
-    DuplicateID,
-    Option,
-    OptionDoesNotExist,
-    Separator,
-)
+from textual.widgets.option_list import DuplicateID, Option, OptionDoesNotExist
 
 
 class OptionListApp(App[None]):
@@ -21,7 +16,7 @@ class OptionListApp(App[None]):
         yield OptionList(
             "0",
             Option("1"),
-            Separator(),
+            None,
             Option("2", disabled=True),
             None,
             Option("3", id="3"),

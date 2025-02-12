@@ -8,7 +8,7 @@ See [Line API](/guide/widgets#line-api) for how to use Strips.
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator, Sequence
+from typing import Any, Iterable, Iterator, Sequence
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
@@ -598,6 +598,19 @@ class Strip:
         )
         self._style_cache[style] = styled_strip
         return styled_strip
+
+    def apply_meta(self, meta: dict[str, Any]) -> Strip:
+        """Apply meta to all segments.
+
+        Args:
+            meta: A dict of meta information.
+
+        Returns:
+            A new strip.
+
+        """
+        meta_style = Style.from_meta(meta)
+        return self.apply_style(meta_style)
 
     def _apply_link_style(self, link_style: Style) -> Strip:
         segments = self._segments

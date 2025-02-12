@@ -962,9 +962,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     widgets.update(widget.walk_children(with_self=True))
                     break
         if widgets:
-            self.app.stylesheet.update_nodes(
-                [widget for widget in widgets if widget._has_focus_within], animate=True
-            )
+            self.app.stylesheet.update_nodes(widgets, animate=True)
 
     def set_focus(
         self,
