@@ -88,7 +88,7 @@ from textual.rlock import RLock
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.style import Style as VisualStyle
-from textual.visual import Visual, visualize
+from textual.visual import Visual, VisualType, visualize
 
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
@@ -452,7 +452,7 @@ class Widget(DOMNode):
         self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
         self._visual_style_cache: dict[tuple[str, ...], VisualStyle] = {}
 
-        self._tooltip: RenderableType | None = None
+        self._tooltip: VisualType | None = None
         """The tooltip content."""
         self.absolute_offset: Offset | None = None
         """Force an absolute offset for the widget (used by tooltips)."""
@@ -709,12 +709,12 @@ class Widget(DOMNode):
         return self.disabled or self.loading
 
     @property
-    def tooltip(self) -> RenderableType | None:
+    def tooltip(self) -> VisualType | None:
         """Tooltip for the widget, or `None` for no tooltip."""
         return self._tooltip
 
     @tooltip.setter
-    def tooltip(self, tooltip: RenderableType | None):
+    def tooltip(self, tooltip: VisualType | None):
         self._tooltip = tooltip
         try:
             self.screen._update_tooltip(self)
