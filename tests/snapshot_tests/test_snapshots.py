@@ -3577,3 +3577,12 @@ def test_visual_tooltip(snap_compare):
         await pilot.pause()
 
     snap_compare(TooltipApp(), run_before=run_before)
+
+
+def test_newly_created_snapshot_test(snap_compare):
+
+    class TestApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Does this fail?")
+
+    snap_compare(TestApp())
