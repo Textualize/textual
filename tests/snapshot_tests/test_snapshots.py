@@ -3549,3 +3549,12 @@ def test_add_separator(snap_compare):
             await pilot.pause(0.4)
 
     snap_compare(FocusTest(), run_before=run_before)
+
+
+def test_newly_created_snapshot_test(snap_compare):
+
+    class TestApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Does this fail?")
+
+    snap_compare(TestApp())
