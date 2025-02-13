@@ -2418,7 +2418,7 @@ def test_transparent_background(snap_compare):
             return LinearGradient(30.0, stops)
 
     app = TransparentApp()
-    snap_compare(app)
+    assert snap_compare(app)
 
 
 def test_maximize_allow(snap_compare):
@@ -2888,7 +2888,7 @@ def test_select_width_auto(snap_compare):
         await pilot.pause()
         await pilot.click("Select")
 
-    snap_compare(TallSelectApp(), run_before=run_before)
+    assert snap_compare(TallSelectApp(), run_before=run_before)
 
 
 def test_markup_command_list(snap_compare):
@@ -2908,7 +2908,7 @@ def test_markup_command_list(snap_compare):
                 ]
             )
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_app_resize_order(snap_compare):
@@ -2950,7 +2950,7 @@ def test_app_resize_order(snap_compare):
         def on_resize(self) -> None:
             self.add_class("narrow")
 
-    snap_compare(SCApp())
+    assert snap_compare(SCApp())
 
 
 def test_add_remove_tabs(snap_compare):
@@ -2981,7 +2981,7 @@ def test_add_remove_tabs(snap_compare):
             new_pane = TabPane("New tab", Label("new"))
             tabbed_content.add_pane(new_pane)
 
-    snap_compare(ExampleApp(), press=["a", "r", "a"])
+    assert snap_compare(ExampleApp(), press=["a", "r", "a"])
 
 
 def test_click_expand(snap_compare):
@@ -2998,7 +2998,7 @@ def test_click_expand(snap_compare):
         await pilot.pause()
         await pilot.click(Select)
 
-    snap_compare(SelectApp(), run_before=run_before)
+    assert snap_compare(SelectApp(), run_before=run_before)
 
 
 def test_disable_command_palette(snap_compare):
@@ -3019,7 +3019,7 @@ def test_disable_command_palette(snap_compare):
                 return None
             return True
 
-    snap_compare(FooterApp())
+    assert snap_compare(FooterApp())
 
 
 def test_selection_list_wrap(snap_compare):
@@ -3029,7 +3029,7 @@ def test_selection_list_wrap(snap_compare):
         def compose(self) -> ComposeResult:
             yield SelectionList(("Hello World " * 100, 0))
 
-    snap_compare(SelectionListApp())
+    assert snap_compare(SelectionListApp())
 
 
 def test_border_tab(snap_compare):
@@ -3054,7 +3054,7 @@ def test_border_tab(snap_compare):
             label.border_subtitle = ":-)"
             yield label
 
-    snap_compare(TabApp())
+    assert snap_compare(TabApp())
 
 
 def test_dock_align(snap_compare):
@@ -3126,7 +3126,7 @@ def test_dock_align(snap_compare):
         def compose(self):
             yield MainContainer()
 
-    snap_compare(Test1())
+    assert snap_compare(Test1())
 
 
 def test_auto_parent_with_alignment(snap_compare):
@@ -3163,7 +3163,7 @@ def test_auto_parent_with_alignment(snap_compare):
         def compose(self) -> ComposeResult:
             yield Sidebar()
 
-    snap_compare(FloatSidebarApp())
+    assert snap_compare(FloatSidebarApp())
 
 
 def test_select_refocus(snap_compare):
@@ -3207,7 +3207,7 @@ def test_select_refocus(snap_compare):
             with Container():
                 yield MyListView()
 
-    snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
+    assert snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
 
 
 def test_widgets_in_grid(snap_compare):
@@ -3243,7 +3243,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
                     label.border_title = str(n)
                     yield label
 
-    snap_compare(MyApp(), terminal_size=(100, 50))
+    assert snap_compare(MyApp(), terminal_size=(100, 50))
 
 
 def test_arbitrary_selection(snap_compare):
@@ -3296,7 +3296,7 @@ def test_collapsible_datatable(snap_compare):
             for number in range(1, 100):
                 t1.add_row(str(number) + " " * 200)
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_scrollbar_background_with_opacity(snap_compare):
@@ -3342,7 +3342,7 @@ def test_static_markup(snap_compare):
             yield Label("This allows [bold]markup[/bold]")
             yield Label("This does not allow [bold]markup[/bold]", markup=False)
 
-    snap_compare(LabelApp())
+    assert snap_compare(LabelApp())
 
 
 def test_arbitrary_selection_double_cell(snap_compare):
@@ -3447,7 +3447,7 @@ def test_empty_option_list(snap_compare):
         def compose(self) -> ComposeResult:
             yield OptionList()
 
-    snap_compare(OptionListAutoCrash())
+    assert snap_compare(OptionListAutoCrash())
 
 
 def test_focus_within_transparent(snap_compare):
@@ -3491,7 +3491,7 @@ def test_focus_within_transparent(snap_compare):
                 yield OptionList(*["This is an option" for _ in range(30)])
                 yield Input(placeholder="Escape out via here for the bug")
 
-    snap_compare(FocusWithinTransparentApp(), press=["tab"])
+    assert snap_compare(FocusWithinTransparentApp(), press=["tab"])
 
 
 def test_option_list_wrapping(snap_compare):
@@ -3511,7 +3511,7 @@ def test_option_list_wrapping(snap_compare):
                 "This is a very long option that is too wide to fit within the space provided and will overflow."
             )
 
-    snap_compare(OLApp())
+    assert snap_compare(OLApp())
 
 
 def test_add_separator(snap_compare):
@@ -3549,7 +3549,7 @@ def test_add_separator(snap_compare):
             await pilot.click(Button)
             await pilot.pause(0.4)
 
-    snap_compare(FocusTest(), run_before=run_before)
+    assert snap_compare(FocusTest(), run_before=run_before)
 
 
 def test_visual_tooltip(snap_compare):
@@ -3576,4 +3576,4 @@ def test_visual_tooltip(snap_compare):
         await pilot.pause(0.4)
         await pilot.pause()
 
-    snap_compare(TooltipApp(), run_before=run_before)
+    assert snap_compare(TooltipApp(), run_before=run_before)
