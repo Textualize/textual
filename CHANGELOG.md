@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added App.ALLOW_SELECT for a global switch to disable text selection https://github.com/Textualize/textual/pull/5409
 - Added `DOMNode.query_ancestor` https://github.com/Textualize/textual/pull/5409
 - Added selection to Log widget https://github.com/Textualize/textual/pull/5467
+- Added `text-wrap` and `text-overflow` CSS values https://github.com/Textualize/textual/pull/5485
+- Added Textual markup to replace Rich markup https://github.com/Textualize/textual/pull/5485
+- Added `Content.from_markup` https://github.com/Textualize/textual/pull/5485
 
 ### Fixed
 
@@ -34,13 +37,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Updated `TextArea` and `Input` behavior when there is a selection and the user presses left or right https://github.com/Textualize/textual/pull/5400
 - Footer can now be scrolled horizontally without holding `shift` https://github.com/Textualize/textual/pull/5404
 - Modified _on_blur method in `Input` to post a `Blurred` message
-- Fixed `Pilot.click` not working with `times` parameter https://github.com/Textualize/textual/pull/5398
-- Fixed select refocusing itself too late https://github.com/Textualize/textual/pull/5420
 - Fixed Log widget not refreshing on resize https://github.com/Textualize/textual/pull/5460
 - Fixed special case with calculating the height of a container where all children have dynamic heights https://github.com/Textualize/textual/pull/5463
 - Fixed scrollbars ignoring background opacity https://github.com/Textualize/textual/issues/5458
 - Fixed `Header` icon showing command palette tooltip when disabled https://github.com/Textualize/textual/pull/5427
 
+### Changed
+
+- OptionList no longer supports `Separator`, a separator may be specified with `None`
+
+### Removed
+
+- Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
 
 ## [1.0.0] - 2024-12-12
 

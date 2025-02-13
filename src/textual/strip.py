@@ -8,7 +8,7 @@ See [Line API](/guide/widgets#line-api) for how to use Strips.
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator, Sequence
+from typing import Any, Iterable, Iterator, Sequence
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
@@ -112,8 +112,11 @@ class Strip:
             assert get_line_length(self._segments) == cell_length
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._segments
-        yield self.cell_length
+        try:
+            yield self._segments
+            yield self.cell_length
+        except AttributeError:
+            pass
 
     @property
     def text(self) -> str:
@@ -340,6 +343,9 @@ class Strip:
         Returns:
             A new strip with the supplied cell length.
         """
+
+        if self.cell_length == cell_length:
+            return self
 
         cache_key = (cell_length, style)
         cached_strip = self._line_length_cache.get(cache_key)
@@ -592,6 +598,40 @@ class Strip:
         )
         self._style_cache[style] = styled_strip
         return styled_strip
+
+    def apply_meta(self, meta: dict[str, Any]) -> Strip:
+        """Apply meta to all segments.
+
+        Args:
+            meta: A dict of meta information.
+
+        Returns:
+            A new strip.
+
+        """
+        meta_style = Style.from_meta(meta)
+        return self.apply_style(meta_style)
+
+    def _apply_link_style(self, link_style: Style) -> Strip:
+        segments = self._segments
+        _Segment = Segment
+        segments = [
+            (
+                _Segment(
+                    text,
+                    (
+                        style
+                        if style._meta is None
+                        else (style + link_style if "@click" in style.meta else style)
+                    ),
+                    control,
+                )
+                if style
+                else _Segment(text)
+            )
+            for text, style, control in segments
+        ]
+        return Strip(segments, self._cell_length)
 
     def render(self, console: Console) -> str:
         """Render the strip into terminal sequences.

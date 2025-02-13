@@ -2650,7 +2650,6 @@ class App(Generic[ReturnType], DOMNode):
 
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
-            self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         try:
             message_pump = active_message_pump.get()
@@ -2660,7 +2659,6 @@ class App(Generic[ReturnType], DOMNode):
         next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
-        self.stylesheet.update(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         if wait_for_dismiss:
@@ -4197,6 +4195,12 @@ class App(Generic[ReturnType], DOMNode):
             self.query_one(HelpPanel)
         except NoMatches:
             self.mount(HelpPanel())
+
+    def action_notify(
+        self, message: str, title: str = "", severity: str = "information"
+    ) -> None:
+        """Show a notification."""
+        self.notify(message, title=title, severity=severity)
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput

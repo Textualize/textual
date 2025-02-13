@@ -269,13 +269,13 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "cachecontrol"
-version = "0.14.1"
+version = "0.14.2"
 description = "httplib2 caching for requests"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "cachecontrol-0.14.1-py3-none-any.whl", hash = "sha256:65e3abd62b06382ce3894df60dde9e0deb92aeb734724f68fa4f3b91e97206b9"},
-    {file = "cachecontrol-0.14.1.tar.gz", hash = "sha256:06ef916a1e4eb7dba9948cdfc9c76e749db2e02104a9a1277e8b642591a0f717"},
+    {file = "cachecontrol-0.14.2-py3-none-any.whl", hash = "sha256:ebad2091bf12d0d200dfc2464330db638c5deb41d546f6d7aca079e87290f3b0"},
+    {file = "cachecontrol-0.14.2.tar.gz", hash = "sha256:7d47d19f866409b98ff6025b6a0fca8e4c791fb31abbd95f622093894ce903a2"},
 ]
 
 [package.dependencies]
@@ -1165,13 +1165,13 @@ dev = ["click", "codecov", "mkdocs-gen-files", "mkdocs-git-authors-plugin", "mkd
 
 [[package]]
 name = "mkdocs-material"
-version = "9.5.49"
+version = "9.5.50"
 description = "Documentation that simply works"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mkdocs_material-9.5.49-py3-none-any.whl", hash = "sha256:c3c2d8176b18198435d3a3e119011922f3e11424074645c24019c2dcf08a360e"},
-    {file = "mkdocs_material-9.5.49.tar.gz", hash = "sha256:3671bb282b4f53a1c72e08adbe04d2481a98f85fed392530051f80ff94a9621d"},
+    {file = "mkdocs_material-9.5.50-py3-none-any.whl", hash = "sha256:f24100f234741f4d423a9d672a909d859668a4f404796be3cf035f10d6050385"},
+    {file = "mkdocs_material-9.5.50.tar.gz", hash = "sha256:ae5fe16f3d7c9ccd05bb6916a7da7420cf99a9ce5e33debd9d40403a090d5825"},
 ]
 
 [package.dependencies]
@@ -1188,7 +1188,7 @@ regex = ">=2022.4"
 requests = ">=2.26,<3.0"
 
 [package.extras]
-git = ["mkdocs-git-committers-plugin-2 (>=1.1,<2.0)", "mkdocs-git-revision-date-localized-plugin (>=1.2.4,<2.0)"]
+git = ["mkdocs-git-committers-plugin-2 (>=1.1,<3)", "mkdocs-git-revision-date-localized-plugin (>=1.2.4,<2.0)"]
 imaging = ["cairosvg (>=2.6,<3.0)", "pillow (>=10.2,<11.0)"]
 recommended = ["mkdocs-minify-plugin (>=0.7,<1.0)", "mkdocs-redirects (>=1.2,<2.0)", "mkdocs-rss-plugin (>=1.6,<2.0)"]
 
@@ -1720,13 +1720,13 @@ files = [
 
 [[package]]
 name = "pygments"
-version = "2.18.0"
+version = "2.19.1"
 description = "Pygments is a syntax highlighting package written in Python."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pygments-2.18.0-py3-none-any.whl", hash = "sha256:b8e6aca0523f3ab76fee51799c488e38782ac06eafcf95e7ba832985c8e7b13a"},
-    {file = "pygments-2.18.0.tar.gz", hash = "sha256:786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199"},
+    {file = "pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c"},
+    {file = "pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f"},
 ]
 
 [package.extras]
@@ -1734,13 +1734,13 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.13"
+version = "10.14.1"
 description = "Extension pack for Python Markdown."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pymdown_extensions-10.13-py3-none-any.whl", hash = "sha256:80bc33d715eec68e683e04298946d47d78c7739e79d808203df278ee8ef89428"},
-    {file = "pymdown_extensions-10.13.tar.gz", hash = "sha256:e0b351494dc0d8d14a1f52b39b1499a00ef1566b4ba23dc74f1eba75c736f5dd"},
+    {file = "pymdown_extensions-10.14.1-py3-none-any.whl", hash = "sha256:637951cbfbe9874ba28134fb3ce4b8bcadd6aca89ac4998ec29dcbafd554ae08"},
+    {file = "pymdown_extensions-10.14.1.tar.gz", hash = "sha256:b65801996a0cd4f42a3110810c306c45b7313c09b0610a6f773730f2a9e3c96b"},
 ]
 
 [package.dependencies]
@@ -1748,7 +1748,7 @@ markdown = ">=3.6"
 pyyaml = "*"
 
 [package.extras]
-extra = ["pygments (>=2.12)"]
+extra = ["pygments (>=2.19.1)"]
 
 [[package]]
 name = "pytest"
@@ -2142,13 +2142,13 @@ files = [
 
 [[package]]
 name = "syrupy"
-version = "4.8.0"
+version = "4.8.1"
 description = "Pytest Snapshot Test Utility"
 optional = false
 python-versions = ">=3.8.1"
 files = [
-    {file = "syrupy-4.8.0-py3-none-any.whl", hash = "sha256:544f4ec6306f4b1c460fdab48fd60b2c7fe54a6c0a8243aeea15f9ad9c638c3f"},
-    {file = "syrupy-4.8.0.tar.gz", hash = "sha256:648f0e9303aaa8387c8365d7314784c09a6bab0a407455c6a01d6a4f5c6a8ede"},
+    {file = "syrupy-4.8.1-py3-none-any.whl", hash = "sha256:274f97cbaf44175f5e478a2f3a53559d31f41c66c6bf28131695f94ac893ea00"},
+    {file = "syrupy-4.8.1.tar.gz", hash = "sha256:8da8c0311e6d92de0b15767768c6ab98982b7b4a4c67083c08fbac3fbad4d44c"},
 ]
 
 [package.dependencies]
@@ -2308,19 +2308,19 @@ core = ["tree-sitter (>=0.22,<1.0)"]
 
 [[package]]
 name = "tree-sitter-css"
-version = "0.23.1"
+version = "0.23.2"
 description = "CSS grammar for tree-sitter"
 optional = true
 python-versions = ">=3.9"
 files = [
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:6b38462fef7d14b0bfa6e542faab7d3cfd267b8dc138efcf6e2cee11f6988084"},
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:33239e810c518b27fa7b4592d31f6cb63c43d4ea55532b4eb346ac4c9974a7f4"},
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8c4cefceb654f89de8e79563d960f87b9a4680f288d87e20bacca7c339392070"},
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6524a5d097224128c9cda797c09f5704af0705e0ff272cf2f41ec192aa06aa62"},
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:2999be3784999ced8b8d6a4470f0aec28cdc42b31fd9861041a70c834a2c8850"},
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-win_amd64.whl", hash = "sha256:8824f079e7454491347eda4cdbf9cde606c4e5de518cc85bb69cd9dfd67b8982"},
-    {file = "tree_sitter_css-0.23.1-cp39-abi3-win_arm64.whl", hash = "sha256:6ff44819511fe517f6d32f1d8a3563da30093ca155dd1198585819598e83d755"},
-    {file = "tree_sitter_css-0.23.1.tar.gz", hash = "sha256:a5dadf23e201f05606feaa638d0e423050a3d56cea2324c8859857fbbc3f69e8"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-macosx_10_9_x86_64.whl", hash = "sha256:62b9eadb8f47c666a36a2ead96d17c2a01d7599e1f13f69c617f08e4acf62bf0"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:0be54e07f90679173bb06a8ecf483a7d79eaa6d236419b5baa6ce02401ea31a9"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a4ac53c7d74fbb88196301f998a3ab06325447175374500aa477211a59372da2"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0f51bf93f607581ec08c30c591a9274fb29b4b59a1bde4adee7d395de7687285"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:6d13c0683d259d82bed17d00d788a8af026ffb3f412337e9971324742dcf2cc8"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-win_amd64.whl", hash = "sha256:78236683eb974cc738969f70f1fb6d978ae375139b89cfe8efeaca4b865055be"},
+    {file = "tree_sitter_css-0.23.2-cp39-abi3-win_arm64.whl", hash = "sha256:4b95b7f53142029fca2abd3fcb635e3eb952bc198f340be5c429040c791f9c00"},
+    {file = "tree_sitter_css-0.23.2.tar.gz", hash = "sha256:04198e9f4dee4935dbf17fdd7f534be8b9a2dd3a4b44a3ca481d3e8c15f10dca"},
 ]
 
 [package.extras]
@@ -2653,13 +2653,13 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "virtualenv"
-version = "20.28.1"
+version = "20.29.1"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "virtualenv-20.28.1-py3-none-any.whl", hash = "sha256:412773c85d4dab0409b83ec36f7a6499e72eaf08c80e81e9576bca61831c71cb"},
-    {file = "virtualenv-20.28.1.tar.gz", hash = "sha256:5d34ab240fdb5d21549b76f9e8ff3af28252f5499fb6d6f031adac4e5a8c5329"},
+    {file = "virtualenv-20.29.1-py3-none-any.whl", hash = "sha256:4e4cb403c0b0da39e13b46b1b2476e505cb0046b25f242bee80f62bf990b2779"},
+    {file = "virtualenv-20.29.1.tar.gz", hash = "sha256:b8b8970138d32fb606192cb97f6cd4bb644fa486be9308fb9b63f81091b5dc35"},
 ]
 
 [package.dependencies]

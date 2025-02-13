@@ -7,7 +7,7 @@ class LinkHoverColorApp(App):
 
     def compose(self):
         yield Label(
-            "Visit the [link=https://textualize.io]Textualize[/link] website.",
+            "Visit the [link='https://textualize.io']Textualize[/link] website.",
             id="lbl1",  # (1)!
         )
         yield Label(

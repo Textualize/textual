@@ -1,0 +1,12 @@
+Static {
+    height: 1fr;
+}
+
+#static1 {
+    text-wrap: wrap; /* this is the default */
+    background: blue 20%;
+}
+#static2 {
+    text-wrap: nowrap; /* disable wrapping */
+    background: green 20%;
+}

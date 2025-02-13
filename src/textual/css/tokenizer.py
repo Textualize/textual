@@ -127,9 +127,21 @@ class Expect:
         self.match = self._regex.match
         self.search = self._regex.search
         self._expect_eof = False
+        self._expect_semicolon = True
+        self._extract_text = False
 
-    def expect_eof(self, eof: bool) -> Expect:
+    def expect_eof(self, eof: bool = True) -> Expect:
+        """Expect an end of file."""
         self._expect_eof = eof
+        return self
+
+    def expect_semicolon(self, semicolon: bool = True) -> Expect:
+        """Tokenizer expects text to be terminated with a semi-colon."""
+        self._expect_semicolon = semicolon
+        return self
+
+    def extract_text(self, extract: bool = True) -> Expect:
+        self._extract_text = extract
         return self
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -246,22 +258,44 @@ class Tokenizer:
                     "Unexpected end of file; did you forget a '}' ?",
                 )
         line = self.lines[line_no]
-        match = expect.match(line, col_no)
+        preceding_text: str = ""
+        if expect._extract_text:
+            match = expect.search(line, col_no)
+            if match is None:
+                preceding_text = line[self.col_no :]
+                self.line_no += 1
+                self.col_no = 0
+            else:
+                col_no = match.start()
+                preceding_text = line[self.col_no : col_no]
+                self.col_no = col_no
+            if preceding_text:
+                token = Token(
+                    "text",
+                    preceding_text,
+                    self.read_from,
+                    self.code,
+                    (line_no, col_no),
+                    referenced_by=None,
+                )
+
+                return token
+
+        else:
+            match = expect.match(line, col_no)
+
         if match is None:
-            error_line = line[col_no:].rstrip()
+            error_line = line[col_no:]
             error_message = (
                 f"{expect.description} (found {error_line.split(';')[0]!r})."
             )
-            if not error_line.endswith(";"):
+            if expect._expect_semicolon and not error_line.endswith(";"):
                 error_message += "; Did you forget a semicolon at the end of a line?"
             raise TokenError(
                 self.read_from, self.code, (line_no + 1, col_no + 1), error_message
             )
-        iter_groups = iter(match.groups())
 
-        next(iter_groups)
-
-        for name, value in zip(expect.names, iter_groups):
+        for name, value in zip(expect.names, match.groups()[1:]):
             if value is not None:
                 break
         else:

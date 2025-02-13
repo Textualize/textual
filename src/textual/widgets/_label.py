@@ -6,6 +6,7 @@ from typing import Literal
 
 from rich.console import RenderableType
 
+from textual.visual import SupportsVisual
 from textual.widgets._static import Static
 
 LabelVariant = Literal["success", "error", "warning", "primary", "secondary", "accent"]
@@ -49,7 +50,7 @@ class Label(Static):
 
     def __init__(
         self,
-        renderable: RenderableType = "",
+        renderable: RenderableType | SupportsVisual = "",
         *,
         variant: LabelVariant | None = None,
         expand: bool = False,

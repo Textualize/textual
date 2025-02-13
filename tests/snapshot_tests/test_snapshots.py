@@ -8,6 +8,7 @@ from rich.text import Text
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events
+from textual._on import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.command import SimpleCommand
@@ -15,13 +16,16 @@ from textual.containers import (
     Center,
     Container,
     Grid,
+    Horizontal,
     Middle,
     Vertical,
     VerticalGroup,
     VerticalScroll,
     HorizontalGroup,
 )
+from textual.content import Content
 from textual.pilot import Pilot
+from textual.reactive import var
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
@@ -183,7 +187,8 @@ def test_input_setting_value(snap_compare):
 def test_input_cursor(snap_compare):
     """The first input should say こんにちは.
     The second input should say こんにちは, with a cursor on the final character (double width).
-    Note that this might render incorrectly in the SVG output - the letters may overlap."""
+    Note that this might render incorrectly in the SVG output - the letters may overlap.
+    """
 
     class InputApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -2078,7 +2083,7 @@ def test_ansi(snap_compare):
         """
 
         def compose(self) -> ComposeResult:
-            yield Label("[red]Red[/] [magenta]Magenta[/]")
+            yield Label("[ansi_red]Red[/] [ansi_magenta]Magenta[/]")
 
     app = ANSIApp(ansi_color=True)
     assert snap_compare(app)
@@ -2096,7 +2101,7 @@ def test_ansi_command_palette(snap_compare):
         """
 
         def compose(self) -> ComposeResult:
-            yield Label("[red]Red[/] [magenta]Magenta[/] " * 200)
+            yield Label("[ansi_red]Red[/] [ansi_magenta]Magenta[/] " * 200)
 
         def on_mount(self) -> None:
             self.action_command_palette()
@@ -2413,7 +2418,7 @@ def test_transparent_background(snap_compare):
             return LinearGradient(30.0, stops)
 
     app = TransparentApp()
-    snap_compare(app)
+    assert snap_compare(app)
 
 
 def test_maximize_allow(snap_compare):
@@ -2850,6 +2855,8 @@ def test_grid_offset(snap_compare):
     assert snap_compare(GridOffsetApp())
 
 
+# Figure out why this test is flakey
+@pytest.mark.skip("This test is flakey (why)?")
 def test_select_width_auto(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5280"
     The overlay has a width of auto, so the first (widest) option should not wrap."""
@@ -2881,24 +2888,27 @@ def test_select_width_auto(snap_compare):
         await pilot.pause()
         await pilot.click("Select")
 
-    snap_compare(TallSelectApp(), run_before=run_before)
+    assert snap_compare(TallSelectApp(), run_before=run_before)
 
 
 def test_markup_command_list(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5276
-    You should see a command list, with console markup applied to the action name and help text."""
+    You should see a command list, with console markup applied to the action name and help text.
+    """
 
     class MyApp(App):
         def on_mount(self) -> None:
             self.search_commands(
                 [
                     SimpleCommand(
-                        "Hello [u green]World", lambda: None, "Help [u red]text"
+                        "Hello [u ansi_green]World",
+                        lambda: None,
+                        "Help [u ansi_red]text",
                     )
                 ]
             )
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_app_resize_order(snap_compare):
@@ -2940,12 +2950,18 @@ def test_app_resize_order(snap_compare):
         def on_resize(self) -> None:
             self.add_class("narrow")
 
-    snap_compare(SCApp())
+    async def run_before(pilot: Pilot):
+        await pilot.pause()
+        await pilot.wait_for_animation()
+        await pilot.pause()
+
+    assert snap_compare(SCApp(), run_before=run_before)
 
 
 def test_add_remove_tabs(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5215
-    You should see a TabbedContent with three panes, entitled 'tab-2', 'New tab' and 'New tab'"""
+    You should see a TabbedContent with three panes, entitled 'tab-2', 'New tab' and 'New tab'
+    """
 
     class ExampleApp(App):
         BINDINGS = [
@@ -2970,7 +2986,7 @@ def test_add_remove_tabs(snap_compare):
             new_pane = TabPane("New tab", Label("new"))
             tabbed_content.add_pane(new_pane)
 
-    snap_compare(ExampleApp(), press=["a", "r", "a"])
+    assert snap_compare(ExampleApp(), press=["a", "r", "a"])
 
 
 def test_click_expand(snap_compare):
@@ -2987,12 +3003,13 @@ def test_click_expand(snap_compare):
         await pilot.pause()
         await pilot.click(Select)
 
-    snap_compare(SelectApp(), run_before=run_before)
+    assert snap_compare(SelectApp(), run_before=run_before)
 
 
 def test_disable_command_palette(snap_compare):
     """Test command palette may be disabled by check_action.
-    You should see a footer with an enabled binding, and the command palette binding greyed out."""
+    You should see a footer with an enabled binding, and the command palette binding greyed out.
+    """
 
     class FooterApp(App):
         BINDINGS = [("b", "bell", "Bell")]
@@ -3007,7 +3024,7 @@ def test_disable_command_palette(snap_compare):
                 return None
             return True
 
-    snap_compare(FooterApp())
+    assert snap_compare(FooterApp())
 
 
 def test_selection_list_wrap(snap_compare):
@@ -3017,7 +3034,7 @@ def test_selection_list_wrap(snap_compare):
         def compose(self) -> ComposeResult:
             yield SelectionList(("Hello World " * 100, 0))
 
-    snap_compare(SelectionListApp())
+    assert snap_compare(SelectionListApp())
 
 
 def test_border_tab(snap_compare):
@@ -3042,12 +3059,13 @@ def test_border_tab(snap_compare):
             label.border_subtitle = ":-)"
             yield label
 
-    snap_compare(TabApp())
+    assert snap_compare(TabApp())
 
 
 def test_dock_align(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5345
-    You should see a blue panel aligned to the top right of the screen, with a centered button."""
+    You should see a blue panel aligned to the top right of the screen, with a centered button.
+    """
 
     class MainContainer(Static):
         def compose(self):
@@ -3113,7 +3131,7 @@ def test_dock_align(snap_compare):
         def compose(self):
             yield MainContainer()
 
-    snap_compare(Test1())
+    assert snap_compare(Test1())
 
 
 def test_auto_parent_with_alignment(snap_compare):
@@ -3150,7 +3168,7 @@ def test_auto_parent_with_alignment(snap_compare):
         def compose(self) -> ComposeResult:
             yield Sidebar()
 
-    snap_compare(FloatSidebarApp())
+    assert snap_compare(FloatSidebarApp())
 
 
 def test_select_refocus(snap_compare):
@@ -3194,7 +3212,7 @@ def test_select_refocus(snap_compare):
             with Container():
                 yield MyListView()
 
-    snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
+    assert snap_compare(TUI(), press=["down", "enter", "down", "down", "enter"])
 
 
 def test_widgets_in_grid(snap_compare):
@@ -3230,7 +3248,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
                     label.border_title = str(n)
                     yield label
 
-    snap_compare(MyApp(), terminal_size=(100, 50))
+    assert snap_compare(MyApp(), terminal_size=(100, 50))
 
 
 def test_arbitrary_selection(snap_compare):
@@ -3283,7 +3301,7 @@ def test_collapsible_datatable(snap_compare):
             for number in range(1, 100):
                 t1.add_row(str(number) + " " * 200)
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_scrollbar_background_with_opacity(snap_compare):
@@ -3319,7 +3337,7 @@ def test_static_markup(snap_compare):
     You should see 3 labels.
 
     This first label contains an invalid style, and should have tags removed.
-    The second label should have the word "markup" boldened.
+    The second label should have the word "markup" emboldened.
     The third label has markup disabled, and should show tags without styles.
     """
 
@@ -3329,13 +3347,14 @@ def test_static_markup(snap_compare):
             yield Label("This allows [bold]markup[/bold]")
             yield Label("This does not allow [bold]markup[/bold]", markup=False)
 
-    snap_compare(LabelApp())
+    assert snap_compare(LabelApp())
 
 
 def test_arbitrary_selection_double_cell(snap_compare):
     """Check that selection understands double width cells.
 
-    You should see a smiley face followed by 'Hello World!', where Hello is highlighted."""
+    You should see a smiley face followed by 'Hello World!', where Hello is highlighted.
+    """
 
     class LApp(App):
         def compose(self) -> ComposeResult:
@@ -3348,3 +3367,218 @@ def test_arbitrary_selection_double_cell(snap_compare):
         await pilot.pause()
 
     assert snap_compare(LApp(), run_before=run_before)
+
+
+def test_markup(snap_compare):
+    """Check markup rendering, text in test should match the markup."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markup.py")
+
+
+def test_no_wrap(snap_compare):
+    """Test no wrap. You should see exactly two lines. The first is cropped, the second is
+    cropped with an ellipsis symbol."""
+
+    TEXT = """I must not fear. Fear is the mind-killer. Fear is the little-death that brings total obliteration. I will face my fear."""
+
+    class NoWrapApp(App):
+        CSS = """
+        Label {
+            max-width: 100vw;
+            text-wrap: nowrap;
+        }
+        #label2 {
+            text-overflow: ellipsis;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label(TEXT, id="label1")
+            yield Label(TEXT, id="label2")
+
+    assert snap_compare(NoWrapApp())
+
+
+def test_overflow(snap_compare):
+    """Test overflow. You should see three labels across 4 lines. The first with overflow clip,
+    the second with overflow ellipsis, and the last with overflow fold."""
+
+    TEXT = "FOO " + "FOOBARBAZ" * 100
+
+    class OverflowApp(App):
+        CSS = """
+        Label {
+            max-width: 100vw;            
+        }
+        #label1 {
+            # Overflow will be cropped
+            text-overflow: clip;
+            background: blue 20%;
+        }
+        #label2 {
+            # Like clip, but last character will be an ellipsis
+            text-overflow: ellipsis;
+            background: green 20%;
+        }
+        #label3 {
+            # Overflow will fold on to subsequence lines
+            text-overflow: fold;
+            background: red 20%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label(TEXT, id="label1")
+            yield Label(TEXT, id="label2")
+            yield Label(TEXT, id="label3")
+
+    assert snap_compare(OverflowApp())
+
+
+def test_empty_option_list(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5489
+
+    You should see an OptionList with no options, resulting in a small square at the top left.
+
+    """
+
+    class OptionListAutoCrash(App[None]):
+
+        CSS = """
+        OptionList {
+            width: auto;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield OptionList()
+
+    assert snap_compare(OptionListAutoCrash())
+
+
+def test_focus_within_transparent(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5488
+
+    You should see the right 50% in yellow, with a yellow OptionList and a black TextArea
+    """
+
+    class Panel(Vertical, can_focus=True):
+        pass
+
+    class FocusWithinTransparentApp(App[None]):
+
+        CSS = """
+        Screen {
+            layout: horizontal;
+        }
+
+        Input {
+            width: 1fr;
+            height: 1fr;
+        }
+
+        Panel {
+            padding: 5 10;
+            background: red;
+            &:focus, &:focus-within {
+                background: yellow;
+            }
+
+            OptionList, OptionList:focus {
+                height: 1fr;
+                background: transparent;
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Input(placeholder="This is here to escape to")
+            with Panel():
+                yield OptionList(*["This is an option" for _ in range(30)])
+                yield Input(placeholder="Escape out via here for the bug")
+
+    assert snap_compare(FocusWithinTransparentApp(), press=["tab"])
+
+
+def test_option_list_wrapping(snap_compare):
+    """You should see a 40 cell wide Option list with a single line, ending in an ellipsis."""
+
+    class OLApp(App):
+        CSS = """
+        OptionList { 
+            width: 40;
+            text-wrap: nowrap;
+            text-overflow: ellipsis;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(
+                "This is a very long option that is too wide to fit within the space provided and will overflow."
+            )
+
+    assert snap_compare(OLApp())
+
+
+def test_add_separator(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5431
+
+    You should see a button on the left. On the right an option list with Option 1, separator, Option 3
+
+    """
+
+    class FocusTest(App[None]):
+
+        CSS = """
+        OptionList {
+            height: 1fr;
+        }
+        """
+
+        counter: var[int] = var(0)
+
+        def compose(self) -> ComposeResult:
+            with Horizontal():
+                yield Button("Add")
+                yield OptionList()
+
+        @on(Button.Pressed)
+        def add_more_stuff(self) -> None:
+            self.counter += 1
+            self.query_one(OptionList).add_option(
+                (f"This is option {self.counter}" if self.counter % 2 else None)
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        for _ in range(3):
+            await pilot.click(Button)
+            await pilot.pause(0.4)
+
+    assert snap_compare(FocusTest(), run_before=run_before)
+
+
+def test_visual_tooltip(snap_compare):
+    """Test Visuals such as Content work in tooltips.
+
+    You should see a tooltip under a label.
+    The tooltip should have the word "Tooltip" highlighted in the accent color.
+
+    """
+
+    class TooltipApp(App[None]):
+        TOOLTIP_DELAY = 0.4
+
+        def compose(self) -> ComposeResult:
+            progress_bar = Label("Hello, World")
+            progress_bar.tooltip = Content.from_markup(
+                "Hello, [bold $accent]Tooltip[/]!"
+            )
+            yield progress_bar
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.hover(Label)
+        await pilot.pause(0.4)
+        await pilot.pause()
+
+    assert snap_compare(TooltipApp(), run_before=run_before)

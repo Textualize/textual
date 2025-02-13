@@ -4,11 +4,10 @@ from functools import lru_cache
 from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
-from rich.console import Console
+import rich.repr
 from rich.segment import Segment
-from rich.style import Style
+from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
-from rich.text import Text
 
 from textual import log
 from textual._ansi_theme import DEFAULT_TERMINAL_THEME
@@ -16,13 +15,15 @@ from textual._border import get_box, render_border_label, render_row
 from textual._context import active_app
 from textual._opacity import _apply_opacity
 from textual._segment_tools import apply_hatch, line_pad, line_trim
-from textual.color import Color
+from textual.color import TRANSPARENT, Color
 from textual.constants import DEBUG
+from textual.content import Content
 from textual.filter import LineFilter
 from textual.geometry import Region, Size, Spacing
 from textual.renderables.text_opacity import TextOpacity
 from textual.renderables.tint import Tint
 from textual.strip import Strip
+from textual.style import Style
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -34,7 +35,7 @@ RenderLineCallback: TypeAlias = Callable[[int], Strip]
 
 
 @lru_cache(1024 * 8)
-def make_blank(width, style: Style) -> Segment:
+def make_blank(width, style: RichStyle) -> Segment:
     """Make a blank segment.
 
     Args:
@@ -47,6 +48,7 @@ def make_blank(width, style: Style) -> Segment:
     return Segment(intern(" " * width), style)
 
 
+@rich.repr.auto(angular=True)
 class StylesCache:
     """Responsible for rendering CSS Styles and keeping a cache of rendered lines.
 
@@ -76,6 +78,11 @@ class StylesCache:
         self._cache: dict[int, Strip] = {}
         self._dirty_lines: set[int] = set()
         self._width = 1
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        if self._dirty_lines:
+            yield "dirty", self._dirty_lines
+        yield "width", self._width, 1
 
     def set_dirty(self, *regions: Region) -> None:
         """Add a dirty regions."""
@@ -123,7 +130,6 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
-            widget.app.console,
             (
                 None
                 if border_title is None
@@ -147,6 +153,7 @@ class StylesCache:
             opacity=widget.opacity,
             ansi_theme=widget.app.ansi_theme,
         )
+
         if widget.auto_links:
             hover_style = widget.hover_style
             if (
@@ -170,9 +177,8 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
-        console: Console,
-        border_title: tuple[Text, Color, Color, Style] | None,
-        border_subtitle: tuple[Text, Color, Color, Style] | None,
+        border_title: tuple[Content, Color, Color, Style] | None,
+        border_subtitle: tuple[Content, Color, Color, Style] | None,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
@@ -230,7 +236,6 @@ class StylesCache:
                     base_background,
                     background,
                     render_content_line,
-                    console,
                     border_title,
                     border_subtitle,
                     opacity,
@@ -267,9 +272,8 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: Callable[[int], Strip],
-        console: Console,
-        border_title: tuple[Text, Color, Color, Style] | None,
-        border_subtitle: tuple[Text, Color, Color, Style] | None,
+        border_title: tuple[Content, Color, Color, Style] | None,
+        border_subtitle: tuple[Content, Color, Color, Style] | None,
         opacity: float,
         ansi_theme: TerminalTheme,
     ) -> Strip:
@@ -313,17 +317,17 @@ class StylesCache:
             (outline_left, outline_left_color),
         ) = styles.outline
 
-        from_color = Style.from_color
+        from_color = RichStyle.from_color
 
-        inner = from_color(bgcolor=(base_background + background).rich_color)
-        outer = from_color(bgcolor=base_background.rich_color)
+        inner = Style(background=(base_background + background))
+        outer = Style(background=base_background)
 
         def line_post(segments: Iterable[Segment]) -> Iterable[Segment]:
             """Apply effects to segments inside the border."""
             if styles.has_rule("hatch") and styles.hatch != "none":
                 character, color = styles.hatch
                 if character != " " and color.a > 0:
-                    hatch_style = Style.from_color(
+                    hatch_style = from_color(
                         (background + color).rich_color, background.rich_color
                     )
                     return apply_hatch(segments, character, hatch_style)
@@ -354,11 +358,12 @@ class StylesCache:
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
+
             is_top = y == 0
             border_color = base_background + (
                 border_top_color if is_top else border_bottom_color
             ).multiply_alpha(opacity)
-            border_color_as_style = from_color(color=border_color.rich_color)
+            border_color_as_style = Style(foreground=border_color)
             border_edge_type = border_top if is_top else border_bottom
             has_left = border_left != ""
             has_right = border_right != ""
@@ -368,19 +373,16 @@ class StylesCache:
             else:
                 label, label_color, label_background, style = border_label
                 base_label_background = base_background + background
-                style += Style.from_color(
+                style += Style(
                     (
-                        (base_label_background + label_color).rich_color
-                        if label_color.a
-                        else None
-                    ),
-                    (
-                        (base_label_background + label_background).rich_color
+                        (base_label_background + label_background)
                         if label_background.a
-                        else None
+                        else TRANSPARENT
                     ),
+                    (base_label_background + border_color + label_color),
                 )
                 render_label = (label, style)
+
             # Try to save time with expensive call to `render_border_label`:
             if render_label:
                 label_segments = render_border_label(
@@ -391,7 +393,6 @@ class StylesCache:
                     inner,
                     outer,
                     border_color_as_style,
-                    console,
                     has_left,
                     has_right,
                 )
@@ -419,27 +420,23 @@ class StylesCache:
         elif (pad_top and y < gutter.top) or (
             pad_bottom and y >= height - gutter.bottom
         ):
-            background_style = from_color(bgcolor=background.rich_color)
-            left_style = from_color(
-                color=(
-                    base_background + border_left_color.multiply_alpha(opacity)
-                ).rich_color
+            background_rich_style = from_color(bgcolor=background.rich_color)
+            left_style = Style(
+                foreground=base_background + border_left_color.multiply_alpha(opacity)
             )
             left = get_box(border_left, inner, outer, left_style)[1][0]
-            right_style = from_color(
-                color=(
-                    base_background + border_right_color.multiply_alpha(opacity)
-                ).rich_color
+            right_style = Style(
+                foreground=base_background + border_right_color.multiply_alpha(opacity)
             )
             right = get_box(border_right, inner, outer, right_style)[1][2]
             if border_left and border_right:
-                line = [left, make_blank(width - 2, background_style), right]
+                line = [left, make_blank(width - 2, background_rich_style), right]
             elif border_left:
-                line = [left, make_blank(width - 1, background_style)]
+                line = [left, make_blank(width - 1, background_rich_style)]
             elif border_right:
-                line = [make_blank(width - 1, background_style), right]
+                line = [make_blank(width - 1, background_rich_style), right]
             else:
-                line = [make_blank(width, background_style)]
+                line = [make_blank(width, background_rich_style)]
             line = line_post(line)
         else:
             # Content with border and padding (C)
@@ -448,27 +445,25 @@ class StylesCache:
                 line = render_content_line(y - gutter.top)
                 line = line.adjust_cell_length(content_width)
             else:
-                line = [make_blank(content_width, inner)]
+                line = [make_blank(content_width, inner.rich_style)]
             if inner:
-                line = Segment.apply_style(line, inner)
+                line = Segment.apply_style(line, inner.rich_style)
             if styles.text_opacity != 1.0:
                 line = TextOpacity.process_segments(
                     line, styles.text_opacity, ansi_theme
                 )
-            line = line_post(line_pad(line, pad_left, pad_right, inner))
+            line = line_post(line_pad(line, pad_left, pad_right, inner.rich_style))
 
             if border_left or border_right:
                 # Add left / right border
-                left_style = from_color(
-                    (
-                        base_background + border_left_color.multiply_alpha(opacity)
-                    ).rich_color
+                left_style = Style(
+                    foreground=base_background
+                    + border_left_color.multiply_alpha(opacity)
                 )
                 left = get_box(border_left, inner, outer, left_style)[1][0]
-                right_style = from_color(
-                    (
-                        base_background + border_right_color.multiply_alpha(opacity)
-                    ).rich_color
+                right_style = Style(
+                    foreground=base_background
+                    + border_right_color.multiply_alpha(opacity)
                 )
                 right = get_box(border_right, inner, outer, right_style)[1][2]
 
@@ -487,7 +482,7 @@ class StylesCache:
                 outline_top if y == 0 else outline_bottom,
                 inner,
                 outer,
-                from_color(color=(base_background + outline_color).rich_color),
+                Style(foreground=base_background + outline_color),
             )
             line = render_row(
                 box_segments[0 if y == 0 else 2],
@@ -499,9 +494,9 @@ class StylesCache:
 
         elif outline_left or outline_right:
             # Lines in side outline
-            left_style = from_color((base_background + outline_left_color).rich_color)
+            left_style = Style(foreground=(base_background + outline_left_color))
             left = get_box(outline_left, inner, outer, left_style)[1][0]
-            right_style = from_color((base_background + outline_right_color).rich_color)
+            right_style = Style(foreground=(base_background + outline_right_color))
             right = get_box(outline_right, inner, outer, right_style)[1][2]
             line = line_trim(list(line), outline_left != "", outline_right != "")
             if outline_left and outline_right:

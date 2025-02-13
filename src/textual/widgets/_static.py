@@ -4,13 +4,12 @@ from typing import TYPE_CHECKING
 
 from rich.console import RenderableType
 from rich.protocol import is_renderable
-from rich.text import Text
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
 from textual.errors import RenderError
-from textual.visual import SupportsVisual, Visual, visualize
+from textual.visual import SupportsVisual, Visual, VisualType, visualize
 from textual.widget import Widget
 
 
@@ -64,17 +63,18 @@ class Static(Widget, inherit_bindings=False):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        super().__init__(
+            name=name, id=id, classes=classes, disabled=disabled, markup=markup
+        )
         self.expand = expand
         self.shrink = shrink
-        self.markup = markup
         self._content = content
         self._visual: Visual | None = None
 
     @property
     def visual(self) -> Visual:
         if self._visual is None:
-            self._visual = visualize(self, self._content, markup=self.markup)
+            self._visual = visualize(self, self._content, markup=self._render_markup)
         return self._visual
 
     @property
@@ -83,13 +83,7 @@ class Static(Widget, inherit_bindings=False):
 
     @renderable.setter
     def renderable(self, renderable: RenderableType | SupportsVisual) -> None:
-        if isinstance(renderable, str):
-            if self.markup:
-                self._renderable = Text.from_markup(renderable)
-            else:
-                self._renderable = Text(renderable)
-        else:
-            self._renderable = renderable
+        self._renderable = renderable
         self._visual = None
         self.clear_cached_dimensions()
 
@@ -101,7 +95,7 @@ class Static(Widget, inherit_bindings=False):
         """
         return self.visual
 
-    def update(self, content: RenderableType | SupportsVisual = "") -> None:
+    def update(self, content: VisualType = "") -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
@@ -109,5 +103,5 @@ class Static(Widget, inherit_bindings=False):
         """
 
         self._content = content
-        self._visual = visualize(self, content, markup=self.markup)
+        self._visual = visualize(self, content, markup=self._render_markup)
         self.refresh(layout=True)
