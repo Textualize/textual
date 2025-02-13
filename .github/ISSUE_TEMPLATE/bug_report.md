@@ -7,9 +7,16 @@ assignees: ''
 
 ---
 
-Have you checked closed issues? https://github.com/Textualize/textual/issues?q=is%3Aissue+is%3Aclosed
+Have you checked closed issues? (https://github.com/Textualize/textual/issues?q=is%3Aissue+is%3Aclosed)
 
-Have you checked against the most recent version of Textual? https://pypi.org/search/?q=textual
+Have you checked against the most recent version of Textual? (https://pypi.org/search/?q=textual)
+
+## Feature requests
+
+Please post feature requests to Ideas. (https://github.com/Textualize/textual/discussions/categories/ideas)
+
+
+## The bug
 
 Please give a brief but clear explanation of the issue. If you can, include a complete working example that demonstrates the bug. **Check it can run without modifications.**
 
