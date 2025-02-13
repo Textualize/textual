@@ -3582,3 +3582,47 @@ def test_visual_tooltip(snap_compare):
         await pilot.pause()
 
     assert snap_compare(TooltipApp(), run_before=run_before)
+
+
+def test_auto_rich_log_width(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5472
+
+    You should see a tabbed content with a single line of text in the middle of the page.
+
+    """
+
+    class MinimalApp(App):
+        """A minimal Textual app demonstrating the RichLog border issue."""
+
+        CSS = """
+        TabbedContent {
+            height: 100%;
+        }
+
+        #title-container {
+            align: center middle;
+        }
+
+        #title-rich-log {
+            overflow-y: auto;
+            background: black 0%;
+            background: blue;
+            width: auto;
+            height: auto;
+            /* When removing the border, the whole thing is gone? */
+            # border: solid green 0%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            """Create child widgets for the app."""
+            with TabbedContent():
+                with TabPane("Title Slide", id="title-slide-tab"):
+                    yield Container(RichLog(id="title-rich-log"), id="title-container")
+
+        def on_mount(self) -> None:
+            """Add some text to the RichLogs."""
+            title_rich_log = self.query_one("#title-rich-log", RichLog)
+            title_rich_log.write("This is the Title Slide RichLog")
+
+    assert snap_compare(MinimalApp())
