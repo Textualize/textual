@@ -1232,7 +1232,7 @@ class CommandPalette(SystemModalScreen[None]):
                 self._cancel_gather_commands()
                 self.app.post_message(CommandPalette.Closed(option_selected=True))
                 self.dismiss()
-                self.call_later(self._selected_command.command)
+                self.app.call_later(self._selected_command.command)
 
     @on(OptionList.OptionHighlighted)
     def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
