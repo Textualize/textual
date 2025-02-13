@@ -2950,7 +2950,12 @@ def test_app_resize_order(snap_compare):
         def on_resize(self) -> None:
             self.add_class("narrow")
 
-    assert snap_compare(SCApp())
+    async def run_before(pilot: Pilot):
+        await pilot.pause()
+        await pilot.wait_for_animation()
+        await pilot.pause()
+
+    assert snap_compare(SCApp(), run_before=run_before)
 
 
 def test_add_remove_tabs(snap_compare):
