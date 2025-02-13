@@ -138,6 +138,12 @@ class RichLog(ScrollView, can_focus=True):
                 deferred_render = deferred_renders.popleft()
                 self.write(*deferred_render)
 
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        if self._size_known:
+            return self.virtual_size.width
+        else:
+            return container.width
+
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.
 
