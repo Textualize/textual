@@ -587,7 +587,7 @@ If we were to add other selectors for additional screens or widgets, it would be
 
 ### Why use nesting?
 
-There is no requirement to use nested CSS, but it can help to group related rule sets together (which makes it easier to edit). Nested CSS can also help you avoid some repetition in your selectors, i.e. in the nested CSS we only need to type `#questions` once, rather than four times in the non-nested CSS.
+There is no requirement to use nested CSS, but grouping related rules together avoids repetition (in the nested CSS we only need to type `#questions` once, rather than four times in the non-nested CSS).
 
 Nesting CSS will also make rules that are *more* specific.
 This is useful if you find your rules are applying to widgets that you didn't intend.
