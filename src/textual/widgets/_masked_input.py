@@ -12,6 +12,7 @@ from typing_extensions import Literal
 
 from textual import events
 from textual.strip import Strip
+from textual.widgets.input import Selection
 
 if TYPE_CHECKING:
     pass
@@ -256,15 +257,17 @@ class _Template(Validator):
             value, cursor_position = self.insert_separators(value, cursor_position)
         return value, cursor_position
 
-    def move_cursor(self, delta: int) -> None:
+    def move_cursor(self, delta: int, select: bool = False) -> None:
         """Moves the cursor position by `delta` characters, skipping separators if
         running over them.
 
         Args:
             delta: The number of characters to move; positive moves right, negative
                 moves left.
+            select: If `True`, select the text between the old and new cursor positions.
         """
         cursor_position = self.input.cursor_position
+        start, end = self.input.selection
         if delta < 0 and all(
             [
                 (_CharFlags.SEPARATOR in char_definition.flags)
@@ -279,7 +282,11 @@ class _Template(Validator):
             and (_CharFlags.SEPARATOR in self.template[cursor_position].flags)
         ):
             cursor_position += delta
-        self.input.cursor_position = cursor_position
+
+        if select:
+            self.input.selection = Selection(start, cursor_position)
+        else:
+            self.input.cursor_position = cursor_position
 
     def delete_at_position(self, position: int | None = None) -> None:
         """Deletes character at `position`.
@@ -623,16 +630,28 @@ class MaskedInput(Input, can_focus=True):
         self.value, self.cursor_position = self._template.insert_separators("", 0)
 
     def action_cursor_left(self, select: bool = False) -> None:
-        """Move the cursor one position to the left; separators are skipped."""
-        self._template.move_cursor(-1)
+        """Move the cursor one position to the left; separators are skipped.
+
+        Args:
+            select: If `True`, select the text to the left of the cursor.
+        """
+        self._template.move_cursor(-1, select=select)
 
     def action_cursor_right(self, select: bool = False) -> None:
-        """Move the cursor one position to the right; separators are skipped."""
-        self._template.move_cursor(1)
+        """Move the cursor one position to the right; separators are skipped.
+
+        Args:
+            select: If `True`, select the text to the right of the cursor.
+        """
+        self._template.move_cursor(1, select=select)
 
     def action_home(self, select: bool = False) -> None:
-        """Move the cursor to the start of the input."""
-        self._template.move_cursor(-len(self.template))
+        """Move the cursor to the start of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
+        self._template.move_cursor(-len(self.template), select=select)
 
     def action_cursor_left_word(self, select: bool = False) -> None:
         """Move the cursor left next to the previous separator. If no previous
