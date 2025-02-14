@@ -7,18 +7,18 @@ class ExampleApp(App):
 
     def compose(self) -> ComposeResult:
         with TabbedContent(id="tabbed-root"):
-            with TabPane("[red]Parent 1[/]"):
+            with TabPane("[ansi_red]Parent 1[/]"):
                 with TabbedContent():
-                    with TabPane("[red]Child 1.1[/]"):
+                    with TabPane("[ansi_red]Child 1.1[/]"):
                         yield Button("Button 1.1", variant="error")
-                    with TabPane("[red]Child 1.2[/]"):
+                    with TabPane("[ansi_red]Child 1.2[/]"):
                         yield Button("Button 1.2", variant="error")
 
-            with TabPane("[green]Parent 2[/]", id="parent-2"):
+            with TabPane("[ansi_green]Parent 2[/]", id="parent-2"):
                 with TabbedContent(id="tabbed-parent-2"):
-                    with TabPane("[green]Child 2.1[/]"):
+                    with TabPane("[ansi_green]Child 2.1[/]"):
                         yield Button("Button 2.1", variant="success")
-                    with TabPane("[green]Child 2.2[/]", id="child-2-2"):
+                    with TabPane("[ansi_green]Child 2.2[/]", id="child-2-2"):
                         yield Button(
                             "Button 2.2",
                             variant="success",

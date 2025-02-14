@@ -56,9 +56,9 @@ Consequently `"set_background('blue')"` is a valid action string, but `"set_back
 
 ## Links
 
-Actions may be embedded as links within console markup. You can create such links with a `@click` tag.
+Actions may be embedded in [markup](./content.md#actions) with the `@click` tag.
 
-The following example mounts simple static text with embedded action links.
+The following example mounts simple static text with embedded action links:
 
 === "actions03.py"
 

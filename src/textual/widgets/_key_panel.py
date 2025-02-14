@@ -71,7 +71,10 @@ class BindingsTable(Static):
             action_to_bindings: defaultdict[str, list[tuple[Binding, bool, str]]]
             action_to_bindings = defaultdict(list)
             for _, binding, enabled, tooltip in table_bindings:
-                action_to_bindings[binding.action].append((binding, enabled, tooltip))
+                if not binding.system:
+                    action_to_bindings[binding.action].append(
+                        (binding, enabled, tooltip)
+                    )
 
             description_style = self.get_component_rich_style(
                 "bindings-table--description"
@@ -83,7 +86,8 @@ class BindingsTable(Static):
                     binding.description, end="", style=description_style
                 )
                 if binding.tooltip:
-                    text.append(" ")
+                    if binding.description:
+                        text.append(" ")
                     text.append(binding.tooltip, "dim")
                 return text
 
@@ -116,11 +120,11 @@ class KeyPanel(VerticalScroll, can_focus=False):
     """
 
     DEFAULT_CSS = """
-    KeyPanel {                    
+    KeyPanel {
         split: right;
         width: 33%;
-        min-width: 30;              
-        max-width: 60;    
+        min-width: 30;
+        max-width: 60;
         border-left: vkey $foreground 30%;
         padding: 0 1;
         height: 1fr;
@@ -128,7 +132,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         align: center top;
 
         &> BindingsTable > .bindings-table--key {
-            color: $accent;           
+            color: $accent;
             text-style: bold;
             padding: 0 1;
         }
@@ -148,7 +152,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         #bindings-table {
             width: auto;
             height: auto;
-        }      
+        }
     }
     """
 

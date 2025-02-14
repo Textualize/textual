@@ -84,8 +84,10 @@ class ScrollView(ScrollableContainer):
         Returns:
             True if a resize event should be sent, otherwise False.
         """
+        if size_changed := self._size != size:
+            self._set_dirty()
         if (
-            self._size != size
+            size_changed
             or virtual_size != self.virtual_size
             or container_size != self.container_size
         ):
@@ -95,7 +97,7 @@ class ScrollView(ScrollableContainer):
             self._container_size = size - self.styles.gutter.totals
             self._scroll_update(virtual_size)
 
-        return self._size != size or self._container_size != container_size
+        return size_changed or self._container_size != container_size
 
     def render(self) -> RenderableType:
         """Render the scrollable region (if `render_lines` is not implemented).

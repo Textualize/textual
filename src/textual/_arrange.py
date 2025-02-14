@@ -61,7 +61,7 @@ def arrange(
     layers = _build_layers(display_widgets)
 
     for widgets in layers.values():
-        # Partition widgets in to split widgets and non-split widgets
+        # Partition widgets into split widgets and non-split widgets
         non_split_widgets, split_widgets = partition(get_split, widgets)
         if split_widgets:
             _split_placements, dock_region = _arrange_split_widgets(
@@ -167,10 +167,7 @@ def _arrange_dock_widgets(
             # Should not occur, mainly to keep Mypy happy
             raise AssertionError("invalid value for dock edge")  # pragma: no-cover
 
-        align_offset = dock_widget.styles._align_size(
-            (widget_width, widget_height), size
-        )
-        dock_region = dock_region.shrink(margin).translate(align_offset)
+        dock_region = dock_region.shrink(margin)
         styles = dock_widget.styles
         offset = (
             styles.offset.resolve(

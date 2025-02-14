@@ -1,0 +1,17 @@
+Static {
+    height: 1fr;
+    text-wrap: nowrap;
+}
+
+#static1 {
+    text-overflow: clip;  # Overflowing text is clipped  
+    background: red 20%;
+}
+#static2 {
+    text-overflow: fold;  # Overflowing text is folded on to the next line
+    background: green 20%;
+}
+#static3 {
+    text-overflow: ellipsis;  # Overflowing text is truncated with an ellipsis
+    background: blue 20%;
+}

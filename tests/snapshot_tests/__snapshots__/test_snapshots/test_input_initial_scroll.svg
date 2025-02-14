@@ -1,0 +1,76 @@
+<svg class="rich-terminal" viewBox="0 0 262 172.0" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-4191071430-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-4191071430-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-4191071430-r1 { fill: #121212 }
+.terminal-4191071430-r2 { fill: #191919 }
+.terminal-4191071430-r3 { fill: #c5c8c6 }
+.terminal-4191071430-r4 { fill: #e0e0e0 }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-4191071430-clip-terminal">
+      <rect x="0" y="0" width="243.0" height="121.0" />
+    </clipPath>
+    <clipPath id="terminal-4191071430-line-0">
+    <rect x="0" y="1.5" width="244" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4191071430-line-1">
+    <rect x="0" y="25.9" width="244" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4191071430-line-2">
+    <rect x="0" y="50.3" width="244" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-4191071430-line-3">
+    <rect x="0" y="74.7" width="244" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="260" height="170" rx="8"/><text class="terminal-4191071430-title" fill="#c5c8c6" text-anchor="middle" x="130" y="27">InputInitialScrollApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-4191071430-clip-terminal)">
+    <rect fill="#191919" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="231.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="25.9" width="170.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="207.4" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="231.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#191919" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="231.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="244" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-4191071430-matrix">
+    <text class="terminal-4191071430-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-4191071430-line-0)">▊</text><text class="terminal-4191071430-r2" x="12.2" y="20" textLength="219.6" clip-path="url(#terminal-4191071430-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-4191071430-r2" x="231.8" y="20" textLength="12.2" clip-path="url(#terminal-4191071430-line-0)">▎</text><text class="terminal-4191071430-r3" x="244" y="20" textLength="12.2" clip-path="url(#terminal-4191071430-line-0)">
+</text><text class="terminal-4191071430-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-4191071430-line-1)">▊</text><text class="terminal-4191071430-r4" x="36.6" y="44.4" textLength="170.8" clip-path="url(#terminal-4191071430-line-1)">the&#160;quick&#160;brow</text><text class="terminal-4191071430-r2" x="231.8" y="44.4" textLength="12.2" clip-path="url(#terminal-4191071430-line-1)">▎</text><text class="terminal-4191071430-r3" x="244" y="44.4" textLength="12.2" clip-path="url(#terminal-4191071430-line-1)">
+</text><text class="terminal-4191071430-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-4191071430-line-2)">▊</text><text class="terminal-4191071430-r2" x="12.2" y="68.8" textLength="219.6" clip-path="url(#terminal-4191071430-line-2)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-4191071430-r2" x="231.8" y="68.8" textLength="12.2" clip-path="url(#terminal-4191071430-line-2)">▎</text><text class="terminal-4191071430-r3" x="244" y="68.8" textLength="12.2" clip-path="url(#terminal-4191071430-line-2)">
+</text><text class="terminal-4191071430-r3" x="244" y="93.2" textLength="12.2" clip-path="url(#terminal-4191071430-line-3)">
+</text>
+    </g>
+    </g>
+</svg>

@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Literal, cast
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Literal, cast
 
 import rich.repr
 from rich.style import Style
@@ -48,6 +48,8 @@ from textual.css.constants import (
     VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_TEXT_ALIGN,
+    VALID_TEXT_OVERFLOW,
+    VALID_TEXT_WRAP,
     VALID_VISIBILITY,
 )
 from textual.css.scalar import Scalar, ScalarOffset, Unit
@@ -65,6 +67,8 @@ from textual.css.types import (
     Specificity3,
     Specificity6,
     TextAlign,
+    TextOverflow,
+    TextWrap,
     Visibility,
 )
 from textual.geometry import Offset, Spacing
@@ -197,6 +201,9 @@ class RulesMap(TypedDict, total=False):
     constrain_x: Constrain
     constrain_y: Constrain
 
+    text_wrap: TextWrap
+    text_overflow: TextOverflow
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -234,6 +241,8 @@ class StylesBase:
         "link_background",
         "link_color_hover",
         "link_background_hover",
+        "text_wrap",
+        "text_overflow",
     }
 
     node: DOMNode | None = None
@@ -311,16 +320,16 @@ class StylesBase:
     """If `relative` offset is applied to widgets current position, if `absolute` it is applied to (0, 0)."""
 
     border = BorderProperty(layout=True)
-    """Set the border of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the border of the widget e.g. ("round", "green") or "none"."""
 
     border_top = BoxProperty(Color(0, 255, 0))
-    """Set the top border of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the top border of the widget e.g. ("round", "green") or "none"."""
     border_right = BoxProperty(Color(0, 255, 0))
-    """Set the right border of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the right border of the widget e.g. ("round", "green") or "none"."""
     border_bottom = BoxProperty(Color(0, 255, 0))
-    """Set the bottom border of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the bottom border of the widget e.g. ("round", "green") or "none"."""
     border_left = BoxProperty(Color(0, 255, 0))
-    """Set the left border of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the left border of the widget e.g. ("round", "green") or "none"."""
 
     border_title_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     """The alignment of the border title text."""
@@ -328,17 +337,17 @@ class StylesBase:
     """The alignment of the border subtitle text."""
 
     outline = BorderProperty(layout=False)
-    """Set the outline of the widget e.g. ("rounded", "green") or "none".
+    """Set the outline of the widget e.g. ("round", "green") or "none".
     The outline is drawn *on top* of the widget, rather than around it like border.
     """
     outline_top = BoxProperty(Color(0, 255, 0))
-    """Set the top outline of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the top outline of the widget e.g. ("round", "green") or "none"."""
     outline_right = BoxProperty(Color(0, 255, 0))
-    """Set the right outline of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the right outline of the widget e.g. ("round", "green") or "none"."""
     outline_bottom = BoxProperty(Color(0, 255, 0))
-    """Set the bottom outline of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the bottom outline of the widget e.g. ("round", "green") or "none"."""
     outline_left = BoxProperty(Color(0, 255, 0))
-    """Set the left outline of the widget e.g. ("rounded", "green") or "none"."""
+    """Set the left outline of the widget e.g. ("round", "green") or "none"."""
 
     keyline = KeylineProperty()
     """Keyline parameters."""
@@ -437,7 +446,9 @@ class StylesBase:
     row_span = IntegerProperty(default=1, layout=True)
     column_span = IntegerProperty(default=1, layout=True)
 
-    text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
+    text_align: StringEnumProperty[TextAlign] = StringEnumProperty(
+        VALID_TEXT_ALIGN, "start"
+    )
 
     link_color = ColorProperty("transparent")
     auto_link_color = BooleanProperty(False)
@@ -471,6 +482,12 @@ class StylesBase:
     )
     constrain_y: StringEnumProperty[Constrain] = StringEnumProperty(
         VALID_CONSTRAIN, "none"
+    )
+    text_wrap: StringEnumProperty[TextWrap] = StringEnumProperty(
+        VALID_TEXT_WRAP, "wrap"
+    )
+    text_overflow: StringEnumProperty[TextOverflow] = StringEnumProperty(
+        VALID_TEXT_OVERFLOW, "fold"
     )
 
     def __textual_animation__(
@@ -525,6 +542,35 @@ class StylesBase:
             return NotImplemented
         return self.get_rules() == styles.get_rules()
 
+    def __getitem__(self, key: str) -> object:
+        if key not in RULE_NAMES_SET:
+            raise KeyError(key)
+        return getattr(self, key)
+
+    def get(self, key: str, default: object | None = None) -> object:
+        return getattr(self, key) if key in RULE_NAMES_SET else default
+
+    def __len__(self) -> int:
+        return len(RULE_NAMES)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(RULE_NAMES)
+
+    def __contains__(self, key: object) -> bool:
+        return key in RULE_NAMES_SET
+
+    def keys(self) -> Iterable[str]:
+        return RULE_NAMES
+
+    def values(self) -> Iterable[object]:
+        for key in RULE_NAMES:
+            yield getattr(self, key)
+
+    def items(self) -> Iterable[tuple[str, object]]:
+        get_rule = self.get_rule
+        for key in RULE_NAMES:
+            yield (key, getattr(self, key))
+
     @property
     def gutter(self) -> Spacing:
         """Get space around widget.
@@ -543,40 +589,46 @@ class StylesBase:
         )
 
     @property
-    def is_relative_width(self) -> bool:
+    def is_relative_width(self, _relative_units={Unit.FRACTION, Unit.PERCENT}) -> bool:
         """Does the node have a relative width?"""
         width = self.width
-        return width is not None and width.unit in (Unit.FRACTION, Unit.PERCENT)
+        return width is not None and width.unit in _relative_units
 
     @property
-    def is_relative_height(self) -> bool:
+    def is_relative_height(self, _relative_units={Unit.FRACTION, Unit.PERCENT}) -> bool:
         """Does the node have a relative width?"""
         height = self.height
-        return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+        return height is not None and height.unit in _relative_units
 
     @property
-    def is_auto_width(self) -> bool:
+    def is_auto_width(self, _auto=Unit.AUTO) -> bool:
         """Does the node have automatic width?"""
         width = self.width
-        return width is not None and width.unit == Unit.AUTO
+        return width is not None and width.unit == _auto
 
     @property
-    def is_auto_height(self) -> bool:
+    def is_auto_height(self, _auto=Unit.AUTO) -> bool:
         """Does the node have automatic height?"""
         height = self.height
-        return height is not None and height.unit == Unit.AUTO
+        return height is not None and height.unit == _auto
+
+    @property
+    def is_dynamic_height(
+        self, _dynamic_units={Unit.AUTO, Unit.FRACTION, Unit.PERCENT}
+    ) -> bool:
+        """Does the node have a dynamic (not fixed) height?"""
+        height = self.height
+        return height is not None and height.unit in _dynamic_units
 
     @property
     def is_docked(self) -> bool:
         """Is the node docked?"""
-        dock = self.dock
-        return dock != "none"
+        return self.dock != "none"
 
     @property
     def is_split(self) -> bool:
         """Is the node split?"""
-        split = self.split
-        return split != "none"
+        return self.split != "none"
 
     def has_rule(self, rule_name: str) -> bool:
         """Check if a rule is set on this Styles object.
@@ -660,7 +712,7 @@ class StylesBase:
         """
 
     def merge_rules(self, rules: RulesMap) -> None:
-        """Merge rules in to Styles.
+        """Merge rules into Styles.
 
         Args:
             rules: A mapping of rules.
@@ -735,6 +787,7 @@ class StylesBase:
                 offset_x = (parent_width - width) // 2
             else:
                 offset_x = parent_width - width
+
         return offset_x
 
     def _align_height(self, height: int, parent_height: int) -> int:
@@ -1227,6 +1280,10 @@ class Styles(StylesBase):
         if "hatch" in rules:
             hatch_character, hatch_color = self.hatch
             append_declaration("hatch", f'"{hatch_character}" {hatch_color.css}')
+        if "text_wrap" in rules:
+            append_declaration("text-wrap", self.text_wrap)
+        if "text_overflow" in rules:
+            append_declaration("text-overflow", self.text_overflow)
         lines.sort()
         return lines
 

@@ -15,7 +15,11 @@ if TYPE_CHECKING:
 
 
 class DuplicateIds(Exception):
-    pass
+    """Raised when attempting to add a widget with an id that already exists."""
+
+
+class ReadOnlyError(AttributeError):
+    """Raise if you try to mutate the list."""
 
 
 @rich.repr.auto(angular=True)
@@ -138,6 +142,14 @@ class NodeList(Sequence["Widget"]):
             self.updated()
 
     def _ensure_unique_id(self, widget_id: str) -> None:
+        """Ensure a new widget ID would be unique.
+
+        Args:
+            widget_id: New widget ID.
+
+        Raises:
+            DuplicateIds: If the given ID is not unique.
+        """
         if widget_id in self._nodes_by_id:
             raise DuplicateIds(
                 f"Tried to insert a widget with ID {widget_id!r}, but a widget {self._nodes_by_id[widget_id]!r} "
@@ -185,3 +197,10 @@ class NodeList(Sequence["Widget"]):
 
     def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]
+
+    def __getattr__(self, key: str) -> object:
+        if key in {"clear", "append", "pop", "insert", "remove", "extend"}:
+            raise ReadOnlyError(
+                "Widget.children is read-only: use Widget.mount(...) or Widget.remove(...) to add or remove widgets"
+            )
+        raise AttributeError(key)

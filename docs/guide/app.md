@@ -1,6 +1,6 @@
 # App Basics
 
-In this chapter we will cover how to use Textual's App class to create an application. Just enough to get you up to speed. We will go in to more detail in the following chapters.
+In this chapter we will cover how to use Textual's App class to create an application. Just enough to get you up to speed. We will go into more detail in the following chapters.
 
 ## The App class
 
@@ -30,19 +30,16 @@ If we run this app with `python simple02.py` you will see a blank terminal, some
 ```{.textual path="docs/examples/app/simple02.py"}
 ```
 
-When you call [App.run()][textual.app.App.run] Textual puts the terminal in to a special state called *application mode*. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the *screen*).
+When you call [App.run()][textual.app.App.run] Textual puts the terminal into a special state called *application mode*. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the *screen*).
 
-If you hit ++ctrl+c++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
+If you hit ++ctrl+q++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
 
-!!! tip
-
-    A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the ++option++ key. See the documentation for your terminal software for how to select text in application mode.
 
 #### Run inline
 
 !!! tip "Added in version 0.55.0"
 
-You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
+You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go into application mode).
 Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.
 
 To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run]. See [Style Inline Apps](../how-to/style-inline-apps.md) for how to apply additional styles to inline apps.
@@ -65,13 +62,9 @@ We recommend the default behavior for full-screen apps, but you may want to pres
 
 ## Events
 
-Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with `on_` followed by the name of the event.
+Textual has an [event system](./events.md) you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with `on_` followed by the name of the event.
 
 One such event is the *mount* event which is sent to an application after it enters application mode. You can respond to this event by defining a method called `on_mount`.
-
-!!! info
-
-    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. See [events](./events.md) for details.
 
 Another such event is the *key* event which is sent when the user presses a key. The following example contains handlers for both those events:
 
@@ -84,13 +77,12 @@ The `on_mount` handler sets the `self.screen.styles.background` attribute to `"d
 ```{.textual path="docs/examples/app/event01.py" hl_lines="23-25"}
 ```
 
-The key event handler (`on_key`) has an `event` parameter which will receive a [Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
+When you press a key, the key event handler (`on_key`) which will receive a [Key][textual.events.Key] instance.
+If you don't require the event in your handler, you can omit it.
 
-!!! note
-
-    It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.
-
-Some events contain additional information you can inspect in the handler. The [Key][textual.events.Key] event has a `key` attribute which is the name of the key that was pressed. The `on_key` method above uses this attribute to change the background color if any of the keys from ++0++ to ++9++ are pressed.
+Events may contain additional information which you can inspect in the handler.
+In the case of the [Key][textual.events.Key] event, there is a `key` attribute which is the name of the key that was pressed.
+The `on_key` method above uses this attribute to change the background color if any of the keys from ++0++ to ++9++ are pressed.
 
 ### Async events
 
@@ -224,7 +216,7 @@ You may have noticed that we subclassed `App[str]` rather than the usual `App`.
 
 The addition of `[str]` tells mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
 
-!!! note
+!!! note "Typing in Textual"
 
     Type annotations are entirely optional (but recommended) with Textual.
 
@@ -317,7 +309,7 @@ For example:
 
 ## CSS
 
-Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
+Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your project free of messy display related code.
 
 !!! info
 

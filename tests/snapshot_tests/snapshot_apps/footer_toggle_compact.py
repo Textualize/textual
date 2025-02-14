@@ -11,7 +11,6 @@ class ToggleCompactFooterApp(App):
 
     BINDINGS = [
         ("ctrl+t", "toggle_compact_footer", "Toggle Compact Footer"),
-        ("ctrl+q", "quit", "Quit"),
     ]
 
     def compose(self) -> ComposeResult:

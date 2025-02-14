@@ -164,7 +164,7 @@ class WidgetPlacement(NamedTuple):
 
         Args:
             constrain_region: The container region when applying constrain rules.
-            absolute_offset: Default absolute offset that moves widget in to screen coordinates.
+            absolute_offset: Default absolute offset that moves widget into screen coordinates.
 
         Returns:
             Processes placement, may be the same instance.
@@ -256,22 +256,19 @@ class Layout(ABC):
         Returns:
             Content height (in lines).
         """
-        if not widget._nodes:
-            height = 0
-        else:
-            # Use a height of zero to ignore relative heights
-            styles_height = widget.styles.height
-            if widget._parent and len(widget._nodes) == 1:
-                # If it is an only child with height auto we want it to expand
-                height = (
-                    container.height
-                    if styles_height is not None and styles_height.is_auto
-                    else 0
+        if widget._nodes:
+            if not widget.styles.is_docked and all(
+                child.styles.is_dynamic_height for child in widget.displayed_children
+            ):
+                # An exception for containers with all dynamic height widgets
+                arrangement = widget._arrange(
+                    Size(width, container.height - widget.gutter.height)
                 )
             else:
-                height = 0
-            arrangement = widget._arrange(Size(width, height))
+                arrangement = widget._arrange(Size(width, 0))
             height = arrangement.total_region.bottom
+        else:
+            height = 0
 
         return height
 

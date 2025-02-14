@@ -10,6 +10,7 @@ import re
 import threading
 from functools import lru_cache, partial
 from inspect import getfile
+from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -46,6 +47,7 @@ from textual.css.tokenize import IDENTIFIER
 from textual.css.tokenizer import TokenError
 from textual.message_pump import MessagePump
 from textual.reactive import Reactive, ReactiveError, _Mutated, _watch
+from textual.style import Style as VisualStyle
 from textual.timer import Timer
 from textual.walk import walk_breadth_first, walk_depth_first
 from textual.worker_manager import WorkerManager
@@ -1023,6 +1025,12 @@ class DOMNode(MessagePump):
         )
 
     @property
+    def selection_style(self) -> Style:
+        """The style of selected text."""
+        style = self.screen.get_component_rich_style("screen--selection")
+        return style
+
+    @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode.
 
@@ -1080,8 +1088,8 @@ class DOMNode(MessagePump):
 
     def _get_title_style_information(
         self, background: Color
-    ) -> tuple[Color, Color, Style]:
-        """Get a Rich Style object for for titles.
+    ) -> tuple[Color, Color, VisualStyle]:
+        """Get a Visual Style object for for titles.
 
         Args:
             background: The background color.
@@ -1089,6 +1097,7 @@ class DOMNode(MessagePump):
         Returns:
             A Rich style.
         """
+
         styles = self.styles
         if styles.auto_border_title_color:
             color = background.get_contrast_text(styles.border_title_color.a)
@@ -1097,12 +1106,12 @@ class DOMNode(MessagePump):
         return (
             color,
             styles.border_title_background,
-            styles.border_title_style,
+            VisualStyle.from_rich_style(styles.border_title_style),
         )
 
     def _get_subtitle_style_information(
         self, background: Color
-    ) -> tuple[Color, Color, Style]:
+    ) -> tuple[Color, Color, VisualStyle]:
         """Get a Rich Style object for for titles.
 
         Args:
@@ -1119,7 +1128,7 @@ class DOMNode(MessagePump):
         return (
             color,
             styles.border_subtitle_background,
-            styles.border_subtitle_style,
+            VisualStyle.from_rich_style(styles.border_subtitle_style),
         )
 
     @property
@@ -1214,7 +1223,7 @@ class DOMNode(MessagePump):
         Returns:
             A list of nodes.
         """
-        return [child for child in self._nodes if child.display]
+        return list(filter(attrgetter("display"), self._nodes))
 
     def watch(
         self,
@@ -1548,6 +1557,57 @@ class DOMNode(MessagePump):
             return node
 
         raise NoMatches(f"No nodes match {selector!r} on {self!r}")
+
+    if TYPE_CHECKING:
+
+        @overload
+        def query_ancestor(self, selector: str) -> DOMNode: ...
+
+        @overload
+        def query_ancestor(self, selector: type[QueryType]) -> QueryType: ...
+
+        @overload
+        def query_ancestor(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType: ...
+
+    def query_ancestor(
+        self,
+        selector: str | type[QueryType],
+        expect_type: type[QueryType] | None = None,
+    ) -> DOMNode | None:
+        """Get an ancestor which matches a query.
+
+        Args:
+            selector: A TCSS selector.
+            expect_type: Expected type, or `None` for any DOMNode.
+
+        Raises:
+            InvalidQueryFormat: If the selector is invalid.
+            NoMatches: If there are no matching ancestors.
+
+        Returns:
+            A DOMNode or subclass if `expect_type` is provided.
+        """
+        if isinstance(selector, str):
+            query_selector = selector
+        else:
+            query_selector = selector.__name__
+
+        try:
+            selector_set = parse_selectors(query_selector)
+        except TokenError:
+            raise InvalidQueryFormat(
+                f"Unable to parse {query_selector!r} as a query; check for syntax errors"
+            ) from None
+        if self.parent is not None:
+            for node in self.parent.ancestors_with_self:
+                if not match(selector_set, node):
+                    continue
+                if expect_type is not None and not isinstance(node, expect_type):
+                    continue
+                return node
+        raise NoMatches(f"No ancestor matches {selector!r} on {self!r}")
 
     def set_styles(self, css: str | None = None, **update_styles: Any) -> Self:
         """Set custom styles on this object.

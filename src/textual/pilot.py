@@ -131,7 +131,7 @@ class Pilot(Generic[ReturnType]):
         """
         try:
             return await self._post_mouse_events(
-                [MouseDown],
+                [MouseMove, MouseDown],
                 widget=widget,
                 offset=offset,
                 button=1,
@@ -176,7 +176,7 @@ class Pilot(Generic[ReturnType]):
         """
         try:
             return await self._post_mouse_events(
-                [MouseUp],
+                [MouseMove, MouseUp],
                 widget=widget,
                 offset=offset,
                 button=1,
@@ -194,11 +194,14 @@ class Pilot(Generic[ReturnType]):
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
+        times: int = 1,
     ) -> bool:
         """Simulate clicking with the mouse at a specified position.
 
         The final position to be clicked is computed based on the selector provided and
         the offset specified and it must be within the visible area of the screen.
+
+        Implementation note: This method bypasses the normal event processing in `App.on_event`.
 
         Example:
             The code below runs an app and clicks its only button right in the middle:
@@ -218,6 +221,7 @@ class Pilot(Generic[ReturnType]):
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
             control: Click with the control key held down.
+            times: The number of times to click. 2 will double-click, 3 will triple-click, etc.
 
         Raises:
             OutOfBounds: If the position to be clicked is outside of the (visible) screen.
@@ -235,9 +239,100 @@ class Pilot(Generic[ReturnType]):
                 shift=shift,
                 meta=meta,
                 control=control,
+                times=times,
             )
         except OutOfBounds as error:
             raise error from None
+
+    async def double_click(
+        self,
+        widget: Widget | type[Widget] | str | None = None,
+        offset: tuple[int, int] = (0, 0),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate double clicking with the mouse at a specified position.
+
+        Alias for `pilot.click(..., times=2)`.
+
+        The final position to be clicked is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        Implementation note: This method bypasses the normal event processing in `App.on_event`.
+
+        Example:
+            The code below runs an app and double-clicks its only button right in the middle:
+            ```py
+            async with SingleButtonApp().run_test() as pilot:
+                await pilot.double_click(Button, offset=(8, 1))
+            ```
+
+        Args:
+            widget: A widget or selector used as an origin
+                for the click offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to click on a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the click may not land on the widget you specified.
+            offset: The offset to click. The offset is relative to the widget / selector provided
+                or to the screen, if no selector is provided.
+            shift: Click with the shift key held down.
+            meta: Click with the meta key held down.
+            control: Click with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position to be clicked is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the clicks landed on the selected
+                widget, False otherwise.
+        """
+        await self.click(widget, offset, shift, meta, control, times=2)
+
+    async def triple_click(
+        self,
+        widget: Widget | type[Widget] | str | None = None,
+        offset: tuple[int, int] = (0, 0),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate triple clicking with the mouse at a specified position.
+
+        Alias for `pilot.click(..., times=3)`.
+
+        The final position to be clicked is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        Implementation note: This method bypasses the normal event processing in `App.on_event`.
+
+        Example:
+            The code below runs an app and triple-clicks its only button right in the middle:
+            ```py
+            async with SingleButtonApp().run_test() as pilot:
+                await pilot.triple_click(Button, offset=(8, 1))
+            ```
+
+        Args:
+            widget: A widget or selector used as an origin
+                for the click offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to click on a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the click may not land on the widget you specified.
+            offset: The offset to click. The offset is relative to the widget / selector provided
+                or to the screen, if no selector is provided.
+            shift: Click with the shift key held down.
+            meta: Click with the meta key held down.
+            control: Click with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position to be clicked is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the clicks landed on the selected
+                widget, False otherwise.
+        """
+        await self.click(widget, offset, shift, meta, control, times=3)
 
     async def hover(
         self,
@@ -282,6 +377,7 @@ class Pilot(Generic[ReturnType]):
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
+        times: int = 1,
     ) -> bool:
         """Simulate a series of mouse events to be fired at a given position.
 
@@ -302,7 +398,7 @@ class Pilot(Generic[ReturnType]):
             shift: Simulate the events with the shift key held down.
             meta: Simulate the events with the meta key held down.
             control: Simulate the events with the control key held down.
-
+            times: The number of times to click. 2 will double-click, 3 will triple-click, etc.
         Raises:
             OutOfBounds: If the position for the events is outside of the (visible) screen.
 
@@ -336,22 +432,27 @@ class Pilot(Generic[ReturnType]):
             )
 
         widget_at = None
-        for mouse_event_cls in events:
-            # Get the widget under the mouse before the event because the app might
-            # react to the event and move things around. We override on each iteration
-            # because we assume the final event in `events` is the actual event we care
-            # about and that all the preceding events are just setup.
-            # E.g., the click event is preceded by MouseDown/MouseUp to emulate how
-            # the driver works and emits a click event.
-            widget_at, _ = app.get_widget_at(*offset)
-            event = mouse_event_cls(**message_arguments)
-            # Bypass event processing in App.on_event. Because App.on_event
-            # is responsible for updating App.mouse_position, and because
-            # that's useful to other things (tooltip handling, for example),
-            # we patch the offset in there as well.
-            app.mouse_position = offset
-            app.screen._forward_event(event)
-            await self.pause()
+        for chain in range(1, times + 1):
+            for mouse_event_cls in events:
+                # Get the widget under the mouse before the event because the app might
+                # react to the event and move things around. We override on each iteration
+                # because we assume the final event in `events` is the actual event we care
+                # about and that all the preceding events are just setup.
+                # E.g., the click event is preceded by MouseDown/MouseUp to emulate how
+                # the driver works and emits a click event.
+                kwargs = message_arguments
+                if mouse_event_cls is Click:
+                    kwargs = {**kwargs, "chain": chain}
+
+                widget_at, _ = app.get_widget_at(*offset)
+                event = mouse_event_cls(**kwargs)
+                # Bypass event processing in App.on_event. Because App.on_event
+                # is responsible for updating App.mouse_position, and because
+                # that's useful to other things (tooltip handling, for example),
+                # we patch the offset in there as well.
+                app.mouse_position = offset
+                screen._forward_event(event)
+                await self.pause()
 
         return widget is None or widget_at is target_widget
 

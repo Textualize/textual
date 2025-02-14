@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 from textual.geometry import Size
 from textual.renderables.digits import Digits as DigitsRenderable
+from textual.selection import Selection
 from textual.widget import Widget
 
 
@@ -53,6 +54,9 @@ class Digits(Widget):
         """The current value displayed in the Digits."""
         return self._value
 
+    def get_selection(self, selection: Selection) -> str | None:
+        return self._value
+
     def update(self, value: str) -> None:
         """Update the Digits with a new value.
 
@@ -73,6 +77,8 @@ class Digits(Widget):
     def render(self) -> RenderResult:
         """Render digits."""
         rich_style = self.rich_style
+        if self.text_selection:
+            rich_style += self.selection_style
         digits = DigitsRenderable(self._value, rich_style)
         text_align = self.styles.text_align
         align = "left" if text_align not in {"left", "center", "right"} else text_align

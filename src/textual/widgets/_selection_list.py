@@ -15,7 +15,12 @@ from textual import events
 from textual.binding import Binding
 from textual.messages import Message
 from textual.strip import Strip
-from textual.widgets._option_list import NewOptionListContent, Option, OptionList
+from textual.widgets._option_list import (
+    Option,
+    OptionDoesNotExist,
+    OptionList,
+    OptionListContent,
+)
 from textual.widgets._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
@@ -50,7 +55,8 @@ class Selection(Generic[SelectionType], Option):
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         if isinstance(prompt, str):
-            prompt = Text.from_markup(prompt)
+            prompt = Text.from_markup(prompt, overflow="ellipsis")
+        prompt.no_wrap = True
         super().__init__(prompt.split()[0], id, disabled)
         self._value: SelectionType = value
         """The value associated with the selection."""
@@ -228,18 +234,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         self._send_messages = False
         """Keep track of when we're ready to start sending messages."""
         options = [self._make_selection(selection) for selection in selections]
-        super().__init__(
-            *options,
-            name=name,
-            id=id,
-            classes=classes,
-            disabled=disabled,
-            wrap=False,
-        )
         self._values: dict[SelectionType, int] = {
             option.value: index for index, option in enumerate(options)
         }
         """Keeps track of which value relates to which option."""
+        super().__init__(*options, name=name, id=id, classes=classes, disabled=disabled)
 
     @property
     def selected(self) -> list[SelectionType]:
@@ -486,7 +485,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self.highlighted is not None:
             self.toggle(self.get_option_at_index(self.highlighted))
 
-    def _left_gutter_width(self) -> int:
+    def _get_left_gutter_width(self) -> int:
         """Returns the size of any left gutter that should be taken into account.
 
         Returns:
@@ -509,20 +508,20 @@ class SelectionList(Generic[SelectionType], OptionList):
             A [`Strip`][textual.strip.Strip] that is the line to render.
         """
 
-        # First off, get the underlying prompt from OptionList.
-        prompt = super().render_line(y)
+        # TODO: This is rather crufty and hard to fathom. Candidate for a rewrite.
 
-        # If it looks like the prompt itself is actually an empty line...
-        if not prompt:
-            # ...get out with that. We don't need to do any more here.
-            return prompt
+        # First off, get the underlying prompt from OptionList.
+        line = super().render_line(y)
 
         # We know the prompt we're going to display, what we're going to do
         # is place a CheckBox-a-like button next to it. So to start with
         # let's pull out the actual Selection we're looking at right now.
         _, scroll_y = self.scroll_offset
         selection_index = scroll_y + y
-        selection = self.get_option_at_index(selection_index)
+        try:
+            selection = self.get_option_at_index(selection_index)
+        except OptionDoesNotExist:
+            return line
 
         # Figure out which component style is relevant for a checkbox on
         # this particular line.
@@ -532,19 +531,13 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self.highlighted == selection_index:
             component_style += "-highlighted"
 
-        # Get the underlying style used for the prompt.
-        underlying_style = next(iter(prompt)).style
+        # # # Get the underlying style used for the prompt.
+        # TODO: This is not a reliable way of getting the base style
+        underlying_style = next(iter(line)).style or self.rich_style
         assert underlying_style is not None
 
         # Get the style for the button.
         button_style = self.get_component_rich_style(component_style)
-
-        # If the button is in the unselected state, we're going to do a bit
-        # of a switcharound to make it look like it's a "cutout".
-        # if selection.value not in self._selected:
-        #     button_style += Style.from_color(
-        #         self.background_colors[1].rich_color, button_style.bgcolor
-        #     )
 
         # Build the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
@@ -564,7 +557,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                 Segment(ToggleButton.BUTTON_INNER, style=button_style),
                 Segment(ToggleButton.BUTTON_RIGHT, style=side_style),
                 Segment(" ", style=underlying_style),
-                *prompt,
+                *line,
             ]
         )
 
@@ -616,29 +609,22 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         return cast("Selection[SelectionType]", super().get_option(option_id))
 
-    def _remove_option(self, index: int) -> None:
-        """Remove a selection option from the selection option list.
-
-        Args:
-            index: The index of the selection option to remove.
-
-        Raises:
-            IndexError: If there is no selection option of the given index.
-        """
-        option = self.get_option_at_index(index)
+    def _pre_remove_option(self, option: Option, index: int) -> None:
+        """Hook called prior to removing an option."""
+        assert isinstance(option, Selection)
         self._deselect(option.value)
         del self._values[option.value]
+
         # Decrement index of options after the one we just removed.
         self._values = {
             option_value: option_index - 1 if option_index > index else option_index
             for option_value, option_index in self._values.items()
         }
-        return super()._remove_option(index)
 
     def add_options(
         self,
         items: Iterable[
-            NewOptionListContent
+            OptionListContent
             | Selection[SelectionType]
             | tuple[TextType, SelectionType]
             | tuple[TextType, SelectionType, bool]
@@ -693,7 +679,7 @@ class SelectionList(Generic[SelectionType], OptionList):
     def add_option(
         self,
         item: (
-            NewOptionListContent
+            OptionListContent
             | Selection
             | tuple[TextType, SelectionType]
             | tuple[TextType, SelectionType, bool]

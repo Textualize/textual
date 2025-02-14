@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from fractions import Fraction
 from typing import Sequence, cast
 
@@ -16,13 +15,6 @@ class EdgeProtocol(Protocol):
     fraction: int
     # Minimum size for edge, in cells
     min_size: int
-
-
-@dataclass
-class Edge:
-    size: int | None = None
-    fraction: int | None = 1
-    min_size: int = 1
 
 
 def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> list[int]:

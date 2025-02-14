@@ -22,6 +22,7 @@ VALID_BORDER: Final = {
     "round",
     "solid",
     "tall",
+    "tab",
     "thick",
     "vkey",
     "wide",
@@ -82,6 +83,9 @@ VALID_OVERLAY: Final = {"none", "screen"}
 VALID_CONSTRAIN: Final = {"inflect", "inside", "none"}
 VALID_KEYLINE: Final = {"none", "thin", "heavy", "double"}
 VALID_HATCH: Final = {"left", "right", "cross", "vertical", "horizontal"}
+VALID_TEXT_WRAP: Final = {"wrap", "nowrap"}
+VALID_TEXT_OVERFLOW: Final = {"clip", "fold", "ellipsis"}
+
 HATCHES: Final = {
     "left": "╲",
     "right": "╱",

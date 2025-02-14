@@ -48,7 +48,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("up", "scroll_up", "Scroll Up", show=False),
         Binding("down", "scroll_down", "Scroll Down", show=False),
-        Binding("left", "scroll_left", "Scroll Up", show=False),
+        Binding("left", "scroll_left", "Scroll Left", show=False),
         Binding("right", "scroll_right", "Scroll Right", show=False),
         Binding("home", "scroll_home", "Scroll Home", show=False),
         Binding("end", "scroll_end", "Scroll End", show=False),
@@ -85,6 +85,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
         can_maximize: bool | None = None,
     ) -> None:
         """
+        Construct a scrollable container.
 
         Args:
             *children: Child widgets.
@@ -242,7 +243,7 @@ class Grid(Widget, inherit_bindings=False):
 
 
 class ItemGrid(Widget, inherit_bindings=False):
-    """A container with grid layout."""
+    """A container with grid layout and automatic columns."""
 
     DEFAULT_CSS = """
     ItemGrid {
@@ -267,7 +268,8 @@ class ItemGrid(Widget, inherit_bindings=False):
         stretch_height: bool = True,
         regular: bool = False,
     ) -> None:
-        """Initialize a Widget.
+        """
+        Construct a ItemGrid.
 
         Args:
             *children: Child widgets.

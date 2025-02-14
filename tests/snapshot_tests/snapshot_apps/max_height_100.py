@@ -3,9 +3,12 @@ from textual.widgets import DataTable, Static
 
 
 class HappyDataTableFunApp(App[None]):
-    """The DataTable should expand as if it has height 1fr."""
+    """The DataTable should expand to full the screen and show a horizontal scrollbar."""
 
     CSS = """
+    #s {
+        max-height: 100%;
+    }
     DataTable {
         max-height: 100%;        
     }

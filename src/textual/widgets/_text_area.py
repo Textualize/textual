@@ -14,7 +14,7 @@ from rich.text import Text
 from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
-from textual._tree_sitter import TREE_SITTER
+from textual._tree_sitter import BUILTIN_LANGUAGES, TREE_SITTER
 from textual.color import Color
 from textual.document._document import (
     Document,
@@ -27,7 +27,6 @@ from textual.document._document import (
 from textual.document._document_navigator import DocumentNavigator
 from textual.document._edit import Edit
 from textual.document._history import EditHistory
-from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
@@ -36,7 +35,7 @@ from textual.document._wrapped_document import WrappedDocument
 from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
 
 if TYPE_CHECKING:
-    from tree_sitter import Language
+    from tree_sitter import Language, Query
 
 from textual import events, log
 from textual._cells import cell_len, cell_width_to_column_index
@@ -227,7 +226,9 @@ TextArea {
         Binding(
             "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
-        Binding("ctrl+x", "delete_line", "Delete line", show=False),
+        Binding("ctrl+x", "cut", "Cut", show=False),
+        Binding("ctrl+c", "copy", "Copy", show=False),
+        Binding("ctrl+v", "paste", "Paste", show=False),
         Binding(
             "ctrl+u", "delete_to_start_of_line", "Delete to line start", show=False
         ),
@@ -235,6 +236,12 @@ TextArea {
             "ctrl+k",
             "delete_to_end_of_line_or_delete_line",
             "Delete to line end",
+            show=False,
+        ),
+        Binding(
+            "ctrl+shift+k",
+            "delete_line",
+            "Delete line",
             show=False,
         ),
         Binding("ctrl+z", "undo", "Undo", show=False),
@@ -265,13 +272,16 @@ TextArea {
     | ctrl+w                 | Delete from cursor to start of the word.     |
     | delete,ctrl+d          | Delete character to the right of cursor.     |
     | ctrl+f                 | Delete from cursor to end of the word.       |
-    | ctrl+x                 | Delete the current line.                     |
+    | ctrl+shift+k           | Delete the current line.                     |
     | ctrl+u                 | Delete from cursor to the start of the line. |
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
     | f7                     | Select all text in the document.             |
     | ctrl+z                 | Undo.                                        |
     | ctrl+y                 | Redo.                                        |
+    | ctrl+x                 | Cut selection or line if no selection.       |
+    | ctrl+c                 | Copy selection to clipboard.                 |
+    | ctrl+v                 | Paste from clipboard.                        |
     """
 
     language: Reactive[str | None] = reactive(None, always_update=True, init=False)
@@ -414,6 +424,13 @@ TextArea {
 
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to TextAreaLanguage."""
+
+        for language_name, language_object in BUILTIN_LANGUAGES.items():
+            self._languages[language_name] = TextAreaLanguage(
+                language_name,
+                language_object,
+                self._get_builtin_highlight_query(language_name),
+            )
 
         self._themes: dict[str, TextAreaTheme] = {}
         """Maps theme names to TextAreaTheme."""
@@ -583,26 +600,28 @@ TextArea {
             return
 
         captures = self.document.query_syntax_tree(self._highlight_query)
-        for capture in captures:
-            node, highlight_name = capture
-            node_start_row, node_start_column = node.start_point
-            node_end_row, node_end_column = node.end_point
+        for highlight_name, nodes in captures.items():
+            for node in nodes:
+                node_start_row, node_start_column = node.start_point
+                node_end_row, node_end_column = node.end_point
 
-            if node_start_row == node_end_row:
-                highlight = (node_start_column, node_end_column, highlight_name)
-                highlights[node_start_row].append(highlight)
-            else:
-                # Add the first line of the node range
-                highlights[node_start_row].append(
-                    (node_start_column, None, highlight_name)
-                )
+                if node_start_row == node_end_row:
+                    highlight = (node_start_column, node_end_column, highlight_name)
+                    highlights[node_start_row].append(highlight)
+                else:
+                    # Add the first line of the node range
+                    highlights[node_start_row].append(
+                        (node_start_column, None, highlight_name)
+                    )
 
-                # Add the middle lines - entire row of this node is highlighted
-                for node_row in range(node_start_row + 1, node_end_row):
-                    highlights[node_row].append((0, None, highlight_name))
+                    # Add the middle lines - entire row of this node is highlighted
+                    for node_row in range(node_start_row + 1, node_end_row):
+                        highlights[node_row].append((0, None, highlight_name))
 
-                # Add the last line of the node range
-                highlights[node_end_row].append((0, node_end_column, highlight_name))
+                    # Add the last line of the node range
+                    highlights[node_end_row].append(
+                        (0, node_end_column, highlight_name)
+                    )
 
     def _watch_has_focus(self, focus: bool) -> None:
         self._cursor_visible = focus
@@ -721,6 +740,9 @@ TextArea {
 
     def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
+        if not TREE_SITTER:
+            return
+
         if language is not None and language not in self.available_languages:
             raise LanguageDoesNotExist(
                 f"{language!r} is not a builtin language, or it has not been registered. "
@@ -830,7 +852,8 @@ TextArea {
 
     def register_language(
         self,
-        language: "str | Language",
+        name: str,
+        language: "Language",
         highlight_query: str,
     ) -> None:
         """Register a language and corresponding highlight query.
@@ -845,34 +868,29 @@ TextArea {
         Registering a language only registers it to this instance of `TextArea`.
 
         Args:
-            language: A string referring to a builtin language or a tree-sitter `Language` object.
+            name: The name of the language.
+            language: A tree-sitter `Language` object.
             highlight_query: The highlight query to use for syntax highlighting this language.
         """
-
-        # If tree-sitter is unavailable, do nothing.
         if not TREE_SITTER:
             return
+        self._languages[name] = TextAreaLanguage(name, language, highlight_query)
 
-        from tree_sitter_languages import get_language
+    def update_highlight_query(self, name: str, highlight_query: str) -> None:
+        """Update the highlight query for an already registered language.
 
-        if isinstance(language, str):
-            language_name = language
-            language = get_language(language_name)
-        else:
-            language_name = language.name
-
-        # Update the custom languages. When changing the document,
-        # we should first look in here for a language specification.
-        # If nothing is found, then we can go to the builtin languages.
-        self._languages[language_name] = TextAreaLanguage(
-            name=language_name,
-            language=language,
-            highlight_query=highlight_query,
-        )
-        # If we updated the currently set language, rebuild the highlights
-        # using the newly updated highlights query.
-        if language_name == self.language:
-            self._set_document(self.text, language_name)
+        Args:
+            name: The name of the language.
+            highlight_query: The highlight query to use for syntax highlighting this language.
+        """
+        if name not in self._languages:
+            raise LanguageDoesNotExist(
+                f"{name!r} is not a registered language.\n"
+                f"To register a language, call `TextArea.register_language`."
+            )
+        self._languages[name].highlight_query = highlight_query
+        if name == self.language:
+            self._set_document(self.text, name)
 
     def _set_document(self, text: str, language: str | None) -> None:
         """Construct and return an appropriate document.
@@ -1817,10 +1835,16 @@ TextArea {
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
 
+        If text is selected, move the cursor to the start of the selection.
+
         Args:
             select: If True, select the text while moving.
         """
-        target = self.get_cursor_left_location()
+        target = (
+            self.get_cursor_left_location()
+            if select or self.selection.is_empty
+            else min(*self.selection)
+        )
         self.move_cursor(target, select=select)
 
     def get_cursor_left_location(self) -> Location:
@@ -1836,10 +1860,16 @@ TextArea {
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
 
+        If text is selected, move the cursor to the end of the selection.
+
         Args:
             select: If True, select the text while moving.
         """
-        target = self.get_cursor_right_location()
+        target = (
+            self.get_cursor_right_location()
+            if select or self.selection.is_empty
+            else max(*self.selection)
+        )
         self.move_cursor(target, select=select)
 
     def get_cursor_right_location(self) -> Location:
@@ -2174,6 +2204,10 @@ TextArea {
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
+        self._delete_cursor_line()
+
+    def _delete_cursor_line(self) -> EditResult | None:
+        """Deletes the line (including the line terminator) that the cursor is on."""
         start, end = self.selection
         start, end = sorted((start, end))
         start_row, _start_column = start
@@ -2190,6 +2224,34 @@ TextArea {
         deletion = self._delete_via_keyboard(from_location, to_location)
         if deletion is not None:
             self.move_cursor_relative(columns=end_column, record_width=False)
+        return deletion
+
+    def action_cut(self) -> None:
+        """Cut text (remove and copy to clipboard)."""
+        if self.read_only:
+            return
+        start, end = self.selection
+        if start == end:
+            edit_result = self._delete_cursor_line()
+        else:
+            edit_result = self._delete_via_keyboard(start, end)
+
+        if edit_result is not None:
+            self.app.copy_to_clipboard(edit_result.replaced_text)
+
+    def action_copy(self) -> None:
+        """Copy selection to clipboard."""
+        selected_text = self.selected_text
+        if selected_text:
+            self.app.copy_to_clipboard(selected_text)
+
+    def action_paste(self) -> None:
+        """Paste from local clipboard."""
+        if self.read_only:
+            return
+        clipboard = self.app.clipboard
+        if result := self._replace_via_keyboard(clipboard, *self.selection):
+            self.move_cursor(result.end_location)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""

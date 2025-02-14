@@ -126,6 +126,7 @@ class RichLog(ScrollView, can_focus=True):
         indicating we can proceed with rendering deferred writes."""
 
     def notify_style_update(self) -> None:
+        super().notify_style_update()
         self._line_cache.clear()
 
     def on_resize(self, event: Resize) -> None:
@@ -136,6 +137,12 @@ class RichLog(ScrollView, can_focus=True):
             while deferred_renders:
                 deferred_render = deferred_renders.popleft()
                 self.write(*deferred_render)
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        if self._size_known:
+            return self.virtual_size.width
+        else:
+            return container.width
 
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.

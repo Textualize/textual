@@ -1199,7 +1199,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Scroll to the given node.
 
         Args:
-            node: Node to scroll in to view.
+            node: Node to scroll into view.
             animate: Animate scrolling.
         """
         line = node._line
@@ -1462,6 +1462,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                     await self.run_action("select_cursor")
 
     def notify_style_update(self) -> None:
+        super().notify_style_update()
         self._invalidate()
 
     def action_cursor_up(self) -> None:
@@ -1525,6 +1526,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             will cause both an expand/collapse event to occur, as well as a
             selected event.
         """
+        if self.cursor_line < 0:
+            return
         try:
             line = self._tree_lines[self.cursor_line]
         except IndexError:

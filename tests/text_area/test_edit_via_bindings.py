@@ -168,6 +168,57 @@ async def test_delete_right_end_of_line():
 
 
 @pytest.mark.parametrize(
+    "selection,expected_result,expected_clipboard,cursor_end_location",
+    [
+        (Selection.cursor((0, 0)), "", "0123456789", (0, 0)),
+        (Selection.cursor((0, 4)), "", "0123456789", (0, 0)),
+        (Selection.cursor((0, 10)), "", "0123456789", (0, 0)),
+        (Selection((0, 2), (0, 4)), "01456789", "23", (0, 2)),
+        (Selection((0, 4), (0, 2)), "01456789", "23", (0, 2)),
+    ],
+)
+async def test_cut(selection, expected_result, expected_clipboard, cursor_end_location):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+x")
+
+        assert text_area.selection == Selection.cursor(cursor_end_location)
+        assert text_area.text == expected_result
+        assert app.clipboard == expected_clipboard
+
+
+@pytest.mark.parametrize(
+    "selection,expected_result",
+    [
+        # Cursors
+        (Selection.cursor((0, 0)), "345\n678\n9\n"),
+        (Selection.cursor((0, 2)), "345\n678\n9\n"),
+        (Selection.cursor((3, 1)), "012\n345\n678\n"),
+        (Selection.cursor((4, 0)), "012\n345\n678\n9\n"),
+        # Selections
+        (Selection((1, 1), (1, 2)), "012\n35\n678\n9\n"),
+        (Selection((1, 2), (2, 1)), "012\n3478\n9\n"),
+    ],
+)
+async def test_cut_multiline_document(selection, expected_result):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("012\n345\n678\n9\n")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+x")
+
+        cursor_row, cursor_column = text_area.cursor_location
+        assert text_area.selection == Selection.cursor((cursor_row, cursor_column))
+        assert text_area.text == expected_result
+
+
+@pytest.mark.parametrize(
     "selection,expected_result",
     [
         (Selection.cursor((0, 0)), ""),
@@ -184,7 +235,7 @@ async def test_delete_line(selection, expected_result):
         text_area.load_text("0123456789")
         text_area.selection = selection
 
-        await pilot.press("ctrl+x")
+        await pilot.press("ctrl+shift+k")
 
         assert text_area.selection == Selection.cursor((0, 0))
         assert text_area.text == expected_result
@@ -219,7 +270,7 @@ async def test_delete_line_multiline_document(selection, expected_result):
         text_area.load_text("012\n345\n678\n9\n")
         text_area.selection = selection
 
-        await pilot.press("ctrl+x")
+        await pilot.press("ctrl+shift+k")
 
         cursor_row, cursor_column = text_area.cursor_location
         assert text_area.selection == Selection.cursor((cursor_row, cursor_column))

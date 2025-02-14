@@ -16,6 +16,7 @@ __all__ = ["Collapsible", "CollapsibleTitle"]
 class CollapsibleTitle(Static, can_focus=True):
     """Title and symbol for the Collapsible."""
 
+    ALLOW_SELECT = False
     DEFAULT_CSS = """
     CollapsibleTitle {
         width: auto;

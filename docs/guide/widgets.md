@@ -24,9 +24,12 @@ Let's create a simple custom widget to display a greeting.
 --8<-- "docs/examples/guide/widgets/hello01.py"
 ```
 
-The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
+The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method.
+Textual will display whatever is returned from render in the [content](./content.md) area of your widget.
 
-Note that the text contains tags in square brackets, i.e. `[b]`. This is [console markup](https://rich.readthedocs.io/en/latest/markup.html) which allows you to embed various styles within your content. If you run this you will find that `World` is in bold.
+Note that the text contains tags in square brackets, i.e. `[b]`.
+This is [Textual markup](./content.md#markup) which allows you to embed various styles within your content.
+If you run this you will find that `World` is in bold.
 
 ```{.textual path="docs/examples/guide/widgets/hello01.py"}
 ```
@@ -118,15 +121,16 @@ CSS defined within `DEFAULT_CSS` has an automatically lower [specificity](./CSS.
 
 ## Text links
 
-Text in a widget may be marked up with links which perform an action when clicked. Links in console markup use the following format:
+Text in a widget may be marked up with links which perform an action when clicked.
+Links in markup use the following format:
 
 ```
-"Click [@click='app.bell']Me[/]"
+"Click [@click=app.bell]Me[/]"
 ```
 
 The `@click` tag introduces a click handler, which runs the `app.bell` action.
 
-Let's use markup links in the hello example so that the greeting becomes a link which updates the widget.
+Let's use links in the hello example so that the greeting becomes a link which updates the widget.
 
 
 === "hello05.py"
@@ -407,7 +411,7 @@ Textual will call this method as required to get content for every row of charac
 --8<-- "docs/images/render_line.excalidraw.svg"
 </div>
 
-Let's look at an example before we go in to the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers game. Here's the code:
+Let's look at an example before we go into the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers game. Here's the code:
 
 === "checker01.py"
 

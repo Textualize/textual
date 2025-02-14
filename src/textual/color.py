@@ -110,11 +110,11 @@ hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOS
     re.VERBOSE,
 )
 
-# Fast way to split a string of 6 characters in to 3 pairs of 2 characters
+# Fast way to split a string of 6 characters into 3 pairs of 2 characters
 _split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
-# Fast way to split a string of 8 characters in to 4 pairs of 2 characters
+# Fast way to split a string of 8 characters into 4 pairs of 2 characters
 _split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6), slice(6, 8)
 )
@@ -177,6 +177,7 @@ class Color(NamedTuple):
         return cls(0, 0, 0, alpha_percentage / 100.0, auto=True)
 
     @classmethod
+    @lru_cache(maxsize=1024)
     def from_rich_color(
         cls, rich_color: RichColor | None, theme: TerminalTheme | None = None
     ) -> Color:
@@ -192,7 +193,9 @@ class Color(NamedTuple):
         if rich_color is None:
             return TRANSPARENT
         r, g, b = rich_color.get_truecolor(theme)
-        return cls(r, g, b)
+        return cls(
+            r, g, b, ansi=rich_color.number if rich_color.is_system_defined else None
+        )
 
     @classmethod
     def from_hsl(cls, h: float, s: float, l: float) -> Color:
@@ -247,7 +250,7 @@ class Color(NamedTuple):
         Returns:
             A color object as used by Rich.
         """
-        r, g, b, _a, ansi, _ = self
+        r, g, b, a, ansi, _ = self
         if ansi is not None:
             return RichColor.parse("default") if ansi < 0 else RichColor.from_ansi(ansi)
         return RichColor(
@@ -327,6 +330,8 @@ class Color(NamedTuple):
         r, g, b, a, ansi, auto = self
         if auto:
             alpha_percentage = clamp(a, 0.0, 1.0) * 100.0
+            if alpha_percentage == 100:
+                return "auto"
             if not alpha_percentage % 1:
                 return f"auto {int(alpha_percentage)}%"
             return f"auto {alpha_percentage:.1f}%"
@@ -377,8 +382,8 @@ class Color(NamedTuple):
         """
         if self.ansi is not None:
             return self
-        r, g, b, a, _, _ = self
-        return Color(r, g, b, a * alpha)
+        r, g, b, a, _ansi, auto = self
+        return Color(r, g, b, a * alpha, auto=auto)
 
     @lru_cache(maxsize=1024)
     def blend(
@@ -450,6 +455,15 @@ class Color(NamedTuple):
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
             return self.blend(other, other.a, 1.0)
+        elif other is None:
+            return self
+        return NotImplemented
+
+    def __radd__(self, other: object) -> Color:
+        if isinstance(other, Color):
+            return self.blend(other, other.a, 1.0)
+        elif other is None:
+            return self
         return NotImplemented
 
     @classmethod

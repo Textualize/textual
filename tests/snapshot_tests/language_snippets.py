@@ -705,104 +705,6 @@ export DB_PASSWORD="secret"
 source config.sh
 """
 
-KOTLIN = """\
-// Variables
-val name = "John"
-var age = 30
-var isStudent = true
-
-// Printing variables
-println("Hello, $name! You are $age years old.")
-
-// Conditional statements
-when {
-    age >= 18 && isStudent -> println("You are an adult student.")
-    age >= 18 -> println("You are an adult.")
-    else -> println("You are a minor.")
-}
-
-// Arrays
-val numbers = arrayOf(1, 2, 3, 4, 5)
-println("Numbers: ${numbers.contentToString()}")
-
-// Lists
-val fruits = listOf("apple", "banana", "orange")
-println("Fruits: $fruits")
-
-// Loops
-for (num in numbers) {
-    println("Number: $num")
-}
-
-// Functions
-fun greet(name: String) {
-    println("Hello, $name!")
-}
-greet("Alice")
-
-// Lambda functions
-val square = { num: Int -> num * num }
-println("Square of 5: ${square(5)}")
-
-// Extension functions
-fun String.reverse(): String {
-    return this.reversed()
-}
-val reversed = "Hello".reverse()
-println("Reversed: $reversed")
-
-// Data classes
-data class Person(val name: String, val age: Int)
-val person = Person("John", 30)
-println("Person: $person")
-
-// Null safety
-var nullable: String? = null
-println("Length: ${nullable?.length}")
-
-// Elvis operator
-val length = nullable?.length ?: 0
-println("Length (Elvis): $length")
-
-// Smart casts
-fun printLength(obj: Any) {
-    if (obj is String) {
-        println("Length: ${obj.length}")
-    }
-}
-printLength("Hello")
-
-// Object expressions
-val comparator = object : Comparator<Int> {
-    override fun compare(a: Int, b: Int): Int {
-        return a - b
-    }
-}
-val sortedNumbers = numbers.sortedWith(comparator)
-println("Sorted numbers: ${sortedNumbers.contentToString()}")
-
-// Companion objects
-class MyClass {
-    companion object {
-        fun create(): MyClass {
-            return MyClass()
-        }
-    }
-}
-val obj = MyClass.create()
-
-// Sealed classes
-sealed class Result {
-    data class Success(val data: String) : Result()
-    data class Error(val message: String) : Result()
-}
-val result: Result = Result.Success("Data")
-when (result) {
-    is Result.Success -> println("Success: ${result.data}")
-    is Result.Error -> println("Error: ${result.message}")
-}
-"""
-
 RUST = """\
 use std::collections::HashMap;
 
@@ -1016,6 +918,26 @@ public class Main {
 }
 """
 
+XML = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is an example XML document -->
+<library>
+    <book id="1" genre="fiction">
+        <title>The Great Gatsby</title>
+        <author>F. Scott Fitzgerald</author>
+        <published>1925</published>
+        <description><![CDATA[This classic novel explores themes of wealth, society, and the American dream.]]></description>
+    </book>
+    <book id="2" genre="non-fiction">
+        <title>Sapiens: A Brief History of Humankind</title>
+        <author>Yuval Noah Harari</author>
+        <published>2011</published>
+        <description><![CDATA[Explores the history and impact of Homo sapiens.]]></description>
+    </book>
+    <!-- Another book can be added here -->
+</library>
+"""
+
 SNIPPETS = {
     "python": PYTHON,
     "markdown": MARKDOWN,
@@ -1029,7 +951,7 @@ SNIPPETS = {
     "go": GO,
     "javascript": JAVASCRIPT,
     "bash": BASH,
-    "kotlin": KOTLIN,
     "rust": RUST,
     "java": JAVA,
+    "xml": XML,
 }

@@ -26,7 +26,7 @@ from textual.geometry import Offset, Size
 from textual.reactive import reactive
 from textual.screen import ModalScreen, Screen
 from textual.timer import Timer
-from textual.widgets import Button, Digits, Footer, Select, Static
+from textual.widgets import Button, Digits, Footer, Markdown, Select, Static
 
 
 @dataclass
@@ -324,10 +324,10 @@ class Game(containers.Vertical, can_focus=True):
     """
 
     BINDINGS = [
-        Binding("up", "move('up')", "☝️", priority=True),
-        Binding("down", "move('down')", "👇", priority=True),
-        Binding("left", "move('left')", "👈", priority=True),
-        Binding("right", "move('right')", "👉", priority=True),
+        Binding("up", "move('up')", "up", priority=True),
+        Binding("down", "move('down')", "down", priority=True),
+        Binding("left", "move('left')", "left", priority=True),
+        Binding("right", "move('right')", "right", priority=True),
     ]
 
     state = reactive("waiting")
@@ -447,13 +447,13 @@ class Game(containers.Vertical, can_focus=True):
             return
         blank = self.get_tile(None).position
         if direction == "up":
-            position = blank + (0, -1)
-        elif direction == "down":
             position = blank + (0, +1)
+        elif direction == "down":
+            position = blank + (0, -1)
         elif direction == "left":
-            position = blank + (-1, 0)
-        elif direction == "right":
             position = blank + (+1, 0)
+        elif direction == "right":
+            position = blank + (-1, 0)
         try:
             tile = self.get_tile_at(position)
         except IndexError:
@@ -503,15 +503,51 @@ class Game(containers.Vertical, can_focus=True):
         self.move_tile(tile)
 
 
+class GameInstructions(containers.VerticalGroup):
+    DEFAULT_CSS = """\
+    GameInstructions {        
+        layer: instructions;
+        width: 60;
+        background: $panel;
+        border: thick $primary-darken-2; 
+        Markdown {
+            background: $panel;
+        }
+        
+    }
+
+"""
+    INSTRUCTIONS = """\
+# Instructions
+
+This is an implementation of the *sliding tile puzzle*.
+
+The board consists of a number of tiles and a blank space.
+After shuffling, the goal is to restore the original "image" by moving a square either horizontally or vertically into the blank space.
+
+This version is like the physical game, but rather than an image, you need to restore code.
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Markdown(self.INSTRUCTIONS)
+        with containers.Center():
+            yield Button("New Game", action="screen.new_game", variant="success")
+
+
 class GameScreen(PageScreen):
     """The screen containing the game."""
 
-    BINDINGS = [
-        ("s", "shuffle", "Shuffle"),
-        ("n", "new_game", "New Game"),
-    ]
+    DEFAULT_CSS = """
+    GameScreen{       
+        align: center middle;
+        layers: instructions game;     
+    }
+    """
+
+    BINDINGS = [("n", "new_game", "New Game")]
 
     def compose(self) -> ComposeResult:
+        yield GameInstructions()
         yield Game("\n" * 100, "", dimensions=(4, 4), tile_size=(16, 8))
         yield Footer()
 
@@ -524,6 +560,7 @@ class GameScreen(PageScreen):
     async def new_game(self, new_game: NewGame | None) -> None:
         if new_game is None:
             return
+        self.query_one(GameInstructions).display = False
         game = self.query_one(Game)
         game.state = "waiting"
         game.code = new_game.code
@@ -532,8 +569,10 @@ class GameScreen(PageScreen):
         await game.recompose()
         game.focus()
 
-    def on_mount(self) -> None:
-        self.action_new_game()
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        if action == "shuffle" and self.query_one(Game).state == "waiting":
+            return None
+        return True
 
 
 if __name__ == "__main__":

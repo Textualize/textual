@@ -24,6 +24,8 @@ from textual.css.tokenize import Token, tokenize_values
 from textual.css.tokenizer import TokenError
 from textual.css.types import CSSLocation, Specificity3, Specificity6
 from textual.dom import DOMNode
+from textual.markup import parse_style
+from textual.style import Style
 from textual.widget import Widget
 
 _DEFAULT_STYLES = Styles()
@@ -149,6 +151,7 @@ class Stylesheet:
         self._require_parse = False
         self._invalid_css: set[str] = set()
         self._parse_cache: LRUCache[tuple, list[RuleSet]] = LRUCache(64)
+        self._style_parse_cache: LRUCache[str, Style] = LRUCache(1024 * 4)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
@@ -215,6 +218,24 @@ class Stylesheet:
         self.__variable_tokens = None
         self._invalid_css = set()
         self._parse_cache.clear()
+        self._style_parse_cache.clear()
+
+    def parse_style(self, style_text: str | Style) -> Style:
+        """Parse a (visual) Style.
+
+        Args:
+            style_text: Visual style, such as "bold white 90% on $primary"
+
+        Returns:
+            New Style instance.
+        """
+        if isinstance(style_text, Style):
+            return style_text
+        if style_text in self._style_parse_cache:
+            return self._style_parse_cache[style_text]
+        style = parse_style(style_text)
+        self._style_parse_cache[style_text] = style
+        return style
 
     def _parse_rules(
         self,
@@ -276,7 +297,7 @@ class Stylesheet:
         """
         filename = os.path.expanduser(filename)
         try:
-            with open(filename, "rt") as css_file:
+            with open(filename, "rt", encoding="utf-8") as css_file:
                 css = css_file.read()
             path = os.path.abspath(filename)
         except Exception:
@@ -437,7 +458,7 @@ class Stylesheet:
     # These shouldn't be used in a cache key
     _EXCLUDE_PSEUDO_CLASSES_FROM_CACHE: Final[set[str]] = {
         "first-of-type",
-        "last-of_type",
+        "last-of-type",
         "odd",
         "even",
         "focus-within",

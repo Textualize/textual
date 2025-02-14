@@ -5,7 +5,7 @@ from textwrap import dedent
 from textual.app import ComposeResult
 from textual.css.query import NoMatches
 from textual.widget import Widget
-from textual.widgets import KeyPanel, Label, Markdown
+from textual.widgets import KeyPanel, Markdown
 
 
 class HelpPanel(Widget):
@@ -37,14 +37,6 @@ class HelpPanel(Widget):
             .bindings-table--divide {
                 color: transparent;
             }
-        }
-      
-        #title {
-            width: 1fr;
-            text-align: center;
-            text-style: bold;
-            dock: top;
-            display: none;
         }
         
         #widget-help {
@@ -110,6 +102,5 @@ class HelpPanel(Widget):
                 pass
 
     def compose(self) -> ComposeResult:
-        yield Label("Help", id="title")
         yield Markdown(id="widget-help")
         yield KeyPanel(id="keys-help")

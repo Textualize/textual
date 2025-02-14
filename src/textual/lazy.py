@@ -18,7 +18,7 @@ class Lazy(Widget):
     Making a widget lazy is beneficial for widgets which start out invisible, such as tab panes.
 
     Note that since lazy widgets aren't mounted immediately (by definition), they will not appear
-    in queries for a brief interval until they are mounted. Your code should take this in to account.
+    in queries for a brief interval until they are mounted. Your code should take this into account.
 
     Example:
         ```python
@@ -83,7 +83,7 @@ class Reveal(Widget):
                 yield Logs()
                 yield Sparklines()
             yield Footer()
-    ```
+        ```
     """
 
     DEFAULT_CSS = """

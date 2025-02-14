@@ -299,7 +299,7 @@ class BoxProperty:
 
         Returns:
             A ``tuple[EdgeType, Style]`` containing the string type of the box and
-                its style. Example types are "rounded", "solid", and "dashed".
+                its style. Example types are "round", "solid", and "dashed".
         """
         return obj.get_rule(self.name) or ("", self._default_color)  # type: ignore[return-value]
 
@@ -1172,7 +1172,7 @@ class FractionalProperty:
 
 
 class AlignProperty:
-    """Combines the horizontal and vertical alignment properties in to a single property."""
+    """Combines the horizontal and vertical alignment properties into a single property."""
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.horizontal = f"{name}_horizontal"

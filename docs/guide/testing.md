@@ -91,7 +91,7 @@ Knowing which test has failed will help you quickly track down where your code w
 ## Simulating key presses
 
 We've seen how the [`press`][textual.pilot.Pilot] method simulates keys.
-You can also supply multiple keys to simulate the user typing in to the app.
+You can also supply multiple keys to simulate the user typing into the app.
 Here's an example of simulating the user typing the word "hello".
 
 ```python
@@ -136,6 +136,15 @@ Here's how you would click the line *above* a button.
 
 ```python
 await pilot.click(Button, offset=(0, -1))
+```
+
+### Double & triple clicks
+
+You can simulate double and triple clicks by setting the `times` parameter.
+
+```python
+await pilot.click(Button, times=2)  # Double click
+await pilot.click(Button, times=3)  # Triple click
 ```
 
 ### Modifier keys

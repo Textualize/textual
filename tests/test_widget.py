@@ -1,17 +1,16 @@
 from operator import attrgetter
 
 import pytest
-from rich.text import Text
 
 from textual import events
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
 from textual.containers import Container
+from textual.content import Content
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
-from textual.visual import RichVisual
 from textual.widget import BadWidgetName, MountError, PseudoClasses, Widget
 from textual.widgets import (
     Button,
@@ -317,11 +316,11 @@ async def test_remove_unmounted():
 
 def test_render_str() -> None:
     widget = Label()
-    assert widget.render_str("foo") == Text("foo")
-    assert widget.render_str("[b]foo") == Text.from_markup("[b]foo")
+    assert widget.render_str("foo") == Content("foo")
+    assert widget.render_str("[b]foo") == Content.from_markup("[b]foo")
     # Text objects are passed unchanged
-    text = Text("bar")
-    assert widget.render_str(text) is text
+    content = Content("bar")
+    assert widget.render_str(content) is content
 
 
 async def test_compose_order() -> None:
@@ -532,11 +531,8 @@ async def test_render_returns_text():
 
     widget = SimpleWidget()
     render_result = widget._render()
-    assert isinstance(render_result, RichVisual)
-    renderable = render_result._renderable
-    assert isinstance(renderable, Text)
-
-    assert renderable.plain == "Hello World!"
+    assert isinstance(render_result, Content)
+    assert render_result.plain == "Hello World!"
 
 
 async def test_sort_children() -> None:

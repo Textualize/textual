@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
 from rich.style import Style
+from typing_extensions import Self
 
 from textual._types import CallbackType
 from textual.geometry import Offset, Size
@@ -454,6 +455,8 @@ class MouseEvent(InputEvent, bubble=True):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
+        if self.style:
+            yield "style", self.style
 
     @property
     def control(self) -> Widget | None:
@@ -562,7 +565,7 @@ class MouseScrollDown(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *down*.
 
     - [X] Bubbles
-    - [ ] Verbose
+    - [X] Verbose
     """
 
 
@@ -571,7 +574,7 @@ class MouseScrollUp(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *up*.
 
     - [X] Bubbles
-    - [ ] Verbose
+    - [X] Verbose
     """
 
 
@@ -580,7 +583,87 @@ class Click(MouseEvent, bubble=True):
 
     - [X] Bubbles
     - [ ] Verbose
+
+    Args:
+        chain: The number of clicks in the chain. 2 is a double click, 3 is a triple click, etc.
     """
+
+    def __init__(
+        self,
+        widget: Widget | None,
+        x: int,
+        y: int,
+        delta_x: int,
+        delta_y: int,
+        button: int,
+        shift: bool,
+        meta: bool,
+        ctrl: bool,
+        screen_x: int | None = None,
+        screen_y: int | None = None,
+        style: Style | None = None,
+        chain: int = 1,
+    ) -> None:
+        super().__init__(
+            widget,
+            x,
+            y,
+            delta_x,
+            delta_y,
+            button,
+            shift,
+            meta,
+            ctrl,
+            screen_x,
+            screen_y,
+            style,
+        )
+        self.chain = chain
+
+    @classmethod
+    def from_event(
+        cls: Type[Self],
+        widget: Widget,
+        event: MouseEvent,
+        chain: int = 1,
+    ) -> Self:
+        new_event = cls(
+            widget,
+            event.x,
+            event.y,
+            event.delta_x,
+            event.delta_y,
+            event.button,
+            event.shift,
+            event.meta,
+            event.ctrl,
+            event.screen_x,
+            event.screen_y,
+            event._style,
+            chain=chain,
+        )
+        return new_event
+
+    def _apply_offset(self, x: int, y: int) -> Self:
+        return self.__class__(
+            self.widget,
+            x=self.x + x,
+            y=self.y + y,
+            delta_x=self.delta_x,
+            delta_y=self.delta_y,
+            button=self.button,
+            shift=self.shift,
+            meta=self.meta,
+            ctrl=self.ctrl,
+            screen_x=self.screen_x,
+            screen_y=self.screen_y,
+            style=self.style,
+            chain=self.chain,
+        )
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "chain", self.chain
 
 
 @rich.repr.auto
@@ -665,7 +748,21 @@ class Focus(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
+
+    Args:
+        from_app_focus: True if this focus event has been sent because the app itself has
+            regained focus (via an AppFocus event). False if the focus came from within
+            the Textual app (e.g. via the user pressing tab or a programmatic setting
+            of the focused widget).
     """
+
+    def __init__(self, from_app_focus: bool = False) -> None:
+        self.from_app_focus = from_app_focus
+        super().__init__()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "from_app_focus", self.from_app_focus
 
 
 class Blur(Event, bubble=False):

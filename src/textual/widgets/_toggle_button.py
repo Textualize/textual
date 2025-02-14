@@ -32,6 +32,7 @@ class ToggleButton(Static, can_focus=True):
         [RadioButton][textual.widgets.RadioButton].
     """
 
+    ALLOW_SELECT = False
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter,space", "toggle_button", "Toggle", show=False),
     ]
@@ -84,7 +85,7 @@ class ToggleButton(Static, can_focus=True):
             }
         }
     }
-    """  # TODO: https://github.com/Textualize/textual/issues/1780
+    """
 
     BUTTON_LEFT: str = "▐"
     """The character used for the left side of the toggle button."""
