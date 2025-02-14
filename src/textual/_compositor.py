@@ -1187,19 +1187,16 @@ class Compositor:
 
         for region, clip, strips in renders:
             render_region = intersection(region, clip)
+            render_x = render_region.x
+            first_cut, last_cut = render_region.column_span
 
             for y, strip in zip(render_region.line_range, strips):
                 if not is_rendered_line(y):
                     continue
 
                 chops_line = chops[y]
-
-                first_cut, last_cut = render_region.column_span
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
-
-                render_x = render_region.x
-                relative_cuts = [cut - render_x for cut in final_cuts[1:]]
-                cut_strips = strip.divide(relative_cuts)
+                cut_strips = strip.divide([cut - render_x for cut in final_cuts[1:]])
 
                 # Since we are painting front to back, the first segments for a cut "wins"
                 get_chops_line = chops_line.get
