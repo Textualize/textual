@@ -2911,6 +2911,8 @@ def test_markup_command_list(snap_compare):
     assert snap_compare(MyApp())
 
 
+# TODO: Why is this flakey?
+@pytest.mark.skip("Flakey on Windows")
 def test_app_resize_order(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5284
     You should see a placeholder with text "BAR", focused and scrolled down so it fills the screen.

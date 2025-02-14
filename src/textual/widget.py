@@ -1693,12 +1693,12 @@ class Widget(DOMNode):
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
-        self.horizontal_scrollbar.position = round(new_value)
+        self.horizontal_scrollbar.position = new_value
         if round(old_value) != round(new_value):
             self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
-        self.vertical_scrollbar.position = round(new_value)
+        self.vertical_scrollbar.position = new_value
         if round(old_value) != round(new_value):
             self._refresh_scroll()
 
@@ -1706,13 +1706,13 @@ class Widget(DOMNode):
         return clamp(value, 0, self.max_scroll_x)
 
     def validate_scroll_target_x(self, value: float) -> float:
-        return clamp(value, 0, self.max_scroll_x)
+        return round(clamp(value, 0, self.max_scroll_x))
 
     def validate_scroll_y(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_y)
 
     def validate_scroll_target_y(self, value: float) -> float:
-        return clamp(value, 0, self.max_scroll_y)
+        return round(clamp(value, 0, self.max_scroll_y))
 
     @property
     def max_scroll_x(self) -> int:
