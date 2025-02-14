@@ -159,5 +159,5 @@ Textual will use the first theme that exists.
 """
 
 SMOOTH_SCROLL: Final[bool] = _get_environ_int("TEXTUAL_SMOOTH_SCROLL", 1) == 1
-"""Should smooth scrolling be enabled? set `TEXTUAL_SMOOTH_SCROLL=0` to disable smooth scrolling.
+"""Should smooth scrolling be enabled? set `TEXTUAL_SMOOTH_SCROLL=0` to disable smooth
 """
