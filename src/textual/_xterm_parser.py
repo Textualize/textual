@@ -287,7 +287,12 @@ class XTermParser(Parser[Message]):
                         setting_parameter = int(mode_report_match["setting_parameter"])
                         if mode_id == "2026" and setting_parameter > 0:
                             on_token(messages.TerminalSupportsSynchronizedOutput())
-                        elif mode_id == "2048" and not IS_ITERM:
+                        elif (
+                            mode_id == "2048"
+                            and constants.SMOOTH_SCROLL
+                            and not IS_ITERM
+                        ):
+                            # TODO: iTerm is buggy in one or more of the protocols required here
                             in_band_event = messages.TerminalSupportInBandWindowResize.from_setting_parameter(
                                 setting_parameter
                             )

@@ -379,7 +379,6 @@ class ScrollBar(Widget):
                     (event._screen_x - self.grabbed.x)
                     * (virtual_size / self.window_size)
                 )
-            print(event)
             self.post_message(ScrollTo(x=x, y=y))
         event.stop()
 

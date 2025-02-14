@@ -136,6 +136,7 @@ class LinuxDriver(Driver):
         #       extensions.
 
     def _enable_mouse_pixels(self) -> None:
+        """Enable mouse reporting as pixels."""
         if not self._mouse:
             return
         self.write("\x1b[?1016h")

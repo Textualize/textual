@@ -399,26 +399,32 @@ class MouseEvent(InputEvent, bubble=True):
 
     @property
     def x(self) -> int:
+        """The relative X coordinate."""
         return int(self._x)
 
     @property
     def y(self) -> int:
+        """The relative Y coordinate."""
         return int(self._y)
 
     @property
     def delta_x(self) -> int:
+        """Change in `x` since last message."""
         return int(self._delta_x)
 
     @property
     def delta_y(self) -> int:
+        """Change in `y` since the last message."""
         return int(self._delta_y)
 
     @property
     def screen_x(self) -> int:
+        """X coordinate relative to top left of screen."""
         return int(self._screen_x)
 
     @property
     def screen_y(self) -> int:
+        """Y coordinate relative to top left of screen."""
         return int(self._screen_y)
 
     @classmethod

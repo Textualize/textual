@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - OptionList no longer supports `Separator`, a separator may be specified with `None`
+- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable. 
 
 ### Removed
 
