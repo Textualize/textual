@@ -622,19 +622,19 @@ class MaskedInput(Input, can_focus=True):
         """Clear the masked input."""
         self.value, self.cursor_position = self._template.insert_separators("", 0)
 
-    def action_cursor_left(self) -> None:
+    def action_cursor_left(self, select: bool = False) -> None:
         """Move the cursor one position to the left; separators are skipped."""
         self._template.move_cursor(-1)
 
-    def action_cursor_right(self) -> None:
+    def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one position to the right; separators are skipped."""
         self._template.move_cursor(1)
 
-    def action_home(self) -> None:
+    def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input."""
         self._template.move_cursor(-len(self.template))
 
-    def action_cursor_left_word(self) -> None:
+    def action_cursor_left_word(self, select: bool = False) -> None:
         """Move the cursor left next to the previous separator. If no previous
         separator is found, moves the cursor to the start of the input."""
         if self._template.at_separator(self.cursor_position - 1):
@@ -645,7 +645,7 @@ class MaskedInput(Input, can_focus=True):
             position += 1
         self.cursor_position = position or 0
 
-    def action_cursor_right_word(self) -> None:
+    def action_cursor_right_word(self, select: bool = False) -> None:
         """Move the cursor right next to the next separator. If no next
         separator is found, moves the cursor to the end of the input."""
         position = self._template.next_separator_position()
