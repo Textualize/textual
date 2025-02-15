@@ -926,6 +926,23 @@ class App(Generic[ReturnType], DOMNode):
         if not self._batch_count:
             self.check_idle()
 
+    def _delay_update(self, delay: float = 0.05) -> None:
+        """Delay updates for a short period of time.
+
+        May be used to mask a brief transition.
+
+        Args:
+            delay: Delay before updating.
+        """
+        self._begin_batch()
+
+        def end_batch() -> None:
+            """Re-enable updates, and refresh screen."""
+            self.screen.refresh()
+            self._end_batch()
+
+        self.set_timer(delay, end_batch, name="_delay_update")
+
     @contextmanager
     def _context(self) -> Generator[None, None, None]:
         """Context manager to set ContextVars."""
@@ -3504,7 +3521,8 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if renderable is None:
                 return
-
+            if self._batch_count:
+                return
             if (
                 self._running
                 and not self._closed

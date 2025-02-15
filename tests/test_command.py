@@ -59,5 +59,4 @@ async def test_command_dismiss():
         await pilot.press("ctrl+p", *"modal quit", "enter")
         await pilot.pause()
         await pilot.press("enter")
-        await pilot.pause()
         assert app.check_quit_called
