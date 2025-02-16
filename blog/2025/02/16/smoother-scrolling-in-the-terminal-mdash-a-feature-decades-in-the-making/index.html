@@ -6690,7 +6690,7 @@ More granular mouse reporting is possible in the terminal; write the required es
 Without that, we can never know which cell the user clicked on.</p>
 <p>It's a trivial calculation, but we are missing a vital piece of information; the size of the terminal window in pixels.
 If we had that, we could divide the pixel dimensions by the cell dimensions to calculate the pixels per cell.
-Divide the pixel coordinates by <em>pixels per cell</em> and we have cell coordinates.</p>
+Divide pixel coordinates by <em>pixels per cell</em> and we have cell coordinates.</p>
 <p>But the terminal reports its size in cells, and <em>not</em> pixels.
 So we can't use granular mouse coordinates.</p>
 <div class="admonition question">
