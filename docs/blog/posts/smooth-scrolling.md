@@ -39,7 +39,7 @@ Without that, we can never know which cell the user clicked on.
 
 It's a trivial calculation, but we are missing a vital piece of information; the size of the terminal window in pixels.
 If we had that, we could divide the pixel dimensions by the cell dimensions to calculate the pixels per cell.
-Divide the pixel coordinates by *pixels per cell* and we have cell coordinates.
+Divide pixel coordinates by *pixels per cell* and we have cell coordinates.
 
 But the terminal reports its size in cells, and *not* pixels.
 So we can't use granular mouse coordinates.
