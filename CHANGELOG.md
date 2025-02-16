@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed traceback from OptionList in Command Palette
+- Fixed traceback from OptionList in Command Palette https://github.com/Textualize/textual/pull/5544
 
 ## [2.0.2] - 2025-02-16
 
