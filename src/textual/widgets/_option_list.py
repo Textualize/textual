@@ -834,10 +834,10 @@ class OptionList(ScrollView, can_focus=True):
         line_number = self.scroll_offset.y + y
         try:
             option_index, line_offset = self._lines[line_number]
+            option = self.options[option_index]
         except IndexError:
             return Strip.blank(self.scrollable_content_region.width)
 
-        option = self.options[option_index]
         mouse_over = self._mouse_hovering_over == option_index
         component_class = ""
         if option.disabled:
