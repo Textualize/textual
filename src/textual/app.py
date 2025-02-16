@@ -938,8 +938,9 @@ class App(Generic[ReturnType], DOMNode):
 
         def end_batch() -> None:
             """Re-enable updates, and refresh screen."""
-            self.screen.refresh()
             self._end_batch()
+            if not self._batch_count:
+                self.screen.refresh()
 
         self.set_timer(delay, end_batch, name="_delay_update")
 

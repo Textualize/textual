@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased - 2025
+## 2.0.0 - 2024-02-16
 
 ### Added
 
@@ -44,13 +44,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- OptionList no longer supports `Separator`, a separator may be specified with `None`
+- Breaking change: OptionList no longer supports `Separator`, a separator may be specified with `None`
 - Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable. 
 
 ### Removed
 
-- Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
-- Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
+- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Breaking change: Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
 
 ## [1.0.0] - 2024-12-12
 

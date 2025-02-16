@@ -31,18 +31,31 @@ It isn't granular enough to know where the pointer is *within* a cell.
 
 Until recently terminal apps couldn't do any better.
 More granular mouse reporting is possible in the terminal; write the required escape sequence and mouse coordinates are reported in pixels rather than cells.
+
 So why haven't TUIs been using this?
 
-The problem is that we can't translate between pixel coordinates and cell coordinates without first knowing how many pixels are in a cell.
-And in order to know that, we need to know the width and height of the terminal in *pixels*.
-Unfortunately, that standard way to get the terminal size reports just cells.
+The problem is that pixel coordinates are pretty much useless in TUIs unless we have some way of translating between pixel and cell coordinates.
+Without that, we can never know which cell the user clicked on.
 
-At least they didn't before [this extension](https://gist.github.com/rockorager/e695fb2924d36b2bcf1fff4a3704bd83) which reports the size of the terminal in cell *and* pixel coordinates.
+It's a trivial calculation, but we are missing a vital piece of information; the size of the terminal window in pixels.
+If we had that, we could divide the pixel dimensions by the cell dimensions to calculate the pixels per cell.
+Divide the pixel coordinates by *pixels per cell* and we have cell coordinates.
+
+But the terminal reports its size in cells, and *not* pixels.
+So we can't use granular mouse coordinates.
+
+!!! question "What did people use pixel coordinate for?"
+
+    This does make we wonder what pixel reporting was ever used for in terminals.
+    Ping me on Discord if you know!
+
+
+At least we couldn't until [this recent extension](https://gist.github.com/rockorager/e695fb2924d36b2bcf1fff4a3704bd83) which reports the size of the terminal in cell *and* pixel coordinates.
 Once we have both the mouse coordinates in pixels and the dimensions of the terminal in pixels, we can implement much smoother scrolling.
 
 Let's see how this looks.
 
-On the right we have smooth scrolling enabled, on the left is the default non-smooth scrolling:
+On the left we have the default scrolling, on the right, Textual is using granular mouse coordinates.
 
 
 | Default scrolling                                                | Smooth scrolling                                                                    |
@@ -50,8 +63,6 @@ On the right we have smooth scrolling enabled, on the left is the default non-sm
 | ![A TUI Scrollbar](../images/smooth-scroll/no-smooth-scroll.gif) | ![A TUI Scrollbar with smooth scrolling](../images/smooth-scroll/smooth-scroll.gif) |
 
 Notice how much smoother the motion of the table is, now that it tracks the mouse cursor more accurately.
-If you move the scrollbar quickly, you may not notice the difference.
-But if you move slowly like you are searching for something, it is a respectable quality of life improvement.
 
 If you have one of the terminals which support this feature[^2], and at least [Textual](https://github.com/textualize/textual/) 2.0.0 you will be able to see this in action.
 
