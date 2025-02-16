@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed OptionList.add_options exhausting iterator https://github.com/Textualize/textual/pull/5540
-- Fixed screen not refreshing after pop https://github.com/Textualize/textual/issues/5542
+- Fixed screen not refreshing after pop https://github.com/Textualize/textual/pull/5543
 
 ## 2.0.1 - 2024-02-16
 
