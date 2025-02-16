@@ -1333,6 +1333,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._compositor_refresh()
         self.app.stylesheet.update(self)
         self._refresh_layout(size)
+        self.refresh()
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
