@@ -219,6 +219,7 @@ def test_assemble():
 
 
 def test_escape():
+    """Test that escaping the first square bracket."""
     content = Content.from_markup("\\[bold]Not really bold")
     assert content.plain == "[bold]Not really bold"
     assert content.spans == []

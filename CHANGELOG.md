@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed escape tags in Content markup
+- Fixed escape tags in Content markup https://github.com/Textualize/textual/pull/5536
 
 ## 2.0.0 - 2025-02-16
 
