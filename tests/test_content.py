@@ -216,3 +216,10 @@ def test_assemble():
         Span(28, 35, style="blue"),
         Span(41, 66, style="underline"),
     ]
+
+
+def test_escape():
+    """Test that escaping the first square bracket."""
+    content = Content.from_markup("\\[bold]Not really bold")
+    assert content.plain == "[bold]Not really bold"
+    assert content.spans == []

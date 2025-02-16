@@ -48,7 +48,6 @@ expect_markup = Expect(
     "markup tag",
     open_closing_tag=r"(?<!\\)\[/",
     open_tag=r"(?<!\\)\[",
-    end_tag=r"(?<!\\)\]",
 ).extract_text()
 
 expect_markup_expression = (
@@ -344,7 +343,6 @@ def _to_content(
             return template_text
 
     for token in iter_tokens:
-
         token_name = token.name
         if token_name == "text":
             value = process_text(token.value.replace("\\[", "["))
@@ -353,6 +351,7 @@ def _to_content(
 
         elif token_name == "open_tag":
             tag_text = []
+
             for token in iter_tokens:
                 if token.name == "end_tag":
                     break
