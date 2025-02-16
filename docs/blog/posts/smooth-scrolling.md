@@ -35,7 +35,7 @@ More granular mouse reporting is possible in the terminal; write the required es
 So why haven't TUIs been using this?
 
 The problem is that pixel coordinates are pretty much useless in TUIs unless we have some way of translating between pixel and cell coordinates.
-Without that, we can never know which cell the used clicked on.
+Without that, we can never know which cell the user clicked on.
 
 It's a trivial calculation, but we are missing a vital piece of information; the size of the terminal window in pixels.
 If we had that, we could divide the pixel dimensions by the cell dimensions to calculate the pixels per cell.
