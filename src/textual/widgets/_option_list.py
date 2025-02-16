@@ -320,6 +320,8 @@ class OptionList(ScrollView, can_focus=True):
             new_options: Content of new options.
         """
 
+        new_options = list(new_options)
+
         option_ids = [
             option._id
             for option in new_options
@@ -330,7 +332,6 @@ class OptionList(ScrollView, can_focus=True):
                 "New options contain duplicated IDs; Ensure that the IDs are unique."
             )
 
-        new_options = list(new_options)
         if not new_options:
             return self
         if new_options[0] is None:
