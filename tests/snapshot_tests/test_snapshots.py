@@ -3630,6 +3630,98 @@ def test_auto_rich_log_width(snap_compare):
     assert snap_compare(MinimalApp())
 
 
+def test_auto_in_auto(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5550
+
+    You should see a table, with a bar at the bottom.
+
+    The bottom bar should have some text right aligned, and two centered buttons in the center of
+    the remaining space.
+
+    """
+
+    class MyApp(App):
+
+        CSS = """
+
+            MyApp {
+                align: center middle;
+                #datatable {
+                    height: 1fr;
+                }
+
+                Horizontal {
+                    height: auto;
+
+                }
+
+                #button_row {
+                    align: center middle;
+                }
+
+                Button {
+                    margin: 1;
+                    height: auto;
+                }
+
+                #last_updated {
+                    dock: right;
+                    offset: 0 2;
+                }
+
+                Label {
+
+                    height: auto;
+                }
+            }
+        """
+
+        def compose(self) -> ComposeResult:
+            """
+            Create the user interface
+            """
+
+            self.last_updated = Label(f"Last Updated: NOW", id="last_updated")
+
+            yield Header()
+            yield Vertical(
+                DataTable(id="datatable"),
+                Horizontal(
+                    Button("OK", variant="primary", id="ok"),
+                    Button("Cancel", variant="error", id="cancel"),
+                    self.last_updated,
+                    id="button_row",
+                ),
+                id="main_tab",
+            )
+
+        def on_mount(self) -> None:
+            rows = [
+                (
+                    "Name",
+                    "Occupation",
+                    "Country",
+                ),
+                (
+                    "Mike",
+                    "Python Wrangler",
+                    "USA",
+                ),
+                (
+                    "Bill",
+                    "Engineer",
+                    "UK",
+                ),
+                ("Dee", "Manager", "Germany"),
+            ]
+            table = self.query_one(DataTable)
+            table.clear(columns=True)
+            table.add_columns(*rows[0])
+            table.add_rows(rows[1:])
+
+    assert snap_compare(MyApp())
+
+
 def test_panel_border_title_colors(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5548"""
 
