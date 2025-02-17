@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed smooth scrolling broken on iTerm over SSH https://github.com/Textualize/textual/pull/5551
 - Fixed height of auto container which contains auto height children https://github.com/Textualize/textual/pull/5552
+- Fixed flipped title colors in panel border https://github.com/Textualize/textual/issues/5548
 
 ## [2.0.4] - 2025-02-17
 
