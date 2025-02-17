@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.4] - 2025-02-17
+
+### Fixed
+
+- Fixed smooth scrolling breaking mouse support in VSCode (and probably others) https://github.com/Textualize/textual/pull/5549
+
 ## [2.0.3] - 2025-02-16
 
 ### Fixed
@@ -2735,6 +2741,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[2.0.4]: https://github.com/Textualize/textual/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/Textualize/textual/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/Textualize/textual/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/Textualize/textual/compare/v2.0.0...v2.0.1
