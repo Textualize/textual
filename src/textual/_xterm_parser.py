@@ -43,7 +43,10 @@ _re_in_band_window_resize: Final = re.compile(
 )
 
 
-IS_ITERM = os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
+IS_ITERM = (
+    os.environ.get("LC_TERMINAL", "") == "iTerm2"
+    or os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
+)
 
 
 class XTermParser(Parser[Message]):
