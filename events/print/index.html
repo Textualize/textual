@@ -6581,61 +6581,67 @@ window.onload = async (event) => {
 <div class="doc doc-object doc-class">
 
 
-<a id="textual.events.Print"></a>
-  <div class="doc doc-contents first">
-          <p class="doc doc-class-bases">
-            Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../api/events/#textual.events.Event">Event</a></code></p>
 
-  
-      <p>Sent to a widget that is capturing <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#print"><code>print</code></a>.</p>
+<a id="textual.events.Print"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../api/events/#textual.events.Event">Event</a></code></p>
+
+
+
+        <p>Sent to a widget that is capturing <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#print"><code>print</code></a>.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
 </ul>
 
 
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h1 id="textual.events.Print(text)" class="doc doc-heading doc-heading-parameter">                  <code>text</code>
+<a href="#textual.events.Print(text)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Text that was printed.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h1 id="textual.events.Print(stderr)" class="doc doc-heading doc-heading-parameter">                  <code>stderr</code>
+<a href="#textual.events.Print(stderr)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the print was to stderr, or <code>False</code> for stdout.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>text</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Text that was printed.</p>
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>stderr</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p><code>True</code> if the print was to stderr, or <code>False</code> for stdout.</p>
-            </div>
-          </td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
 
 <details class="note" open>
   <summary>Note</summary>
@@ -6643,7 +6649,12 @@ window.onload = async (event) => {
 <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.begin_capture_print"><code>App.begin_capture_print</code></a>.</p>
 </details>
 
-  
+
+
+
+
+
+
 
   <div class="doc doc-children">
 
@@ -6658,21 +6669,21 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Print.stderr" class="doc doc-heading">
-          <span class="doc doc-object-name doc-attribute-name">stderr</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">stderr</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.events.Print.stderr" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">stderr</span> <span class="o">=</span> <span class="n">stderr</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">stderr</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Print(stderr)" href="../../api/events/#textual.events.Print(stderr)">stderr</a></span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
-      <p><code>True</code> if the print was to stderr, or <code>False</code> for stdout.</p>
-  </div>
+    <div class="doc doc-contents ">
+
+        <p><code>True</code> if the print was to stderr, or <code>False</code> for stdout.</p>
+    </div>
 
 </div>
 
@@ -6681,21 +6692,21 @@ window.onload = async (event) => {
 
 
 <h1 id="textual.events.Print.text" class="doc doc-heading">
-          <span class="doc doc-object-name doc-attribute-name">text</span>
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">text</span>
 
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.events.Print.text" class="headerlink" title="Permanent link">&para;</a></h1>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">text</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.events.Print(text)" href="../../api/events/#textual.events.Print(text)">text</a></span>
 </code></pre></div>
 
-  <div class="doc doc-contents ">
-  
-      <p>The text that was printed.</p>
-  </div>
+    <div class="doc doc-contents ">
+
+        <p>The text that was printed.</p>
+    </div>
 
 </div>
 
@@ -6705,7 +6716,7 @@ window.onload = async (event) => {
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
