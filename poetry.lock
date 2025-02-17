@@ -2509,19 +2509,19 @@ core = ["tree-sitter (>=0.22,<1.0)"]
 
 [[package]]
 name = "tree-sitter-sql"
-version = "0.3.8"
+version = "0.3.7"
 description = "Tree-sitter Grammar for SQL"
 optional = true
 python-versions = ">=3.9"
 files = [
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:97c77a0447c9fbada9d66ccf21842fab4e79f2d0add940898dc4285cf450824c"},
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:6ceef7e5070e519bf32d4a10e602e1e0fe38c0ac277318e595b98461be809ba1"},
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b98981b827d83d47aaaff49ba3180f481504dc2cc41d106f84c8c6111553a430"},
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ef00e0b30d62ec1d97fbfc3a3c1e9bf4c01aef6de50a29ad95de8452b848c149"},
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:18268daaca95e38ed0f3b751defc213c07263576f864eaa2a44f642a54f1ff18"},
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-win_amd64.whl", hash = "sha256:bd2832b719d4d3b1560f06fdfabbdb95d1119e8debb96b9b95d1177fe4fccf4c"},
-    {file = "tree_sitter_sql-0.3.8-cp38-abi3-win_arm64.whl", hash = "sha256:5630369688f3eecc59740f2e48e23ac5b905961ad2e8b6a1bcee80a212f85727"},
-    {file = "tree_sitter_sql-0.3.8.tar.gz", hash = "sha256:b1fb94ad6902d46ae26718c0144b55d1a6ef2b60ea5d9184850f8f79b64ec4a1"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:f3f8427328bd8b4ee02ab50d71bfc515937c037b8a03dcf54b8c98403d804269"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:97ad55611f7d777b08a30d60150e1c44100ac2759a341b1cf1ffa2f97f20259e"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:aa7beae1c2e841edc6de5a80d3ee6d401b579d9d27ce9553f2c569bef4b95b8f"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b5fc2daa8fc8d49265327ddaff0b5bbda5a6a0e37d05b157fdbcb2530f1e96e8"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:5f3c34121b625ee8f43e6ccffaca5205b206afa31592aedd1f078b4f6f4cb321"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-win_amd64.whl", hash = "sha256:09e4af2b4c32b09e602c83f1e584e5f390901fce929fa7c3da2ddf416e30681e"},
+    {file = "tree_sitter_sql-0.3.7-cp38-abi3-win_arm64.whl", hash = "sha256:e7b09235e5492ac8f71abaeb078e28dbfa94881998a5fbf22c659da49165054c"},
+    {file = "tree_sitter_sql-0.3.7.tar.gz", hash = "sha256:5eb671ad597e6245d96aa44fd584c990d3eaffe80faddf941bfe8ebee6a8e2dd"},
 ]
 
 [package.extras]
@@ -2855,4 +2855,4 @@ syntax = ["tree-sitter", "tree-sitter-bash", "tree-sitter-css", "tree-sitter-go"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "b7254181f587a82218bd72f76a3bd12cc70e39e2cca8c144689905e5a0f58353"
+content-hash = "db29b377e8fcedd9730b54f573ba175c8743e06fa57da2dee8a4e62bc2a6faa7"
