@@ -454,19 +454,18 @@ class LinuxDriver(Driver):
     def process_message(self, message: Message) -> None:
         # intercept in-band window resize
         if isinstance(message, TerminalSupportInBandWindowResize):
-            # If it is supported, enabled it
-            if message.supported and not message.enabled:
-                self._enable_in_band_window_resize()
-                self._in_band_window_resize = message.supported
-            elif message.enabled:
-                self._in_band_window_resize = message.supported
-            self._enable_mouse_pixels()
-            # Send up-to-date message
-            super().process_message(
-                TerminalSupportInBandWindowResize(
-                    message.supported, self._in_band_window_resize
-                )
-            )
-            return
+            if message.supported:
+                self._in_band_window_resize = True
+                if message.enabled:
+                    # Supported and enabled
+                    super().process_message(message)
+                else:
+                    # Supported, but not enabled
+                    self._enable_in_band_window_resize()
+                    super().process_message(
+                        TerminalSupportInBandWindowResize(True, True)
+                    )
+                self._enable_mouse_pixels()
+                return
 
         super().process_message(message)
