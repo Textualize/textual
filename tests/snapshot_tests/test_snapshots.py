@@ -3723,7 +3723,10 @@ def test_auto_in_auto(snap_compare):
 
 
 def test_panel_border_title_colors(snap_compare):
-    """Regression test for https://github.com/Textualize/textual/issues/5548"""
+    """Regression test for https://github.com/Textualize/textual/issues/5548
+
+    You should see four labels with panel type borders. The border title colors
+    should match the description in the label."""
 
     class BorderTitleApp(App):
         CSS = """
