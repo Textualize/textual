@@ -88,8 +88,8 @@ class XTermParser(Parser[Message]):
                 x /= x_ratio
                 y /= y_ratio
 
-            delta_x = x - self.last_x
-            delta_y = y - self.last_y
+            delta_x = int(x) - int(self.last_x)
+            delta_y = int(y) - int(self.last_y)
             self.last_x = x
             self.last_y = y
             event_class: type[events.MouseEvent]
@@ -121,6 +121,7 @@ class XTermParser(Parser[Message]):
                 screen_x=x,
                 screen_y=y,
             )
+            print(event)
             return event
         return None
 
