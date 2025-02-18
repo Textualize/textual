@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed height of auto container which contains auto height children https://github.com/Textualize/textual/pull/5552
 - Fixed `Content.from_markup` not stripping control codes https://github.com/Textualize/textual/pull/5557
 - Fixed `delta_x` and `delta_y` in mouse events when smooth scrolling is enabled https://github.com/Textualize/textual/pull/5556
-- Fixed detection of smooth scrolling
+- Fixed detection of smooth scrolling https://github.com/Textualize/textual/pull/5558
 
 ### Added
 
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Animating the scrollbar while dragging is disabled if smooth scrolling is available
+- Animating the scrollbar while dragging is disabled if smooth scrolling is available https://github.com/Textualize/textual/pull/5558
 
 ## [2.0.4] - 2025-02-17
 
