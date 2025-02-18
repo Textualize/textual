@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed smooth scrolling broken on iTerm over SSH https://github.com/Textualize/textual/pull/5551
 - Fixed height of auto container which contains auto height children https://github.com/Textualize/textual/pull/5552
 - Fixed `Content.from_markup` not stripping control codes https://github.com/Textualize/textual/pull/5557
+- Fixed `delta_x` and `delta_y` in mouse events when smooth scrolling is enabled https://github.com/Textualize/textual/pull/5556
+
+### Added
+
+- Added `pointer_x`, `pointer_y`, `pointer_screen_x`, and `pointer_screen_y` attributes to mouse events https://github.com/Textualize/textual/pull/5556
 
 ## [2.0.4] - 2025-02-17
 
