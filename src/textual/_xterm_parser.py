@@ -83,13 +83,15 @@ class XTermParser(Parser[Message]):
                 and self.terminal_pixel_size is not None
                 and self.terminal_size is not None
             ):
-                x_ratio = self.terminal_pixel_size[0] / self.terminal_size[0]
-                y_ratio = self.terminal_pixel_size[1] / self.terminal_size[1]
+                pixel_width, pixel_height = self.terminal_pixel_size
+                width, height = self.terminal_size
+                x_ratio = pixel_width / width
+                y_ratio = pixel_height / height
                 x /= x_ratio
                 y /= y_ratio
 
-            delta_x = x - self.last_x
-            delta_y = y - self.last_y
+            delta_x = int(x) - int(self.last_x)
+            delta_y = int(y) - int(self.last_y)
             self.last_x = x
             self.last_y = y
             event_class: type[events.MouseEvent]

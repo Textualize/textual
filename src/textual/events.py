@@ -362,8 +362,8 @@ class MouseEvent(InputEvent, bubble=True):
         widget: Widget | None,
         x: float,
         y: float,
-        delta_x: float,
-        delta_y: float,
+        delta_x: int,
+        delta_y: int,
         button: int,
         shift: bool,
         meta: bool,
@@ -399,33 +399,53 @@ class MouseEvent(InputEvent, bubble=True):
 
     @property
     def x(self) -> int:
-        """The relative X coordinate."""
+        """The relative X coordinate of the cell under the mouse."""
         return int(self._x)
 
     @property
     def y(self) -> int:
-        """The relative Y coordinate."""
+        """The relative Y coordinate of the cell under the mouse."""
         return int(self._y)
 
     @property
     def delta_x(self) -> int:
         """Change in `x` since last message."""
-        return int(self._delta_x)
+        return self._delta_x
 
     @property
     def delta_y(self) -> int:
         """Change in `y` since the last message."""
-        return int(self._delta_y)
+        return self._delta_y
 
     @property
     def screen_x(self) -> int:
-        """X coordinate relative to top left of screen."""
+        """X coordinate of the cell relative to top left of screen."""
         return int(self._screen_x)
 
     @property
     def screen_y(self) -> int:
-        """Y coordinate relative to top left of screen."""
+        """Y coordinate of the cell relative to top left of screen."""
         return int(self._screen_y)
+
+    @property
+    def pointer_x(self) -> float:
+        """The relative X coordinate of the pointer."""
+        return self._x
+
+    @property
+    def pointer_y(self) -> float:
+        """The relative Y coordinate of the pointer."""
+        return self._y
+
+    @property
+    def pointer_screen_x(self) -> float:
+        """The X coordinate of the pointer relative to the screen."""
+        return self._screen_x
+
+    @property
+    def pointer_screen_y(self) -> float:
+        """The Y coordinate of the pointer relative to the screen."""
+        return self._screen_y
 
     @classmethod
     def from_event(
@@ -449,10 +469,12 @@ class MouseEvent(InputEvent, bubble=True):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.widget
-        yield "x", self._x
-        yield "y", self._y
-        yield "delta_x", self._delta_x, 0
-        yield "delta_y", self._delta_y, 0
+        yield "x", self.x
+        yield "y", self.y
+        yield "pointer_x", self.pointer_x
+        yield "pointer_y", self.pointer_y
+        yield "delta_x", self.delta_x, 0
+        yield "delta_y", self.delta_y, 0
         if self.screen_x != self.x:
             yield "screen_x", self._screen_x
         if self.screen_y != self.y:
