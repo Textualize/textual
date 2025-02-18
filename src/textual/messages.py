@@ -100,7 +100,7 @@ class TerminalSupportsSynchronizedOutput(Message):
 
 
 @rich.repr.auto
-class TerminalSupportInBandWindowResize(Message):
+class InBandWindowResize(Message):
     """Reports if the in-band window resize protocol is supported.
 
     https://gist.github.com/rockorager/e695fb2924d36b2bcf1fff4a3704bd83"""
@@ -121,18 +121,16 @@ class TerminalSupportInBandWindowResize(Message):
         yield "enabled", self.enabled
 
     @classmethod
-    def from_setting_parameter(
-        cls, setting_parameter: int
-    ) -> TerminalSupportInBandWindowResize:
+    def from_setting_parameter(cls, setting_parameter: int) -> InBandWindowResize:
         """Construct the message from the setting parameter.
 
         Args:
             setting_parameter: Setting parameter from stdin.
 
         Returns:
-            New TerminalSupportInBandWindowResize instance.
+            New InBandWindowResize instance.
         """
 
         supported = setting_parameter not in (0, 4)
         enabled = setting_parameter in (1, 3)
-        return TerminalSupportInBandWindowResize(supported, enabled)
+        return InBandWindowResize(supported, enabled)

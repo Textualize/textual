@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Animating the scrollbar while dragging is disabled if smooth scrolling is available https://github.com/Textualize/textual/pull/5558
+- Renamed `TerminalSupportsInBandWindowResize` to `InBandWindowResize` https://github.com/Textualize/textual/pull/5558
 
 ## [2.0.4] - 2025-02-17
 
