@@ -21,7 +21,7 @@ from textual.driver import Driver
 from textual.drivers._writer_thread import WriterThread
 from textual.geometry import Size
 from textual.message import Message
-from textual.messages import TerminalSupportInBandWindowResize
+from textual.messages import InBandWindowResize
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -453,7 +453,7 @@ class LinuxDriver(Driver):
 
     def process_message(self, message: Message) -> None:
         # intercept in-band window resize
-        if isinstance(message, TerminalSupportInBandWindowResize):
+        if isinstance(message, InBandWindowResize):
             if message.supported:
                 self._in_band_window_resize = True
                 if message.enabled:
@@ -462,9 +462,7 @@ class LinuxDriver(Driver):
                 else:
                     # Supported, but not enabled
                     self._enable_in_band_window_resize()
-                    super().process_message(
-                        TerminalSupportInBandWindowResize(True, True)
-                    )
+                    super().process_message(InBandWindowResize(True, True))
                 self._enable_mouse_pixels()
                 return
 

@@ -379,7 +379,9 @@ class ScrollBar(Widget):
                     (event._screen_x - self.grabbed.x)
                     * (virtual_size / self.window_size)
                 )
-            self.post_message(ScrollTo(x=x, y=y))
+            self.post_message(
+                ScrollTo(x=x, y=y, animate=not self.app.supports_smooth_scrolling)
+            )
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:
