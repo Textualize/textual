@@ -223,3 +223,9 @@ def test_escape():
     content = Content.from_markup("\\[bold]Not really bold")
     assert content.plain == "[bold]Not really bold"
     assert content.spans == []
+
+
+def test_strip_control_codes():
+    """Test that control codes are removed from content."""
+    assert Content("foo\r\nbar").plain == "foo\nbar"
+    assert Content.from_markup("foo\r\nbar").plain == "foo\nbar"
