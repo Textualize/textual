@@ -83,8 +83,10 @@ class XTermParser(Parser[Message]):
                 and self.terminal_pixel_size is not None
                 and self.terminal_size is not None
             ):
-                x_ratio = self.terminal_pixel_size[0] / self.terminal_size[0]
-                y_ratio = self.terminal_pixel_size[1] / self.terminal_size[1]
+                pixel_width, pixel_height = self.terminal_pixel_size
+                width, height = self.terminal_size
+                x_ratio = pixel_width / width
+                y_ratio = pixel_height / height
                 x /= x_ratio
                 y /= y_ratio
 
@@ -121,7 +123,6 @@ class XTermParser(Parser[Message]):
                 screen_x=x,
                 screen_y=y,
             )
-            print(event)
             return event
         return None
 
