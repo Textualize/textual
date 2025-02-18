@@ -795,7 +795,7 @@ class App(Generic[ReturnType], DOMNode):
         self._clipboard: str = ""
         """Contents of local clipboard."""
 
-        self.supports_smooth_scrolling: bool = True
+        self.supports_smooth_scrolling: bool = False
         """Does the terminal support smooth scrolling?"""
 
         if self.ENABLE_COMMAND_PALETTE:
@@ -4654,7 +4654,7 @@ class App(Generic[ReturnType], DOMNode):
         """There isn't much we can do with this information currently, so
         we will just log it.
         """
-        self.supports_smooth_scrolling = True
+        self.supports_smooth_scrolling = message.enabled
         self.log.debug(message)
 
     def _on_idle(self) -> None:
