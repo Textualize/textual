@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- `App.query` and friends will now always query the default (first) screen, not necessarily the active screen.
+- Breaking change: `App.query` and friends will now always query the default (first) screen, not necessarily the active screen.
+- Content now has a default argument of an empty string, so `Content()` is equivalent to `Content("")`
 
 ## [2.1.0] - 2025-02-19
 
