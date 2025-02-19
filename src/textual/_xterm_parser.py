@@ -298,8 +298,10 @@ class XTermParser(Parser[Message]):
                             and not IS_ITERM
                         ):
                             # TODO: iTerm is buggy in one or more of the protocols required here
-                            in_band_event = messages.TerminalSupportInBandWindowResize.from_setting_parameter(
-                                setting_parameter
+                            in_band_event = (
+                                messages.InBandWindowResize.from_setting_parameter(
+                                    setting_parameter
+                                )
                             )
                             on_token(in_band_event)
                         break

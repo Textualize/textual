@@ -795,7 +795,7 @@ class App(Generic[ReturnType], DOMNode):
         self._clipboard: str = ""
         """Contents of local clipboard."""
 
-        self.supports_smooth_scrolling: bool = True
+        self.supports_smooth_scrolling: bool = False
         """Does the terminal support smooth scrolling?"""
 
         if self.ENABLE_COMMAND_PALETTE:
@@ -4647,14 +4647,10 @@ class App(Generic[ReturnType], DOMNode):
                 "Failed to save screenshot", title="Screenshot", severity="error"
             )
 
-    @on(messages.TerminalSupportInBandWindowResize)
-    def _on_terminal_supports_in_band_window_resize(
-        self, message: messages.TerminalSupportInBandWindowResize
-    ) -> None:
-        """There isn't much we can do with this information currently, so
-        we will just log it.
-        """
-        self.supports_smooth_scrolling = True
+    @on(messages.InBandWindowResize)
+    def _on_in_band_window_resize(self, message: messages.InBandWindowResize) -> None:
+        """In band window resize enables smooth scrolling."""
+        self.supports_smooth_scrolling = message.enabled
         self.log.debug(message)
 
     def _on_idle(self) -> None:
