@@ -238,6 +238,9 @@ class DOMNode(MessagePump):
     def _get_dom_base(self) -> DOMNode:
         """Get the DOM base node (typically self).
 
+        All DOM queries on this node will use the return value as the root node.
+        This method allows the App to query the default screen, and not the active screen.
+
         Returns:
             DOMNode.
         """

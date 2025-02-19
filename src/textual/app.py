@@ -837,6 +837,7 @@ class App(Generic[ReturnType], DOMNode):
         return super().__init_subclass__(*args, **kwargs)
 
     def _get_dom_base(self) -> DOMNode:
+        """When querying from the app, we want to query the default screen."""
         return self.default_screen
 
     def validate_title(self, title: Any) -> str:
