@@ -385,8 +385,8 @@ class Content(Visual):
             A width in cells.
 
         """
-        lines = self.without_spans.split("\n")
-        return max(line.cell_length for line in lines)
+        width = max(cell_len(line) for line in self.plain.split("\n"))
+        return width
 
     def get_height(self, rules: RulesMap, width: int) -> int:
         """Get the height of the Visual if rendered at the given width.
