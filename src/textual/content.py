@@ -371,11 +371,15 @@ class Content(Visual):
         rules: RulesMap,
         container_width: int,
     ) -> int:
-        """Get optimal width of the visual to display its content. Part of the Textual Visual protocol.
+        """Get optimal width of the Visual to display its content.
+
+        The exact definition of "optimal width" is dependant on the Visual, but
+        will typically be wide enough to display output without cropping or wrapping,
+        and without superfluous space.
 
         Args:
-            widget: Parent widget.
-            container_size: The size of the container.
+            rules: A mapping of style rules, such as the Widgets `styles` object.
+            container_width: The size of the container in cells.
 
         Returns:
             A width in cells.
@@ -385,11 +389,11 @@ class Content(Visual):
         return max(line.cell_length for line in lines)
 
     def get_height(self, rules: RulesMap, width: int) -> int:
-        """Get the height of the visual if rendered with the given width. Part of the Textual Visual protocol.
+        """Get the height of the Visual if rendered at the given width.
 
         Args:
-            widget: Parent widget.
-            width: Width of visual.
+            rules: A mapping of style rules, such as the Widgets `styles` object.
+            width: Width of visual in cells.
 
         Returns:
             A height in lines.
