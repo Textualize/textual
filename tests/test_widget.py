@@ -341,7 +341,7 @@ async def test_compose_order() -> None:
     class SelectBugApp(App[None]):
         async def on_mount(self):
             await self.push_screen(MyScreen(id="my-screen"))
-            self.query_one(Select)
+            self.screen.query_one(Select)
 
     app = SelectBugApp()
     messages: list[Message] = []

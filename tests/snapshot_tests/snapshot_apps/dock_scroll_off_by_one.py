@@ -11,7 +11,7 @@ class ScrollOffByOne(App):
         yield Footer()
 
     def on_mount(self) -> None:
-        self.query_one("Screen").scroll_end()
+        self.screen.scroll_end()
 
 
 app = ScrollOffByOne()

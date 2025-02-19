@@ -152,7 +152,7 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
         # Build the stack up.
         for _ in range(N):
             await pilot.press("p")
-            fruits.append(str(app.query_one(Label).renderable))
+            fruits.append(str(app.screen.query_one(Label).renderable))
 
         assert len(app.screen_stack) == N + 1
 
@@ -164,7 +164,7 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
         # Check the stack.
         assert len(app.screen_stack) == N + 1
         for _ in range(N):
-            assert str(app.query_one(Label).renderable) == fruits.pop()
+            assert str(app.screen.query_one(Label).renderable) == fruits.pop()
             await pilot.press("o")
 
 
