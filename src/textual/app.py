@@ -837,7 +837,7 @@ class App(Generic[ReturnType], DOMNode):
         return super().__init_subclass__(*args, **kwargs)
 
     def _get_dom_base(self) -> DOMNode:
-        return self.screen if self._compose_screen is None else self._compose_screen
+        return self.default_screen
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -846,6 +846,11 @@ class App(Generic[ReturnType], DOMNode):
     def validate_sub_title(self, sub_title: Any) -> str:
         """Make sure the subtitle is set to a string."""
         return str(sub_title)
+
+    @property
+    def default_screen(self) -> Screen:
+        """The default screen instance."""
+        return self.screen if self._compose_screen is None else self._compose_screen
 
     @property
     def workers(self) -> WorkerManager:
