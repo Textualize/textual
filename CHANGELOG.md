@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Breaking change: `App.query` and friends will now always query the default (first) screen, not necessarily the active screen.
+- Content now has a default argument of an empty string, so `Content()` is equivalent to `Content("")`
+
 ## [2.1.0] - 2025-02-19
 
 ### Fixed

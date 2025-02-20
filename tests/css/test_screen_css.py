@@ -58,15 +58,15 @@ class SwitchBaseApp(BaseApp):
 
 
 def check_colors_before_screen_css(app: BaseApp):
-    assert app.query_one("#app-css").styles.background == GREEN
-    assert app.query_one("#screen-css-path").styles.background == GREEN
-    assert app.query_one("#screen-css").styles.background == GREEN
+    assert app.screen.query_one("#app-css").styles.background == GREEN
+    assert app.screen.query_one("#screen-css-path").styles.background == GREEN
+    assert app.screen.query_one("#screen-css").styles.background == GREEN
 
 
 def check_colors_after_screen_css(app: BaseApp):
-    assert app.query_one("#app-css").styles.background == GREEN
-    assert app.query_one("#screen-css-path").styles.background == BLUE
-    assert app.query_one("#screen-css").styles.background == RED
+    assert app.screen.query_one("#app-css").styles.background == GREEN
+    assert app.screen.query_one("#screen-css-path").styles.background == BLUE
+    assert app.screen.query_one("#screen-css").styles.background == RED
 
 
 async def test_screen_pushing_and_popping_does_not_reparse_css():

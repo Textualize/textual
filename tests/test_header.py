@@ -16,7 +16,7 @@ async def test_screen_title_none_is_ignored():
 
     app = MyApp()
     async with app.run_test():
-        assert app.query_one("HeaderTitle").text == "app title"
+        assert app.screen.query_one("HeaderTitle").text == "app title"
 
 
 async def test_screen_title_overrides_app_title():
@@ -34,7 +34,7 @@ async def test_screen_title_overrides_app_title():
 
     app = MyApp()
     async with app.run_test():
-        assert app.query_one("HeaderTitle").text == "screen title"
+        assert app.screen.query_one("HeaderTitle").text == "screen title"
 
 
 async def test_screen_title_reactive_updates_title():
@@ -54,7 +54,7 @@ async def test_screen_title_reactive_updates_title():
     async with app.run_test() as pilot:
         app.screen.title = "new screen title"
         await pilot.pause()
-        assert app.query_one("HeaderTitle").text == "new screen title"
+        assert app.screen.query_one("HeaderTitle").text == "new screen title"
 
 
 async def test_app_title_reactive_does_not_update_title_when_screen_title_is_set():
@@ -74,7 +74,7 @@ async def test_app_title_reactive_does_not_update_title_when_screen_title_is_set
     async with app.run_test() as pilot:
         app.title = "new app title"
         await pilot.pause()
-        assert app.query_one("HeaderTitle").text == "screen title"
+        assert app.screen.query_one("HeaderTitle").text == "screen title"
 
 
 async def test_screen_sub_title_none_is_ignored():
@@ -90,7 +90,7 @@ async def test_screen_sub_title_none_is_ignored():
 
     app = MyApp()
     async with app.run_test():
-        assert app.query_one("HeaderTitle").sub_text == "app sub-title"
+        assert app.screen.query_one("HeaderTitle").sub_text == "app sub-title"
 
 
 async def test_screen_sub_title_overrides_app_sub_title():
@@ -108,7 +108,7 @@ async def test_screen_sub_title_overrides_app_sub_title():
 
     app = MyApp()
     async with app.run_test():
-        assert app.query_one("HeaderTitle").sub_text == "screen sub-title"
+        assert app.screen.query_one("HeaderTitle").sub_text == "screen sub-title"
 
 
 async def test_screen_sub_title_reactive_updates_sub_title():
@@ -128,7 +128,7 @@ async def test_screen_sub_title_reactive_updates_sub_title():
     async with app.run_test() as pilot:
         app.screen.sub_title = "new screen sub-title"
         await pilot.pause()
-        assert app.query_one("HeaderTitle").sub_text == "new screen sub-title"
+        assert app.screen.query_one("HeaderTitle").sub_text == "new screen sub-title"
 
 
 async def test_app_sub_title_reactive_does_not_update_sub_title_when_screen_sub_title_is_set():
@@ -148,4 +148,4 @@ async def test_app_sub_title_reactive_does_not_update_sub_title_when_screen_sub_
     async with app.run_test() as pilot:
         app.sub_title = "new app sub-title"
         await pilot.pause()
-        assert app.query_one("HeaderTitle").sub_text == "screen sub-title"
+        assert app.screen.query_one("HeaderTitle").sub_text == "screen sub-title"

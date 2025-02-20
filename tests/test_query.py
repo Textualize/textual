@@ -14,20 +14,20 @@ from textual.widget import Widget
 from textual.widgets import Input, Label
 
 
-def test_query_errors():
+async def test_query_errors():
     app = App()
+    async with app.run_test():
+        with pytest.raises(InvalidQueryFormat):
+            app.query_one("foo_bar")
 
-    with pytest.raises(InvalidQueryFormat):
-        app.query_one("foo_bar")
+        with pytest.raises(InvalidQueryFormat):
+            app.query("foo_bar")
 
-    with pytest.raises(InvalidQueryFormat):
-        app.query("foo_bar")
+        with pytest.raises(InvalidQueryFormat):
+            app.query("1")
 
-    with pytest.raises(InvalidQueryFormat):
-        app.query("1")
-
-    with pytest.raises(InvalidQueryFormat):
-        app.query_one("1")
+        with pytest.raises(InvalidQueryFormat):
+            app.query_one("1")
 
 
 def test_query():

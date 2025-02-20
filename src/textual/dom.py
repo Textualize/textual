@@ -235,6 +235,17 @@ class DOMNode(MessagePump):
 
         super().__init__()
 
+    def _get_dom_base(self) -> DOMNode:
+        """Get the DOM base node (typically self).
+
+        All DOM queries on this node will use the return value as the root node.
+        This method allows the App to query the default screen, and not the active screen.
+
+        Returns:
+            DOMNode.
+        """
+        return self
+
     def set_reactive(
         self, reactive: Reactive[ReactiveType], value: ReactiveType
     ) -> None:
@@ -1380,10 +1391,11 @@ class DOMNode(MessagePump):
         from textual.css.query import DOMQuery, QueryType
         from textual.widget import Widget
 
+        node = self._get_dom_base()
         if isinstance(selector, str) or selector is None:
-            return DOMQuery[Widget](self, filter=selector)
+            return DOMQuery[Widget](node, filter=selector)
         else:
-            return DOMQuery[QueryType](self, filter=selector.__name__)
+            return DOMQuery[QueryType](node, filter=selector.__name__)
 
     if TYPE_CHECKING:
 
@@ -1411,10 +1423,11 @@ class DOMNode(MessagePump):
         from textual.css.query import DOMQuery, QueryType
         from textual.widget import Widget
 
+        node = self._get_dom_base()
         if isinstance(selector, str) or selector is None:
-            return DOMQuery[Widget](self, deep=False, filter=selector)
+            return DOMQuery[Widget](node, deep=False, filter=selector)
         else:
-            return DOMQuery[QueryType](self, deep=False, filter=selector.__name__)
+            return DOMQuery[QueryType](node, deep=False, filter=selector.__name__)
 
     if TYPE_CHECKING:
 
@@ -1449,6 +1462,8 @@ class DOMNode(MessagePump):
         """
         _rich_traceback_omit = True
 
+        base_node = self._get_dom_base()
+
         if isinstance(selector, str):
             query_selector = selector
         else:
@@ -1462,20 +1477,20 @@ class DOMNode(MessagePump):
             ) from None
 
         if all(selectors.is_simple for selectors in selector_set):
-            cache_key = (self._nodes._updates, query_selector, expect_type)
-            cached_result = self._query_one_cache.get(cache_key)
+            cache_key = (base_node._nodes._updates, query_selector, expect_type)
+            cached_result = base_node._query_one_cache.get(cache_key)
             if cached_result is not None:
                 return cached_result
         else:
             cache_key = None
 
-        for node in walk_depth_first(self, with_root=False):
+        for node in walk_depth_first(base_node, with_root=False):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
                 continue
             if cache_key is not None:
-                self._query_one_cache[cache_key] = node
+                base_node._query_one_cache[cache_key] = node
             return node
 
         raise NoMatches(f"No nodes match {selector!r} on {self!r}")
@@ -1518,6 +1533,8 @@ class DOMNode(MessagePump):
         """
         _rich_traceback_omit = True
 
+        base_node = self._get_dom_base()
+
         if isinstance(selector, str):
             query_selector = selector
         else:
@@ -1531,14 +1548,14 @@ class DOMNode(MessagePump):
             ) from None
 
         if all(selectors.is_simple for selectors in selector_set):
-            cache_key = (self._nodes._updates, query_selector, expect_type)
-            cached_result = self._query_one_cache.get(cache_key)
+            cache_key = (base_node._nodes._updates, query_selector, expect_type)
+            cached_result = base_node._query_one_cache.get(cache_key)
             if cached_result is not None:
                 return cached_result
         else:
             cache_key = None
 
-        children = walk_depth_first(self, with_root=False)
+        children = walk_depth_first(base_node, with_root=False)
         iter_children = iter(children)
         for node in iter_children:
             if not match(selector_set, node):
@@ -1553,7 +1570,7 @@ class DOMNode(MessagePump):
                         "Call to query_one resulted in more than one matched node"
                     )
             if cache_key is not None:
-                self._query_one_cache[cache_key] = node
+                base_node._query_one_cache[cache_key] = node
             return node
 
         raise NoMatches(f"No nodes match {selector!r} on {self!r}")
@@ -1589,6 +1606,7 @@ class DOMNode(MessagePump):
         Returns:
             A DOMNode or subclass if `expect_type` is provided.
         """
+        base_node = self._get_dom_base()
         if isinstance(selector, str):
             query_selector = selector
         else:
@@ -1600,8 +1618,8 @@ class DOMNode(MessagePump):
             raise InvalidQueryFormat(
                 f"Unable to parse {query_selector!r} as a query; check for syntax errors"
             ) from None
-        if self.parent is not None:
-            for node in self.parent.ancestors_with_self:
+        if base_node.parent is not None:
+            for node in base_node.parent.ancestors_with_self:
                 if not match(selector_set, node):
                     continue
                 if expect_type is not None and not isinstance(node, expect_type):

@@ -48,7 +48,7 @@ async def test_escape_key_when_tab_behavior_is_indent():
         assert isinstance(pilot.app.screen, TextAreaDialog)
         assert isinstance(pilot.app.focused, TextArea)
 
-        pilot.app.query_one(TextArea).tab_behavior = "indent"
+        pilot.app.screen.query_one(TextArea).tab_behavior = "indent"
         # Pressing escape should focus the button, not dismiss the dialog screen
         await pilot.press("escape")
         assert isinstance(pilot.app.screen, TextAreaDialog)

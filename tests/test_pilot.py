@@ -126,7 +126,7 @@ async def test_pilot_click_screen():
     Check we can use `Screen` as a selector for a click."""
 
     async with App().run_test() as pilot:
-        await pilot.click("Screen")
+        await pilot.click()
 
 
 async def test_pilot_hover_screen():
@@ -135,7 +135,7 @@ async def test_pilot_hover_screen():
     Check we can use `Screen` as a selector for a hover."""
 
     async with App().run_test() as pilot:
-        await pilot.hover("Screen")
+        await pilot.hover()
 
 
 @pytest.mark.parametrize(
