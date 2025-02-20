@@ -392,9 +392,6 @@ class ScrollBarCorner(Widget):
     """Widget which fills the gap between horizontal and vertical scrollbars,
     should they both be present."""
 
-    def __init__(self, name: str | None = None):
-        super().__init__(name=name)
-
     def render(self) -> RenderableType:
         assert self.parent is not None
         styles = self.parent.styles
