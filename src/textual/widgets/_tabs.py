@@ -527,7 +527,6 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.post_message(self.Cleared(self))
-        # self.call_after_refresh(self.post_message, self.Cleared(self))
         self.active = ""
         return AwaitComplete(self.query("#tabs-list > Tab").remove())
 
