@@ -1,15 +1,13 @@
-[tool.poetry]
+[project]
 name = "textual"
 version = "2.1.0"
-homepage = "https://github.com/Textualize/textual"
-repository = "https://github.com/Textualize/textual"
-documentation = "https://textual.textualize.io/"
-
 description = "Modern Text User Interface framework"
-authors = ["Will McGugan <will@textualize.io>"]
-license = "MIT"
 readme = "README.md"
-classifiers = [    
+license = { text = "MIT" }
+authors = [
+  { name = "Will McGugan", email = "will@textualize.io" }
+]
+classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
@@ -25,6 +23,76 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
+dependencies = [
+    "markdown-it-py[plugins,linkify]>=2.1.0",
+    "rich>=13.3.3",
+    "typing-extensions>=4.4.0,<5",
+    "platformdirs>=3.6.0,<5",
+]
+requires-python = ">=3.8.1"
+
+[project.optional-dependencies]
+syntax = [
+    "tree-sitter>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-python>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-markdown>=0.3.0; python_version >= '3.9'",
+    "tree-sitter-json>=0.24.0; python_version >= '3.9'",
+    "tree-sitter-toml>=0.6.0; python_version >= '3.9'",
+    "tree-sitter-yaml>=0.6.0; python_version >= '3.9'",
+    "tree-sitter-html>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-css>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-javascript>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-rust>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-go>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-regex>=0.24.0; python_version >= '3.9'",
+    "tree-sitter-xml>=0.7.0; python_version >= '3.9'",
+    "tree-sitter-sql>=0.3.0,<0.3.8; python_version >= '3.9'",
+    "tree-sitter-java>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-bash>=0.23.0; python_version >= '3.9'",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/Textualize/textual"
+Repository = "https://github.com/Textualize/textual"
+Documentation = "https://textual.textualize.io/"
+"Bug Tracker" = "https://github.com/Textualize/textual/issues"
+
+[build-system]
+requires = ["poetry-core>=1.2.0"]  # Keep poetry as the primary build tool
+build-backend = "poetry.core.masonry.api"
+
+[tool.uv]  # uv settings (optional, can be configured separately)
+# version = ">=0.1.0" # Example you can specify the uv version.
+
+[tool.poetry]
+# Keep the rest of [tool.poetry]
+name = "textual"
+version = "2.1.0"
+homepage = "https://github.com/Textualize/textual"
+repository = "https://github.com/Textualize/textual"
+documentation = "https://textual.textualize.io/"
+description = "Modern Text User Interface framework"
+authors = ["Will McGugan <will@textualize.io>"]
+license = "MIT"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+
 include = [
     "src/textual/py.typed",
     { path = "docs/examples", format = "sdist" },
@@ -39,9 +107,6 @@ include = [
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
-
-[tool.ruff]
-target-version = "py38"
 
 [tool.poetry.dependencies]
 python = "^3.8.1"
@@ -92,6 +157,7 @@ syntax = [
     "tree-sitter-bash",
 ]
 
+
 [tool.poetry.group.dev.dependencies]
 black = "24.4.2"
 griffe = "0.32.3"
@@ -114,6 +180,9 @@ types-setuptools = "^67.2.0.1"
 isort = "^5.13.2"
 pytest-textual-snapshot = "^1.0.0"
 
+[tool.ruff] # Moved ruff config up to be accessible by both
+target-version = "py38"
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
@@ -122,7 +191,3 @@ markers = [
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
 asyncio_default_fixture_loop_scope = "function"
-
-[build-system]
-requires = ["poetry-core>=1.2.0"]
-build-backend = "poetry.core.masonry.api"
