@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed IndexError in OptionList https://github.com/Textualize/textual/pull/5574
 - Fixed issue with clear_panes breaking tabbed content https://github.com/Textualize/textual/pull/5573
 
+## Changed
+
+- The user can now interrupt a scroll to end by grabbing the scrollbar or scrolling in any other way. Press ++end++ or scroll to the end to restore default behavior. This is more intuitive that it may sound.
+
 ## [2.1.0] - 2025-02-19
 
 ### Fixed
