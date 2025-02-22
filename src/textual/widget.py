@@ -1700,8 +1700,6 @@ class Widget(DOMNode):
             self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
-        if new_value >= self.max_scroll_y:
-            self._user_scroll_interrupt = True
         self.vertical_scrollbar.position = new_value
         if round(old_value) != round(new_value):
             self._refresh_scroll()
@@ -2428,6 +2426,9 @@ class Widget(DOMNode):
             if on_complete is not None:
                 self.call_next(on_complete)
 
+        if y is not None and maybe_scroll_y and y >= self.max_scroll_y:
+            self._user_scroll_interrupt = False
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -2550,6 +2551,11 @@ class Widget(DOMNode):
         Note:
             The call to scroll is made after the next refresh.
         """
+        animator = self.app.animator
+        if x is not None:
+            animator.force_stop_animation(self, "scroll_x")
+        if y is not None:
+            animator.force_stop_animation(self, "scroll_y")
         if immediate:
             self._scroll_to(
                 x,
