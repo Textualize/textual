@@ -4396,6 +4396,7 @@ class App(Generic[ReturnType], DOMNode):
             self._driver.resume_application_mode()
             # ...and publish a resume signal.
             self._resume_signal()
+            self.refresh(layout=True)
         else:
             raise SuspendNotSupported(
                 "App.suspend is not supported in this environment."
