@@ -502,6 +502,8 @@ class Widget(DOMNode):
         """Used to cache :odd pseudoclass state."""
         self._last_scroll_time = monotonic()
         """Time of last scroll."""
+        self._user_scroll_interrupt: bool = False
+        """Has the user interrupted a scroll to end?"""
 
     @property
     def is_mounted(self) -> bool:
@@ -1698,6 +1700,8 @@ class Widget(DOMNode):
             self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
+        if new_value >= self.max_scroll_y:
+            self._user_scroll_interrupt = True
         self.vertical_scrollbar.position = new_value
         if round(old_value) != round(new_value):
             self._refresh_scroll()
@@ -2688,8 +2692,19 @@ class Widget(DOMNode):
             y_axis: Allow scrolling on Y axis?
 
         """
+
+        if self._user_scroll_interrupt and not force:
+            # Do not scroll to end if a user action has interrupted scrolling
+            return
+
         if speed is None and duration is None:
             duration = 1.0
+
+        async def scroll_end_on_complete() -> None:
+            """It's possible new content was added before we reached the end."""
+            self.scroll_y = self.max_scroll_y
+            if on_complete is not None:
+                self.call_next(on_complete)
 
         # In most cases we'd call self.scroll_to and let it handle the call
         # to do things after a refresh, but here we need the refresh to
@@ -2707,7 +2722,7 @@ class Widget(DOMNode):
                 duration=duration,
                 easing=easing,
                 force=force,
-                on_complete=on_complete,
+                on_complete=scroll_end_on_complete,
                 level=level,
             )
 
@@ -4450,6 +4465,7 @@ class Widget(DOMNode):
     def action_scroll_home(self) -> None:
         if not self._allow_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_home(x_axis=self.scroll_y == 0)
 
@@ -4457,6 +4473,7 @@ class Widget(DOMNode):
         if not self._allow_scroll:
             raise SkipAction()
         self._clear_anchor()
+        self._user_scroll_interrupt = False
         self.scroll_end(x_axis=self.scroll_y == self.is_vertical_scroll_end)
 
     def action_scroll_left(self) -> None:
@@ -4474,24 +4491,28 @@ class Widget(DOMNode):
     def action_scroll_up(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_up()
 
     def action_scroll_down(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_down()
 
     def action_page_down(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_page_down()
 
     def action_page_up(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_page_up()
 

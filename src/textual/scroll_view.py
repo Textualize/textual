@@ -38,6 +38,8 @@ class ScrollView(ScrollableContainer):
             self.refresh()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
+        if new_value >= self.max_scroll_y:
+            self._user_scroll_interrupt = False
         if self.show_vertical_scrollbar and (old_value) != (new_value):
             self.vertical_scrollbar.position = new_value
             self.refresh()
