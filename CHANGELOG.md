@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `Link` binding to open the link https://github.com/Textualize/textual/issues/5564
+- Fixed IndexError in OptionList
 
 ## [2.1.0] - 2025-02-19
 
