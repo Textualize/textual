@@ -83,6 +83,19 @@ Documentation = "https://textual.textualize.io/"
 requires = ["poetry-core>=1.2.0"]  # Keep poetry as the primary build tool
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry]
+include = [
+    "src/textual/py.typed",
+    { path = "docs/examples", format = "sdist" },
+    { path = "tests", format = "sdist" },
+    # The reason for the slightly convoluted path specification here is that
+    # poetry populates the exclude list with the content of .gitignore, and
+    # it also seems like exclude trumps include. So here we specify that we
+    # want to package up the content of the docs-offline directory in a way
+    # that works around that.
+    { path = "docs-offline/**/*", format = "sdist" },
+]
+
 [tool.ruff] # Moved ruff config up to be accessible by both
 target-version = "py38"
 
