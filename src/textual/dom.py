@@ -1387,7 +1387,6 @@ class DOMNode(MessagePump):
         """
         from textual.css.query import DOMQuery, QueryType
         from textual.widget import Widget
-        from typing import get_args
 
         if isinstance(selector, str) or selector is None:
             return DOMQuery[Widget](self, filter=selector)
