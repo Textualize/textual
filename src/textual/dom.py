@@ -21,8 +21,10 @@ from typing import (
     Type,
     TypeVar,
     cast,
+    get_args,
     overload,
 )
+from types import UnionType
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -95,9 +97,9 @@ def check_identifiers(description: str, *names: str) -> None:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
     """
-    match = _re_identifier.fullmatch
+    fullmatch = _re_identifier.fullmatch
     for name in names:
-        if match(name) is None:
+        if fullmatch(name) is None:
             raise BadIdentifier(
                 f"{name!r} is an invalid {description}; "
                 "identifiers must contain only letters, numbers, underscores, or hyphens, and must not begin with a number."
@@ -1366,22 +1368,48 @@ class DOMNode(MessagePump):
         @overload
         def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
+        @overload
+        def query(self, selector: UnionType) -> DOMQuery[Widget]: ...
+
     def query(
-        self, selector: str | type[QueryType] | None = None
+        self, selector: str | type[QueryType] | UnionType | None = None
     ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
-        """Query the DOM for children that match a selector or widget type.
+        """Query the DOM for children that match a selector or widget type, or a union of widget types.
 
         Args:
-            selector: A CSS selector, widget type, or `None` for all nodes.
+            selector: A CSS selector, widget type, a union of widget types, or `None` for all nodes.
 
         Returns:
             A query object.
+
+        Raises:
+            TypeError: If any type in a Union is not a Widget subclass.
         """
         from textual.css.query import DOMQuery, QueryType
         from textual.widget import Widget
 
         if isinstance(selector, str) or selector is None:
             return DOMQuery[Widget](self, filter=selector)
+        elif isinstance(selector, UnionType):
+            # Get all types from the union, including nested unions
+            def get_all_types(union_type):
+                types = set()
+                for t in get_args(union_type):
+                    if isinstance(t, UnionType):
+                        types.update(get_all_types(t))
+                    else:
+                        types.add(t)
+                return types
+            
+            # Validate all types in the union are Widget subclasses
+            types_in_union = get_args(selector)
+            if not all(isinstance(t, type) and issubclass(t, Widget) for t in types_in_union):
+                raise TypeError("All types in Union must be Widget subclasses")
+            
+            # Convert Union type to comma-separated string of class names
+            type_names = [t.__name__ for t in types_in_union]
+            selector_str = ", ".join(type_names)
+            return DOMQuery[Widget](self, filter=selector_str)
         else:
             return DOMQuery[QueryType](self, filter=selector.__name__)
 
