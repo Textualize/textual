@@ -2921,8 +2921,11 @@ class App(Generic[ReturnType], DOMNode):
     def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget or disable mouse capture.
 
+        Normally mouse events are sent to the widget directly under the pointer.
+        Capturing the mouse allows a widget to receive mouse events even when the pointer is over another widget.
+
         Args:
-            widget: If a widget, capture mouse event, or `None` to end mouse capture.
+            widget: Widget to capture mouse events, or `None` to end mouse capture.
         """
         if widget == self.mouse_captured:
             return
