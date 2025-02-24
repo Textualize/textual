@@ -13,6 +13,7 @@ from typing import Iterable, NamedTuple
 
 import rich.repr
 
+from textual.cache import LRUCache
 from textual.content import Content
 from textual.visual import Style
 
@@ -57,13 +58,16 @@ class FuzzySearch:
     Unlike a regex solution, this will finds all possible matches.
     """
 
+    cache: LRUCache[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = LRUCache(
+        maxsize=1024
+    )
+
     def __init__(self, case_sensitive: bool = False) -> None:
         """Initialize fuzzy search.
 
         Args:
             case_sensitive: Is the match case sensitive?
         """
-        self.cache: dict[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = {}
         self.case_sensitive = case_sensitive
 
     def match(self, query: str, candidate: str) -> tuple[float, tuple[int, ...]]:
@@ -124,8 +128,8 @@ class FuzzySearch:
             """
             # This is a heuristic, and can be tweaked for better results
             # Boost first letter matches
-            score: float = sum(
-                (2.0 if offset in first_letters else 1.0) for offset in search.offsets
+            score: float = len(search.offsets) + len(
+                first_letters.intersection(search.offsets)
             )
             # Boost to favor less groups
             offset_count = len(search.offsets)
@@ -140,7 +144,7 @@ class FuzzySearch:
         find = candidate.find
         # Limit the number of loops out of an abundance of caution.
         # This would be hard to reach without contrived data.
-        remaining_loops = 200
+        remaining_loops = 10_000
 
         while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
