@@ -110,7 +110,7 @@ class Failure:
 
 
 class Validator(ABC):
-    """Base class for the validation of string values.
+    '''Base class for the validation of string values.
 
     Commonly used in conjunction with the `Input` widget, which accepts a
     list of validators via its constructor. This validation framework can also be used to validate any 'stringly-typed'
@@ -120,13 +120,18 @@ class Validator(ABC):
 
     Example:
         ```python
+        def is_palindrome(value: str) -> bool:
+            """Check has string has the same code points left to right, as right to left."""
+            return value == value[::-1]
+
         class Palindrome(Validator):
             def validate(self, value: str) -> ValidationResult:
-                def is_palindrome(value: str) -> bool:
-                    return value == value[::-1]
-                return self.success() if is_palindrome(value) else self.failure("Not palindrome!")
+                if is_palindrome(value):
+                    return self.success()
+                else:
+                    return self.failure("Not a palindrome!")
         ```
-    """
+    '''
 
     def __init__(self, failure_description: str | None = None) -> None:
         self.failure_description = failure_description
