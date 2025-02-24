@@ -97,9 +97,9 @@ def check_identifiers(description: str, *names: str) -> None:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
     """
-    match = _re_identifier.fullmatch
+    fullmatch = _re_identifier.fullmatch
     for name in names:
-        if match(name) is None:
+        if fullmatch(name) is None:
             raise BadIdentifier(
                 f"{name!r} is an invalid {description}; "
                 "identifiers must contain only letters, numbers, underscores, or hyphens, and must not begin with a number."
