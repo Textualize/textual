@@ -143,9 +143,10 @@ class FuzzySearch:
         query_size = len(query)
         find = candidate.find
         # Limit the number of loops out of an abundance of caution.
-        # This would be hard to reach without contrived data.
+        # This should be hard to reach without contrived data.
         remaining_loops = 10_000
 
+        # TODO: Can this be optimized? The following can be slow for long candidates (can reach ~1ms).
         while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
             offset = find(query[search.query_offset], search.candidate_offset)
