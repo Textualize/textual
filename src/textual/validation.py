@@ -194,7 +194,7 @@ class Validator(ABC):
     ) -> ValidationResult:
         """Shorthand for signaling validation failure.
 
-        Return `self.failure(...)` from [`validate()`][textual.validation.Validator.validate]` to indicated that validation *failed*.
+        Return `self.failure(...)` from [`validate()`][textual.validation.Validator.validate] to indicated that validation *failed*.
 
         Args:
             description: The failure description that will be used. When used in conjunction with the Input widget,
