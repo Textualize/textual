@@ -13,7 +13,6 @@ from typing import Iterable, NamedTuple
 
 import rich.repr
 
-from textual.cache import LRUCache
 from textual.content import Content
 from textual.visual import Style
 
@@ -58,16 +57,13 @@ class FuzzySearch:
     Unlike a regex solution, this will finds all possible matches.
     """
 
-    cache: LRUCache[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = LRUCache(
-        maxsize=1024
-    )
-
     def __init__(self, case_sensitive: bool = False) -> None:
         """Initialize fuzzy search.
 
         Args:
             case_sensitive: Is the match case sensitive?
         """
+        self.cache: dict[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = {}
         self.case_sensitive = case_sensitive
 
     def match(self, query: str, candidate: str) -> tuple[float, tuple[int, ...]]:
@@ -128,8 +124,8 @@ class FuzzySearch:
             """
             # This is a heuristic, and can be tweaked for better results
             # Boost first letter matches
-            score: float = len(search.offsets) + len(
-                first_letters.intersection(search.offsets)
+            score: float = sum(
+                (2.0 if offset in first_letters else 1.0) for offset in search.offsets
             )
             # Boost to favor less groups
             offset_count = len(search.offsets)
@@ -143,10 +139,9 @@ class FuzzySearch:
         query_size = len(query)
         find = candidate.find
         # Limit the number of loops out of an abundance of caution.
-        # This should be hard to reach without contrived data.
-        remaining_loops = 10_000
+        # This would be hard to reach without contrived data.
+        remaining_loops = 200
 
-        # TODO: Can this be optimized? The following can be slow for long candidates (can reach ~1ms).
         while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
             offset = find(query[search.query_offset], search.candidate_offset)
@@ -156,8 +151,8 @@ class FuzzySearch:
                     yield score(advance_branch), advance_branch.offsets
                     push(branch)
                 else:
-                    push(branch)
                     push(advance_branch)
+                    push(branch)
 
 
 @rich.repr.auto
