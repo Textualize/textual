@@ -147,11 +147,13 @@ class Validator(ABC):
     def validate(self, value: str) -> ValidationResult:
         """Validate the value and return a ValidationResult describing the outcome of the validation.
 
+        Implement this method when defining custom validators.
+
         Args:
             value: The value to validate.
 
         Returns:
-            The result of the validation.
+            The result of the validation ([`self.success()`][textual.validation.Validator.success) or [`self.failure(...)`][textual.validation.Validator.failure]).
         """
 
     def describe_failure(self, failure: Failure) -> str | None:
@@ -177,8 +179,7 @@ class Validator(ABC):
     def success(self) -> ValidationResult:
         """Shorthand for `ValidationResult(True)`.
 
-        You can return success() from a `Validator.validate` method implementation to signal
-        that validation has succeeded.
+        Return `self.success()` from [`validate()`][textual.validation.Validator.validate] to indicated that validation *succeeded*.
 
         Returns:
             A ValidationResult indicating validation succeeded.
@@ -193,7 +194,7 @@ class Validator(ABC):
     ) -> ValidationResult:
         """Shorthand for signaling validation failure.
 
-        You can return failure(...) from a `Validator.validate` implementation to signal validation succeeded.
+        Return `self.failure(...)` from [`validate()`][textual.validation.Validator.validate] to indicated that validation *failed*.
 
         Args:
             description: The failure description that will be used. When used in conjunction with the Input widget,
