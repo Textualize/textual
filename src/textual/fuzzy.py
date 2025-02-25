@@ -124,13 +124,13 @@ class FuzzySearch:
             """
             # This is a heuristic, and can be tweaked for better results
             # Boost first letter matches
-            score: float = sum(
-                (2.0 if offset in first_letters else 1.0) for offset in search.offsets
+            score: float = len(search.offsets) + len(
+                first_letters.intersection(search.offsets)
             )
             # Boost to favor less groups
             offset_count = len(search.offsets)
             normalized_groups = (offset_count - (search.groups - 1)) / offset_count
-            score *= 1 + (normalized_groups**2)
+            score *= 1 + (normalized_groups * normalized_groups)
             return score
 
         stack: list[_Search] = [_Search()]
@@ -151,8 +151,8 @@ class FuzzySearch:
                     yield score(advance_branch), advance_branch.offsets
                     push(branch)
                 else:
-                    push(advance_branch)
                     push(branch)
+                    push(advance_branch)
 
 
 @rich.repr.auto
