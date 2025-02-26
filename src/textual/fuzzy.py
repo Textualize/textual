@@ -13,6 +13,7 @@ from typing import Iterable, NamedTuple
 
 import rich.repr
 
+from textual.cache import LRUCache
 from textual.content import Content
 from textual.visual import Style
 
@@ -43,8 +44,8 @@ class _Search(NamedTuple):
     def groups(self) -> int:
         """Number of groups in offsets."""
         groups = 1
-        last_offset = self.offsets[0]
-        for offset in self.offsets[1:]:
+        last_offset, *offsets = self.offsets
+        for offset in offsets:
             if offset != last_offset + 1:
                 groups += 1
             last_offset = offset
@@ -57,13 +58,17 @@ class FuzzySearch:
     Unlike a regex solution, this will finds all possible matches.
     """
 
+    cache: LRUCache[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = LRUCache(
+        1024 * 4
+    )
+
     def __init__(self, case_sensitive: bool = False) -> None:
         """Initialize fuzzy search.
 
         Args:
             case_sensitive: Is the match case sensitive?
         """
-        self.cache: dict[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = {}
+
         self.case_sensitive = case_sensitive
 
     def match(self, query: str, candidate: str) -> tuple[float, tuple[int, ...]]:
@@ -76,7 +81,6 @@ class FuzzySearch:
         Returns:
             A pair of (score, tuple of offsets). `(0, ())` for no result.
         """
-
         query_regex = ".*?".join(f"({escape(character)})" for character in query)
         if not search(
             query_regex, candidate, flags=0 if self.case_sensitive else IGNORECASE
@@ -124,11 +128,11 @@ class FuzzySearch:
             """
             # This is a heuristic, and can be tweaked for better results
             # Boost first letter matches
-            score: float = len(search.offsets) + len(
+            offset_count = len(search.offsets)
+            score: float = offset_count + len(
                 first_letters.intersection(search.offsets)
             )
             # Boost to favor less groups
-            offset_count = len(search.offsets)
             normalized_groups = (offset_count - (search.groups - 1)) / offset_count
             score *= 1 + (normalized_groups * normalized_groups)
             return score
@@ -141,11 +145,15 @@ class FuzzySearch:
         # Limit the number of loops out of an abundance of caution.
         # This should be hard to reach without contrived data.
         remaining_loops = 10_000
-
         while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
             offset = find(query[search.query_offset], search.candidate_offset)
             if offset != -1:
+                if not set(candidate[search.candidate_offset :]).issuperset(
+                    query[search.query_offset :]
+                ):
+                    # Early out if there is not change of a match
+                    continue
                 advance_branch, branch = search.branch(offset)
                 if advance_branch.query_offset == query_size:
                     yield score(advance_branch), advance_branch.offsets
