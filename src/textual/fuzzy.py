@@ -139,8 +139,8 @@ class FuzzySearch:
         query_size = len(query)
         find = candidate.find
         # Limit the number of loops out of an abundance of caution.
-        # This would be hard to reach without contrived data.
-        remaining_loops = 200
+        # This should be hard to reach without contrived data.
+        remaining_loops = 10_000
 
         while stack and (remaining_loops := remaining_loops - 1):
             search = pop()
