@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed fuzzy search bailing too early https://github.com/Textualize/textual/pull/5579
+- Fixed command palette fuzzy search bailing too early https://github.com/Textualize/textual/pull/5579
 
 ## [2.1.1] - 2025-02-22
 
