@@ -949,7 +949,6 @@ class CommandPalette(SystemModalScreen[None]):
             )
             for provider in self._providers
         ]
-
         # Set up a delay for showing that we're busy.
         self._start_busy_countdown()
 
