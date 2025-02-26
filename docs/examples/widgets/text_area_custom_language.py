@@ -22,7 +22,7 @@ class TextAreaCustomLanguage(App):
         text_area.cursor_blink = False
 
         # Register the Java language and highlight query
-        text_area.register_language(java_language, java_highlight_query)
+        text_area.register_language("java", java_language, java_highlight_query)
 
         # Switch to Java
         text_area.language = "java"
