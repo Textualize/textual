@@ -504,8 +504,6 @@ class Widget(DOMNode):
         """Time of last scroll."""
         self._user_scroll_interrupt: bool = False
         """Has the user interrupted a scroll to end?"""
-        if self.app.debug:
-            self._preflight()
 
     @property
     def is_mounted(self) -> bool:
@@ -653,10 +651,11 @@ class Widget(DOMNode):
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
-    def _preflight(self) -> None:
+    def preflight_checks(self) -> None:
         """Called in debug mode to do preflight checks.
 
-        Errors are reported via self.log.
+        This is used by Textual to log some common errors, but you could implement this
+        in custom widgets to perform additional checks.
 
         """
 
@@ -1492,6 +1491,8 @@ class Widget(DOMNode):
                 tie_breaker=tie_breaker,
                 scope=scope,
             )
+        if app.debug:
+            app.call_next(self.preflight_checks)
 
     def _get_box_model(
         self,
