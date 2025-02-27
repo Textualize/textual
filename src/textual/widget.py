@@ -504,6 +504,8 @@ class Widget(DOMNode):
         """Time of last scroll."""
         self._user_scroll_interrupt: bool = False
         """Has the user interrupted a scroll to end?"""
+        if self.app.debug:
+            self._preflight()
 
     @property
     def is_mounted(self) -> bool:
@@ -650,6 +652,19 @@ class Widget(DOMNode):
     def text_selection(self) -> Selection | None:
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
+
+    def _preflight(self) -> None:
+        """Called in debug mode to do preflight checks.
+
+        Errors are reported via self.log.
+
+        """
+        from textual.screen import Screen
+
+        if not isinstance(self, Screen) and hasattr(self, "CSS"):
+            self.log.warning(
+                f"'{self.__class__.__name__}.CSS' will be ignored (use 'DEFAULT_CSS' class variable for widgets)"
+            )
 
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).

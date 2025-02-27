@@ -1026,7 +1026,7 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def debug(self) -> bool:
         """Is debug mode enabled?"""
-        return "debug" in self.features
+        return "debug" in self.features or constants.DEBUG
 
     @property
     def is_headless(self) -> bool:
