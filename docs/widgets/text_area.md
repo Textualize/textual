@@ -548,7 +548,7 @@ Styles from the `theme` attribute take priority.
 - [`EditHistory`][textual.widgets.text_area.EditHistory] - manages the undo stack
 - The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
-- `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
+- `tree-sitter-language-pack` [repository](https://github.com/Goldziher/tree-sitter-language-pack) (provides binary wheels for a large variety of tree-sitter languages).
 
 ## Additional notes
 
