@@ -659,12 +659,14 @@ class Widget(DOMNode):
         Errors are reported via self.log.
 
         """
-        from textual.screen import Screen
 
-        if not isinstance(self, Screen) and hasattr(self, "CSS"):
-            self.log.warning(
-                f"'{self.__class__.__name__}.CSS' will be ignored (use 'DEFAULT_CSS' class variable for widgets)"
-            )
+        if hasattr(self, "CSS"):
+            from textual.screen import Screen
+
+            if not isinstance(self, Screen):
+                self.log.warning(
+                    f"'{self.__class__.__name__}.CSS' will be ignored (use 'DEFAULT_CSS' class variable for widgets)"
+                )
 
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).
