@@ -51,7 +51,10 @@ This widget has no component classes.
 
 ## Additional Notes
 
-- The spacing between the text and the edges of a button are _not_ due to padding. The default styling for a `Button` has the `height` set to 3 lines and a `min-width` of 16 columns. To create a button with zero visible padding, you will need to change these values and also remove the border with `border: none;`.
+- The spacing between the text and the edges of a button are _not_ due to padding.
+  The default styling for a `Button` includes borders and a `min-width` of 16 columns.
+  To remove the spacing, set `border: none` in your CSS, ensuring to also update the
+  [pseudo classes](https://textual.textualize.io/guide/CSS/#pseudo-classes).
 
 ---
 
