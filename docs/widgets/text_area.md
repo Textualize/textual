@@ -36,7 +36,7 @@ To enable syntax highlighting, you'll need to install the `syntax` extra depende
     poetry add "textual[syntax]"
     ```
 
-This will install `tree-sitter` and `tree-sitter-languages`.
+This will install `tree-sitter` and various language packages.
 These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not available.
 After installing, you can set the [`language`][textual.widgets._text_area.TextArea.language] reactive attribute on the `TextArea` to enable highlighting.
 
