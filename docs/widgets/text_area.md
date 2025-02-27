@@ -474,7 +474,9 @@ Be sure to check the license in the repo to ensure it can be freely copied.
 
 We now have our `Language` and our highlight query, so we can register Ruby as a language.
 
-<!--- TODO: Add new code examples for the custom language --->
+```python
+--8<-- "docs/examples/widgets/text_area_custom_language.py"
+```
 
 Running our app, we can see that the Ruby code is highlighted.
 We can freely edit the text, and the syntax highlighting will update immediately.
