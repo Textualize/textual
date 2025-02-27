@@ -651,6 +651,22 @@ class Widget(DOMNode):
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
+    def preflight_checks(self) -> None:
+        """Called in debug mode to do preflight checks.
+
+        This is used by Textual to log some common errors, but you could implement this
+        in custom widgets to perform additional checks.
+
+        """
+
+        if hasattr(self, "CSS"):
+            from textual.screen import Screen
+
+            if not isinstance(self, Screen):
+                self.log.warning(
+                    f"'{self.__class__.__name__}.CSS' will be ignored (use 'DEFAULT_CSS' class variable for widgets)"
+                )
+
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).
 
@@ -1475,6 +1491,8 @@ class Widget(DOMNode):
                 tie_breaker=tie_breaker,
                 scope=scope,
             )
+        if app.debug:
+            app.call_next(self.preflight_checks)
 
     def _get_box_model(
         self,
