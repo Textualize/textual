@@ -440,30 +440,30 @@ To register a language, we require two things:
 1. A tree-sitter `Language` object which contains the grammar for the language.
 2. A highlight query which is used for [syntax highlighting](#syntax-highlighting).
 
-##### Example - adding C++ support
+##### Example - adding Ruby support
 
 You can obtain a `Language` object by installing the corresponding tree-sitter package.
 Search PyPI for `tree-sitter-` followed by the language name, and install the package using pip:
 
 ```
-pip install tree-sitter-cpp
+pip install tree-sitter-ruby
 ```
 
 With the package installed, you can import the module and use it to create a `Language` object:
 
 ```python
-import tree_sitter_cpp
+import tree_sitter_ruby
 from tree_sitter import Language
 
-cpp_language = Language(tree_sitter_cpp.language())
+ruby_language = Language(tree_sitter_ruby.language())
 ```
 
 The syntax highlighting also requires a highlight query for the language.
 Normally, the repository for the tree-sitter language will include pre-made highlight queries at `queries/highlights.scm`,
 and a file showing all the available node types which can be used in highlight queries at `src/node-types.json`.
 
-Since we're adding support for C++, you can find a pre-made highlight query in the `tree-sitter-cpp` repository on GitHub,
-in the [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-cpp/blob/v0.23.4/queries/highlights.scm) file.
+Since we're adding support for Ruby, you can find a pre-made highlight query in the `tree-sitter-ruby` repository on GitHub,
+in the [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-ruby/blob/v0.23.1/queries/highlights.scm) file.
 
 Be sure to check the license in the repo to ensure it can be freely copied.
 
@@ -472,11 +472,11 @@ Be sure to check the license in the repo to ensure it can be freely copied.
     It's important to use a highlight query which is compatible with the parser in use.
     Ensure the highlight query file is from the same version of your installed package.
 
-We now have our `Language` and our highlight query, so we can register C++ as a language.
+We now have our `Language` and our highlight query, so we can register Ruby as a language.
 
 <!--- TODO: Add new code examples for the custom language --->
 
-Running our app, we can see that the C++ code is highlighted.
+Running our app, we can see that the Ruby code is highlighted.
 We can freely edit the text, and the syntax highlighting will update immediately.
 
 Recall that we map names (like `@heading`) from the tree-sitter highlight query to Rich style objects inside the `TextAreaTheme.syntax_styles` dictionary.
