@@ -102,3 +102,46 @@ def test_invalid_binding():
 
         class BrokenApp(App):
             BINDINGS = [(", ,", "foo", "Broken")]
+
+
+async def test_unbind():
+    class MyApp(App):
+        def on_mount(self):
+            self.bind("a", action="action1", description="description1")
+
+    app = MyApp()
+    async with app.run_test() as _:
+        assert "a" in app.active_bindings
+        app.unbind("a")
+        assert "a" not in app.active_bindings
+
+
+async def test_unbind_practical():
+    class MyApp(App):
+        val = 0
+
+        def on_mount(self):
+            self.bind("a", action="action1", description="description1")
+
+        def action_action1(self):
+            self.val += 1
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        assert app.val == 0
+        await pilot.press("a")
+        assert app.val == 1
+        app.unbind("a")
+        await pilot.press("a")
+        assert app.val == 1
+
+
+async def test_unbind_non_existant():
+    class MyApp(App):
+        def on_mount(self):
+            self.bind("a", action="action1", description="description1")
+
+    app = MyApp()
+    async with app.run_test() as _:
+        with pytest.raises(NoBinding):
+            app.unbind("b")

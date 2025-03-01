@@ -1784,6 +1784,17 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
+    def unbind(
+        self,
+        keys: str,
+    ) -> None:
+        """Unbind all actions binded to keys.
+
+        Args:
+            keys: The keys to unbind. Can be a comma-separated list of keys.
+        """
+        self._bindings.unbind(keys)
+
     def get_key_display(self, binding: Binding) -> str:
         """Format a bound key for display in footer / key panel etc.
 
