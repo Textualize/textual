@@ -361,6 +361,22 @@ class BindingsMap:
                 )
             )
 
+    def unbind(
+        self,
+        keys: str,
+    ) -> None:
+        """Unbind all actions binded to keys.
+
+        Args:
+            keys: The keys to unbind. Can be a comma-separated list of keys.
+        """
+        all_keys = [key.strip() for key in keys.split(",")]
+        for key in all_keys:
+            try:
+                del self.key_to_bindings[key]
+            except KeyError:
+                raise NoBinding(f"No binding for {key}") from None
+
     def get_bindings_for_key(self, key: str) -> list[Binding]:
         """Get a list of bindings for a given key.
 
