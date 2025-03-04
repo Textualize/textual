@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed issue with alignment in containers with auto and min height/width https://github.com/Textualize/textual/issues/5608
+
 ### Added
 
 - Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
