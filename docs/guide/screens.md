@@ -329,6 +329,8 @@ You can switch between these screens at any time by calling [`App.switch_mode`][
 When you switch to a new mode, the topmost screen in the new stack becomes visible.
 Any calls to [`App.push_screen`][textual.app.App.push_screen] or [`App.pop_screen`][textual.app.App.pop_screen] will affect only the active mode.
 
+You can set which mode will be active when the app starts by setting the [`DEFAULT_MODE`][textual.app.App.DEFAULT_MODE] class variable.
+
 Let's look at an example with modes:
 
 === "modes01.py"
