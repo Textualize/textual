@@ -431,6 +431,7 @@ class Input(ScrollView):
             self.tooltip = tooltip
 
         self.select_on_focus = select_on_focus
+        self.validate(self.value)
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position.
