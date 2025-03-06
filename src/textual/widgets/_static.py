@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from rich.console import RenderableType
 from rich.protocol import is_renderable
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
 from textual.errors import RenderError
-from textual.visual import SupportsVisual, Visual, VisualType, visualize
+from textual.visual import Visual, VisualType, visualize
 from textual.widget import Widget
 
 
@@ -49,11 +48,11 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    _renderable: RenderableType | SupportsVisual
+    _renderable: VisualType
 
     def __init__(
         self,
-        content: RenderableType | SupportsVisual = "",
+        content: VisualType = "",
         *,
         expand: bool = False,
         shrink: bool = False,
@@ -78,11 +77,11 @@ class Static(Widget, inherit_bindings=False):
         return self._visual
 
     @property
-    def renderable(self) -> RenderableType | SupportsVisual:
+    def renderable(self) -> VisualType:
         return self._content or ""
 
     @renderable.setter
-    def renderable(self, renderable: RenderableType | SupportsVisual) -> None:
+    def renderable(self, renderable: VisualType) -> None:
         self._renderable = renderable
         self._visual = None
         self.clear_cached_dimensions()
