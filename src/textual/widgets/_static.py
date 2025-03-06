@@ -32,7 +32,7 @@ class Static(Widget, inherit_bindings=False):
     """A widget to display simple static content, or use as a base class for more complex widgets.
 
     Args:
-        content: A Rich renderable, or string containing console markup.
+        content: A Content object, Rich renderable, or string containing console markup.
         expand: Expand content if required to fill container.
         shrink: Shrink content if required to fill container.
         markup: True if markup should be parsed and rendered.
