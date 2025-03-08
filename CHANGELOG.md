@@ -118,7 +118,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipsis`)
 - Breaking change: Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
 
 ## [1.0.0] - 2024-12-12
