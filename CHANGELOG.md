@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
 
+### Fixed
+
+- Fixed click selection not being disabled when allow_select was set to false https://github.com/Textualize/textual/issues/5627
+
 ## [2.1.2] - 2025-02-26
 
 ### Fixed

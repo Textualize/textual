@@ -4332,10 +4332,11 @@ class Widget(DOMNode):
 
     async def _on_click(self, event: events.Click) -> None:
         if event.widget is self:
-            if event.chain == 2:
-                self.text_select_all()
-            elif event.chain == 3 and self.parent is not None:
-                self.select_container.text_select_all()
+            if self.allow_select and self.screen.allow_select and self.app.ALLOW_SELECT:
+                if event.chain == 2:
+                    self.text_select_all()
+                elif event.chain == 3 and self.parent is not None:
+                    self.select_container.text_select_all()
 
         await self.broker_event("click", event)
 
