@@ -22,7 +22,6 @@ from textual.widget import Widget
 from textual.widgets import Static
 
 if TYPE_CHECKING:
-    from textual.content import Content, ContentType
     from textual.visual import VisualType
 
 
@@ -151,7 +150,7 @@ class Tab(Static):
 
     def __init__(
         self,
-        label: ContentType,
+        label: TextType,
         *,
         id: str | None = None,
         classes: str | None = None,
@@ -166,18 +165,18 @@ class Tab(Static):
             disabled: Whether the tab is disabled or not.
         """
         super().__init__(id=id, classes=classes, disabled=disabled)
-        self._label: Content
+        self._label: Text
         # Setter takes Text or str
         self.label = label  # type: ignore[assignment]
 
     @property
-    def label(self) -> Content:
+    def label(self) -> Text:
         """The label for the tab."""
         return self._label
 
     @label.setter
-    def label(self, label: ContentType) -> None:
-        self._label = self.render_str(label)
+    def label(self, label: TextType) -> None:
+        self._label = Text.from_markup(label) if isinstance(label, str) else label
         self.update(self._label)
 
     def update(self, content: VisualType = "") -> None:

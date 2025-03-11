@@ -10,15 +10,28 @@ from textual.widgets._tabs import Underline
 
 async def test_tab_label():
     """It should be possible to access a tab's label."""
-    assert Tab("Pilot").label_text == "Pilot"
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tab = pilot.app.query_one(Tab)
+        assert tab.label_text == "Pilot"
 
 
 async def test_tab_relabel():
     """It should be possible to relabel a tab."""
-    tab = Tab("Pilot")
-    assert tab.label_text == "Pilot"
-    tab.label = "Aeryn"
-    assert tab.label_text == "Aeryn"
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tab = pilot.app.query_one(Tab)
+        assert tab.label_text == "Pilot"
+        tab.label = "Aeryn"
+        assert tab.label_text == "Aeryn"
 
 
 async def test_compose_empty_tabs():
