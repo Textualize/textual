@@ -114,11 +114,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: OptionList no longer supports `Separator`, a separator may be specified with `None`
-- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable. 
+- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable.
 
 ### Removed
 
-- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipsis`)
 - Breaking change: Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
 
 ## [1.0.0] - 2024-12-12
