@@ -23,6 +23,7 @@ from textual.widgets import Static
 
 if TYPE_CHECKING:
     from textual.content import Content, ContentType
+    from textual.visual import VisualType
 
 
 class Underline(Widget):
@@ -179,9 +180,9 @@ class Tab(Static):
         self._label = self.render_str(label)
         self.update(self._label)
 
-    def update(self, content: ContentType = "") -> None:
+    def update(self, content: VisualType = "") -> None:
         self.post_message(self.Relabelled(self))
-        return super().update(self.render_str(content))
+        return super().update(content)
 
     @property
     def label_text(self) -> str:
