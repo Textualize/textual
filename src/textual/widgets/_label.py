@@ -48,6 +48,7 @@ class Label(Static):
 
     def __init__(
         self,
+        # TODO: Should probably be renamed to `content`.
         renderable: VisualType = "",
         *,
         variant: LabelVariant | None = None,

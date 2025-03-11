@@ -80,6 +80,7 @@ class Static(Widget, inherit_bindings=False):
     def renderable(self) -> VisualType:
         return self._content or ""
 
+    # TODO: Should probably be renamed to `content`.
     @renderable.setter
     def renderable(self, renderable: VisualType) -> None:
         self._renderable = renderable
