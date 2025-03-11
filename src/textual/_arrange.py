@@ -100,12 +100,34 @@ def arrange(
             if styles.align_horizontal != "left" or styles.align_vertical != "top":
                 bounding_region = WidgetPlacement.get_bounds(layout_placements)
                 container_width, container_height = dock_region.size
+
+                align_width = container_width
+                if styles.is_auto_width:
+                    align_width = (
+                        int(
+                            styles.min_width.resolve(
+                                size, viewport, Fraction(container_width)
+                            )
+                        )
+                        if styles.min_width
+                        else 0
+                    )
+
+                align_height = container_height
+                if styles.is_auto_height:
+                    align_height = (
+                        int(
+                            styles.min_height.resolve(
+                                size, viewport, Fraction(container_height)
+                            )
+                        )
+                        if styles.min_height
+                        else 0
+                    )
+
                 placement_offset += styles._align_size(
                     bounding_region.size,
-                    Size(
-                        0 if styles.is_auto_width else container_width,
-                        0 if styles.is_auto_height else container_height,
-                    ),
+                    Size(align_width, align_height),
                 ).clamped
 
             if placement_offset:
