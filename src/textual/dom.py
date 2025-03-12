@@ -21,10 +21,15 @@ from typing import (
     Type,
     TypeVar,
     cast,
-    get_args,
     overload,
 )
-from types import UnionType
+
+try:
+    from types import UnionType
+    from typing import get_args
+except ImportError:
+    UnionType = None  # Type will not exist in earlier versions
+    get_args = None  # Not needed for earlier versions
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -1368,8 +1373,10 @@ class DOMNode(MessagePump):
         @overload
         def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
-        @overload
-        def query(self, selector: UnionType) -> DOMQuery[Widget]: ...
+        if UnionType is not None:
+
+            @overload
+            def query(self, selector: UnionType) -> DOMQuery[Widget]: ...
 
     def query(
         self, selector: str | type[QueryType] | UnionType | None = None
@@ -1390,7 +1397,7 @@ class DOMNode(MessagePump):
 
         if isinstance(selector, str) or selector is None:
             return DOMQuery[Widget](self, filter=selector)
-        elif isinstance(selector, UnionType):
+        elif UnionType is not None and isinstance(selector, UnionType):
             # Get all types from the union, including nested unions
             def get_all_types(union_type):
                 types = set()
@@ -1400,12 +1407,14 @@ class DOMNode(MessagePump):
                     else:
                         types.add(t)
                 return types
-            
+
             # Validate all types in the union are Widget subclasses
             types_in_union = get_args(selector)
-            if not all(isinstance(t, type) and issubclass(t, Widget) for t in types_in_union):
+            if not all(
+                isinstance(t, type) and issubclass(t, Widget) for t in types_in_union
+            ):
                 raise TypeError("All types in Union must be Widget subclasses")
-            
+
             # Convert Union type to comma-separated string of class names
             type_names = [t.__name__ for t in types_in_union]
             selector_str = ", ".join(type_names)
