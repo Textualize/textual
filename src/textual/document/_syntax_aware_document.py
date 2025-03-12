@@ -16,7 +16,7 @@ class SyntaxAwareDocumentError(Exception):
 
 
 class SyntaxAwareDocument(Document):
-    """A wrapper around a Document which also maintains a tree-sitter syntax
+    """A subclass of Document which also maintains a tree-sitter syntax
     tree when the document is edited.
     """
 

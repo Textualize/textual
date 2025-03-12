@@ -57,6 +57,25 @@ HighlightName = str
 Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 """A tuple representing a syntax highlight within one line."""
 
+BUILTIN_LANGUAGES = [
+    "python",
+    "markdown",
+    "json",
+    "toml",
+    "yaml",
+    "html",
+    "css",
+    "javascript",
+    "rust",
+    "go",
+    "regex",
+    "sql",
+    "java",
+    "bash",
+    "xml",
+]
+"""Languages that are included in the `syntax` extras."""
+
 
 class ThemeDoesNotExist(Exception):
     """Raised when the user tries to use a theme which does not exist.
@@ -72,17 +91,16 @@ class LanguageDoesNotExist(Exception):
 
 @dataclass
 class TextAreaLanguage:
-    """A container for a language which has been registered with the TextArea.
-
-    Attributes:
-        name: The name of the language.
-        language: The tree-sitter Language.
-        highlight_query: The tree-sitter highlight query corresponding to the language, as a string.
-    """
+    """A container for a language which has been registered with the TextArea."""
 
     name: str
-    language: "Language"
+    """The name of the language"""
+
+    language: "Language" | None
+    """The tree-sitter language object if that has been overridden, or None if it is a built-in language."""
+
     highlight_query: str
+    """The tree-sitter highlight query to use for syntax highlighting."""
 
 
 class TextArea(ScrollView):
@@ -423,15 +441,12 @@ TextArea {
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         self._languages: dict[str, TextAreaLanguage] = {}
-        """Maps language names to TextAreaLanguage."""
-
-        # TODO - we do not pre-register languages anymore, so we need to lazy load them.
-        # for language_name, language_object in BUILTIN_LANGUAGES.items():
-        #     self._languages[language_name] = TextAreaLanguage(
-        #         language_name,
-        #         language_object,
-        #         self._get_builtin_highlight_query(language_name),
-        #     )
+        """Maps language names to TextAreaLanguage. This is only used for languages
+        registered by end-users using `TextArea.register_language`. If a user attempts
+        to set `TextArea.language` to a language that is not registered here, we'll
+        attempt to get it from the environment. If that fails, we'll fall back to
+        plain text.
+        """
 
         self._themes: dict[str, TextAreaTheme] = {}
         """Maps theme names to TextAreaTheme."""
@@ -741,16 +756,6 @@ TextArea {
 
     def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
-        if not TREE_SITTER:
-            return
-
-        if language is not None and language not in self.available_languages:
-            raise LanguageDoesNotExist(
-                f"{language!r} is not a builtin language, or it has not been registered. "
-                f"To use a custom language, register it first using `register_language`, "
-                f"then switch to it by setting the `TextArea.language` attribute."
-            )
-
         self._set_document(self.document.text, language)
 
     def _watch_show_line_numbers(self) -> None:
@@ -840,14 +845,13 @@ TextArea {
 
     @property
     def available_languages(self) -> set[str]:
-        """A list of the names of languages available to the `TextArea`.
+        """A set of the names of languages available to the `TextArea`.
 
-        The values in this list can be assigned to the `language` reactive attribute
+        The values in this set can be assigned to the `language` reactive attribute
         of `TextArea`.
 
-        The returned list contains the builtin languages plus those registered via the
-        `register_language` method. Builtin languages will be listed before
-        user-registered languages, but there are no other ordering guarantees.
+        The returned set contains the builtin languages installed with the syntax extras,
+        plus those registered via the `register_language` method.
         """
         return set(BUILTIN_LANGUAGES) | self._languages.keys()
 
@@ -873,8 +877,6 @@ TextArea {
             language: A tree-sitter `Language` object.
             highlight_query: The highlight query to use for syntax highlighting this language.
         """
-        if not TREE_SITTER:
-            return
         self._languages[name] = TextAreaLanguage(name, language, highlight_query)
 
     def update_highlight_query(self, name: str, highlight_query: str) -> None:
@@ -885,11 +887,12 @@ TextArea {
             highlight_query: The highlight query to use for syntax highlighting this language.
         """
         if name not in self._languages:
-            raise LanguageDoesNotExist(
-                f"{name!r} is not a registered language.\n"
-                f"To register a language, call `TextArea.register_language`."
-            )
-        self._languages[name].highlight_query = highlight_query
+            self._languages[name] = TextAreaLanguage(name, None, highlight_query)
+        else:
+            self._languages[name].highlight_query = highlight_query
+
+        # If this is the currently loaded language, reload the document because
+        # it could be a different highlight query for the same language.
         if name == self.language:
             self._set_document(self.text, name)
 
@@ -904,44 +907,51 @@ TextArea {
         """
         self._highlight_query = None
         if TREE_SITTER and language:
-            # Attempt to get the override language.
-            text_area_language = get_language(language)
-            document_language: "str | Language"
-            if text_area_language is not None:
-                # The language was found, so look for a corresponding highlight query.
-                # The language has been installed (e.g. via pip install tree-sitter-python, etc).
-                # We must fetch the highlight query corresponding to the language if possible.
-                # First, check for a registered highlight query - this should count as an override of any
-                # built-in highlight query. Then, check for a built-in highlight query.
-
-                if language in self._languages:
-                    # First, check for a registered highlight query.
-                    highlight_query = self._languages[language].highlight_query
-                else:
-                    # Then, check for a built-in highlight query (returns "" on no match).
-                    highlight_query = self._get_builtin_highlight_query(language)
-
+            if language in self._languages:
+                # User-registered languages take priority.
+                highlight_query = self._languages[language].highlight_query
+                document_language = self._languages[language].language
+                if document_language is None:
+                    document_language = get_language(language)
             else:
-                # The language was not found, so we'll use the default highlight query.
-                highlight_query = None
-            document: DocumentBase
-            try:
-                document = SyntaxAwareDocument(text, text_area_language)
-            except SyntaxAwareDocumentError:
-                document = Document(text)
-                log.warning(
-                    f"Parser not found for language {text_area_language!r}. Parsing disabled."
+                # No user-registered language, so attempt to use a built-in language.
+                highlight_query = self._get_builtin_highlight_query(language)
+                document_language = get_language(language)
+
+            # No built-in language, and no user-registered language: use plain text and warn.
+            if document_language is None:
+                raise LanguageDoesNotExist(
+                    f"tree-sitter is available, but no built-in or user-registered language called {language!r}.\n"
+                    f"Ensure the language is installed (e.g. `pip install tree-sitter-ruby`)\n"
+                    f"Falling back to plain text."
                 )
             else:
-                self._highlight_query = document.prepare_query(highlight_query)
+                document: DocumentBase
+                try:
+                    document = SyntaxAwareDocument(text, document_language)
+                except SyntaxAwareDocumentError:
+                    document = Document(text)
+                    log.warning(
+                        f"Parser not found for language {document_language!r}. Parsing disabled."
+                    )
+                else:
+                    self._highlight_query = document.prepare_query(highlight_query)
         elif language and not TREE_SITTER:
+            # User has supplied a language i.e. `TextArea(language="python")`, but they
+            # don't have tree-sitter available in the environment. We fallback to plain text.
             log.warning(
                 "tree-sitter not available in this environment. Parsing disabled.\n"
                 "You may need to install the `syntax` extras alongside textual.\n"
-                "Try `pip install 'textual[syntax]'` or '`poetry add textual[syntax]'."
+                "Try `pip install 'textual[syntax]'` or '`poetry add textual[syntax]' to get started quickly.\n\n"
+                "Alternatively, install tree-sitter manually (`pip install tree-sitter`) and then\n"
+                "install the required language (e.g. `pip install tree-sitter-ruby`), then register it.\n"
+                "and it's highlight query using TextArea.register_language().\n\n"
+                "Falling back to plain text for now."
             )
             document = Document(text)
         else:
+            # tree-sitter is available, but the user has supplied None or "" for the language.
+            # Use a regular plain-text document.
             document = Document(text)
 
         self.document = document

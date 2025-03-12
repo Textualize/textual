@@ -18,9 +18,11 @@ from textual.widgets._text_area import (
     LanguageDoesNotExist,
     StartColumn,
     ThemeDoesNotExist,
+    BUILTIN_LANGUAGES,
 )
 
 __all__ = [
+    "BUILTIN_LANGUAGES",
     "Document",
     "DocumentBase",
     "DocumentNavigator",
