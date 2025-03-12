@@ -671,6 +671,8 @@ async def test_of_type() -> None:
 
 
 async def test_click_line_api_border():
+    """Regression test for https://github.com/Textualize/textual/issues/5634"""
+
     class MyApp(App):
         def compose(self) -> ComposeResult:
             self.my_log = Log()
