@@ -3767,3 +3767,44 @@ def test_panel_border_title_colors(snap_compare):
                 label.border_title = "Border title"
 
     assert snap_compare(BorderTitleApp())
+
+
+@pytest.mark.parametrize(
+    "widget_allow_select, screen_allow_select, app_allow_select",
+    [
+        (True, True, True),
+        (False, True, True),
+        (True, False, True),
+        (True, True, False),
+    ],
+)
+def test_click_selection_disabled_when_allow_select_is_false(
+    widget_allow_select, screen_allow_select, app_allow_select, snap_compare
+):
+    """Regression test for https://github.com/Textualize/textual/issues/5627"""
+
+    class AllowSelectWidget(Label):
+        ALLOW_SELECT = widget_allow_select
+
+    class AllowSelectScreen(Screen):
+        ALLOW_SELECT = screen_allow_select
+
+        def compose(self) -> ComposeResult:
+            should_select = (
+                widget_allow_select and screen_allow_select and app_allow_select
+            )
+            yield AllowSelectWidget(
+                f"Double-clicking me {'SHOULD' if should_select else 'SHOULD NOT'} select the text"
+            )
+
+    class AllowSelectApp(App):
+        ALLOW_SELECT = app_allow_select
+
+        def on_mount(self) -> None:
+            self.push_screen(AllowSelectScreen())
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(Label, times=2)
+
+    assert snap_compare(AllowSelectApp(), run_before=run_before)
