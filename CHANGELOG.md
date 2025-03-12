@@ -90,8 +90,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   single colour. Now the 'px' appears in a different colour to the rest of the
   text.
 
-- Fixed a cause of slow editing for syntax highlighed TextArea widgets with
-  large documents.
+- Fixed some situations where editing for syntax highlighed TextArea widgets with
+  large documents was very unresponsive.
 
 
 ## [2.1.2] - 2025-02-26

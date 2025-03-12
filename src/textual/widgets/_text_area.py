@@ -708,6 +708,30 @@ TextArea {
         # Otherwise we capture all printable keys
         return character is not None and character.isprintable()
 
+    def _handle_syntax_tree_update(self) -> None:
+        """Reflect changes to the syntax tree."""
+        if self._highlight_query:
+            self._highlights.reset()
+
+            # TODO: This feels heavy handed.
+            _, scroll_offset_y = self.scroll_offset
+            self.refresh(Region(0, scroll_offset_y, self.size.width, self.size.height))
+
+    def _handle_change_affecting_highlighting(
+        self,
+        force_update: bool = False,
+    ) -> None:
+        """Trigger an update of the syntax highlighting tree.
+
+        If the tree is already being updated in the background then that will
+        complete first.
+
+        Args:
+            force_update: When set, ensure that the syntax tree is regenerated
+                unconditionally.
+        """
+        self.document.trigger_syntax_tree_update(force_update=force_update)
+
     def _reset_highlights(self) -> None:
         """Reset the lazily evaluated highlight map."""
 
@@ -972,6 +996,7 @@ TextArea {
         # it could be a different highlight query for the same language.
         if name == self.language:
             self._set_document(self.text, name)
+        self._reset_highlights()
 
     def _set_document(self, text: str, language: str | None) -> None:
         """Construct and return an appropriate document.
@@ -1013,6 +1038,9 @@ TextArea {
                     )
                 else:
                     self._highlight_query = document.prepare_query(highlight_query)
+                    document.set_syntax_tree_update_callback(
+                        self._handle_syntax_tree_update
+                    )
         elif language and not TREE_SITTER:
             # User has supplied a language i.e. `TextArea(language="python")`, but they
             # don't have tree-sitter available in the environment. We fallback to plain text.
@@ -1031,10 +1059,12 @@ TextArea {
             # Use a regular plain-text document.
             document = Document(text)
 
+        if self.document:
+            self.document.clean_up()
         self.document = document
         self.wrapped_document = WrappedDocument(document, tab_width=self.indent_width)
         self.navigator = DocumentNavigator(self.wrapped_document)
-        self._reset_highlights()
+        self._handle_change_affecting_highlighting(force_update=True)
         self.move_cursor((0, 0))
         self._rewrap_and_refresh_virtual_size()
 
@@ -1447,7 +1477,7 @@ TextArea {
 
         self._refresh_size()
         edit.after(self)
-        self._reset_highlights()
+        self._handle_change_affecting_highlighting()
         self.post_message(self.Changed(self))
         return result
 
@@ -1510,7 +1540,7 @@ TextArea {
         self._refresh_size()
         for edit in reversed(edits):
             edit.after(self)
-        self._reset_highlights()
+        self._handle_change_affecting_highlighting()
         self.post_message(self.Changed(self))
 
     def _redo_batch(self, edits: Sequence[Edit]) -> None:
@@ -1558,7 +1588,7 @@ TextArea {
         self._refresh_size()
         for edit in edits:
             edit.after(self)
-        self._reset_highlights()
+        self._handle_change_affecting_highlighting()
         self.post_message(self.Changed(self))
 
     async def _on_key(self, event: events.Key) -> None:
