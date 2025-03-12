@@ -185,6 +185,15 @@ You can create priority key bindings by setting `priority=True` on the Binding o
 The [footer](../widgets/footer.md) widget can inspect bindings to display available keys. If you don't want a binding to display in the footer you can set `show=False`. The default bindings on App do this so that the standard ++ctrl+c++, ++tab++ and ++shift+tab++ bindings don't typically appear in the footer.
 
 
+### Dynamic bindings?
+
+You may find you have bindings which are not always applicable given the current state of your app.
+For instance a "Save file" binding when there are no changes to save.
+It wouldn't be a good user experience if the save key did nothing, or raised an error.
+
+Textual doesn't support modifying the bindings at runtime, but you can accomplish this with [dynamic actions](./actions.md#dynamic-actions) which offers greater flexibility.
+
+
 ## Mouse Input
 
 Textual will send events in response to mouse movement and mouse clicks. These events contain the coordinates of the mouse cursor relative to the terminal or widget.
