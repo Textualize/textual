@@ -38,10 +38,10 @@ class SyntaxAwareDocument(Document):
             )
 
         super().__init__(text)
-        self._language: Language = language
+        self.language: Language = language
         """The tree-sitter Language."""
 
-        self._parser = Parser(self._language)
+        self._parser = Parser(self.language)
         """The tree-sitter Parser or None if tree-sitter is unavailable."""
 
         self._syntax_tree: Tree = self._parser.parse(self._read_callable)  # type: ignore
@@ -60,7 +60,7 @@ class SyntaxAwareDocument(Document):
         Returns:
             The prepared query.
         """
-        return self._language.query(query)
+        return self.language.query(query)
 
     def query_syntax_tree(
         self,
