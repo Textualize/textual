@@ -1338,13 +1338,13 @@ def hello(name):
         text_area = pilot.app.query_one(TextArea)
         text_area.load_text(text)
         text_area.language = "python"
-        text_area.selection = Selection((0, 1), (1, 9))
         text_area.theme = theme_name
 
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_theme,
         terminal_size=(48, text.count("\n") + 4),
+        press=['right', 'shift+down'] + ['shift+right'] * 8,
     )
 
 
@@ -1876,7 +1876,7 @@ def test_maximize_container(snap_compare):
         DEFAULT_CSS = """
         FormContainer {
             width: 50%;
-            border: blue;            
+            border: blue;
         }
         """
 
@@ -2575,7 +2575,7 @@ def test_themes(snap_compare, theme_name):
         Screen {
             align: center middle;
         }
-        
+
         Label {
             background: $panel;
             color: $text;
@@ -2610,7 +2610,7 @@ def test_custom_theme_with_variables(snap_compare):
         Screen {
             align: center middle;
         }
-        
+
         Label {
             background: $custom-background;
             color: $custom-text;
@@ -2785,7 +2785,7 @@ def test_position_absolute(snap_compare):
 
     class AbsoluteApp(App):
         CSS = """
-        Screen {        
+        Screen {
             align: center middle;
 
             .absolute {
@@ -2800,7 +2800,7 @@ def test_position_absolute(snap_compare):
                 offset: 1 1;
             }
             .offset2 {
-                offset: 2 2;                
+                offset: 2 2;
             }
             .offset3 {
                 offset: 3 3;
@@ -2838,7 +2838,7 @@ def test_grid_offset(snap_compare):
             border: solid green;
         }
 
-        #six {   
+        #six {
             offset: 0 10;
             background: blue;
         }
@@ -3092,7 +3092,7 @@ def test_dock_align(snap_compare):
             layout: horizontal;
         }
 
-        MainContainer {    
+        MainContainer {
             width: 100%;
             height: 100%;
             background: red;
@@ -3151,7 +3151,7 @@ def test_auto_parent_with_alignment(snap_compare):
                 height: auto;
                 background: red;
                 border: white;
-            }        
+            }
         }
         """
 
@@ -3237,7 +3237,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
             height: auto;
             background: blue;
         }
-        Label {        
+        Label {
             border: heavy red;
             text-align: left;
         }
@@ -3285,7 +3285,7 @@ def test_collapsible_datatable(snap_compare):
     class MyApp(App):
         CSS = """
         DataTable {
-        
+
         }
         """
 
@@ -3409,7 +3409,7 @@ def test_overflow(snap_compare):
     class OverflowApp(App):
         CSS = """
         Label {
-            max-width: 100vw;            
+            max-width: 100vw;
         }
         #label1 {
             # Overflow will be cropped
@@ -3504,7 +3504,7 @@ def test_option_list_wrapping(snap_compare):
 
     class OLApp(App):
         CSS = """
-        OptionList { 
+        OptionList {
             width: 40;
             text-wrap: nowrap;
             text-overflow: ellipsis;
