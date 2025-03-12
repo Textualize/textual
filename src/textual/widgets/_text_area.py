@@ -70,6 +70,105 @@ class LanguageDoesNotExist(Exception):
     """
 
 
+class HighlightMap:
+    """Lazy evaluated pseudo dictionary mapping lines to highlight information.
+
+    This allows TextArea syntax highlighting to scale.
+
+    Args:
+        text_area_widget: The associated `TextArea` widget.
+    """
+
+    BLOCK_SIZE = 50
+
+    def __init__(self, text_area: TextArea):
+        self.text_area: TextArea = text_area
+        """The text area associated with this highlight map."""
+
+        self._highlighted_blocks: set[int] = set()
+        """The set of blocks that have been highlighted. Each block covers BLOCK_SIZE
+        lines.
+        """
+
+        self._highlights: dict[int, list[Highlight]] = defaultdict(list)
+        """A mapping from line index to a list of Highlight instances."""
+
+    def reset(self) -> None:
+        """Reset so that future lookups rebuild the highlight map."""
+        self._highlights.clear()
+        self._highlighted_blocks.clear()
+
+    @property
+    def document(self) -> DocumentBase:
+        """The text document being highlighted."""
+        return self.text_area.document
+
+    def __getitem__(self, index: int) -> list[Highlight]:
+        block_index = index // self.BLOCK_SIZE
+        if block_index not in self._highlighted_blocks:
+            self._highlighted_blocks.add(block_index)
+            self._build_part_of_highlight_map(block_index * self.BLOCK_SIZE)
+        return self._highlights[index]
+
+    def _build_part_of_highlight_map(self, start_index: int) -> None:
+        """Build part of the highlight map.
+
+        Args:
+            start_index: The start of the block of line for which to build the map.
+        """
+        highlights = self._highlights
+        start_point = (start_index, 0)
+        end_index = min(self.document.line_count, start_index + self.BLOCK_SIZE)
+        end_point = (end_index, 0)
+        captures = self.document.query_syntax_tree(
+            self.text_area._highlight_query,
+            start_point=start_point,
+            end_point=end_point,
+        )
+        for highlight_name, nodes in captures.items():
+            for node in nodes:
+                node_start_row, node_start_column = node.start_point
+                node_end_row, node_end_column = node.end_point
+                if node_start_row == node_end_row:
+                    highlight = node_start_column, node_end_column, highlight_name
+                    highlights[node_start_row].append(highlight)
+                else:
+                    # Add the first line of the node range
+                    highlights[node_start_row].append(
+                        (node_start_column, None, highlight_name)
+                    )
+
+                    # Add the middle lines - entire row of this node is highlighted
+                    middle_highlight = (0, None, highlight_name)
+                    for node_row in range(node_start_row + 1, node_end_row):
+                        highlights[node_row].append(middle_highlight)
+
+                    # Add the last line of the node range
+                    highlights[node_end_row].append(
+                        (0, node_end_column, highlight_name)
+                    )
+
+        # The highlights for each line need to be sorted. Each highlight is of
+        # the form:
+        #
+        #     a, b, highlight-name
+        #
+        # Where a is a number and b is a number or ``None``. These highlights need
+        # to be sorted in ascending order of ``a``. When two highlights have the same
+        # value of ``a`` then the one with the larger a--b range comes first, with ``None``
+        # being considered larger than any number.
+        def sort_key(highlight: Highlight) -> tuple[int, int, int]:
+            a, b, _ = highlight
+            max_range_index = 1
+            if b is None:
+                max_range_index = 0
+                b = a
+            return a, max_range_index, a - b
+
+        for line_index in range(start_index, end_index):
+            highlights.get(line_index, []).sort(key=sort_key)
+
+
 @dataclass
 class TextAreaLanguage:
     """A container for a language which has been registered with the TextArea.
@@ -456,14 +555,14 @@ TextArea {
         cursor is currently at. If the cursor is at a bracket, or there's no matching
         bracket, this will be `None`."""
 
-        self._highlights: dict[int, list[Highlight]] = defaultdict(list)
-        """Mapping line numbers to the set of highlights for that line."""
-
         self._highlight_query: "Query | None" = None
         """The query that's currently being used for highlighting."""
 
         self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
+
+        self._highlights: HighlightMap = HighlightMap(self)
+        """Mapping line numbers to the set of highlights for that line."""
 
         self.wrapped_document: WrappedDocument = WrappedDocument(self.document)
         """The wrapped view of the document."""
@@ -592,36 +691,11 @@ TextArea {
         # Otherwise we capture all printable keys
         return character is not None and character.isprintable()
 
-    def _build_highlight_map(self) -> None:
-        """Query the tree for ranges to highlights, and update the internal highlights mapping."""
-        highlights = self._highlights
-        highlights.clear()
-        if not self._highlight_query:
-            return
+    def _reset_highlights(self) -> None:
+        """Reset the lazily evaluated highlight map."""
 
-        captures = self.document.query_syntax_tree(self._highlight_query)
-        for highlight_name, nodes in captures.items():
-            for node in nodes:
-                node_start_row, node_start_column = node.start_point
-                node_end_row, node_end_column = node.end_point
-
-                if node_start_row == node_end_row:
-                    highlight = (node_start_column, node_end_column, highlight_name)
-                    highlights[node_start_row].append(highlight)
-                else:
-                    # Add the first line of the node range
-                    highlights[node_start_row].append(
-                        (node_start_column, None, highlight_name)
-                    )
-
-                    # Add the middle lines - entire row of this node is highlighted
-                    for node_row in range(node_start_row + 1, node_end_row):
-                        highlights[node_row].append((0, None, highlight_name))
-
-                    # Add the last line of the node range
-                    highlights[node_end_row].append(
-                        (0, node_end_column, highlight_name)
-                    )
+        if self._highlight_query:
+            self._highlights.reset()
 
     def _watch_has_focus(self, focus: bool) -> None:
         self._cursor_visible = focus
@@ -935,7 +1009,7 @@ TextArea {
         self.document = document
         self.wrapped_document = WrappedDocument(document, tab_width=self.indent_width)
         self.navigator = DocumentNavigator(self.wrapped_document)
-        self._build_highlight_map()
+        self._reset_highlights()
         self.move_cursor((0, 0))
         self._rewrap_and_refresh_virtual_size()
 
@@ -1348,7 +1422,7 @@ TextArea {
 
         self._refresh_size()
         edit.after(self)
-        self._build_highlight_map()
+        self._reset_highlights()
         self.post_message(self.Changed(self))
         return result
 
@@ -1411,7 +1485,7 @@ TextArea {
         self._refresh_size()
         for edit in reversed(edits):
             edit.after(self)
-        self._build_highlight_map()
+        self._reset_highlights()
         self.post_message(self.Changed(self))
 
     def _redo_batch(self, edits: Sequence[Edit]) -> None:
@@ -1459,7 +1533,7 @@ TextArea {
         self._refresh_size()
         for edit in edits:
             edit.after(self)
-        self._build_highlight_map()
+        self._reset_highlights()
         self.post_message(self.Changed(self))
 
     async def _on_key(self, event: events.Key) -> None:
