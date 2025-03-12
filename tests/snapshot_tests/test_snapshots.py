@@ -2544,7 +2544,7 @@ def test_pseudo_classes(snap_compare):
 
         def compose(self) -> ComposeResult:
             for item_number in range(5):
-                yield Label(f"Item {item_number+1}")
+                yield Label(f"Item {item_number + 1}")
 
         def on_mount(self) -> None:
             # Mounting a new widget should updated previous widgets, as the last of type has changed
@@ -3444,7 +3444,6 @@ def test_empty_option_list(snap_compare):
     """
 
     class OptionListAutoCrash(App[None]):
-
         CSS = """
         OptionList {
             width: auto;
@@ -3467,7 +3466,6 @@ def test_focus_within_transparent(snap_compare):
         pass
 
     class FocusWithinTransparentApp(App[None]):
-
         CSS = """
         Screen {
             layout: horizontal;
@@ -3529,7 +3527,6 @@ def test_add_separator(snap_compare):
     """
 
     class FocusTest(App[None]):
-
         CSS = """
         OptionList {
             height: 1fr;
@@ -3641,7 +3638,6 @@ def test_auto_in_auto(snap_compare):
     """
 
     class MyApp(App):
-
         CSS = """
 
             MyApp {
