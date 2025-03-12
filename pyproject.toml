@@ -1,6 +1,10 @@
 [project]
 name = "textual"
-version = "2.1.0"
+version = "2.1.2"
+homepage = "https://github.com/Textualize/textual"
+repository = "https://github.com/Textualize/textual"
+documentation = "https://textual.textualize.io/"
+
 description = "Modern Text User Interface framework"
 readme = "README.md"
 license = { text = "MIT" }

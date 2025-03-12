@@ -853,7 +853,10 @@ class OptionList(ScrollView, can_focus=True):
             style = self.get_visual_style("option-list--option")
 
         strips = self._get_option_render(option, style)
-        strip = strips[line_offset]
+        try:
+            strip = strips[line_offset]
+        except IndexError:
+            return Strip.blank(self.scrollable_content_region.width)
         return strip
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:

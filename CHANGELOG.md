@@ -7,9 +7,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
+
+## [2.1.2] - 2025-02-26
+
+### Fixed
+
+- Fixed command palette fuzzy search bailing too early https://github.com/Textualize/textual/pull/5579
+
+## [2.1.1] - 2025-02-22
+
 ### Fixed
 
 - Fixed `Link` binding to open the link https://github.com/Textualize/textual/issues/5564
+- Fixed IndexError in OptionList https://github.com/Textualize/textual/pull/5574
+- Fixed issue with clear_panes breaking tabbed content https://github.com/Textualize/textual/pull/5573
+
+## Changed
+
+- The user can now interrupt a scroll to end by grabbing the scrollbar or scrolling in any other way. Press ++end++ or scroll to the end to restore default behavior. This is more intuitive that it may sound.
 
 ## [2.1.0] - 2025-02-19
 
@@ -97,11 +115,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: OptionList no longer supports `Separator`, a separator may be specified with `None`
-- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable. 
+- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable.
 
 ### Removed
 
-- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipsis`)
 - Breaking change: Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
 
 ## [1.0.0] - 2024-12-12
@@ -2768,6 +2786,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[2.1.2]: https://github.com/Textualize/textual/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/Textualize/textual/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Textualize/textual/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/Textualize/textual/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/Textualize/textual/compare/v2.0.2...v2.0.3
