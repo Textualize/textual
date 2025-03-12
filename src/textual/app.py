@@ -1773,6 +1773,10 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Bind a key to an action.
 
+        !!! warning
+            This method may be private or removed in a future version of Textual.
+            See [dynamic actions](/guide/actions#dynamic-actions) for a more flexible alternative to updating bindings.
+
         Args:
             keys: A comma separated list of keys, i.e.
             action: Action to bind to.
