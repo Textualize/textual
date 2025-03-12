@@ -2944,9 +2944,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             *renderables: Text or Rich renderable(s) to display on exit.
         """
-        assert all(
-            is_renderable(renderable) for renderable in renderables
-        ), "Can only call panic with strings or Rich renderables"
+        assert all(is_renderable(renderable) for renderable in renderables), (
+            "Can only call panic with strings or Rich renderables"
+        )
 
         def render(renderable: RenderableType) -> list[Segment]:
             """Render a panic renderables."""

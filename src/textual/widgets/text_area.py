@@ -1,5 +1,4 @@
 from textual._text_area_theme import TextAreaTheme
-from textual._tree_sitter import BUILTIN_LANGUAGES
 from textual.document._document import (
     Document,
     DocumentBase,
@@ -22,7 +21,6 @@ from textual.widgets._text_area import (
 )
 
 __all__ = [
-    "BUILTIN_LANGUAGES",
     "Document",
     "DocumentBase",
     "DocumentNavigator",

@@ -14,7 +14,7 @@ from rich.text import Text
 from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
-from textual._tree_sitter import BUILTIN_LANGUAGES, TREE_SITTER
+from textual._tree_sitter import TREE_SITTER, get_language
 from textual.color import Color
 from textual.document._document import (
     Document,
@@ -425,12 +425,13 @@ TextArea {
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to TextAreaLanguage."""
 
-        for language_name, language_object in BUILTIN_LANGUAGES.items():
-            self._languages[language_name] = TextAreaLanguage(
-                language_name,
-                language_object,
-                self._get_builtin_highlight_query(language_name),
-            )
+        # TODO - we do not pre-register languages anymore, so we need to lazy load them.
+        # for language_name, language_object in BUILTIN_LANGUAGES.items():
+        #     self._languages[language_name] = TextAreaLanguage(
+        #         language_name,
+        #         language_object,
+        #         self._get_builtin_highlight_query(language_name),
+        #     )
 
         self._themes: dict[str, TextAreaTheme] = {}
         """Maps theme names to TextAreaTheme."""
@@ -897,28 +898,39 @@ TextArea {
 
         Args:
             text: The text of the document.
-            language: The name of the language to use. This must either be a
-                built-in supported language, or a language previously registered
-                via the `register_language` method.
+            language: The name of the language to use. This must correspond to a tree-sitter
+                language available in the current environment (e.g. use `python` for `tree-sitter-python`).
+                If None, the document will be treated as plain text.
         """
         self._highlight_query = None
         if TREE_SITTER and language:
             # Attempt to get the override language.
-            text_area_language = self._languages.get(language, None)
+            text_area_language = get_language(language)
             document_language: "str | Language"
-            if text_area_language:
-                document_language = text_area_language.language
-                highlight_query = text_area_language.highlight_query
+            if text_area_language is not None:
+                # The language was found, so look for a corresponding highlight query.
+                # The language has been installed (e.g. via pip install tree-sitter-python, etc).
+                # We must fetch the highlight query corresponding to the language if possible.
+                # First, check for a registered highlight query - this should count as an override of any
+                # built-in highlight query. Then, check for a built-in highlight query.
+
+                if language in self._languages:
+                    # First, check for a registered highlight query.
+                    highlight_query = self._languages[language].highlight_query
+                else:
+                    # Then, check for a built-in highlight query (returns "" on no match).
+                    highlight_query = self._get_builtin_highlight_query(language)
+
             else:
-                document_language = language
-                highlight_query = self._get_builtin_highlight_query(language)
+                # The language was not found, so we'll use the default highlight query.
+                highlight_query = None
             document: DocumentBase
             try:
-                document = SyntaxAwareDocument(text, document_language)
+                document = SyntaxAwareDocument(text, text_area_language)
             except SyntaxAwareDocumentError:
                 document = Document(text)
                 log.warning(
-                    f"Parser not found for language {document_language!r}. Parsing disabled."
+                    f"Parser not found for language {text_area_language!r}. Parsing disabled."
                 )
             else:
                 self._highlight_query = document.prepare_query(highlight_query)
