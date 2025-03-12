@@ -254,7 +254,7 @@ class ItemGrid(Widget, inherit_bindings=False):
     """
 
     stretch_height: reactive[bool] = reactive(True)
-    min_column_width: reactive[int | None] = reactive(None, layout=True)
+    min_column_width: reactive[int | None] = reactive(1, layout=True)
     regular: reactive[bool] = reactive(False)
 
     def __init__(
@@ -264,7 +264,7 @@ class ItemGrid(Widget, inherit_bindings=False):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        min_column_width: int | None = None,
+        min_column_width: int | None = 1,
         stretch_height: bool = True,
         regular: bool = False,
     ) -> None:
