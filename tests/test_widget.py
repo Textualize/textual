@@ -668,3 +668,16 @@ async def test_of_type() -> None:
         assert labels[4].last_of_type
         assert labels[4].is_odd
         assert not labels[4].is_even
+
+
+async def test_click_line_api_border():
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            self.my_log = Log()
+            self.my_log.styles.border = ("round", "white")
+            yield self.my_log
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.click("Log", (10, 0))
