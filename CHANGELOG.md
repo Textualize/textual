@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
 
+### Changed
+
+- tree-sitter languages are now loaded lazily, improving cold-start time https://github.com/Textualize/textual/pull/5639
+
 ## [2.1.2] - 2025-02-26
 
 ### Fixed
