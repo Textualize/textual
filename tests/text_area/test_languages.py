@@ -86,10 +86,10 @@ async def test_update_highlight_query():
         text_area = app.query_one(TextArea)
 
         # Before registering the language, we have highlights as expected.
-        assert len(text_area._highlights) > 0
+        assert len(text_area._highlights[0]) > 0
 
         # Overwriting the highlight query for Python...
         text_area.update_highlight_query("python", "")
 
         # We've overridden the highlight query with a blank one, so there are no highlights.
-        assert text_area._highlights == {}
+        assert len(text_area._highlights[0]) == 0

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
+from typing import TYPE_CHECKING, Callable, NamedTuple, Tuple, overload
 
 from typing_extensions import Literal, get_args
 
@@ -140,6 +140,12 @@ class DocumentBase(ABC):
             The Size of the document bounding box.
         """
 
+    def clean_up(self) -> None:
+        """Perform any pre-deletion clean up.
+
+        The default implementation does nothing.
+        """
+
     def query_syntax_tree(
         self,
         query: "Query",
@@ -161,6 +167,27 @@ class DocumentBase(ABC):
             A dict mapping captured node names to lists of Nodes with that name.
         """
         return {}
+
+    def set_syntax_tree_update_callback(
+        callback: Callable[[], None],
+    ) -> None:
+        """Set a callback function for signalling a rebuild of the syntax tree.
+
+        The default implementation does nothing.
+
+        Args:
+            callback: A function that takes no arguments and returns None.
+        """
+
+    def trigger_syntax_tree_update(self, force_update: bool = False) -> None:
+        """Trigger a new syntax tree update to run in the background.
+
+        The default implementation does nothing.
+
+        Args:
+            force_update: When set, ensure that the syntax tree is regenerated
+                unconditionally.
+        """
 
     def prepare_query(self, query: str) -> "Query | None":
         return None
