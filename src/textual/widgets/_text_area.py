@@ -708,14 +708,62 @@ TextArea {
         # Otherwise we capture all printable keys
         return character is not None and character.isprintable()
 
-    def _handle_syntax_tree_update(self) -> None:
+    def _handle_syntax_tree_update(self, tree_ranges) -> None:
         """Reflect changes to the syntax tree."""
-        if self._highlight_query:
-            self._highlights.reset()
+        if not self._highlight_query:
+            return
 
-            # TODO: This feels heavy handed.
-            _, scroll_offset_y = self.scroll_offset
-            self.refresh(Region(0, scroll_offset_y, self.size.width, self.size.height))
+        self._highlights.reset()
+
+        _, first_line_index = self.scroll_offset
+        visible_line_range = range(
+            first_line_index, first_line_index + self.size.height
+        )
+
+        visible_region = self.window_region
+        regions = []
+        full_width = self.size.width
+
+        for tree_range in tree_ranges:
+            start_row = tree_range.start_point.row
+            end_row = tree_range.end_point.row
+            if not (start_row in visible_line_range or end_row in visible_line_range):
+                continue
+
+            start_column = tree_range.start_point.column
+            end_column = tree_range.end_point.column
+
+            if start_row == end_row:
+                width = end_column = start_column
+                tree_region = Region(start_column, start_row, width, 1)
+                region = tree_region.intersection(visible_region)
+                if region.area > 0:
+                    regions.append(region)
+
+            else:
+                # Add region for the first changed line.
+                width = full_width - start_column
+                tree_region = Region(start_column, start_row, width, 1)
+                region = tree_region.intersection(visible_region)
+                if region.area > 0:
+                    regions.append(region)
+
+                # Add region for the last changed line.
+                tree_region = Region(0, end_row, end_column, 1)
+                region = tree_region.intersection(visible_region)
+                if region.area > 0:
+                    regions.append(region)
+
+                # Add region for the other lines.
+                height = end_row - start_row - 1
+                if height > 0:
+                    tree_region = Region(0, start_row + 1, width, height)
+                    region = tree_region.intersection(visible_region)
+                    if region.area > 0:
+                        regions.append(region)
+
+            if regions:
+                self.refresh(*regions)
 
     def _handle_change_affecting_highlighting(
         self,
