@@ -239,9 +239,12 @@ class SyntaxAwareDocument(Document):
                 # The only known cause is a timeout.
                 return False
             else:
-                self._syntax_tree = tree
                 if self._syntax_tree_update_callback is not None:
-                    self._syntax_tree_update_callback()
+                    changed_ranges = self._syntax_tree.changed_ranges(tree)
+                    self._syntax_tree = tree
+                    self._syntax_tree_update_callback(changed_ranges)
+                else:
+                    self._syntax_tree = tree
                 return True
         finally:
             self._parser.timeout_micros = saved_timeout
