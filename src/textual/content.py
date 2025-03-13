@@ -1,6 +1,6 @@
 """
 Content is a container for text, with spans marked up with color / style.
-If is equivalent to Rich's Text object, with support for more of Textual features.
+It is equivalent to Rich's Text object, with support for more of Textual features.
 
 Unlike Rich Text, Content is *immutable* so you can't modify it in place, and most methods will return a new Content instance.
 This is more like the builtin str, and allows Textual to make some significant optimizations.
@@ -124,6 +124,7 @@ class Content(Visual):
         cell_length: int | None = None,
     ) -> None:
         """
+        Initialize a Content object.
 
         Args:
             text: text content.
