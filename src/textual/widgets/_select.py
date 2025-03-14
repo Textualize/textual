@@ -477,7 +477,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         """
         value = self.value
-        assert not isinstance(value, NoSelection)
+        if isinstance(value, NoSelection):
+            return None
         return value
 
     def _setup_variables_for_options(
