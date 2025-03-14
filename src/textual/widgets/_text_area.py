@@ -2,12 +2,25 @@ from __future__ import annotations
 
 import dataclasses
 import re
+from array import array
 from collections import defaultdict
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import lru_cache
+from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
+from typing import (
+    TYPE_CHECKING,
+    ClassVar,
+    ContextManager,
+    Iterable,
+    MutableSequence,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
+from rich.cells import get_character_cell_size
 from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
@@ -22,7 +35,6 @@ from textual.document._document import (
     EditResult,
     Location,
     Selection,
-    _utf8_encode,
 )
 from textual.document._document_navigator import DocumentNavigator
 from textual.document._edit import Edit
@@ -32,7 +44,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocumentError,
 )
 from textual.document._wrapped_document import WrappedDocument
-from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
+from textual.expand_tabs import expand_tabs_inline
 from textual.screen import Screen
 
 if TYPE_CHECKING:
@@ -42,7 +54,7 @@ from textual import events, log
 from textual._cells import cell_len, cell_width_to_column_index
 from textual.binding import Binding
 from textual.events import Message, MouseEvent
-from textual.geometry import Offset, Region, Size, Spacing, clamp
+from textual.geometry import LineRegion, Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -51,6 +63,11 @@ _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
 _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
 _TREE_SITTER_PATH = Path(__file__).parent / "../tree-sitter/"
 _HIGHLIGHTS_PATH = _TREE_SITTER_PATH / "highlights/"
+DISCARDABLE_CONTROL_CHARS: set[str] = set(
+    chr(n) for n in chain(range(0x09), range(0x10, 0x20), range(0x7F, 0xA0))
+)
+TAB = "\t"
+EMPTY_RANGE = range(0)
 
 StartColumn = int
 EndColumn = Optional[int]
@@ -77,6 +94,15 @@ BUILTIN_LANGUAGES = [
 ]
 """Languages that are included in the `syntax` extras."""
 
+# This is a pragmatic limitation, which allows some code to be simplified and
+# other code to use less memory. This is basically 2**32 so lines of 2**31 less
+# a few bytes are technically supported, but I (Paul Ollis) have no intention
+# of writing the tests.
+#
+# This constant can be elimiated at the expense of handling extra corner cases
+# in the code and not using array('L') in place of lists.
+MAX_LINE_LENGTH_X2 = 0x1_0000_0000
+
 
 class ThemeDoesNotExist(Exception):
     """Raised when the user tries to use a theme which does not exist.
@@ -90,10 +116,242 @@ class LanguageDoesNotExist(Exception):
     """
 
 
+class TextReprString(str):
+    """A string 'optimised' for text representation.
+
+    This extends the standard Python 'str' providing support for easily working
+    with character cells.
+
+    Use the `create` class method to instantiate instances.
+    """
+
+    __slots__ = ["_cell_offsets", "_cells", "_tab_offsets"]
+
+    def __new__(cls, value: str):
+        # Create the basic instance. the `create` class method is responsible
+        # for assigning the additional attributes.
+        inst = super().__new__(cls, value)
+        return inst
+
+    @classmethod
+    @lru_cache(maxsize=256)
+    def create(cls, text: str, tab_size: int = 4, tab_offset: int = 0):
+        """Create a TextReprString from the given text.
+
+        Any TAB characters in `text` are expanded before the instance is
+        created. Expansion is performed with respect to character cells, taking
+        into account wide characters and zero width combining characters.
+        Leading zero width characters, all non-TAB control characters and
+        combining characters immediately after TAB characters are discarded.
+
+        Args:
+            text: The text of the string.
+            tab_size: The tab-stop size for the string.
+            offset: The offset to the first tabstop position. Zero implies
+                tab_size.
+        """
+        text, cells, cell_offsets, tab_offsets = cls._expand_and_map_string(
+            text, tab_size, tab_offset
+        )
+        inst = cls(text)
+        inst._cell_offsets = cell_offsets
+        inst._cells = cells
+        inst._tab_offsets = tab_offsets
+        return inst
+
+    @property
+    def cells(self) -> list[tuple[str, ...]]:
+        """A list of character tuples for this string's terminal representation.
+
+        Most cells will consist of a 1-tuple holding a single unicode
+        character. For double width characters, the first cell is a 1-tuple of
+        the character and the following cell is an empty tuple. For TAB
+        characters, a 1-tuple of (`\t`,) is followed by zero or more empty
+        tuples. When a character is followed by one or more combining (zero
+        width) characters, the cell is a tuple of the character and those
+        combining characters.
+        """
+        return self._cells
+
+    def cell_width(self, index) -> int:
+        """The number of cells covered by the character at a given index.
+
+        When the index lies on an expanded TAB character, the result is
+        number of spaces used in the expansion.
+        """
+        try:
+            cell_index = self._cell_offsets[index]
+            n = len(self._cells[cell_index])
+        except IndexError:
+            return 1
+        else:
+            if n == 0:
+                return 0
+            cell_index += 1
+            while cell_index < len(self._cells):
+                chars = self._cells[cell_index]
+                if chars:
+                    break
+                n += 1
+                cell_index += 1
+            return n
+
+    def logical_character_width(self, index) -> int:
+        """The logical width of the character at a given index.
+
+        For TAB characters this is the number of spaces that the TAB has been
+        expannded to. For all other characters this returns 1.
+        """
+        try:
+            cell_index = self._cell_offsets[index]
+            cell = self._cells[cell_index]
+        except IndexError:
+            return 1
+        if cell == (TAB,):
+            return self.cell_width(index)
+        else:
+            return 1
+
+    def render_count(self, index) -> int:
+        """How many characters combine into the cell for the character index.
+
+        Typically this is 1, but if a character is followed by one or more
+        combining (zero width) characters the value is increased accordingly.
+        """
+        try:
+            cell_index = self._cell_offsets[index]
+            return len(self._cells[cell_index])
+        except IndexError:
+            return 1
+
+    def cell_offset(self, index) -> int:
+        """Calculate the cell offset for the indexed character."""
+        try:
+            return self._cell_offsets[index]
+        except IndexError:
+            return self._cell_offsets[-1]
+
+    def adjust_index_for_tabs(self, index) -> int:
+        """Adjust index to allow for TAB character expansion."""
+        try:
+            return self._tab_offsets[index]
+        except IndexError:
+            return len(self)
+
+    @staticmethod
+    def _expand_and_map_string(
+        text: str,
+        tab_size: int,
+        tab_offset: int,
+    ) -> tuple[str, bytearray, bytearray]:
+        """Expand TAB characters in text and generate useful mappings.
+
+        Args:
+            text: The text of the string.
+            tab_size: The tab-stop size for the string.
+            offset: An offset to the first tabstop position.
+        Returns:
+            A tuple of:
+
+            1. The expanded string.
+            2. A character cell representation of the string.
+            3. Offsets that allow mapping string indices to cell indices.
+            4. Offsets that map from the original string to the expanded string.
+        """
+        expanded_text: list[str] = []
+        cell_offsets = array("L")
+        tab_offsets = array("L")
+        cells: list[tuple[str, ...]] = []
+
+        next_tab_offset = tab_size if tab_offset == 0 else tab_offset
+        char_index = 0
+        cell_index = 0
+        discarding_zero_width = True
+        empty_tuple = ()
+
+        for c in text:
+            if discarding_zero_width and character_cell_size(c) == 0:
+                # Discard invalid zero width/control characters.
+                continue
+
+            if c in DISCARDABLE_CONTROL_CHARS:
+                continue
+
+            discarding_zero_width = False
+            tab_offsets.append(char_index)
+            if c == TAB:
+                # Replace with a space and add additional spaces so that the
+                # next character's cell is tab-aligned.
+                expanded_text.append(" ")
+                cells.append((TAB,))
+                cell_offsets.append(cell_index)
+                char_index += 1
+                cell_index += 1
+                while cell_index < next_tab_offset:
+                    expanded_text.append(" ")
+                    cells.append(empty_tuple)
+                    cell_offsets.append(cell_index)
+                    cell_index += 1
+                    char_index += 1
+                discarding_zero_width = False
+
+            else:
+                width = character_cell_size(c)
+                if width == 0:
+                    cells[-1] = cells[-1] + (c,)
+                else:
+                    expanded_text.append(c)
+                    cells.append((c,))
+                    assert width == 1 or width == 2
+                    if width == 2:
+                        cells.append(())
+
+                cell_offsets.append(cell_index)
+                char_index += 1
+                cell_index += character_cell_size(c)
+
+                if cell_index >= next_tab_offset:
+                    next_tab_offset += tab_size
+
+        # Add a cell offset for the 'cursor-at-end-of-line' position.
+        cell_offsets.append(char_index)
+        return "".join(expanded_text), cells, cell_offsets, tab_offsets
+
+
+class DocSelection:
+
+    def __init__(self, selection: Selection, lines: list[str]):
+        start, end = selection.start, selection.end
+        self.selection = Selection(*sorted((start, end)))
+        self.cursor = end
+        self.lines = lines
+        self.line_range = range(selection.start[0], selection.end[0] + 1)
+
+    def char_range(self, index) -> range:
+        """The range of characters covered on a given line."""
+        lines = self.lines
+        if index in self.line_range and index < len(lines):
+            selection = self.selection
+            line = lines[index]
+            if len(self.line_range) == 1:
+                return range(selection.start[1], selection.end[1] + 1)
+            elif index == selection.start[0]:
+                return range(selection.start[1], len(line))
+            elif index == selection.end[0]:
+                return range(0, min(selection.end[1] + 1, len(line)))
+            else:
+                return range(0, len(line))
+        else:
+            return range(0)
+
+    def __len__(self) -> int:
+        return len(self.line_range)
+
+
 class HighlightMap:
     """Lazy evaluated pseudo dictionary mapping lines to highlight information.
 
-    This allows TextArea syntax highlighting to scale.
+    This represents a snapshot of the TextArea's underlying document.
 
     Args:
         text_area_widget: The associated `TextArea` widget.
@@ -101,29 +359,104 @@ class HighlightMap:
 
     BLOCK_SIZE = 50
 
-    def __init__(self, text_area: TextArea):
-        self.text_area: TextArea = text_area
-        """The text area associated with this highlight map."""
+    def __init__(self):
+        self._lines: list[str] = []
+        """The lines from which the syntax tree was generated."""
+
+        self._tree: Tree | None = None
+        """The tree-sitter tree from which to genrate highlights."""
+
+        self._query: Query | None = None
+        """The tree-sitter query used to generate highlights from the tree."""
 
         self._highlighted_blocks: set[int] = set()
-        """The set of blocks that have been highlighted. Each block covers BLOCK_SIZE
-        lines.
-        """
+        """The set of already highlighted blocks, BLOCK_SIZE lines per block."""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
-        """A mapping from line index to a list of Highlight instances."""
+        """A cache mapping line index to a list of Highlight instances."""
 
-    def reset(self) -> None:
-        """Reset so that future lookups rebuild the highlight map."""
+        self.tab_size: int = 4
+        """The tab size setting in effect."""
+
+    @property
+    def line_count(self) -> int:
+        """The number of lines in the map."""
+        return len(self._lines)
+
+    def copy(self) -> HighlightMap:
+        """Create a copy of this highlight map."""
+        inst = HighlightMap()
+        inst._lines = self._lines
+        inst._tree = self._tree
+        inst._query = self._query
+        inst._highlighted_blocks = self._highlighted_blocks.copy()
+        inst._highlights = self._highlights.copy()
+        return inst
+
+    def set_snapshot(
+        self, lines: list[str], query: Query, tree: Tree, tab_size: int
+    ) -> None:
+        """Set the snapshot information for this mapping
+
+        Args:
+            lines: The lines from which the syntax tree was generated.
+            query: The current Query structure used to generate highlights.
+            tree: The tree-sitter syntax tree.
+            tab_size: The tab_size for the text area.
+        ."""
+        if self._tree is not tree:
+            self._highlights.clear()
+            self._highlighted_blocks.clear()
+            self._query = query
+            self._tree = tree
+            self.tab_size = tab_size
+            self._lines = [] if None in (query, tree) else lines
+
+    def set_query(self, query: Query) -> None:
+        self._query = query
         self._highlights.clear()
         self._highlighted_blocks.clear()
 
-    @property
-    def document(self) -> DocumentBase:
-        """The text document being highlighted."""
-        return self.text_area.document
+    def difference_region(
+        self, index: int, other_map: HighlightMap
+    ) -> LineRegion | None:
+        """Create a region by comparing highlights for a line with another map.
+
+        Args:
+            index: The index of the line to compare.
+            other_map: The other HighlightMap to use for comparison.
+
+        Returns:
+            None if the highlights are the same. Otherwise a Region
+            covering the full extent of the changes.
+        """
+        highlights = self[index]
+        other_highlighs = other_map[index]
+        if highlights != other_highlighs:
+            min_start = min(
+                highlight[0] for highlight in chain(highlights, other_highlighs)
+            )
+            max_end = max(
+                highlight[1] for highlight in chain(highlights, other_highlighs)
+            )
+            return LineRegion(min_start, index, max_end - min_start + 1)
+        else:
+            return None
+
+    @staticmethod
+    def _highlight_change_range(highlight_list_a, highlight_list_b) -> range:
+        min_start = min(
+            highlight[0] for highlight in chain(highlight_list_a, highlight_list_b)
+        )
+        max_end = max(
+            highlight[1] for highlight in chain(highlight_list_a, highlight_list_b)
+        )
+        return range(min_start, max_end + 1)
 
     def __getitem__(self, index: int) -> list[Highlight]:
+        if index >= self.line_count:
+            return []
+
         block_index = index // self.BLOCK_SIZE
         if block_index not in self._highlighted_blocks:
             self._highlighted_blocks.add(block_index)
@@ -133,40 +466,64 @@ class HighlightMap:
     def _build_part_of_highlight_map(self, start_index: int) -> None:
         """Build part of the highlight map.
 
+        This is invoped by __getitem__, when an uncached highlight list is
+        accessed. It generates the highlights for the block of lines containing
+        the index and adds them to the cache.
+
         Args:
-            start_index: The start of the block of line for which to build the map.
+            start_index: The start of the block of lines for which to build the
+            map.
         """
-        highlights = self._highlights
         start_point = (start_index, 0)
-        end_index = min(self.document.line_count, start_index + self.BLOCK_SIZE)
+        end_index = min(self.line_count, start_index + self.BLOCK_SIZE)
         end_point = (end_index, 0)
-        captures = self.document.query_syntax_tree(
-            self.text_area._highlight_query,
-            start_point=start_point,
-            end_point=end_point,
-        )
+        with temporary_query_point_range(self._query, start_point, end_point):
+            captures = self._query.captures(self._tree.root_node)
+
+        highlights = self._highlights
+        line_count = len(self._lines)
         for highlight_name, nodes in captures.items():
             for node in nodes:
                 node_start_row, node_start_column = node.start_point
                 node_end_row, node_end_column = node.end_point
                 if node_start_row == node_end_row:
-                    highlight = node_start_column, node_end_column, highlight_name
-                    highlights[node_start_row].append(highlight)
+                    if node_start_row < line_count:
+                        highlight = node_start_column, node_end_column, highlight_name
+                        highlights[node_start_row].append(highlight)
                 else:
                     # Add the first line of the node range
-                    highlights[node_start_row].append(
-                        (node_start_column, None, highlight_name)
-                    )
+                    if node_start_row < line_count:
+                        highlights[node_start_row].append(
+                            (node_start_column, None, highlight_name)
+                        )
 
                     # Add the middle lines - entire row of this node is highlighted
                     middle_highlight = (0, None, highlight_name)
                     for node_row in range(node_start_row + 1, node_end_row):
-                        highlights[node_row].append(middle_highlight)
+                        if node_row < line_count:
+                            highlights[node_row].append(middle_highlight)
 
                     # Add the last line of the node range
-                    highlights[node_end_row].append(
-                        (0, node_end_column, highlight_name)
-                    )
+                    if node_end_row < line_count:
+                        highlights[node_end_row].append(
+                            (0, node_end_column, highlight_name)
+                        )
+
+        def realign_highlight(highlight):
+            start, end, name = highlight
+            return mapper[start], mapper[end], name
+
+        # Tree-sitter uses byte offsets, but we want to use characters so we
+        # adjust each highlight's offset here to match character positions in
+        # the (TAB expanded) line text.
+        block_end = min(line_count, start_index + self.BLOCK_SIZE)
+        for index in range(start_index, block_end):
+            # text, offsets = expand_tabs(self._lines[index])
+            text = self._lines[index]
+            mapper = build_byte_to_tab_expanded_string_table(text, self.tab_size)
+            highlights[index][:] = [
+                realign_highlight(highlight) for highlight in highlights[index]
+            ]
 
         # The highlights for each line need to be sorted. Each highlight is of
         # the form:
@@ -187,6 +544,142 @@ class HighlightMap:
 
         for line_index in range(start_index, end_index):
             highlights.get(line_index, []).sort(key=sort_key)
+
+
+@dataclass
+class PreRenderLine:
+    """Pre-render information about a physical line in a TextArea.
+
+    This stores enough information to compute difference regions.
+    """
+
+    text: TextReprString
+    """The plain form of the text on the line."""
+    gutter_text: str
+    """The text shown in the gutter."""
+    select_range: range
+    """The range of characters highlighted by the current selection."""
+    syntax: list[Highlight]
+    """The syntax highlights for the line."""
+    cursor_highlighted: bool
+    """Set if cursor highlighting is shown for this physical line."""
+
+    def make_diff_regions(
+        self,
+        text_area: TextArea,
+        y: int,
+        line: PreRenderLine | None,
+        full_width: int,
+        gutter_width: int,
+        prev_gutter_width: int,
+    ) -> list[LineRegion]:
+        text_width = full_width - gutter_width
+        if line is None:
+            return [LineRegion(0, y, text_width)]
+
+        def text_region(x, width):
+            return LineRegion(x + gutter_width, y, width)
+
+        regions = []
+        if self.cursor_highlighted != line.cursor_highlighted:
+            regions.append(LineRegion(0, y, text_width + gutter_width))
+            return regions
+
+        if self.text != line.text:
+            regions.append(
+                build_difference_region(
+                    y,
+                    self.text.cells,
+                    line.text.cells,
+                    x_offset=gutter_width,
+                )
+            )
+
+        if self.gutter_text != line.gutter_text:
+            text_a = text_b = ""
+            if gutter_width > 1:
+                gutter_width_no_margin = gutter_width - 2
+                text_a = f"{self.gutter_text:>{gutter_width_no_margin}}"
+            if prev_gutter_width > 1:
+                gutter_width_no_margin = prev_gutter_width - 2
+                text_b = f"{line.gutter_text:>{gutter_width_no_margin}}"
+            regions.append(build_difference_region(y, text_a, text_b))
+
+        if self.select_range != line.select_range:
+            before, common, after = intersect_ranges(
+                self.select_range, line.select_range
+            )
+            if before:
+                regions.append(text_region(before.start, len(before)))
+            if after:
+                regions.append(text_region(after.start, len(after)))
+
+        if self.syntax != line.syntax:
+            min_start = min(hl[0] for hl in chain(self.syntax, line.syntax))
+            max_end = max(hl[1] for hl in chain(self.syntax, line.syntax))
+            regions.append(text_region(min_start, max_end - min_start + 1))
+
+        return regions
+
+
+@dataclass
+class PreRenderState:
+    """Information about the TextArea state at the just before being rendered.
+
+    Attributes:
+        lines: A snapshot of the document's lines at the time of rendering.
+        cursor: A tuple of (visible, cell_x, cell_y, width, char_x).
+        size: The (width, height) of the full text area, including the gutter.
+        gutter_width: The width of the gutter.
+        bracket: A tuple of (cell_x, cell_y, char_x).
+    """
+
+    lines: list[PreRenderLine]
+    cursor: tuple[bool, int, int, int] = (False, -1, -1, 1)
+    size: tuple[int, int] = 0, 0
+    gutter_width: int = 0
+    bracket: tuple[int, int, int] = -1, -1, -1
+
+    def make_diff_regions(
+        self,
+        text_area: TextArea,
+        state: PreRenderState,
+    ) -> list[LineRegion]:
+
+        def text_region(x, y, width):
+            return LineRegion(x + gutter_width, y, width)
+
+        gutter_width = self.gutter_width
+        prev_gutter_width = state.gutter_width
+        regions = []
+        for y, line in enumerate(self.lines):
+            try:
+                old_line = state.lines[y]
+            except IndexError:
+                old_line = None
+            if not (old_line == line):
+                regions.extend(
+                    line.make_diff_regions(
+                        text_area,
+                        y,
+                        old_line,
+                        self.size.width,
+                        gutter_width,
+                        prev_gutter_width,
+                    )
+                )
+
+        if self.cursor != state.cursor:
+            if self.cursor[1] >= 0:
+                regions.append(text_region(*self.cursor[1:-1]))
+            if state.cursor[1] >= 0:
+                regions.append(text_region(*state.cursor[1:-1]))
+        if self.bracket != state.bracket:
+            if self.bracket[0] >= 0:
+                regions.append(text_region(*self.bracket[:-1], 1))
+            if state.bracket[0] >= 0:
+                regions.append(text_region(*state.bracket[:-1], 1))
+        return regions
 
 
 @dataclass
@@ -422,7 +915,10 @@ TextArea {
     """
 
     selection: Reactive[Selection] = reactive(
-        Selection(), init=False, always_update=True
+        Selection(),
+        init=False,
+        always_update=True,
+        repaint=False,
     )
     """The selection start and end locations (zero-based line_index, offset).
 
@@ -578,8 +1074,8 @@ TextArea {
         self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
 
-        self._highlights: HighlightMap = HighlightMap(self)
-        """Mapping line numbers to the set of highlights for that line."""
+        self._highlights: HighlightMap = HighlightMap()
+        """Mapping of line number to the lists of highlights."""
 
         self.wrapped_document: WrappedDocument = WrappedDocument(self.document)
         """The wrapped view of the document."""
@@ -590,6 +1086,10 @@ TextArea {
 
         self._cursor_offset = (0, 0)
         """The virtual offset of the cursor (not screen-space offset)."""
+
+        self._old_render_state: PreRenderState = PreRenderState(lines=[])
+        self._new_render_state: PreRenderState = PreRenderState(lines=[])
+        """Saved state for the last time this widget was rendered."""
 
         self._set_document(text, language)
 
@@ -708,62 +1208,9 @@ TextArea {
         # Otherwise we capture all printable keys
         return character is not None and character.isprintable()
 
-    def _handle_syntax_tree_update(self, tree_ranges) -> None:
+    def _handle_syntax_tree_update(self, tree: Tree, line_count: int) -> None:
         """Reflect changes to the syntax tree."""
-        if not self._highlight_query:
-            return
-
-        self._highlights.reset()
-
-        _, first_line_index = self.scroll_offset
-        visible_line_range = range(
-            first_line_index, first_line_index + self.size.height
-        )
-
-        visible_region = self.window_region
-        regions = []
-        full_width = self.size.width
-
-        for tree_range in tree_ranges:
-            start_row = tree_range.start_point.row
-            end_row = tree_range.end_point.row
-            if not (start_row in visible_line_range or end_row in visible_line_range):
-                continue
-
-            start_column = tree_range.start_point.column
-            end_column = tree_range.end_point.column
-
-            if start_row == end_row:
-                width = end_column = start_column
-                tree_region = Region(start_column, start_row, width, 1)
-                region = tree_region.intersection(visible_region)
-                if region.area > 0:
-                    regions.append(region)
-
-            else:
-                # Add region for the first changed line.
-                width = full_width - start_column
-                tree_region = Region(start_column, start_row, width, 1)
-                region = tree_region.intersection(visible_region)
-                if region.area > 0:
-                    regions.append(region)
-
-                # Add region for the last changed line.
-                tree_region = Region(0, end_row, end_column, 1)
-                region = tree_region.intersection(visible_region)
-                if region.area > 0:
-                    regions.append(region)
-
-                # Add region for the other lines.
-                height = end_row - start_row - 1
-                if height > 0:
-                    tree_region = Region(0, start_row + 1, width, height)
-                    region = tree_region.intersection(visible_region)
-                    if region.area > 0:
-                        regions.append(region)
-
-            if regions:
-                self.refresh(*regions)
+        self._trigger_repaint()
 
     def _handle_change_affecting_highlighting(
         self,
@@ -810,6 +1257,9 @@ TextArea {
 
         self.scroll_cursor_visible()
 
+        if previous_selection != selection:
+            self.post_message(self.SelectionChanged(selection, self))
+
         cursor_row, cursor_column = cursor_location
 
         try:
@@ -820,13 +1270,8 @@ TextArea {
         # Record the location of a matching closing/opening bracket.
         match_location = self.find_matching_bracket(character, cursor_location)
         self._matching_bracket_location = match_location
-        if match_location is not None:
-            _, offset_y = self._cursor_offset
-            self.refresh_lines(offset_y)
-
         self.app.cursor_position = self.cursor_screen_offset
-        if previous_selection != selection:
-            self.post_message(self.SelectionChanged(selection, self))
+        self._trigger_repaint()
 
     def _watch_cursor_blink(self, blink: bool) -> None:
         if not self.is_mounted:
@@ -1044,7 +1489,8 @@ TextArea {
         # it could be a different highlight query for the same language.
         if name == self.language:
             self._set_document(self.text, name)
-        self._reset_highlights()
+        if self._highlight_query:
+            self._highlights.set_query(self._highlight_query)
 
     def _set_document(self, text: str, language: str | None) -> None:
         """Construct and return an appropriate document.
@@ -1215,12 +1661,17 @@ TextArea {
 
     def _refresh_size(self) -> None:
         """Update the virtual size of the TextArea."""
-        if self.soft_wrap:
-            self.virtual_size = Size(0, self.wrapped_document.height)
-        else:
-            # +1 width to make space for the cursor resting at the end of the line
-            width, height = self.document.get_size(self.indent_width)
-            self.virtual_size = Size(width + self.gutter_width + 1, height)
+        dirty = self._dirty_regions.copy(), self._repaint_regions.copy()
+        try:
+            if self.soft_wrap:
+                self.virtual_size = Size(0, self.wrapped_document.height)
+            else:
+                # +1 width to make space for the cursor resting at the end of the line
+                width, height = self.document.get_size(self.indent_width)
+                self.virtual_size = Size(width + self.gutter_width + 1, height)
+        finally:
+            self._dirty_regions, self._repaint_regions = dirty
+        self._trigger_repaint()
 
     def get_line(self, line_index: int) -> Text:
         """Retrieve the line at the given line index.
@@ -1237,6 +1688,306 @@ TextArea {
         line_string = self.document.get_line(line_index)
         return Text(line_string, end="")
 
+    def _prepare_for_repaint(self) -> Collection[Region]:
+        with self._preserved_refresh_state():
+            return self._do_prepare_for_repaint()
+
+    def _do_prepare_for_repaint(self) -> Collection[Region]:
+        # TODO:
+        #   This is being used as a hook to prepare for an imminent screen
+        #   update, which is not the intended use of this method. A proper
+        #   'prepare for screen update' hook.
+
+        is_syntax_aware = self.is_syntax_aware
+        if is_syntax_aware:
+            highlights = self._highlights
+            highlights.set_snapshot(
+                lines=self.document.copy_of_lines(),
+                query=self._highlight_query,
+                tree=self.document.current_syntax_tree,
+                tab_size=self.indent_width,
+            )
+
+        prev_render_state = self._new_render_state
+        render_state = self._pre_render_lines()
+        regions = render_state.make_diff_regions(self, prev_render_state)
+        self._old_render_state = render_state
+
+        self._repaint_regions.clear()
+        self._dirty_regions.clear()
+
+        regions = [r.as_region(0) for r in regions if r.width > 0]
+        if regions:
+            self.refresh(*regions)
+
+    def render_lines(self, crop: Region) -> list[Strip]:
+        if len(self._dirty_regions) == 0:
+            self._new_render_state = self._old_render_state
+            return super().render_lines(crop)
+
+        ret = super().render_lines(crop)
+        self._dirty_regions.clear()
+
+        self._new_render_state = self._old_render_state
+
+        return ret
+
+    @contextmanager
+    def _preserved_refresh_state(self) -> ContextManager:
+        repaint_required = self._repaint_required
+        try:
+            yield
+        finally:
+            self._repaint_required = repaint_required
+
+    def _pre_render_lines(self) -> PreRenderState:
+
+        def build_doc_y_to_render_y_table() -> dict[int, int]:
+            """Build a dict mapping document y (row) to text area y."""
+            if not visible_line_range:
+                return []
+
+            line_index, section_offset = offset_to_line_info[scroll_y]
+            line_count = self.document.line_count
+            table: dicxt[int, int] = {}
+            y = -section_offset
+            while line_index < line_count:
+                table[line_index] = y
+                y += len(wrap_offsets[line_index]) + 1
+                if y not in visible_line_range:
+                    break
+                line_index += 1
+
+            return table
+
+        def doc_pos_to_xy(row, column) -> tuple[int, int]:
+            try:
+                y = doc_y_to_render_y_table[row]
+            except KeyError:
+                return -1, -1
+
+            offsets = wrap_offsets[row]
+            offset = 0
+            physical_column = column
+            for offset in offsets:
+                if column >= offset:
+                    y += 1
+                    physical_column = column - offset
+                else:
+                    break
+            return physical_column, y
+
+        def snip_syntax(line_highlights, start, end):
+            snipped = []
+            for hl_start, hl_end, hl_name in line_highlights:
+                if hl_end is None:
+                    hl_end = end
+                hl_start = max(start, hl_start) - start
+                hl_end = min(end, hl_end) - start
+                if hl_start <= hl_end:
+                    snipped.append((hl_start, hl_end, hl_name))
+            return snipped
+
+        def add_pre_renders(y: int) -> None:
+
+            nonlocal cursor_line_text
+
+            def get_line_sections(section_offset):
+                sections = get_sections(line_index)
+                if not soft_wrap:
+                    text = sections[0]
+                    if scroll_x > 0:
+                        # If horizontally scrolled, 'pretend' this line is the
+                        # second of a wrapped line.
+                        section_offset = 1
+                        sections = [
+                            text[:scroll_x],
+                            text[scroll_x : text_width + scroll_x],
+                        ]
+                    else:
+                        sections = [text[:text_width]]
+                return sections, section_offset
+
+            def calculate_selection_limits() -> tuple[int | None, int | None]:
+                """Calculate the selection limits for the current document line."""
+                sel_start = sel_end = None
+                if line_index in selection_line_range:
+                    if len(selection_line_range) == 1:
+                        sel_start = selection_top_column
+                        sel_len = selection_bottom_column - selection_top_column + 1
+                    elif line_index == selection_top_row:
+                        sel_start = selection_top_column
+                        sel_len = MAX_LINE_LENGTH_X2
+                    elif line_index == selection_bottom_row:
+                        sel_start = 0
+                        sel_len = selection_bottom_column
+                    else:
+                        sel_start = 0
+                        sel_len = MAX_LINE_LENGTH_X2
+                    sel_end = sel_start + sel_len
+                return sel_start, sel_end
+
+            def create_gutter_text():
+                if gutter_width > 0:
+                    if section_offset == 0 or not soft_wrap:
+                        gutter_content = str(line_index + line_number_start)
+                        gutter_text = f"{gutter_content:>{gutter_width_no_margin}}  "
+                    else:
+                        gutter_text = blank_gutter_text
+                else:
+                    gutter_text = blank_gutter_text
+                return gutter_text
+
+            def create_select_range() -> range:
+                """Calculate the selection range for the current line section."""
+
+                nonlocal sel_start, sel_end, line_text
+
+                select_range = EMPTY_RANGE
+                if sel_start is not None:
+                    if sel_start <= sel_end and 0 <= sel_start <= text_length:
+                        range_end = min(sel_end, text_length)
+                        if not line_text and yy != cursor_y:
+                            # Make sure that empty line show up as selected.
+                            line_text = TextReprString("▌")
+                            select_range = range(1, 0, -1)
+                        elif sel_start < sel_end:
+                            # The selection covers part of this line section.
+                            select_range = range(sel_start, range_end)
+
+                    # Adjust start/end ready for the next line section.
+                    sel_start = max(0, sel_start - text_length)
+                    sel_end = max(0, sel_end - text_length)
+
+                return select_range
+
+            y_offset = y + scroll_y
+            if y_offset >= len(offset_to_line_info):
+                repr_line = TextReprString.create("")
+                text_repr_strings[y] = repr_line
+                rendered_lines.append(PreRenderLine(repr_line, "", range(0), [], False))
+                return
+
+            line_index, section_offset = offset_to_line_info[y_offset]
+            sections, section_offset = get_line_sections(section_offset)
+            sel_start, sel_end = calculate_selection_limits()
+            gutter_text = create_gutter_text()
+            doc_line_highlights = highlights[line_index] if highlights else []
+
+            syn_start = 0
+            line_highlights = []
+            tab_offset = 0
+            for yy, doc_text in enumerate(sections, y - section_offset):
+                line_text = TextReprString.create(
+                    doc_text, self.indent_width, tab_offset=tab_offset
+                )
+                tab_offset = self.indent_width - len(line_text) % self.indent_width
+                text_length = len(line_text)
+                syn_end = syn_start + len(line_text)
+                if yy in visible_line_range and yy not in text_repr_strings:
+                    select_range = create_select_range()
+                    if highlights:
+                        line_highlights = snip_syntax(
+                            doc_line_highlights, syn_start, syn_end
+                        )
+                    if yy == cursor_y:
+                        cursor_line_text = line_text
+                    rendered_lines.append(
+                        PreRenderLine(
+                            line_text,
+                            gutter_text,
+                            select_range,
+                            line_highlights,
+                            cursor_row == line_index,
+                        )
+                    )
+                    text_repr_strings[yy] = line_text
+                    gutter_text = blank_gutter_text
+                syn_start = syn_end
+
+        # Create local references to oft-used attributes and methods.
+        full_width = self.size.width
+        gutter_width = self.gutter_width
+        text_width = full_width - gutter_width
+        highlights = self._highlights if self._highlights and self.theme else None
+        line_count = self.size.height
+        if line_count < 1:
+            # We have no visible lines.
+            return PreRenderState([])
+
+        line_number_start = self.line_number_start
+        scroll_x, scroll_y = self.scroll_offset
+        selection = self.selection
+        soft_wrap = self.soft_wrap
+        wrapped_document = self.wrapped_document
+
+        # Local references to the wrapped document attribute and methods
+        get_sections = wrapped_document.get_sections
+        line_index_to_offsets = wrapped_document._line_index_to_offsets
+        offset_to_line_info = wrapped_document._offset_to_line_info
+        wrap_offsets = wrapped_document._wrap_offsets
+        wrapped_height = wrapped_document.height  # Note: slowish property.
+
+        visible_line_range = range(line_count)
+        if self.show_line_numbers:
+            gutter_width_no_margin = gutter_width - 2
+            blank_gutter_text = " " * (gutter_width_no_margin + 2)
+        else:
+            gutter_width = 0
+            blank_gutter_text = ""
+
+        selection_top, selection_bottom = sorted(selection)
+        selection_top_row, selection_top_column = selection_top
+        selection_bottom_row, selection_bottom_column = selection_bottom
+        if selection.is_empty:
+            selection_line_range = EMPTY_RANGE
+        else:
+            selection_line_range = range(selection_top_row, selection_bottom_row + 1)
+
+        doc_y_to_render_y_table = build_doc_y_to_render_y_table()
+        cursor_row, cursor_column = selection.end
+        cursor_char_x, cursor_y = doc_pos_to_xy(*selection.end)
+        cursor_x = cursor_char_x
+        if self._matching_bracket_location is not None:
+            bracket_char_x, bracket_y = doc_pos_to_xy(*self._matching_bracket_location)
+            bracket_x = bracket_char_x
+        else:
+            bracket_char_x = bracket_x = bracket_y = -1
+        if not soft_wrap:
+            cursor_char_x -= scroll_x
+            bracket_x -= scroll_x
+            bracket_char_x -= scroll_x
+
+        cursor_line_text: str | None = None
+        text_repr_strings: dict[int, TextReprString] = {}
+        rendered_lines: list[PreRenderLine] = []
+        for y in visible_line_range:
+            if y not in text_repr_strings:
+                add_pre_renders(y)
+
+        if bracket_char_x >= 0:
+            try:
+                bracket_x = text_repr_strings[bracket_y].cell_offset(bracket_char_x)
+            except IndexError:
+                # This can occur when the cursor is beyond RHS.
+                bracket_x = bracket_char_x = -1
+        else:
+            bracket_x = -1
+        cursor_width = 1
+        if cursor_line_text is not None:  # Should always be true.
+            cursor_char_x = cursor_line_text.adjust_index_for_tabs(cursor_char_x)
+            cursor_x = cursor_line_text.cell_offset(cursor_char_x)
+            if cursor_char_x < len(cursor_line_text):
+                cursor_width = cursor_line_text.cell_width(cursor_char_x)
+
+        return PreRenderState(
+            lines=rendered_lines,
+            cursor=(self.cursor_is_on, cursor_x, cursor_y, cursor_width, cursor_char_x),
+            size=self.size,
+            gutter_width=gutter_width,
+            bracket=(bracket_x, bracket_y, bracket_char_x),
+        )
+
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
@@ -1246,213 +1997,101 @@ TextArea {
         Returns:
             A rendered line.
         """
-        theme = self._theme
-        if theme:
+        state = self._old_render_state
+        if y >= len(state.lines):
+            return Strip.blank(self.size.width)
+        if y + self.scroll_offset.y >= self.wrapped_document.height:
+            return Strip.blank(self.size.width)
+
+        # Get the text for this physical line.
+        pre_render = state.lines[y]
+        text = pre_render.text
+        rich_line = Text(text + " ", end="")
+        if theme := self._theme:
             theme.apply_css(self)
+        if cursor_highlighted := pre_render.cursor_highlighted:
+            cursor_line_style = theme.cursor_line_style if theme else None
+            rich_line.stylize(cursor_line_style)
 
-        wrapped_document = self.wrapped_document
-        scroll_x, scroll_y = self.scroll_offset
-
-        # Account for how much the TextArea is scrolled.
-        y_offset = y + scroll_y
-
-        # If we're beyond the height of the document, render blank lines
-        out_of_bounds = y_offset >= wrapped_document.height
-
-        if out_of_bounds:
-            return Strip.blank(self.size.width)
-
-        # Get the line corresponding to this offset
-        try:
-            line_info = wrapped_document._offset_to_line_info[y_offset]
-        except IndexError:
-            line_info = None
-
-        if line_info is None:
-            return Strip.blank(self.size.width)
-
-        line_index, section_offset = line_info
-
-        line = self.get_line(line_index)
-        line_character_count = len(line)
-        line.tab_size = self.indent_width
-        line.set_length(line_character_count + 1)  # space at end for cursor
-        virtual_width, _virtual_height = self.virtual_size
-
-        selection = self.selection
-        start, end = selection
-        cursor_row, cursor_column = end
-
-        selection_top, selection_bottom = sorted(selection)
-        selection_top_row, selection_top_column = selection_top
-        selection_bottom_row, selection_bottom_column = selection_bottom
-
-        cursor_line_style = theme.cursor_line_style if theme else None
-        if cursor_line_style and cursor_row == line_index:
-            line.stylize(cursor_line_style)
-
-        # Selection styling
-        if start != end and selection_top_row <= line_index <= selection_bottom_row:
-            # If this row intersects with the selection range
+        # If this line is part of the selection, add selection styling.
+        if sel_range := pre_render.select_range:
             selection_style = theme.selection_style if theme else None
-            cursor_row, _ = end
-            if selection_style:
-                if line_character_count == 0 and line_index != cursor_row:
-                    # A simple highlight to show empty lines are included in the selection
-                    line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
+            if selection_style is not None:
+                if sel_range.step < 0:
+                    rich_line = Text(
+                        "▌", end="", style=Style(color=selection_style.bgcolor)
+                    )
                 else:
-                    if line_index == selection_top_row == selection_bottom_row:
-                        # Selection within a single line
-                        line.stylize(
-                            selection_style,
-                            start=selection_top_column,
-                            end=selection_bottom_column,
-                        )
-                    else:
-                        # Selection spanning multiple lines
-                        if line_index == selection_top_row:
-                            line.stylize(
-                                selection_style,
-                                start=selection_top_column,
-                                end=line_character_count,
-                            )
-                        elif line_index == selection_bottom_row:
-                            line.stylize(selection_style, end=selection_bottom_column)
-                        else:
-                            line.stylize(selection_style, end=line_character_count)
+                    rich_line.stylize(
+                        selection_style, start=sel_range.start, end=sel_range.stop
+                    )
 
-        highlights = self._highlights
-        if highlights and theme:
-            line_bytes = _utf8_encode(line.plain)
-            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+        # Add syntax highlighting.
+        if (line_highlights := pre_render.syntax) and theme:
             get_highlight_from_theme = theme.syntax_styles.get
-            line_highlights = highlights[line_index]
             for highlight_start, highlight_end, highlight_name in line_highlights:
                 node_style = get_highlight_from_theme(highlight_name)
                 if node_style is not None:
-                    line.stylize(
-                        node_style,
-                        byte_to_codepoint.get(highlight_start, 0),
-                        byte_to_codepoint.get(highlight_end) if highlight_end else None,
-                    )
+                    rich_line.stylize(node_style, highlight_start, highlight_end)
 
-        # Highlight the cursor
-        matching_bracket = self._matching_bracket_location
-        match_cursor_bracket = self.match_cursor_bracket
-        draw_matched_brackets = (
-            match_cursor_bracket and matching_bracket is not None and start == end
-        )
+        # Highlight the cursor, taking care when it is on a bracket.
+        draw_matched_brackets = False
+        if self._matching_bracket_location is not None:
+            if self.match_cursor_bracket:
+                draw_matched_brackets = self.selection.is_empty
 
-        if cursor_row == line_index:
-            draw_cursor = (
-                self.has_focus
-                and not self.cursor_blink
-                or (self.cursor_blink and self._cursor_visible)
-            )
+        cursor_is_on, cell_x, cell_y, _, char_x = state.cursor
+        if cell_y == y:
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
                 if matching_bracket_style:
-                    line.stylize(
-                        matching_bracket_style,
-                        cursor_column,
-                        cursor_column + 1,
-                    )
-
-            if draw_cursor:
+                    rich_line.stylize(matching_bracket_style, char_x, char_x + 1)
+            if cursor_is_on:
                 cursor_style = theme.cursor_style if theme else None
                 if cursor_style:
-                    line.stylize(cursor_style, cursor_column, cursor_column + 1)
+                    width = text.logical_character_width(char_x)
+                    rich_line.stylize(cursor_style, char_x, char_x + width)
 
-        # Highlight the partner opening/closing bracket.
-        if draw_matched_brackets:
-            # mypy doesn't know matching bracket is guaranteed to be non-None
-            assert matching_bracket is not None
-            bracket_match_row, bracket_match_column = matching_bracket
-            if theme and bracket_match_row == line_index:
+        # Add styling for a matching bracket.
+        _, bracket_cell_y, bracket_char_x = state.bracket
+        if theme and draw_matched_brackets:
+            if bracket_cell_y == y and bracket_char_x >= 0:
                 matching_bracket_style = theme.bracket_matching_style
                 if matching_bracket_style:
-                    line.stylize(
-                        matching_bracket_style,
-                        bracket_match_column,
-                        bracket_match_column + 1,
+                    rich_line.stylize(
+                        matching_bracket_style, bracket_char_x, bracket_char_x + 1
                     )
 
-        # Build the gutter text for this line
+        # Add gutter text.
         gutter_width = self.gutter_width
+        gutter = Text("", end="")
+        gutter_style = theme.gutter_style
         if self.show_line_numbers:
-            if cursor_row == line_index:
+            if cursor_highlighted:
                 gutter_style = theme.cursor_line_gutter_style
-            else:
-                gutter_style = theme.gutter_style
+            gutter = Text(pre_render.gutter_text, style=gutter_style or "", end="")
 
-            gutter_width_no_margin = gutter_width - 2
-            gutter_content = (
-                str(line_index + self.line_number_start) if section_offset == 0 else ""
-            )
-            gutter = Text(
-                f"{gutter_content:>{gutter_width_no_margin}}  ",
-                style=gutter_style or "",
-                end="",
-            )
-        else:
-            gutter = Text("", end="")
-
-        # TODO: Lets not apply the division each time through render_line.
-        #  We should cache sections with the edit counts.
-        wrap_offsets = wrapped_document.get_offsets(line_index)
-        if wrap_offsets:
-            sections = line.divide(wrap_offsets)  # TODO cache result with edit count
-            line = sections[section_offset]
-            line_tab_widths = wrapped_document.get_tab_widths(line_index)
-            line.end = ""
-
-            # Get the widths of the tabs corresponding only to the section of the
-            # line that is currently being rendered. We don't care about tabs in
-            # other sections of the same line.
-
-            # Count the tabs before this section.
-            tabs_before = 0
-            for section_index in range(section_offset):
-                tabs_before += sections[section_index].plain.count("\t")
-
-            # Count the tabs in this section.
-            tabs_within = line.plain.count("\t")
-            section_tab_widths = line_tab_widths[
-                tabs_before : tabs_before + tabs_within
-            ]
-            line = expand_text_tabs_from_widths(line, section_tab_widths)
-        else:
-            line.expand_tabs(self.indent_width)
-
-        base_width = (
-            self.scrollable_content_region.size.width
-            if self.soft_wrap
-            else max(virtual_width, self.region.size.width)
-        )
-        target_width = base_width - self.gutter_width
+        # Create strips for the gutter and line text.
+        base_width = self.scrollable_content_region.size.width
+        if not self.soft_wrap:
+            base_width = max(self.virtual_size.width, self.region.size.width)
+        target_width = base_width - gutter_width
         console = self.app.console
         gutter_segments = console.render(gutter)
-
         text_segments = list(
-            console.render(line, console.options.update_width(target_width))
+            console.render(rich_line, console.options.update_width(target_width))
         )
-
         gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
         text_strip = Strip(text_segments)
 
-        # Crop the line to show only the visible part (some may be scrolled out of view)
-        if not self.soft_wrap:
-            text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
-
-        # Stylize the line the cursor is currently on.
-        if cursor_row == line_index:
+        # Pad the line using the cursor line or base style.
+        if cursor_highlighted:
             line_style = cursor_line_style
         else:
             line_style = theme.base_style if theme else None
-
         text_strip = text_strip.extend_cell_length(target_width, line_style)
-        strip = Strip.join([gutter_strip, text_strip]).simplify()
 
+        strip = Strip.join([gutter_strip, text_strip]).simplify()
         return strip.apply_style(
             theme.base_style
             if theme and theme.base_style is not None
@@ -1656,7 +2295,7 @@ TextArea {
                 self.screen.focus_next()
                 return
             if self.indent_type == "tabs":
-                insert_values["tab"] = "\t"
+                insert_values["tab"] = TAB
             else:
                 insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
 
@@ -1745,12 +2384,12 @@ TextArea {
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
         self._cursor_visible = not self._cursor_visible
         _, cursor_y = self._cursor_offset
-        self.refresh_lines(cursor_y)
+        self._trigger_repaint()
 
     def _watch__cursor_visible(self) -> None:
         """When the cursor visibility is toggled, ensure the row is refreshed."""
         _, cursor_y = self._cursor_offset
-        self.refresh_lines(cursor_y)
+        self._trigger_repaint()
 
     def _restart_blink(self) -> None:
         """Reset the cursor blink timer."""
@@ -1762,6 +2401,11 @@ TextArea {
         """Pause the cursor blinking but ensure it stays visible."""
         self._cursor_visible = visible
         self.blink_timer.pause()
+
+    @property
+    def cursor_is_on(self) -> bool:
+        """True if the cursor currently visible."""
+        return self.has_focus and (self._cursor_visible or not self.cursor_blink)
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
         """Update the cursor position, and begin a selection using the mouse."""
@@ -1894,6 +2538,7 @@ TextArea {
             self.scroll_cursor_visible(center)
 
         self.history.checkpoint()
+        self._trigger_repaint()
 
     def move_cursor_relative(
         self,
@@ -2520,41 +3165,157 @@ TextArea {
         self._delete_via_keyboard(end, to_location)
 
 
+class IndexMapper:
+    """An infinite list-like mapping from one index to another."""
+
+    def __init__(self, base_map: MutableSequence[int]):
+        self._base_map = base_map or [0]
+
+    def __getitem__(self, index: int | None) -> int | None:
+        if index is None:
+            return None
+        try:
+            return self._base_map[index]
+        except IndexError:
+            return self._base_map[-1] + index - len(self._base_map) + 1
+
+
+class _IdentityIndexMapper(IndexMapper):
+    """A `Mapper` that maps 0->0, 1->1, ..."""
+
+    def __init__(self):
+        pass
+
+    def __getitem__(self, index: int | None) -> int | None:
+        return index
+
+
 @lru_cache(maxsize=128)
-def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
-    """Build a mapping of utf-8 byte offsets to codepoint offsets for the given data.
+def build_byte_to_tab_expanded_string_table(text: str, tab_size: int) -> Mapper:
+    """Build a mapping of utf-8 byte offsets to TAB-expanded character positions.
 
     Args:
-        data: utf-8 bytes.
+        text: The string to map.
+        tab_size: The size setting to use for TAB expansion.
 
     Returns:
-        A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
+        A list-like object mapping byte index to character index.
     """
-    byte_to_codepoint: dict[int, int] = {}
-    current_byte_offset = 0
-    code_point_offset = 0
+    if not text:
+        return identity_index_mapper
 
-    while current_byte_offset < len(data):
-        byte_to_codepoint[current_byte_offset] = code_point_offset
-        first_byte = data[current_byte_offset]
+    data = text.encode("utf-8")
+    if len(data) == len(text) and TAB not in text:
+        return identity_index_mapper
 
-        # Single-byte character
-        if (first_byte & 0b10000000) == 0:
-            current_byte_offset += 1
-        # 2-byte character
-        elif (first_byte & 0b11100000) == 0b11000000:
-            current_byte_offset += 2
-        # 3-byte character
-        elif (first_byte & 0b11110000) == 0b11100000:
-            current_byte_offset += 3
-        # 4-byte character
-        elif (first_byte & 0b11111000) == 0b11110000:
-            current_byte_offset += 4
+    offsets: MutableSequence[int] = array("L")
+    char_offset = 0
+    next_tabstop = 0
+    for c in text:
+        offsets.append(char_offset)
+        if c == TAB:
+            char_offset = next_tabstop
         else:
-            raise ValueError(f"Invalid UTF-8 byte: {first_byte}")
+            ord_c = ord(c)
+            if ord_c >= 0x80:
+                offsets.append(char_offset)
+                if ord_c >= 0x800:
+                    offsets.append(char_offset)
+                    if ord_c >= 0x10000:
+                        offsets.append(char_offset)
+            char_offset += 1
 
-        code_point_offset += 1
+        if char_offset >= next_tabstop:
+            next_tabstop += tab_size
 
-    # Mapping for the end of the string
-    byte_to_codepoint[current_byte_offset] = code_point_offset
-    return byte_to_codepoint
+    return IndexMapper(offsets)
+
+
+@contextmanager
+def temporary_query_point_range(
+    query: Query,
+    start_point: tuple[int, int] | None,
+    end_point: tuple[int, int] | None,
+) -> ContextManager[None]:
+    """Temporarily change the start and/or end point for a tree-sitter Query.
+
+    Args:
+        query: The tree-sitter Query.
+        start_point: The (row, column byte) to start the query at.
+        end_point: The (row, column byte) to end the query at.
+    """
+    # Note: Although not documented for the tree-sitter Python API, an
+    # end-point of (0, 0) means 'end of document'.
+    default_point_range = [(0, 0), (0, 0)]
+
+    point_range = list(default_point_range)
+    if start_point is not None:
+        point_range[0] = start_point
+    if end_point is not None:
+        point_range[1] = end_point
+    query.set_point_range(point_range)
+    try:
+        yield None
+    finally:
+        query.set_point_range(default_point_range)
+
+
+def build_difference_region(
+    line_index: int,
+    a: Sequence,
+    b: Sequence,
+    x_offset: int = 0,
+) -> LineRegion:
+    """Compare 2 sequences to create a line region covering the differences.
+
+    The caller should only use this if a nd b are known to differ.
+    """
+    if a is None:
+        return LineRegion(x_offset, line_index, len(b))
+    elif b is None:
+        return LineRegion(x_offset, line_index, len(a))
+
+    start = 0
+    for start, (ca, cb) in enumerate(zip(a, b)):
+        if ca != cb:
+            break
+    end = max(len(a), len(b))
+    return LineRegion(start + x_offset, line_index, end - start + 1)
+
+
+def intersect_ranges(range_a, range_b) -> list[range]:
+    if range_a.step < 0:
+        range_b = range(0)
+    if range_b.step < 0:
+        range_b = range(0)
+    if range_a.start > range_b.start:
+        range_a, range_b = range_b, range_a
+    elif range_a.start == range_b.start:
+        if range_a.stop > range_b.stop:
+            range_a, range_b = range_b, range_a
+    overlap = range_a.stop - range_b.start
+    if overlap <= 0:
+        # Ranges do not overlap
+        before = range_a
+        common = []
+        after = range_b
+    else:
+        before = range(range_a.start, range_a.stop - overlap)
+        common = range(range_a.stop - overlap, range_a.stop)
+        after = range(range_b.start + overlap, range_b.stop)
+    return before, common, after
+
+
+def character_cell_size(char: str) -> int:
+    """Calculate the cell size for a character.
+
+    This is athing wrapper around get_character_cell_size, which treats the TAB
+    character as width == 1.
+    """
+    if char == TAB:
+        return 1
+    else:
+        return get_character_cell_size(char)
+
+
+identity_index_mapper = _IdentityIndexMapper()

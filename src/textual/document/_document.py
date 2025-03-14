@@ -3,12 +3,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
+from itertools import zip_longest
 from typing import TYPE_CHECKING, Callable, NamedTuple, Tuple, overload
 
 from typing_extensions import Literal, get_args
 
 if TYPE_CHECKING:
-    from tree_sitter import Node, Query
+    from tree_sitter import Query
 
 from textual._cells import cell_len
 from textual.geometry import Size
@@ -27,6 +28,10 @@ class EditResult:
     """The new end Location after the edit is complete."""
     replaced_text: str
     """The text that was replaced."""
+    dirty_lines: range | None = None
+    """The range of lines considered dirty."""
+    alt_dirty_line: tuple[int, range] | None = None
+    """Alternative list of lines considered dirty."""
 
 
 @lru_cache(maxsize=1024)
@@ -146,28 +151,6 @@ class DocumentBase(ABC):
         The default implementation does nothing.
         """
 
-    def query_syntax_tree(
-        self,
-        query: "Query",
-        start_point: tuple[int, int] | None = None,
-        end_point: tuple[int, int] | None = None,
-    ) -> dict[str, list["Node"]]:
-        """Query the tree-sitter syntax tree.
-
-        The default implementation always returns an empty list.
-
-        To support querying in a subclass, this must be implemented.
-
-        Args:
-            query: The tree-sitter Query to perform.
-            start_point: The (row, column byte) to start the query at.
-            end_point: The (row, column byte) to end the query at.
-
-        Returns:
-            A dict mapping captured node names to lists of Nodes with that name.
-        """
-        return {}
-
     def set_syntax_tree_update_callback(
         callback: Callable[[], None],
     ) -> None:
@@ -262,6 +245,10 @@ class Document(DocumentBase):
         """Get the Newline used in this document (e.g. '\r\n', '\n'. etc.)"""
         return self._newline
 
+    def copy_of_lines(self):
+        """Provide a copy of the document's lines."""
+        return list(self._lines)
+
     def get_size(self, tab_width: int) -> Size:
         """The Size of the document, taking into account the tab rendering width.
 
@@ -321,11 +308,40 @@ class Document(DocumentBase):
             destination_column = len(before_selection)
             insert_lines = [before_selection + after_selection]
 
+        try:
+            prev_top_line = lines[top_row]
+        except IndexError:
+            prev_top_line = None
         lines[top_row : bottom_row + 1] = insert_lines
         destination_row = top_row + len(insert_lines) - 1
 
         end_location = (destination_row, destination_column)
-        return EditResult(end_location, replaced_text)
+
+        n_previous_lines = bottom_row - top_row + 1
+        dirty_range = None
+        alt_dirty_line = None
+        if len(insert_lines) != n_previous_lines:
+            dirty_range = range(top_row, len(lines))
+        else:
+            if len(insert_lines) == 1 and prev_top_line is not None:
+                rng = self._build_single_line_range(prev_top_line, insert_lines[0])
+                if rng is not None:
+                    alt_dirty_line = top_row, rng
+            else:
+                dirty_range = range(top_row, bottom_row + 1)
+
+        return EditResult(end_location, replaced_text, dirty_range, alt_dirty_line)
+
+    @staticmethod
+    def _build_single_line_range(a, b):
+        rng = []
+        for i, (ca, cb) in enumerate(zip_longest(a, b)):
+            if ca != cb:
+                rng.append(i)
+        if rng:
+            return range(rng[0], rng[-1] + 1)
+        else:
+            None
 
     def get_text_range(self, start: Location, end: Location) -> str:
         """Get the text that falls between the start and end locations.

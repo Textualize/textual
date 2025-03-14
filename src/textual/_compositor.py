@@ -1229,6 +1229,7 @@ class Compositor:
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__
         for widget in self.visible_widgets.keys() & widgets:
+            widget._prepare_for_repaint()
             region, clip = get_widget(widget)
             offset = region.offset
             intersection = clip.intersection
