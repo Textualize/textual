@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from bisect import bisect_right
+from functools import lru_cache
 
 from rich.text import Text
 
@@ -85,6 +86,7 @@ class WrappedDocument:
             tab_width: The maximum width to consider for tab characters. If None,
                 reuse the  tab width.
         """
+        self.get_sections.cache_clear()
         self._width = width
         if tab_width:
             self._tab_width = tab_width
@@ -168,6 +170,7 @@ class WrappedDocument:
             old_end: The old end location of the edit in document-space.
             new_end: The new end location of the edit in document-space.
         """
+        self.get_sections.cache_clear()
         start_line_index, _ = start
         old_end_line_index, _ = old_end
         new_end_line_index, _ = new_end
@@ -403,6 +406,7 @@ class WrappedDocument:
 
         return target_column_index
 
+    @lru_cache(200)
     def get_sections(self, line_index: int) -> list[str]:
         """Return the sections for the given line index.
 

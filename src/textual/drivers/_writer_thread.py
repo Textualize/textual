@@ -8,6 +8,8 @@ from typing_extensions import Final
 
 MAX_QUEUED_WRITES: Final[int] = 30
 
+write_count = 0
+
 
 class WriterThread(threading.Thread):
     """A thread / file-like to do writes to stdout in the background."""
@@ -23,6 +25,8 @@ class WriterThread(threading.Thread):
         Args:
             text: Text to write to the file.
         """
+        global write_count
+        write_count += len(text)
         self._queue.put(text)
 
     def isatty(self) -> bool:

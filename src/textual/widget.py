@@ -308,11 +308,11 @@ class Widget(DOMNode):
 
     ALLOW_MAXIMIZE: ClassVar[bool | None] = None
     """Defines default logic to allow the widget to be maximized.
-    
+
     - `None` Use default behavior (Focusable widgets may be maximized)
     - `False` Do not allow widget to be maximized
     - `True` Allow widget to be maximized
-    
+
     """
 
     ALLOW_SELECT: ClassVar[bool] = True
@@ -2391,6 +2391,18 @@ class Widget(DOMNode):
             if outer_size:
                 self._repaint_regions.add(outer_size.region)
 
+    def _prepare_for_repaint(self) -> None:
+        """A hook to allow a widget to prepare for a repaint.
+
+        Currently only used by `TextArea`. This hook allow a widget a chance to
+        perform extra preparation required in order to be ready to repaint.
+
+        The hook is for specialised use and should almost certainly not be
+        used for most widgets. In the case of the `TextArea`, it is used to
+        calculate the regions that have changed since the last repaint -
+        something that is automatic for other widgets.
+        """
+
     def _exchange_repaint_regions(self) -> Collection[Region]:
         """Get a copy of the regions which need a repaint, and clear internal cache.
 
@@ -3898,7 +3910,23 @@ class Widget(DOMNode):
         Args:
             selection: Selection information or `None` if no selection.
         """
+        try:
+            prints = self._paul_prints
+        except AttributeError:
+            pass
+        else:
+            prints.append(
+                f"Paul pre-selection_updated {len(self._dirty_regions)} dirty regions"
+            )
         self.refresh()
+        try:
+            prints = self._paul_prints
+        except AttributeError:
+            pass
+        else:
+            prints.append(
+                f"Paul post-selection_updated {len(self._dirty_regions)} dirty regions"
+            )
 
     def _render_content(self) -> None:
         """Render all lines."""
@@ -4029,6 +4057,17 @@ class Widget(DOMNode):
 
         self.check_idle()
         return self
+
+    def _trigger_repaint(self) -> None:
+        """Indicate that parts of this widget need repainting.
+
+        !!!warning
+
+            This is provided for very specialised use - currently only the
+            `TextArea` widget uses it.
+        """
+        self._repaint_required = True
+        self.check_idle()
 
     def remove(self) -> AwaitRemove:
         """Remove the Widget from the DOM (effectively deleting it).

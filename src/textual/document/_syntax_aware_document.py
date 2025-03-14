@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import weakref
 from asyncio import CancelledError, Event, Task, create_task, sleep
-from contextlib import contextmanager
 from functools import partial
-from typing import Callable, ContextManager, NamedTuple
+from typing import Callable, NamedTuple
 
 try:
-    from tree_sitter import Language, Node, Parser, Query, Tree
+    from tree_sitter import Language, Parser, Query, Tree
 
     TREE_SITTER = True
 except ImportError:
@@ -15,35 +14,6 @@ except ImportError:
 
 
 from textual.document._document import Document, EditResult, Location, _utf8_encode
-
-
-@contextmanager
-def temporary_query_point_range(
-    query: Query,
-    start_point: tuple[int, int] | None,
-    end_point: tuple[int, int] | None,
-) -> ContextManager[None]:
-    """Temporarily change the start and/or end point for a tree-sitter Query.
-
-    Args:
-        query: The tree-sitter Query.
-        start_point: The (row, column byte) to start the query at.
-        end_point: The (row, column byte) to end the query at.
-    """
-    # Note: Although not documented for the tree-sitter Python API, an
-    # end-point of (0, 0) means 'end of document'.
-    default_point_range = [(0, 0), (0, 0)]
-
-    point_range = list(default_point_range)
-    if start_point is not None:
-        point_range[0] = start_point
-    if end_point is not None:
-        point_range[1] = end_point
-    query.set_point_range(point_range)
-    try:
-        yield None
-    finally:
-        query.set_point_range(default_point_range)
 
 
 class SyntaxTreeEdit(NamedTuple):
@@ -99,13 +69,14 @@ class SyntaxAwareDocument(Document):
         self._background_parser = BackgroundSyntaxParser(self)
         self._pending_syntax_edits: list[SyntaxTreeEdit] = []
 
+    @property
+    def current_syntax_tree(self) -> Tree:
+        """The current syntax tree."""
+        return self._syntax_tree
+
     def clean_up(self) -> None:
         """Perform any pre-deletion clean up."""
         self._background_parser.stop()
-
-    def copy_of_lines(self):
-        """Provide a copy of the document's lines."""
-        return list(self._lines)
 
     def apply_pending_syntax_edits(self) -> bool:
         """Apply any pending edits to the syntax tree.
@@ -135,29 +106,6 @@ class SyntaxAwareDocument(Document):
             The prepared query.
         """
         return self.language.query(query)
-
-    def query_syntax_tree(
-        self,
-        query: Query,
-        start_point: tuple[int, int] | None = None,
-        end_point: tuple[int, int] | None = None,
-    ) -> dict[str, list["Node"]]:
-        """Query the tree-sitter syntax tree.
-
-        The default implementation always returns an empty list.
-
-        To support querying in a subclass, this must be implemented.
-
-        Args:
-            query: The tree-sitter Query to perform.
-            start_point: The (row, column byte) to start the query at.
-            end_point: The (row, column byte) to end the query at.
-
-        Returns:
-            A tuple containing the nodes and text captured by the query.
-        """
-        with temporary_query_point_range(query, start_point, end_point):
-            return query.captures(self._syntax_tree.root_node)
 
     def set_syntax_tree_update_callback(
         self,
@@ -239,10 +187,14 @@ class SyntaxAwareDocument(Document):
                 # The only known cause is a timeout.
                 return False
             else:
+                self._syntax_tree = tree
                 if self._syntax_tree_update_callback is not None:
+
+                    def set_new_tree():
+                        self._syntax_tree = tree
+
                     changed_ranges = self._syntax_tree.changed_ranges(tree)
-                    self._syntax_tree = tree
-                    self._syntax_tree_update_callback(changed_ranges)
+                    self._syntax_tree_update_callback(self._syntax_tree, len(lines))
                 else:
                     self._syntax_tree = tree
                 return True

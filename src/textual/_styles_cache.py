@@ -260,6 +260,33 @@ class StylesCache:
             x1, x2 = crop.column_span
             strips = [strip.crop(x1, x2) for strip in strips]
 
+        try:
+            prints = _paul_prints
+        except NameError:
+            pass
+        else:
+            if prints is not None:
+                if 1 in crop.line_range:
+                    # prints.append(f"STYLE strip[1] {strips[1 - crop.line_range.start].text!r}")
+                    # prints.append(f"               crop={crop}")
+
+                    if 0:
+                        import io
+                        import traceback
+
+                        f = io.StringIO()
+                        traceback.print_stack(file=f, limit=10)
+                        lines = []
+                        for line in f.getvalue().splitlines():
+                            if line.lstrip().startswith('File "/home'):
+                                line = line.replace(
+                                    '"/home/paul/np/os/python/textual/textual/fork/'
+                                    "src/textual/",
+                                    '"',
+                                )
+                            lines.append(line)
+                        prints.append("\n".join(lines))
+
         return strips
 
     def render_line(
