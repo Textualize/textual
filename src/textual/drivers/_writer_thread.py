@@ -13,7 +13,7 @@ class WriterThread(threading.Thread):
     """A thread / file-like to do writes to stdout in the background."""
 
     def __init__(self, file: IO[str]) -> None:
-        super().__init__(daemon=True)
+        super().__init__(daemon=True, name="textual-output")
         self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
         self._file = file
 

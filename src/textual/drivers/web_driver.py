@@ -62,7 +62,9 @@ class WebDriver(Driver):
         self.fileno = sys.__stdout__.fileno()
         self._write = partial(os.write, self.fileno)
         self.exit_event = Event()
-        self._key_thread: Thread = Thread(target=self.run_input_thread)
+        self._key_thread: Thread = Thread(
+            target=self.run_input_thread, name="textual-input"
+        )
         self._input_reader = InputReader()
 
         self._deliveries: dict[str, BinaryIO | TextIO] = {}
