@@ -223,7 +223,7 @@ class EventMonitor(threading.Thread):
         self.app = app
         self.exit_event = exit_event
         self.process_event = process_event
-        super().__init__()
+        super().__init__(name="textual-input")
 
     def run(self) -> None:
         exit_requested = self.exit_event.is_set
