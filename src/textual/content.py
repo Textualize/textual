@@ -39,6 +39,9 @@ __all__ = ["ContentType", "Content", "Span"]
 ContentType: TypeAlias = Union["Content", str]
 """Type alias used where content and a str are interchangeable in a function."""
 
+ContentText: TypeAlias = Union["Content", Text, str]
+"""A type that may be used to construct Text."""
+
 ANSI_DEFAULT = Style(
     background=Color(0, 0, 0, 0, ansi=-1),
     foreground=Color(0, 0, 0, 0, ansi=-1),
@@ -169,6 +172,41 @@ class Content(Visual):
         return markup
 
     @classmethod
+    def from_text(
+        cls, markup_content_or_text: ContentText, markup: bool = True
+    ) -> Content:
+        """Construct content from Text or str. If the argument is already Content, then
+        return it unmodified.
+
+        This method exists to make (Rich) Text and Content interchangeable. While Content
+        is preferred, we don't want to make it harder than necessary for apps to use Text.
+
+        Args:
+            markup_content_or_text: Value to create Content from.
+            markup: If `True`, then str values will be parsed as markup, otherwise they will
+                be considered literals.
+
+        Raises:
+            TypeError: If the supplied argument is not a valid type.
+
+        Returns:
+            A new Content instance.
+        """
+        if isinstance(markup_content_or_text, Content):
+            return markup_content_or_text
+        elif isinstance(markup_content_or_text, str):
+            if markup:
+                return cls.from_markup(markup_content_or_text)
+            else:
+                return cls(markup_content_or_text)
+        elif isinstance(markup_content_or_text, Text):
+            return cls.from_rich_text(markup_content_or_text)
+        else:
+            raise TypeError(
+                "This method expects a str, a Text instance, or a Content instance"
+            )
+
+    @classmethod
     def from_markup(cls, markup: str | Content, **variables: object) -> Content:
         """Create content from Textual markup, optionally combined with template variables.
 
@@ -208,6 +246,8 @@ class Content(Visual):
 
         Args:
             text: String or Rich Text.
+            console: A Console object to use if parsing Rich Console markup, or `None` to
+                use app default.
 
         Returns:
             New Content.
@@ -220,7 +260,12 @@ class Content(Visual):
         if console is not None:
             get_style = console.get_style
         else:
-            get_style = RichStyle.parse
+            try:
+                app = active_app.get()
+            except LookupError:
+                get_style = RichStyle.parse
+            else:
+                get_style = app.console.get_style
 
         if text._spans:
             try:
