@@ -174,7 +174,7 @@ class ChopsUpdate(CompositorUpdate):
 
         Args:
             chops: A mapping of offsets to list of segments, per line.
-            crop: Region to restrict update to.
+            spans: Line spans to restrict update to.
             chop_ends: A list of the end offsets for each line
         """
         self.chops = chops
@@ -263,8 +263,8 @@ class ChopsUpdate(CompositorUpdate):
                     append(strip.render(console))
                     continue
 
-                strip = strip.crop(0, min(end, x2) - x)
-                append(move_to(x, y).segment.text)
+                strip = strip.crop(x1, min(end, x2) - x)
+                append(move_to(x1, y).segment.text)
                 append(strip.render(console))
 
             if y != last_y:
