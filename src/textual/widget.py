@@ -1130,7 +1130,7 @@ class Widget(DOMNode):
     @overload
     def render_str(self, text_content: Content) -> Content: ...
 
-    def render_str(self, text_content: str | Content) -> Content | Text:
+    def render_str(self, text_content: str | Content) -> Content:
         """Convert str into a [Content][textual.content.Content] instance.
 
         If you pass in an existing Content instance it will be returned unaltered.
