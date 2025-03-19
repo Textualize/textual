@@ -63,3 +63,13 @@ async def test_clear_fails_if_allow_blank_is_false():
         assert not select.is_blank()
         with pytest.raises(InvalidSelectValueError):
             select.clear()
+
+async def test_selection_is_none_with_blank():
+    class SelectApp(App[None]):
+        def compose(self):
+            yield Select(SELECT_OPTIONS)
+
+    app = SelectApp()
+    async with app.run_test():
+        select = app.query_one(Select)
+        assert select.selection is None
