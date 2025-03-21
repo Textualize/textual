@@ -3871,6 +3871,7 @@ class Widget(DOMNode):
             bold=style.bold,
             dim=style.dim,
             italic=style.italic,
+            reverse=style.reverse,
             underline=style.underline,
             strike=style.strike,
         )

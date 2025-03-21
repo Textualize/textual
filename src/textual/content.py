@@ -172,6 +172,11 @@ class Content(Visual):
         return markup
 
     @classmethod
+    def empty(cls) -> Content:
+        """Get an empty (blank) content"""
+        return EMPTY_CONTENT
+
+    @classmethod
     def from_text(
         cls, markup_content_or_text: ContentText, markup: bool = True
     ) -> Content:
@@ -1449,3 +1454,6 @@ class _FormattedLine:
             if style is not None
         ]
         return segments
+
+
+EMPTY_CONTENT: Final = Content("")
