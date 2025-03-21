@@ -340,7 +340,10 @@ class Padding(Visual):
         )
 
     def get_height(self, rules: RulesMap, width: int) -> int:
-        return self._visual.get_height(rules, width) + self._spacing.height
+        return (
+            self._visual.get_height(rules, width - self._spacing.width)
+            + self._spacing.height
+        )
 
     def render_strips(
         self,
