@@ -151,7 +151,7 @@ class WrappedDocument:
     @property
     def height(self) -> int:
         """The height of the wrapped document."""
-        return sum(len(offsets) + 1 for offsets in self._wrap_offsets)
+        return len(self._offset_to_line_info)
 
     def wrap_range(
         self,
