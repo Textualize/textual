@@ -137,6 +137,7 @@ class Content(Visual):
         self._text: str = _strip_control_codes(text)
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
+        self._optimal_width_cache: int | None = None
 
     def __str__(self) -> str:
         return self._text
@@ -431,9 +432,13 @@ class Content(Visual):
             A width in cells.
 
         """
-        line_pad = rules.get("line_pad", 0) * 2
-        width = max(cell_len(line) + line_pad for line in self.plain.split("\n"))
-        return width
+        if self._optimal_width_cache is None:
+            self._optimal_width_cache = width = max(
+                cell_len(line) for line in self.plain.split("\n")
+            )
+        else:
+            width = self._optimal_width_cache
+        return width + rules.get("line_pad", 0) * 2
 
     def get_height(self, rules: RulesMap, width: int) -> int:
         """Get the height of the Visual if rendered at the given width.
