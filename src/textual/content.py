@@ -138,6 +138,7 @@ class Content(Visual):
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
         self._optimal_width_cache: int | None = None
+        self._height_cache: tuple[tuple[int, str, bool] | None, int] = (None, 0)
 
     def __str__(self) -> str:
         return self._text
@@ -450,13 +451,20 @@ class Content(Visual):
         Returns:
             A height in lines.
         """
-        line_pad = rules.get("line_pad", 0) * 2
-        lines = self.without_spans._wrap_and_format(
-            width - line_pad,
-            overflow=rules.get("text_overflow", "fold"),
-            no_wrap=rules.get("text_wrap", "wrap") == "nowrap",
-        )
-        return len(lines)
+        get_rule = rules.get
+        line_pad = get_rule("line_pad", 0) * 2
+        overflow = get_rule("text_overflow", "fold")
+        no_wrap = get_rule("text_wrap", "wrap") == "nowrap"
+        cache_key = (width + line_pad, overflow, no_wrap)
+        if self._height_cache[0] == cache_key:
+            height = self._height_cache[1]
+        else:
+            lines = self.without_spans._wrap_and_format(
+                width - line_pad, overflow=overflow, no_wrap=no_wrap
+            )
+            height = len(lines)
+            self._height_cache = (cache_key, height)
+        return height
 
     def _wrap_and_format(
         self,
@@ -518,9 +526,14 @@ class Content(Visual):
                     line.plain, width - line_pad * 2, fold=overflow == "fold"
                 )
                 divided_lines = content_line.content.divide(offsets)
+                ellipsis = overflow == "ellipsis"
                 divided_lines = [
-                    line.rstrip().truncate(width, ellipsis=overflow == "ellipsis")
-                    for line in divided_lines
+                    (
+                        line.truncate(width, ellipsis=ellipsis)
+                        if last
+                        else line.rstrip().truncate(width, ellipsis=ellipsis)
+                    )
+                    for last, line in loop_last(divided_lines)
                 ]
 
                 new_lines = [
