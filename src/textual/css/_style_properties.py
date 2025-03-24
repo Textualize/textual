@@ -126,7 +126,7 @@ class IntegerProperty(GenericProperty[int, int]):
         if isinstance(value, (int, float)):
             return int(value)
         else:
-            raise StyleValueError(f"Expected a number here, got f{value}")
+            raise StyleValueError(f"Expected a number here, got {value!r}")
 
 
 class BooleanProperty(GenericProperty[bool, bool]):

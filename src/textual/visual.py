@@ -208,7 +208,7 @@ class Visual(ABC):
 
         if height is None:
             height = len(strips)
-        rich_style = style.rich_style
+        rich_style = (style + Style(reverse=False)).rich_style
         if pad:
             strips = [strip.extend_cell_length(width, rich_style) for strip in strips]
         content_align = widget.styles.content_align
@@ -380,6 +380,69 @@ class Padding(Visual):
                     for strip in strips
                 ],
                 *bottom_padding,
+            ]
+
+        return strips
+
+
+@rich.repr.auto
+class LinePadding(Visual):
+    """A Visual to pad another visual."""
+
+    def __init__(self, visual: Visual, pad_left: int = 0, pad_right: int = 0) -> None:
+        """
+
+        Args:
+            Visual: A Visual.
+            spacing: A Spacing object containing desired padding dimensions.
+        """
+        self._visual = visual
+        self._pad_left = pad_left
+        self._pad_right = pad_right
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._visual
+        yield "pad_left", self._pad_left, 0
+        yield "pad_right", self._pad_right, 0
+
+    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
+        return (
+            self._visual.get_optimal_width(rules, container_width)
+            + self._pad_left
+            + self._pad_right
+        )
+
+    def get_height(self, rules: RulesMap, width: int) -> int:
+        return self._visual.get_height(rules, width - self._pad_left - self._pad_right)
+
+    def render_strips(
+        self,
+        rules: RulesMap,
+        width: int,
+        height: int | None,
+        style: Style,
+        selection: Selection | None = None,
+        selection_style: Style | None = None,
+    ) -> list[Strip]:
+        left = self._pad_left
+        right = self._pad_right
+        render_width = width - (left + right)
+        if render_width <= 0:
+            return []
+
+        strips = self._visual.render_strips(
+            rules,
+            render_width,
+            height,
+            style,
+            selection,
+            selection_style,
+        )
+        if left or right:
+            rich_style = style.rich_style
+            strips = [
+                strip.crop_pad(render_width, left, right, rich_style)
+                for strip in strips
             ]
 
         return strips

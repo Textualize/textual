@@ -1069,6 +1069,7 @@ class StylesBuilder:
     process_row_span = _process_integer
     process_grid_size_columns = _process_integer
     process_grid_size_rows = _process_integer
+    process_line_pad = _process_integer
 
     def process_grid_gutter(self, name: str, tokens: list[Token]) -> None:
         if not tokens:

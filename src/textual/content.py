@@ -436,7 +436,8 @@ class Content(Visual):
             A width in cells.
 
         """
-        width = max(cell_len(line) for line in self.plain.split("\n"))
+        line_pad = rules.get("line_pad", 0) * 2
+        width = max(cell_len(line) + line_pad for line in self.plain.split("\n"))
         return width
 
     def get_height(self, rules: RulesMap, width: int) -> int:
@@ -449,8 +450,9 @@ class Content(Visual):
         Returns:
             A height in lines.
         """
+        line_pad = rules.get("line_pad", 0) * 2
         lines = self.without_spans._wrap_and_format(
-            width,
+            width - line_pad,
             overflow=rules.get("text_overflow", "fold"),
             no_wrap=rules.get("text_wrap", "wrap") == "nowrap",
         )
@@ -462,6 +464,7 @@ class Content(Visual):
         align: TextAlign = "left",
         overflow: TextOverflow = "fold",
         no_wrap: bool = False,
+        line_pad: int = 0,
         tab_size: int = 8,
         selection: Selection | None = None,
         selection_style: Style | None = None,
@@ -511,15 +514,22 @@ class Content(Visual):
                     new_lines = [content_line]
             else:
                 content_line = _FormattedLine(line, width, y=y, align=align)
-                offsets = divide_line(line.plain, width, fold=overflow == "fold")
+                offsets = divide_line(
+                    line.plain, width - line_pad * 2, fold=overflow == "fold"
+                )
                 divided_lines = content_line.content.divide(offsets)
                 divided_lines = [
-                    line.truncate(width, ellipsis=overflow == "ellipsis")
+                    line.rstrip().truncate(width, ellipsis=overflow == "ellipsis")
                     for line in divided_lines
                 ]
+
                 new_lines = [
                     _FormattedLine(
-                        content.rstrip_end(width), width, offset, y, align=align
+                        content.rstrip_end(width).pad(line_pad, line_pad),
+                        width,
+                        offset,
+                        y,
+                        align=align,
                     )
                     for content, offset in zip(divided_lines, [0, *offsets])
                 ]
@@ -555,11 +565,13 @@ class Content(Visual):
         if not width:
             return []
 
+        get_rule = rules.get
         lines = self._wrap_and_format(
             width,
-            align=rules.get("text_align", "left"),
-            overflow=rules.get("text_overflow", "fold"),
-            no_wrap=rules.get("text_wrap", "wrap") == "nowrap",
+            align=get_rule("text_align", "left"),
+            overflow=get_rule("text_overflow", "fold"),
+            no_wrap=get_rule("text_wrap", "wrap") == "nowrap",
+            line_pad=get_rule("line_pad", 0),
             tab_size=8,
             selection=selection,
             selection_style=selection_style,
@@ -887,6 +899,34 @@ class Content(Visual):
             )
         return self
 
+    def pad(self, left: int, right: int, character: str = " ") -> Content:
+        """Pad both the left and right edges with a given number of characters.
+
+        Args:
+            left (int): Number of characters to pad on the left.
+            right (int): Number of characters to pad on the right.
+            character (str, optional): Character to pad with. Defaults to " ".
+        """
+        assert len(character) == 1, "Character must be a string of length 1"
+        if left or right:
+            text = f"{character * left}{self.plain}{character * right}"
+            _Span = Span
+            if left:
+                spans = [
+                    _Span(start + left, end + left, style)
+                    for start, end, style in self._spans
+                ]
+            else:
+                spans = self._spans
+            content = Content(
+                text,
+                spans,
+                None if self._cell_length is None else self._cell_length + left + right,
+            )
+            return content
+
+        return self
+
     def center(self, width: int, ellipsis: bool = False) -> Content:
         """Align a line to the center.
 
@@ -900,7 +940,7 @@ class Content(Visual):
         content = self.rstrip().truncate(width, ellipsis=ellipsis)
         left = (width - content.cell_length) // 2
         right = width - left
-        content = content.pad_left(left).pad_right(right)
+        content = content.pad(left, right)
         return content
 
     def right(self, width: int, ellipsis: bool = False) -> Content:

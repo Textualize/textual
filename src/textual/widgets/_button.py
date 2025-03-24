@@ -10,7 +10,6 @@ from rich.text import TextType
 from typing_extensions import Literal, Self
 
 from textual import events
-from textual.visual import Padding
 
 if TYPE_CHECKING:
     from textual.app import RenderResult
@@ -20,9 +19,8 @@ from rich.style import Style
 from textual.binding import Binding
 from textual.content import Content, ContentText
 from textual.css._error_tools import friendly_list
-from textual.geometry import Size, Spacing
+from textual.geometry import Size
 from textual.message import Message
-from textual.pad import HorizontalPad
 from textual.reactive import reactive
 from textual.widget import Widget
 
@@ -60,6 +58,7 @@ class Button(Widget, can_focus=True):
         text-align: center;
         content-align: center middle;
         text-style: bold;
+        line-pad: 1;
 
         &:disabled {            
             text-opacity: 0.6;
@@ -249,18 +248,7 @@ class Button(Widget, can_focus=True):
 
     def render(self) -> RenderResult:
         assert isinstance(self.label, Content)
-
-        return Padding(self.label, Spacing.unpack((0, 1)))
-
-        label = self.label.copy()
-        label.stylize_before(self.rich_style)
-        return HorizontalPad(
-            label,
-            1,
-            1,
-            self.rich_style,
-            self._get_justify_method() or "center",
-        )
+        return self.label
 
     def post_render(
         self, renderable: RenderableType, base_style: Style
