@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, cast
 import rich.repr
 from rich.cells import cell_len
 from rich.console import ConsoleRenderable, RenderableType
-from rich.text import TextType
 from typing_extensions import Literal, Self
 
 from textual import events
@@ -297,7 +296,7 @@ class Button(Widget, can_focus=True):
     @classmethod
     def success(
         cls,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -330,7 +329,7 @@ class Button(Widget, can_focus=True):
     @classmethod
     def warning(
         cls,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -363,7 +362,7 @@ class Button(Widget, can_focus=True):
     @classmethod
     def error(
         cls,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
