@@ -135,7 +135,7 @@ class Visual(ABC):
         """
 
     @abstractmethod
-    def get_optimal_width(self, rules: RulesMap) -> int:
+    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
         """Get optimal width of the Visual to display its content.
 
         The exact definition of "optimal width" is dependant on the Visual, but
@@ -144,6 +144,8 @@ class Visual(ABC):
 
         Args:
             rules: A mapping of style rules, such as the Widgets `styles` object.
+            container_width: The width of the container, used by Rich Renderables.
+                May be ignored for Textual Visuals.
 
         Returns:
             A width in cells.
@@ -255,9 +257,11 @@ class RichVisual(Visual):
             )
         return self._measurement
 
-    def get_optimal_width(self, rules: RulesMap) -> int:
+    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
         console = active_app.get().console
-        width = measure(console, self._renderable, console.size.width)
+        width = measure(
+            console, self._renderable, container_width, container_width=container_width
+        )
         return width
 
     def get_height(self, rules: RulesMap, width: int) -> int:
@@ -330,8 +334,10 @@ class Padding(Visual):
         yield self._visual
         yield self._spacing
 
-    def get_optimal_width(self, rules: RulesMap) -> int:
-        return self._visual.get_optimal_width(rules) + self._spacing.width
+    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
+        return (
+            self._visual.get_optimal_width(rules, container_width) + self._spacing.width
+        )
 
     def get_height(self, rules: RulesMap, width: int) -> int:
         return (

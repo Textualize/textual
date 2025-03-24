@@ -419,7 +419,7 @@ class Content(Visual):
             return False
         return self.spans == content.spans
 
-    def get_optimal_width(self, rules: RulesMap) -> int:
+    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
         """Get optimal width of the Visual to display its content.
 
         The exact definition of "optimal width" is dependant on the Visual, but

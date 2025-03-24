@@ -797,7 +797,7 @@ class OptionList(ScrollView, can_focus=True):
         container_width = container.width
         width = (
             max(
-                get_visual_from_index(index).get_optimal_width(styles)
+                get_visual_from_index(index).get_optimal_width(styles, container_width)
                 for index in range(len(self.options))
             )
             + padding.width
