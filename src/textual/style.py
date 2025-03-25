@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from marshal import dumps, loads
+from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, Mapping
 
 import rich.repr
@@ -21,6 +22,23 @@ from textual.color import Color
 
 if TYPE_CHECKING:
     from textual.css.styles import StylesBase
+
+
+_get_hash_attributes = attrgetter(
+    "background",
+    "foreground",
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "underline2",
+    "reverse",
+    "strike",
+    "blink",
+    "link",
+    "auto_color",
+    "_meta",
+)
 
 
 @rich.repr.auto(angular=True)
@@ -81,23 +99,8 @@ class Style:
 
     @cached_property
     def hash(self) -> int:
-        return hash(
-            (
-                self.background,
-                self.foreground,
-                self.bold,
-                self.dim,
-                self.italic,
-                self.underline,
-                self.underline2,
-                self.reverse,
-                self.strike,
-                self.blink,
-                self.link,
-                self.auto_color,
-                self._meta,
-            )
-        )
+        """A hash of the style's attributes."""
+        return hash(_get_hash_attributes(self))
 
     def __hash__(self) -> int:
         return self.hash
