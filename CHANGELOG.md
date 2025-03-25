@@ -16,12 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
-- Added text-padding style
+- Added text-padding style https://github.com/Textualize/textual/pull/5657
+- Added `Content.first_line` property https://github.com/Textualize/textual/pull/5657
 
 ## Changed
 
 - Assigned names to Textual-specific threads: `textual-input`, `textual-output`. These should become visible in monitoring tools (ps, top, htop) as of Python 3.14. https://github.com/Textualize/textual/pull/5654
-- Tabs now accept Content or content markup
+- Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
 
 ## [2.1.2] - 2025-02-26
 
