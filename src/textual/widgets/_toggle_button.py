@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from rich.console import RenderableType
-from rich.text import Text
 
 from textual.binding import Binding, BindingType
 from textual.content import Content, ContentText
@@ -184,32 +183,17 @@ class ToggleButton(Static, can_focus=True):
             The content to render for the widget.
         """
         button = self._button
-        label = self._label.stylize(self.get_visual_style("toggle--label"))
-        # label.stylize_before(self.get_component_rich_style("toggle--label"))
+        label_style = self.get_visual_style("toggle--label")
+        label = self._label.stylize_before(label_style)
         spacer = " " if label else ""
 
         if self._button_first:
-            return Content.assemble(button, spacer, label)
+            content = Content.assemble(button, spacer, label)
         else:
-            return Content.assemble(label, spacer, button)
+            content = Content.assemble(label, spacer, button)
 
-        return Content.assemble(
-            *(
-                (button, spacer, label)
-                if self._button_first
-                else (label, spacer, button)
-            )
-        )
-
-        return Text.assemble(
-            *(
-                (button, spacer, label)
-                if self._button_first
-                else (label, spacer, button)
-            ),
-            no_wrap=True,
-            overflow="ellipsis",
-        )
+        # content = content.stylize_before(self.get_visual_style("toggle--label"))
+        return content
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return (

@@ -1106,7 +1106,7 @@ class Widget(DOMNode):
                 else:
                     text_background = background
                 if has_rule("color"):
-                    color = styles.color
+                    color = styles.color.multiply_alpha(styles.text_opacity)
                 style += styles.text_style
                 if has_rule("auto_color") and styles.auto_color:
                     color = text_background.get_contrast_text(color.a)

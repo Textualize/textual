@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Assigned names to Textual-specific threads: `textual-input`, `textual-output`. These should become visible in monitoring tools (ps, top, htop) as of Python 3.14. https://github.com/Textualize/textual/pull/5654
 - Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
+- Buttons will now use Textual markup rather than console markup
 
 ## [2.1.2] - 2025-02-26
 
