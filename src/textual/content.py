@@ -504,7 +504,7 @@ class Content(Visual):
         for y, line in enumerate(self.split(allow_blank=True)):
 
             if post_style is not None:
-                line.stylize(post_style)
+                line = line.stylize(post_style)
 
             if selection_style is not None and (span := get_span(y)) is not None:
                 start, end = span
