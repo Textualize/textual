@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed click selection not being disabled when allow_select was set to false https://github.com/Textualize/textual/issues/5627
 - Fixed crash on clicking line API border https://github.com/Textualize/textual/pull/5641
 - Fixed additional spaces after text-wrapping https://github.com/Textualize/textual/pull/5657
+- Added missing `scroll_end` parameter to the `Log.write_line` method https://github.com/Textualize/textual/pull/5672
 
 ### Added
 
