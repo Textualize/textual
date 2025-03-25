@@ -8,11 +8,11 @@ from typing import Callable, ClassVar, Generic, Iterable, TypeVar, cast
 from rich.repr import Result
 from rich.segment import Segment
 from rich.style import Style
-from rich.text import Text, TextType
 from typing_extensions import Self
 
 from textual import events
 from textual.binding import Binding
+from textual.content import Content, ContentText
 from textual.messages import Message
 from textual.strip import Strip
 from textual.widgets._option_list import (
@@ -39,7 +39,7 @@ class Selection(Generic[SelectionType], Option):
 
     def __init__(
         self,
-        prompt: TextType,
+        prompt: ContentText,
         value: SelectionType,
         initial_state: bool = False,
         id: str | None = None,
@@ -54,10 +54,9 @@ class Selection(Generic[SelectionType], Option):
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
-        if isinstance(prompt, str):
-            prompt = Text.from_markup(prompt, overflow="ellipsis")
-        prompt.no_wrap = True
-        super().__init__(prompt.split()[0], id, disabled)
+
+        selection_prompt = Content.from_text(prompt)
+        super().__init__(selection_prompt.split()[0], id, disabled)
         self._value: SelectionType = value
         """The value associated with the selection."""
         self._initial_state: bool = initial_state
@@ -102,6 +101,8 @@ class SelectionList(Generic[SelectionType], OptionList):
     DEFAULT_CSS = """
     SelectionList {
         height: auto;
+        text-wrap: nowrap;
+        text-overflow: ellipsis;
         
         & > .selection-list--button {
             color: $panel-darken-2;
@@ -213,8 +214,8 @@ class SelectionList(Generic[SelectionType], OptionList):
     def __init__(
         self,
         *selections: Selection[SelectionType]
-        | tuple[TextType, SelectionType]
-        | tuple[TextType, SelectionType, bool],
+        | tuple[ContentText, SelectionType]
+        | tuple[ContentText, SelectionType, bool],
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -440,8 +441,8 @@ class SelectionList(Generic[SelectionType], OptionList):
         self,
         selection: (
             Selection[SelectionType]
-            | tuple[TextType, SelectionType]
-            | tuple[TextType, SelectionType, bool]
+            | tuple[ContentText, SelectionType]
+            | tuple[ContentText, SelectionType, bool]
         ),
     ) -> Selection[SelectionType]:
         """Turn incoming selection data into a `Selection` instance.
@@ -461,7 +462,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         if isinstance(selection, tuple):
             if len(selection) == 2:
                 selection = cast(
-                    "tuple[TextType, SelectionType, bool]", (*selection, False)
+                    "tuple[ContentText, SelectionType, bool]", (*selection, False)
                 )
             elif len(selection) != 3:
                 raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
@@ -626,8 +627,8 @@ class SelectionList(Generic[SelectionType], OptionList):
         items: Iterable[
             OptionListContent
             | Selection[SelectionType]
-            | tuple[TextType, SelectionType]
-            | tuple[TextType, SelectionType, bool]
+            | tuple[ContentText, SelectionType]
+            | tuple[ContentText, SelectionType, bool]
         ],
     ) -> Self:
         """Add new selection options to the end of the list.
@@ -654,7 +655,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                 cleaned_options.append(
                     self._make_selection(
                         cast(
-                            "tuple[TextType, SelectionType] | tuple[TextType, SelectionType, bool]",
+                            "tuple[ContentText, SelectionType] | tuple[ContentText, SelectionType, bool]",
                             item,
                         )
                     )
@@ -681,8 +682,8 @@ class SelectionList(Generic[SelectionType], OptionList):
         item: (
             OptionListContent
             | Selection
-            | tuple[TextType, SelectionType]
-            | tuple[TextType, SelectionType, bool]
+            | tuple[ContentText, SelectionType]
+            | tuple[ContentText, SelectionType, bool]
         ) = None,
     ) -> Self:
         """Add a new selection option to the end of the list.

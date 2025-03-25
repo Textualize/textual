@@ -8,15 +8,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from rich.console import RenderableType
-from rich.style import Style
-from rich.text import Text, TextType
 
-from textual.app import RenderResult
 from textual.binding import Binding, BindingType
+from textual.content import Content, ContentText
 from textual.events import Click
 from textual.geometry import Size
 from textual.message import Message
 from textual.reactive import reactive
+from textual.style import Style
 from textual.widgets._static import Static
 
 if TYPE_CHECKING:
@@ -59,6 +58,8 @@ class ToggleButton(Static, can_focus=True):
         border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
+        text-wrap: nowrap;
+        text-overflow: ellipsis;
 
         & > .toggle--button {
             color: $panel-darken-2;
@@ -101,7 +102,7 @@ class ToggleButton(Static, can_focus=True):
 
     def __init__(
         self,
-        label: TextType = "",
+        label: ContentText = "",
         value: bool = False,
         button_first: bool = True,
         *,
@@ -132,76 +133,72 @@ class ToggleButton(Static, can_focus=True):
         if tooltip is not None:
             self.tooltip = tooltip
 
-    def _make_label(self, label: TextType) -> Text:
-        """Make a `Text` label from a `TextType` value.
+    def _make_label(self, label: ContentText) -> Content:
+        """Make label content.
 
         Args:
             label: The source value for the label.
 
         Returns:
-            A `Text` rendering of the label for use in the button.
+            A `Content` rendering of the label for use in the button.
         """
-        label = Text.from_markup(label) if isinstance(label, str) else label
-        try:
-            # Only use the first line if it's a multi-line label.
-            label = label.split()[0]
-        except IndexError:
-            pass
-
+        label = Content.from_text(label).first_line
         return label
 
     @property
-    def label(self) -> Text:
+    def label(self) -> Content:
         """The label associated with the button."""
         return self._label
 
     @label.setter
-    def label(self, label: TextType) -> None:
+    def label(self, label: ContentText) -> None:
         self._label = self._make_label(label)
         self.refresh(layout=True)
 
     @property
-    def _button(self) -> Text:
+    def _button(self) -> Content:
         """The button, reflecting the current value."""
 
         # Grab the button style.
-        button_style = self.get_component_rich_style("toggle--button")
+        button_style = self.get_visual_style("toggle--button")
 
         # Building the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
         # BUTTON_LEFT and BUTTON_RIGHT.
-        side_style = Style.from_color(
-            button_style.bgcolor, self.background_colors[1].rich_color
+        side_style = Style(
+            foreground=button_style.background,
+            background=self.background_colors[1],
         )
 
-        return Text.assemble(
+        return Content.assemble(
             (self.BUTTON_LEFT, side_style),
             (self.BUTTON_INNER, button_style),
             (self.BUTTON_RIGHT, side_style),
         )
 
-    def render(self) -> RenderResult:
+    def render(self) -> Content:
         """Render the content of the widget.
 
         Returns:
             The content to render for the widget.
         """
         button = self._button
-        label = self._label.copy()
-        label.stylize_before(self.get_component_rich_style("toggle--label"))
+        label_style = self.get_visual_style("toggle--label")
+        label = self._label.stylize_before(label_style)
         spacer = " " if label else ""
-        return Text.assemble(
-            *(
-                (button, spacer, label)
-                if self._button_first
-                else (label, spacer, button)
-            ),
-            no_wrap=True,
-            overflow="ellipsis",
-        )
+
+        if self._button_first:
+            content = Content.assemble(button, spacer, label)
+        else:
+            content = Content.assemble(label, spacer, button)
+        return content
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        return self._button.cell_len + (1 if self._label else 0) + self._label.cell_len
+        return (
+            self._button.get_optimal_width(self.styles, 0)
+            + (1 if self._label else 0)
+            + self._label.get_optimal_width(self.styles, 0)
+        )
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1

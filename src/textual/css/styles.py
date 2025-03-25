@@ -204,6 +204,8 @@ class RulesMap(TypedDict, total=False):
     text_wrap: TextWrap
     text_overflow: TextOverflow
 
+    line_pad: int
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -243,6 +245,7 @@ class StylesBase:
         "link_background_hover",
         "text_wrap",
         "text_overflow",
+        "line_pad",
     }
 
     node: DOMNode | None = None
@@ -489,6 +492,8 @@ class StylesBase:
     text_overflow: StringEnumProperty[TextOverflow] = StringEnumProperty(
         VALID_TEXT_OVERFLOW, "fold"
     )
+    line_pad = IntegerProperty(default=0, layout=True)
+    """Padding added to left and right of lines."""
 
     def __textual_animation__(
         self,
@@ -1284,6 +1289,8 @@ class Styles(StylesBase):
             append_declaration("text-wrap", self.text_wrap)
         if "text_overflow" in rules:
             append_declaration("text-overflow", self.text_overflow)
+        if "line_pad" in rules:
+            append_declaration("line-pad", str(self.line_pad))
         lines.sort()
         return lines
 

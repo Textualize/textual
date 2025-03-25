@@ -12,15 +12,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Static and Label now accept Content objects, satisfying type checkers https://github.com/Textualize/textual/pull/5618
 - Fixed click selection not being disabled when allow_select was set to false https://github.com/Textualize/textual/issues/5627
 - Fixed crash on clicking line API border https://github.com/Textualize/textual/pull/5641
+- Fixed additional spaces after text-wrapping https://github.com/Textualize/textual/pull/5657
 - Added missing `scroll_end` parameter to the `Log.write_line` method https://github.com/Textualize/textual/pull/5672
 
 ### Added
 
 - Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
+- Added text-padding style https://github.com/Textualize/textual/pull/5657
+- Added `Content.first_line` property https://github.com/Textualize/textual/pull/5657
+- Added `Content.from_text` constructor https://github.com/Textualize/textual/pull/5657
+- Added `Content.empty` constructor https://github.com/Textualize/textual/pull/5657
+- Added `Content.pad` method https://github.com/Textualize/textual/pull/5657
+- Added `Style.has_transparent_foreground` property https://github.com/Textualize/textual/pull/5657
 
 ## Changed
 
 - Assigned names to Textual-specific threads: `textual-input`, `textual-output`. These should become visible in monitoring tools (ps, top, htop) as of Python 3.14. https://github.com/Textualize/textual/pull/5654
+- Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
+- Buttons will now use Textual markup rather than console markup
 
 ## [2.1.2] - 2025-02-26
 

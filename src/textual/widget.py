@@ -1106,7 +1106,7 @@ class Widget(DOMNode):
                 else:
                     text_background = background
                 if has_rule("color"):
-                    color = styles.color
+                    color = styles.color.multiply_alpha(styles.text_opacity)
                 style += styles.text_style
                 if has_rule("auto_color") and styles.auto_color:
                     color = text_background.get_contrast_text(color.a)
@@ -1130,7 +1130,7 @@ class Widget(DOMNode):
     @overload
     def render_str(self, text_content: Content) -> Content: ...
 
-    def render_str(self, text_content: str | Content) -> Content | Text:
+    def render_str(self, text_content: str | Content) -> Content:
         """Convert str into a [Content][textual.content.Content] instance.
 
         If you pass in an existing Content instance it will be returned unaltered.
@@ -1660,7 +1660,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         visual = self._render()
-        width = visual.get_optimal_width(self, container.width)
+        width = visual.get_optimal_width(self.styles, container.width)
 
         if self.expand:
             width = max(container.width, width)
@@ -3871,6 +3871,7 @@ class Widget(DOMNode):
             bold=style.bold,
             dim=style.dim,
             italic=style.italic,
+            reverse=style.reverse,
             underline=style.underline,
             strike=style.strike,
         )
