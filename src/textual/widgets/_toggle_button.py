@@ -191,8 +191,6 @@ class ToggleButton(Static, can_focus=True):
             content = Content.assemble(button, spacer, label)
         else:
             content = Content.assemble(label, spacer, button)
-
-        # content = content.stylize_before(self.get_visual_style("toggle--label"))
         return content
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
