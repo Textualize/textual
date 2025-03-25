@@ -134,7 +134,7 @@ STYLE_ABBREVIATIONS = {
     "d": "dim",
     "i": "italic",
     "u": "underline",
-    "uu": "underline",
+    "uu": "underline2",
     "r": "reverse",
     "s": "strike",
 }
