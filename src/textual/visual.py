@@ -119,6 +119,7 @@ class Visual(ABC):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         """Render the Visual into an iterable of strips.
 
@@ -129,6 +130,7 @@ class Visual(ABC):
             style: The base style to render on top of.
             selection: Selection information, if applicable, otherwise `None`.
             selection_style: Selection style if `selection` is not `None`.
+            post_style: Optional style to apply post render.
 
         Returns:
             An list of Strips.
@@ -174,6 +176,7 @@ class Visual(ABC):
         style: Style,
         *,
         pad: bool = False,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         """High level function to render a visual to strips.
 
@@ -184,6 +187,7 @@ class Visual(ABC):
             height: Desired height (in lines) or `None` for no limit.
             style: A (Visual) Style instance.
             pad: Pad to desired width?
+            post_style: Optional Style to apply to strips after rendering.
 
         Returns:
             A list of Strips containing the render.
@@ -292,6 +296,7 @@ class RichVisual(Visual):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         console = active_app.get().console
         options = console.options.update(
@@ -353,6 +358,7 @@ class Padding(Visual):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         padding = self._spacing
         top, right, bottom, left = self._spacing

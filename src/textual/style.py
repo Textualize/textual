@@ -307,7 +307,7 @@ class Style:
         )
 
     @classmethod
-    def from_meta(cls, meta: dict[str, str]) -> Style:
+    def from_meta(cls, meta: Mapping[str, Any]) -> Style:
         """Create a Visual Style containing meta information.
 
         Args:

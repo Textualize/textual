@@ -101,6 +101,8 @@ class SelectionList(Generic[SelectionType], OptionList):
     DEFAULT_CSS = """
     SelectionList {
         height: auto;
+        text-wrap: nowrap;
+        text-overflow: ellipsis;
         
         & > .selection-list--button {
             color: $panel-darken-2;

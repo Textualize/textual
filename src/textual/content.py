@@ -476,6 +476,7 @@ class Content(Visual):
         tab_size: int = 8,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[_FormattedLine]:
         """Wraps the text and applies formatting.
 
@@ -501,6 +502,10 @@ class Content(Visual):
                 return None
 
         for y, line in enumerate(self.split(allow_blank=True)):
+
+            if post_style is not None:
+                line.stylize(post_style)
+
             if selection_style is not None and (span := get_span(y)) is not None:
                 start, end = span
                 if end == -1:
@@ -560,6 +565,7 @@ class Content(Visual):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         """Render the visual into an iterable of strips. Part of the Visual protocol.
 
@@ -570,6 +576,7 @@ class Content(Visual):
             style: The base style to render on top of.
             selection: Selection information, if applicable, otherwise `None`.
             selection_style: Selection style if `selection` is not `None`.
+            post_style: Style | None = None,
 
         Returns:
             An list of Strips.
@@ -588,6 +595,7 @@ class Content(Visual):
             tab_size=8,
             selection=selection,
             selection_style=selection_style,
+            post_style=post_style,
         )
 
         if height is not None:
