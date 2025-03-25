@@ -134,11 +134,11 @@ class Style:
         if self.underline is not None:
             output_append("underline" if self.underline else "not underline")
         if self.underline2 is not None:
-            output_append("underline2" if self.underline else "not underline2")
+            output_append("underline2" if self.underline2 else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
         if self.blink is not None:
-            output_append("blink" if self.strike else "not blink")
+            output_append("blink" if self.blink else "not blink")
         if self.link is not None:
             if "'" not in self.link:
                 output_append(f"link='{self.link}'")
@@ -180,7 +180,7 @@ class Style:
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
         if self.blink is not None:
-            output_append("blink" if self.strike else "not blink")
+            output_append("blink" if self.blink else "not blink")
         if self.link is not None:
             output_append("link")
         if self._meta is not None:
