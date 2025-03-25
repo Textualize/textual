@@ -41,6 +41,7 @@ class Style:
     underline2: bool | None = None
     reverse: bool | None = None
     strike: bool | None = None
+    blink: bool | None = None
     link: str | None = None
     _meta: bytes | None = None
     auto_color: bool = False
@@ -55,6 +56,7 @@ class Style:
         yield "underline2", self.underline2, None
         yield "reverse", self.reverse, None
         yield "strike", self.strike, None
+        yield "blink", self.blink, None
         yield "link", self.link, None
 
         if self._meta is not None:
@@ -72,6 +74,7 @@ class Style:
             and self.underline2 is None
             and self.reverse is None
             and self.strike is None
+            and self.blink is None
             and self.link is None
             and self._meta is None
         )
@@ -89,6 +92,7 @@ class Style:
                 self.underline2,
                 self.reverse,
                 self.strike,
+                self.blink,
                 self.link,
                 self.auto_color,
                 self._meta,
@@ -130,6 +134,8 @@ class Style:
             output_append("underline2" if self.underline else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
+        if self.blink is not None:
+            output_append("blink" if self.strike else "not blink")
         if self.link is not None:
             if "'" not in self.link:
                 output_append(f"link='{self.link}'")
@@ -170,6 +176,8 @@ class Style:
             output_append("underline2" if self.underline2 else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
+        if self.blink is not None:
+            output_append("blink" if self.strike else "not blink")
         if self.link is not None:
             output_append("link")
         if self._meta is not None:
@@ -200,6 +208,7 @@ class Style:
                 self.underline2 if other.underline2 is None else other.underline2,
                 self.reverse if other.reverse is None else other.reverse,
                 self.strike if other.strike is None else other.strike,
+                self.blink if other.blink is None else other.blink,
                 self.link if other.link is None else other.link,
                 (
                     dumps({**self.meta, **other.meta})
@@ -287,6 +296,7 @@ class Style:
             underline2=rich_style.underline2,
             reverse=rich_style.reverse,
             strike=rich_style.strike,
+            blink=rich_style.blink,
             link=rich_style.link,
             _meta=rich_style._meta,
         )
@@ -347,6 +357,7 @@ class Style:
             underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
+            blink=self.blink,
             link=self.link,
             meta=None if self._meta is None else self.meta,
         )
@@ -374,6 +385,7 @@ class Style:
             underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
+            blink=self.blink,
             link=self.link,
             meta={**self.meta, "offset": (x, y)},
         )
@@ -389,6 +401,7 @@ class Style:
             underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
+            blink=self.blink,
             link=self.link,
             _meta=self._meta,
         )
