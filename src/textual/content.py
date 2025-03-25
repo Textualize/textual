@@ -332,7 +332,7 @@ class Content(Visual):
 
     @classmethod
     def assemble(
-        cls, *parts: str | Content | tuple[str, str], end: str = ""
+        cls, *parts: str | Content | tuple[str, str | Style], end: str = ""
     ) -> Content:
         """Construct new content from string, content, or tuples of (TEXT, STYLE).
 
@@ -648,6 +648,13 @@ class Content(Visual):
     def without_spans(self) -> Content:
         """The content with no spans"""
         return Content(self.plain, [], self._cell_length)
+
+    @property
+    def first_line(self) -> Content:
+        """The first line of the content."""
+        if "\n" not in self.plain:
+            return self
+        return self[: self.plain.index("\n")]
 
     def __getitem__(self, slice: int | slice) -> Content:
         def get_text_at(offset: int) -> "Content":

@@ -254,3 +254,10 @@ def test_content_from_text():
     assert isinstance(content4, Content)
     assert content4.plain == "[bold]Hello World"
     assert content4.spans == []
+
+
+def test_first_line():
+    content = Content("foo\nbar").stylize("red")
+    first_line = content.first_line
+    assert first_line.plain == "foo"
+    assert first_line.spans == [Span(0, 3, "red")]
