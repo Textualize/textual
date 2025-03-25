@@ -195,16 +195,21 @@ class Log(ScrollView, can_focus=True):
             self.scroll_end(animate=False, immediate=True, x_axis=False)
         return self
 
-    def write_line(self, line: str) -> Self:
+    def write_line(
+        self,
+        line: str,
+        scroll_end: bool | None = None,
+    ) -> Self:
         """Write content on a new line.
 
         Args:
             line: String to write to the log.
+            scroll_end: Scroll to the end after writing, or `None` to use `self.auto_scroll`.
 
         Returns:
             The `Log` instance.
         """
-        self.write_lines([line])
+        self.write_lines([line], scroll_end)
         return self
 
     def write_lines(
