@@ -38,6 +38,7 @@ class Style:
     dim: bool | None = None
     italic: bool | None = None
     underline: bool | None = None
+    underline2: bool | None = None
     reverse: bool | None = None
     strike: bool | None = None
     link: str | None = None
@@ -51,6 +52,7 @@ class Style:
         yield "dim", self.dim, None
         yield "italic", self.italic, None
         yield "underline", self.underline, None
+        yield "underline2", self.underline2, None
         yield "reverse", self.reverse, None
         yield "strike", self.strike, None
         yield "link", self.link, None
@@ -67,6 +69,7 @@ class Style:
             and self.dim is None
             and self.italic is None
             and self.underline is None
+            and self.underline2 is None
             and self.reverse is None
             and self.strike is None
             and self.link is None
@@ -83,6 +86,7 @@ class Style:
                 self.dim,
                 self.italic,
                 self.underline,
+                self.underline2,
                 self.reverse,
                 self.strike,
                 self.link,
@@ -122,6 +126,8 @@ class Style:
             output_append("italic" if self.italic else "not italic")
         if self.underline is not None:
             output_append("underline" if self.underline else "not underline")
+        if self.underline2 is not None:
+            output_append("underline2" if self.underline else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
         if self.link is not None:
@@ -160,6 +166,8 @@ class Style:
             output_append("italic" if self.italic else "not italic")
         if self.underline is not None:
             output_append("underline" if self.underline else "not underline")
+        if self.underline2 is not None:
+            output_append("underline2" if self.underline2 else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
         if self.link is not None:
@@ -189,6 +197,7 @@ class Style:
                 self.dim if other.dim is None else other.dim,
                 self.italic if other.italic is None else other.italic,
                 self.underline if other.underline is None else other.underline,
+                self.underline2 if other.underline2 is None else other.underline2,
                 self.reverse if other.reverse is None else other.reverse,
                 self.strike if other.strike is None else other.strike,
                 self.link if other.link is None else other.link,
@@ -275,6 +284,7 @@ class Style:
             dim=rich_style.dim,
             italic=rich_style.italic,
             underline=rich_style.underline,
+            underline2=rich_style.underline2,
             reverse=rich_style.reverse,
             strike=rich_style.strike,
             link=rich_style.link,
@@ -301,6 +311,7 @@ class Style:
             dim=text_style.italic,
             italic=text_style.italic,
             underline=text_style.underline,
+            underline2=text_style.underline2,
             reverse=text_style.reverse,
             strike=text_style.strike,
             auto_color=styles.auto_color,
@@ -333,6 +344,7 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
             link=self.link,
@@ -359,6 +371,7 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
             link=self.link,
@@ -373,6 +386,7 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
             link=self.link,
@@ -383,6 +397,11 @@ class Style:
     def background_style(self) -> Style:
         """Just the background color, with no other attributes."""
         return Style(self.background, _meta=self._meta)
+
+    @property
+    def has_transparent_foreground(self) -> bool:
+        """Is the foreground transparent (or not set)?"""
+        return self.foreground is None or self.foreground.a == 0
 
     @classmethod
     def combine(cls, styles: Iterable[Style]) -> Style:
