@@ -25,15 +25,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Content.empty` constructor https://github.com/Textualize/textual/pull/5657
 - Added `Content.pad` method https://github.com/Textualize/textual/pull/5657
 - Added `Style.has_transparent_foreground` property https://github.com/Textualize/textual/pull/5657
+- DOMNode.query now accepts UnionType for selector in Python 3.10 and above, e.g. `self.query(Input | Select )` https://github.com/Textualize/textual/pull/5578
 
 ## Changed
 
 - Assigned names to Textual-specific threads: `textual-input`, `textual-output`. These should become visible in monitoring tools (ps, top, htop) as of Python 3.14. https://github.com/Textualize/textual/pull/5654
 - Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
 - Buttons will now use Textual markup rather than console markup
-
-### Changed
-
 - tree-sitter languages are now loaded lazily, improving cold-start time https://github.com/Textualize/textual/pull/5639
 
 ## [2.1.2] - 2025-02-26
@@ -68,7 +66,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `pointer_x`, `pointer_y`, `pointer_screen_x`, and `pointer_screen_y` attributes to mouse events https://github.com/Textualize/textual/pull/5556
-- DOMNode.query now accepts UnionType for selector, e.g. `self.query(Input | Select )` https://github.com/Textualize/textual/pull/5578
 
 ### Changed
 
