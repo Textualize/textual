@@ -32,6 +32,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
 - Buttons will now use Textual markup rather than console markup
 
+### Changed
+
+- tree-sitter languages are now loaded lazily, improving cold-start time https://github.com/Textualize/textual/pull/5639
+
 ## [2.1.2] - 2025-02-26
 
 ### Fixed
