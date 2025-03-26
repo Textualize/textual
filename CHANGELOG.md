@@ -68,6 +68,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `pointer_x`, `pointer_y`, `pointer_screen_x`, and `pointer_screen_y` attributes to mouse events https://github.com/Textualize/textual/pull/5556
+- DOMNode.query now accepts UnionType for selector, e.g. `self.query(Input | Select )` https://github.com/Textualize/textual/pull/5578
 
 ### Changed
 
