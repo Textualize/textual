@@ -293,71 +293,68 @@ class SimpleApp(App):
         yield Input(id="input2")
 
 
-@pytest.fixture
-async def simple_app():
-    """Async fixture for SimpleApp."""
-    app = SimpleApp()
-    async with app.run_test():  # Use async with for compatibility with older versions
-        yield app
-
-
-@pytest.mark.asyncio
-async def test_query_union_type(simple_app: SimpleApp):
+async def test_query_union_type():
     # Test with a UnionType
-    results = simple_app.query(Input | Select)
-    assert len(results) == 3
-    assert {w.id for w in results} == {"input1", "select1", "input2"}
+    simple_app = SimpleApp()
+    async with simple_app.run_test():
+        results = simple_app.query(Input | Select)
+        assert len(results) == 3
+        assert {w.id for w in results} == {"input1", "select1", "input2"}
 
-    # Test with a single type
-    results2 = simple_app.query(Input)
-    assert len(results2) == 2
-    assert {w.id for w in results2} == {"input1", "input2"}
+        # Test with a single type
+        results2 = simple_app.query(Input)
+        assert len(results2) == 2
+        assert {w.id for w in results2} == {"input1", "input2"}
 
-    # Test with string selector
-    results3 = simple_app.query("#input1")
-    assert len(results3) == 1
-    assert results3[0].id == "input1"
+        # Test with string selector
+        results3 = simple_app.query("#input1")
+        assert len(results3) == 1
+        assert results3[0].id == "input1"
 
 
-@pytest.mark.asyncio
-async def test_query_nested_unions(simple_app: SimpleApp):
+async def test_query_nested_unions():
     """Test handling of nested unions."""
-    # Create nested union types
-    InputOrSelect = Input | Select
-    InputSelectOrStatic = InputOrSelect | Static
 
-    # Test nested union query
-    results = simple_app.query(InputSelectOrStatic)
+    simple_app = SimpleApp()
+    async with simple_app.run_test():
+        # Create nested union types
+        InputOrSelect = Input | Select
+        InputSelectOrStatic = InputOrSelect | Static
 
-    # Verify that we find all our explicitly defined widgets
-    widget_ids = {w.id for w in results if w.id is not None}
-    expected_ids = {"input1", "select1", "static1", "input2"}
-    assert expected_ids.issubset(widget_ids), "Not all expected widgets were found"
+        # Test nested union query
+        results = simple_app.query(InputSelectOrStatic)
 
-    # Verify we get the right types of widgets
-    assert all(isinstance(w, (Input, Select, Static)) for w in results), (
-        "Found unexpected widget types"
-    )
+        # Verify that we find all our explicitly defined widgets
+        widget_ids = {w.id for w in results if w.id is not None}
+        expected_ids = {"input1", "select1", "static1", "input2"}
+        assert expected_ids.issubset(widget_ids), "Not all expected widgets were found"
 
-    # Verify each expected widget appears exactly once
-    for expected_id in expected_ids:
-        matching_widgets = [w for w in results if w.id == expected_id]
-        assert len(matching_widgets) == 1, (
-            f"Widget with id {expected_id} should appear exactly once"
-        )
+        # Verify we get the right types of widgets
+        assert all(
+            isinstance(w, (Input, Select, Static)) for w in results
+        ), "Found unexpected widget types"
+
+        # Verify each expected widget appears exactly once
+        for expected_id in expected_ids:
+            matching_widgets = [w for w in results if w.id == expected_id]
+            assert (
+                len(matching_widgets) == 1
+            ), f"Widget with id {expected_id} should appear exactly once"
 
 
-@pytest.mark.asyncio
-async def test_query_empty_union(simple_app: SimpleApp):
+async def test_query_empty_union():
     """Test querying with empty or invalid unions."""
 
     class AnotherWidget(Widget):
         pass
 
-    # Test with a type that exists but has no matches
-    results = simple_app.query(AnotherWidget)
-    assert len(results) == 0
+    simple_app = SimpleApp()
+    async with simple_app.run_test():
 
-    # Test with widget union that has no matches
-    results = simple_app.query(AnotherWidget | AnotherWidget)
-    assert len(results) == 0
+        # Test with a type that exists but has no matches
+        results = simple_app.query(AnotherWidget)
+        assert len(results) == 0
+
+        # Test with widget union that has no matches
+        results = simple_app.query(AnotherWidget | AnotherWidget)
+        assert len(results) == 0
