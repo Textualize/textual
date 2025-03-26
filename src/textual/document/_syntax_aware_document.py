@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
+from typing import ContextManager
+
 try:
     from tree_sitter import Language, Node, Parser, Query, Tree
 
@@ -10,6 +13,35 @@ except ImportError:
 
 from textual._tree_sitter import BUILTIN_LANGUAGES
 from textual.document._document import Document, EditResult, Location, _utf8_encode
+
+
+@contextmanager
+def temporary_query_point_range(
+    query: Query,
+    start_point: tuple[int, int] | None,
+    end_point: tuple[int, int] | None,
+) -> ContextManager[None]:
+    """Temporarily change the start and/or end point for a tree-sitter Query.
+
+    Args:
+        query: The tree-sitter Query.
+        start_point: The (row, column byte) to start the query at.
+        end_point: The (row, column byte) to end the query at.
+    """
+    # Note: Although not documented for the tree-sitter Python API, an
+    # end-point of (0, 0) means 'end of document'.
+    default_point_range = [(0, 0), (0, 0)]
+
+    point_range = list(default_point_range)
+    if start_point is not None:
+        point_range[0] = start_point
+    if end_point is not None:
+        point_range[1] = end_point
+    query.set_point_range(point_range)
+    try:
+        yield None
+    finally:
+        query.set_point_range(default_point_range)
 
 
 class SyntaxAwareDocumentError(Exception):
@@ -128,14 +160,8 @@ class SyntaxAwareDocument(Document):
                 "tree-sitter is not available on this architecture."
             )
 
-        captures_kwargs = {}
-        if start_point is not None:
-            captures_kwargs["start_point"] = start_point
-        if end_point is not None:
-            captures_kwargs["end_point"] = end_point
-
-        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
-        return captures
+        with temporary_query_point_range(query, start_point, end_point):
+            return query.captures(self._syntax_tree.root_node)
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
