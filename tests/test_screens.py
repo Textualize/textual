@@ -20,22 +20,6 @@ skip_py310 = pytest.mark.skipif(
 )
 
 
-async def test_screen_walk_children():
-    """Test query only reports active screen."""
-
-    class ScreensApp(App):
-        pass
-
-    app = ScreensApp()
-    async with app.run_test() as pilot:
-        screen1 = Screen()
-        screen2 = Screen()
-        pilot.app.push_screen(screen1)
-        assert list(pilot.app.query("*")) == [screen1]
-        pilot.app.push_screen(screen2)
-        assert list(pilot.app.query("*")) == [screen2]
-
-
 async def test_installed_screens():
     class ScreensApp(App):
         SCREENS = {

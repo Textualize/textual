@@ -119,12 +119,22 @@ class StyleTokenizer(TokenizerState):
     }
 
 
-STYLES = {"bold", "dim", "italic", "underline", "reverse", "strike"}
+STYLES = {
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "underline2",
+    "reverse",
+    "strike",
+    "blink",
+}
 STYLE_ABBREVIATIONS = {
     "b": "bold",
     "d": "dim",
     "i": "italic",
     "u": "underline",
+    "uu": "underline2",
     "r": "reverse",
     "s": "strike",
 }

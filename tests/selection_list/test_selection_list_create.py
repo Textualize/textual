@@ -9,7 +9,6 @@ changed or wrapped in some way.
 from __future__ import annotations
 
 import pytest
-from rich.text import Text
 
 from textual.app import App, ComposeResult
 from textual.widgets import SelectionList
@@ -44,16 +43,16 @@ async def test_get_selection_by_index() -> None:
     async with SelectionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(SelectionList)
         for n in range(5):
-            assert option_list.get_option_at_index(n).prompt == Text(str(n))
-        assert option_list.get_option_at_index(-1).prompt == Text("4")
+            assert str(option_list.get_option_at_index(n).prompt) == str(n)
+        assert str(option_list.get_option_at_index(-1).prompt) == "4"
 
 
 async def test_get_selection_by_id() -> None:
     """It should be possible to get a selection by ID."""
     async with SelectionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(SelectionList)
-        assert option_list.get_option("3").prompt == Text("3")
-        assert option_list.get_option("4").prompt == Text("4")
+        assert str(option_list.get_option("3").prompt) == "3"
+        assert str(option_list.get_option("4").prompt) == "4"
 
 
 async def test_add_later() -> None:

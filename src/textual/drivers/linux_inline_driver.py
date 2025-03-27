@@ -237,7 +237,7 @@ class LinuxInlineDriver(Driver):
 
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
-        self._key_thread = Thread(target=self._run_input_thread)
+        self._key_thread = Thread(target=self._run_input_thread, name="textual-input")
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()

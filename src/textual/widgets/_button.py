@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, cast
 import rich.repr
 from rich.cells import cell_len
 from rich.console import ConsoleRenderable, RenderableType
-from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from textual import events
@@ -17,10 +16,10 @@ if TYPE_CHECKING:
 from rich.style import Style
 
 from textual.binding import Binding
+from textual.content import Content, ContentText
 from textual.css._error_tools import friendly_list
 from textual.geometry import Size
 from textual.message import Message
-from textual.pad import HorizontalPad
 from textual.reactive import reactive
 from textual.widget import Widget
 
@@ -58,6 +57,7 @@ class Button(Widget, can_focus=True):
         text-align: center;
         content-align: center middle;
         text-style: bold;
+        line-pad: 1;
 
         &:disabled {            
             text-opacity: 0.6;
@@ -154,7 +154,7 @@ class Button(Widget, can_focus=True):
 
     BINDINGS = [Binding("enter", "press", "Press button", show=False)]
 
-    label: reactive[TextType] = reactive[TextType]("")
+    label: reactive[ContentText] = reactive[ContentText](Content.empty)
     """The text label that appears within the button."""
 
     variant = reactive("default", init=False)
@@ -182,7 +182,7 @@ class Button(Widget, can_focus=True):
 
     def __init__(
         self,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         variant: ButtonVariant = "default",
         *,
         name: str | None = None,
@@ -209,7 +209,7 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = label
+        self.label = Content.from_text(label)
         self.variant = variant
         self.action = action
         self.active_effect_duration = 0.2
@@ -219,6 +219,7 @@ class Button(Widget, can_focus=True):
             self.tooltip = tooltip
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
+        assert isinstance(self.label, Content)
         try:
             return max([cell_len(line) for line in self.label.plain.splitlines()]) + 2
         except ValueError:
@@ -240,23 +241,13 @@ class Button(Widget, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    def validate_label(self, label: TextType) -> Text:
+    def validate_label(self, label: ContentText) -> Content:
         """Parse markup for self.label"""
-        if isinstance(label, str):
-            return Text.from_markup(label)
-        return label
+        return Content.from_text(label)
 
     def render(self) -> RenderResult:
-        assert isinstance(self.label, Text)
-        label = self.label.copy()
-        label.stylize_before(self.rich_style)
-        return HorizontalPad(
-            label,
-            1,
-            1,
-            self.rich_style,
-            self._get_justify_method() or "center",
-        )
+        assert isinstance(self.label, Content)
+        return self.label
 
     def post_render(
         self, renderable: RenderableType, base_style: Style
@@ -305,7 +296,7 @@ class Button(Widget, can_focus=True):
     @classmethod
     def success(
         cls,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -338,7 +329,7 @@ class Button(Widget, can_focus=True):
     @classmethod
     def warning(
         cls,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -371,7 +362,7 @@ class Button(Widget, can_focus=True):
     @classmethod
     def error(
         cls,
-        label: TextType | None = None,
+        label: ContentText | None = None,
         *,
         name: str | None = None,
         id: str | None = None,

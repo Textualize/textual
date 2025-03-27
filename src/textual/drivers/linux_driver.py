@@ -276,7 +276,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
 
         self.flush()
-        self._key_thread = Thread(target=self._run_input_thread)
+        self._key_thread = Thread(target=self._run_input_thread, name="textual-input")
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()

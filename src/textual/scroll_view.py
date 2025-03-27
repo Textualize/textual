@@ -33,13 +33,15 @@ class ScrollView(ScrollableContainer):
         return True
 
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
-        if self.show_horizontal_scrollbar and old_value != new_value:
+        if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = new_value
+        if round(old_value) != round(new_value):
             self.refresh()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
-        if self.show_vertical_scrollbar and (old_value) != (new_value):
+        if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = new_value
+        if round(old_value) != round(new_value):
             self.refresh()
 
     def on_mount(self):
@@ -174,7 +176,6 @@ class ScrollView(ScrollableContainer):
             y_start: First line to refresh.
             line_count: Total number of lines to refresh.
         """
-
         refresh_region = Region(
             0,
             y_start - self.scroll_offset.y,

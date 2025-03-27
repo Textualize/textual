@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from marshal import dumps, loads
+from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, Mapping
 
 import rich.repr
@@ -21,6 +22,23 @@ from textual.color import Color
 
 if TYPE_CHECKING:
     from textual.css.styles import StylesBase
+
+
+_get_hash_attributes = attrgetter(
+    "background",
+    "foreground",
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "underline2",
+    "reverse",
+    "strike",
+    "blink",
+    "link",
+    "auto_color",
+    "_meta",
+)
 
 
 @rich.repr.auto(angular=True)
@@ -38,8 +56,10 @@ class Style:
     dim: bool | None = None
     italic: bool | None = None
     underline: bool | None = None
+    underline2: bool | None = None
     reverse: bool | None = None
     strike: bool | None = None
+    blink: bool | None = None
     link: str | None = None
     _meta: bytes | None = None
     auto_color: bool = False
@@ -51,8 +71,10 @@ class Style:
         yield "dim", self.dim, None
         yield "italic", self.italic, None
         yield "underline", self.underline, None
+        yield "underline2", self.underline2, None
         yield "reverse", self.reverse, None
         yield "strike", self.strike, None
+        yield "blink", self.blink, None
         yield "link", self.link, None
 
         if self._meta is not None:
@@ -67,29 +89,18 @@ class Style:
             and self.dim is None
             and self.italic is None
             and self.underline is None
+            and self.underline2 is None
             and self.reverse is None
             and self.strike is None
+            and self.blink is None
             and self.link is None
             and self._meta is None
         )
 
     @cached_property
     def hash(self) -> int:
-        return hash(
-            (
-                self.background,
-                self.foreground,
-                self.bold,
-                self.dim,
-                self.italic,
-                self.underline,
-                self.reverse,
-                self.strike,
-                self.link,
-                self.auto_color,
-                self._meta,
-            )
-        )
+        """A hash of the style's attributes."""
+        return hash(_get_hash_attributes(self))
 
     def __hash__(self) -> int:
         return self.hash
@@ -122,8 +133,12 @@ class Style:
             output_append("italic" if self.italic else "not italic")
         if self.underline is not None:
             output_append("underline" if self.underline else "not underline")
+        if self.underline2 is not None:
+            output_append("underline2" if self.underline2 else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
+        if self.blink is not None:
+            output_append("blink" if self.blink else "not blink")
         if self.link is not None:
             if "'" not in self.link:
                 output_append(f"link='{self.link}'")
@@ -160,8 +175,12 @@ class Style:
             output_append("italic" if self.italic else "not italic")
         if self.underline is not None:
             output_append("underline" if self.underline else "not underline")
+        if self.underline2 is not None:
+            output_append("underline2" if self.underline2 else "not underline2")
         if self.strike is not None:
             output_append("strike" if self.strike else "not strike")
+        if self.blink is not None:
+            output_append("blink" if self.blink else "not blink")
         if self.link is not None:
             output_append("link")
         if self._meta is not None:
@@ -189,8 +208,10 @@ class Style:
                 self.dim if other.dim is None else other.dim,
                 self.italic if other.italic is None else other.italic,
                 self.underline if other.underline is None else other.underline,
+                self.underline2 if other.underline2 is None else other.underline2,
                 self.reverse if other.reverse is None else other.reverse,
                 self.strike if other.strike is None else other.strike,
+                self.blink if other.blink is None else other.blink,
                 self.link if other.link is None else other.link,
                 (
                     dumps({**self.meta, **other.meta})
@@ -275,8 +296,10 @@ class Style:
             dim=rich_style.dim,
             italic=rich_style.italic,
             underline=rich_style.underline,
+            underline2=rich_style.underline2,
             reverse=rich_style.reverse,
             strike=rich_style.strike,
+            blink=rich_style.blink,
             link=rich_style.link,
             _meta=rich_style._meta,
         )
@@ -301,13 +324,14 @@ class Style:
             dim=text_style.italic,
             italic=text_style.italic,
             underline=text_style.underline,
+            underline2=text_style.underline2,
             reverse=text_style.reverse,
             strike=text_style.strike,
             auto_color=styles.auto_color,
         )
 
     @classmethod
-    def from_meta(cls, meta: dict[str, str]) -> Style:
+    def from_meta(cls, meta: Mapping[str, Any]) -> Style:
         """Create a Visual Style containing meta information.
 
         Args:
@@ -333,8 +357,10 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
+            blink=self.blink,
             link=self.link,
             meta=None if self._meta is None else self.meta,
         )
@@ -359,8 +385,10 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
+            blink=self.blink,
             link=self.link,
             meta={**self.meta, "offset": (x, y)},
         )
@@ -373,8 +401,10 @@ class Style:
             dim=self.dim,
             italic=self.italic,
             underline=self.underline,
+            underline2=self.underline2,
             reverse=self.reverse,
             strike=self.strike,
+            blink=self.blink,
             link=self.link,
             _meta=self._meta,
         )
@@ -383,6 +413,11 @@ class Style:
     def background_style(self) -> Style:
         """Just the background color, with no other attributes."""
         return Style(self.background, _meta=self._meta)
+
+    @property
+    def has_transparent_foreground(self) -> bool:
+        """Is the foreground transparent (or not set)?"""
+        return self.foreground is None or self.foreground.a == 0
 
     @classmethod
     def combine(cls, styles: Iterable[Style]) -> Style:
