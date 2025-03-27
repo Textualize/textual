@@ -4003,7 +4003,6 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-
         if layout:
             self._layout_required = True
             for ancestor in self.ancestors:
