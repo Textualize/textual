@@ -900,6 +900,9 @@ class Compositor:
         x -= region.x + gutter_left
         y -= region.y + gutter_right
 
+        if y < 0:
+            return None, None
+
         visible_screen_stack.set(widget.app._background_screens)
         line = widget.render_line(y)
 

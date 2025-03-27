@@ -502,6 +502,8 @@ class Widget(DOMNode):
         """Used to cache :odd pseudoclass state."""
         self._last_scroll_time = monotonic()
         """Time of last scroll."""
+        self._user_scroll_interrupt: bool = False
+        """Has the user interrupted a scroll to end?"""
 
     @property
     def is_mounted(self) -> bool:
@@ -648,6 +650,22 @@ class Widget(DOMNode):
     def text_selection(self) -> Selection | None:
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
+
+    def preflight_checks(self) -> None:
+        """Called in debug mode to do preflight checks.
+
+        This is used by Textual to log some common errors, but you could implement this
+        in custom widgets to perform additional checks.
+
+        """
+
+        if hasattr(self, "CSS"):
+            from textual.screen import Screen
+
+            if not isinstance(self, Screen):
+                self.log.warning(
+                    f"'{self.__class__.__name__}.CSS' will be ignored (use 'DEFAULT_CSS' class variable for widgets)"
+                )
 
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).
@@ -1088,7 +1106,7 @@ class Widget(DOMNode):
                 else:
                     text_background = background
                 if has_rule("color"):
-                    color = styles.color
+                    color = styles.color.multiply_alpha(styles.text_opacity)
                 style += styles.text_style
                 if has_rule("auto_color") and styles.auto_color:
                     color = text_background.get_contrast_text(color.a)
@@ -1112,7 +1130,7 @@ class Widget(DOMNode):
     @overload
     def render_str(self, text_content: Content) -> Content: ...
 
-    def render_str(self, text_content: str | Content) -> Content | Text:
+    def render_str(self, text_content: str | Content) -> Content:
         """Convert str into a [Content][textual.content.Content] instance.
 
         If you pass in an existing Content instance it will be returned unaltered.
@@ -1473,6 +1491,8 @@ class Widget(DOMNode):
                 tie_breaker=tie_breaker,
                 scope=scope,
             )
+        if app.debug:
+            app.call_next(self.preflight_checks)
 
     def _get_box_model(
         self,
@@ -1640,7 +1660,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         visual = self._render()
-        width = visual.get_optimal_width(self, container.width)
+        width = visual.get_optimal_width(self.styles, container.width)
 
         if self.expand:
             width = max(container.width, width)
@@ -2424,6 +2444,9 @@ class Widget(DOMNode):
             if on_complete is not None:
                 self.call_next(on_complete)
 
+        if y is not None and maybe_scroll_y and y >= self.max_scroll_y:
+            self._user_scroll_interrupt = False
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -2546,6 +2569,11 @@ class Widget(DOMNode):
         Note:
             The call to scroll is made after the next refresh.
         """
+        animator = self.app.animator
+        if x is not None:
+            animator.force_stop_animation(self, "scroll_x")
+        if y is not None:
+            animator.force_stop_animation(self, "scroll_y")
         if immediate:
             self._scroll_to(
                 x,
@@ -2688,8 +2716,19 @@ class Widget(DOMNode):
             y_axis: Allow scrolling on Y axis?
 
         """
+
+        if self._user_scroll_interrupt and not force:
+            # Do not scroll to end if a user action has interrupted scrolling
+            return
+
         if speed is None and duration is None:
             duration = 1.0
+
+        async def scroll_end_on_complete() -> None:
+            """It's possible new content was added before we reached the end."""
+            self.scroll_y = self.max_scroll_y
+            if on_complete is not None:
+                self.call_next(on_complete)
 
         # In most cases we'd call self.scroll_to and let it handle the call
         # to do things after a refresh, but here we need the refresh to
@@ -2707,7 +2746,7 @@ class Widget(DOMNode):
                 duration=duration,
                 easing=easing,
                 force=force,
-                on_complete=on_complete,
+                on_complete=scroll_end_on_complete,
                 level=level,
             )
 
@@ -3832,6 +3871,7 @@ class Widget(DOMNode):
             bold=style.bold,
             dim=style.dim,
             italic=style.italic,
+            reverse=style.reverse,
             underline=style.underline,
             strike=style.strike,
         )
@@ -4293,10 +4333,11 @@ class Widget(DOMNode):
 
     async def _on_click(self, event: events.Click) -> None:
         if event.widget is self:
-            if event.chain == 2:
-                self.text_select_all()
-            elif event.chain == 3 and self.parent is not None:
-                self.select_container.text_select_all()
+            if self.allow_select and self.screen.allow_select and self.app.ALLOW_SELECT:
+                if event.chain == 2:
+                    self.text_select_all()
+                elif event.chain == 3 and self.parent is not None:
+                    self.select_container.text_select_all()
 
         await self.broker_event("click", event)
 
@@ -4450,6 +4491,7 @@ class Widget(DOMNode):
     def action_scroll_home(self) -> None:
         if not self._allow_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_home(x_axis=self.scroll_y == 0)
 
@@ -4457,6 +4499,7 @@ class Widget(DOMNode):
         if not self._allow_scroll:
             raise SkipAction()
         self._clear_anchor()
+        self._user_scroll_interrupt = False
         self.scroll_end(x_axis=self.scroll_y == self.is_vertical_scroll_end)
 
     def action_scroll_left(self) -> None:
@@ -4474,24 +4517,28 @@ class Widget(DOMNode):
     def action_scroll_up(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_up()
 
     def action_scroll_down(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_down()
 
     def action_page_down(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_page_down()
 
     def action_page_up(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._user_scroll_interrupt = True
         self._clear_anchor()
         self.scroll_page_up()
 

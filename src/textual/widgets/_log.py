@@ -191,24 +191,25 @@ class Log(ScrollView, can_focus=True):
             self._prune_max_lines()
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
-        if (
-            auto_scroll
-            and not self.is_vertical_scrollbar_grabbed
-            and is_vertical_scroll_end
-        ):
+        if auto_scroll:
             self.scroll_end(animate=False, immediate=True, x_axis=False)
         return self
 
-    def write_line(self, line: str) -> Self:
+    def write_line(
+        self,
+        line: str,
+        scroll_end: bool | None = None,
+    ) -> Self:
         """Write content on a new line.
 
         Args:
             line: String to write to the log.
+            scroll_end: Scroll to the end after writing, or `None` to use `self.auto_scroll`.
 
         Returns:
             The `Log` instance.
         """
-        self.write_lines([line])
+        self.write_lines([line], scroll_end)
         return self
 
     def write_lines(

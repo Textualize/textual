@@ -7,10 +7,53 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
 ### Changed
 
 - Breaking change: `App.query` and friends will now always query the default (first) screen, not necessarily the active screen.
 - Content now has a default argument of an empty string, so `Content()` is equivalent to `Content("")`
+- Assigned names to Textual-specific threads: `textual-input`, `textual-output`. These should become visible in monitoring tools (ps, top, htop) as of Python 3.14. https://github.com/Textualize/textual/pull/5654
+- Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
+- Buttons will now use Textual markup rather than console markup
+- tree-sitter languages are now loaded lazily, improving cold-start time https://github.com/Textualize/textual/pull/563
+
+### Fixed
+
+- Static and Label now accept Content objects, satisfying type checkers https://github.com/Textualize/textual/pull/5618
+- Fixed click selection not being disabled when allow_select was set to false https://github.com/Textualize/textual/issues/5627
+- Fixed crash on clicking line API border https://github.com/Textualize/textual/pull/5641
+- Fixed additional spaces after text-wrapping https://github.com/Textualize/textual/pull/5657
+- Added missing `scroll_end` parameter to the `Log.write_line` method https://github.com/Textualize/textual/pull/5672
+- Restored support for blink https://github.com/Textualize/textual/pull/5675
+
+### Added
+
+- Added Widget.preflight_checks to perform some debug checks after a widget is instantiated, to catch common errors. https://github.com/Textualize/textual/pull/5588
+- Added text-padding style https://github.com/Textualize/textual/pull/5657
+- Added `Content.first_line` property https://github.com/Textualize/textual/pull/5657
+- Added `Content.from_text` constructor https://github.com/Textualize/textual/pull/5657
+- Added `Content.empty` constructor https://github.com/Textualize/textual/pull/5657
+- Added `Content.pad` method https://github.com/Textualize/textual/pull/5657
+- Added `Style.has_transparent_foreground` property https://github.com/Textualize/textual/pull/5657
+
+
+## [2.1.2] - 2025-02-26
+
+### Fixed
+
+- Fixed command palette fuzzy search bailing too early https://github.com/Textualize/textual/pull/5579
+
+## [2.1.1] - 2025-02-22
+
+### Fixed
+
+- Fixed `Link` binding to open the link https://github.com/Textualize/textual/issues/5564
+- Fixed IndexError in OptionList https://github.com/Textualize/textual/pull/5574
+- Fixed issue with clear_panes breaking tabbed content https://github.com/Textualize/textual/pull/5573
+
+## Changed
+
+- The user can now interrupt a scroll to end by grabbing the scrollbar or scrolling in any other way. Press ++end++ or scroll to the end to restore default behavior. This is more intuitive that it may sound.
 
 ## [2.1.0] - 2025-02-19
 
@@ -97,11 +140,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: OptionList no longer supports `Separator`, a separator may be specified with `None`
-- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable. 
+- Implemented smooth (pixel perfect) scrolling on supported terminals. Set `TEXTUAL_SMOOTH_SCROLL=0` to disable.
 
 ### Removed
 
-- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipses`)
+- Breaking change: Removed `wrap` argument from OptionList (use CSS `text-wrap: nowrap; text-overflow: ellipsis`)
 - Breaking change: Removed `tooltip` argument from OptionList. Use `tooltip` attribute or `with_tooltip(...)` method.
 
 ## [1.0.0] - 2024-12-12
@@ -2768,6 +2811,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[2.1.2]: https://github.com/Textualize/textual/compare/v2.1.1...v2.1.2
+[2.1.1]: https://github.com/Textualize/textual/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Textualize/textual/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/Textualize/textual/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/Textualize/textual/compare/v2.0.2...v2.0.3

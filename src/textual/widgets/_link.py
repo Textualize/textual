@@ -20,7 +20,7 @@ class Link(Static, can_focus=True):
     }
     """
 
-    BINDINGS = [Binding("enter", "select", "Open link")]
+    BINDINGS = [Binding("enter", "open_link", "Open link")]
     """
     | Key(s) | Description |
     | :- | :- |

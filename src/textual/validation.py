@@ -110,7 +110,7 @@ class Failure:
 
 
 class Validator(ABC):
-    """Base class for the validation of string values.
+    '''Base class for the validation of string values.
 
     Commonly used in conjunction with the `Input` widget, which accepts a
     list of validators via its constructor. This validation framework can also be used to validate any 'stringly-typed'
@@ -120,13 +120,18 @@ class Validator(ABC):
 
     Example:
         ```python
+        def is_palindrome(value: str) -> bool:
+            """Check has string has the same code points left to right, as right to left."""
+            return value == value[::-1]
+
         class Palindrome(Validator):
             def validate(self, value: str) -> ValidationResult:
-                def is_palindrome(value: str) -> bool:
-                    return value == value[::-1]
-                return self.success() if is_palindrome(value) else self.failure("Not palindrome!")
+                if is_palindrome(value):
+                    return self.success()
+                else:
+                    return self.failure("Not a palindrome!")
         ```
-    """
+    '''
 
     def __init__(self, failure_description: str | None = None) -> None:
         self.failure_description = failure_description
@@ -142,11 +147,13 @@ class Validator(ABC):
     def validate(self, value: str) -> ValidationResult:
         """Validate the value and return a ValidationResult describing the outcome of the validation.
 
+        Implement this method when defining custom validators.
+
         Args:
             value: The value to validate.
 
         Returns:
-            The result of the validation.
+            The result of the validation ([`self.success()`][textual.validation.Validator.success) or [`self.failure(...)`][textual.validation.Validator.failure]).
         """
 
     def describe_failure(self, failure: Failure) -> str | None:
@@ -172,8 +179,7 @@ class Validator(ABC):
     def success(self) -> ValidationResult:
         """Shorthand for `ValidationResult(True)`.
 
-        You can return success() from a `Validator.validate` method implementation to signal
-        that validation has succeeded.
+        Return `self.success()` from [`validate()`][textual.validation.Validator.validate] to indicated that validation *succeeded*.
 
         Returns:
             A ValidationResult indicating validation succeeded.
@@ -188,7 +194,7 @@ class Validator(ABC):
     ) -> ValidationResult:
         """Shorthand for signaling validation failure.
 
-        You can return failure(...) from a `Validator.validate` implementation to signal validation succeeded.
+        Return `self.failure(...)` from [`validate()`][textual.validation.Validator.validate] to indicated that validation *failed*.
 
         Args:
             description: The failure description that will be used. When used in conjunction with the Input widget,

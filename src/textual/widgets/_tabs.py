@@ -1,28 +1,27 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 import rich.repr
 from rich.style import Style
-from rich.text import Text, TextType
+from rich.text import Text
 
 from textual import events
 from textual.app import ComposeResult, RenderResult
 from textual.await_complete import AwaitComplete
 from textual.binding import Binding, BindingType
 from textual.containers import Container, Horizontal, Vertical
+from textual.content import Content, ContentText
 from textual.css.query import NoMatches
 from textual.events import Mount
 from textual.geometry import Offset
 from textual.message import Message
 from textual.reactive import reactive
 from textual.renderables.bar import Bar
+from textual.visual import VisualType
 from textual.widget import Widget
 from textual.widgets import Static
-
-if TYPE_CHECKING:
-    from textual.content import Content, ContentType
 
 
 class Underline(Widget):
@@ -150,7 +149,7 @@ class Tab(Static):
 
     def __init__(
         self,
-        label: ContentType,
+        label: ContentText,
         *,
         id: str | None = None,
         classes: str | None = None,
@@ -167,7 +166,7 @@ class Tab(Static):
         super().__init__(id=id, classes=classes, disabled=disabled)
         self._label: Content
         # Setter takes Text or str
-        self.label = label  # type: ignore[assignment]
+        self.label = Content.from_text(label)
 
     @property
     def label(self) -> Content:
@@ -175,13 +174,13 @@ class Tab(Static):
         return self._label
 
     @label.setter
-    def label(self, label: ContentType) -> None:
-        self._label = self.render_str(label)
+    def label(self, label: ContentText) -> None:
+        self._label = Content.from_text(label)
         self.update(self._label)
 
-    def update(self, content: ContentType = "") -> None:
+    def update(self, content: VisualType = "") -> None:
         self.post_message(self.Relabelled(self))
-        return super().update(self.render_str(content))
+        return super().update(content)
 
     @property
     def label_text(self) -> str:
@@ -347,7 +346,7 @@ class Tabs(Widget, can_focus=True):
 
     def __init__(
         self,
-        *tabs: Tab | TextType,
+        *tabs: Tab | ContentText,
         active: str | None = None,
         name: str | None = None,
         id: str | None = None,
@@ -369,7 +368,7 @@ class Tabs(Widget, can_focus=True):
         add_tabs = [
             (
                 Tab(tab, id=f"tab-{self._new_tab_id}")
-                if isinstance(tab, (str, Text))
+                if isinstance(tab, (str, Content, Text))
                 else self._auto_tab_id(tab)
             )
             for tab in tabs
@@ -435,7 +434,7 @@ class Tabs(Widget, can_focus=True):
 
     def add_tab(
         self,
-        tab: Tab | str | Text,
+        tab: Tab | ContentText,
         *,
         before: Tab | str | None = None,
         after: Tab | str | None = None,
@@ -487,7 +486,7 @@ class Tabs(Widget, can_focus=True):
         from_empty = self.tab_count == 0
         tab_widget = (
             Tab(tab, id=f"tab-{self._new_tab_id}")
-            if isinstance(tab, (str, Text))
+            if isinstance(tab, (str, Content, Text))
             else self._auto_tab_id(tab)
         )
 
@@ -526,7 +525,7 @@ class Tabs(Widget, can_focus=True):
         underline = self.query_one(Underline)
         underline.highlight_start = 0
         underline.highlight_end = 0
-        self.call_after_refresh(self.post_message, self.Cleared(self))
+        self.post_message(self.Cleared(self))
         self.active = ""
         return AwaitComplete(self.query("#tabs-list > Tab").remove())
 

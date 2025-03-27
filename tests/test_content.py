@@ -3,6 +3,7 @@ from __future__ import annotations
 from rich.text import Text
 
 from textual.content import Content, Span
+from textual.style import Style
 
 
 def test_blank():
@@ -229,3 +230,34 @@ def test_strip_control_codes():
     """Test that control codes are removed from content."""
     assert Content("foo\r\nbar").plain == "foo\nbar"
     assert Content.from_markup("foo\r\nbar").plain == "foo\nbar"
+
+
+def test_content_from_text():
+    # Check markup
+    content1 = Content.from_text("[bold]Hello World")
+    assert isinstance(content1, Content)
+    assert content1.plain == "Hello World"
+    assert content1.spans == [Span(0, 11, "bold")]
+
+    # Check Content is unaltered
+    content2 = Content.from_text(content1)
+    assert content1 is content2
+
+    # Check Text instance is converted to Content
+    content3 = Content.from_text(Text.from_markup("[bold]Hello World"))
+    assert isinstance(content3, Content)
+    assert content3.plain == "Hello World"
+    assert content3.spans == [Span(0, 11, Style(bold=True))]
+
+    # Check markup disabled
+    content4 = Content.from_text("[bold]Hello World", markup=False)
+    assert isinstance(content4, Content)
+    assert content4.plain == "[bold]Hello World"
+    assert content4.spans == []
+
+
+def test_first_line():
+    content = Content("foo\nbar").stylize("red")
+    first_line = content.first_line
+    assert first_line.plain == "foo"
+    assert first_line.spans == [Span(0, 3, "red")]

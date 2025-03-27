@@ -6,13 +6,12 @@ from itertools import zip_longest
 from typing import Awaitable
 
 from rich.repr import Result
-from rich.text import TextType
 from typing_extensions import Final
 
 from textual import events
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
-from textual.content import ContentType
+from textual.content import ContentText, ContentType
 from textual.css.query import NoMatches
 from textual.message import Message
 from textual.reactive import reactive
@@ -79,7 +78,7 @@ class ContentTabs(Tabs):
 
     def __init__(
         self,
-        *tabs: Tab | TextType,
+        *tabs: Tab | ContentText,
         active: str | None = None,
         tabbed_content: TabbedContent,
     ):

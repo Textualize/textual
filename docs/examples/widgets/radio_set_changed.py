@@ -1,3 +1,5 @@
+from rich.text import Text
+
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Label, RadioButton, RadioSet
@@ -18,7 +20,9 @@ class RadioSetChangedApp(App[None]):
                     yield RadioButton("Star Wars: A New Hope")
                     yield RadioButton("The Last Starfighter")
                     yield RadioButton(
-                        "Total Recall :backhand_index_pointing_right: :red_circle:"
+                        Text.from_markup(
+                            "Total Recall :backhand_index_pointing_right: :red_circle:"
+                        )
                     )
                     yield RadioButton("Wing Commander")
             with Horizontal():

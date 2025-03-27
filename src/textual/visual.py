@@ -119,6 +119,7 @@ class Visual(ABC):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         """Render the Visual into an iterable of strips.
 
@@ -129,6 +130,7 @@ class Visual(ABC):
             style: The base style to render on top of.
             selection: Selection information, if applicable, otherwise `None`.
             selection_style: Selection style if `selection` is not `None`.
+            post_style: Optional style to apply post render.
 
         Returns:
             An list of Strips.
@@ -144,7 +146,8 @@ class Visual(ABC):
 
         Args:
             rules: A mapping of style rules, such as the Widgets `styles` object.
-            container_width: The size of the container in cells.
+            container_width: The width of the container, used by Rich Renderables.
+                May be ignored for Textual Visuals.
 
         Returns:
             A width in cells.
@@ -173,6 +176,7 @@ class Visual(ABC):
         style: Style,
         *,
         pad: bool = False,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         """High level function to render a visual to strips.
 
@@ -183,6 +187,7 @@ class Visual(ABC):
             height: Desired height (in lines) or `None` for no limit.
             style: A (Visual) Style instance.
             pad: Pad to desired width?
+            post_style: Optional Style to apply to strips after rendering.
 
         Returns:
             A list of Strips containing the render.
@@ -208,7 +213,7 @@ class Visual(ABC):
 
         if height is None:
             height = len(strips)
-        rich_style = style.rich_style
+        rich_style = (style + Style(reverse=False)).rich_style
         if pad:
             strips = [strip.extend_cell_length(width, rich_style) for strip in strips]
         content_align = widget.styles.content_align
@@ -261,7 +266,6 @@ class RichVisual(Visual):
         width = measure(
             console, self._renderable, container_width, container_width=container_width
         )
-
         return width
 
     def get_height(self, rules: RulesMap, width: int) -> int:
@@ -292,6 +296,7 @@ class RichVisual(Visual):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         console = active_app.get().console
         options = console.options.update(
@@ -340,7 +345,10 @@ class Padding(Visual):
         )
 
     def get_height(self, rules: RulesMap, width: int) -> int:
-        return self._visual.get_height(rules, width) + self._spacing.height
+        return (
+            self._visual.get_height(rules, width - self._spacing.width)
+            + self._spacing.height
+        )
 
     def render_strips(
         self,
@@ -350,6 +358,7 @@ class Padding(Visual):
         style: Style,
         selection: Selection | None = None,
         selection_style: Style | None = None,
+        post_style: Style | None = None,
     ) -> list[Strip]:
         padding = self._spacing
         top, right, bottom, left = self._spacing
