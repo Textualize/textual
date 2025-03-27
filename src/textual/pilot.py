@@ -414,7 +414,7 @@ class Pilot(Generic[ReturnType]):
         elif isinstance(widget, Widget):
             target_widget = widget
         else:
-            target_widget = app.query_one(widget)
+            target_widget = app.screen.query_one(widget)
 
         message_arguments = _get_mouse_message_arguments(
             target_widget,

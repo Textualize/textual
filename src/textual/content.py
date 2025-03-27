@@ -122,7 +122,7 @@ class Content(Visual):
 
     def __init__(
         self,
-        text: str,
+        text: str = "",
         spans: list[Span] | None = None,
         cell_length: int | None = None,
     ) -> None:

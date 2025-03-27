@@ -30,7 +30,7 @@ async def test_compositor_scroll_placements():
                 yield Static("Hello", id="hello")
 
         def on_mount(self) -> None:
-            self.query_one("Screen").scroll_to(20, 0, animate=False)
+            self.screen.scroll_to(20, 0, animate=False)
 
     app = ScrollApp()
     async with app.run_test() as pilot:

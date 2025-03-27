@@ -798,6 +798,9 @@ class App(Generic[ReturnType], DOMNode):
         self.supports_smooth_scrolling: bool = False
         """Does the terminal support smooth scrolling?"""
 
+        self._compose_screen: Screen | None = None
+        """The screen composed by App.compose."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -833,6 +836,10 @@ class App(Generic[ReturnType], DOMNode):
 
         return super().__init_subclass__(*args, **kwargs)
 
+    def _get_dom_base(self) -> DOMNode:
+        """When querying from the app, we want to query the default screen."""
+        return self.default_screen
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
@@ -840,6 +847,11 @@ class App(Generic[ReturnType], DOMNode):
     def validate_sub_title(self, sub_title: Any) -> str:
         """Make sure the subtitle is set to a string."""
         return str(sub_title)
+
+    @property
+    def default_screen(self) -> Screen:
+        """The default screen instance."""
+        return self.screen if self._compose_screen is None else self._compose_screen
 
     @property
     def workers(self) -> WorkerManager:
@@ -3244,6 +3256,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_compose(self) -> None:
         _rich_traceback_omit = True
+        self._compose_screen = self.screen
         try:
             widgets = [*self.screen._nodes, *compose(self)]
         except TypeError as error:
