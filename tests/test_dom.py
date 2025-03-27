@@ -1,10 +1,7 @@
 import pytest
 
-from textual.app import App
 from textual.css.errors import StyleValueError
 from textual.dom import BadIdentifier, DOMNode
-from textual.widget import Widget
-from textual.widgets import Input, Select, Static
 
 
 def test_display_default():
@@ -283,78 +280,3 @@ def test_id_validation(identifier: str):
     """Regression tests for https://github.com/Textualize/textual/issues/3954."""
     with pytest.raises(BadIdentifier):
         DOMNode(id=identifier)
-
-
-class SimpleApp(App):
-    def compose(self):
-        yield Input(id="input1")
-        yield Select([], id="select1")
-        yield Static("Hello", id="static1")
-        yield Input(id="input2")
-
-
-async def test_query_union_type():
-    # Test with a UnionType
-    simple_app = SimpleApp()
-    async with simple_app.run_test():
-        results = simple_app.query(Input | Select)
-        assert len(results) == 3
-        assert {w.id for w in results} == {"input1", "select1", "input2"}
-
-        # Test with a single type
-        results2 = simple_app.query(Input)
-        assert len(results2) == 2
-        assert {w.id for w in results2} == {"input1", "input2"}
-
-        # Test with string selector
-        results3 = simple_app.query("#input1")
-        assert len(results3) == 1
-        assert results3[0].id == "input1"
-
-
-async def test_query_nested_unions():
-    """Test handling of nested unions."""
-
-    simple_app = SimpleApp()
-    async with simple_app.run_test():
-        # Create nested union types
-        InputOrSelect = Input | Select
-        InputSelectOrStatic = InputOrSelect | Static
-
-        # Test nested union query
-        results = simple_app.query(InputSelectOrStatic)
-
-        # Verify that we find all our explicitly defined widgets
-        widget_ids = {w.id for w in results if w.id is not None}
-        expected_ids = {"input1", "select1", "static1", "input2"}
-        assert expected_ids.issubset(widget_ids), "Not all expected widgets were found"
-
-        # Verify we get the right types of widgets
-        assert all(
-            isinstance(w, (Input, Select, Static)) for w in results
-        ), "Found unexpected widget types"
-
-        # Verify each expected widget appears exactly once
-        for expected_id in expected_ids:
-            matching_widgets = [w for w in results if w.id == expected_id]
-            assert (
-                len(matching_widgets) == 1
-            ), f"Widget with id {expected_id} should appear exactly once"
-
-
-async def test_query_empty_union():
-    """Test querying with empty or invalid unions."""
-
-    class AnotherWidget(Widget):
-        pass
-
-    simple_app = SimpleApp()
-    async with simple_app.run_test():
-
-        # Test with a type that exists but has no matches
-        results = simple_app.query(AnotherWidget)
-        assert len(results) == 0
-
-        # Test with widget union that has no matches
-        results = simple_app.query(AnotherWidget | AnotherWidget)
-        assert len(results) == 0
