@@ -7218,6 +7218,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.text_area.BUILTIN_LANGUAGES" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;BUILTIN_LANGUAGES
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.text_area.Highlight" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;Highlight
@@ -13116,6 +13125,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widgets.text_area.BUILTIN_LANGUAGES" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;BUILTIN_LANGUAGES
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widgets.text_area.Highlight" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;Highlight
@@ -16900,12 +16918,11 @@ Styles from the <code>theme</code> attribute take priority.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A list of the names of languages available to the <code>TextArea</code>.</p>
-<p>The values in this list can be assigned to the <code>language</code> reactive attribute
+        <p>A set of the names of languages available to the <code>TextArea</code>.</p>
+<p>The values in this set can be assigned to the <code>language</code> reactive attribute
 of <code>TextArea</code>.</p>
-<p>The returned list contains the builtin languages plus those registered via the
-<code>register_language</code> method. Builtin languages will be listed before
-user-registered languages, but there are no other ordering guarantees.</p>
+<p>The returned set contains the builtin languages installed with the syntax extras,
+plus those registered via the <code>register_language</code> method.</p>
     </div>
 
 </div>
@@ -20979,6 +20996,45 @@ edit.</p>
 
 
 
+<h2 id="textual.widgets.text_area.BUILTIN_LANGUAGES" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">BUILTIN_LANGUAGES</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets.text_area.BUILTIN_LANGUAGES" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BUILTIN_LANGUAGES</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;python&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">&quot;markdown&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">&quot;toml&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="s2">&quot;yaml&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="s2">&quot;html&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">&quot;css&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="s2">&quot;javascript&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="s2">&quot;rust&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="s2">&quot;go&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="s2">&quot;regex&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="s2">&quot;sql&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="s2">&quot;java&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="s2">&quot;bash&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="s2">&quot;xml&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Languages that are included in the <code>syntax</code> extras.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h2 id="textual.widgets.text_area.Highlight" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">Highlight</span>
 
@@ -24854,15 +24910,8 @@ The selection is inclusive of the minimum point and exclusive of the maximum poi
 
 
 
-        <p>A wrapper around a Document which also maintains a tree-sitter syntax
+        <p>A subclass of Document which also maintains a tree-sitter syntax
 tree when the document is edited.</p>
-<p>The primary reason for this split is actually to keep tree-sitter stuff separate,
-since it isn't supported in Python 3.7. By having the tree-sitter code
-isolated in this subclass, it makes it easier to conditionally import. However,
-it does come with other design flaws (e.g. Document is required to have methods
-which only really make sense on SyntaxAwareDocument).</p>
-<p>If you're reading this and Python 3.7 is no longer supported by Textual,
-consider merging this subclass into the <code>Document</code> superclass.</p>
 
 
 
@@ -24898,12 +24947,11 @@ consider merging this subclass into the <code>Document</code> superclass.</p>
 <h3 id="textual.widgets.text_area.SyntaxAwareDocument(language)" class="doc doc-heading doc-heading-parameter">                  <code>language</code>
 <a href="#textual.widgets.text_area.SyntaxAwareDocument(language)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <span title="tree_sitter.Language">Language</span></code>
+                  <code><span title="tree_sitter.Language">Language</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The language to use. You can pass a string to use a supported
-language, or pass in your own tree-sitter <code>Language</code> object.</p>
+                <p>The tree-sitter language to use.</p>
               </div>
             </td>
             <td>
@@ -24942,12 +24990,12 @@ language, or pass in your own tree-sitter <code>Language</code> object.</p>
   </span>
 
 <a href="#textual.widgets.text_area.SyntaxAwareDocument.language" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">language</span> <span class="o">=</span> <span class="n"><span title="textual._tree_sitter.get_language">get_language</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" language (textual.document._syntax_aware_document.SyntaxAwareDocument(language))" href="#textual.widgets.text_area.SyntaxAwareDocument(language)">language</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">language</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" language (textual.document._syntax_aware_document.SyntaxAwareDocument(language))" href="#textual.widgets.text_area.SyntaxAwareDocument(language)">language</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The tree-sitter Language or None if tree-sitter is unavailable.</p>
+        <p>The tree-sitter Language.</p>
     </div>
 
 </div>
