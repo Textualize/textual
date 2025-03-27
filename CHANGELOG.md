@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Static and Label now accept Content objects, satisfying type checkers https://github.com/Textualize/textual/pull/5618
 - Fixed click selection not being disabled when allow_select was set to false https://github.com/Textualize/textual/issues/5627
 - Fixed crash on clicking line API border https://github.com/Textualize/textual/pull/5641
+- Fixed Select.selection now correctly returns None if Select.BLANK is selected instead of an AssertionError
 - Fixed additional spaces after text-wrapping https://github.com/Textualize/textual/pull/5657
 - Added missing `scroll_end` parameter to the `Log.write_line` method https://github.com/Textualize/textual/pull/5672
 - Restored support for blink https://github.com/Textualize/textual/pull/5675
