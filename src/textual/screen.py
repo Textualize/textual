@@ -1306,7 +1306,7 @@ class Screen(Generic[ScreenResultType], Widget):
         inline_height = min(self.app.size.height, inline_height)
         return inline_height
 
-    def _screen_resized(self, size: Size):
+    def _screen_resized(self, size: Size) -> None:
         """Called by App when the screen is resized."""
         if self.stack_updates:
             self._refresh_layout(size)

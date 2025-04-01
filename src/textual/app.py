@@ -2687,6 +2687,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
+            self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         try:
             message_pump = active_message_pump.get()
