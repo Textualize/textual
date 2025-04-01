@@ -6,7 +6,7 @@ from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.containers import Vertical
 from textual.css.parse import parse
-from textual.css.tokenizer import EOFError, TokenError
+from textual.css.tokenizer import TokenError, UnexpectedEnd
 from textual.widgets import Button, Label
 
 
@@ -94,16 +94,16 @@ async def test_rule_declaration_after_nested() -> None:
 @pytest.mark.parametrize(
     ("css", "exception"),
     [
-        ("Selector {", EOFError),
-        ("Selector{ Foo {", EOFError),
-        ("Selector{ Foo {}", EOFError),
+        ("Selector {", UnexpectedEnd),
+        ("Selector{ Foo {", UnexpectedEnd),
+        ("Selector{ Foo {}", UnexpectedEnd),
         ("> {}", TokenError),
         ("&", TokenError),
         ("&&", TokenError),
         ("&.foo", TokenError),
         ("& .foo", TokenError),
         ("{", TokenError),
-        ("*{", EOFError),
+        ("*{", UnexpectedEnd),
     ],
 )
 def test_parse_errors(css: str, exception: type[Exception]) -> None:

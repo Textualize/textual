@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from rich.text import Text
 
 from textual.content import Content, Span
@@ -261,3 +262,14 @@ def test_first_line():
     first_line = content.first_line
     assert first_line.plain == "foo"
     assert first_line.spans == [Span(0, 3, "red")]
+
+
+def test_errors():
+    with pytest.raises(Exception):
+        Content.from_markup("[")
+
+    with pytest.raises(Exception):
+        Content.from_markup("[:")
+
+    with pytest.raises(Exception):
+        Content.from_markup("[foo")

@@ -102,8 +102,8 @@ class TokenError(Exception):
         return Group(*errors)
 
 
-class EOFError(TokenError):
-    """Indicates that the CSS ended prematurely."""
+class UnexpectedEnd(TokenError):
+    """Indicates that the text being tokenized ended prematurely."""
 
 
 @rich.repr.auto
@@ -231,7 +231,7 @@ class Tokenizer:
             expect: Expect object which describes which tokens may be read.
 
         Raises:
-            EOFError: If there is an unexpected end of file.
+            UnexpectedEnd: If there is an unexpected end of file.
             TokenError: If there is an error with the token.
 
         Returns:
@@ -251,11 +251,15 @@ class Tokenizer:
                     None,
                 )
             else:
-                raise EOFError(
+                raise UnexpectedEnd(
                     self.read_from,
                     self.code,
                     (line_no + 1, col_no + 1),
-                    "Unexpected end of file; did you forget a '}' ?",
+                    (
+                        "Unexpected end of file; did you forget a '}' ?"
+                        if expect._expect_semicolon
+                        else "Unexpected end of text"
+                    ),
                 )
         line = self.lines[line_no]
         preceding_text: str = ""
@@ -348,7 +352,7 @@ class Tokenizer:
             expect: Expect object describing the expected token.
 
         Raises:
-            EOFError: If end of file is reached.
+            UnexpectedEndOfText: If end of file is reached.
 
         Returns:
             A new token.
@@ -358,11 +362,15 @@ class Tokenizer:
 
         while True:
             if line_no >= len(self.lines):
-                raise EOFError(
+                raise UnexpectedEnd(
                     self.read_from,
                     self.code,
                     (line_no, col_no),
-                    "Unexpected end of file; did you forget a '}' ?",
+                    (
+                        "Unexpected end of file; did you forget a '}' ?"
+                        if expect._expect_semicolon
+                        else "Unexpected end of markup"
+                    ),
                 )
             line = self.lines[line_no]
             match = expect.search(line, col_no)

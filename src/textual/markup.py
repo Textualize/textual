@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from textual.css.parse import substitute_references
+from textual.css.tokenizer import UnexpectedEnd
 
 __all__ = ["MarkupError", "escape", "to_content"]
 
@@ -40,7 +41,7 @@ expect_markup_tag = (
         variable_ref=VARIABLE_REF,
         whitespace=r"\s+",
     )
-    .expect_eof()
+    .expect_eof(False)
     .expect_semicolon(False)
 )
 
@@ -66,7 +67,7 @@ expect_markup_expression = (
         double_string=r"\".*?\"",
         single_string=r"'.*?'",
     )
-    .expect_eof()
+    .expect_eof(True)
     .expect_semicolon(False)
 )
 
@@ -302,6 +303,10 @@ def to_content(
     _rich_traceback_omit = True
     try:
         return _to_content(markup, style, template_variables)
+    except UnexpectedEnd:
+        raise MarkupError(
+            "Unexpected end of markup; are you missing a closing square bracket?"
+        ) from None
     except Exception as error:
         # Ensure all errors are wrapped in a MarkupError
         raise MarkupError(str(error)) from None
