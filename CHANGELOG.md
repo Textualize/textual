@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.1] - 2025-04-01
+
+### Fixed
+
+- Fixed issue with modal dialog not refreshing
+
 ## [3.0.0] - 2025-03-27
 
 ### Changed
@@ -2812,6 +2818,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[3.0.1]: https://github.com/Textualize/textual/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/Textualize/textual/compare/v2.1.2...v3.0.0
 [2.1.2]: https://github.com/Textualize/textual/compare/v2.1.1...v2.1.2
 [2.1.1]: https://github.com/Textualize/textual/compare/v2.1.0...v2.1.1
