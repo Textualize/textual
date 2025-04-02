@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed markup escaping edge cases https://github.com/Textualize/textual/pull/5697
+
+### Changed
+
+- Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
+
 ## [3.0.1] - 2025-04-01
 
 ### Fixed

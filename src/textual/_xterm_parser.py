@@ -9,7 +9,7 @@ from typing_extensions import Final
 from textual import constants, events, messages
 from textual._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from textual._keyboard_protocol import FUNCTIONAL_KEYS
-from textual._parser import Parser, ParseTimeout, Peek1, Read1, TokenCallback
+from textual._parser import ParseEOF, Parser, ParseTimeout, Peek1, Read1, TokenCallback
 from textual.keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 from textual.message import Message
 
@@ -187,7 +187,7 @@ class XTermParser(Parser[Message]):
 
             try:
                 character = yield read1()
-            except EOFError:
+            except ParseEOF:
                 return
 
             if bracketed_paste:
@@ -216,7 +216,7 @@ class XTermParser(Parser[Message]):
                 except ParseTimeout:
                     send_escape()
                     break
-                except EOFError:
+                except ParseEOF:
                     send_escape()
                     return
 

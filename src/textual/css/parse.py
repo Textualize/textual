@@ -17,7 +17,7 @@ from textual.css.model import (
 )
 from textual.css.styles import Styles
 from textual.css.tokenize import Token, tokenize, tokenize_declarations, tokenize_values
-from textual.css.tokenizer import EOFError, ReferencedBy
+from textual.css.tokenizer import ReferencedBy, UnexpectedEnd
 from textual.css.types import CSSLocation, Specificity3
 from textual.suggestions import get_suggestion
 
@@ -66,7 +66,7 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
     while True:
         try:
             token = next(tokens, None)
-        except EOFError:
+        except UnexpectedEnd:
             break
         if token is None:
             break

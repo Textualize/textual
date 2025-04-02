@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from rich.text import Text
 
 from textual.content import Content, Span
@@ -219,10 +220,21 @@ def test_assemble():
     ]
 
 
-def test_escape():
+@pytest.mark.parametrize(
+    "markup,plain",
+    [
+        ("\\[", "["),
+        ("\\[foo", "[foo"),
+        ("\\[foo]", "[foo]"),
+        ("\\[/foo", "[/foo"),
+        ("\\[/foo]", "[/foo]"),
+        ("\\[]", "[]"),
+    ],
+)
+def test_escape(markup: str, plain: str) -> None:
     """Test that escaping the first square bracket."""
-    content = Content.from_markup("\\[bold]Not really bold")
-    assert content.plain == "[bold]Not really bold"
+    content = Content.from_markup(markup)
+    assert content.plain == plain
     assert content.spans == []
 
 
@@ -261,3 +273,14 @@ def test_first_line():
     first_line = content.first_line
     assert first_line.plain == "foo"
     assert first_line.spans == [Span(0, 3, "red")]
+
+
+def test_errors():
+    with pytest.raises(Exception):
+        Content.from_markup("[")
+
+    with pytest.raises(Exception):
+        Content.from_markup("[:")
+
+    with pytest.raises(Exception):
+        Content.from_markup("[foo")

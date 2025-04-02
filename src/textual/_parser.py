@@ -83,7 +83,7 @@ class Parser(Generic[T]):
         if not data:
             self._eof = True
             try:
-                self._gen.throw(EOFError())
+                self._gen.throw(ParseEOF())
             except StopIteration:
                 pass
             while tokens:
