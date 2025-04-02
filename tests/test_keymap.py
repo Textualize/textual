@@ -192,3 +192,31 @@ async def test_keymap_child_with_different_id_overridden():
         await pilot.press("i")
         assert parent_counter == 1
         assert child_counter == 1
+
+
+async def test_keymap_with_comma_space_separated_keys():
+    """Regression test for https://github.com/Textualize/textual/issues/5694"""
+
+    class KeymapApp(App):
+        BINDINGS = [
+            Binding(key="i, up", action="increment", id="increment"),
+            # Note the existing binding is comma-space separated
+        ]
+
+        counter = 0
+
+        def action_increment(self) -> None:
+            self.counter += 1
+
+    app = KeymapApp()
+    async with app.run_test() as pilot:
+        # Sanity check
+        await pilot.press("i")
+        await pilot.press("up")
+        assert app.counter == 2
+
+        # Update the keymap with the same comma-separated binding as before
+        app.update_keymap({"increment": "i, up"})
+        await pilot.press("i")
+        await pilot.press("up")
+        assert app.counter == 4

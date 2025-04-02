@@ -287,6 +287,7 @@ class BindingsMap:
                                 del self.key_to_bindings[key]
 
                     for keymap_key in keymap_keys:
+                        keymap_key = keymap_key.strip()
                         if (
                             keymap_key in self.key_to_bindings
                             or keymap_key in new_bindings
@@ -310,6 +311,7 @@ class BindingsMap:
                                 del self.key_to_bindings[keymap_key]
 
                     for keymap_key in keymap_keys:
+                        keymap_key = keymap_key.strip()
                         new_bindings.setdefault(keymap_key, []).append(
                             binding.with_key(key=keymap_key, key_display=None)
                         )
