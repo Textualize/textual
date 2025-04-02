@@ -220,10 +220,21 @@ def test_assemble():
     ]
 
 
-def test_escape():
+@pytest.mark.parametrize(
+    "markup,plain",
+    [
+        ("\\[", "["),
+        ("\\[foo", "[foo"),
+        ("\\[foo]", "[foo]"),
+        ("\\[/foo", "[/foo"),
+        ("\\[/foo]", "[/foo]"),
+        ("\\[]", "[]"),
+    ],
+)
+def test_escape(markup: str, plain: str) -> None:
     """Test that escaping the first square bracket."""
-    content = Content.from_markup("\\[bold]Not really bold")
-    assert content.plain == "[bold]Not really bold"
+    content = Content.from_markup(markup)
+    assert content.plain == plain
     assert content.spans == []
 
 

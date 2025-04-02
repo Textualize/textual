@@ -4,6 +4,7 @@ from textual import events
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
+from textual.content import Content, ContentText
 from textual.css.query import NoMatches
 from textual.message import Message
 from textual.reactive import reactive
@@ -47,12 +48,12 @@ class CollapsibleTitle(Static, can_focus=True):
     """
 
     collapsed = reactive(True)
-    label = reactive("Toggle")
+    label: reactive[ContentText] = reactive(Content("Toggle"))
 
     def __init__(
         self,
         *,
-        label: str,
+        label: ContentText,
         collapsed_symbol: str,
         expanded_symbol: str,
         collapsed: bool,
@@ -60,10 +61,8 @@ class CollapsibleTitle(Static, can_focus=True):
         super().__init__()
         self.collapsed_symbol = collapsed_symbol
         self.expanded_symbol = expanded_symbol
-        self.label = label
+        self.label = Content.from_text(label)
         self.collapsed = collapsed
-        self._collapsed_label = f"{collapsed_symbol} {label}"
-        self._expanded_label = f"{expanded_symbol} {label}"
 
     class Toggle(Message):
         """Request toggle."""
@@ -77,19 +76,21 @@ class CollapsibleTitle(Static, can_focus=True):
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
-    def _watch_label(self, label: str) -> None:
-        self._collapsed_label = f"{self.collapsed_symbol} {label}"
-        self._expanded_label = f"{self.expanded_symbol} {label}"
+    def validate_label(self, label: ContentText) -> Content:
+        return Content.from_text(label)
+
+    def _update_label(self) -> None:
+        assert isinstance(self.label, Content)
         if self.collapsed:
-            self.update(self._collapsed_label)
+            self.update(Content.assemble(self.collapsed_symbol, " ", self.label))
         else:
-            self.update(self._expanded_label)
+            self.update(Content.assemble(self.expanded_symbol, " ", self.label))
+
+    def _watch_label(self) -> None:
+        self._update_label()
 
     def _watch_collapsed(self, collapsed: bool) -> None:
-        if collapsed:
-            self.update(self._collapsed_label)
-        else:
-            self.update(self._expanded_label)
+        self._update_label()
 
 
 class Collapsible(Widget):
