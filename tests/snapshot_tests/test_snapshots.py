@@ -3285,7 +3285,11 @@ def test_collapsible_datatable(snap_compare):
     class MyApp(App):
         CSS = """
         DataTable {
-        
+            
+        }
+        Collapsible {
+            max-height: 50%;
+            # height: 1fr;
         }
         """
 
@@ -3294,8 +3298,8 @@ def test_collapsible_datatable(snap_compare):
             yield Collapsible(Label("hello"), id="c2")
 
         def on_mount(self) -> None:
-            self.query_one("#c1", Collapsible).styles.max_height = "50%"
-            self.query_one("#c2", Collapsible).styles.max_height = "50%"
+            # self.query_one("#c1", Collapsible).styles.max_height = "50%"
+            # self.query_one("#c2", Collapsible).styles.max_height = "50%"
 
             t1 = self.query_one("#t1", DataTable)
             t1.styles.border = "heavy", "black"
