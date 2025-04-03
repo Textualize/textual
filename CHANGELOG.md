@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed markup escaping edge cases https://github.com/Textualize/textual/pull/5697
 - Fixed keymap bindings with comma-space separated keys https://github.com/Textualize/textual/issues/5694
+- Fixed keymap bindings with symbol keys https://github.com/Textualize/textual/issues/5704
 
 ### Changed
 
