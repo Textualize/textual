@@ -51,6 +51,21 @@ class InvalidBinding(Exception):
     """Binding key is in an invalid format."""
 
 
+def _key_string_to_keys(key_string: str) -> list[str]:
+    """Convert a key binding string into a list of key values."""
+    keys: list[str] = []
+    for key in key_string.split(","):
+        key = key.strip()
+        if not key:
+            raise InvalidBinding(f"Can not bind empty string in {key_string!r}")
+        if len(key) == 1:
+            key = _character_to_key(key)
+
+        keys.append(key)
+
+    return keys
+
+
 @dataclass(frozen=True)
 class Binding:
     """The configuration of a key binding."""
@@ -132,15 +147,7 @@ class Binding:
             # At this point we have a Binding instance, but the key may
             # be a list of keys, so now we unroll that single Binding
             # into a (potential) collection of Binding instances.
-            for key in binding.key.split(","):
-                key = key.strip()
-                if not key:
-                    raise InvalidBinding(
-                        f"Can not bind empty string in {binding.key!r}"
-                    )
-                if len(key) == 1:
-                    key = _character_to_key(key)
-
+            for key in _key_string_to_keys(binding.key):
                 yield Binding(
                     key=key,
                     action=binding.action,
@@ -277,10 +284,7 @@ class BindingsMap:
 
                 # If the keymap has an override for this binding ID
                 if keymap_key_string := keymap.get(binding_id):
-                    keymap_keys = [
-                        keymap_key.strip()
-                        for keymap_key in keymap_key_string.split(",")
-                    ]
+                    keymap_keys = _key_string_to_keys(keymap_key_string)
 
                     # Remove the old binding
                     for key, key_bindings in key_to_bindings:
