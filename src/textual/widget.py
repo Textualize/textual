@@ -1590,7 +1590,11 @@ class Widget(DOMNode):
         elif is_auto_height:
             # Calculate dimensions based on content
             content_height = Fraction(
-                self.get_content_height(content_container, viewport, int(content_width))
+                self.get_content_height(
+                    content_container - margin.totals,
+                    viewport,
+                    int(content_width),
+                )
             )
             if (
                 styles.overflow_y == "auto" and styles.scrollbar_gutter == "stable"
