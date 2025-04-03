@@ -220,3 +220,29 @@ async def test_keymap_with_comma_space_separated_keys():
         await pilot.press("i")
         await pilot.press("up")
         assert app.counter == 4
+
+
+async def test_keymap_with_symbol_keys():
+    """Regression test for https://github.com/Textualize/textual/issues/5704"""
+
+    class KeymapApp(App):
+        BINDINGS = [
+            Binding(key="+", action="increment", id="increment"),
+            # Note the existing binding is the symbol key "+" rather than "plus"
+        ]
+
+        counter = 0
+
+        def action_increment(self) -> None:
+            self.counter += 1
+
+    app = KeymapApp()
+    async with app.run_test() as pilot:
+        # Sanity check
+        await pilot.press("+")
+        assert app.counter == 1
+
+        # Update the keymap with the same symbol key as before
+        app.update_keymap({"increment": "+"})
+        await pilot.press("+")
+        assert app.counter == 2
