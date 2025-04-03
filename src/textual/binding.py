@@ -277,7 +277,10 @@ class BindingsMap:
 
                 # If the keymap has an override for this binding ID
                 if keymap_key_string := keymap.get(binding_id):
-                    keymap_keys = keymap_key_string.split(",")
+                    keymap_keys = [
+                        keymap_key.strip()
+                        for keymap_key in keymap_key_string.split(",")
+                    ]
 
                     # Remove the old binding
                     for key, key_bindings in key_to_bindings:
@@ -287,7 +290,6 @@ class BindingsMap:
                                 del self.key_to_bindings[key]
 
                     for keymap_key in keymap_keys:
-                        keymap_key = keymap_key.strip()
                         if (
                             keymap_key in self.key_to_bindings
                             or keymap_key in new_bindings
@@ -311,7 +313,6 @@ class BindingsMap:
                                 del self.key_to_bindings[keymap_key]
 
                     for keymap_key in keymap_keys:
-                        keymap_key = keymap_key.strip()
                         new_bindings.setdefault(keymap_key, []).append(
                             binding.with_key(key=keymap_key, key_display=None)
                         )
