@@ -2,6 +2,8 @@ import re
 from bisect import bisect, bisect_left, bisect_right
 from typing import Any, Sequence
 
+from rich.cells import get_character_cell_size
+
 from textual._cells import cell_len
 from textual.document._document import Location
 from textual.document._wrapped_document import WrappedDocument
@@ -242,6 +244,16 @@ class DocumentNavigator:
         length_of_row_above = len(self._document[row - 1])
         target_row = row if column != 0 else row - 1
         target_column = column - 1 if column != 0 else length_of_row_above
+
+        if target_row < self._document.line_count:
+            line = self._document[target_row]
+            if target_column < len(line):
+                while target_column > 0:
+                    c = line[target_column]
+                    if c == "\t" or get_character_cell_size(c) > 0:
+                        break
+                    target_column -= 1
+
         return target_row, target_column
 
     def get_location_right(self, location: Location) -> Location:
@@ -263,6 +275,15 @@ class DocumentNavigator:
         is_end_of_line = self.is_end_of_document_line(location)
         target_row = row + 1 if is_end_of_line else row
         target_column = 0 if is_end_of_line else column + 1
+
+        if target_row < self._document.line_count:
+            line = self._document[target_row]
+            while target_column < len(line):
+                c = line[target_column]
+                if c == "\t" or get_character_cell_size(c) > 0:
+                    break
+                target_column += 1
+
         return target_row, target_column
 
     def get_location_above(self, location: Location) -> Location:

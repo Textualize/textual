@@ -7,11 +7,17 @@ See [Line API](/guide/widgets#line-api) for how to use Strips.
 
 from __future__ import annotations
 
+from functools import lru_cache
 from itertools import chain
 from typing import Any, Iterable, Iterator, Sequence
 
 import rich.repr
-from rich.cells import cell_len, set_cell_size
+from rich.cells import (
+    _is_single_cell_widths,
+    cell_len,
+    get_character_cell_size,
+    set_cell_size,
+)
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.segment import Segment
@@ -525,7 +531,7 @@ class Strip:
             for segment in iter_segments:
                 end_pos = pos + _cell_len(segment.text)
                 if end_pos > start:
-                    segment = segment.split_cells(start - pos)[1]
+                    segment = self.split_segment_cells(segment, start - pos)[1]
                     break
                 pos = end_pos
 
@@ -542,13 +548,91 @@ class Strip:
                     if end_pos < end:
                         add_segment(segment)
                     else:
-                        add_segment(segment.split_cells(end - pos)[0])
+                        add_segment(self.split_segment_cells(segment, end - pos)[0])
                         break
                     pos = end_pos
                     segment = next(iter_segments, None)
                 strip = Strip(output_segments, end - start)
         self._crop_cache[cache_key] = strip
         return strip
+
+    # TODO:
+    #   This and _split_cells are replacements for Rich library methods.
+    #   Arguably, the Rich library should be updated with the same 'fixes'.
+    @classmethod
+    def split_segment_cells(cls, segment, cut: int) -> Tuple["Segment", "Segment"]:
+        """Split segment into two segments at the specified column.
+
+        If the cut point falls in the middle of a 2-cell wide character then it is replaced
+        by two spaces, to preserve the display width of the parent segment.
+
+        Returns:
+            Tuple[Segment, Segment]: Two segments.
+        """
+        text, style, control = segment
+
+        if _is_single_cell_widths(text):
+            # Fast path with all 1 cell characters
+            if cut >= len(text):
+                return segment, Segment("", style, control)
+            return (
+                Segment(text[:cut], style, control),
+                Segment(text[cut:], style, control),
+            )
+
+        return cls._split_cells(segment, cut)
+
+    @classmethod
+    @lru_cache(1024 * 16)
+    def _split_cells(cls, segment: "Segment", cut: int) -> Tuple["Segment", "Segment"]:
+
+        def split_text_at_cell_boundary(text, index):
+            text_end = len(text) - 1
+            while index < text_end:
+                if cell_size(text[index]) > 0:
+                    break
+                index += 1
+            return text[:index], text[index:]
+
+        text, style, control = segment
+        _Segment = Segment
+
+        cell_length = segment.cell_length
+        if cut >= cell_length:
+            # Cut beyond end of segment, return segment and empty segment.
+            return segment, _Segment("", style, control)
+
+        # If some simple maths lands us on the correct cell then 'take the
+        # win'.
+        cell_size = get_character_cell_size
+        pos = int((cut / cell_length) * (len(text) - 1))
+        before, after = split_text_at_cell_boundary(text, pos)
+        cell_pos = cell_len(before)
+        if cell_pos == cut:
+            return (
+                _Segment(before, style, control),
+                _Segment(text[pos:], style, control),
+            )
+
+        # Fall back to the slowish iteration over characters.
+        while pos < len(text):
+            char = text[pos]
+            pos += 1
+            cell_pos += cell_size(char)
+            if cell_pos == cut:
+                before, after = split_text_at_cell_boundary(text, pos)
+                return (
+                    _Segment(before, style, control),
+                    _Segment(after, style, control),
+                )
+            if cell_pos > cut:
+                before = text[:pos]
+                return (
+                    _Segment(before[: pos - 1] + " ", style, control),
+                    _Segment(" " + text[pos:], style, control),
+                )
+
+        raise AssertionError("Will never reach here")
 
     def divide(self, cuts: Iterable[int]) -> Sequence[Strip]:
         """Divide the strip into multiple smaller strips by cutting at given (cell) indices.

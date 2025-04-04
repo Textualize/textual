@@ -174,7 +174,7 @@ class ChopsUpdate(CompositorUpdate):
 
         Args:
             chops: A mapping of offsets to list of segments, per line.
-            crop: Region to restrict update to.
+            spans: Line spans to restrict update to.
             chop_ends: A list of the end offsets for each line
         """
         self.chops = chops
@@ -230,7 +230,7 @@ class ChopsUpdate(CompositorUpdate):
             if y != last_y:
                 yield new_line
 
-    def render_segments(self, console: Console) -> str:
+    def render_segments(self, console: Console, prints=None) -> str:
         """Render the update to raw data, suitable for writing to terminal.
 
         Args:
@@ -261,11 +261,15 @@ class ChopsUpdate(CompositorUpdate):
                 if x2 > x >= x1 and end <= x2:
                     append(move_to(x, y).segment.text)
                     append(strip.render(console))
+                    if prints is not None:
+                        prints.append(f"    {y=} {x2, x, x1} {strip.text!r}")
                     continue
 
-                strip = strip.crop(0, min(end, x2) - x)
-                append(move_to(x, y).segment.text)
+                strip = strip.crop(x1, min(end, x2) - x)
+                append(move_to(x1, y).segment.text)
                 append(strip.render(console))
+                if prints is not None:
+                    prints.append(f"    {y=} {x=} {strip.text!r}")
 
             if y != last_y:
                 append("\n")
@@ -1229,6 +1233,7 @@ class Compositor:
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__
         for widget in self.visible_widgets.keys() & widgets:
+            widget._prepare_for_repaint()
             region, clip = get_widget(widget)
             offset = region.offset
             intersection = clip.intersection

@@ -1315,6 +1315,91 @@ class Spacing(NamedTuple):
         )
 
 
+class LineRegion(NamedTuple):
+    """Defines a region for a line.
+
+    This is similar to a `Region`, but its height is fixed at 1.
+
+    ```
+      (x, y)
+        ┌────────────────────┐ ▲
+        │                    │ height = 1
+        └────────────────────┘ ▼
+        ◀─────── width ──────▶
+    ```
+
+    A region may be empty (w == 0) in which case the 'x' value is considered
+    irrelevant.
+    """
+
+    x: int = 0
+    """Offset in the x-axis (horizontal)."""
+    y: int = 0
+    """Offset in the y-axis (vertical)."""
+    width: int = 0
+    """The width of the region."""
+
+    def __bool__(self) -> bool:
+        """A Region is considered False when it has zero width."""
+        return self.width > 0
+
+    @lru_cache(maxsize=1024)
+    def union(self, region: LineRegion) -> LineRegion:
+        """Get the smallest line region that contains both regions.
+
+        Both regions must have the same 'y' value.
+
+        Args:
+            region: Another line region.
+
+        Returns:
+            An optimally sized region to cover both regions.
+        """
+        assert self.y == region.y
+
+        if self.width == 0:
+            return region
+        elif region.width == 0:
+            return self
+
+        x_min = min(self.x, region.x)
+        x_max = max(self.x + self.width, region.x + region.width)
+        return LineRegion(x_min, self.y, x_max - x_min)
+
+    @lru_cache(maxsize=1024)
+    def as_region(self, xoffset: int) -> Region:
+        x, y, w = self
+        return Region(x + xoffset, y, w, 1)
+
+    @lru_cache(maxsize=1024)
+    def disjoint_regions(self, region: LineRegion) -> list[LineRegion]:
+        assert self.y == region.y
+
+        if self.x == region.x and self.width == region.width:
+            return []
+
+        self_x2 = self.x + self.width - 1
+        region_x2 = region.x + region.width - 1
+        if self_x2 + 1 == region.x or region_x2 + 1 == self.x:
+            # The regions abut, so return the union.A
+            return [self.union(region)]
+
+        if self_x2 + 1 < region.x or region_x2 + 1 < self.x:
+            # The regions do not overlap at all so return boith regions.
+            return [self, region]
+
+        regions = []
+        w = abs(self.x - region.x)
+        if w != 0:
+            regions.append(LineRegion(min(self.x, region.x), self.y, w))
+        w = abs(self_x2 - region_x2)
+        if w != 0:
+            x2 = max(self_x1, region_x2)
+            x = x2 - w + 1
+            regions.append(LineRegion(x, self.y, w))
+        return regions
+
+
 NULL_OFFSET: Final = Offset(0, 0)
 """An [offset][textual.geometry.Offset] constant for (0, 0)."""
 
