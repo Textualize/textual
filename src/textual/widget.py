@@ -409,6 +409,7 @@ class Widget(DOMNode):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
+            markup: True if markup should be parsed and rendered.
         """
         self._render_markup = markup
         _null_size = NULL_SIZE
