@@ -55,6 +55,7 @@ from textual.widgets import (
     TabPane,
 )
 from textual.theme import Theme
+from textual.widgets.option_list import Option
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
 from textual.widgets.selection_list import Selection as SLSelection
 
@@ -3842,3 +3843,34 @@ def test_select_list_in_collapsible(snap_compare):
             yield Footer()
 
     snap_compare(MyApp())
+
+
+def test_enforce_visual(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5701
+
+    You should see an OptionList with long wrapping text.
+
+    This is no longer the recommended way of applying overflow ellipsis. Textual will
+    largely ignore the "overflow" parameter on Text objects.
+
+    """
+
+    class OverflowOption(Option):
+
+        def __init__(self) -> None:
+            super().__init__(
+                Text.from_markup(f"Line one\n{'a' * 100}", overflow="ellipsis")
+            )
+
+    class OptionListOverflowApp(App[None]):
+
+        CSS = """
+        OptionList {
+            width: 30;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(*[OverflowOption() for _ in range(100)])
+
+    snap_compare(OptionListOverflowApp())
