@@ -22,7 +22,7 @@ class CollapsibleTitle(Static, can_focus=True):
     CollapsibleTitle {
         width: auto;
         height: auto;
-        padding: 0 1 0 1;
+        padding: 0 1;
         text-style: $block-cursor-blurred-text-style;
         color: $block-cursor-blurred-foreground;
 
@@ -227,7 +227,8 @@ class Collapsible(Widget):
 
     def compose(self) -> ComposeResult:
         yield self._title
-        yield self.Contents(*self._contents_list)
+        with self.Contents():
+            yield from self._contents_list
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the contents.

@@ -1519,7 +1519,7 @@ class Widget(DOMNode):
         content_width = Fraction(_content_width)
         content_height = Fraction(_content_height)
         is_border_box = styles.box_sizing == "border-box"
-        gutter = styles.gutter
+        gutter = styles.gutter  # Padding plus border
         margin = styles.margin
 
         is_auto_width = styles.width and styles.width.is_auto
@@ -1590,7 +1590,11 @@ class Widget(DOMNode):
         elif is_auto_height:
             # Calculate dimensions based on content
             content_height = Fraction(
-                self.get_content_height(content_container, viewport, int(content_width))
+                self.get_content_height(
+                    content_container - margin.totals,
+                    viewport,
+                    int(content_width),
+                )
             )
             if (
                 styles.overflow_y == "auto" and styles.scrollbar_gutter == "stable"
@@ -1629,12 +1633,12 @@ class Widget(DOMNode):
             max_height = styles.max_height.resolve(
                 container - margin.totals, viewport, height_fraction
             )
+
             if is_border_box:
                 max_height -= gutter.height
             content_height = min(content_height, max_height)
 
         content_height = max(Fraction(0), content_height)
-
         model = BoxModel(
             content_width + gutter.width, content_height + gutter.height, margin
         )
