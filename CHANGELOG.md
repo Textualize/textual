@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
+- Rich Text objects will be converted to Content in OptionList and other widgets https://github.com/Textualize/textual/pull/5712
 
 ## [3.0.1] - 2025-04-01
 
