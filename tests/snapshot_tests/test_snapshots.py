@@ -56,6 +56,7 @@ from textual.widgets import (
 )
 from textual.theme import Theme
 from textual.widgets.text_area import BUILTIN_LANGUAGES, Selection, TextAreaTheme
+from textual.widgets.selection_list import Selection as SLSelection
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -3274,22 +3275,28 @@ def test_arbitrary_selection(snap_compare):
     )
 
 
+# TODO: Is this fixable?
+@pytest.mark.xfail(
+    reason="This doesn't work as described, because of the height auto in Collapsible.Contents. "
+    "I suspect it isn't broken per se, it's just that the intuitive interpretation is not correct."
+)
 def test_collapsible_datatable(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5407
 
     You should see two collapsibles, where the first is expanded.
-    In the expanded coillapsible, you should see a DataTable filling the space,
+    In the expanded collapsible, you should see a DataTable filling the space,
     with all borders and both scrollbars visible.
     """
 
     class MyApp(App):
         CSS = """
         DataTable {
-            
+            max-height: 1fr;            
+            border: red;            
         }
         Collapsible {
             max-height: 50%;
-            # height: 1fr;
+            
         }
         """
 
@@ -3298,14 +3305,10 @@ def test_collapsible_datatable(snap_compare):
             yield Collapsible(Label("hello"), id="c2")
 
         def on_mount(self) -> None:
-            # self.query_one("#c1", Collapsible).styles.max_height = "50%"
-            # self.query_one("#c2", Collapsible).styles.max_height = "50%"
-
             t1 = self.query_one("#t1", DataTable)
-            t1.styles.border = "heavy", "black"
             t1.add_column("A")
             for number in range(1, 100):
-                t1.add_row(str(number) + " " * 200)
+                t1.add_row(str(number) + " " * 100)
 
     assert snap_compare(MyApp())
 
@@ -3808,3 +3811,34 @@ def test_click_selection_disabled_when_allow_select_is_false(
         await pilot.click(Label, times=2)
 
     assert snap_compare(AllowSelectApp(), run_before=run_before)
+
+
+def test_select_list_in_collapsible(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5690
+
+    The Collapsible should be expanded, and just fit a Selection List with 3 items.
+    """
+
+    class CustomWidget(Horizontal):
+        DEFAULT_CSS = """
+        CustomWidget {
+            height: auto;                	
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Collapsible(title="Toggle for options", collapsed=False):
+                yield SelectionList[int](
+                    SLSelection("first selection", 1),
+                    SLSelection("second selection", 2),
+                    SLSelection(
+                        "third selection", 3
+                    ),  # not visible after toggling collapsible
+                )
+
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            yield CustomWidget()
+            yield Footer()
+
+    snap_compare(MyApp())

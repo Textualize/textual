@@ -1347,7 +1347,7 @@ class RenderStyles(StylesBase):
 
     @property
     def gutter(self) -> Spacing:
-        """Get space around widget.
+        """Get space around widget (padding + border)
 
         Returns:
             Space around widget content.

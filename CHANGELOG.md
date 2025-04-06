@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed markup escaping edge cases https://github.com/Textualize/textual/pull/5697
+- Fixed incorrect auto height in Collapsible https://github.com/Textualize/textual/pull/5703
 
 ### Changed
 
