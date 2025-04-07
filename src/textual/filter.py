@@ -227,7 +227,7 @@ class ANSIToTruecolor(LineFilter):
         super().__init__(enabled=enabled)
 
     @lru_cache(1024)
-    def truecolor_style(self, style: Style) -> Style:
+    def truecolor_style(self, style: Style, background: RichColor) -> Style:
         """Replace system colors with truecolor equivalent.
 
         Args:
@@ -247,8 +247,11 @@ class ANSIToTruecolor(LineFilter):
             bgcolor = RichColor.from_rgb(
                 *bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
+        # Convert dim style to RGB
+        if style.dim and color is not None:
+            color = dim_color(background, color, 0.5)
 
-        return style + Style.from_color(color, bgcolor)
+        return Style.from_color(color, bgcolor)
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
@@ -263,10 +266,16 @@ class ANSIToTruecolor(LineFilter):
         _Segment = Segment
         truecolor_style = self.truecolor_style
 
+        background_rich_color = background.rich_color
+
         return [
             _Segment(
                 text,
-                None if style is None else truecolor_style(style),
+                (
+                    None
+                    if style is None
+                    else truecolor_style(style, background_rich_color)
+                ),
                 None,
             )
             for text, style, _ in segments
