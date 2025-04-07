@@ -16,11 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
 - Rich Text objects will be converted to Content in OptionList and other widgets https://github.com/Textualize/textual/pull/5712
-- Textual will always convert dim attributes to RGB by default
+- Textual will always convert dim attributes to RGB by default https://github.com/Textualize/textual/pull/5715
 
 ### Added
 
-- Added `TEXTUAL_DIM_FACTOR` env var to set the opacity of the 'dim' ANSI attribute
+- Added `TEXTUAL_DIM_FACTOR` env var to set the opacity of the 'dim' ANSI attribute https://github.com/Textualize/textual/pull/5715
 
 ## [3.0.1] - 2025-04-01
 
