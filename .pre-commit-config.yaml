@@ -15,6 +15,7 @@ repos:
       - id: check-shebang-scripts-are-executable  # ensures that (non-binary) files with a shebang are executable
       - id: check-vcs-permalinks  # ensures that links to vcs websites are permalinks
       - id: end-of-file-fixer  # ensures that a file is either empty, or ends with one newline
+        exclude: '^.*\.svg$'
       - id: mixed-line-ending  # replaces or checks mixed line ending
   - repo: https://github.com/pycqa/isort
     rev: '6.0.1'
