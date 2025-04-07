@@ -1,2 +1,1 @@
 # Textual Blog
-
