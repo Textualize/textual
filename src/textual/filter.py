@@ -253,8 +253,9 @@ class ANSIToTruecolor(LineFilter):
         # Convert dim style to RGB
         if style.dim and color is not None:
             color = dim_color(background, color)
+            style += NO_DIM
 
-        return Style.from_color(color, bgcolor)
+        return style + Style.from_color(color, bgcolor)
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.

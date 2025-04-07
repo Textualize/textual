@@ -34,14 +34,14 @@
 
     .terminal-r1 { fill: #c5c8c6 }
 .terminal-r2 { fill: #e0e0e0 }
-.terminal-r3 { fill: #94999c }
+.terminal-r3 { fill: #a0a3a6 }
 .terminal-r4 { fill: #3e3e3e }
 .terminal-r5 { fill: #0178d4;font-weight: bold }
-.terminal-r6 { fill: #969696;font-weight: bold }
+.terminal-r6 { fill: #a1a1a1;font-weight: bold }
 .terminal-r7 { fill: #0178d4;text-decoration: underline; }
 .terminal-r8 { fill: #e2e2e2;text-decoration: underline; }
 .terminal-r9 { fill: #ffa62b;font-weight: bold }
-.terminal-r10 { fill: #a77630;font-weight: bold }
+.terminal-r10 { fill: #b47d2f;font-weight: bold }
 .terminal-r11 { fill: #495259 }
     </style>
 

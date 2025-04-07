@@ -167,6 +167,6 @@ SMOOTH_SCROLL: Final[bool] = _get_environ_int("TEXTUAL_SMOOTH_SCROLL", 1) == 1
 """
 
 DIM_FACTOR: Final[float] = (
-    _get_environ_int("TEXTUAL_DIM_FACTOR", 50, minimum=0, maximum=100) / 100
+    _get_environ_int("TEXTUAL_DIM_FACTOR", 66, minimum=0, maximum=100) / 100
 )
 """Percentage to use as opacity when converting ANSI 'dim' attribute to RGB."""

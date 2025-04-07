@@ -35,10 +35,10 @@
     .terminal-r1 { fill: #c5c8c6 }
 .terminal-r2 { fill: #e0e0e0 }
 .terminal-r3 { fill: #1e1e1e }
-.terminal-r4 { fill: #94999c }
+.terminal-r4 { fill: #a0a3a6 }
 .terminal-r5 { fill: #3e3e3e }
 .terminal-r6 { fill: #0178d4;font-weight: bold }
-.terminal-r7 { fill: #969696;font-weight: bold }
+.terminal-r7 { fill: #a1a1a1;font-weight: bold }
 .terminal-r8 { fill: #0178d4;text-decoration: underline; }
 .terminal-r9 { fill: #000000 }
 .terminal-r10 { fill: #4ebf71;font-weight: bold }
