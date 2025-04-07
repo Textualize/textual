@@ -22,6 +22,7 @@ from rich.style import Style
 from rich.terminal_theme import TerminalTheme
 
 from textual.color import Color
+from textual.constants import DIM_FACTOR
 
 
 class LineFilter(ABC):
@@ -125,7 +126,9 @@ NO_DIM = Style(dim=False)
 
 
 @lru_cache(1024)
-def dim_color(background: RichColor, color: RichColor, factor: float) -> RichColor:
+def dim_color(
+    background: RichColor, color: RichColor, factor: float = DIM_FACTOR
+) -> RichColor:
     """Dim a color by blending towards the background
 
     Args:
@@ -249,7 +252,7 @@ class ANSIToTruecolor(LineFilter):
             )
         # Convert dim style to RGB
         if style.dim and color is not None:
-            color = dim_color(background, color, 0.5)
+            color = dim_color(background, color)
 
         return Style.from_color(color, bgcolor)
 
