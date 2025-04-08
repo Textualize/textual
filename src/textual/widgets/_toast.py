@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 from textual import on
-
-if TYPE_CHECKING:
-    pass
-
 from textual.containers import Container
 from textual.content import Content
 from textual.css.query import NoMatches
