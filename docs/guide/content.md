@@ -119,7 +119,7 @@ This is equivalent to the following (but saves typing a few characters):
 [bold]Hello[/bold], World!
 ```
 
-Auto-closing tags recommended when it is clear which tag they are intended to close. 
+Auto-closing tags are recommended when it is clear which tag they are intended to close. 
 
 ### Styles
 
