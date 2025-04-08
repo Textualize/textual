@@ -3874,3 +3874,22 @@ def test_enforce_visual(snap_compare):
             yield OptionList(*[OverflowOption() for _ in range(100)])
 
     snap_compare(OptionListOverflowApp())
+
+
+def test_notifications_markup(snap_compare):
+    """You should see two notifications, the first (top) will have markup applied.
+    The second will have markup disabled, and square brackets will be verbatim."""
+
+    class ToastApp(App[None]):
+        def on_mount(self) -> None:
+            self.notify(
+                "[$accent italic]Hello, World!", title="With Markup", timeout=100
+            )
+            self.notify(
+                "[$accent italic]Square brackets should be visible [1,2,3]",
+                title="Without markup",
+                markup=False,
+                timeout=100,
+            )
+
+    snap_compare(ToastApp())

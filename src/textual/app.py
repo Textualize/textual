@@ -4285,6 +4285,7 @@ class App(Generic[ReturnType], DOMNode):
         title: str = "",
         severity: SeverityLevel = "information",
         timeout: float | None = None,
+        markup: bool = True,
     ) -> None:
         """Create a notification.
 
@@ -4298,6 +4299,7 @@ class App(Generic[ReturnType], DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout (in seconds) for the notification, or `None` for default.
+            markup: Render the message as Textual markup?
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
@@ -4334,7 +4336,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         if timeout is None:
             timeout = self.NOTIFICATION_TIMEOUT
-        notification = Notification(message, title, severity, timeout)
+        notification = Notification(message, title, severity, timeout, markup=markup)
         self.post_message(Notify(notification))
 
     def _on_notify(self, event: Notify) -> None:
