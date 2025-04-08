@@ -4,14 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from rich.text import Text
-
 from textual import on
 
 if TYPE_CHECKING:
-    from textual.app import RenderResult
+    pass
 
 from textual.containers import Container
+from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Click, Mount
 from textual.notifications import Notification, Notifications
@@ -30,7 +29,7 @@ class ToastHolder(Container, inherit_css=False):
         align-horizontal: right;
         width: 1fr;
         height: auto;
-        visibility: hidden;
+        visibility: hidden;        
     }
     """
 
@@ -43,8 +42,8 @@ class Toast(Static, inherit_css=False):
         width: 60;
         max-width: 50%;
         height: auto;
-        visibility: visible;
         margin-top: 1;
+        visibility: visible;        
         padding: 1 1;
         background: $panel-lighten-1;
         link-background: initial;
@@ -104,25 +103,27 @@ class Toast(Static, inherit_css=False):
         self._notification = notification
         self._timeout = notification.time_left
 
-    def render(self) -> RenderResult:
+    def render(self) -> Content:
         """Render the toast's content.
 
         Returns:
             A Rich renderable for the title and content of the Toast.
         """
         notification = self._notification
+
+        message_content = (
+            Content.from_markup(notification.message)
+            if notification.markup
+            else Content(notification.message)
+        )
+
         if notification.title:
-            header_style = self.get_component_rich_style("toast--title")
-            notification_text = Text.assemble(
-                (notification.title, header_style),
-                "\n",
-                Text.from_markup(notification.message),
+            header_style = self.get_visual_style("toast--title")
+            message_content = Content.assemble(
+                (notification.title, header_style), "\n", message_content
             )
-        else:
-            notification_text = Text.assemble(
-                Text.from_markup(notification.message),
-            )
-        return notification_text
+
+        return message_content
 
     def _on_mount(self, _: Mount) -> None:
         """Set the time running once the toast is mounted."""
@@ -155,7 +156,7 @@ class ToastRack(Container, inherit_css=False):
         visibility: hidden;
         layout: vertical;
         overflow-y: scroll;
-        margin-bottom: 1;
+        margin-bottom: 1;         
     }
     """
     DEFAULT_CLASSES = "-textual-system"

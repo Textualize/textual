@@ -4564,6 +4564,7 @@ class Widget(DOMNode):
         title: str = "",
         severity: SeverityLevel = "information",
         timeout: float | None = None,
+        markup: bool = True,
     ) -> None:
         """Create a notification.
 
@@ -4576,6 +4577,7 @@ class Widget(DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout (in seconds) for the notification, or `None` for default.
+            markup: Render the message as Textual markup?
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.
@@ -4585,6 +4587,7 @@ class Widget(DOMNode):
                 message,
                 title=title,
                 severity=severity,
+                markup=markup,
             )
         else:
             return self.app.notify(
@@ -4592,9 +4595,19 @@ class Widget(DOMNode):
                 title=title,
                 severity=severity,
                 timeout=timeout,
+                markup=markup,
             )
 
     def action_notify(
-        self, message: str, title: str = "", severity: str = "information"
+        self,
+        message: str,
+        title: str = "",
+        severity: str = "information",
+        markup: bool = True,
     ) -> None:
-        self.notify(message, title=title, severity=severity)
+        self.notify(
+            message,
+            title=title,
+            severity=severity,
+            markup=markup,
+        )

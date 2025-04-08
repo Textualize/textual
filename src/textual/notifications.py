@@ -39,6 +39,9 @@ class Notification:
     timeout: float = 5
     """The timeout (in seconds) for the notification."""
 
+    markup: bool = False
+    """Render the notification message as console Markup?"""
+
     raised_at: float = field(default_factory=time)
     """The time when the notification was raised (in Unix time)."""
 
