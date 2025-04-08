@@ -1385,6 +1385,7 @@ def test_text_area_line_number_start(snap_compare):
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize(
     "press",
     [
@@ -1426,6 +1427,7 @@ def test_text_area_horizontal_scrolling(snap_compare, press):
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize(
     "press",
     [
@@ -1465,6 +1467,7 @@ def test_text_area_horizontal_scrolling_cursor_matching(snap_compare, press):
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize("soft_wrap", [False, True])
 @pytest.mark.parametrize(
     "press", [
@@ -1511,6 +1514,7 @@ def test_text_area_unicode_wide_syntax_highlighting(
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.skip("SVG rendering does not match terminal rendering")
 @pytest.mark.parametrize(
     "press", [
