@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
 - Rich Text objects will be converted to Content in OptionList and other widgets https://github.com/Textualize/textual/pull/5712
 - Textual will always convert dim attributes to RGB by default https://github.com/Textualize/textual/pull/5715
-- Notifications will now use Content markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
+- Notifications will now use Textual markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
 
 ### Added
 
@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `App.query` and friends will now always query the default (first) screen, not necessarily the active screen.
 - Content now has a default argument of an empty string, so `Content()` is equivalent to `Content("")`
 - Assigned names to Textual-specific threads: `textual-input`, `textual-output`. These should become visible in monitoring tools (ps, top, htop) as of Python 3.14. https://github.com/Textualize/textual/pull/5654
-- Tabs now accept Content or content markup https://github.com/Textualize/textual/pull/5657
+- Tabs now accept Content or Textual markup https://github.com/Textualize/textual/pull/5657
 - Buttons will now use Textual markup rather than console markup
 - tree-sitter languages are now loaded lazily, improving cold-start time https://github.com/Textualize/textual/pull/563
 
@@ -124,7 +124,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed escape tags in Content markup https://github.com/Textualize/textual/pull/5536
+- Fixed escape tags in Textual markup https://github.com/Textualize/textual/pull/5536
 
 ## [2.0.0] - 2025-02-16
 

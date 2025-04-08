@@ -145,7 +145,7 @@ class Content(Visual):
 
     @cached_property
     def markup(self) -> str:
-        """Get Content markup to render this Text.
+        """Get Textual markup to render this Text.
 
         Returns:
             str: A string potentially creating markup tags.
