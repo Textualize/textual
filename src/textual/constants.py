@@ -27,7 +27,9 @@ def _get_environ_bool(name: str) -> bool:
     return has_environ
 
 
-def _get_environ_int(name: str, default: int, minimum: int | None = None) -> int:
+def _get_environ_int(
+    name: str, default: int, minimum: int | None = None, maximum: int | None = None
+) -> int:
     """Retrieves an integer environment variable.
 
     Args:
@@ -48,6 +50,8 @@ def _get_environ_int(name: str, default: int, minimum: int | None = None) -> int
         return default
     if minimum is not None:
         return max(minimum, value)
+    if maximum is not None:
+        return min(maximum, value)
     return value
 
 
@@ -159,5 +163,10 @@ Textual will use the first theme that exists.
 """
 
 SMOOTH_SCROLL: Final[bool] = _get_environ_int("TEXTUAL_SMOOTH_SCROLL", 1) == 1
-"""Should smooth scrolling be enabled? set `TEXTUAL_SMOOTH_SCROLL=0` to disable smooth
+"""Should smooth scrolling be enabled? set `TEXTUAL_SMOOTH_SCROLL=0` to disable smooth scrolling.
 """
+
+DIM_FACTOR: Final[float] = (
+    _get_environ_int("TEXTUAL_DIM_FACTOR", 66, minimum=0, maximum=100) / 100
+)
+"""Percentage to use as opacity when converting ANSI 'dim' attribute to RGB."""
