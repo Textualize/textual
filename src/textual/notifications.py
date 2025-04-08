@@ -40,7 +40,7 @@ class Notification:
     """The timeout (in seconds) for the notification."""
 
     markup: bool = False
-    """Render the notification message as console Markup?"""
+    """Render the notification message as Textual Markup?"""
 
     raised_at: float = field(default_factory=time)
     """The time when the notification was raised (in Unix time)."""

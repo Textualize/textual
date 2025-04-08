@@ -3276,11 +3276,11 @@ def test_arbitrary_selection(snap_compare):
     )
 
 
-# # TODO: Is this fixable?
-# @pytest.mark.xfail(
-#     reason="This doesn't work as described, because of the height auto in Collapsible.Contents. "
-#     "I suspect it isn't broken per se, it's just that the intuitive interpretation is not correct."
-# )
+# TODO: Is this fixable?
+@pytest.mark.xfail(
+    reason="This doesn't work as described, because of the height auto in Collapsible.Contents. "
+    "I suspect it isn't broken per se, it's just that the intuitive interpretation is not correct."
+)
 def test_collapsible_datatable(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5407
 
