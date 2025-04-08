@@ -15,6 +15,12 @@ class RadioButton(ToggleButton):
     BUTTON_INNER = "\u25cf"
     """The character used for the inside of the button."""
 
+    BUTTON_LEFT = ""
+    """Unused left character from toggle button (empty to avoid unwanted rendering artifacts in some terminals)."""
+
+    BUTTON_RIGHT = ""
+    """Unused right character from toggle button (empty to avoid unwanted rendering artifacts in some terminals)."""
+
     class Changed(ToggleButton.Changed):
         """Posted when the value of the radio button changes.
 
