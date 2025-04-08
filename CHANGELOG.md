@@ -17,12 +17,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
 - Rich Text objects will be converted to Content in OptionList and other widgets https://github.com/Textualize/textual/pull/5712
 - Textual will always convert dim attributes to RGB by default https://github.com/Textualize/textual/pull/5715
-- Notifications will now use Content markup (previously they used Console markup)
+- Notifications will now use Content markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
 
 ### Added
 
 - Added `TEXTUAL_DIM_FACTOR` env var to set the opacity of the 'dim' ANSI attribute https://github.com/Textualize/textual/pull/5715
-- `notify()` now accepts a `markup` parameter to disable rendering the message as markup
+- `notify()` now accepts a `markup` parameter to disable rendering the message as markup https://github.com/Textualize/textual/pull/5719
 
 ## [3.0.1] - 2025-04-01
 
