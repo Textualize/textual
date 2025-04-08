@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added missing `scroll_end` parameter to the `Log.write_line` method https://github.com/Textualize/textual/pull/5672
 - Restored support for blink https://github.com/Textualize/textual/pull/5675
 - Fixed scrolling breaking on DataTable with `overflow: hidden` https://github.com/Textualize/textual/pull/5681
+- Fixed ToggleButton glyph edges drawing lines through RadioButton https://github.com/Textualize/textual/pull/5722
 
 ### Added
 
