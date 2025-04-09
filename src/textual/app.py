@@ -3710,6 +3710,7 @@ class App(Generic[ReturnType], DOMNode):
             keymap: A mapping of binding IDs to key strings.
         """
         self._keymap = keymap
+        self.refresh_bindings()
 
     def update_keymap(self, keymap: Keymap) -> None:
         """Update the App's keymap, merging with `keymap`.
@@ -3721,6 +3722,7 @@ class App(Generic[ReturnType], DOMNode):
             keymap: A mapping of binding IDs to key strings.
         """
         self._keymap = {**self._keymap, **keymap}
+        self.refresh_bindings()
 
     def handle_bindings_clash(
         self, clashed_bindings: set[Binding], node: DOMNode
