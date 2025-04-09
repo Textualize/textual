@@ -11,7 +11,7 @@ def camel_to_snake(
         name: A symbol name, such as a class name.
 
     Returns:
-        Name in camel case.
+        Name in snake case.
     """
 
     def repl(match: Match[str]) -> str:

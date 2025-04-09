@@ -22,6 +22,7 @@ from rich.style import Style
 from rich.terminal_theme import TerminalTheme
 
 from textual.color import Color
+from textual.constants import DIM_FACTOR
 
 
 class LineFilter(ABC):
@@ -125,7 +126,9 @@ NO_DIM = Style(dim=False)
 
 
 @lru_cache(1024)
-def dim_color(background: RichColor, color: RichColor, factor: float) -> RichColor:
+def dim_color(
+    background: RichColor, color: RichColor, factor: float = DIM_FACTOR
+) -> RichColor:
     """Dim a color by blending towards the background
 
     Args:
@@ -227,7 +230,7 @@ class ANSIToTruecolor(LineFilter):
         super().__init__(enabled=enabled)
 
     @lru_cache(1024)
-    def truecolor_style(self, style: Style) -> Style:
+    def truecolor_style(self, style: Style, background: RichColor) -> Style:
         """Replace system colors with truecolor equivalent.
 
         Args:
@@ -247,6 +250,10 @@ class ANSIToTruecolor(LineFilter):
             bgcolor = RichColor.from_rgb(
                 *bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
+        # Convert dim style to RGB
+        if style.dim and color is not None:
+            color = dim_color(background, color)
+            style += NO_DIM
 
         return style + Style.from_color(color, bgcolor)
 
@@ -263,10 +270,16 @@ class ANSIToTruecolor(LineFilter):
         _Segment = Segment
         truecolor_style = self.truecolor_style
 
+        background_rich_color = background.rich_color
+
         return [
             _Segment(
                 text,
-                None if style is None else truecolor_style(style),
+                (
+                    None
+                    if style is None
+                    else truecolor_style(style, background_rich_color)
+                ),
                 None,
             )
             for text, style, _ in segments

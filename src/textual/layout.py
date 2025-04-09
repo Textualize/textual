@@ -261,15 +261,12 @@ class Layout(ABC):
                 child.styles.is_dynamic_height for child in widget.displayed_children
             ):
                 # An exception for containers with all dynamic height widgets
-                arrangement = widget._arrange(
-                    Size(width, container.height - widget.gutter.height)
-                )
+                arrangement = widget._arrange(Size(width, container.height))
             else:
                 arrangement = widget._arrange(Size(width, 0))
-            height = arrangement.total_region.bottom
+            height = arrangement.total_region.height
         else:
             height = 0
-
         return height
 
     def render_keyline(self, container: Widget) -> StripRenderable:

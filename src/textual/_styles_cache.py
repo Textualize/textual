@@ -350,7 +350,9 @@ class StylesCache:
                 ansi_theme = DEFAULT_TERMINAL_THEME
 
             if styles.tint.a:
-                segments = Tint.process_segments(segments, styles.tint, ansi_theme)
+                segments = Tint.process_segments(
+                    segments, styles.tint, ansi_theme, background
+                )
             if opacity != 1.0:
                 segments = _apply_opacity(segments, base_background, opacity)
             return segments
