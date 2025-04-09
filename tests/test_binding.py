@@ -127,3 +127,13 @@ async def test_keymap_update() -> None:
         app.set_keymap({"quit": "f1"})
         await pilot.pause()
         assert bindings_updated == [app.screen, app.screen]
+
+
+async def test_keymap_key() -> None:
+    app: App[None] = App()
+
+    async with app.run_test():
+        app.set_keymap({"foo": "?,space"})
+        assert app._keymap == {"foo": "question_mark,space"}
+        app.update_keymap({"bar": "$"})
+        assert app._keymap == {"bar": "dollar_sign", "foo": "question_mark,space"}

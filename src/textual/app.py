@@ -107,6 +107,7 @@ from textual.keys import (
     REPLACED_KEYS,
     _character_to_key,
     _get_unicode_name_from_key,
+    _normalize_key_list,
     format_key,
 )
 from textual.messages import CallbackType, Prune
@@ -3709,7 +3710,10 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             keymap: A mapping of binding IDs to key strings.
         """
-        self._keymap = keymap
+
+        self._keymap = {
+            binding_id: _normalize_key_list(keys) for binding_id, keys in keymap.items()
+        }
         self.refresh_bindings()
 
     def update_keymap(self, keymap: Keymap) -> None:
@@ -3721,6 +3725,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             keymap: A mapping of binding IDs to key strings.
         """
+        keymap = {
+            binding_id: _normalize_key_list(keys) for binding_id, keys in keymap.items()
+        }
         self._keymap = {**self._keymap, **keymap}
         self.refresh_bindings()
 
