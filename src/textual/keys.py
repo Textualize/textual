@@ -360,10 +360,9 @@ def _normalize_key_list(keys: str) -> str:
     """Normalizes a comma separated list of keys.
 
     Replaces single letter keys with full name.
-    Sorts alphabetically.
     """
 
     keys_list = [key.strip() for key in keys.split(",")]
     return ",".join(
-        _character_to_key(key) if len(key) == 1 else key for key in sorted(keys_list)
+        _character_to_key(key) if len(key) == 1 else key for key in keys_list
     )
