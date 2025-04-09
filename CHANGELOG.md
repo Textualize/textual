@@ -119,6 +119,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed OptionList.add_options exhausting iterator https://github.com/Textualize/textual/pull/5540
 - Fixed screen not refreshing after pop https://github.com/Textualize/textual/pull/5543
+- Fixed footer / key panel not updating when keymaps are applied https://github.com/Textualize/textual/pull/5724
 
 ## [2.0.1] - 2025-02-16
 
