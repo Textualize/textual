@@ -3893,3 +3893,32 @@ def test_notifications_markup(snap_compare):
             )
 
     assert snap_compare(ToastApp())
+
+
+def test_alignment_with_auto_and_min_height(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5608
+    You should see a blue label that is centered both horizontally and vertically
+    within a pink container. The container has auto width and height, but also
+    a min-width of 20 and a min-height of 3.
+    """
+
+    class AlignmentApp(App):
+        CSS = """
+        Container {
+            align: center middle;
+            height: auto;
+            min-height: 3;
+            width: auto;
+            min-width: 20;
+            background: pink;
+        }
+        Label {
+            background: blue;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container():
+                yield Label("centered")
+
+    assert snap_compare(AlignmentApp())
