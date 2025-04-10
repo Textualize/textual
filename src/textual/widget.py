@@ -2193,7 +2193,7 @@ class Widget(DOMNode):
         width_fraction: Fraction,
         height_fraction: Fraction,
     ) -> Extrema:
-        """Resolve minimum and maximum values.
+        """Resolve minimum and maximum values for width and height.
 
         Args:
             container: Size of outer widget.
@@ -2211,8 +2211,7 @@ class Widget(DOMNode):
         max_height: Fraction | None = None
 
         styles = self.styles
-        margin = styles.margin
-        container -= margin.totals
+        container -= styles.margin.totals
         if styles.box_sizing == "border-box":
             gutter_width, gutter_height = styles.gutter.totals
         else:
