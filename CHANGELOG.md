@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed markup escaping edge cases https://github.com/Textualize/textual/pull/5697
 - Fixed incorrect auto height in Collapsible https://github.com/Textualize/textual/pull/5703
 - Fixed issue with keymaps and single-letter keys https://github.com/Textualize/textual/pull/5726
+- Fixed `OptionList` size after removing or clearing options https://github.com/Textualize/textual/issues/5728
 
 ### Changed
 
