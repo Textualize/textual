@@ -3914,7 +3914,7 @@ def test_option_list_size_when_options_removed(snap_compare):
             for _ in range(15):
                 option_list.remove_option_at_index(0)
 
-    snap_compare(OptionListApp(), press=["x"])
+    assert snap_compare(OptionListApp(), press=["x"])
 
 
 def test_option_list_size_when_options_cleared(snap_compare):
@@ -3934,4 +3934,4 @@ def test_option_list_size_when_options_cleared(snap_compare):
         def action_clear_options(self) -> None:
             self.query_one(OptionList).clear_options()
 
-    snap_compare(OptionListApp(), press=["x"])
+    assert snap_compare(OptionListApp(), press=["x"])
