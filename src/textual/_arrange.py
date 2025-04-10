@@ -100,10 +100,9 @@ def arrange(
             if styles.align_horizontal != "left" or styles.align_vertical != "top":
                 bounding_region = WidgetPlacement.get_bounds(layout_placements)
                 container_width, container_height = dock_region.size
-                extrema = widget._extrema
                 placement_offset += styles._align_size(
                     bounding_region.size,
-                    extrema.apply_dimensions(
+                    widget._extrema.apply_dimensions(
                         0 if styles.is_auto_width else container_width,
                         0 if styles.is_auto_height else container_height,
                     ),
