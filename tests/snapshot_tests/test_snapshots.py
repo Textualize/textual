@@ -3893,3 +3893,25 @@ def test_notifications_markup(snap_compare):
             )
 
     snap_compare(ToastApp())
+
+
+def test_option_list_size_when_options_removed(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5728
+
+    You should see the height of the OptionList has updated correctly after
+    half of its options are removed.
+    """
+
+    class OptionListApp(App):
+        BINDINGS = [("x", "remove_options", "Remove options")]
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(*[f"Option {n}" for n in range(30)])
+            yield Footer()
+
+        def action_remove_options(self) -> None:
+            option_list = self.query_one(OptionList)
+            for _ in range(15):
+                option_list.remove_option_at_index(0)
+
+    snap_compare(OptionListApp(), press=["x"])
