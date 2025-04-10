@@ -158,9 +158,9 @@ class Canvas:
         self._width = width
         self._height = height
         blank_line = " " * width
+        array_type_code = "w" if sys.version_info >= (3, 13) else "u"
         self.lines: list[array[str]] = [
-            array("w" if sys.version_info >= (3, 13) else "u", blank_line)
-            for _ in range(height)
+            array(array_type_code, blank_line) for _ in range(height)
         ]
         self.box: list[defaultdict[int, Quad]] = [
             defaultdict(lambda: (0, 0, 0, 0)) for _ in range(height)
