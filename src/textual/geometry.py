@@ -5,6 +5,7 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
+from fractions import Fraction
 from functools import lru_cache
 from operator import attrgetter, itemgetter
 from typing import (
@@ -186,6 +187,58 @@ class Offset(NamedTuple):
         return Offset(clamp(x, 0, width - 1), clamp(y, 0, height - 1))
 
 
+class Extrema(NamedTuple):
+    """Specifies minimum and maximum dimensions."""
+
+    min_width: int | None = None
+    max_width: int | None = None
+    min_height: int | None = None
+    max_height: int | None = None
+
+    @property
+    def fractions(
+        self,
+    ) -> tuple[Fraction | None, Fraction | None, Fraction | None, Fraction | None]:
+        min_width, max_width, min_height, max_height = self
+        return (
+            None if min_width is None else Fraction(min_width),
+            None if max_width is None else Fraction(max_width),
+            None if min_height is None else Fraction(min_height),
+            None if max_height is None else Fraction(max_height),
+        )
+
+    def apply_width(self, width: int) -> int:
+        """Apply width extrema."""
+        min_width, max_width, *_ = self
+        if min_width is not None:
+            width = max(width, min_width)
+        if max_width is not None:
+            width = min(width, max_width)
+        return width
+
+    def apply_height(self, height: int) -> int:
+        """Apply height extrema."""
+        *_, min_height, max_height = self
+        if min_height is not None:
+            height = max(height, min_height)
+        if max_height is not None:
+            height = max(height, max_height)
+        return height
+
+    def apply(self, width: int, height: int) -> Size:
+        """Apply extrema to width and height."""
+        min_width, max_width, min_height, max_height = self
+        if min_width is not None:
+            width = max(width, min_width)
+        if max_width is not None:
+            width = min(width, max_width)
+        if min_height is not None:
+            height = max(height, min_height)
+        if max_height is not None:
+            height = max(height, max_height)
+        return Size(width, height)
+
+
 class Size(NamedTuple):
     """The dimensions (width and height) of a rectangular region.
 
@@ -227,6 +280,26 @@ class Size(NamedTuple):
     def line_range(self) -> range:
         """A range object that covers values between 0 and `height`."""
         return range(self.height)
+
+    def apply_extrema(
+        self,
+        min_width: int | None,
+        max_width: int | None,
+        min_height: int | None,
+        max_height: int | None,
+    ) -> Size:
+        width = self.width
+        height = self.height
+        if min_width is not None:
+            width = max(width, min_width)
+        if max_width is not None:
+            width = min(width, max_width)
+        if min_height is not None:
+            height = max(height, min_height)
+        if max_height is not None:
+            height = max(height, max_height)
+        # print(self, min_width, max_width, min_height, max_height, (width, height))
+        return Size(width, height)
 
     def with_width(self, width: int) -> Size:
         """Get a new Size with just the width changed.

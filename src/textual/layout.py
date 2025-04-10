@@ -257,13 +257,19 @@ class Layout(ABC):
             Content height (in lines).
         """
         if widget._nodes:
+            height = container.height
+
             if not widget.styles.is_docked and all(
                 child.styles.is_dynamic_height for child in widget.displayed_children
             ):
                 # An exception for containers with all dynamic height widgets
-                arrangement = widget._arrange(Size(width, container.height))
+                arrangement = widget._arrange(
+                    Size(width, widget.extrema.apply_height(container.height))
+                )
             else:
-                arrangement = widget._arrange(Size(width, 0))
+                arrangement = widget._arrange(
+                    Size(width, widget.extrema.min_height or 0)
+                )
             height = arrangement.total_region.height
         else:
             height = 0
