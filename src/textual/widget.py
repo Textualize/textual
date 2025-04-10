@@ -2212,33 +2212,34 @@ class Widget(DOMNode):
 
         styles = self.styles
         margin = styles.margin
-        is_border_box = styles.box_sizing == "border-box"
-        gutter = styles.gutter
+        container -= margin.totals
+        if styles.box_sizing == "border-box":
+            gutter_width, gutter_height = styles.gutter.totals
+        else:
+            gutter_width = gutter_height = 0
 
         if styles.min_width is not None:
-            min_width = styles.min_width.resolve(
-                container - margin.totals, viewport, width_fraction
+            min_width = (
+                styles.min_width.resolve(container, viewport, width_fraction)
+                - gutter_width
             )
-            if is_border_box:
-                min_width -= gutter.width
+
         if styles.max_width is not None:
-            max_width = styles.max_width.resolve(
-                container - margin.totals, viewport, width_fraction
+            max_width = (
+                styles.max_width.resolve(container, viewport, width_fraction)
+                - gutter_width
             )
-            if is_border_box:
-                max_width -= gutter.width
         if styles.min_height is not None:
-            min_height = styles.min_height.resolve(
-                container - margin.totals, viewport, height_fraction
+            min_height = (
+                styles.min_height.resolve(container, viewport, height_fraction)
+                - gutter_height
             )
-            if is_border_box:
-                min_height -= gutter.height
+
         if styles.max_height is not None:
-            max_height = styles.max_height.resolve(
-                container - margin.totals, viewport, height_fraction
+            max_height = (
+                styles.max_height.resolve(container, viewport, height_fraction)
+                - gutter_height
             )
-            if is_border_box:
-                max_height -= gutter.height
 
         extrema = Extrema(min_width, max_width, min_height, max_height)
         return extrema
