@@ -228,26 +228,6 @@ class Size(NamedTuple):
         """A range object that covers values between 0 and `height`."""
         return range(self.height)
 
-    def apply_extrema(
-        self,
-        min_width: int | None,
-        max_width: int | None,
-        min_height: int | None,
-        max_height: int | None,
-    ) -> Size:
-        width = self.width
-        height = self.height
-        if min_width is not None:
-            width = max(width, min_width)
-        if max_width is not None:
-            width = min(width, max_width)
-        if min_height is not None:
-            height = max(height, min_height)
-        if max_height is not None:
-            height = max(height, max_height)
-        # print(self, min_width, max_width, min_height, max_height, (width, height))
-        return Size(width, height)
-
     def with_width(self, width: int) -> Size:
         """Get a new Size with just the width changed.
 
