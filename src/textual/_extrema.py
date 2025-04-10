@@ -3,6 +3,8 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import NamedTuple
 
+from textual.geometry import Size
+
 
 class Extrema(NamedTuple):
     """Specifies minimum and maximum dimensions."""
@@ -45,3 +47,18 @@ class Extrema(NamedTuple):
         if max_height is not None:
             height = min(height, max_height)
         return height
+
+    def apply_dimensions(self, width: int, height: int) -> Size:
+        """Apply extrema to integer dimensions.
+
+        Args:
+            width: Integer width.
+            height: Integer height.
+
+        Returns:
+            Size with extrema applied.
+        """
+        return Size(
+            int(self.apply_width(Fraction(width))),
+            int(self.apply_height(Fraction(height))),
+        )

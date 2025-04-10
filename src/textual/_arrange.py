@@ -99,23 +99,13 @@ def arrange(
             # Perform any alignment of the widgets.
             if styles.align_horizontal != "left" or styles.align_vertical != "top":
                 bounding_region = WidgetPlacement.get_bounds(layout_placements)
-
                 container_width, container_height = dock_region.size
-                widget.log(
-                    widget, bounding_region=bounding_region, container=dock_region
-                )
-
-                min_height = 0
-                if styles.min_height is not None:
-                    min_height = int(
-                        styles.min_height.resolve(size, viewport, Fraction(size.height))
-                    )
-
+                extrema = widget._extrema
                 placement_offset += styles._align_size(
                     bounding_region.size,
-                    Size(
+                    extrema.apply_dimensions(
                         0 if styles.is_auto_width else container_width,
-                        min_height if styles.is_auto_height else container_height,
+                        0 if styles.is_auto_height else container_height,
                     ),
                 ).clamped
 
