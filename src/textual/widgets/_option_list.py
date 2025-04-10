@@ -759,8 +759,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def _update_lines(self) -> None:
         """Update internal structures when new lines are added."""
-        if not self.options or not self.scrollable_content_region:
-            # No options -- nothing to
+        if not self.scrollable_content_region:
             return
 
         line_cache = self._line_cache

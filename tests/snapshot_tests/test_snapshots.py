@@ -3915,3 +3915,23 @@ def test_option_list_size_when_options_removed(snap_compare):
                 option_list.remove_option_at_index(0)
 
     snap_compare(OptionListApp(), press=["x"])
+
+
+def test_option_list_size_when_options_cleared(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5728
+
+    You should see the height of the OptionList has updated correctly after
+    its options are cleared.
+    """
+
+    class OptionListApp(App):
+        BINDINGS = [("x", "clear_options", "Clear options")]
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(*[f"Option {n}" for n in range(30)])
+            yield Footer()
+
+        def action_clear_options(self) -> None:
+            self.query_one(OptionList).clear_options()
+
+    snap_compare(OptionListApp(), press=["x"])
