@@ -2219,28 +2219,24 @@ class Widget(DOMNode):
             min_width = styles.min_width.resolve(
                 container - margin.totals, viewport, width_fraction
             )
-
             if is_border_box:
                 min_width -= gutter.width
         if styles.max_width is not None:
             max_width = styles.max_width.resolve(
                 container - margin.totals, viewport, width_fraction
             )
-
             if is_border_box:
                 max_width -= gutter.width
         if styles.min_height is not None:
             min_height = styles.min_height.resolve(
                 container - margin.totals, viewport, height_fraction
             )
-
             if is_border_box:
                 min_height -= gutter.height
         if styles.max_height is not None:
             max_height = styles.max_height.resolve(
                 container - margin.totals, viewport, height_fraction
             )
-
             if is_border_box:
                 max_height -= gutter.height
 
