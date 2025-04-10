@@ -3842,7 +3842,7 @@ def test_select_list_in_collapsible(snap_compare):
             yield CustomWidget()
             yield Footer()
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_enforce_visual(snap_compare):
@@ -3873,7 +3873,7 @@ def test_enforce_visual(snap_compare):
         def compose(self) -> ComposeResult:
             yield OptionList(*[OverflowOption() for _ in range(100)])
 
-    snap_compare(OptionListOverflowApp())
+    assert snap_compare(OptionListOverflowApp())
 
 
 def test_notifications_markup(snap_compare):
@@ -3892,4 +3892,4 @@ def test_notifications_markup(snap_compare):
                 timeout=100,
             )
 
-    snap_compare(ToastApp())
+    assert snap_compare(ToastApp())
