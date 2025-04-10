@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from fractions import Fraction
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from textual._spatial_map import SpatialMap
@@ -238,16 +237,9 @@ class Layout(ABC):
             width = 0
         else:
             arrangement = widget._arrange(
-                Size(
-                    (
-                        int(widget._extrema.min_width or 0)
-                        if widget.shrink
-                        else int(widget._extrema.apply_width(Fraction(container.width)))
-                    ),
-                    0,
-                )
+                Size(0 if widget.shrink else container.width, 0)
             )
-            width = arrangement.total_region.width
+            width = arrangement.total_region.right
         return width
 
     def get_content_height(
@@ -265,22 +257,13 @@ class Layout(ABC):
             Content height (in lines).
         """
         if widget._nodes:
-            height = container.height
-
             if not widget.styles.is_docked and all(
                 child.styles.is_dynamic_height for child in widget.displayed_children
             ):
                 # An exception for containers with all dynamic height widgets
-                arrangement = widget._arrange(
-                    Size(
-                        width,
-                        int(widget._extrema.apply_height(Fraction(container.height))),
-                    )
-                )
+                arrangement = widget._arrange(Size(width, container.height))
             else:
-                arrangement = widget._arrange(
-                    Size(width, int(widget._extrema.min_height or 0))
-                )
+                arrangement = widget._arrange(Size(width, 0))
             height = arrangement.total_region.height
         else:
             height = 0
