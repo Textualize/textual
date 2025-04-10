@@ -102,7 +102,7 @@ def arrange(
                 container_width, container_height = dock_region.size
                 placement_offset += styles._align_size(
                     bounding_region.size,
-                    Size(
+                    widget._extrema.apply_dimensions(
                         0 if styles.is_auto_width else container_width,
                         0 if styles.is_auto_height else container_height,
                     ),

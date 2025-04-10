@@ -1162,9 +1162,9 @@ class Styles(StylesBase):
         if "min_height" in rules:
             append_declaration("min-height", str(self.min_height))
         if "max_width" in rules:
-            append_declaration("max-width", str(self.min_width))
+            append_declaration("max-width", str(self.max_width))
         if "max_height" in rules:
-            append_declaration("max-height", str(self.min_height))
+            append_declaration("max-height", str(self.max_height))
         if "transitions" in rules:
             append_declaration(
                 "transition",

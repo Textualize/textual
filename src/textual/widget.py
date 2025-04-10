@@ -54,6 +54,7 @@ from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
+from textual._extrema import Extrema
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
 from textual.actions import SkipAction
@@ -504,6 +505,8 @@ class Widget(DOMNode):
         """Time of last scroll."""
         self._user_scroll_interrupt: bool = False
         """Has the user interrupted a scroll to end?"""
+        self._extrema = Extrema()
+        """Optional minimum and maximum values for width and height."""
 
     @property
     def is_mounted(self) -> bool:
@@ -1528,12 +1531,16 @@ class Widget(DOMNode):
         # Container minus padding and border
         content_container = container - gutter.totals
 
+        extrema = self._extrema = self._resolve_extrema(
+            container, viewport, width_fraction, height_fraction
+        )
+        min_width, max_width, min_height, max_height = extrema
+
         if styles.width is None:
             # No width specified, fill available space
             content_width = Fraction(content_container.width - margin.width)
         elif is_auto_width:
             # When width is auto, we want enough space to always fit the content
-
             content_width = Fraction(
                 self.get_content_width(content_container - margin.totals, viewport)
             )
@@ -1555,28 +1562,17 @@ class Widget(DOMNode):
             if is_border_box:
                 content_width -= gutter.width
 
-        if styles.min_width is not None:
+        if min_width is not None:
             # Restrict to minimum width, if set
-            min_width = styles.min_width.resolve(
-                container - margin.totals, viewport, width_fraction
-            )
-            if is_border_box:
-                min_width -= gutter.width
             content_width = max(content_width, min_width, Fraction(0))
 
-        if styles.max_width is not None and not (
+        if max_width is not None and not (
             container.width == 0
             and not styles.max_width.is_cells
             and self._parent is not None
             and self._parent.styles.is_auto_width
         ):
             # Restrict to maximum width, if set
-            max_width = styles.max_width.resolve(
-                container - margin.totals, viewport, width_fraction
-            )
-            if is_border_box:
-                max_width -= gutter.width
-
             content_width = min(content_width, max_width)
 
         content_width = max(Fraction(0), content_width)
@@ -1614,28 +1610,16 @@ class Widget(DOMNode):
             if is_border_box:
                 content_height -= gutter.height
 
-        if styles.min_height is not None:
+        if min_height is not None:
             # Restrict to minimum height, if set
-            min_height = styles.min_height.resolve(
-                container - margin.totals, viewport, height_fraction
-            )
-            if is_border_box:
-                min_height -= gutter.height
             content_height = max(content_height, min_height, Fraction(0))
 
-        if styles.max_height is not None and not (
+        if max_height is not None and not (
             container.height == 0
             and not styles.max_height.is_cells
             and self._parent is not None
             and self._parent.styles.is_auto_height
         ):
-            # Restrict maximum height, if set
-            max_height = styles.max_height.resolve(
-                container - margin.totals, viewport, height_fraction
-            )
-
-            if is_border_box:
-                max_height -= gutter.height
             content_height = min(content_height, max_height)
 
         content_height = max(Fraction(0), content_height)
@@ -2201,6 +2185,63 @@ class Widget(DOMNode):
         except (NoScreen, errors.NoWidget):
             return False
         return True
+
+    def _resolve_extrema(
+        self,
+        container: Size,
+        viewport: Size,
+        width_fraction: Fraction,
+        height_fraction: Fraction,
+    ) -> Extrema:
+        """Resolve minimum and maximum values for width and height.
+
+        Args:
+            container: Size of outer widget.
+            viewport: Viewport size.
+            width_fraction: Size of 1fr width.
+            height_fraction: Size of 1fr height.
+
+        Returns:
+            Extrema object.
+        """
+
+        min_width: Fraction | None = None
+        max_width: Fraction | None = None
+        min_height: Fraction | None = None
+        max_height: Fraction | None = None
+
+        styles = self.styles
+        container -= styles.margin.totals
+        if styles.box_sizing == "border-box":
+            gutter_width, gutter_height = styles.gutter.totals
+        else:
+            gutter_width = gutter_height = 0
+
+        if styles.min_width is not None:
+            min_width = (
+                styles.min_width.resolve(container, viewport, width_fraction)
+                - gutter_width
+            )
+
+        if styles.max_width is not None:
+            max_width = (
+                styles.max_width.resolve(container, viewport, width_fraction)
+                - gutter_width
+            )
+        if styles.min_height is not None:
+            min_height = (
+                styles.min_height.resolve(container, viewport, height_fraction)
+                - gutter_height
+            )
+
+        if styles.max_height is not None:
+            max_height = (
+                styles.max_height.resolve(container, viewport, height_fraction)
+                - gutter_height
+            )
+
+        extrema = Extrema(min_width, max_width, min_height, max_height)
+        return extrema
 
     def animate(
         self,
