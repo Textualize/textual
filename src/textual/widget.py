@@ -2237,7 +2237,6 @@ class Widget(DOMNode):
                 max_height -= gutter.height
 
         extrema = Extrema(min_width, max_width, min_height, max_height)
-        print(container, viewport, width_fraction, height_fraction, extrema)
         return extrema
 
     def animate(

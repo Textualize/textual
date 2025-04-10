@@ -209,7 +209,7 @@ class Extrema(NamedTuple):
 
     def apply_width(self, width: int) -> int:
         """Apply width extrema."""
-        min_width, max_width, *_ = self
+        min_width, max_width = self[:2]
         if min_width is not None:
             width = max(width, min_width)
         if max_width is not None:
@@ -218,25 +218,19 @@ class Extrema(NamedTuple):
 
     def apply_height(self, height: int) -> int:
         """Apply height extrema."""
-        *_, min_height, max_height = self
+        min_height, max_height = self[2:]
         if min_height is not None:
             height = max(height, min_height)
         if max_height is not None:
-            height = max(height, max_height)
+            height = min(height, max_height)
         return height
 
     def apply(self, width: int, height: int) -> Size:
         """Apply extrema to width and height."""
-        min_width, max_width, min_height, max_height = self
-        if min_width is not None:
-            width = max(width, min_width)
-        if max_width is not None:
-            width = min(width, max_width)
-        if min_height is not None:
-            height = max(height, min_height)
-        if max_height is not None:
-            height = max(height, max_height)
-        return Size(width, height)
+        return Size(
+            self.apply_width(width),
+            self.apply_height(height),
+        )
 
 
 class Size(NamedTuple):
