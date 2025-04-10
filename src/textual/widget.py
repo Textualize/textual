@@ -54,6 +54,7 @@ from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
+from textual._extrema import Extrema
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
 from textual.actions import SkipAction
@@ -71,7 +72,6 @@ from textual.geometry import (
     NULL_REGION,
     NULL_SIZE,
     NULL_SPACING,
-    Extrema,
     Offset,
     Region,
     Size,
@@ -505,7 +505,8 @@ class Widget(DOMNode):
         """Time of last scroll."""
         self._user_scroll_interrupt: bool = False
         """Has the user interrupted a scroll to end?"""
-        self.extrema = Extrema()
+        self._extrema = Extrema()
+        """Optional minimum and maximum values for width and height."""
 
     @property
     def is_mounted(self) -> bool:
@@ -1530,10 +1531,10 @@ class Widget(DOMNode):
         # Container minus padding and border
         content_container = container - gutter.totals
 
-        extrema = self.extrema = self._resolve_extrema(
+        extrema = self._extrema = self._resolve_extrema(
             container, viewport, width_fraction, height_fraction
         )
-        min_width, max_width, min_height, max_height = extrema.fractions
+        min_width, max_width, min_height, max_height = extrema
 
         if styles.width is None:
             # No width specified, fill available space
@@ -2192,11 +2193,22 @@ class Widget(DOMNode):
         width_fraction: Fraction,
         height_fraction: Fraction,
     ) -> Extrema:
+        """Resolve minimum and maximum values.
 
-        min_width: int | None = None
-        max_width: int | None = None
-        min_height: int | None = None
-        max_height: int | None = None
+        Args:
+            container: Size of outer widget.
+            viewport: Viewport size.
+            width_fraction: Size of 1fr width.
+            height_fraction: Size of 1fr height.
+
+        Returns:
+            Extrema object.
+        """
+
+        min_width: Fraction | None = None
+        max_width: Fraction | None = None
+        min_height: Fraction | None = None
+        max_height: Fraction | None = None
 
         styles = self.styles
         margin = styles.margin
@@ -2204,35 +2216,31 @@ class Widget(DOMNode):
         gutter = styles.gutter
 
         if styles.min_width is not None:
-            min_width = int(
-                styles.min_width.resolve(
-                    container - margin.totals, viewport, width_fraction
-                )
+            min_width = styles.min_width.resolve(
+                container - margin.totals, viewport, width_fraction
             )
+
             if is_border_box:
                 min_width -= gutter.width
         if styles.max_width is not None:
-            max_width = int(
-                styles.max_width.resolve(
-                    container - margin.totals, viewport, width_fraction
-                )
+            max_width = styles.max_width.resolve(
+                container - margin.totals, viewport, width_fraction
             )
+
             if is_border_box:
                 max_width -= gutter.width
         if styles.min_height is not None:
-            min_height = int(
-                styles.min_height.resolve(
-                    container - margin.totals, viewport, height_fraction
-                )
+            min_height = styles.min_height.resolve(
+                container - margin.totals, viewport, height_fraction
             )
+
             if is_border_box:
                 min_height -= gutter.height
         if styles.max_height is not None:
-            max_height = int(
-                styles.max_height.resolve(
-                    container - margin.totals, viewport, height_fraction
-                )
+            max_height = styles.max_height.resolve(
+                container - margin.totals, viewport, height_fraction
             )
+
             if is_border_box:
                 max_height -= gutter.height
 

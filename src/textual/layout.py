@@ -264,11 +264,11 @@ class Layout(ABC):
             ):
                 # An exception for containers with all dynamic height widgets
                 arrangement = widget._arrange(
-                    Size(width, widget.extrema.apply_height(container.height))
+                    Size(width, widget._extrema.apply_height(container.height))
                 )
             else:
                 arrangement = widget._arrange(
-                    Size(width, widget.extrema.min_height or 0)
+                    Size(width, widget._extrema.min_height or 0)
                 )
             height = arrangement.total_region.height
         else:

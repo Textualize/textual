@@ -5,7 +5,6 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-from fractions import Fraction
 from functools import lru_cache
 from operator import attrgetter, itemgetter
 from typing import (
@@ -185,52 +184,6 @@ class Offset(NamedTuple):
         """
         x, y = self
         return Offset(clamp(x, 0, width - 1), clamp(y, 0, height - 1))
-
-
-class Extrema(NamedTuple):
-    """Specifies minimum and maximum dimensions."""
-
-    min_width: int | None = None
-    max_width: int | None = None
-    min_height: int | None = None
-    max_height: int | None = None
-
-    @property
-    def fractions(
-        self,
-    ) -> tuple[Fraction | None, Fraction | None, Fraction | None, Fraction | None]:
-        min_width, max_width, min_height, max_height = self
-        return (
-            None if min_width is None else Fraction(min_width),
-            None if max_width is None else Fraction(max_width),
-            None if min_height is None else Fraction(min_height),
-            None if max_height is None else Fraction(max_height),
-        )
-
-    def apply_width(self, width: int) -> int:
-        """Apply width extrema."""
-        min_width, max_width = self[:2]
-        if min_width is not None:
-            width = max(width, min_width)
-        if max_width is not None:
-            width = min(width, max_width)
-        return width
-
-    def apply_height(self, height: int) -> int:
-        """Apply height extrema."""
-        min_height, max_height = self[2:]
-        if min_height is not None:
-            height = max(height, min_height)
-        if max_height is not None:
-            height = min(height, max_height)
-        return height
-
-    def apply(self, width: int, height: int) -> Size:
-        """Apply extrema to width and height."""
-        return Size(
-            self.apply_width(width),
-            self.apply_height(height),
-        )
 
 
 class Size(NamedTuple):
