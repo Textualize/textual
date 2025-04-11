@@ -157,7 +157,7 @@ SLOW_THRESHOLD: int = _get_environ_int("TEXTUAL_SLOW_THRESHOLD", 500, minimum=10
 if message processing exceeds this duration.
 """
 
-DEFAULT_THEME: Final[str] = get_environ("TEXTUAL_THEME", "textual-dark")
+DEFAULT_THEME: Final[str] = get_environ("TEXTUAL_THEME") or "textual-dark"
 """Textual theme to make default. More than one theme may be specified in a comma separated list.
 Textual will use the first theme that exists.
 """
