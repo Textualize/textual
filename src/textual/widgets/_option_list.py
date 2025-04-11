@@ -311,6 +311,8 @@ class OptionList(ScrollView, can_focus=True):
         self._option_to_index.clear()
         self.highlighted = None
         self.refresh()
+        self.scroll_to(0, 0, animate=False)
+        self._update_lines()
         return self
 
     def add_options(self, new_options: Iterable[OptionListContent]) -> Self:

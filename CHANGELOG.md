@@ -15,13 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `OptionList` size after removing or clearing options https://github.com/Textualize/textual/issues/5728
 - Fixed footer / key panel not updating when keymaps are applied https://github.com/Textualize/textual/pull/5724
 - Fixed alignment not being applied when there are min and max limits on dimensions https://github.com/Textualize/textual/pull/5732
+- Fixed issues with OptionList scrollbar not updating https://github.com/Textualize/textual/pull/5736
 
 ### Changed
 
 - Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
 - Rich Text objects will be converted to Content in OptionList and other widgets https://github.com/Textualize/textual/pull/5712
 - Textual will always convert dim attributes to RGB by default https://github.com/Textualize/textual/pull/5715
-- Notifications will now use Textual markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
+- Notifications will now use content markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
 
 ### Added
 
