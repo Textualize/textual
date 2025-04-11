@@ -534,7 +534,7 @@ class OptionList(ScrollView, can_focus=True):
             del self._id_to_option[option._id]
         del self._option_to_index[option]
         self.highlighted = self.highlighted
-        self.refresh()
+        self._clear_caches()
         return self
 
     def _pre_remove_option(self, option: Option, index: int) -> None:
@@ -759,8 +759,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def _update_lines(self) -> None:
         """Update internal structures when new lines are added."""
-        if not self.options or not self.scrollable_content_region:
-            # No options -- nothing to
+        if not self.scrollable_content_region:
             return
 
         line_cache = self._line_cache
