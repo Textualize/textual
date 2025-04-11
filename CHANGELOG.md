@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed footer / key panel not updating when keymaps are applied https://github.com/Textualize/textual/pull/5724
 - Fixed alignment not being applied when there are min and max limits on dimensions https://github.com/Textualize/textual/pull/5732
 - Fixed issues with OptionList scrollbar not updating https://github.com/Textualize/textual/pull/5736
-- Fixed allow_focus method not overriding can_focus
+- Fixed allow_focus method not overriding `can_focus()` https://github.com/Textualize/textual/pull/5737
 
 ### Changed
 
