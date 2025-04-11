@@ -378,7 +378,7 @@ class Widget(DOMNode):
         "hover": lambda widget: widget.mouse_hover,
         "focus": lambda widget: widget.has_focus,
         "blur": lambda widget: not widget.has_focus,
-        "can-focus": lambda widget: widget.can_focus,
+        "can-focus": lambda widget: widget.allow_focus(),
         "disabled": lambda widget: widget.is_disabled,
         "enabled": lambda widget: not widget.is_disabled,
         "dark": lambda widget: widget.app.current_theme.dark,
