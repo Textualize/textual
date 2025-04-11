@@ -3894,7 +3894,6 @@ def test_notifications_markup(snap_compare):
 
     snap_compare(ToastApp())
 
-
 def test_option_list_size_when_options_removed(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5728
 
@@ -3935,3 +3934,32 @@ def test_option_list_size_when_options_cleared(snap_compare):
             self.query_one(OptionList).clear_options()
 
     assert snap_compare(OptionListApp(), press=["x"])
+
+# Thanks Tom Gooding
+def test_alignment_with_auto_and_min_height(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5608
+    You should see a blue label that is centered both horizontally and vertically
+    within a pink container. The container has auto width and height, but also
+    a min-width of 20 and a min-height of 3.
+    """
+
+    class AlignmentApp(App):
+        CSS = """
+        Container {
+            align: center middle;
+            height: auto;
+            min-height: 3;
+            width: auto;
+            min-width: 20;
+            background: pink;
+        }
+        Label {
+            background: blue;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container():
+                yield Label("centered")
+
+    snap_compare(AlignmentApp())
