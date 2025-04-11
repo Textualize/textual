@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Container, ScrollableContainer
 from textual.widget import Widget
 from textual.widgets import Button, Label
+from textual.widgets._placeholder import Placeholder
 
 
 class Focusable(Widget, can_focus=True):
@@ -464,3 +465,45 @@ async def test_get_focusable_widget_at() -> None:
         await pilot.click("#egg")
         # Confirm nothing focused
         assert app.screen.focused is None
+
+
+async def test_allow_focus_override():
+    """Test that allow_focus() method override can_focus."""
+
+    class Focusable(Placeholder, can_focus=False):
+        """Override can_focus from False to True"""
+
+        def allow_focus(self) -> bool:
+            return True
+
+    class NonFocusable(Placeholder, can_focus=True):
+        """Override can_focus from True to False"""
+
+        def allow_focus(self) -> bool:
+            return False
+
+    class FocusApp(App):
+        CSS = """
+        Placeholder {
+            height: 1fr;
+        }
+        *:can-focus {
+            border: heavy red;
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Focusable("FOCUSABLE")
+            yield NonFocusable("NON FOCUSABLE")
+
+    app = FocusApp()
+    async with app.run_test():
+        # Default should be focused
+        assert isinstance(app.focused, Focusable)
+        # Attempt to focus non focusable
+        app.query(NonFocusable).focus()
+        # Unable to focus NonFocusable
+        assert isinstance(app.focused, Focusable)
+        # Check focus chain
+        assert app.screen.focus_chain == [app.query_one(Focusable)]

@@ -303,7 +303,7 @@ class ChangingThemeApp(App[None]):
                     widget.__class__.__name__,
                     (
                         partial(self.set_focus, widget)
-                        if widget.can_focus
+                        if widget.allow_focus()
                         else lambda: None
                     ),
                     f"Focus on {widget.__class__.__name__}",

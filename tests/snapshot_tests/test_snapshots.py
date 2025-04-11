@@ -3894,6 +3894,7 @@ def test_notifications_markup(snap_compare):
 
     assert snap_compare(ToastApp())
 
+
 def test_option_list_size_when_options_removed(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5728
 
@@ -3935,6 +3936,7 @@ def test_option_list_size_when_options_cleared(snap_compare):
 
     assert snap_compare(OptionListApp(), press=["x"])
 
+
 def test_alignment_with_auto_and_min_height(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5608
     You should see a blue label that is centered both horizontally and vertically
@@ -3962,3 +3964,41 @@ def test_alignment_with_auto_and_min_height(snap_compare):
                 yield Label("centered")
 
     assert snap_compare(AlignmentApp())
+
+
+def test_allow_focus(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5609
+
+    You should see two placeholders split vertically.
+    The top should have the label "FOCUSABLE", and have a heavy red border.
+    The bottom should have the label "NON FOCUSABLE" and have the default border.
+    """
+
+    class Focusable(Placeholder, can_focus=False):
+        """Override can_focus from False to True"""
+
+        def allow_focus(self) -> bool:
+            return True
+
+    class NonFocusable(Placeholder, can_focus=True):
+        """Override can_focus from True to False"""
+
+        def allow_focus(self) -> bool:
+            return False
+
+    class FocusApp(App):
+        CSS = """
+        Placeholder {
+            height: 1fr;
+        }
+        *:can-focus {
+            border: heavy red;
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Focusable("FOCUSABLE")
+            yield NonFocusable("NON FOCUSABLE")
+
+    assert snap_compare(FocusApp())
