@@ -3842,7 +3842,7 @@ def test_select_list_in_collapsible(snap_compare):
             yield CustomWidget()
             yield Footer()
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_enforce_visual(snap_compare):
@@ -3873,7 +3873,7 @@ def test_enforce_visual(snap_compare):
         def compose(self) -> ComposeResult:
             yield OptionList(*[OverflowOption() for _ in range(100)])
 
-    snap_compare(OptionListOverflowApp())
+    assert snap_compare(OptionListOverflowApp())
 
 
 def test_notifications_markup(snap_compare):
@@ -3892,7 +3892,7 @@ def test_notifications_markup(snap_compare):
                 timeout=100,
             )
 
-    snap_compare(ToastApp())
+    assert snap_compare(ToastApp())
 
 def test_option_list_size_when_options_removed(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5728
@@ -3935,7 +3935,6 @@ def test_option_list_size_when_options_cleared(snap_compare):
 
     assert snap_compare(OptionListApp(), press=["x"])
 
-# Thanks Tom Gooding
 def test_alignment_with_auto_and_min_height(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5608
     You should see a blue label that is centered both horizontally and vertically
@@ -3962,4 +3961,4 @@ def test_alignment_with_auto_and_min_height(snap_compare):
             with Container():
                 yield Label("centered")
 
-    snap_compare(AlignmentApp())
+    assert snap_compare(AlignmentApp())
