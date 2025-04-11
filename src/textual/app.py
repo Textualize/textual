@@ -4311,7 +4311,7 @@ class App(Generic[ReturnType], DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout (in seconds) for the notification, or `None` for default.
-            markup: Render the message as Textual markup?
+            markup: Render the message as content markup?
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
