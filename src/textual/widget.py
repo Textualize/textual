@@ -2111,7 +2111,7 @@ class Widget(DOMNode):
         """Can this widget currently be focused?"""
         return (
             not self.loading
-            and self.can_focus
+            and self.allow_focus()
             and self.visible
             and not self._self_or_ancestors_disabled
         )
