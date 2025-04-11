@@ -15,11 +15,11 @@ In this chapter, we will cover all these methods.
 When building a custom widget you can embed color and style information in the string returned from the Widget's [`render()`][textual.widget.Widget.render] method.
 Markup is specified as a string which contains 
 Text enclosed in square brackets (`[]`) won't appear in the output, but will modify the style of the text that follows.
-This is known as *Textual markup*.
+This is known as *content markup*.
 
-Before we explore Textual markup in detail, let's first demonstrate some of what it can do.
+Before we explore content markup in detail, let's first demonstrate some of what it can do.
 In the following example, we have two widgets.
-The top has Textual markup enabled, while the bottom widget has Textual markup *disabled*.
+The top has content markup enabled, while the bottom widget has content markup *disabled*.
 
 Notice how the markup *tags* change the style in the first widget, but are left unaltered in the second:
 
@@ -40,7 +40,7 @@ Notice how the markup *tags* change the style in the first widget, but are left 
 
 ### Playground
 
-Textual comes with a markup playground where you can enter Textual markup and see the result's live.
+Textual comes with a markup playground where you can enter content markup and see the result's live.
 To launch the playground, run the following command:
 
 ```

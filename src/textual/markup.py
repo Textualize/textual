@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 class MarkupError(Exception):
-    """An error occurred parsing Textual markup."""
+    """An error occurred parsing content markup."""
 
 
 expect_markup_tag = (
@@ -73,7 +73,7 @@ expect_markup_expression = (
 
 
 class MarkupTokenizer(TokenizerState):
-    """Tokenizes Textual markup."""
+    """Tokenizes content markup."""
 
     EXPECT = expect_markup.expect_eof()
     STATE_MAP = {

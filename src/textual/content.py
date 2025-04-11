@@ -145,7 +145,7 @@ class Content(Visual):
 
     @cached_property
     def markup(self) -> str:
-        """Get Textual markup to render this Text.
+        """Get content markup to render this Text.
 
         Returns:
             str: A string potentially creating markup tags.
@@ -215,7 +215,7 @@ class Content(Visual):
 
     @classmethod
     def from_markup(cls, markup: str | Content, **variables: object) -> Content:
-        """Create content from Textual markup, optionally combined with template variables.
+        """Create content from markup, optionally combined with template variables.
 
         If `markup` is already a Content instance, it will be returned unmodified.
 
@@ -228,7 +228,7 @@ class Content(Visual):
             ```
 
         Args:
-            markup: Textual markup, or Content.
+            markup: Content markup, or Content.
             **variables: Optional template variables used
 
         Returns:

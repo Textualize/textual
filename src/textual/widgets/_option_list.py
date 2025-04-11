@@ -261,7 +261,7 @@ class OptionList(ScrollView, can_focus=True):
             id: The ID of the OptionList in the DOM.
             classes: Initial CSS classes.
             disabled: Disable the widget?
-            markup: Strips should be rendered as Textual markup if `True`, or plain text if `False`.
+            markup: Strips should be rendered as content markup if `True`, or plain text if `False`.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._markup = markup

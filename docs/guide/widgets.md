@@ -28,7 +28,7 @@ The highlighted lines define a custom widget class with just a [render()][textua
 Textual will display whatever is returned from render in the [content](./content.md) area of your widget.
 
 Note that the text contains tags in square brackets, i.e. `[b]`.
-This is [Textual markup](./content.md#markup) which allows you to embed various styles within your content.
+This is [content markup](./content.md#markup) which allows you to embed various styles within your content.
 If you run this you will find that `World` is in bold.
 
 ```{.textual path="docs/examples/guide/widgets/hello01.py"}

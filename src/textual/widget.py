@@ -410,6 +410,7 @@ class Widget(DOMNode):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
+            markup: Enable content markup?
         """
         self._render_markup = markup
         _null_size = NULL_SIZE
@@ -4618,7 +4619,7 @@ class Widget(DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout (in seconds) for the notification, or `None` for default.
-            markup: Render the message as Textual markup?
+            markup: Render the message as content markup?
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.

@@ -136,7 +136,7 @@ def test_add() -> None:
 
 
 def test_from_markup():
-    """Test simple parsing of Textual markup."""
+    """Test simple parsing of content markup."""
     content = Content.from_markup("[red]Hello[/red] [blue]World[/blue]")
     assert len(content) == 11
     assert content.plain == "Hello World"
