@@ -290,6 +290,11 @@ class Screen(Generic[ScreenResultType], Widget):
         self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
         """A signal published when the bindings have been updated"""
 
+        self.text_selection_started_signal: Signal[Screen] = Signal(
+            self, "selection_started"
+        )
+        """A signal published when text selection has started."""
+
         self._css_update_count = -1
         """Track updates to CSS."""
 
@@ -1541,6 +1546,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 ):
                     self._selecting = True
                     if select_widget is not None and select_offset is not None:
+                        self.text_selection_started_signal.publish(self)
                         self._select_start = (
                             select_widget,
                             event.screen_offset,

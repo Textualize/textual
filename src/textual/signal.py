@@ -3,8 +3,6 @@ Signals are a simple pub-sub mechanism.
 
 DOMNodes can subscribe to a signal, which will invoke a callback when the signal is published.
 
-This is experimental for now, for internal use. It may be part of the public API in a future release.
-
 """
 
 from __future__ import annotations

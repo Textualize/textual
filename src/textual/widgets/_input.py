@@ -12,6 +12,7 @@ from typing_extensions import Literal
 
 from textual import events
 from textual.expand_tabs import expand_tabs_inline
+from textual.screen import Screen
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
 
@@ -476,6 +477,7 @@ class Input(ScrollView):
         return Selection(clamp(start, 0, value_length), clamp(end, 0, value_length))
 
     def _watch_selection(self, selection: Selection) -> None:
+        self.app.clear_selection()
         self.app.cursor_position = self.cursor_screen_offset
         if not self._initial_value:
             self.scroll_to_region(
@@ -665,6 +667,13 @@ class Input(ScrollView):
         self._cursor_visible = not self._cursor_visible
 
     def _on_mount(self, event: Mount) -> None:
+        def text_selection_started(screen: Screen) -> None:
+            """Signal callback to unselect when arbitrary text selection starts."""
+            self.selection = Selection.cursor(self.cursor_position)
+
+        self.screen.text_selection_started_signal.subscribe(
+            self, text_selection_started, immediate=True
+        )
         self._blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor,
