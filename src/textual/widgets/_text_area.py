@@ -33,6 +33,7 @@ from textual.document._syntax_aware_document import (
 )
 from textual.document._wrapped_document import WrappedDocument
 from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
+from textual.screen import Screen
 
 if TYPE_CHECKING:
     from tree_sitter import Language, Query
@@ -656,6 +657,8 @@ TextArea {
 
         if not self.is_mounted:
             return
+
+        self.app.clear_selection()
 
         cursor_location = selection.end
 
@@ -1569,9 +1572,17 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
+
+        def text_selection_started(screen: Screen) -> None:
+            """Signal callback to unselect when arbitrary text selection starts."""
+            self.selection = Selection(self.cursor_location, self.cursor_location)
+
+        self.screen.text_selection_started_signal.subscribe(
+            self, text_selection_started, immediate=True
+        )
+
         # When `app.theme` reactive is changed, reset the theme to clear cached styles.
         self.watch(self.app, "theme", self._app_theme_changed, init=False)
-
         self.blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor_blink_visible,

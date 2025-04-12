@@ -4290,6 +4290,13 @@ class App(Generic[ReturnType], DOMNode):
             # Update the toast rack.
             self.call_later(toast_rack.show, self._notifications)
 
+    def clear_selection(self) -> None:
+        """Clear text selection on the active screen."""
+        try:
+            self.screen.clear_selection()
+        except NoScreen:
+            pass
+
     def notify(
         self,
         message: str,
