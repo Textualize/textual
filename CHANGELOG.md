@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed alignment not being applied when there are min and max limits on dimensions https://github.com/Textualize/textual/pull/5732
 - Fixed issues with OptionList scrollbar not updating https://github.com/Textualize/textual/pull/5736
 - Fixed allow_focus method not overriding `can_focus()` https://github.com/Textualize/textual/pull/5737
-- Fixed overlap of Input / TextArea selection with arbitrary text selection
+- Fixed overlap of Input / TextArea selection with arbitrary text selection https://github.com/Textualize/textual/pull/5739
 
 ### Changed
 
@@ -30,8 +30,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `TEXTUAL_DIM_FACTOR` env var to set the opacity of the 'dim' ANSI attribute https://github.com/Textualize/textual/pull/5715
 - `notify()` now accepts a `markup` parameter to disable rendering the message as markup https://github.com/Textualize/textual/pull/5719
-- Added `Screen.text_selection_started_signal`
-- Added `App.clear_selection()` method to clear arbitrary text selection
+- Added `Screen.text_selection_started_signal` https://github.com/Textualize/textual/pull/5739
+- Added `App.clear_selection()` helper method to clear arbitrary text selection of active screen https://github.com/Textualize/textual/pull/5739
 
 ## [3.0.1] - 2025-04-01
 
