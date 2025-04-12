@@ -11,7 +11,7 @@ from textual._loop import loop_last
 from textual.binding import Binding, BindingType
 from textual.cache import LRUCache
 from textual.css.styles import RulesMap
-from textual.geometry import Region, Size, clamp
+from textual.geometry import Region, Size, Spacing, clamp
 from textual.message import Message
 from textual.reactive import reactive
 from textual.scroll_view import ScrollView
@@ -272,7 +272,7 @@ class OptionList(ScrollView, can_focus=True):
         self._option_to_index: dict[Option, int] = {}
         """Maps an Option to it's index in self._options."""
 
-        self._option_render_cache: LRUCache[tuple[Option, Style], list[Strip]]
+        self._option_render_cache: LRUCache[tuple[Option, Style, Spacing], list[Strip]]
         self._option_render_cache = LRUCache(maxsize=1024 * 2)
         """Caches rendered options."""
 
@@ -658,7 +658,7 @@ class OptionList(ScrollView, can_focus=True):
         self.refresh()
 
     def notify_style_update(self) -> None:
-        self._clear_caches()
+        self.refresh()
         super().notify_style_update()
 
     def _on_resize(self):
@@ -741,7 +741,7 @@ class OptionList(ScrollView, can_focus=True):
         padding = self.get_component_styles("option-list--option").padding
         render_width = self.scrollable_content_region.width
         width = render_width - self._get_left_gutter_width()
-        cache_key = (option, style)
+        cache_key = (option, style, padding)
         if (strips := self._option_render_cache.get(cache_key)) is None:
             visual = self._get_visual(option)
             if padding:
