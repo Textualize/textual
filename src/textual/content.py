@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from functools import cached_property, total_ordering
 from operator import itemgetter
-from typing import Callable, Iterable, NamedTuple, Sequence, Union
+from typing import Callable, Final, Iterable, NamedTuple, Sequence, Union
 
 import rich.repr
 from rich._wrap import divide_line
@@ -22,7 +22,7 @@ from rich.segment import Segment
 from rich.style import Style as RichStyle
 from rich.terminal_theme import TerminalTheme
 from rich.text import Text
-from typing_extensions import Final, TypeAlias
+from typing_extensions import TypeAlias
 
 from textual._cells import cell_len
 from textual._context import active_app

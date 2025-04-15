@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 import rich.repr
 from rich.cells import cell_len
 from rich.console import ConsoleRenderable, RenderableType
-from typing_extensions import Literal, Self
+from typing_extensions import Self
 
 from textual import events
 

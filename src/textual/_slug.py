@@ -19,10 +19,8 @@ from __future__ import annotations
 from collections import defaultdict
 from re import compile
 from string import punctuation
-from typing import Pattern
+from typing import Final, Pattern
 from urllib.parse import quote
-
-from typing_extensions import Final
 
 WHITESPACE_REPLACEMENT: Final[str] = "-"
 """The character to replace undesirable characters with."""

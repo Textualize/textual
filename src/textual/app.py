@@ -131,8 +131,10 @@ from textual.worker import NoActiveWorker, get_current_worker
 from textual.worker_manager import WorkerManager
 
 if TYPE_CHECKING:
+    from typing import Coroutine, Literal
+
     from textual_dev.client import DevtoolsClient
-    from typing_extensions import Coroutine, Literal, Self, TypeAlias
+    from typing_extensions import Self, TypeAlias
 
     from textual._types import MessageTarget
 

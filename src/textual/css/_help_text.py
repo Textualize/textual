@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Sequence
-
-from typing_extensions import Literal
+from typing import Iterable, Literal, Sequence
 
 from textual.color import ColorParseError
 from textual.css._error_tools import friendly_list

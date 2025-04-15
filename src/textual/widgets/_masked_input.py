@@ -3,12 +3,11 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from enum import Flag, auto
-from typing import TYPE_CHECKING, Iterable, Pattern
+from typing import TYPE_CHECKING, Iterable, Literal, Pattern
 
 from rich.console import RenderableType
 from rich.segment import Segment
 from rich.text import Text
-from typing_extensions import Literal
 
 from textual import events
 from textual.strip import Strip

@@ -15,7 +15,7 @@ from textual.widget import Widget
 from textual.widgets import Button, Footer, Label, Markdown
 
 if TYPE_CHECKING:
-    from typing_extensions import Final
+    from typing import Final
 
 
 class Help(Screen):

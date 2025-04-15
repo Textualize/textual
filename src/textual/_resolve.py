@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from fractions import Fraction
 from itertools import accumulate
-from typing import TYPE_CHECKING, Iterable, Sequence, cast
-
-from typing_extensions import Literal
+from typing import TYPE_CHECKING, Iterable, Literal, Sequence, cast
 
 from textual.box_model import BoxModel
 from textual.css.scalar import Scalar

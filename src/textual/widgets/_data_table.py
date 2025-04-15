@@ -4,7 +4,16 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Generic,
+    Iterable,
+    Literal,
+    NamedTuple,
+    TypeVar,
+)
 
 import rich.repr
 from rich.console import RenderableType
@@ -13,7 +22,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
-from typing_extensions import Literal, Self, TypeAlias
+from typing_extensions import Self, TypeAlias
 
 from textual import events
 from textual._segment_tools import line_crop

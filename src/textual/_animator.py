@@ -4,9 +4,7 @@ import asyncio
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
-
-from typing_extensions import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Callable, Protocol, TypeVar, runtime_checkable
 
 from textual import _time
 from textual._callback import invoke

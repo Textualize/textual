@@ -3,9 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
-
-from typing_extensions import Literal, get_args
+from typing import TYPE_CHECKING, Literal, NamedTuple, Tuple, get_args, overload
 
 if TYPE_CHECKING:
     from tree_sitter import Node, Query

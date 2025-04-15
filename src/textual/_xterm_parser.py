@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Any, Generator, Iterable
-
-from typing_extensions import Final
+from typing import Any, Final, Generator, Iterable
 
 from textual import constants, events, messages
 from textual._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE

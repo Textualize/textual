@@ -3,10 +3,9 @@ from __future__ import annotations
 from asyncio import gather
 from dataclasses import dataclass
 from itertools import zip_longest
-from typing import Awaitable
+from typing import Awaitable, Final
 
 from rich.repr import Result
-from typing_extensions import Final
 
 from textual import events
 from textual.app import ComposeResult
