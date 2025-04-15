@@ -6251,6 +6251,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.text_selection_started_signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;text_selection_started_signal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.title" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;title
@@ -8063,6 +8072,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.text_selection_started_signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;text_selection_started_signal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.title" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;title
@@ -8644,7 +8662,7 @@ window.onload = async (event) => {
 <a id="textual.screen"></a>
     <div class="doc doc-contents first">
 
-        <p>This module contains the <code>Screen</code> class and related objects.</p>
+      <p>This module contains the <code>Screen</code> class and related objects.</p>
 <p>The <code>Screen</code> class is a special widget which represents the content in the terminal. See <a href="/guide/screens/">Screens</a> for details.</p>
 
 
@@ -8676,14 +8694,14 @@ window.onload = async (event) => {
 
 <a href="#textual.screen.ScreenResultCallbackType" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ScreenResultCallbackType</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a></span><span class="p">[</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a></span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n"><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a></span><span class="p">]],</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Awaitable" href="https://docs.python.org/3/library/typing.html#typing.Awaitable">Awaitable</a></span><span class="p">[</span><span class="kc">None</span><span class="p">]],</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a></span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n"><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></span><span class="p">[[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a></span><span class="p">]],</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Awaitable" href="https://docs.python.org/3/library/typing.html#typing.Awaitable">Awaitable</a></span><span class="p">[</span><span class="kc">None</span><span class="p">]],</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Type of a screen result callback function.</p>
+      <p>Type of a screen result callback function.</p>
     </div>
 
 </div>
@@ -8706,7 +8724,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The result type of a screen.</p>
+      <p>The result type of a screen.</p>
     </div>
 
 </div>
@@ -8721,16 +8739,16 @@ window.onload = async (event) => {
 
 
 <a href="#textual.screen.ModalScreen" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ModalScreen</span><span class="p">(</span><span class="n"><span title="textual.screen.ModalScreen(name)">name</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.screen.ModalScreen(id)">id</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.screen.ModalScreen(classes)">classes</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ModalScreen</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Screen (textual.screen.Screen)" href="#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code></p>
 
 
 
-        <p>A screen with bindings that take precedence over the App's key bindings.</p>
+      <p>A screen with bindings that take precedence over the App's key bindings.</p>
 <p>The default styling of a modal screen will dim the screen underneath.</p>
 
 
@@ -8768,16 +8786,16 @@ window.onload = async (event) => {
 
 
 <a href="#textual.screen.ResultCallback" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ResultCallback</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" requester (textual.screen.ResultCallback(requester))" href="#textual.screen.ResultCallback(requester)">requester</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" callback (textual.screen.ResultCallback(callback))" href="#textual.screen.ResultCallback(callback)">callback</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" future (textual.screen.ResultCallback(future))" href="#textual.screen.ResultCallback(future)">future</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ResultCallback</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.ResultCallback(requester)">requester</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.ResultCallback(callback)">callback</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.ResultCallback(future)">future</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code></p>
+              Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code></p>
 
 
 
-        <p>Holds the details of a callback.</p>
+      <p>Holds the details of a callback.</p>
 
 
 
@@ -8797,7 +8815,7 @@ window.onload = async (event) => {
 <h3 id="textual.screen.ResultCallback(requester)" class="doc doc-heading doc-heading-parameter">                  <code>requester</code>
 <a href="#textual.screen.ResultCallback(requester)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" MessagePump (textual.message_pump.MessagePump)" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8813,7 +8831,7 @@ window.onload = async (event) => {
 <h3 id="textual.screen.ResultCallback(callback)" class="doc doc-heading doc-heading-parameter">                  <code>callback</code>
 <a href="#textual.screen.ResultCallback(callback)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ScreenResultCallbackType (textual.screen.ScreenResultCallbackType)" href="#textual.screen.ScreenResultCallbackType">ScreenResultCallbackType</a>[<a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultCallbackType" href="#textual.screen.ScreenResultCallbackType">ScreenResultCallbackType</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8829,7 +8847,7 @@ window.onload = async (event) => {
 <h3 id="textual.screen.ResultCallback(future)" class="doc doc-heading doc-heading-parameter">                  <code>future</code>
 <a href="#textual.screen.ResultCallback(future)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="asyncio.Future" href="https://docs.python.org/3/library/asyncio-future.html#asyncio.Future">Future</a>[<a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
+                  <code><a class="autorefs autorefs-external" title="asyncio.Future" href="https://docs.python.org/3/library/asyncio-future.html#asyncio.Future">Future</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8872,12 +8890,12 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.screen.ResultCallback.callback" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">callback</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" callback (textual.screen.ResultCallback(callback))" href="#textual.screen.ResultCallback(callback)">callback</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">callback</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.screen.ResultCallback.callback" href="#textual.screen.ResultCallback.callback">callback</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The callback function.</p>
+      <p>The callback function.</p>
     </div>
 
 </div>
@@ -8895,12 +8913,12 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.screen.ResultCallback.future" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">future</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" future (textual.screen.ResultCallback(future))" href="#textual.screen.ResultCallback(future)">future</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">future</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.screen.ResultCallback.future" href="#textual.screen.ResultCallback.future">future</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>A future for the result</p>
+      <p>A future for the result</p>
     </div>
 
 </div>
@@ -8918,12 +8936,12 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.screen.ResultCallback.requester" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">requester</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" requester (textual.screen.ResultCallback(requester))" href="#textual.screen.ResultCallback(requester)">requester</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">requester</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.screen.ResultCallback.requester" href="#textual.screen.ResultCallback.requester">requester</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The object in the DOM that requested the callback.</p>
+      <p>The object in the DOM that requested the callback.</p>
     </div>
 
 </div>
@@ -8947,16 +8965,16 @@ window.onload = async (event) => {
 
 
 <a href="#textual.screen.Screen" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Screen</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" name (textual.screen.Screen(name))" href="#textual.screen.Screen(name)">name</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" id (textual.screen.Screen(id))" href="#textual.screen.Screen(id)">id</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" classes (textual.screen.Screen(classes))" href="#textual.screen.Screen(classes)">classes</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Screen</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen(name)">name</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen(id)">id</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen(classes)">classes</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code>, <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code></p>
+              Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code>, <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code></p>
 
 
 
-        <p>The base class for screens.</p>
+      <p>The base class for screens.</p>
 
 
 
@@ -9056,8 +9074,13 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget). Or
-<code>None</code> to default to <a class="autorefs autorefs-internal" title=" ALLOW_IN_MAXIMIZED_VIEW" href="../app/#textual.app.App.ALLOW_IN_MAXIMIZED_VIEW">App.ALLOW_IN_MAXIMIZED_VIEW</a></p>
+      <p>A selector for the widgets (direct children of Screen) that are allowed in the maximized view (in addition to maximized widget). Or
+<code>None</code> to default to <a class="autorefs autorefs-internal" title="            ALLOW_IN_MAXIMIZED_VIEW
+
+
+  
+      class-attribute
+  " href="../app/#textual.app.App.ALLOW_IN_MAXIMIZED_VIEW">App.ALLOW_IN_MAXIMIZED_VIEW</a></p>
     </div>
 
 </div>
@@ -9080,7 +9103,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>A selector to determine what to focus automatically when the screen is activated.</p>
+      <p>A selector to determine what to focus automatically when the screen is activated.</p>
 <p>The widget focused is the first that matches the given <a href="/guide/queries/#query-selectors">CSS selector</a>.
 Set to <code>None</code> to inherit the value from the screen's app.
 Set to <code>""</code> to disable auto focus.</p>
@@ -9106,8 +9129,8 @@ Set to <code>""</code> to disable auto focus.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Command providers used by the <a href="/guide/command_palette">command palette</a>, associated with the screen.</p>
-<p>Should be a set of <a class="autorefs autorefs-internal" title=" Provider" href="../command/#textual.command.Provider"><code>command.Provider</code></a> classes.</p>
+      <p>Command providers used by the <a href="/guide/command_palette">command palette</a>, associated with the screen.</p>
+<p>Should be a set of <a class="autorefs autorefs-internal" title="            Provider" href="../command/#textual.command.Provider"><code>command.Provider</code></a> classes.</p>
     </div>
 
 </div>
@@ -9130,7 +9153,7 @@ Set to <code>""</code> to disable auto focus.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Inline CSS, useful for quick scripts. Rules here take priority over CSS_PATH.</p>
+      <p>Inline CSS, useful for quick scripts. Rules here take priority over CSS_PATH.</p>
 
 
 <details class="note" open>
@@ -9158,7 +9181,7 @@ Set to <code>""</code> to disable auto focus.</p>
 
     <div class="doc doc-contents ">
 
-        <p>File paths to load CSS from.</p>
+      <p>File paths to load CSS from.</p>
 
 
 <details class="note" open>
@@ -9186,7 +9209,12 @@ Set to <code>""</code> to disable auto focus.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Use escape key to minimize (potentially overriding bindings) or <code>None</code> to defer to <a class="autorefs autorefs-internal" title=" ESCAPE_TO_MINIMIZE" href="../app/#textual.app.App.ESCAPE_TO_MINIMIZE"><code>App.ESCAPE_TO_MINIMIZE</code></a>.</p>
+      <p>Use escape key to minimize (potentially overriding bindings) or <code>None</code> to defer to <a class="autorefs autorefs-internal" title="            ESCAPE_TO_MINIMIZE
+
+
+  
+      class-attribute
+  " href="../app/#textual.app.App.ESCAPE_TO_MINIMIZE"><code>App.ESCAPE_TO_MINIMIZE</code></a>.</p>
     </div>
 
 </div>
@@ -9209,10 +9237,16 @@ Set to <code>""</code> to disable auto focus.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A class variable to set the <em>default</em> sub-title for the screen.</p>
+      <p>A class variable to set the <em>default</em> sub-title for the screen.</p>
 <p>This overrides the app sub-title.
 To update the sub-title while the screen is running,
-you can set the <a class="autorefs autorefs-internal" title=" sub_title" href="#textual.screen.Screen.sub_title">sub_title</a> attribute.</p>
+you can set the <a class="autorefs autorefs-internal" title="            sub_title
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="#textual.screen.Screen.sub_title">sub_title</a> attribute.</p>
     </div>
 
 </div>
@@ -9235,10 +9269,16 @@ you can set the <a class="autorefs autorefs-internal" title=" sub_title" href="
 
     <div class="doc doc-contents ">
 
-        <p>A class variable to set the <em>default</em> title for the screen.</p>
+      <p>A class variable to set the <em>default</em> title for the screen.</p>
 <p>This overrides the app title.
 To update the title while the screen is running,
-you can set the <a class="autorefs autorefs-internal" title=" title" href="#textual.screen.Screen.title">title</a> attribute.</p>
+you can set the <a class="autorefs autorefs-internal" title="            title
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="#textual.screen.Screen.title">title</a> attribute.</p>
     </div>
 
 </div>
@@ -9261,7 +9301,7 @@ you can set the <a class="autorefs autorefs-internal" title=" title" href="#tex
 
     <div class="doc doc-contents ">
 
-        <p>Get currently active bindings for this screen.</p>
+      <p>Get currently active bindings for this screen.</p>
 <p>If no widget is focused, then app-level bindings are returned.
 If a widget is focused, then any bindings present in the screen and app are merged and returned.</p>
 <p>This property may be used to inspect current bindings.</p>
@@ -9278,7 +9318,7 @@ If a widget is focused, then any bindings present in the screen and app are merg
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title=" ActiveBinding (textual.binding.ActiveBinding)" href="../binding/#textual.binding.ActiveBinding">ActiveBinding</a>]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="textual.binding.ActiveBinding" href="../binding/#textual.binding.ActiveBinding">ActiveBinding</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9310,7 +9350,7 @@ If a widget is focused, then any bindings present in the screen and app are merg
 
     <div class="doc doc-contents ">
 
-        <p>Check if this widget permits text selection.</p>
+      <p>Check if this widget permits text selection.</p>
     </div>
 
 </div>
@@ -9328,12 +9368,12 @@ If a widget is focused, then any bindings present in the screen and app are merg
   </span>
 
 <a href="#textual.screen.Screen.bindings_updated_signal" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bindings_updated_signal</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" Signal (textual.signal.Signal)" href="../signal/#textual.signal.Signal">Signal</a></span><span class="p">(</span><span class="n"><span title="textual.screen.Screen(self)">self</span></span><span class="p">,</span> <span class="s1">&#39;bindings_updated&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bindings_updated_signal</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.signal.Signal" href="../signal/#textual.signal.Signal">Signal</a></span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="s1">&#39;bindings_updated&#39;</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>A signal published when the bindings have been updated</p>
+      <p>A signal published when the bindings have been updated</p>
     </div>
 
 </div>
@@ -9356,7 +9396,7 @@ If a widget is focused, then any bindings present in the screen and app are merg
 
     <div class="doc doc-contents ">
 
-        <p>A list of widgets that may receive focus, in focus order.</p>
+      <p>A list of widgets that may receive focus, in focus order.</p>
     </div>
 
 </div>
@@ -9375,13 +9415,13 @@ If a widget is focused, then any bindings present in the screen and app are merg
   </span>
 
 <a href="#textual.screen.Screen.focused" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">focused</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" Reactive (textual.reactive.Reactive)" href="../reactive/#textual.reactive.Reactive">Reactive</a></span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">focused</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="../reactive/#textual.reactive.Reactive">Reactive</a></span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The focused <a class="autorefs autorefs-internal" title=" Widget" href="../widget/#textual.widget.Widget">widget</a> or <code>None</code> for no focus.
-To set focus, do not update this value directly. Use <a class="autorefs autorefs-internal" title=" set_focus" href="#textual.screen.Screen.set_focus">set_focus</a> instead.</p>
+      <p>The focused <a class="autorefs autorefs-internal" title="            Widget" href="../widget/#textual.widget.Widget">widget</a> or <code>None</code> for no focus.
+To set focus, do not update this value directly. Use <a class="autorefs autorefs-internal" title="            set_focus" href="#textual.screen.Screen.set_focus">set_focus</a> instead.</p>
     </div>
 
 </div>
@@ -9404,7 +9444,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Is the screen active (i.e. visible and top of the stack)?</p>
+      <p>Is the screen active (i.e. visible and top of the stack)?</p>
     </div>
 
 </div>
@@ -9427,7 +9467,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Is the screen current (i.e. visible to user)?</p>
+      <p>Is the screen current (i.e. visible to user)?</p>
     </div>
 
 </div>
@@ -9450,7 +9490,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Is the screen modal?</p>
+      <p>Is the screen modal?</p>
     </div>
 
 </div>
@@ -9473,7 +9513,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Layers from parent.</p>
+      <p>Layers from parent.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -9515,12 +9555,12 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.maximized" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maximized</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" Reactive (textual.reactive.Reactive)" href="../reactive/#textual.reactive.Reactive">Reactive</a></span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" layout (textual.reactive.Reactive(layout))" href="../reactive/#textual.reactive.Reactive(layout)">layout</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maximized</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="../reactive/#textual.reactive.Reactive">Reactive</a></span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.Reactive(layout)" href="../reactive/#textual.reactive.Reactive(layout)">layout</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The currently maximized widget, or <code>None</code> for no maximized widget.</p>
+      <p>The currently maximized widget, or <code>None</code> for no maximized widget.</p>
     </div>
 
 </div>
@@ -9538,14 +9578,14 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.screen_layout_refresh_signal" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen_layout_refresh_signal</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" Signal (textual.signal.Signal)" href="../signal/#textual.signal.Signal">Signal</a></span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.screen.Screen(self)">self</span></span><span class="p">,</span> <span class="s2">&quot;layout-refresh&quot;</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen_layout_refresh_signal</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.signal.Signal" href="../signal/#textual.signal.Signal">Signal</a></span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">self</span><span class="p">,</span> <span class="s2">&quot;layout-refresh&quot;</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The signal that is published when the screen's layout is refreshed.</p>
+      <p>The signal that is published when the screen's layout is refreshed.</p>
     </div>
 
 </div>
@@ -9564,12 +9604,12 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.selections" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selections</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" var (textual.reactive.var)" href="../reactive/#textual.reactive.var">var</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selections</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.var" href="../reactive/#textual.reactive.var">var</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Map of widgets and selected ranges.</p>
+      <p>Map of widgets and selected ranges.</p>
     </div>
 
 </div>
@@ -9588,12 +9628,12 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.stack_updates" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">stack_updates</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" Reactive (textual.reactive.Reactive)" href="../reactive/#textual.reactive.Reactive">Reactive</a></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" repaint (textual.reactive.Reactive(repaint))" href="../reactive/#textual.reactive.Reactive(repaint)">repaint</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">stack_updates</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="../reactive/#textual.reactive.Reactive">Reactive</a></span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.Reactive(repaint)" href="../reactive/#textual.reactive.Reactive(repaint)">repaint</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>An integer that updates when the screen is resumed.</p>
+      <p>An integer that updates when the screen is resumed.</p>
     </div>
 
 </div>
@@ -9612,12 +9652,43 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sub_title</span> <span class="o">=</span> <span class="n"><span title="textual.screen.Screen(self).SUB_TITLE">SUB_TITLE</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sub_title</span> <span class="o">=</span> <span class="n"><span title="self.SUB_TITLE">SUB_TITLE</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Screen sub-title to override <a class="autorefs autorefs-internal" title=" sub_title" href="../app/#textual.app.App.sub_title">the app sub-title</a>.</p>
+      <p>Screen sub-title to override <a class="autorefs autorefs-internal" title="            sub_title
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../app/#textual.app.App.sub_title">the app sub-title</a>.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.screen.Screen.text_selection_started_signal" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">text_selection_started_signal</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.text_selection_started_signal" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">text_selection_started_signal</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.signal.Signal" href="../signal/#textual.signal.Signal">Signal</a></span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">self</span><span class="p">,</span> <span class="s2">&quot;selection_started&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>A signal published when text selection has started.</p>
     </div>
 
 </div>
@@ -9636,12 +9707,18 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.title" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">title</span> <span class="o">=</span> <span class="n"><span title="textual.screen.Screen(self).TITLE">TITLE</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">title</span> <span class="o">=</span> <span class="n"><span title="self.TITLE">TITLE</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Screen title to override <a class="autorefs autorefs-internal" title=" title" href="../app/#textual.app.App.title">the app title</a>.</p>
+      <p>Screen title to override <a class="autorefs autorefs-internal" title="            title
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../app/#textual.app.App.title">the app title</a>.</p>
     </div>
 
 </div>
@@ -9661,7 +9738,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Action to remove focus (if set).</p>
+      <p>Action to remove focus (if set).</p>
 
     </div>
 
@@ -9680,7 +9757,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Copy selected text to clipboard.</p>
+      <p>Copy selected text to clipboard.</p>
 
     </div>
 
@@ -9698,12 +9775,12 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
   </span>
 
 <a href="#textual.screen.Screen.action_dismiss" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_dismiss</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" result (textual.screen.Screen.action_dismiss(result))" href="#textual.screen.Screen.action_dismiss(result)">result</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_dismiss</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.action_dismiss(result)">result</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>A wrapper around <a class="autorefs autorefs-internal" title=" dismiss" href="#textual.screen.Screen.dismiss"><code>dismiss</code></a> that can be called as an action.</p>
+      <p>A wrapper around <a class="autorefs autorefs-internal" title="            dismiss" href="#textual.screen.Screen.dismiss"><code>dismiss</code></a> that can be called as an action.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9722,7 +9799,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 <h4 id="textual.screen.Screen.action_dismiss(result)" class="doc doc-heading doc-heading-parameter">                  <code>result</code>
 <a href="#textual.screen.Screen.action_dismiss(result)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9753,7 +9830,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Action to maximize the currently focused widget.</p>
+      <p>Action to maximize the currently focused widget.</p>
 
     </div>
 
@@ -9772,7 +9849,7 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
     <div class="doc doc-contents ">
 
-        <p>Action to minimize the currently maximized widget.</p>
+      <p>Action to minimize the currently maximized widget.</p>
 
     </div>
 
@@ -9786,12 +9863,12 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
 
 
 <a href="#textual.screen.Screen.can_view_entire" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">can_view_entire</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.screen.Screen.can_view_entire(widget))" href="#textual.screen.Screen.can_view_entire(widget)">widget</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">can_view_entire</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.can_view_entire(widget)">widget</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Check if a given widget is fully within the current screen.</p>
+      <p>Check if a given widget is fully within the current screen.</p>
 <p>Note: This doesn't necessarily equate to a widget being visible.
 There are other reasons why a widget may not be visible.</p>
 
@@ -9812,7 +9889,7 @@ There are other reasons why a widget may not be visible.</p>
 <h4 id="textual.screen.Screen.can_view_entire(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.screen.Screen.can_view_entire(widget)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9861,12 +9938,12 @@ There are other reasons why a widget may not be visible.</p>
 
 
 <a href="#textual.screen.Screen.can_view_partial" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">can_view_partial</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.screen.Screen.can_view_partial(widget))" href="#textual.screen.Screen.can_view_partial(widget)">widget</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">can_view_partial</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.can_view_partial(widget)">widget</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Check if a given widget is at least partially within the current view.</p>
+      <p>Check if a given widget is at least partially within the current view.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9885,7 +9962,7 @@ There are other reasons why a widget may not be visible.</p>
 <h4 id="textual.screen.Screen.can_view_partial(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.screen.Screen.can_view_partial(widget)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9939,7 +10016,7 @@ There are other reasons why a widget may not be visible.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Clear any selected text.</p>
+      <p>Clear any selected text.</p>
 
     </div>
 
@@ -9953,18 +10030,18 @@ There are other reasons why a widget may not be visible.</p>
 
 
 <a href="#textual.screen.Screen.dismiss" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dismiss</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" result (textual.screen.Screen.dismiss(result))" href="#textual.screen.Screen.dismiss(result)">result</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">dismiss</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.dismiss(result)">result</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Dismiss the screen, optionally with a result.</p>
-<p>Any callback provided in <a class="autorefs autorefs-internal" title=" push_screen" href="../app/#textual.app.App.push_screen">push_screen</a> will be invoked with the supplied result.</p>
+      <p>Dismiss the screen, optionally with a result.</p>
+<p>Any callback provided in <a class="autorefs autorefs-internal" title="            push_screen" href="../app/#textual.app.App.push_screen">push_screen</a> will be invoked with the supplied result.</p>
 <p>Only the active screen may be dismissed. This method will produce a warning in the logs if
 called on an inactive screen (but otherwise have no effect).</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Textual will raise a <a class="autorefs autorefs-internal" title=" ScreenError" href="../app/#textual.app.ScreenError"><code>ScreenError</code></a> if you await the return value from a
+<p>Textual will raise a <a class="autorefs autorefs-internal" title="            ScreenError" href="../app/#textual.app.ScreenError"><code>ScreenError</code></a> if you await the return value from a
 message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
 call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
 </div>
@@ -9986,7 +10063,7 @@ call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
 <h4 id="textual.screen.Screen.dismiss(result)" class="doc doc-heading doc-heading-parameter">                  <code>result</code>
 <a href="#textual.screen.Screen.dismiss(result)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10012,12 +10089,12 @@ call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
 
 
 <a href="#textual.screen.Screen.find_widget" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">find_widget</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.screen.Screen.find_widget(widget))" href="#textual.screen.Screen.find_widget(widget)">widget</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">find_widget</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.find_widget(widget)">widget</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get the screen region of a Widget.</p>
+      <p>Get the screen region of a Widget.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10036,7 +10113,7 @@ call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
 <h4 id="textual.screen.Screen.find_widget(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.screen.Screen.find_widget(widget)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10062,7 +10139,7 @@ call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" MapGeometry (textual._compositor.MapGeometry)" href="../map_geometry/#textual.map_geometry.MapGeometry">MapGeometry</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual._compositor.MapGeometry" href="../map_geometry/#textual.map_geometry.MapGeometry">MapGeometry</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10085,7 +10162,7 @@ call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" NoWidget (textual.errors.NoWidget)" href="../errors/#textual.errors.NoWidget">NoWidget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.errors.NoWidget" href="../errors/#textual.errors.NoWidget">NoWidget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10108,12 +10185,12 @@ call <code>self.dismiss()</code> <em>without</em> awaiting.</p>
 
 
 <a href="#textual.screen.Screen.focus_next" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">focus_next</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" selector (textual.screen.Screen.focus_next(selector))" href="#textual.screen.Screen.focus_next(selector)">selector</a></span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">focus_next</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.focus_next(selector)">selector</a></span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Focus the next widget, optionally filtered by a CSS selector.</p>
+      <p>Focus the next widget, optionally filtered by a CSS selector.</p>
 <p>If no widget is currently focused, this will focus the first focusable widget.
 If no focusable widget matches the given CSS selector, focus is set to <code>None</code>.</p>
 
@@ -10134,7 +10211,7 @@ If no focusable widget matches the given CSS selector, focus is set to <code>Non
 <h4 id="textual.screen.Screen.focus_next(selector)" class="doc doc-heading doc-heading-parameter">                  <code>selector</code>
 <a href="#textual.screen.Screen.focus_next(selector)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title=" QueryType (textual.css.query.QueryType)" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10161,7 +10238,7 @@ what nodes can be focused.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10186,12 +10263,12 @@ the CSS selectors given in the argument.</p>
 
 
 <a href="#textual.screen.Screen.focus_previous" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">focus_previous</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" selector (textual.screen.Screen.focus_previous(selector))" href="#textual.screen.Screen.focus_previous(selector)">selector</a></span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">focus_previous</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.focus_previous(selector)">selector</a></span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Focus the previous widget, optionally filtered by a CSS selector.</p>
+      <p>Focus the previous widget, optionally filtered by a CSS selector.</p>
 <p>If no widget is currently focused, this will focus the first focusable widget.
 If no focusable widget matches the given CSS selector, focus is set to <code>None</code>.</p>
 
@@ -10212,7 +10289,7 @@ If no focusable widget matches the given CSS selector, focus is set to <code>Non
 <h4 id="textual.screen.Screen.focus_previous(selector)" class="doc doc-heading doc-heading-parameter">                  <code>selector</code>
 <a href="#textual.screen.Screen.focus_previous(selector)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title=" QueryType (textual.css.query.QueryType)" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10239,7 +10316,7 @@ what nodes can be focused.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10264,12 +10341,12 @@ the CSS selectors given in the argument.</p>
 
 
 <a href="#textual.screen.Screen.get_focusable_widget_at" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_focusable_widget_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" x (textual.screen.Screen.get_focusable_widget_at(x))" href="#textual.screen.Screen.get_focusable_widget_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" y (textual.screen.Screen.get_focusable_widget_at(y))" href="#textual.screen.Screen.get_focusable_widget_at(y)">y</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_focusable_widget_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_focusable_widget_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_focusable_widget_at(y)">y</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get the focusable widget under a given coordinate.</p>
+      <p>Get the focusable widget under a given coordinate.</p>
 <p>If the widget directly under the given coordinate is not focusable, then this method will check
 if any of the ancestors are focusable. If no ancestors are focusable, then <code>None</code> will be returned.</p>
 
@@ -10332,7 +10409,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10355,12 +10432,12 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 
 <a href="#textual.screen.Screen.get_offset" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_offset</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.screen.Screen.get_offset(widget))" href="#textual.screen.Screen.get_offset(widget)">widget</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_offset</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_offset(widget)">widget</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get the absolute offset of a given Widget.</p>
+      <p>Get the absolute offset of a given Widget.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10379,7 +10456,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 <h4 id="textual.screen.Screen.get_offset(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.screen.Screen.get_offset(widget)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10405,7 +10482,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Offset (textual.geometry.Offset)" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10433,7 +10510,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
     <div class="doc doc-contents ">
 
-        <p>Get text under selection.</p>
+      <p>Get text under selection.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -10470,12 +10547,12 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 
 <a href="#textual.screen.Screen.get_style_at" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_style_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" x (textual.screen.Screen.get_style_at(x))" href="#textual.screen.Screen.get_style_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" y (textual.screen.Screen.get_style_at(y))" href="#textual.screen.Screen.get_style_at(y)">y</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_style_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_style_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_style_at(y)">y</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get the style under a given coordinate.</p>
+      <p>Get the style under a given coordinate.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10559,12 +10636,12 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 
 <a href="#textual.screen.Screen.get_widget_and_offset_at" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_widget_and_offset_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" x (textual.screen.Screen.get_widget_and_offset_at(x))" href="#textual.screen.Screen.get_widget_and_offset_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" y (textual.screen.Screen.get_widget_and_offset_at(y))" href="#textual.screen.Screen.get_widget_and_offset_at(y)">y</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_widget_and_offset_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_widget_and_offset_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_widget_and_offset_at(y)">y</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get the widget under a given coordinate, and an offset within the original content.</p>
+      <p>Get the widget under a given coordinate, and an offset within the original content.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10625,7 +10702,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a> | None, <a class="autorefs autorefs-internal" title=" Offset (textual.geometry.Offset)" href="../geometry/#textual.geometry.Offset">Offset</a> | None]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None, <a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a> | None]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10648,12 +10725,12 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 
 <a href="#textual.screen.Screen.get_widget_at" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_widget_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" x (textual.screen.Screen.get_widget_at(x))" href="#textual.screen.Screen.get_widget_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" y (textual.screen.Screen.get_widget_at(y))" href="#textual.screen.Screen.get_widget_at(y)">y</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_widget_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_widget_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_widget_at(y)">y</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get the widget at a given coordinate.</p>
+      <p>Get the widget at a given coordinate.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10714,7 +10791,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a>, <a class="autorefs autorefs-internal" title=" Region (textual.geometry.Region)" href="../geometry/#textual.geometry.Region">Region</a>]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>, <a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10737,7 +10814,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" NoWidget (textual.errors.NoWidget)" href="../errors/#textual.errors.NoWidget">NoWidget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.errors.NoWidget" href="../errors/#textual.errors.NoWidget">NoWidget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10760,12 +10837,12 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 
 <a href="#textual.screen.Screen.get_widgets_at" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_widgets_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" x (textual.screen.Screen.get_widgets_at(x))" href="#textual.screen.Screen.get_widgets_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" y (textual.screen.Screen.get_widgets_at(y))" href="#textual.screen.Screen.get_widgets_at(y)">y</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_widgets_at</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_widgets_at(x)">x</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.get_widgets_at(y)">y</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get all widgets under a given coordinate.</p>
+      <p>Get all widgets under a given coordinate.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10826,7 +10903,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a>, <a class="autorefs autorefs-internal" title=" Region (textual.geometry.Region)" href="../geometry/#textual.geometry.Region">Region</a>]]</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>, <a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a>]]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10849,12 +10926,12 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 
 <a href="#textual.screen.Screen.maximize" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">maximize</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.screen.Screen.maximize(widget))" href="#textual.screen.Screen.maximize(widget)">widget</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" container (textual.screen.Screen.maximize(container))" href="#textual.screen.Screen.maximize(container)">container</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">maximize</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.maximize(widget)">widget</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.maximize(container)">container</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Maximize a widget, so it fills the screen.</p>
+      <p>Maximize a widget, so it fills the screen.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10873,7 +10950,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 <h4 id="textual.screen.Screen.maximize(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.screen.Screen.maximize(widget)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10943,7 +11020,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
     <div class="doc doc-contents ">
 
-        <p>Restore any maximized widget to normal state.</p>
+      <p>Restore any maximized widget to normal state.</p>
 
     </div>
 
@@ -10962,7 +11039,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
     <div class="doc doc-contents ">
 
-        <p>Pop any screens on top of this one, until this screen is active.</p>
+      <p>Pop any screens on top of this one, until this screen is active.</p>
 
 
 <p><span class="doc-section-title">Raises:</span></p>
@@ -10976,7 +11053,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ScreenError">ScreenError</span></code>
+                  <code>ScreenError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -11004,7 +11081,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
     <div class="doc doc-contents ">
 
-        <p>Call to request a refresh of bindings.</p>
+      <p>Call to request a refresh of bindings.</p>
 
     </div>
 
@@ -11019,13 +11096,13 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 
 <a href="#textual.screen.Screen.set_focus" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_focus</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.screen.Screen.set_focus(widget))" href="#textual.screen.Screen.set_focus(widget)">widget</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" scroll_visible (textual.screen.Screen.set_focus(scroll_visible))" href="#textual.screen.Screen.set_focus(scroll_visible)">scroll_visible</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" from_app_focus (textual.screen.Screen.set_focus(from_app_focus))" href="#textual.screen.Screen.set_focus(from_app_focus)">from_app_focus</a></span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.set_focus(widget)">widget</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.set_focus(scroll_visible)">scroll_visible</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.screen.Screen.set_focus(from_app_focus)">from_app_focus</a></span><span class="o">=</span><span class="kc">False</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Focus (or un-focus) a widget. A focused widget will receive key events first.</p>
+      <p>Focus (or un-focus) a widget. A focused widget will receive key events first.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11044,7 +11121,7 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
 <h4 id="textual.screen.Screen.set_focus(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.screen.Screen.set_focus(widget)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -11104,12 +11181,12 @@ regained focus.</p>
 
 
 <a href="#textual.screen.Screen.validate_sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_sub_title</span><span class="p">(</span><span class="n"><span title="textual.screen.Screen.validate_sub_title(sub_title)">sub_title</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_sub_title</span><span class="p">(</span><span class="n">sub_title</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Ensure the sub-title is a string or <code>None</code>.</p>
+      <p>Ensure the sub-title is a string or <code>None</code>.</p>
 
     </div>
 
@@ -11123,12 +11200,12 @@ regained focus.</p>
 
 
 <a href="#textual.screen.Screen.validate_title" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_title</span><span class="p">(</span><span class="n"><span title="textual.screen.Screen.validate_title(title)">title</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Ensure the title is a string or <code>None</code>.</p>
+      <p>Ensure the title is a string or <code>None</code>.</p>
 
     </div>
 
@@ -11151,16 +11228,16 @@ regained focus.</p>
 
 
 <a href="#textual.screen.SystemModalScreen" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SystemModalScreen</span><span class="p">(</span><span class="n"><span title="textual.screen.SystemModalScreen(name)">name</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.screen.SystemModalScreen(id)">id</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.screen.SystemModalScreen(classes)">classes</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SystemModalScreen</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" ModalScreen (textual.screen.ModalScreen)" href="#textual.screen.ModalScreen">ModalScreen</a>[<a class="autorefs autorefs-internal" title=" ScreenResultType (textual.screen.ScreenResultType)" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.screen.ModalScreen" href="#textual.screen.ModalScreen">ModalScreen</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>]</code></p>
 
 
 
-        <p>A variant of <code>ModalScreen</code> for internal use.</p>
+      <p>A variant of <code>ModalScreen</code> for internal use.</p>
 <p>This version of <code>ModalScreen</code> allows us to build system-level screens;
 the type being used to indicate that the screen should be isolated from
 the main application.</p>

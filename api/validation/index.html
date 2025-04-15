@@ -8410,7 +8410,7 @@ window.onload = async (event) => {
 <a id="textual.validation"></a>
     <div class="doc doc-contents first">
 
-        <p>This module provides a number of classes for validating input.</p>
+      <p>This module provides a number of classes for validating input.</p>
 <p>See <a href="/widgets/input/#validating-input">Validating Input</a> for details.</p>
 
 
@@ -8442,14 +8442,14 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.validation.Failure" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Failure</span><span class="p">(</span><span class="n"><span title="textual.validation.Failure(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Failure(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Failure(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Failure</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
 
 
-        <p>Information about a validation failure.</p>
+      <p>Information about a validation failure.</p>
 
 
 
@@ -8486,7 +8486,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>An optional override for describing this failure. Takes precedence over any messages set in the Validator.</p>
+      <p>An optional override for describing this failure. Takes precedence over any messages set in the Validator.</p>
     </div>
 
 </div>
@@ -8509,7 +8509,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The Validator which produced the failure.</p>
+      <p>The Validator which produced the failure.</p>
     </div>
 
 </div>
@@ -8533,7 +8533,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The value which resulted in validation failing.</p>
+      <p>The value which resulted in validation failing.</p>
     </div>
 
 </div>
@@ -8557,16 +8557,16 @@ window.onload = async (event) => {
 
 
 <a href="#textual.validation.Function" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Function</span><span class="p">(</span><span class="n"><span title="textual.validation.Function(function)">function</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Function(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Function</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="#textual.validation.Validator">Validator</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Validator" href="#textual.validation.Validator">Validator</a></code></p>
 
 
 
-        <p>A flexible validator which allows you to provide custom validation logic.</p>
+      <p>A flexible validator which allows you to provide custom validation logic.</p>
 
 
 
@@ -8597,12 +8597,12 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.validation.Function.function" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">function</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Function(function)">function</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">function</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Function.function" href="#textual.validation.Function.function">function</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Function which takes the value to validate and returns True if valid, and False otherwise.</p>
+      <p>Function which takes the value to validate and returns True if valid, and False otherwise.</p>
     </div>
 
 </div>
@@ -8621,16 +8621,16 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.validation.Function.ReturnedFalse" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ReturnedFalse</span><span class="p">(</span><span class="n"><span title="textual.validation.Function.ReturnedFalse(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Function.ReturnedFalse(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Function.ReturnedFalse(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ReturnedFalse</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates validation failed because the supplied function returned False.</p>
+      <p>Indicates validation failed because the supplied function returned False.</p>
 
 
 
@@ -8667,12 +8667,12 @@ window.onload = async (event) => {
 
 
 <a href="#textual.validation.Function.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.Function.describe_failure(failure))" href="#textual.validation.Function.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Function.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Describes why the validator failed.</p>
+      <p>Describes why the validator failed.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -8691,7 +8691,7 @@ window.onload = async (event) => {
 <h4 id="textual.validation.Function.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.Function.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8740,12 +8740,12 @@ window.onload = async (event) => {
 
 
 <a href="#textual.validation.Function.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Function.validate(value))" href="#textual.validation.Function.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Function.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Validate that the supplied function returns True.</p>
+      <p>Validate that the supplied function returns True.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -8790,7 +8790,7 @@ window.onload = async (event) => {
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8824,17 +8824,17 @@ and failure if the function return False.</p>
 
 <a href="#textual.validation.Integer" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Integer</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.validation.Integer(minimum)">minimum</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Integer(maximum)">maximum</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Integer(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">minimum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Number (textual.validation.Number)" href="#textual.validation.Number">Number</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Number" href="#textual.validation.Number">Number</a></code></p>
 
 
 
-        <p>Validator which ensures the value is an integer which falls within a range.</p>
+      <p>Validator which ensures the value is an integer which falls within a range.</p>
 
 
 
@@ -8866,16 +8866,16 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Integer.NotAnInteger" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NotAnInteger</span><span class="p">(</span><span class="n"><span title="textual.validation.Integer.NotAnInteger(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Integer.NotAnInteger(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Integer.NotAnInteger(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NotAnInteger</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates a failure due to the value not being a valid integer.</p>
+      <p>Indicates a failure due to the value not being a valid integer.</p>
 
 
 
@@ -8912,12 +8912,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Integer.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.Integer.describe_failure(failure))" href="#textual.validation.Integer.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Integer.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Describes why the validator failed.</p>
+      <p>Describes why the validator failed.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -8936,7 +8936,7 @@ and failure if the function return False.</p>
 <h4 id="textual.validation.Integer.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.Integer.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8985,12 +8985,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Integer.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Integer.validate(value))" href="#textual.validation.Integer.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Integer.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Ensure that <code>value</code> is an integer, optionally within a range.</p>
+      <p>Ensure that <code>value</code> is an integer, optionally within a range.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9035,7 +9035,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9068,17 +9068,17 @@ and failure if the function return False.</p>
 
 <a href="#textual.validation.Length" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Length</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.validation.Length(minimum)">minimum</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Length(maximum)">maximum</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Length(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">minimum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="#textual.validation.Validator">Validator</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Validator" href="#textual.validation.Validator">Validator</a></code></p>
 
 
 
-        <p>Validate that a string is within a range (inclusive).</p>
+      <p>Validate that a string is within a range (inclusive).</p>
 
 
 
@@ -9109,12 +9109,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Length.maximum" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maximum</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Length(maximum)">maximum</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maximum</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Length.maximum" href="#textual.validation.Length.maximum">maximum</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The inclusive maximum length of the value, or None if unbounded.</p>
+      <p>The inclusive maximum length of the value, or None if unbounded.</p>
     </div>
 
 </div>
@@ -9132,12 +9132,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Length.minimum" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">minimum</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Length(minimum)">minimum</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">minimum</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Length.minimum" href="#textual.validation.Length.minimum">minimum</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The inclusive minimum length of the value, or None if unbounded.</p>
+      <p>The inclusive minimum length of the value, or None if unbounded.</p>
     </div>
 
 </div>
@@ -9156,16 +9156,16 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Length.Incorrect" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Incorrect</span><span class="p">(</span><span class="n"><span title="textual.validation.Length.Incorrect(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Length.Incorrect(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Length.Incorrect(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Incorrect</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates a failure due to the length of the value being outside the range.</p>
+      <p>Indicates a failure due to the length of the value being outside the range.</p>
 
 
 
@@ -9202,12 +9202,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Length.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.Length.describe_failure(failure))" href="#textual.validation.Length.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Length.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Describes why the validator failed.</p>
+      <p>Describes why the validator failed.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9226,7 +9226,7 @@ and failure if the function return False.</p>
 <h4 id="textual.validation.Length.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.Length.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9275,12 +9275,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Length.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Length.validate(value))" href="#textual.validation.Length.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Length.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Ensure that value falls within the maximum and minimum length constraints.</p>
+      <p>Ensure that value falls within the maximum and minimum length constraints.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9325,7 +9325,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9358,17 +9358,17 @@ and failure if the function return False.</p>
 
 <a href="#textual.validation.Number" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Number</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.validation.Number(minimum)">minimum</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Number(maximum)">maximum</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Number(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">minimum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="#textual.validation.Validator">Validator</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Validator" href="#textual.validation.Validator">Validator</a></code></p>
 
 
 
-        <p>Validator that ensures the value is a number, with an optional range check.</p>
+      <p>Validator that ensures the value is a number, with an optional range check.</p>
 
 
 
@@ -9399,12 +9399,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Number.maximum" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maximum</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Number(maximum)">maximum</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maximum</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Number.maximum" href="#textual.validation.Number.maximum">maximum</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The maximum value of the number, inclusive. If <code>None</code>, the maximum is unbounded.</p>
+      <p>The maximum value of the number, inclusive. If <code>None</code>, the maximum is unbounded.</p>
     </div>
 
 </div>
@@ -9422,12 +9422,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Number.minimum" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">minimum</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Number(minimum)">minimum</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">minimum</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Number.minimum" href="#textual.validation.Number.minimum">minimum</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The minimum value of the number, inclusive. If <code>None</code>, the minimum is unbounded.</p>
+      <p>The minimum value of the number, inclusive. If <code>None</code>, the minimum is unbounded.</p>
     </div>
 
 </div>
@@ -9446,16 +9446,16 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Number.NotANumber" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NotANumber</span><span class="p">(</span><span class="n"><span title="textual.validation.Number.NotANumber(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Number.NotANumber(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Number.NotANumber(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NotANumber</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates a failure due to the value not being a valid number (decimal/integer, inc. scientific notation)</p>
+      <p>Indicates a failure due to the value not being a valid number (decimal/integer, inc. scientific notation)</p>
 
 
 
@@ -9496,16 +9496,16 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Number.NotInRange" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NotInRange</span><span class="p">(</span><span class="n"><span title="textual.validation.Number.NotInRange(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Number.NotInRange(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Number.NotInRange(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NotInRange</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates a failure due to the number not being within the range [minimum, maximum].</p>
+      <p>Indicates a failure due to the number not being within the range [minimum, maximum].</p>
 
 
 
@@ -9542,12 +9542,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Number.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.Number.describe_failure(failure))" href="#textual.validation.Number.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Number.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Describes why the validator failed.</p>
+      <p>Describes why the validator failed.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9566,7 +9566,7 @@ and failure if the function return False.</p>
 <h4 id="textual.validation.Number.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.Number.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9615,12 +9615,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Number.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Number.validate(value))" href="#textual.validation.Number.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Number.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Ensure that <code>value</code> is a valid number, optionally within a range.</p>
+      <p>Ensure that <code>value</code> is a valid number, optionally within a range.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9665,7 +9665,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9697,16 +9697,16 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Regex" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Regex</span><span class="p">(</span><span class="n"><span title="textual.validation.Regex(regex)">regex</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Regex(flags)">flags</span></span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n"><span title="textual.validation.Regex(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Regex</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="#textual.validation.Validator">Validator</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Validator" href="#textual.validation.Validator">Validator</a></code></p>
 
 
 
-        <p>A validator that checks the value matches a regex (via <code>re.fullmatch</code>).</p>
+      <p>A validator that checks the value matches a regex (via <code>re.fullmatch</code>).</p>
 
 
 
@@ -9737,12 +9737,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Regex.flags" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">flags</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Regex(flags)">flags</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">flags</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Regex.flags" href="#textual.validation.Regex.flags">flags</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The flags to pass to <code>re.fullmatch</code>.</p>
+      <p>The flags to pass to <code>re.fullmatch</code>.</p>
     </div>
 
 </div>
@@ -9760,12 +9760,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Regex.regex" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">regex</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Regex(regex)">regex</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">regex</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Regex.regex" href="#textual.validation.Regex.regex">regex</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The regex which we'll validate is matched by the value.</p>
+      <p>The regex which we'll validate is matched by the value.</p>
     </div>
 
 </div>
@@ -9784,16 +9784,16 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.Regex.NoResults" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NoResults</span><span class="p">(</span><span class="n"><span title="textual.validation.Regex.NoResults(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.Regex.NoResults(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.Regex.NoResults(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">NoResults</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates validation failed because the regex could not be found within the value string.</p>
+      <p>Indicates validation failed because the regex could not be found within the value string.</p>
 
 
 
@@ -9830,12 +9830,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Regex.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.Regex.describe_failure(failure))" href="#textual.validation.Regex.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Regex.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Describes why the validator failed.</p>
+      <p>Describes why the validator failed.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9854,7 +9854,7 @@ and failure if the function return False.</p>
 <h4 id="textual.validation.Regex.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.Regex.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9903,12 +9903,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Regex.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Regex.validate(value))" href="#textual.validation.Regex.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Regex.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Ensure that the value matches the regex.</p>
+      <p>Ensure that the value matches the regex.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9953,7 +9953,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9985,16 +9985,16 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.URL" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">URL</span><span class="p">(</span><span class="n"><span title="textual.validation.URL(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">URL</span><span class="p">(</span><span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="#textual.validation.Validator">Validator</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Validator" href="#textual.validation.Validator">Validator</a></code></p>
 
 
 
-        <p>Validator that checks if a URL is valid (ensuring a scheme is present).</p>
+      <p>Validator that checks if a URL is valid (ensuring a scheme is present).</p>
 
 
 
@@ -10026,16 +10026,16 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.URL.InvalidURL" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">InvalidURL</span><span class="p">(</span><span class="n"><span title="textual.validation.URL.InvalidURL(validator)">validator</span></span><span class="p">,</span> <span class="n"><span title="textual.validation.URL.InvalidURL(value)">value</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><span title="textual.validation.URL.InvalidURL(description)">description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">InvalidURL</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code></p>
 
 
 
-        <p>Indicates that the URL is not valid.</p>
+      <p>Indicates that the URL is not valid.</p>
 
 
 
@@ -10072,12 +10072,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.URL.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.URL.describe_failure(failure))" href="#textual.validation.URL.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.URL.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Describes why the validator failed.</p>
+      <p>Describes why the validator failed.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10096,7 +10096,7 @@ and failure if the function return False.</p>
 <h4 id="textual.validation.URL.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.URL.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10145,12 +10145,12 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.URL.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.URL.validate(value))" href="#textual.validation.URL.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.URL.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Validates that <code>value</code> is a valid URL (contains a scheme).</p>
+      <p>Validates that <code>value</code> is a valid URL (contains a scheme).</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10195,7 +10195,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10231,14 +10231,14 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.ValidationResult" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ValidationResult</span><span class="p">(</span><span class="n"><span title="textual.validation.ValidationResult(failures)">failures</span></span><span class="o">=</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></span><span class="p">())</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ValidationResult</span><span class="p">(</span><span class="n">failures</span><span class="o">=</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a></span><span class="p">())</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
 
 
-        <p>The result of calling a <code>Validator.validate</code> method.</p>
+      <p>The result of calling a <code>Validator.validate</code> method.</p>
 
 
 
@@ -10274,7 +10274,7 @@ and failure if the function return False.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Utility for extracting failure descriptions as strings.</p>
+      <p>Utility for extracting failure descriptions as strings.</p>
 <p>Useful if you don't care about the additional metadata included in the <code>Failure</code> objects.</p>
 
 
@@ -10322,7 +10322,7 @@ and failure if the function return False.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A list of reasons why the value was invalid. Empty if valid=True</p>
+      <p>A list of reasons why the value was invalid. Empty if valid=True</p>
     </div>
 
 </div>
@@ -10345,7 +10345,7 @@ and failure if the function return False.</p>
 
     <div class="doc doc-contents ">
 
-        <p>True if the validation was successful.</p>
+      <p>True if the validation was successful.</p>
     </div>
 
 </div>
@@ -10364,12 +10364,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.ValidationResult.failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failures (textual.validation.ValidationResult.failure(failures))" href="#textual.validation.ValidationResult.failure(failures)">failures</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.ValidationResult.failure(failures)">failures</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Construct a failure ValidationResult.</p>
+      <p>Construct a failure ValidationResult.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10388,7 +10388,7 @@ and failure if the function return False.</p>
 <h4 id="textual.validation.ValidationResult.failure(failures)" class="doc doc-heading doc-heading-parameter">                  <code>failures</code>
 <a href="#textual.validation.ValidationResult.failure(failures)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10414,7 +10414,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10441,12 +10441,12 @@ and failure if the function return False.</p>
   </span>
 
 <a href="#textual.validation.ValidationResult.merge" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">merge</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" results (textual.validation.ValidationResult.merge(results))" href="#textual.validation.ValidationResult.merge(results)">results</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">merge</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.ValidationResult.merge(results)">results</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Merge multiple ValidationResult objects into one.</p>
+      <p>Merge multiple ValidationResult objects into one.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10523,7 +10523,7 @@ and failure if the function return False.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Construct a successful ValidationResult.</p>
+      <p>Construct a successful ValidationResult.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -10537,7 +10537,7 @@ and failure if the function return False.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10569,7 +10569,7 @@ and failure if the function return False.</p>
 
 
 <a href="#textual.validation.Validator" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Validator</span><span class="p">(</span><span class="n"><span title="textual.validation.Validator(failure_description)">failure_description</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Validator</span><span class="p">(</span><span class="n">failure_description</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10578,7 +10578,7 @@ and failure if the function return False.</p>
 
 
 
-        <p>Base class for the validation of string values.</p>
+      <p>Base class for the validation of string values.</p>
 <p>Commonly used in conjunction with the <code>Input</code> widget, which accepts a
 list of validators via its constructor. This validation framework can also be used to validate any 'stringly-typed'
 values (for example raw command line input from <code>sys.args</code>).</p>
@@ -10628,12 +10628,12 @@ values (for example raw command line input from <code>sys.args</code>).</p>
   </span>
 
 <a href="#textual.validation.Validator.failure_description" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">failure_description</span> <span class="o">=</span> <span class="n"><span title="textual.validation.Validator(failure_description)">failure_description</span></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">failure_description</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.validation.Validator.failure_description" href="#textual.validation.Validator.failure_description">failure_description</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>A description of why the validation failed.</p>
+      <p>A description of why the validation failed.</p>
 <p>The description (intended to be user-facing) to attached to the Failure if the validation fails.
 This failure description is ultimately accessible at the time of validation failure  via the <code>Input.Changed</code>
 or <code>Input.Submitted</code> event, and you can access it on your message handler (a method called, for example,
@@ -10652,12 +10652,12 @@ or <code>Input.Submitted</code> event, and you can access it on your message han
 
 
 <a href="#textual.validation.Validator.describe_failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" failure (textual.validation.Validator.describe_failure(failure))" href="#textual.validation.Validator.describe_failure(failure)">failure</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">describe_failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Validator.describe_failure(failure)">failure</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Return a string description of the Failure.</p>
+      <p>Return a string description of the Failure.</p>
 <p>Used to provide a more fine-grained description of the failure. A Validator could fail for multiple
 reasons, so this method could be used to provide a different reason for different types of failure.</p>
 <div class="admonition warning">
@@ -10684,7 +10684,7 @@ the validator, those will take priority, and this method won't be called.</p>
 <h4 id="textual.validation.Validator.describe_failure(failure)" class="doc doc-heading doc-heading-parameter">                  <code>failure</code>
 <a href="#textual.validation.Validator.describe_failure(failure)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10733,13 +10733,18 @@ the validator, those will take priority, and this method won't be called.</p>
 
 
 <a href="#textual.validation.Validator.failure" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" description (textual.validation.Validator.failure(description))" href="#textual.validation.Validator.failure(description)">description</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Validator.failure(value))" href="#textual.validation.Validator.failure(value)">value</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" failures (textual.validation.Validator.failure(failures))" href="#textual.validation.Validator.failure(failures)">failures</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">failure</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Validator.failure(description)">description</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Validator.failure(value)">value</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Validator.failure(failures)">failures</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Shorthand for signaling validation failure.</p>
-<p>Return <code>self.failure(...)</code> from <a class="autorefs autorefs-internal" title=" validate" href="#textual.validation.Validator.validate"><code>validate()</code></a> to indicated that validation <em>failed</em>.</p>
+      <p>Shorthand for signaling validation failure.</p>
+<p>Return <code>self.failure(...)</code> from <a class="autorefs autorefs-internal" title="            validate
+
+
+  
+      abstractmethod
+  " href="#textual.validation.Validator.validate"><code>validate()</code></a> to indicated that validation <em>failed</em>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -10794,7 +10799,7 @@ in your <code>Input.Changed</code> handler.</p>
 <h4 id="textual.validation.Validator.failure(failures)" class="doc doc-heading doc-heading-parameter">                  <code>failures</code>
 <a href="#textual.validation.Validator.failure(failures)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a> | <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title=" Failure (textual.validation.Failure)" href="#textual.validation.Failure">Failure</a>] | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a> | <a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="textual.validation.Failure" href="#textual.validation.Failure">Failure</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10821,7 +10826,7 @@ ValidationResult returned from this function.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10850,8 +10855,13 @@ to this function.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Shorthand for <code>ValidationResult(True)</code>.</p>
-<p>Return <code>self.success()</code> from <a class="autorefs autorefs-internal" title=" validate" href="#textual.validation.Validator.validate"><code>validate()</code></a> to indicated that validation <em>succeeded</em>.</p>
+      <p>Shorthand for <code>ValidationResult(True)</code>.</p>
+<p>Return <code>self.success()</code> from <a class="autorefs autorefs-internal" title="            validate
+
+
+  
+      abstractmethod
+  " href="#textual.validation.Validator.validate"><code>validate()</code></a> to indicated that validation <em>succeeded</em>.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -10865,7 +10875,7 @@ to this function.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10892,12 +10902,12 @@ to this function.</p>
   </span>
 
 <a href="#textual.validation.Validator.validate" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.validation.Validator.validate(value))" href="#textual.validation.Validator.validate(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.validation.Validator.validate(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Validate the value and return a ValidationResult describing the outcome of the validation.</p>
+      <p>Validate the value and return a ValidationResult describing the outcome of the validation.</p>
 <p>Implement this method when defining custom validators.</p>
 
 
@@ -10943,7 +10953,7 @@ to this function.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="#textual.validation.ValidationResult">ValidationResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="#textual.validation.ValidationResult">ValidationResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">

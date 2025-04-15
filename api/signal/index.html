@@ -7156,9 +7156,8 @@ window.onload = async (event) => {
 <a id="textual.signal"></a>
     <div class="doc doc-contents first">
 
-        <p>Signals are a simple pub-sub mechanism.</p>
+      <p>Signals are a simple pub-sub mechanism.</p>
 <p>DOMNodes can subscribe to a signal, which will invoke a callback when the signal is published.</p>
-<p>This is experimental for now, for internal use. It may be part of the public API in a future release.</p>
 
 
 
@@ -7185,7 +7184,7 @@ window.onload = async (event) => {
 
 
 <a href="#textual.signal.Signal" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Signal</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" owner (textual.signal.Signal(owner))" href="#textual.signal.Signal(owner)">owner</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" name (textual.signal.Signal(name))" href="#textual.signal.Signal(name)">name</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Signal</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal(owner)">owner</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal(name)">name</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7194,7 +7193,7 @@ window.onload = async (event) => {
 
 
 
-        <p>A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs.</p>
+      <p>A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs.</p>
 
 
 
@@ -7214,7 +7213,7 @@ window.onload = async (event) => {
 <h3 id="textual.signal.Signal(owner)" class="doc doc-heading doc-heading-parameter">                  <code>owner</code>
 <a href="#textual.signal.Signal(owner)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" DOMNode (textual.dom.DOMNode)" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7278,7 +7277,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The owner of this Signal, or <code>None</code> if there is no owner.</p>
+      <p>The owner of this Signal, or <code>None</code> if there is no owner.</p>
     </div>
 
 </div>
@@ -7293,12 +7292,12 @@ window.onload = async (event) => {
 
 
 <a href="#textual.signal.Signal.publish" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">publish</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" data (textual.signal.Signal.publish(data))" href="#textual.signal.Signal.publish(data)">data</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">publish</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal.publish(data)">data</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Publish the signal (invoke subscribed callbacks).</p>
+      <p>Publish the signal (invoke subscribed callbacks).</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7343,12 +7342,12 @@ window.onload = async (event) => {
 
 
 <a href="#textual.signal.Signal.subscribe" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">subscribe</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" node (textual.signal.Signal.subscribe(node))" href="#textual.signal.Signal.subscribe(node)">node</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" callback (textual.signal.Signal.subscribe(callback))" href="#textual.signal.Signal.subscribe(callback)">callback</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" immediate (textual.signal.Signal.subscribe(immediate))" href="#textual.signal.Signal.subscribe(immediate)">immediate</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">subscribe</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal.subscribe(node)">node</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal.subscribe(callback)">callback</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal.subscribe(immediate)">immediate</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Subscribe a node to this signal.</p>
+      <p>Subscribe a node to this signal.</p>
 <p>When the signal is published, the callback will be invoked.</p>
 
 
@@ -7368,7 +7367,7 @@ window.onload = async (event) => {
 <h4 id="textual.signal.Signal.subscribe(node)" class="doc doc-heading doc-heading-parameter">                  <code>node</code>
 <a href="#textual.signal.Signal.subscribe(node)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" MessagePump (textual.message_pump.MessagePump)" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7427,7 +7426,7 @@ called once existing messages have been processed.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" SignalError (textual.signal.SignalError)" href="#textual.signal.SignalError">SignalError</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.signal.SignalError" href="#textual.signal.SignalError">SignalError</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7450,12 +7449,12 @@ called once existing messages have been processed.</p>
 
 
 <a href="#textual.signal.Signal.unsubscribe" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">unsubscribe</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" node (textual.signal.Signal.unsubscribe(node))" href="#textual.signal.Signal.unsubscribe(node)">node</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">unsubscribe</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.signal.Signal.unsubscribe(node)">node</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Unsubscribe a node from this signal.</p>
+      <p>Unsubscribe a node from this signal.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7474,7 +7473,7 @@ called once existing messages have been processed.</p>
 <h4 id="textual.signal.Signal.unsubscribe(node)" class="doc doc-heading doc-heading-parameter">                  <code>node</code>
 <a href="#textual.signal.Signal.unsubscribe(node)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" MessagePump (textual.message_pump.MessagePump)" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7517,7 +7516,7 @@ called once existing messages have been processed.</p>
 
 
 
-        <p>Raised for Signal errors.</p>
+      <p>Raised for Signal errors.</p>
 
 
 

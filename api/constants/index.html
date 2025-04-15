@@ -5503,6 +5503,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.constants.DIM_FACTOR" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DIM_FACTOR
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.constants.DRIVER" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DRIVER
@@ -7054,6 +7063,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.constants.DIM_FACTOR" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DIM_FACTOR
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.constants.DRIVER" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;DRIVER
@@ -7198,7 +7216,7 @@ window.onload = async (event) => {
 <a id="textual.constants"></a>
     <div class="doc doc-contents first">
 
-        <p>This module contains constants, which may be set in environment variables.</p>
+      <p>This module contains constants, which may be set in environment variables.</p>
 
 
 
@@ -7233,7 +7251,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Force color system override.</p>
+      <p>Force color system override.</p>
     </div>
 
 </div>
@@ -7256,7 +7274,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Enable debug mode.</p>
+      <p>Enable debug mode.</p>
     </div>
 
 </div>
@@ -7279,7 +7297,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Textual theme to make default. More than one theme may be specified in a comma separated list.
+      <p>Textual theme to make default. More than one theme may be specified in a comma separated list.
 Textual will use the first theme that exists.</p>
     </div>
 
@@ -7305,7 +7323,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The host where textual console is running.</p>
+      <p>The host where textual console is running.</p>
     </div>
 
 </div>
@@ -7330,7 +7348,35 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Constant with the port that the devtools will connect to.</p>
+      <p>Constant with the port that the devtools will connect to.</p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.constants.DIM_FACTOR" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">DIM_FACTOR</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.constants.DIM_FACTOR" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DIM_FACTOR</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.constants._get_environ_int">_get_environ_int</span></span><span class="p">(</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;TEXTUAL_DIM_FACTOR&quot;</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="n"><span title="textual.constants._get_environ_int(minimum)">minimum</span></span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n"><span title="textual.constants._get_environ_int(maximum)">maximum</span></span><span class="o">=</span><span class="mi">100</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="o">/</span> <span class="mi">100</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Percentage to use as opacity when converting ANSI 'dim' attribute to RGB.</p>
     </div>
 
 </div>
@@ -7353,7 +7399,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Import for replacement driver.</p>
+      <p>Import for replacement driver.</p>
     </div>
 
 </div>
@@ -7378,7 +7424,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The delay (in seconds) before reporting an escape key (not used if the extend key protocol is available).</p>
+      <p>The delay (in seconds) before reporting an escape key (not used if the extend key protocol is available).</p>
     </div>
 
 </div>
@@ -7401,7 +7447,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A list of filters to apply to renderables.</p>
+      <p>A list of filters to apply to renderables.</p>
     </div>
 
 </div>
@@ -7424,7 +7470,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A last resort log file that appends all logs, when devtools isn't working.</p>
+      <p>A last resort log file that appends all logs, when devtools isn't working.</p>
     </div>
 
 </div>
@@ -7447,7 +7493,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Maximum frames per second for updates.</p>
+      <p>Maximum frames per second for updates.</p>
     </div>
 
 </div>
@@ -7470,7 +7516,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Keys to automatically press.</p>
+      <p>Keys to automatically press.</p>
     </div>
 
 </div>
@@ -7495,7 +7541,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Seconds delay before taking screenshot, -1 for no screenshot.</p>
+      <p>Seconds delay before taking screenshot, -1 for no screenshot.</p>
     </div>
 
 </div>
@@ -7520,7 +7566,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The filename to use for the screenshot.</p>
+      <p>The filename to use for the screenshot.</p>
     </div>
 
 </div>
@@ -7545,7 +7591,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The location where screenshots should be written.</p>
+      <p>The location where screenshots should be written.</p>
     </div>
 
 </div>
@@ -7568,7 +7614,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Write the return value on exit.</p>
+      <p>Write the return value on exit.</p>
     </div>
 
 </div>
@@ -7593,7 +7639,7 @@ Textual will use the first theme that exists.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The time threshold (in milliseconds) after which a warning is logged 
+      <p>The time threshold (in milliseconds) after which a warning is logged 
 if message processing exceeds this duration.</p>
     </div>
 
@@ -7619,7 +7665,7 @@ if message processing exceeds this duration.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Should smooth scrolling be enabled? set <code>TEXTUAL_SMOOTH_SCROLL=0</code> to disable smooth</p>
+      <p>Should smooth scrolling be enabled? set <code>TEXTUAL_SMOOTH_SCROLL=0</code> to disable smooth scrolling.</p>
     </div>
 
 </div>
@@ -7642,7 +7688,7 @@ if message processing exceeds this duration.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Determines whether animations run or not.</p>
+      <p>Determines whether animations run or not.</p>
     </div>
 
 </div>

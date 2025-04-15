@@ -7544,7 +7544,7 @@ The algorithm it uses may be familiar if you have done any classic game-dev.</p>
 
 <p>Here we have 8 widgets, where only 3 or 4 will be visible at any given time, depending on the position of the scrollbar.
 We want to avoid doing work on widgets which will not be seen in the next frame.</p>
-<p>A naive solution to this would be to check each widget's <a class="autorefs autorefs-internal" title=" Region" href="../../../../../api/geometry/#textual.geometry.Region">Region</a> to see if it overlaps with the visible area.
+<p>A naive solution to this would be to check each widget's <a class="autorefs autorefs-internal" title="            Region" href="../../../../../api/geometry/#textual.geometry.Region">Region</a> to see if it overlaps with the visible area.
 This is a perfectly reasonable solution, but it won't scale well.
 If we get in to the 1000s of widgets territory, it may become significant &mdash; and we may have to do this 30 times a second if we are scrolling.</p>
 <h3 id="the-grid">The Grid<a class="headerlink" href="#the-grid" title="Permanent link">&para;</a></h3>

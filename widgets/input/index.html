@@ -9249,16 +9249,36 @@ For instance, if you wanted to limit characters to binary you could set <code>re
 <p>You can limit the length of the input by setting <code>max_length</code> to a value greater than zero.
 This will prevent the user from typing any more characters when the maximum has been reached.</p>
 <h3 id="validating-input">Validating Input<a class="headerlink" href="#validating-input" title="Permanent link">&para;</a></h3>
-<p>You can supply one or more <em><a class="autorefs autorefs-internal" title=" Validator" href="../../api/validation/#textual.validation.Validator">validators</a></em> to the <code>Input</code> widget to validate the value.</p>
+<p>You can supply one or more <em><a class="autorefs autorefs-internal" title="            Validator" href="../../api/validation/#textual.validation.Validator">validators</a></em> to the <code>Input</code> widget to validate the value.</p>
 <p>All the supplied validators will run when the value changes, the <code>Input</code> is submitted, or focus moves <em>out</em> of the <code>Input</code>.
 The values <code>"changed"</code>, <code>"submitted"</code>, and <code>"blur"</code>, can be passed as an iterable to the <code>Input</code> parameter <code>validate_on</code> to request that validation occur only on the respective mesages.
-(See <a class="autorefs autorefs-internal" title=" InputValidationOn" href="../../api/types/#textual.types.InputValidationOn"><code>InputValidationOn</code></a> and <a class="autorefs autorefs-internal" title=" validate_on" href="#textual.widgets.Input.validate_on"><code>Input.validate_on</code></a>.)
+(See <a class="autorefs autorefs-internal" title="            InputValidationOn
+
+
+  
+      module-attribute
+  " href="../../api/types/#textual.types.InputValidationOn"><code>InputValidationOn</code></a> and <a class="autorefs autorefs-internal" title="            validate_on
+
+
+  
+      instance-attribute
+  " href="#textual.widgets.Input.validate_on"><code>Input.validate_on</code></a>.)
 For example, the code below creates an <code>Input</code> widget that only gets validated when the value is submitted explicitly:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">validate_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;submitted&quot;</span><span class="p">])</span>
 </code></pre></div>
 <p>Validation is considered to have failed if <em>any</em> of the validators fail.</p>
-<p>You can check whether the validation succeeded or failed inside an <a class="autorefs autorefs-internal" title=" Changed" href="#textual.widgets.Input.Changed">Input.Changed</a> or
-<a class="autorefs autorefs-internal" title=" Submitted" href="#textual.widgets.Input.Submitted">Input.Submitted</a> handler by looking at the <code>validation_result</code> attribute on these events.</p>
+<p>You can check whether the validation succeeded or failed inside an <a class="autorefs autorefs-internal" title="            Changed
+
+
+  
+      dataclass
+  " href="#textual.widgets.Input.Changed">Input.Changed</a> or
+<a class="autorefs autorefs-internal" title="            Submitted
+
+
+  
+      dataclass
+  " href="#textual.widgets.Input.Submitted">Input.Submitted</a> handler by looking at the <code>validation_result</code> attribute on these events.</p>
 <p>In the example below, we show how to combine multiple validators and update the UI to tell the user
 why validation failed.
 Click the tabs to see the output for validation failures and successes.</p>
@@ -9663,7 +9683,7 @@ Click the tabs to see the output for validation failures and successes.</p>
 </div>
 </div>
 <p>Textual offers several <a class="autorefs autorefs-internal" title=" validation" href="../../api/validation/#textual.validation">built-in validators</a> for common requirements,
-but you can easily roll your own by extending <a class="autorefs autorefs-internal" title=" Validator" href="../../api/validation/#textual.validation.Validator">Validator</a>,
+but you can easily roll your own by extending <a class="autorefs autorefs-internal" title="            Validator" href="../../api/validation/#textual.validation.Validator">Validator</a>,
 as seen for <code>Palindrome</code> in the example above.</p>
 <h4 id="validate-empty">Validate Empty<a class="headerlink" href="#validate-empty" title="Permanent link">&para;</a></h4>
 <p>If you set <code>valid_empty=True</code> then empty values will bypass any validators, and empty values will be considered valid.</p>
@@ -9736,8 +9756,18 @@ as seen for <code>Palindrome</code> in the example above.</p>
 </table>
 <h2 id="messages">Messages<a class="headerlink" href="#messages" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a class="autorefs autorefs-internal" title=" Changed" href="#textual.widgets.Input.Changed">Input.Changed</a></li>
-<li><a class="autorefs autorefs-internal" title=" Submitted" href="#textual.widgets.Input.Submitted">Input.Submitted</a></li>
+<li><a class="autorefs autorefs-internal" title="            Changed
+
+
+  
+      dataclass
+  " href="#textual.widgets.Input.Changed">Input.Changed</a></li>
+<li><a class="autorefs autorefs-internal" title="            Submitted
+
+
+  
+      dataclass
+  " href="#textual.widgets.Input.Submitted">Input.Submitted</a></li>
 </ul>
 <h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
 <p>The input widget defines the following bindings:</p>
@@ -9751,7 +9781,7 @@ as seen for <code>Palindrome</code> in the example above.</p>
 
     <div class="doc doc-contents first">
 
-        <table>
+      <table>
 <thead>
 <tr>
 <th style="text-align: left;">Key(s)</th>
@@ -9863,7 +9893,7 @@ as seen for <code>Palindrome</code> in the example above.</p>
 
     <div class="doc doc-contents first">
 
-        <table>
+      <table>
 <thead>
 <tr>
 <th style="text-align: left;">Class</th>
@@ -9905,11 +9935,11 @@ as seen for <code>Palindrome</code> in the example above.</p>
 <a id="textual.widgets.Input"></a>
     <div class="doc doc-contents first">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" ScrollView (textual.scroll_view.ScrollView)" href="../../api/scroll_view/#textual.scroll_view.ScrollView">ScrollView</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.scroll_view.ScrollView" href="../../api/scroll_view/#textual.scroll_view.ScrollView">ScrollView</a></code></p>
 
 
 
-        <p>A text input widget.</p>
+      <p>A text input widget.</p>
 
 
 
@@ -10041,11 +10071,11 @@ as seen for <code>Palindrome</code> in the example above.</p>
 <h2 id="textual.widgets.Input(suggester)" class="doc doc-heading doc-heading-parameter">                  <code>suggester</code>
 <a href="#textual.widgets.Input(suggester)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Suggester (textual.suggester.Suggester)" href="../../api/suggester/#textual.suggester.Suggester">Suggester</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.suggester.Suggester" href="../../api/suggester/#textual.suggester.Suggester">Suggester</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><a class="autorefs autorefs-internal" title=" Suggester" href="../../api/suggester/#textual.suggester.Suggester"><code>Suggester</code></a> associated with this
+                <p><a class="autorefs autorefs-internal" title="            Suggester" href="../../api/suggester/#textual.suggester.Suggester"><code>Suggester</code></a> associated with this
 input instance.</p>
               </div>
             </td>
@@ -10058,7 +10088,7 @@ input instance.</p>
 <h2 id="textual.widgets.Input(validators)" class="doc doc-heading doc-heading-parameter">                  <code>validators</code>
 <a href="#textual.widgets.Input(validators)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="../../api/validation/#textual.validation.Validator">Validator</a> | <a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title=" Validator (textual.validation.Validator)" href="../../api/validation/#textual.validation.Validator">Validator</a>] | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.Validator" href="../../api/validation/#textual.validation.Validator">Validator</a> | <a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.validation.Validator" href="../../api/validation/#textual.validation.Validator">Validator</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10074,7 +10104,7 @@ input instance.</p>
 <h2 id="textual.widgets.Input(validate_on)" class="doc doc-heading doc-heading-parameter">                  <code>validate_on</code>
 <a href="#textual.widgets.Input(validate_on)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title=" InputValidationOn (textual.widgets._input.InputValidationOn)" href="../../api/types/#textual.types.InputValidationOn">InputValidationOn</a>] | None</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.widgets._input.InputValidationOn" href="../../api/types/#textual.types.InputValidationOn">InputValidationOn</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10232,114 +10262,114 @@ validation for all messages.</p>
 
 <a href="#textual.widgets.Input.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">&quot;cursor_left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="s2">&quot;Move cursor left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">),</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="s2">&quot;shift+left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">&quot;cursor_left(True)&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="s2">&quot;Move cursor left and select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">),</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="s2">&quot;ctrl+left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="s2">&quot;cursor_left_word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="s2">&quot;Move cursor left a word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="p">),</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="s2">&quot;ctrl+shift+left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="s2">&quot;cursor_left_word(True)&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>        <span class="s2">&quot;Move cursor left a word and select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    <span class="p">),</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="s2">&quot;right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>        <span class="s2">&quot;cursor_right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>        <span class="s2">&quot;Move cursor right or accept the completion suggestion&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>    <span class="p">),</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>        <span class="s2">&quot;shift+right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>        <span class="s2">&quot;cursor_right(True)&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>        <span class="s2">&quot;Move cursor right and select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    <span class="p">),</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>        <span class="s2">&quot;ctrl+right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>        <span class="s2">&quot;cursor_right_word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>        <span class="s2">&quot;Move cursor right a word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    <span class="p">),</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>        <span class="s2">&quot;ctrl+shift+right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>        <span class="s2">&quot;cursor_right_word(True)&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>        <span class="s2">&quot;Move cursor right a word and select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>    <span class="p">),</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>        <span class="s2">&quot;backspace&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>        <span class="s2">&quot;delete_left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>        <span class="s2">&quot;Delete character left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>    <span class="p">),</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>        <span class="s2">&quot;home,ctrl+a&quot;</span><span class="p">,</span> <span class="s2">&quot;home&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to start&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
 <a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>    <span class="p">),</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;end,ctrl+e&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to end&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;end,ctrl+e&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;Go to end&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>        <span class="s2">&quot;shift+home&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>        <span class="s2">&quot;home(True)&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>        <span class="s2">&quot;Select line start&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a>    <span class="p">),</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a>        <span class="s2">&quot;shift+end&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a>        <span class="s2">&quot;end(True)&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a>        <span class="s2">&quot;Select line end&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a>    <span class="p">),</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a>        <span class="s2">&quot;delete,ctrl+d&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a>        <span class="s2">&quot;delete_right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a>        <span class="s2">&quot;Delete character right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-76" name="__codelineno-0-76" href="#__codelineno-0-76"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-77" name="__codelineno-0-77" href="#__codelineno-0-77"></a>    <span class="p">),</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;enter&quot;</span><span class="p">,</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="s2">&quot;Submit&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span><span class="s2">&quot;enter&quot;</span><span class="p">,</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="s2">&quot;Submit&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-80" name="__codelineno-0-80" href="#__codelineno-0-80"></a>        <span class="s2">&quot;ctrl+w&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-81" name="__codelineno-0-81" href="#__codelineno-0-81"></a>        <span class="s2">&quot;delete_left_word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-82" name="__codelineno-0-82" href="#__codelineno-0-82"></a>        <span class="s2">&quot;Delete left to start of word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-83" name="__codelineno-0-83" href="#__codelineno-0-83"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84" href="#__codelineno-0-84"></a>    <span class="p">),</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a>        <span class="s2">&quot;ctrl+u&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a>        <span class="s2">&quot;delete_left_all&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-88" name="__codelineno-0-88" href="#__codelineno-0-88"></a>        <span class="s2">&quot;Delete all to the left&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-89" name="__codelineno-0-89" href="#__codelineno-0-89"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90" href="#__codelineno-0-90"></a>    <span class="p">),</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-92" name="__codelineno-0-92" href="#__codelineno-0-92"></a>        <span class="s2">&quot;ctrl+f&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-93" name="__codelineno-0-93" href="#__codelineno-0-93"></a>        <span class="s2">&quot;delete_right_word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94" href="#__codelineno-0-94"></a>        <span class="s2">&quot;Delete right to start of word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95" href="#__codelineno-0-95"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-96" name="__codelineno-0-96" href="#__codelineno-0-96"></a>    <span class="p">),</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-98" name="__codelineno-0-98" href="#__codelineno-0-98"></a>        <span class="s2">&quot;ctrl+k&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-99" name="__codelineno-0-99" href="#__codelineno-0-99"></a>        <span class="s2">&quot;delete_right_all&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-100" name="__codelineno-0-100" href="#__codelineno-0-100"></a>        <span class="s2">&quot;Delete all to the right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-101" name="__codelineno-0-101" href="#__codelineno-0-101"></a>        <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-102" name="__codelineno-0-102" href="#__codelineno-0-102"></a>    <span class="p">),</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-104" name="__codelineno-0-104" href="#__codelineno-0-104"></a>        <span class="s2">&quot;ctrl+x&quot;</span><span class="p">,</span> <span class="s2">&quot;cut&quot;</span><span class="p">,</span> <span class="s2">&quot;Cut selected text&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
 <a id="__codelineno-0-105" name="__codelineno-0-105" href="#__codelineno-0-105"></a>    <span class="p">),</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-107" name="__codelineno-0-107" href="#__codelineno-0-107"></a>        <span class="s2">&quot;ctrl+c&quot;</span><span class="p">,</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span> <span class="s2">&quot;Copy selected text&quot;</span><span class="p">,</span> <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">False</span>
 <a id="__codelineno-0-108" name="__codelineno-0-108" href="#__codelineno-0-108"></a>    <span class="p">),</span>
-<a id="__codelineno-0-109" name="__codelineno-0-109" href="#__codelineno-0-109"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109" href="#__codelineno-0-109"></a>    <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../../api/binding/#textual.binding.Binding">Binding</a></span><span class="p">(</span>
 <a id="__codelineno-0-110" name="__codelineno-0-110" href="#__codelineno-0-110"></a>        <span class="s2">&quot;ctrl+v&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-111" name="__codelineno-0-111" href="#__codelineno-0-111"></a>        <span class="s2">&quot;paste&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-112" name="__codelineno-0-112" href="#__codelineno-0-112"></a>        <span class="s2">&quot;Paste text from the clipboard&quot;</span><span class="p">,</span>
@@ -10350,7 +10380,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <table>
+      <table>
 <thead>
 <tr>
 <th style="text-align: left;">Key(s)</th>
@@ -10475,7 +10505,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <table>
+      <table>
 <thead>
 <tr>
 <th style="text-align: left;">Class</th>
@@ -10523,7 +10553,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The width of the content.</p>
+      <p>The width of the content.</p>
     </div>
 
 </div>
@@ -10547,7 +10577,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The current position of the cursor, corresponding to the end of the selection.</p>
+      <p>The current position of the cursor, corresponding to the end of the selection.</p>
     </div>
 
 </div>
@@ -10570,7 +10600,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The offset of the cursor of this input in screen-space. (x, y)/(column, row)</p>
+      <p>The offset of the cursor of this input in screen-space. (x, y)/(column, row)</p>
     </div>
 
 </div>
@@ -10593,7 +10623,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Check if the value has passed validation.</p>
+      <p>Check if the value has passed validation.</p>
     </div>
 
 </div>
@@ -10612,12 +10642,12 @@ validation for all messages.</p>
   </span>
 
 <a href="#textual.widgets.Input.max_length" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">max_length</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" max_length (textual.widgets._input.Input(max_length))" href="#textual.widgets.Input(max_length)">max_length</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">max_length</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.widgets._input.Input.max_length" href="#textual.widgets.Input.max_length">max_length</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The maximum length of the input, in characters.</p>
+      <p>The maximum length of the input, in characters.</p>
     </div>
 
 </div>
@@ -10636,12 +10666,12 @@ validation for all messages.</p>
   </span>
 
 <a href="#textual.widgets.Input.restrict" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">restrict</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" restrict (textual.widgets._input.Input(restrict))" href="#textual.widgets.Input(restrict)">restrict</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">restrict</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.widgets._input.Input.restrict" href="#textual.widgets.Input.restrict">restrict</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>A regular expression to limit changes in value.</p>
+      <p>A regular expression to limit changes in value.</p>
     </div>
 
 </div>
@@ -10664,7 +10694,7 @@ validation for all messages.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The text between the start and end points of the current selection.</p>
+      <p>The text between the start and end points of the current selection.</p>
     </div>
 
 </div>
@@ -10683,12 +10713,12 @@ validation for all messages.</p>
   </span>
 
 <a href="#textual.widgets.Input.selection" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selection</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" reactive (textual.reactive.reactive)" href="../../api/reactive/#textual.reactive.reactive">reactive</a></span><span class="p">(</span><span class="n"><span title="textual.widgets._input.Selection.cursor">cursor</span></span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selection</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.reactive" href="../../api/reactive/#textual.reactive.reactive">reactive</a></span><span class="p">(</span><span class="n"><span title="textual.widgets._input.Selection.cursor">cursor</span></span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The currently selected range of text.</p>
+      <p>The currently selected range of text.</p>
     </div>
 
 </div>
@@ -10706,12 +10736,12 @@ validation for all messages.</p>
   </span>
 
 <a href="#textual.widgets.Input.suggester" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">suggester</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" suggester (textual.widgets._input.Input(suggester))" href="#textual.widgets.Input(suggester)">suggester</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">suggester</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.widgets._input.Input.suggester" href="#textual.widgets.Input.suggester">suggester</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The suggester used to provide completions as the user types.</p>
+      <p>The suggester used to provide completions as the user types.</p>
     </div>
 
 </div>
@@ -10730,12 +10760,12 @@ validation for all messages.</p>
   </span>
 
 <a href="#textual.widgets.Input.type" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">type</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" type (textual.widgets._input.Input(type))" href="#textual.widgets.Input(type)">type</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">type</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.widgets._input.Input.type" href="#textual.widgets.Input.type">type</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The type of the input.</p>
+      <p>The type of the input.</p>
     </div>
 
 </div>
@@ -10754,12 +10784,12 @@ validation for all messages.</p>
   </span>
 
 <a href="#textual.widgets.Input.valid_empty" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">valid_empty</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" var (textual.reactive.var)" href="../../api/reactive/#textual.reactive.var">var</a></span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">valid_empty</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.reactive.var" href="../../api/reactive/#textual.reactive.var">var</a></span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Empty values should pass validation.</p>
+      <p>Empty values should pass validation.</p>
     </div>
 
 </div>
@@ -10778,15 +10808,15 @@ validation for all messages.</p>
 
 <a href="#textual.widgets.Input.validate_on" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">validate_on</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.widgets._input._POSSIBLE_VALIDATE_ON_VALUES">_POSSIBLE_VALIDATE_ON_VALUES</span></span> <span class="o">&amp;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#set">set</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" validate_on (textual.widgets._input.Input(validate_on))" href="#textual.widgets.Input(validate_on)">validate_on</a></span><span class="p">)</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">if</span> <span class="n"><a class="autorefs autorefs-internal" title=" validate_on (textual.widgets._input.Input(validate_on))" href="#textual.widgets.Input(validate_on)">validate_on</a></span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.widgets._input._POSSIBLE_VALIDATE_ON_VALUES">_POSSIBLE_VALIDATE_ON_VALUES</span></span> <span class="o">&amp;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#set">set</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="textual.widgets._input.Input.validate_on" href="#textual.widgets.Input.validate_on">validate_on</a></span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">if</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.widgets._input.Input.validate_on" href="#textual.widgets.Input.validate_on">validate_on</a></span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">else</span> <span class="n"><span title="textual.widgets._input._POSSIBLE_VALIDATE_ON_VALUES">_POSSIBLE_VALIDATE_ON_VALUES</span></span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Set with event names to do input validation on.</p>
+      <p>Set with event names to do input validation on.</p>
 <p>Validation can only be performed on blur, on input changes and on input submission.</p>
 
 
@@ -10814,16 +10844,16 @@ is submitted explicitly:</p>
   </span>
 
 <a href="#textual.widgets.Input.Blurred" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Blurred</span><span class="p">(</span><span class="n"><span title="textual.widgets.Input.Blurred(input)">input</span></span><span class="p">,</span> <span class="n"><span title="textual.widgets.Input.Blurred(value)">value</span></span><span class="p">,</span> <span class="n"><span title="textual.widgets.Input.Blurred(validation_result)">validation_result</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Blurred</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">validation_result</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Message (textual.message.Message)" href="../../api/message/#textual.message.Message">Message</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
 
 
 
-        <p>Posted when the widget is blurred (loses focus).</p>
+      <p>Posted when the widget is blurred (loses focus).</p>
 <p>Can be handled using <code>on_input_blurred</code> in a subclass of <code>Input</code> or in a parent
 widget in the DOM.</p>
 
@@ -10861,7 +10891,7 @@ widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Alias for self.input.</p>
+      <p>Alias for self.input.</p>
     </div>
 
 </div>
@@ -10884,7 +10914,7 @@ widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The <code>Input</code> widget that was changed.</p>
+      <p>The <code>Input</code> widget that was changed.</p>
     </div>
 
 </div>
@@ -10908,7 +10938,7 @@ widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The result of validating the value (formed by combining the results from each validator), or None
+      <p>The result of validating the value (formed by combining the results from each validator), or None
 if validation was not performed (for example when no validators are specified in the <code>Input</code>s init)</p>
     </div>
 
@@ -10932,7 +10962,7 @@ if validation was not performed (for example when no validators are specified in
 
     <div class="doc doc-contents ">
 
-        <p>The value that the input was changed to.</p>
+      <p>The value that the input was changed to.</p>
     </div>
 
 </div>
@@ -10960,16 +10990,16 @@ if validation was not performed (for example when no validators are specified in
   </span>
 
 <a href="#textual.widgets.Input.Changed" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Changed</span><span class="p">(</span><span class="n"><span title="textual.widgets.Input.Changed(input)">input</span></span><span class="p">,</span> <span class="n"><span title="textual.widgets.Input.Changed(value)">value</span></span><span class="p">,</span> <span class="n"><span title="textual.widgets.Input.Changed(validation_result)">validation_result</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Changed</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">validation_result</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Message (textual.message.Message)" href="../../api/message/#textual.message.Message">Message</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
 
 
 
-        <p>Posted when the value changes.</p>
+      <p>Posted when the value changes.</p>
 <p>Can be handled using <code>on_input_changed</code> in a subclass of <code>Input</code> or in a parent
 widget in the DOM.</p>
 
@@ -11007,7 +11037,7 @@ widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Alias for self.input.</p>
+      <p>Alias for self.input.</p>
     </div>
 
 </div>
@@ -11030,7 +11060,7 @@ widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The <code>Input</code> widget that was changed.</p>
+      <p>The <code>Input</code> widget that was changed.</p>
     </div>
 
 </div>
@@ -11054,7 +11084,7 @@ widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The result of validating the value (formed by combining the results from each validator), or None
+      <p>The result of validating the value (formed by combining the results from each validator), or None
 if validation was not performed (for example when no validators are specified in the <code>Input</code>s init)</p>
     </div>
 
@@ -11078,7 +11108,7 @@ if validation was not performed (for example when no validators are specified in
 
     <div class="doc doc-contents ">
 
-        <p>The value that the input was changed to.</p>
+      <p>The value that the input was changed to.</p>
     </div>
 
 </div>
@@ -11106,16 +11136,16 @@ if validation was not performed (for example when no validators are specified in
   </span>
 
 <a href="#textual.widgets.Input.Submitted" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Submitted</span><span class="p">(</span><span class="n"><span title="textual.widgets.Input.Submitted(input)">input</span></span><span class="p">,</span> <span class="n"><span title="textual.widgets.Input.Submitted(value)">value</span></span><span class="p">,</span> <span class="n"><span title="textual.widgets.Input.Submitted(validation_result)">validation_result</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Submitted</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">validation_result</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Message (textual.message.Message)" href="../../api/message/#textual.message.Message">Message</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
 
 
 
-        <p>Posted when the enter key is pressed within an <code>Input</code>.</p>
+      <p>Posted when the enter key is pressed within an <code>Input</code>.</p>
 <p>Can be handled using <code>on_input_submitted</code> in a subclass of <code>Input</code> or in a
 parent widget in the DOM.</p>
 
@@ -11153,7 +11183,7 @@ parent widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Alias for self.input.</p>
+      <p>Alias for self.input.</p>
     </div>
 
 </div>
@@ -11176,7 +11206,7 @@ parent widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The <code>Input</code> widget that is being submitted.</p>
+      <p>The <code>Input</code> widget that is being submitted.</p>
     </div>
 
 </div>
@@ -11200,7 +11230,7 @@ parent widget in the DOM.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The result of validating the value on submission, formed by combining the results for each validator.
+      <p>The result of validating the value on submission, formed by combining the results for each validator.
 This value will be None if no validation was performed, which will be the case if no validators are supplied
 to the corresponding <code>Input</code> widget.</p>
     </div>
@@ -11225,7 +11255,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The value of the <code>Input</code> being submitted.</p>
+      <p>The value of the <code>Input</code> being submitted.</p>
     </div>
 
 </div>
@@ -11254,7 +11284,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Copy the current selection to the clipboard.</p>
+      <p>Copy the current selection to the clipboard.</p>
 
     </div>
 
@@ -11268,12 +11298,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_left" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" select (textual.widgets.Input.action_cursor_left(select))" href="#textual.widgets.Input.action_cursor_left(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_left(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Move the cursor one position to the left.</p>
+      <p>Move the cursor one position to the left.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11318,12 +11348,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_left_word" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left_word</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" select (textual.widgets.Input.action_cursor_left_word(select))" href="#textual.widgets.Input.action_cursor_left_word(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_left_word</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_left_word(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Move the cursor left to the start of a word.</p>
+      <p>Move the cursor left to the start of a word.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11368,12 +11398,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_right" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" select (textual.widgets.Input.action_cursor_right(select))" href="#textual.widgets.Input.action_cursor_right(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_right(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Accept an auto-completion or move the cursor one position to the right.</p>
+      <p>Accept an auto-completion or move the cursor one position to the right.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11418,12 +11448,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_cursor_right_word" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right_word</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" select (textual.widgets.Input.action_cursor_right_word(select))" href="#textual.widgets.Input.action_cursor_right_word(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_cursor_right_word</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_cursor_right_word(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Move the cursor right to the start of a word.</p>
+      <p>Move the cursor right to the start of a word.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11473,7 +11503,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Cut the current selection (copy to clipboard and remove from input).</p>
+      <p>Cut the current selection (copy to clipboard and remove from input).</p>
 
     </div>
 
@@ -11492,7 +11522,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete one character to the left of the current cursor position.</p>
+      <p>Delete one character to the left of the current cursor position.</p>
 
     </div>
 
@@ -11511,7 +11541,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete all characters to the left of the cursor position.</p>
+      <p>Delete all characters to the left of the cursor position.</p>
 
     </div>
 
@@ -11530,7 +11560,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete leftward of the cursor position to the start of a word.</p>
+      <p>Delete leftward of the cursor position to the start of a word.</p>
 
     </div>
 
@@ -11549,7 +11579,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete one character at the current cursor position.</p>
+      <p>Delete one character at the current cursor position.</p>
 
     </div>
 
@@ -11568,7 +11598,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete the current character and all characters to the right of the cursor position.</p>
+      <p>Delete the current character and all characters to the right of the cursor position.</p>
 
     </div>
 
@@ -11587,7 +11617,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete the current character and all rightward to the start of the next word.</p>
+      <p>Delete the current character and all rightward to the start of the next word.</p>
 
     </div>
 
@@ -11601,12 +11631,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_end" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_end</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" select (textual.widgets.Input.action_end(select))" href="#textual.widgets.Input.action_end(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_end</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_end(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Move the cursor to the end of the input.</p>
+      <p>Move the cursor to the end of the input.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11651,12 +11681,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.action_home" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_home</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" select (textual.widgets.Input.action_home(select))" href="#textual.widgets.Input.action_home(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_home</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.action_home(select)">select</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Move the cursor to the start of the input.</p>
+      <p>Move the cursor to the start of the input.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11706,7 +11736,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Paste from the local clipboard.</p>
+      <p>Paste from the local clipboard.</p>
 
     </div>
 
@@ -11729,7 +11759,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Handle a submit action.</p>
+      <p>Handle a submit action.</p>
 <p>Normally triggered by the user pressing Enter. This may also run any validators.</p>
 
     </div>
@@ -11744,12 +11774,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.check_consume_key" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">check_consume_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.widgets.Input.check_consume_key(key))" href="#textual.widgets.Input.check_consume_key(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" character (textual.widgets.Input.check_consume_key(character))" href="#textual.widgets.Input.check_consume_key(character)">character</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">check_consume_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.check_consume_key(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.check_consume_key(character)">character</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Check if the widget may consume the given key.</p>
+      <p>Check if the widget may consume the given key.</p>
 <p>As an input we are expecting to capture printable keys.</p>
 
 
@@ -11839,7 +11869,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Clear the input.</p>
+      <p>Clear the input.</p>
 
     </div>
 
@@ -11853,12 +11883,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.delete" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">delete</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" start (textual.widgets.Input.delete(start))" href="#textual.widgets.Input.delete(start)">start</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" end (textual.widgets.Input.delete(end))" href="#textual.widgets.Input.delete(end)">end</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">delete</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.delete(start)">start</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.delete(end)">end</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Delete the text between the start and end locations.</p>
+      <p>Delete the text between the start and end locations.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -11924,7 +11954,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Delete the current selection.</p>
+      <p>Delete the current selection.</p>
 
     </div>
 
@@ -11938,12 +11968,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.insert" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">insert</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" text (textual.widgets.Input.insert(text))" href="#textual.widgets.Input.insert(text)">text</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" index (textual.widgets.Input.insert(index))" href="#textual.widgets.Input.insert(index)">index</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">insert</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.insert(text)">text</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.insert(index)">index</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Insert text at the given index.</p>
+      <p>Insert text at the given index.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -12004,12 +12034,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.insert_text_at_cursor" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">insert_text_at_cursor</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" text (textual.widgets.Input.insert_text_at_cursor(text))" href="#textual.widgets.Input.insert_text_at_cursor(text)">text</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">insert_text_at_cursor</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.insert_text_at_cursor(text)">text</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Insert new text at the cursor, move the cursor to the end of the new text.</p>
+      <p>Insert new text at the cursor, move the cursor to the end of the new text.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -12054,12 +12084,12 @@ to the corresponding <code>Input</code> widget.</p>
 
 
 <a href="#textual.widgets.Input.replace" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">replace</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" text (textual.widgets.Input.replace(text))" href="#textual.widgets.Input.replace(text)">text</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" start (textual.widgets.Input.replace(start))" href="#textual.widgets.Input.replace(start)">start</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" end (textual.widgets.Input.replace(end))" href="#textual.widgets.Input.replace(end)">end</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">replace</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.replace(text)">text</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.replace(start)">start</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.widgets.Input.replace(end)">end</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Replace the text between the start and end locations with the given text.</p>
+      <p>Replace the text between the start and end locations with the given text.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -12141,7 +12171,7 @@ to the corresponding <code>Input</code> widget.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Called when a character has been restricted.</p>
+      <p>Called when a character has been restricted.</p>
 <p>The default behavior is to play the system bell.
 You may want to override this method if you want to disable the bell or do something else entirely.</p>
 
@@ -12157,12 +12187,12 @@ You may want to override this method if you want to disable the bell or do somet
 
 
 <a href="#textual.widgets.Input.validate" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n"><span title="textual.widgets.Input.validate(value)">value</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Run all the validators associated with this Input on the supplied value.</p>
+      <p>Run all the validators associated with this Input on the supplied value.</p>
 <p>Runs all validators, combines the result into one. If any of the validators
 failed, the combined result will be a failure. If no validators are present,
 None will be returned. This also sets the <code>-invalid</code> CSS class on the Input
@@ -12181,7 +12211,7 @@ the validation succeeds.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" ValidationResult (textual.validation.ValidationResult)" href="../../api/validation/#textual.validation.ValidationResult">ValidationResult</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.validation.ValidationResult" href="../../api/validation/#textual.validation.ValidationResult">ValidationResult</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">

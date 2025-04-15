@@ -6940,7 +6940,7 @@ window.onload = async (event) => {
 <a id="textual.lazy"></a>
     <div class="doc doc-contents first">
 
-        <p>Tools for lazy loading widgets.</p>
+      <p>Tools for lazy loading widgets.</p>
 
 
 
@@ -6967,16 +6967,16 @@ window.onload = async (event) => {
 
 
 <a href="#textual.lazy.Lazy" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Lazy</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" widget (textual.lazy.Lazy(widget))" href="#textual.lazy.Lazy(widget)">widget</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Lazy</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.lazy.Lazy(widget)">widget</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code></p>
 
 
 
-        <p>Wraps a widget so that it is mounted <em>lazily</em>.</p>
+      <p>Wraps a widget so that it is mounted <em>lazily</em>.</p>
 <p>Lazy widgets are mounted after the first refresh. This can be used to display some parts of
 the UI very quickly, followed by the lazy widgets. Technically, this won't make anything
 faster, but it reduces the time the user sees a blank screen and will make apps feel
@@ -7013,7 +7013,7 @@ in queries for a brief interval until they are mounted. Your code should take th
 <h3 id="textual.lazy.Lazy(widget)" class="doc doc-heading doc-heading-parameter">                  <code>widget</code>
 <a href="#textual.lazy.Lazy(widget)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7062,16 +7062,16 @@ in queries for a brief interval until they are mounted. Your code should take th
 
 
 <a href="#textual.lazy.Reveal" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Reveal</span><span class="p">(</span><span class="n"><span title="textual.lazy.Reveal(widget)">widget</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Reveal</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code></p>
 
 
 
-        <p>Similar to <a class="autorefs autorefs-internal" title=" Lazy" href="#textual.lazy.Lazy">Lazy</a>, but mounts children sequentially.</p>
+      <p>Similar to <a class="autorefs autorefs-internal" title="            Lazy" href="#textual.lazy.Lazy">Lazy</a>, but mounts children sequentially.</p>
 <p>This is useful when you have so many child widgets that there is a noticeable delay before
 you see anything. By mounting the children over several frames, the user will feel that
 something is happening.</p>

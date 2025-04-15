@@ -7420,7 +7420,7 @@ window.onload = async (event) => {
 <a id="textual.cache"></a>
     <div class="doc doc-contents first">
 
-        <p>Cache classes are dict-like containers used to avoid recalculating expensive operations such as rendering.</p>
+      <p>Cache classes are dict-like containers used to avoid recalculating expensive operations such as rendering.</p>
 <p>You can also use them in your own apps for similar reasons.</p>
 
 
@@ -7448,7 +7448,7 @@ window.onload = async (event) => {
 
 
 <a href="#textual.cache.FIFOCache" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">FIFOCache</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" maxsize (textual.cache.FIFOCache(maxsize))" href="#textual.cache.FIFOCache(maxsize)">maxsize</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">FIFOCache</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache(maxsize)">maxsize</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7457,7 +7457,7 @@ window.onload = async (event) => {
 
 
 
-        <p>A simple cache that discards the first added key when full (First In First Out).</p>
+      <p>A simple cache that discards the first added key when full (First In First Out).</p>
 <p>This has a lower overhead than LRUCache, but won't manage a working set as efficiently.
 It is most suitable for a cache with a relatively low maximum size that is not expected to
 do many lookups.</p>
@@ -7525,7 +7525,7 @@ do many lookups.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Clear the cache.</p>
+      <p>Clear the cache.</p>
 
     </div>
 
@@ -7540,17 +7540,17 @@ do many lookups.</p>
 
 <a href="#textual.cache.FIFOCache.get" class="headerlink" title="Permanent link">&para;</a></h3>
           <div class="doc-overloads">
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.FIFOCache.get(key))" href="#textual.cache.FIFOCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="textual.cache.CacheValue">CacheValue</span></span> <span class="o">|</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="textual.cache.CacheValue">CacheValue</span></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.FIFOCache.get(key))" href="#textual.cache.FIFOCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" default (textual.cache.FIFOCache.get(default))" href="#textual.cache.FIFOCache.get(default)">default</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.DefaultValue">DefaultValue</span></span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.get(default)">default</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.DefaultValue">DefaultValue</span></span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="textual.cache.CacheValue">CacheValue</span></span> <span class="o">|</span> <span class="n"><span title="textual.cache.DefaultValue">DefaultValue</span></span>
 </code></pre></div>          </div>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.FIFOCache.get(key))" href="#textual.cache.FIFOCache.get(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" default (textual.cache.FIFOCache.get(default))" href="#textual.cache.FIFOCache.get(default)">default</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.get(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.get(default)">default</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get a value from the cache, or return a default if the key is not present.</p>
+      <p>Get a value from the cache, or return a default if the key is not present.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7639,7 +7639,7 @@ do many lookups.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Get cache keys.</p>
+      <p>Get cache keys.</p>
 
     </div>
 
@@ -7653,12 +7653,12 @@ do many lookups.</p>
 
 
 <a href="#textual.cache.FIFOCache.set" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">set</span><span class="p">(</span><span class="nf"><a class="autorefs autorefs-internal" title=" key (textual.cache.FIFOCache.set(key))" href="#textual.cache.FIFOCache.set(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" value (textual.cache.FIFOCache.set(value))" href="#textual.cache.FIFOCache.set(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">set</span><span class="p">(</span><span class="nf"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.set(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.FIFOCache.set(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Set a value.</p>
+      <p>Set a value.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7728,7 +7728,7 @@ do many lookups.</p>
 
 
 <a href="#textual.cache.LRUCache" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">LRUCache</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" maxsize (textual.cache.LRUCache(maxsize))" href="#textual.cache.LRUCache(maxsize)">maxsize</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">LRUCache</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache(maxsize)">maxsize</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7737,7 +7737,7 @@ do many lookups.</p>
 
 
 
-        <p>A dictionary-like container with a maximum size.</p>
+      <p>A dictionary-like container with a maximum size.</p>
 <p>If an additional item is added when the LRUCache is full, the least
 recently used key is discarded to make room for the new item.</p>
 <p>The implementation is similar to functools.lru_cache, which uses a (doubly)
@@ -7816,7 +7816,7 @@ where the overhead of the cache is a small fraction of the total processing time
 
     <div class="doc doc-contents ">
 
-        
+      
     </div>
 
 </div>
@@ -7836,7 +7836,7 @@ where the overhead of the cache is a small fraction of the total processing time
 
     <div class="doc doc-contents ">
 
-        <p>Clear the cache.</p>
+      <p>Clear the cache.</p>
 
     </div>
 
@@ -7850,12 +7850,12 @@ where the overhead of the cache is a small fraction of the total processing time
 
 
 <a href="#textual.cache.LRUCache.discard" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">discard</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.LRUCache.discard(key))" href="#textual.cache.LRUCache.discard(key)">key</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">discard</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.discard(key)">key</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Discard item in cache from key.</p>
+      <p>Discard item in cache from key.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7901,17 +7901,17 @@ where the overhead of the cache is a small fraction of the total processing time
 
 <a href="#textual.cache.LRUCache.get" class="headerlink" title="Permanent link">&para;</a></h3>
           <div class="doc-overloads">
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.LRUCache.get(key))" href="#textual.cache.LRUCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="textual.cache.CacheValue">CacheValue</span></span> <span class="o">|</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="textual.cache.CacheValue">CacheValue</span></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.LRUCache.get(key))" href="#textual.cache.LRUCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" default (textual.cache.LRUCache.get(default))" href="#textual.cache.LRUCache.get(default)">default</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.DefaultValue">DefaultValue</span></span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.get(key)">key</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.CacheKey">CacheKey</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.get(default)">default</a></span><span class="p">:</span> <span class="n"><span title="textual.cache.DefaultValue">DefaultValue</span></span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="textual.cache.CacheValue">CacheValue</span></span> <span class="o">|</span> <span class="n"><span title="textual.cache.DefaultValue">DefaultValue</span></span>
 </code></pre></div>          </div>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.cache.LRUCache.get(key))" href="#textual.cache.LRUCache.get(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" default (textual.cache.LRUCache.get(default))" href="#textual.cache.LRUCache.get(default)">default</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.get(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.get(default)">default</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get a value from the cache, or return a default if the key is not present.</p>
+      <p>Get a value from the cache, or return a default if the key is not present.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7995,12 +7995,12 @@ where the overhead of the cache is a small fraction of the total processing time
 
 
 <a href="#textual.cache.LRUCache.grow" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">grow</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" maxsize (textual.cache.LRUCache.grow(maxsize))" href="#textual.cache.LRUCache.grow(maxsize)">maxsize</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">grow</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.grow(maxsize)">maxsize</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Grow the maximum size to at least <code>maxsize</code> elements.</p>
+      <p>Grow the maximum size to at least <code>maxsize</code> elements.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -8050,7 +8050,7 @@ where the overhead of the cache is a small fraction of the total processing time
 
     <div class="doc doc-contents ">
 
-        <p>Get cache keys.</p>
+      <p>Get cache keys.</p>
 
     </div>
 
@@ -8064,12 +8064,12 @@ where the overhead of the cache is a small fraction of the total processing time
 
 
 <a href="#textual.cache.LRUCache.set" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">set</span><span class="p">(</span><span class="nf"><a class="autorefs autorefs-internal" title=" key (textual.cache.LRUCache.set(key))" href="#textual.cache.LRUCache.set(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" value (textual.cache.LRUCache.set(value))" href="#textual.cache.LRUCache.set(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">set</span><span class="p">(</span><span class="nf"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.set(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.cache.LRUCache.set(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Set a value.</p>
+      <p>Set a value.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>

@@ -7037,7 +7037,12 @@ window.onload = async (event) => {
 </code></pre></div>
 <p>The <code>action_set_background</code> method is an action method which sets the background of the screen. The key handler above will call this action method if you press the <span class="keys"><kbd class="key-r">R</kbd></span> key.</p>
 <p>Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an <em>action string</em>. For instance, the string <code>"set_background('red')"</code> is an action string which would call <code>self.action_set_background('red')</code>.</p>
-<p>The following example replaces the immediate call with a call to <a class="autorefs autorefs-internal" title=" run_action" href="../../api/widget/#textual.widget.Widget.run_action">run_action()</a> which parses an action string and dispatches it to the appropriate method.</p>
+<p>The following example replaces the immediate call with a call to <a class="autorefs autorefs-internal" title="            run_action
+
+
+  
+      async
+  " href="../../api/widget/#textual.widget.Widget.run_action">run_action()</a> which parses an action string and dispatches it to the appropriate method.</p>
 <div class="highlight"><span class="filename">actions02.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual</span><span class="w"> </span><span class="kn">import</span> <span class="n">events</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -7550,7 +7555,7 @@ For instance, consider an app with a fixed number of pages and actions to go to 
 It doesn't make sense to go to the previous page if we are on the first, or the next page when we are on the last page.</p>
 <p>We could easily add this logic to the action methods, but the <a class="autorefs autorefs-internal" title=" Footer" href="../../widgets/footer/#textual.widgets.Footer">footer</a> would still display the keys even if they would have no effect.
 The user may wonder why the app is showing keys that don't appear to work.</p>
-<p>We can solve this issue by implementing the <a class="autorefs autorefs-internal" title=" check_action" href="../../api/dom_node/#textual.dom.DOMNode.check_action"><code>check_action</code></a> on our app, screen, or widget.
+<p>We can solve this issue by implementing the <a class="autorefs autorefs-internal" title="            check_action" href="../../api/dom_node/#textual.dom.DOMNode.check_action"><code>check_action</code></a> on our app, screen, or widget.
 This method is called with the name of the action and any parameters, prior to running actions or refreshing the footer.
 It should return one of the following values:</p>
 <ul>
@@ -7646,135 +7651,135 @@ It should return one of the following values:</p>
         font-weight: 700;
     }
 
-    .terminal-336083354-matrix {
+    .terminal-565204719-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-336083354-title {
+    .terminal-565204719-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-336083354-r1 { fill: #e7e0e6 }
-.terminal-336083354-r2 { fill: #c5c8c6 }
-.terminal-336083354-r3 { fill: #ffa62b;font-weight: bold }
-.terminal-336083354-r4 { fill: #e0e0e0 }
-.terminal-336083354-r5 { fill: #495259 }
+    .terminal-565204719-r1 { fill: #e7e0e6 }
+.terminal-565204719-r2 { fill: #c5c8c6 }
+.terminal-565204719-r3 { fill: #ffa62b;font-weight: bold }
+.terminal-565204719-r4 { fill: #e0e0e0 }
+.terminal-565204719-r5 { fill: #495259 }
     </style>
 
     <defs>
-    <clipPath id="terminal-336083354-clip-terminal">
+    <clipPath id="terminal-565204719-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-336083354-line-0">
+    <clipPath id="terminal-565204719-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-1">
+<clipPath id="terminal-565204719-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-2">
+<clipPath id="terminal-565204719-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-3">
+<clipPath id="terminal-565204719-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-4">
+<clipPath id="terminal-565204719-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-5">
+<clipPath id="terminal-565204719-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-6">
+<clipPath id="terminal-565204719-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-7">
+<clipPath id="terminal-565204719-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-8">
+<clipPath id="terminal-565204719-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-9">
+<clipPath id="terminal-565204719-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-10">
+<clipPath id="terminal-565204719-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-11">
+<clipPath id="terminal-565204719-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-12">
+<clipPath id="terminal-565204719-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-13">
+<clipPath id="terminal-565204719-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-14">
+<clipPath id="terminal-565204719-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-15">
+<clipPath id="terminal-565204719-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-16">
+<clipPath id="terminal-565204719-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-17">
+<clipPath id="terminal-565204719-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-18">
+<clipPath id="terminal-565204719-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-19">
+<clipPath id="terminal-565204719-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-20">
+<clipPath id="terminal-565204719-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-21">
+<clipPath id="terminal-565204719-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-336083354-line-22">
+<clipPath id="terminal-565204719-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-336083354-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">PagesApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-565204719-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">PagesApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-336083354-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-565204719-clip-terminal)">
     <rect fill="#4d1144" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="123.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="451.4" y="269.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="524.6" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="0" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="36.6" y="562.7" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="97.6" y="562.7" width="732" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="829.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="866.2" y="562.7" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="963.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-336083354-matrix">
-    <text class="terminal-336083354-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-336083354-line-0)">
-</text><text class="terminal-336083354-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-336083354-line-1)">
-</text><text class="terminal-336083354-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-336083354-line-2)">
-</text><text class="terminal-336083354-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-336083354-line-3)">
-</text><text class="terminal-336083354-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-336083354-line-4)">
-</text><text class="terminal-336083354-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-336083354-line-5)">
-</text><text class="terminal-336083354-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-336083354-line-6)">
-</text><text class="terminal-336083354-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-336083354-line-7)">
-</text><text class="terminal-336083354-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-336083354-line-8)">
-</text><text class="terminal-336083354-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-336083354-line-9)">
-</text><text class="terminal-336083354-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-336083354-line-10)">
-</text><text class="terminal-336083354-r1" x="451.4" y="288.4" textLength="73.2" clip-path="url(#terminal-336083354-line-11)">Page&#160;0</text><text class="terminal-336083354-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-336083354-line-11)">
-</text><text class="terminal-336083354-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-336083354-line-12)">
-</text><text class="terminal-336083354-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-336083354-line-13)">
-</text><text class="terminal-336083354-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-336083354-line-14)">
-</text><text class="terminal-336083354-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-336083354-line-15)">
-</text><text class="terminal-336083354-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-336083354-line-16)">
-</text><text class="terminal-336083354-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-336083354-line-17)">
-</text><text class="terminal-336083354-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-336083354-line-18)">
-</text><text class="terminal-336083354-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-336083354-line-19)">
-</text><text class="terminal-336083354-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-336083354-line-20)">
-</text><text class="terminal-336083354-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-336083354-line-21)">
-</text><text class="terminal-336083354-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-336083354-line-22)">
-</text><text class="terminal-336083354-r3" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-336083354-line-23)">&#160;n&#160;</text><text class="terminal-336083354-r4" x="36.6" y="581.2" textLength="61" clip-path="url(#terminal-336083354-line-23)">Next&#160;</text><text class="terminal-336083354-r5" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-336083354-line-23)">▏</text><text class="terminal-336083354-r3" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-336083354-line-23)">^p</text><text class="terminal-336083354-r4" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-336083354-line-23)">&#160;palette</text>
+    <g class="terminal-565204719-matrix">
+    <text class="terminal-565204719-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-565204719-line-0)">
+</text><text class="terminal-565204719-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-565204719-line-1)">
+</text><text class="terminal-565204719-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-565204719-line-2)">
+</text><text class="terminal-565204719-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-565204719-line-3)">
+</text><text class="terminal-565204719-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-565204719-line-4)">
+</text><text class="terminal-565204719-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-565204719-line-5)">
+</text><text class="terminal-565204719-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-565204719-line-6)">
+</text><text class="terminal-565204719-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-565204719-line-7)">
+</text><text class="terminal-565204719-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-565204719-line-8)">
+</text><text class="terminal-565204719-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-565204719-line-9)">
+</text><text class="terminal-565204719-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-565204719-line-10)">
+</text><text class="terminal-565204719-r1" x="451.4" y="288.4" textLength="73.2" clip-path="url(#terminal-565204719-line-11)">Page&#160;0</text><text class="terminal-565204719-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-565204719-line-11)">
+</text><text class="terminal-565204719-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-565204719-line-12)">
+</text><text class="terminal-565204719-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-565204719-line-13)">
+</text><text class="terminal-565204719-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-565204719-line-14)">
+</text><text class="terminal-565204719-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-565204719-line-15)">
+</text><text class="terminal-565204719-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-565204719-line-16)">
+</text><text class="terminal-565204719-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-565204719-line-17)">
+</text><text class="terminal-565204719-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-565204719-line-18)">
+</text><text class="terminal-565204719-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-565204719-line-19)">
+</text><text class="terminal-565204719-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-565204719-line-20)">
+</text><text class="terminal-565204719-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-565204719-line-21)">
+</text><text class="terminal-565204719-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-565204719-line-22)">
+</text><text class="terminal-565204719-r3" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-565204719-line-23)">&#160;n&#160;</text><text class="terminal-565204719-r4" x="36.6" y="581.2" textLength="61" clip-path="url(#terminal-565204719-line-23)">Next&#160;</text><text class="terminal-565204719-r5" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-565204719-line-23)">▏</text><text class="terminal-565204719-r3" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-565204719-line-23)">^p</text><text class="terminal-565204719-r4" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-565204719-line-23)">&#160;palette</text>
     </g>
     </g>
 </svg>
@@ -7784,7 +7789,7 @@ It should return one of the following values:</p>
 </div>
 <p>This app has key bindings for <span class="keys"><kbd class="key-n">N</kbd></span> and <span class="keys"><kbd class="key-p">P</kbd></span> to navigate the pages.
 Notice how the keys are hidden from the footer when they would have no effect.</p>
-<p>The actions above call <a class="autorefs autorefs-internal" title=" refresh_bindings" href="../../api/dom_node/#textual.dom.DOMNode.refresh_bindings"><code>refresh_bindings</code></a> to prompt Textual to refresh the footer.
+<p>The actions above call <a class="autorefs autorefs-internal" title="            refresh_bindings" href="../../api/dom_node/#textual.dom.DOMNode.refresh_bindings"><code>refresh_bindings</code></a> to prompt Textual to refresh the footer.
 An alternative to doing this manually is to set <code>bindings=True</code> on a <a href="../reactivity/">reactive</a>, which will refresh the bindings if the reactive changes.</p>
 <p>Let's make this change.
 We will also demonstrate what the footer will show if we return <code>None</code> from <code>check_action</code> (rather than <code>False</code>):</p>
@@ -7871,137 +7876,137 @@ We will also demonstrate what the footer will show if we return <code>None</code
         font-weight: 700;
     }
 
-    .terminal-4244098459-matrix {
+    .terminal-1394473474-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-4244098459-title {
+    .terminal-1394473474-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-4244098459-r1 { fill: #e7e0e6 }
-.terminal-4244098459-r2 { fill: #c5c8c6 }
-.terminal-4244098459-r3 { fill: #ffa62b;font-weight: bold }
-.terminal-4244098459-r4 { fill: #e0e0e0 }
-.terminal-4244098459-r5 { fill: #a77630;font-weight: bold }
-.terminal-4244098459-r6 { fill: #94999c }
-.terminal-4244098459-r7 { fill: #495259 }
+    .terminal-1394473474-r1 { fill: #e7e0e6 }
+.terminal-1394473474-r2 { fill: #c5c8c6 }
+.terminal-1394473474-r3 { fill: #ffa62b;font-weight: bold }
+.terminal-1394473474-r4 { fill: #e0e0e0 }
+.terminal-1394473474-r5 { fill: #b47d2f;font-weight: bold }
+.terminal-1394473474-r6 { fill: #a0a3a6 }
+.terminal-1394473474-r7 { fill: #495259 }
     </style>
 
     <defs>
-    <clipPath id="terminal-4244098459-clip-terminal">
+    <clipPath id="terminal-1394473474-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-4244098459-line-0">
+    <clipPath id="terminal-1394473474-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-1">
+<clipPath id="terminal-1394473474-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-2">
+<clipPath id="terminal-1394473474-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-3">
+<clipPath id="terminal-1394473474-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-4">
+<clipPath id="terminal-1394473474-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-5">
+<clipPath id="terminal-1394473474-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-6">
+<clipPath id="terminal-1394473474-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-7">
+<clipPath id="terminal-1394473474-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-8">
+<clipPath id="terminal-1394473474-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-9">
+<clipPath id="terminal-1394473474-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-10">
+<clipPath id="terminal-1394473474-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-11">
+<clipPath id="terminal-1394473474-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-12">
+<clipPath id="terminal-1394473474-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-13">
+<clipPath id="terminal-1394473474-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-14">
+<clipPath id="terminal-1394473474-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-15">
+<clipPath id="terminal-1394473474-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-16">
+<clipPath id="terminal-1394473474-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-17">
+<clipPath id="terminal-1394473474-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-18">
+<clipPath id="terminal-1394473474-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-19">
+<clipPath id="terminal-1394473474-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-20">
+<clipPath id="terminal-1394473474-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-21">
+<clipPath id="terminal-1394473474-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4244098459-line-22">
+<clipPath id="terminal-1394473474-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-4244098459-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">PagesApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-1394473474-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">PagesApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-4244098459-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-1394473474-clip-terminal)">
     <rect fill="#4d1144" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="123.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="451.4" y="269.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="524.6" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4d1144" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="0" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="36.6" y="562.7" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="97.6" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="134.2" y="562.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="244" y="562.7" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="829.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="866.2" y="562.7" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="963.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-4244098459-matrix">
-    <text class="terminal-4244098459-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-4244098459-line-0)">
-</text><text class="terminal-4244098459-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-4244098459-line-1)">
-</text><text class="terminal-4244098459-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-4244098459-line-2)">
-</text><text class="terminal-4244098459-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-4244098459-line-3)">
-</text><text class="terminal-4244098459-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-4244098459-line-4)">
-</text><text class="terminal-4244098459-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-4244098459-line-5)">
-</text><text class="terminal-4244098459-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-4244098459-line-6)">
-</text><text class="terminal-4244098459-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-4244098459-line-7)">
-</text><text class="terminal-4244098459-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-4244098459-line-8)">
-</text><text class="terminal-4244098459-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-4244098459-line-9)">
-</text><text class="terminal-4244098459-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-4244098459-line-10)">
-</text><text class="terminal-4244098459-r1" x="451.4" y="288.4" textLength="73.2" clip-path="url(#terminal-4244098459-line-11)">Page&#160;0</text><text class="terminal-4244098459-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-4244098459-line-11)">
-</text><text class="terminal-4244098459-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-4244098459-line-12)">
-</text><text class="terminal-4244098459-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-4244098459-line-13)">
-</text><text class="terminal-4244098459-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-4244098459-line-14)">
-</text><text class="terminal-4244098459-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-4244098459-line-15)">
-</text><text class="terminal-4244098459-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-4244098459-line-16)">
-</text><text class="terminal-4244098459-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-4244098459-line-17)">
-</text><text class="terminal-4244098459-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-4244098459-line-18)">
-</text><text class="terminal-4244098459-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-4244098459-line-19)">
-</text><text class="terminal-4244098459-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-4244098459-line-20)">
-</text><text class="terminal-4244098459-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-4244098459-line-21)">
-</text><text class="terminal-4244098459-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-4244098459-line-22)">
-</text><text class="terminal-4244098459-r3" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-4244098459-line-23)">&#160;n&#160;</text><text class="terminal-4244098459-r4" x="36.6" y="581.2" textLength="61" clip-path="url(#terminal-4244098459-line-23)">Next&#160;</text><text class="terminal-4244098459-r5" x="97.6" y="581.2" textLength="36.6" clip-path="url(#terminal-4244098459-line-23)">&#160;p&#160;</text><text class="terminal-4244098459-r6" x="134.2" y="581.2" textLength="109.8" clip-path="url(#terminal-4244098459-line-23)">Previous&#160;</text><text class="terminal-4244098459-r7" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-4244098459-line-23)">▏</text><text class="terminal-4244098459-r3" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-4244098459-line-23)">^p</text><text class="terminal-4244098459-r4" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-4244098459-line-23)">&#160;palette</text>
+    <g class="terminal-1394473474-matrix">
+    <text class="terminal-1394473474-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-1394473474-line-0)">
+</text><text class="terminal-1394473474-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-1394473474-line-1)">
+</text><text class="terminal-1394473474-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-1394473474-line-2)">
+</text><text class="terminal-1394473474-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-1394473474-line-3)">
+</text><text class="terminal-1394473474-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-1394473474-line-4)">
+</text><text class="terminal-1394473474-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-1394473474-line-5)">
+</text><text class="terminal-1394473474-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-1394473474-line-6)">
+</text><text class="terminal-1394473474-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-1394473474-line-7)">
+</text><text class="terminal-1394473474-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-1394473474-line-8)">
+</text><text class="terminal-1394473474-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-1394473474-line-9)">
+</text><text class="terminal-1394473474-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-1394473474-line-10)">
+</text><text class="terminal-1394473474-r1" x="451.4" y="288.4" textLength="73.2" clip-path="url(#terminal-1394473474-line-11)">Page&#160;0</text><text class="terminal-1394473474-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-1394473474-line-11)">
+</text><text class="terminal-1394473474-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-1394473474-line-12)">
+</text><text class="terminal-1394473474-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-1394473474-line-13)">
+</text><text class="terminal-1394473474-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-1394473474-line-14)">
+</text><text class="terminal-1394473474-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-1394473474-line-15)">
+</text><text class="terminal-1394473474-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-1394473474-line-16)">
+</text><text class="terminal-1394473474-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-1394473474-line-17)">
+</text><text class="terminal-1394473474-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-1394473474-line-18)">
+</text><text class="terminal-1394473474-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-1394473474-line-19)">
+</text><text class="terminal-1394473474-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-1394473474-line-20)">
+</text><text class="terminal-1394473474-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-1394473474-line-21)">
+</text><text class="terminal-1394473474-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-1394473474-line-22)">
+</text><text class="terminal-1394473474-r3" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-1394473474-line-23)">&#160;n&#160;</text><text class="terminal-1394473474-r4" x="36.6" y="581.2" textLength="61" clip-path="url(#terminal-1394473474-line-23)">Next&#160;</text><text class="terminal-1394473474-r5" x="97.6" y="581.2" textLength="36.6" clip-path="url(#terminal-1394473474-line-23)">&#160;p&#160;</text><text class="terminal-1394473474-r6" x="134.2" y="581.2" textLength="109.8" clip-path="url(#terminal-1394473474-line-23)">Previous&#160;</text><text class="terminal-1394473474-r7" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-1394473474-line-23)">▏</text><text class="terminal-1394473474-r3" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-1394473474-line-23)">^p</text><text class="terminal-1394473474-r4" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-1394473474-line-23)">&#160;palette</text>
     </g>
     </g>
 </svg>
@@ -8009,27 +8014,82 @@ We will also demonstrate what the footer will show if we return <code>None</code
 </div>
 </div>
 </div>
-<p>Note how the logic is the same but we don't need to explicitly call <a class="autorefs autorefs-internal" title=" refresh_bindings" href="../../api/dom_node/#textual.dom.DOMNode.refresh_bindings"><code>refresh_bindings</code></a>.
+<p>Note how the logic is the same but we don't need to explicitly call <a class="autorefs autorefs-internal" title="            refresh_bindings" href="../../api/dom_node/#textual.dom.DOMNode.refresh_bindings"><code>refresh_bindings</code></a>.
 The change to <code>check_action</code> also causes the disabled footer keys to be grayed out, indicating they are temporarily unavailable.</p>
 <h2 id="builtin-actions">Builtin actions<a class="headerlink" href="#builtin-actions" title="Permanent link">&para;</a></h2>
 <p>Textual supports the following builtin actions which are defined on the app.</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title=" action_add_class" href="../../api/app/#textual.app.App.action_add_class">action_add_class</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_back" href="../../api/app/#textual.app.App.action_back">action_back</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_bell" href="../../api/app/#textual.app.App.action_bell">action_bell</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_focus_next" href="../../api/app/#textual.app.App.action_focus_next">action_focus_next</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_focus_previous" href="../../api/app/#textual.app.App.action_focus_previous">action_focus_previous</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_focus" href="../../api/app/#textual.app.App.action_focus">action_focus</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_pop_screen" href="../../api/app/#textual.app.App.action_pop_screen">action_pop_screen</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_push_screen" href="../../api/app/#textual.app.App.action_push_screen">action_push_screen</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_quit" href="../../api/app/#textual.app.App.action_quit">action_quit</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_remove_class" href="../../api/app/#textual.app.App.action_remove_class">action_remove_class</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_screenshot" href="../../api/app/#textual.app.App.action_screenshot">action_screenshot</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_simulate_key" href="../../api/app/#textual.app.App.action_simulate_key">action_simulate_key</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_suspend_process" href="../../api/app/#textual.app.App.action_suspend_process">action_suspend_process</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_switch_screen" href="../../api/app/#textual.app.App.action_switch_screen">action_switch_screen</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_toggle_class" href="../../api/app/#textual.app.App.action_toggle_class">action_toggle_class</a></li>
-<li><a class="autorefs autorefs-internal" title=" action_toggle_dark" href="../../api/app/#textual.app.App.action_toggle_dark">action_toggle_dark</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_add_class
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_add_class">action_add_class</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_back
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_back">action_back</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_bell
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_bell">action_bell</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_focus_next" href="../../api/app/#textual.app.App.action_focus_next">action_focus_next</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_focus_previous" href="../../api/app/#textual.app.App.action_focus_previous">action_focus_previous</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_focus
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_focus">action_focus</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_pop_screen
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_pop_screen">action_pop_screen</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_push_screen
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_push_screen">action_push_screen</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_quit
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_quit">action_quit</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_remove_class
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_remove_class">action_remove_class</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_screenshot" href="../../api/app/#textual.app.App.action_screenshot">action_screenshot</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_simulate_key
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_simulate_key">action_simulate_key</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_suspend_process" href="../../api/app/#textual.app.App.action_suspend_process">action_suspend_process</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_switch_screen
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_switch_screen">action_switch_screen</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_toggle_class
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.action_toggle_class">action_toggle_class</a></li>
+<li><a class="autorefs autorefs-internal" title="            action_toggle_dark" href="../../api/app/#textual.app.App.action_toggle_dark">action_toggle_dark</a></li>
 </ul>
 
 

@@ -7186,7 +7186,7 @@ window.onload = async (event) => {
 <a id="textual.suggester"></a>
     <div class="doc doc-contents first">
 
-        <p>Contains the <code>Suggester</code> class, used by the <a href="/widgets/input">Input</a> widget.</p>
+      <p>Contains the <code>Suggester</code> class, used by the <a href="/widgets/input">Input</a> widget.</p>
 
 
 
@@ -7213,16 +7213,16 @@ window.onload = async (event) => {
 
 
 <a href="#textual.suggester.SuggestFromList" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SuggestFromList</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" suggestions (textual.suggester.SuggestFromList(suggestions))" href="#textual.suggester.SuggestFromList(suggestions)">suggestions</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" case_sensitive (textual.suggester.SuggestFromList(case_sensitive))" href="#textual.suggester.SuggestFromList(case_sensitive)">case_sensitive</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SuggestFromList</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.suggester.SuggestFromList(suggestions)">suggestions</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.suggester.SuggestFromList(case_sensitive)">case_sensitive</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Suggester (textual.suggester.Suggester)" href="#textual.suggester.Suggester">Suggester</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.suggester.Suggester" href="#textual.suggester.Suggester">Suggester</a></code></p>
 
 
 
-        <p>Give completion suggestions based on a fixed list of options.</p>
+      <p>Give completion suggestions based on a fixed list of options.</p>
 
 
 <details class="example" open>
@@ -7317,12 +7317,12 @@ with that same casing.</p>
   </span>
 
 <a href="#textual.suggester.SuggestFromList.get_suggestion" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_suggestion</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.suggester.SuggestFromList.get_suggestion(value))" href="#textual.suggester.SuggestFromList.get_suggestion(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_suggestion</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.suggester.SuggestFromList.get_suggestion(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Gets a completion from the given possibilities.</p>
+      <p>Gets a completion from the given possibilities.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7399,7 +7399,7 @@ with that same casing.</p>
 
 
 <a href="#textual.suggester.Suggester" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Suggester</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" use_cache (textual.suggester.Suggester(use_cache))" href="#textual.suggester.Suggester(use_cache)">use_cache</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" case_sensitive (textual.suggester.Suggester(case_sensitive))" href="#textual.suggester.Suggester(case_sensitive)">case_sensitive</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Suggester</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.suggester.Suggester(use_cache)">use_cache</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.suggester.Suggester(case_sensitive)">case_sensitive</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7408,10 +7408,10 @@ with that same casing.</p>
 
 
 
-        <p>Defines how widgets generate completion suggestions.</p>
+      <p>Defines how widgets generate completion suggestions.</p>
 <p>To define a custom suggester, subclass <code>Suggester</code> and implement the async method
 <code>get_suggestion</code>.
-See <a class="autorefs autorefs-internal" title=" SuggestFromList" href="#textual.suggester.SuggestFromList"><code>SuggestFromList</code></a> for an example.</p>
+See <a class="autorefs autorefs-internal" title="            SuggestFromList" href="#textual.suggester.SuggestFromList"><code>SuggestFromList</code></a> for an example.</p>
 
 
 
@@ -7492,12 +7492,12 @@ the suggestion.</p>
   </span>
 
 <a href="#textual.suggester.Suggester.cache" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cache</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title=" LRUCache (textual.cache.LRUCache)" href="../cache/#textual.cache.LRUCache">LRUCache</a></span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span> <span class="k">if</span> <span class="n"><a class="autorefs autorefs-internal" title=" use_cache (textual.suggester.Suggester(use_cache))" href="#textual.suggester.Suggester(use_cache)">use_cache</a></span> <span class="k">else</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cache</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.cache.LRUCache" href="../cache/#textual.cache.LRUCache">LRUCache</a></span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span> <span class="k">if</span> <span class="n">use_cache</span> <span class="k">else</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Suggestion cache, if used.</p>
+      <p>Suggestion cache, if used.</p>
     </div>
 
 </div>
@@ -7517,12 +7517,12 @@ the suggestion.</p>
   </span>
 
 <a href="#textual.suggester.Suggester.get_suggestion" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_suggestion</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" value (textual.suggester.Suggester.get_suggestion(value))" href="#textual.suggester.Suggester.get_suggestion(value)">value</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_suggestion</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.suggester.Suggester.get_suggestion(value)">value</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Try to get a completion suggestion for the given input value.</p>
+      <p>Try to get a completion suggestion for the given input value.</p>
 <p>Custom suggesters should implement this method.</p>
 
 
@@ -7614,16 +7614,16 @@ the suggestion.</p>
   </span>
 
 <a href="#textual.suggester.SuggestionReady" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SuggestionReady</span><span class="p">(</span><span class="n"><span title="textual.suggester.SuggestionReady(value)">value</span></span><span class="p">,</span> <span class="n"><span title="textual.suggester.SuggestionReady(suggestion)">suggestion</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SuggestionReady</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">suggestion</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Message (textual.message.Message)" href="../message/#textual.message.Message">Message</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code></p>
 
 
 
-        <p>Sent when a completion suggestion is ready.</p>
+      <p>Sent when a completion suggestion is ready.</p>
 
 
 
@@ -7659,7 +7659,7 @@ the suggestion.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The string suggestion.</p>
+      <p>The string suggestion.</p>
     </div>
 
 </div>
@@ -7682,7 +7682,7 @@ the suggestion.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The value to which the suggestion is for.</p>
+      <p>The value to which the suggestion is for.</p>
     </div>
 
 </div>

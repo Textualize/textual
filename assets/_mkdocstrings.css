@@ -43,7 +43,7 @@
 }
 
 /* Symbols in Navigation and ToC. */
-:root, :host,
+:root,
 [data-md-color-scheme="default"] {
   --doc-symbol-parameter-fg-color: #df50af;
   --doc-symbol-attribute-fg-color: #953800;

@@ -7107,14 +7107,14 @@ Or you can ignore it, and Textual will automatically await the work before handl
 
 
 <a href="#textual.await_complete.AwaitComplete" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">AwaitComplete</span><span class="p">(</span><span class="o">*</span><span class="n"><span title="textual.await_complete.AwaitComplete(*awaitables)">awaitables</span></span><span class="p">,</span> <span class="n"><span title="textual.await_complete.AwaitComplete(pre_await)">pre_await</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">AwaitComplete</span><span class="p">(</span><span class="n">*awaitables</span><span class="p">,</span> <span class="n">pre_await</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
 
 
-        <p>An 'optionally-awaitable' object which runs one or more coroutines (or other awaitables) concurrently.</p>
+      <p>An 'optionally-awaitable' object which runs one or more coroutines (or other awaitables) concurrently.</p>
 
 
 
@@ -7182,7 +7182,7 @@ Or you can ignore it, and Textual will automatically await the work before handl
 
     <div class="doc doc-contents ">
 
-        <p>An exception if the awaitables failed.</p>
+      <p>An exception if the awaitables failed.</p>
     </div>
 
 </div>
@@ -7205,7 +7205,7 @@ Or you can ignore it, and Textual will automatically await the work before handl
 
     <div class="doc doc-contents ">
 
-        <p><code>True</code> if the task has completed.</p>
+      <p><code>True</code> if the task has completed.</p>
     </div>
 
 </div>
@@ -7220,12 +7220,12 @@ Or you can ignore it, and Textual will automatically await the work before handl
 
 
 <a href="#textual.await_complete.AwaitComplete.call_next" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">call_next</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" node (textual.await_complete.AwaitComplete.call_next(node))" href="#textual.await_complete.AwaitComplete.call_next(node)">node</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">call_next</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.await_complete.AwaitComplete.call_next(node)">node</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Await after the next message.</p>
+      <p>Await after the next message.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7244,7 +7244,7 @@ Or you can ignore it, and Textual will automatically await the work before handl
 <h4 id="textual.await_complete.AwaitComplete.call_next(node)" class="doc doc-heading doc-heading-parameter">                  <code>node</code>
 <a href="#textual.await_complete.AwaitComplete.call_next(node)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" MessagePump (textual.message_pump.MessagePump)" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7279,7 +7279,7 @@ Or you can ignore it, and Textual will automatically await the work before handl
 
     <div class="doc doc-contents ">
 
-        <p>Returns an already completed instance of AwaitComplete.</p>
+      <p>Returns an already completed instance of AwaitComplete.</p>
 
     </div>
 
@@ -7293,12 +7293,12 @@ Or you can ignore it, and Textual will automatically await the work before handl
 
 
 <a href="#textual.await_complete.AwaitComplete.set_pre_await_callback" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_pre_await_callback</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" pre_await (textual.await_complete.AwaitComplete.set_pre_await_callback(pre_await))" href="#textual.await_complete.AwaitComplete.set_pre_await_callback(pre_await)">pre_await</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">set_pre_await_callback</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.await_complete.AwaitComplete.set_pre_await_callback(pre_await)">pre_await</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Set a callback to run prior to awaiting.</p>
+      <p>Set a callback to run prior to awaiting.</p>
 <p>This is used by Textual, mainly to check for possible deadlocks.
 You are unlikely to need to call this method in an app.</p>
 
@@ -7319,7 +7319,7 @@ You are unlikely to need to call this method in an app.</p>
 <h4 id="textual.await_complete.AwaitComplete.set_pre_await_callback(pre_await)" class="doc doc-heading doc-heading-parameter">                  <code>pre_await</code>
 <a href="#textual.await_complete.AwaitComplete.set_pre_await_callback(pre_await)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" CallbackType (textual.types.CallbackType)" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="textual.types.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">

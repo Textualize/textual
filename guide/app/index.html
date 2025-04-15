@@ -7312,7 +7312,7 @@ window.onload = async (event) => {
 <h1 id="app-basics">App Basics<a class="headerlink" href="#app-basics" title="Permanent link">&para;</a></h1>
 <p>In this chapter we will cover how to use Textual's App class to create an application. Just enough to get you up to speed. We will go into more detail in the following chapters.</p>
 <h2 id="the-app-class">The App class<a class="headerlink" href="#the-app-class" title="Permanent link">&para;</a></h2>
-<p>The first step in building a Textual app is to import the <a class="autorefs autorefs-internal" title=" App" href="../../api/app/#textual.app.App">App</a> class and create a subclass. Let's look at the simplest app class:</p>
+<p>The first step in building a Textual app is to import the <a class="autorefs autorefs-internal" title="            App" href="../../api/app/#textual.app.App">App</a> class and create a subclass. Let's look at the simplest app class:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -7320,7 +7320,7 @@ window.onload = async (event) => {
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">pass</span>
 </code></pre></div>
 <h3 id="the-run-method">The run method<a class="headerlink" href="#the-run-method" title="Permanent link">&para;</a></h3>
-<p>To run an app we create an instance and call <a class="autorefs autorefs-internal" title=" run" href="../../api/app/#textual.app.App.run">run()</a>.</p>
+<p>To run an app we create an instance and call <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">run()</a>.</p>
 <div class="highlight"><span class="filename">simple02.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -7489,7 +7489,7 @@ window.onload = async (event) => {
     </g>
 </svg>
 </p>
-<p>When you call <a class="autorefs autorefs-internal" title=" run" href="../../api/app/#textual.app.App.run">App.run()</a> Textual puts the terminal into a special state called <em>application mode</em>. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the <em>screen</em>).</p>
+<p>When you call <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">App.run()</a> Textual puts the terminal into a special state called <em>application mode</em>. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the <em>screen</em>).</p>
 <p>If you hit <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.</p>
 <h4 id="run-inline">Run inline<a class="headerlink" href="#run-inline" title="Permanent link">&para;</a></h4>
 <div class="admonition tip">
@@ -7497,7 +7497,7 @@ window.onload = async (event) => {
 </div>
 <p>You can also run apps in <em>inline</em> mode, which will cause the app to appear beneath the prompt (and won't go into application mode).
 Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.</p>
-<p>To run an app in inline mode set the <code>inline</code> parameter to <code>True</code> when you call <a class="autorefs autorefs-internal" title=" run" href="../../api/app/#textual.app.App.run">App.run()</a>. See <a href="../../how-to/style-inline-apps/">Style Inline Apps</a> for how to apply additional styles to inline apps.</p>
+<p>To run an app in inline mode set the <code>inline</code> parameter to <code>True</code> when you call <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">App.run()</a>. See <a href="../../how-to/style-inline-apps/">Style Inline Apps</a> for how to apply additional styles to inline apps.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Inline mode is not currently supported on Windows.</p>
@@ -7508,7 +7508,7 @@ Inline apps are useful for tools that integrate closely with the typical workflo
 </div>
 <p>Terminals support 16 theme-able <em>ANSI</em> colors, which you can personalize from your terminal settings.
 By default, Textual will replace these colors with its own color choices (see the <a href="../../FAQ/#why-doesnt-textual-support-ansi-themes">FAQ for details</a>).</p>
-<p>You can disable this behavior by setting <code>ansi_color=True</code> in the <a class="autorefs autorefs-internal" title=" App" href="../../api/app/#textual.app.App">App constructor</a>.</p>
+<p>You can disable this behavior by setting <code>ansi_color=True</code> in the <a class="autorefs autorefs-internal" title="            App" href="../../api/app/#textual.app.App">App constructor</a>.</p>
 <p>We recommend the default behavior for full-screen apps, but you may want to preserve ANSI colors in <a href="#run-inline">inline</a> apps.</p>
 <h2 id="events">Events<a class="headerlink" href="#events" title="Permanent link">&para;</a></h2>
 <p>Textual has an <a href="../events/">event system</a> you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with <code>on_</code> followed by the name of the event.</p>
@@ -7697,10 +7697,10 @@ By default, Textual will replace these colors with its own color choices (see th
     </g>
 </svg>
 </p>
-<p>When you press a key, the key event handler (<code>on_key</code>) which will receive a <a class="autorefs autorefs-internal" title=" Key" href="../../api/events/#textual.events.Key">Key</a> instance.
+<p>When you press a key, the key event handler (<code>on_key</code>) which will receive a <a class="autorefs autorefs-internal" title="            Key" href="../../api/events/#textual.events.Key">Key</a> instance.
 If you don't require the event in your handler, you can omit it.</p>
 <p>Events may contain additional information which you can inspect in the handler.
-In the case of the <a class="autorefs autorefs-internal" title=" Key" href="../../api/events/#textual.events.Key">Key</a> event, there is a <code>key</code> attribute which is the name of the key that was pressed.
+In the case of the <a class="autorefs autorefs-internal" title="            Key" href="../../api/events/#textual.events.Key">Key</a> event, there is a <code>key</code> attribute which is the name of the key that was pressed.
 The <code>on_key</code> method above uses this attribute to change the background color if any of the keys from <span class="keys"><kbd class="key-0">0</kbd></span> to <span class="keys"><kbd class="key-9">9</kbd></span> are pressed.</p>
 <h3 id="async-events">Async events<a class="headerlink" href="#async-events" title="Permanent link">&para;</a></h3>
 <p>Textual is powered by Python's <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> framework which uses the <code>async</code> and <code>await</code> keywords.</p>
@@ -7713,7 +7713,7 @@ The <code>on_key</code> method above uses this attribute to change the backgroun
 <p>Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.</p>
 <p>Widgets can be as simple as a piece of text, a button, or a fully-fledged component like a text editor or file browser (which may contain widgets of their own).</p>
 <h3 id="composing">Composing<a class="headerlink" href="#composing" title="Permanent link">&para;</a></h3>
-<p>To add widgets to your app implement a <a class="autorefs autorefs-internal" title=" compose" href="../../api/app/#textual.app.App.compose"><code>compose()</code></a> method which should return an iterable of <code>Widget</code> instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
+<p>To add widgets to your app implement a <a class="autorefs autorefs-internal" title="            compose" href="../../api/app/#textual.app.App.compose"><code>compose()</code></a> method which should return an iterable of <code>Widget</code> instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
 <p>The following example imports a builtin <code>Welcome</code> widget and yields it from <code>App.compose()</code>.</p>
 <div class="highlight"><span class="filename">widgets01.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Welcome</span>
@@ -7890,9 +7890,9 @@ The <code>on_key</code> method above uses this attribute to change the backgroun
     </g>
 </svg>
 </p>
-<p>Notice the <code>on_button_pressed</code> method which handles the <a class="autorefs autorefs-internal" title=" Button" href="../../widgets/button/#textual.widgets.Button">Button.Pressed</a> event sent by a button contained in the <code>Welcome</code> widget. The handler calls <a class="autorefs autorefs-internal" title=" exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> to exit the app.</p>
+<p>Notice the <code>on_button_pressed</code> method which handles the <a class="autorefs autorefs-internal" title=" Button" href="../../widgets/button/#textual.widgets.Button">Button.Pressed</a> event sent by a button contained in the <code>Welcome</code> widget. The handler calls <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> to exit the app.</p>
 <h3 id="mounting">Mounting<a class="headerlink" href="#mounting" title="Permanent link">&para;</a></h3>
-<p>While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling <a class="autorefs autorefs-internal" title=" mount" href="../../api/widget/#textual.widget.Widget.mount">mount()</a> which will add a new widget to the UI.</p>
+<p>While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling <a class="autorefs autorefs-internal" title="            mount" href="../../api/widget/#textual.widget.Widget.mount">mount()</a> which will add a new widget to the UI.</p>
 <p>Here's an app which adds a welcome widget in response to any key press:</p>
 <div class="highlight"><span class="filename">widgets02.py</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Welcome</span>
@@ -8095,7 +8095,7 @@ It will also attempt to modify the Button in the Welcome widget by changing its 
 <ol>
 <li>See <a href="../queries/">queries</a> for more information on the <code>query_one</code> method.</li>
 </ol>
-<p>If you run this example, you will find that Textual raises a <a class="autorefs autorefs-internal" title=" NoMatches" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception when you press a key.
+<p>If you run this example, you will find that Textual raises a <a class="autorefs autorefs-internal" title="            NoMatches" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception when you press a key.
 This is because the mount process has not yet completed when we attempt to change the button.</p>
 <p>To solve this we can optionally await the result of <code>mount()</code>, which requires we make the function <code>async</code>.
 This guarantees that by the following line, the Button has been mounted, and we can change its label.</p>
@@ -8273,7 +8273,7 @@ This guarantees that by the following line, the Button has been mounted, and we 
 </svg>
 </p>
 <h2 id="exiting">Exiting<a class="headerlink" href="#exiting" title="Permanent link">&para;</a></h2>
-<p>An app will run until you call <a class="autorefs autorefs-internal" title=" exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> which will exit application mode and the <a class="autorefs autorefs-internal" title=" run" href="../../api/app/#textual.app.App.run">run</a> method will return. If this is the last line in your code you will return to the command prompt.</p>
+<p>An app will run until you call <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> which will exit application mode and the <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">run</a> method will return. If this is the last line in your code you will return to the command prompt.</p>
 <p>The exit method will also accept an optional positional value to be returned by <code>run()</code>. The following example uses this to return the <code>id</code> (identifier) of a clicked button.</p>
 <div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
@@ -8474,13 +8474,13 @@ This guarantees that by the following line, the Button has been mounted, and we 
 <a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
-<p>The addition of <code>[str]</code> tells mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <a class="autorefs autorefs-internal" title=" exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>. Replace the <code>str</code> in <code>[str]</code> with the type of the value you intend to call the exit method with.</p>
+<p>The addition of <code>[str]</code> tells mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>. Replace the <code>str</code> in <code>[str]</code> with the type of the value you intend to call the exit method with.</p>
 <div class="admonition note">
 <p class="admonition-title">Typing in Textual</p>
 <p>Type annotations are entirely optional (but recommended) with Textual.</p>
 </div>
 <h3 id="return-code">Return code<a class="headerlink" href="#return-code" title="Permanent link">&para;</a></h3>
-<p>When you exit a Textual app with <a class="autorefs autorefs-internal" title=" exit" href="../../api/app/#textual.app.App.exit"><code>App.exit()</code></a>, you can optionally specify a <em>return code</em> with the <code>return_code</code> parameter.</p>
+<p>When you exit a Textual app with <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit"><code>App.exit()</code></a>, you can optionally specify a <em>return code</em> with the <code>return_code</code> parameter.</p>
 <div class="admonition info">
 <p class="admonition-title">What are return codes?</p>
 <p>Returns codes are a standard feature provided by your operating system.
@@ -9189,139 +9189,139 @@ You can change these defaults by defining <code>TITLE</code> and <code>SUB_TITLE
         font-weight: 700;
     }
 
-    .terminal-2299831236-matrix {
+    .terminal-3874792466-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-2299831236-title {
+    .terminal-3874792466-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-2299831236-r1 { fill: #c5c8c6 }
-.terminal-2299831236-r2 { fill: #e0e0e0 }
-.terminal-2299831236-r3 { fill: #94999c }
-.terminal-2299831236-r4 { fill: #e0e0e0;font-weight: bold }
-.terminal-2299831236-r5 { fill: #6db2ff }
-.terminal-2299831236-r6 { fill: #e76580 }
-.terminal-2299831236-r7 { fill: #0c7dd4;font-weight: bold }
-.terminal-2299831236-r8 { fill: #f5e5e9;font-weight: bold }
-.terminal-2299831236-r9 { fill: #004295 }
-.terminal-2299831236-r10 { fill: #780028 }
+    .terminal-3874792466-r1 { fill: #c5c8c6 }
+.terminal-3874792466-r2 { fill: #e0e0e0 }
+.terminal-3874792466-r3 { fill: #a0a3a6 }
+.terminal-3874792466-r4 { fill: #e0e0e0;font-weight: bold }
+.terminal-3874792466-r5 { fill: #6db2ff }
+.terminal-3874792466-r6 { fill: #e76580 }
+.terminal-3874792466-r7 { fill: #0c7dd4;font-weight: bold }
+.terminal-3874792466-r8 { fill: #f5e5e9;font-weight: bold }
+.terminal-3874792466-r9 { fill: #004295 }
+.terminal-3874792466-r10 { fill: #780028 }
     </style>
 
     <defs>
-    <clipPath id="terminal-2299831236-clip-terminal">
+    <clipPath id="terminal-3874792466-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-2299831236-line-0">
+    <clipPath id="terminal-3874792466-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-1">
+<clipPath id="terminal-3874792466-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-2">
+<clipPath id="terminal-3874792466-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-3">
+<clipPath id="terminal-3874792466-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-4">
+<clipPath id="terminal-3874792466-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-5">
+<clipPath id="terminal-3874792466-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-6">
+<clipPath id="terminal-3874792466-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-7">
+<clipPath id="terminal-3874792466-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-8">
+<clipPath id="terminal-3874792466-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-9">
+<clipPath id="terminal-3874792466-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-10">
+<clipPath id="terminal-3874792466-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-11">
+<clipPath id="terminal-3874792466-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-12">
+<clipPath id="terminal-3874792466-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-13">
+<clipPath id="terminal-3874792466-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-14">
+<clipPath id="terminal-3874792466-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-15">
+<clipPath id="terminal-3874792466-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-16">
+<clipPath id="terminal-3874792466-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-17">
+<clipPath id="terminal-3874792466-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-18">
+<clipPath id="terminal-3874792466-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-19">
+<clipPath id="terminal-3874792466-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-20">
+<clipPath id="terminal-3874792466-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-21">
+<clipPath id="terminal-3874792466-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2299831236-line-22">
+<clipPath id="terminal-3874792466-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2299831236-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">A&#160;Question&#160;App</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-3874792466-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">A&#160;Question&#160;App</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-2299831236-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-3874792466-clip-terminal)">
     <rect fill="#121212" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="24.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="36.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="48.8" y="50.3" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="109.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="122" y="50.3" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="207.4" y="50.3" width="207.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="414.8" y="50.3" width="329.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="744.2" y="50.3" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="829.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="50.3" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="50.3" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="939.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="74.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="99.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="123.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="147.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="172.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="196.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="221.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="245.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="366" y="245.5" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="610" y="245.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="269.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="294.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="24.4" y="318.7" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="475.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="500.2" y="318.7" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="24.4" y="343.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#dfeef9" x="219.6" y="343.1" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="280.6" y="343.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="475.8" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="500.2" y="343.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="695.4" y="343.1" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="744.2" y="343.1" width="207.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="24.4" y="367.5" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="475.8" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="500.2" y="367.5" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="391.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="416.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="440.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="465.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="489.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="513.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-2299831236-matrix">
-    <text class="terminal-2299831236-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2299831236-line-0)">
-</text><text class="terminal-2299831236-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2299831236-line-1)">
-</text><text class="terminal-2299831236-r2" x="36.6" y="68.8" textLength="12.2" clip-path="url(#terminal-2299831236-line-2)">⭘</text><text class="terminal-2299831236-r2" x="207.4" y="68.8" textLength="207.4" clip-path="url(#terminal-2299831236-line-2)">A&#160;Question&#160;App&#160;—&#160;</text><text class="terminal-2299831236-r3" x="414.8" y="68.8" textLength="329.4" clip-path="url(#terminal-2299831236-line-2)">The&#160;most&#160;important&#160;question</text><text class="terminal-2299831236-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2299831236-line-2)">
-</text><text class="terminal-2299831236-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2299831236-line-3)">
-</text><text class="terminal-2299831236-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2299831236-line-4)">
-</text><text class="terminal-2299831236-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2299831236-line-5)">
-</text><text class="terminal-2299831236-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2299831236-line-6)">
-</text><text class="terminal-2299831236-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2299831236-line-7)">
-</text><text class="terminal-2299831236-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2299831236-line-8)">
-</text><text class="terminal-2299831236-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2299831236-line-9)">
-</text><text class="terminal-2299831236-r4" x="366" y="264" textLength="244" clip-path="url(#terminal-2299831236-line-10)">Do&#160;you&#160;love&#160;Textual?</text><text class="terminal-2299831236-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2299831236-line-10)">
-</text><text class="terminal-2299831236-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2299831236-line-11)">
-</text><text class="terminal-2299831236-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2299831236-line-12)">
-</text><text class="terminal-2299831236-r5" x="24.4" y="337.2" textLength="451.4" clip-path="url(#terminal-2299831236-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2299831236-r6" x="500.2" y="337.2" textLength="451.4" clip-path="url(#terminal-2299831236-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2299831236-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2299831236-line-13)">
-</text><text class="terminal-2299831236-r7" x="219.6" y="361.6" textLength="61" clip-path="url(#terminal-2299831236-line-14)">&#160;Yes&#160;</text><text class="terminal-2299831236-r8" x="695.4" y="361.6" textLength="48.8" clip-path="url(#terminal-2299831236-line-14)">&#160;No&#160;</text><text class="terminal-2299831236-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2299831236-line-14)">
-</text><text class="terminal-2299831236-r9" x="24.4" y="386" textLength="451.4" clip-path="url(#terminal-2299831236-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2299831236-r10" x="500.2" y="386" textLength="451.4" clip-path="url(#terminal-2299831236-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2299831236-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2299831236-line-15)">
-</text><text class="terminal-2299831236-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2299831236-line-16)">
-</text><text class="terminal-2299831236-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2299831236-line-17)">
-</text><text class="terminal-2299831236-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2299831236-line-18)">
-</text><text class="terminal-2299831236-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2299831236-line-19)">
-</text><text class="terminal-2299831236-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2299831236-line-20)">
-</text><text class="terminal-2299831236-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2299831236-line-21)">
-</text><text class="terminal-2299831236-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2299831236-line-22)">
+    <g class="terminal-3874792466-matrix">
+    <text class="terminal-3874792466-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-3874792466-line-0)">
+</text><text class="terminal-3874792466-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-3874792466-line-1)">
+</text><text class="terminal-3874792466-r2" x="36.6" y="68.8" textLength="12.2" clip-path="url(#terminal-3874792466-line-2)">⭘</text><text class="terminal-3874792466-r2" x="207.4" y="68.8" textLength="207.4" clip-path="url(#terminal-3874792466-line-2)">A&#160;Question&#160;App&#160;—&#160;</text><text class="terminal-3874792466-r3" x="414.8" y="68.8" textLength="329.4" clip-path="url(#terminal-3874792466-line-2)">The&#160;most&#160;important&#160;question</text><text class="terminal-3874792466-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-3874792466-line-2)">
+</text><text class="terminal-3874792466-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-3874792466-line-3)">
+</text><text class="terminal-3874792466-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-3874792466-line-4)">
+</text><text class="terminal-3874792466-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-3874792466-line-5)">
+</text><text class="terminal-3874792466-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-3874792466-line-6)">
+</text><text class="terminal-3874792466-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-3874792466-line-7)">
+</text><text class="terminal-3874792466-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-3874792466-line-8)">
+</text><text class="terminal-3874792466-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-3874792466-line-9)">
+</text><text class="terminal-3874792466-r4" x="366" y="264" textLength="244" clip-path="url(#terminal-3874792466-line-10)">Do&#160;you&#160;love&#160;Textual?</text><text class="terminal-3874792466-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-3874792466-line-10)">
+</text><text class="terminal-3874792466-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-3874792466-line-11)">
+</text><text class="terminal-3874792466-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-3874792466-line-12)">
+</text><text class="terminal-3874792466-r5" x="24.4" y="337.2" textLength="451.4" clip-path="url(#terminal-3874792466-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-3874792466-r6" x="500.2" y="337.2" textLength="451.4" clip-path="url(#terminal-3874792466-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-3874792466-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-3874792466-line-13)">
+</text><text class="terminal-3874792466-r7" x="219.6" y="361.6" textLength="61" clip-path="url(#terminal-3874792466-line-14)">&#160;Yes&#160;</text><text class="terminal-3874792466-r8" x="695.4" y="361.6" textLength="48.8" clip-path="url(#terminal-3874792466-line-14)">&#160;No&#160;</text><text class="terminal-3874792466-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-3874792466-line-14)">
+</text><text class="terminal-3874792466-r9" x="24.4" y="386" textLength="451.4" clip-path="url(#terminal-3874792466-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-3874792466-r10" x="500.2" y="386" textLength="451.4" clip-path="url(#terminal-3874792466-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-3874792466-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-3874792466-line-15)">
+</text><text class="terminal-3874792466-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-3874792466-line-16)">
+</text><text class="terminal-3874792466-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-3874792466-line-17)">
+</text><text class="terminal-3874792466-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-3874792466-line-18)">
+</text><text class="terminal-3874792466-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-3874792466-line-19)">
+</text><text class="terminal-3874792466-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-3874792466-line-20)">
+</text><text class="terminal-3874792466-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-3874792466-line-21)">
+</text><text class="terminal-3874792466-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-3874792466-line-22)">
 </text>
     </g>
     </g>
@@ -9379,139 +9379,139 @@ You can change these defaults by defining <code>TITLE</code> and <code>SUB_TITLE
         font-weight: 700;
     }
 
-    .terminal-2855640574-matrix {
+    .terminal-71212620-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-2855640574-title {
+    .terminal-71212620-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-2855640574-r1 { fill: #c5c8c6 }
-.terminal-2855640574-r2 { fill: #e0e0e0 }
-.terminal-2855640574-r3 { fill: #94999c }
-.terminal-2855640574-r4 { fill: #e0e0e0;font-weight: bold }
-.terminal-2855640574-r5 { fill: #6db2ff }
-.terminal-2855640574-r6 { fill: #e76580 }
-.terminal-2855640574-r7 { fill: #0c7dd4;font-weight: bold }
-.terminal-2855640574-r8 { fill: #f5e5e9;font-weight: bold }
-.terminal-2855640574-r9 { fill: #004295 }
-.terminal-2855640574-r10 { fill: #780028 }
+    .terminal-71212620-r1 { fill: #c5c8c6 }
+.terminal-71212620-r2 { fill: #e0e0e0 }
+.terminal-71212620-r3 { fill: #a0a3a6 }
+.terminal-71212620-r4 { fill: #e0e0e0;font-weight: bold }
+.terminal-71212620-r5 { fill: #6db2ff }
+.terminal-71212620-r6 { fill: #e76580 }
+.terminal-71212620-r7 { fill: #0c7dd4;font-weight: bold }
+.terminal-71212620-r8 { fill: #f5e5e9;font-weight: bold }
+.terminal-71212620-r9 { fill: #004295 }
+.terminal-71212620-r10 { fill: #780028 }
     </style>
 
     <defs>
-    <clipPath id="terminal-2855640574-clip-terminal">
+    <clipPath id="terminal-71212620-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-2855640574-line-0">
+    <clipPath id="terminal-71212620-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-1">
+<clipPath id="terminal-71212620-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-2">
+<clipPath id="terminal-71212620-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-3">
+<clipPath id="terminal-71212620-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-4">
+<clipPath id="terminal-71212620-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-5">
+<clipPath id="terminal-71212620-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-6">
+<clipPath id="terminal-71212620-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-7">
+<clipPath id="terminal-71212620-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-8">
+<clipPath id="terminal-71212620-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-9">
+<clipPath id="terminal-71212620-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-10">
+<clipPath id="terminal-71212620-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-11">
+<clipPath id="terminal-71212620-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-12">
+<clipPath id="terminal-71212620-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-13">
+<clipPath id="terminal-71212620-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-14">
+<clipPath id="terminal-71212620-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-15">
+<clipPath id="terminal-71212620-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-16">
+<clipPath id="terminal-71212620-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-17">
+<clipPath id="terminal-71212620-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-18">
+<clipPath id="terminal-71212620-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-19">
+<clipPath id="terminal-71212620-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-20">
+<clipPath id="terminal-71212620-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-21">
+<clipPath id="terminal-71212620-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-2855640574-line-22">
+<clipPath id="terminal-71212620-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2855640574-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">A&#160;Question&#160;App</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-71212620-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">A&#160;Question&#160;App</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-2855640574-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-71212620-clip-terminal)">
     <rect fill="#121212" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="24.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="36.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="48.8" y="50.3" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="109.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="122" y="50.3" width="207.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="329.4" y="50.3" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="378.2" y="50.3" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="610" y="50.3" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="829.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="50.3" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="50.3" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="939.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="74.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="99.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="123.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="147.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="172.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="196.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="221.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="245.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="366" y="245.5" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="610" y="245.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="269.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="294.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="24.4" y="318.7" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="475.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="500.2" y="318.7" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="24.4" y="343.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#dfeef9" x="219.6" y="343.1" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="280.6" y="343.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="475.8" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="500.2" y="343.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="695.4" y="343.1" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="744.2" y="343.1" width="207.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#0c7dd4" x="24.4" y="367.5" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="475.8" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#b93c5b" x="500.2" y="367.5" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="391.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="416.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="440.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="465.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="489.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="513.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-2855640574-matrix">
-    <text class="terminal-2855640574-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2855640574-line-0)">
-</text><text class="terminal-2855640574-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2855640574-line-1)">
-</text><text class="terminal-2855640574-r2" x="36.6" y="68.8" textLength="12.2" clip-path="url(#terminal-2855640574-line-2)">⭘</text><text class="terminal-2855640574-r2" x="329.4" y="68.8" textLength="48.8" clip-path="url(#terminal-2855640574-line-2)">t&#160;—&#160;</text><text class="terminal-2855640574-r3" x="378.2" y="68.8" textLength="231.8" clip-path="url(#terminal-2855640574-line-2)">You&#160;just&#160;pressed&#160;t!</text><text class="terminal-2855640574-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2855640574-line-2)">
-</text><text class="terminal-2855640574-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2855640574-line-3)">
-</text><text class="terminal-2855640574-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2855640574-line-4)">
-</text><text class="terminal-2855640574-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2855640574-line-5)">
-</text><text class="terminal-2855640574-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2855640574-line-6)">
-</text><text class="terminal-2855640574-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2855640574-line-7)">
-</text><text class="terminal-2855640574-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2855640574-line-8)">
-</text><text class="terminal-2855640574-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2855640574-line-9)">
-</text><text class="terminal-2855640574-r4" x="366" y="264" textLength="244" clip-path="url(#terminal-2855640574-line-10)">Do&#160;you&#160;love&#160;Textual?</text><text class="terminal-2855640574-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2855640574-line-10)">
-</text><text class="terminal-2855640574-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2855640574-line-11)">
-</text><text class="terminal-2855640574-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2855640574-line-12)">
-</text><text class="terminal-2855640574-r5" x="24.4" y="337.2" textLength="451.4" clip-path="url(#terminal-2855640574-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2855640574-r6" x="500.2" y="337.2" textLength="451.4" clip-path="url(#terminal-2855640574-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2855640574-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2855640574-line-13)">
-</text><text class="terminal-2855640574-r7" x="219.6" y="361.6" textLength="61" clip-path="url(#terminal-2855640574-line-14)">&#160;Yes&#160;</text><text class="terminal-2855640574-r8" x="695.4" y="361.6" textLength="48.8" clip-path="url(#terminal-2855640574-line-14)">&#160;No&#160;</text><text class="terminal-2855640574-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2855640574-line-14)">
-</text><text class="terminal-2855640574-r9" x="24.4" y="386" textLength="451.4" clip-path="url(#terminal-2855640574-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2855640574-r10" x="500.2" y="386" textLength="451.4" clip-path="url(#terminal-2855640574-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2855640574-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2855640574-line-15)">
-</text><text class="terminal-2855640574-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2855640574-line-16)">
-</text><text class="terminal-2855640574-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2855640574-line-17)">
-</text><text class="terminal-2855640574-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2855640574-line-18)">
-</text><text class="terminal-2855640574-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2855640574-line-19)">
-</text><text class="terminal-2855640574-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2855640574-line-20)">
-</text><text class="terminal-2855640574-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2855640574-line-21)">
-</text><text class="terminal-2855640574-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2855640574-line-22)">
+    <g class="terminal-71212620-matrix">
+    <text class="terminal-71212620-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-71212620-line-0)">
+</text><text class="terminal-71212620-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-71212620-line-1)">
+</text><text class="terminal-71212620-r2" x="36.6" y="68.8" textLength="12.2" clip-path="url(#terminal-71212620-line-2)">⭘</text><text class="terminal-71212620-r2" x="329.4" y="68.8" textLength="48.8" clip-path="url(#terminal-71212620-line-2)">t&#160;—&#160;</text><text class="terminal-71212620-r3" x="378.2" y="68.8" textLength="231.8" clip-path="url(#terminal-71212620-line-2)">You&#160;just&#160;pressed&#160;t!</text><text class="terminal-71212620-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-71212620-line-2)">
+</text><text class="terminal-71212620-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-71212620-line-3)">
+</text><text class="terminal-71212620-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-71212620-line-4)">
+</text><text class="terminal-71212620-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-71212620-line-5)">
+</text><text class="terminal-71212620-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-71212620-line-6)">
+</text><text class="terminal-71212620-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-71212620-line-7)">
+</text><text class="terminal-71212620-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-71212620-line-8)">
+</text><text class="terminal-71212620-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-71212620-line-9)">
+</text><text class="terminal-71212620-r4" x="366" y="264" textLength="244" clip-path="url(#terminal-71212620-line-10)">Do&#160;you&#160;love&#160;Textual?</text><text class="terminal-71212620-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-71212620-line-10)">
+</text><text class="terminal-71212620-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-71212620-line-11)">
+</text><text class="terminal-71212620-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-71212620-line-12)">
+</text><text class="terminal-71212620-r5" x="24.4" y="337.2" textLength="451.4" clip-path="url(#terminal-71212620-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-71212620-r6" x="500.2" y="337.2" textLength="451.4" clip-path="url(#terminal-71212620-line-13)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-71212620-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-71212620-line-13)">
+</text><text class="terminal-71212620-r7" x="219.6" y="361.6" textLength="61" clip-path="url(#terminal-71212620-line-14)">&#160;Yes&#160;</text><text class="terminal-71212620-r8" x="695.4" y="361.6" textLength="48.8" clip-path="url(#terminal-71212620-line-14)">&#160;No&#160;</text><text class="terminal-71212620-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-71212620-line-14)">
+</text><text class="terminal-71212620-r9" x="24.4" y="386" textLength="451.4" clip-path="url(#terminal-71212620-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-71212620-r10" x="500.2" y="386" textLength="451.4" clip-path="url(#terminal-71212620-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-71212620-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-71212620-line-15)">
+</text><text class="terminal-71212620-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-71212620-line-16)">
+</text><text class="terminal-71212620-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-71212620-line-17)">
+</text><text class="terminal-71212620-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-71212620-line-18)">
+</text><text class="terminal-71212620-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-71212620-line-19)">
+</text><text class="terminal-71212620-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-71212620-line-20)">
+</text><text class="terminal-71212620-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-71212620-line-21)">
+</text><text class="terminal-71212620-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-71212620-line-22)">
 </text>
     </g>
     </g>

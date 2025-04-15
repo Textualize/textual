@@ -7906,7 +7906,7 @@ window.onload = async (event) => {
 <a id="textual.binding"></a>
     <div class="doc doc-contents first">
 
-        <p>This module contains the <code>Binding</code> class and related objects.</p>
+      <p>This module contains the <code>Binding</code> class and related objects.</p>
 <p>See <a href="/guide/input#bindings">bindings</a> in the guide for details.</p>
 
 
@@ -7942,7 +7942,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The ID of a Binding defined somewhere in the application.</p>
+      <p>The ID of a Binding defined somewhere in the application.</p>
 <p>Corresponds to the <code>id</code> parameter of the <code>Binding</code> class.</p>
     </div>
 
@@ -7968,7 +7968,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The possible types of a binding found in the <code>BINDINGS</code> class variable.</p>
+      <p>The possible types of a binding found in the <code>BINDINGS</code> class variable.</p>
     </div>
 
 </div>
@@ -7991,7 +7991,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>A string that represents a key binding.</p>
+      <p>A string that represents a key binding.</p>
 <p>For example, "x", "ctrl+i", "ctrl+shift+a", "ctrl+j,space,x", etc.</p>
     </div>
 
@@ -8010,12 +8010,12 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.binding.Keymap" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Keymap</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title=" BindingIDString (textual.binding.BindingIDString)" href="#textual.binding.BindingIDString">BindingIDString</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" KeyString (textual.binding.KeyString)" href="#textual.binding.KeyString">KeyString</a></span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Keymap</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="textual.binding.BindingIDString" href="#textual.binding.BindingIDString">BindingIDString</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="textual.binding.KeyString" href="#textual.binding.KeyString">KeyString</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>A mapping of binding IDs to key strings, used for overriding default key bindings.</p>
+      <p>A mapping of binding IDs to key strings, used for overriding default key bindings.</p>
     </div>
 
 </div>
@@ -8038,7 +8038,12 @@ window.onload = async (event) => {
 
 
 
-        <p>Information about an active binding (returned from <a class="autorefs autorefs-internal" title=" active_bindings" href="../screen/#textual.screen.Screen.active_bindings">active_bindings</a>).</p>
+      <p>Information about an active binding (returned from <a class="autorefs autorefs-internal" title="            active_bindings
+
+
+  
+      property
+  " href="../screen/#textual.screen.Screen.active_bindings">active_bindings</a>).</p>
 
 
 
@@ -8074,7 +8079,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The binding information.</p>
+      <p>The binding information.</p>
     </div>
 
 </div>
@@ -8097,7 +8102,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Is the binding enabled? (enabled bindings are typically rendered dim)</p>
+      <p>Is the binding enabled? (enabled bindings are typically rendered dim)</p>
     </div>
 
 </div>
@@ -8120,7 +8125,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>The node where the binding is defined.</p>
+      <p>The node where the binding is defined.</p>
     </div>
 
 </div>
@@ -8144,7 +8149,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Optional tooltip shown in Footer.</p>
+      <p>Optional tooltip shown in Footer.</p>
     </div>
 
 </div>
@@ -8173,15 +8178,15 @@ window.onload = async (event) => {
 
 <a href="#textual.binding.Binding" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><span title="textual.binding.Binding(key)">key</span></span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n"><span title="textual.binding.Binding(action)">action</span></span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n"><span title="textual.binding.Binding(description)">description</span></span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n"><span title="textual.binding.Binding(show)">show</span></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n"><span title="textual.binding.Binding(key_display)">key_display</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n"><span title="textual.binding.Binding(priority)">priority</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n"><span title="textual.binding.Binding(tooltip)">tooltip</span></span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n"><span title="textual.binding.Binding(id)">id</span></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n"><span title="textual.binding.Binding(system)">system</span></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">key</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">action</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">key_display</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">priority</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">tooltip</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">system</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
 </code></pre></div>
 
@@ -8189,7 +8194,7 @@ window.onload = async (event) => {
 
 
 
-        <p>The configuration of a key binding.</p>
+      <p>The configuration of a key binding.</p>
 
 
 
@@ -8225,7 +8230,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Action to bind to.</p>
+      <p>Action to bind to.</p>
     </div>
 
 </div>
@@ -8249,7 +8254,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>Description of action.</p>
+      <p>Description of action.</p>
     </div>
 
 </div>
@@ -8273,7 +8278,7 @@ window.onload = async (event) => {
 
     <div class="doc doc-contents ">
 
-        <p>ID of the binding. Intended to be globally unique, but uniqueness is not enforced.</p>
+      <p>ID of the binding. Intended to be globally unique, but uniqueness is not enforced.</p>
 <p>If specified in the App's keymap then Textual will use this ID to lookup the binding,
 and substitute the <code>key</code> property of the Binding with the key specified in the keymap.</p>
     </div>
@@ -8298,7 +8303,7 @@ and substitute the <code>key</code> property of the Binding with the key specifi
 
     <div class="doc doc-contents ">
 
-        <p>Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action.</p>
+      <p>Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action.</p>
     </div>
 
 </div>
@@ -8322,7 +8327,7 @@ and substitute the <code>key</code> property of the Binding with the key specifi
 
     <div class="doc doc-contents ">
 
-        <p>How the key should be shown in footer.</p>
+      <p>How the key should be shown in footer.</p>
 <p>If None, the display of the key will use the result of <code>App.get_key_display</code>.</p>
 <p>If overridden in a keymap then this value is ignored.</p>
     </div>
@@ -8348,7 +8353,7 @@ and substitute the <code>key</code> property of the Binding with the key specifi
 
     <div class="doc doc-contents ">
 
-        <p>Enable priority binding for this key.</p>
+      <p>Enable priority binding for this key.</p>
     </div>
 
 </div>
@@ -8372,7 +8377,7 @@ and substitute the <code>key</code> property of the Binding with the key specifi
 
     <div class="doc doc-contents ">
 
-        <p>Show the action in Footer, or False to hide.</p>
+      <p>Show the action in Footer, or False to hide.</p>
     </div>
 
 </div>
@@ -8396,7 +8401,7 @@ and substitute the <code>key</code> property of the Binding with the key specifi
 
     <div class="doc doc-contents ">
 
-        <p>Make this binding a system binding, which removes it from the key panel.</p>
+      <p>Make this binding a system binding, which removes it from the key panel.</p>
     </div>
 
 </div>
@@ -8420,7 +8425,7 @@ and substitute the <code>key</code> property of the Binding with the key specifi
 
     <div class="doc doc-contents ">
 
-        <p>Optional tooltip to show in footer.</p>
+      <p>Optional tooltip to show in footer.</p>
     </div>
 
 </div>
@@ -8439,12 +8444,12 @@ and substitute the <code>key</code> property of the Binding with the key specifi
   </span>
 
 <a href="#textual.binding.Binding.make_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">make_bindings</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" bindings (textual.binding.Binding.make_bindings(bindings))" href="#textual.binding.Binding.make_bindings(bindings)">bindings</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">make_bindings</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.Binding.make_bindings(bindings)">bindings</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Convert a list of BindingType (the types that can be specified in BINDINGS)
+      <p>Convert a list of BindingType (the types that can be specified in BINDINGS)
 into an Iterable[Binding].</p>
 <p>Compound bindings like "j,down" will be expanded into 2 Binding instances.</p>
 
@@ -8465,7 +8470,7 @@ into an Iterable[Binding].</p>
 <h4 id="textual.binding.Binding.make_bindings(bindings)" class="doc doc-heading doc-heading-parameter">                  <code>bindings</code>
 <a href="#textual.binding.Binding.make_bindings(bindings)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title=" BindingType (textual.binding.BindingType)" href="#textual.binding.BindingType">BindingType</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.binding.BindingType" href="#textual.binding.BindingType">BindingType</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8491,7 +8496,7 @@ into an Iterable[Binding].</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="#textual.binding.Binding">Binding</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.binding.Binding" href="#textual.binding.Binding">Binding</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8519,7 +8524,7 @@ into an Iterable[Binding].</p>
 
     <div class="doc doc-contents ">
 
-        <p>Parse a key into a list of modifiers, and the actual key.</p>
+      <p>Parse a key into a list of modifiers, and the actual key.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -8556,12 +8561,12 @@ into an Iterable[Binding].</p>
 
 
 <a href="#textual.binding.Binding.with_key" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">with_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.binding.Binding.with_key(key))" href="#textual.binding.Binding.with_key(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title=" key_display (textual.binding.Binding.with_key(key_display))" href="#textual.binding.Binding.with_key(key_display)">key_display</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">with_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.Binding.with_key(key)">key</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.Binding.with_key(key_display)">key_display</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Return a new binding with the key and key_display set to the specified values.</p>
+      <p>Return a new binding with the key and key_display set to the specified values.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -8622,7 +8627,7 @@ into an Iterable[Binding].</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="#textual.binding.Binding">Binding</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.binding.Binding" href="#textual.binding.Binding">Binding</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8662,7 +8667,7 @@ into an Iterable[Binding].</p>
 
 
 
-        <p>A binding related error.</p>
+      <p>A binding related error.</p>
 
 
 
@@ -8683,14 +8688,14 @@ into an Iterable[Binding].</p>
 
 
 <a href="#textual.binding.BindingsMap" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">BindingsMap</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" bindings (textual.binding.BindingsMap(bindings))" href="#textual.binding.BindingsMap(bindings)">bindings</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">BindingsMap</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap(bindings)">bindings</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
 
 
-        <p>Manage a set of bindings.</p>
+      <p>Manage a set of bindings.</p>
 
 
 
@@ -8710,7 +8715,7 @@ into an Iterable[Binding].</p>
 <h3 id="textual.binding.BindingsMap(bindings)" class="doc doc-heading doc-heading-parameter">                  <code>bindings</code>
 <a href="#textual.binding.BindingsMap(bindings)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title=" BindingType (textual.binding.BindingType)" href="#textual.binding.BindingType">BindingType</a>] | None</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.binding.BindingType" href="#textual.binding.BindingType">BindingType</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8765,7 +8770,7 @@ properties of a <code>Binding</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Mapping of key (e.g. "ctrl+a") to list of bindings for that key.</p>
+      <p>Mapping of key (e.g. "ctrl+a") to list of bindings for that key.</p>
     </div>
 
 </div>
@@ -8788,7 +8793,7 @@ properties of a <code>Binding</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A list of bindings for shown keys.</p>
+      <p>A list of bindings for shown keys.</p>
     </div>
 
 </div>
@@ -8803,12 +8808,12 @@ properties of a <code>Binding</code>.</p>
 
 
 <a href="#textual.binding.BindingsMap.apply_keymap" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">apply_keymap</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" keymap (textual.binding.BindingsMap.apply_keymap(keymap))" href="#textual.binding.BindingsMap.apply_keymap(keymap)">keymap</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">apply_keymap</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.apply_keymap(keymap)">keymap</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Replace bindings for keys that are present in <code>keymap</code>.</p>
+      <p>Replace bindings for keys that are present in <code>keymap</code>.</p>
 <p>Preserves existing bindings for keys that are not in <code>keymap</code>.</p>
 
 
@@ -8828,7 +8833,7 @@ properties of a <code>Binding</code>.</p>
 <h4 id="textual.binding.BindingsMap.apply_keymap(keymap)" class="doc doc-heading doc-heading-parameter">                  <code>keymap</code>
 <a href="#textual.binding.BindingsMap.apply_keymap(keymap)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Keymap (textual.binding.Keymap)" href="#textual.binding.Keymap">Keymap</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.binding.Keymap" href="#textual.binding.Keymap">Keymap</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8854,7 +8859,7 @@ properties of a <code>Binding</code>.</p>
       <tbody>
           <tr class="doc-section-item">
 <td><code>KeymapApplyResult</code></td>            <td>
-                  <code><a class="autorefs autorefs-internal" title=" KeymapApplyResult (textual.binding.KeymapApplyResult)" href="#textual.binding.KeymapApplyResult">KeymapApplyResult</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.binding.KeymapApplyResult" href="#textual.binding.KeymapApplyResult">KeymapApplyResult</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8878,18 +8883,18 @@ properties of a <code>Binding</code>.</p>
 
 <a href="#textual.binding.BindingsMap.bind" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">bind</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" keys (textual.binding.BindingsMap.bind(keys))" href="#textual.binding.BindingsMap.bind(keys)">keys</a></span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" action (textual.binding.BindingsMap.bind(action))" href="#textual.binding.BindingsMap.bind(action)">action</a></span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" description (textual.binding.BindingsMap.bind(description))" href="#textual.binding.BindingsMap.bind(description)">description</a></span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" show (textual.binding.BindingsMap.bind(show))" href="#textual.binding.BindingsMap.bind(show)">show</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" key_display (textual.binding.BindingsMap.bind(key_display))" href="#textual.binding.BindingsMap.bind(key_display)">key_display</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n"><a class="autorefs autorefs-internal" title=" priority (textual.binding.BindingsMap.bind(priority))" href="#textual.binding.BindingsMap.bind(priority)">priority</a></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.bind(keys)">keys</a></span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.bind(action)">action</a></span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.bind(description)">description</a></span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.bind(show)">show</a></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.bind(key_display)">key_display</a></span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.bind(priority)">priority</a></span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Bind keys to an action.</p>
+      <p>Bind keys to an action.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9019,7 +9024,7 @@ properties of a <code>Binding</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return a copy of this instance.</p>
+      <p>Return a copy of this instance.</p>
 
 
 <details class="return" open>
@@ -9042,12 +9047,12 @@ properties of a <code>Binding</code>.</p>
   </span>
 
 <a href="#textual.binding.BindingsMap.from_keys" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">from_keys</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" keys (textual.binding.BindingsMap.from_keys(keys))" href="#textual.binding.BindingsMap.from_keys(keys)">keys</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">from_keys</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.from_keys(keys)">keys</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Construct a BindingsMap from a dict of keys and bindings.</p>
+      <p>Construct a BindingsMap from a dict of keys and bindings.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9066,7 +9071,7 @@ properties of a <code>Binding</code>.</p>
 <h4 id="textual.binding.BindingsMap.from_keys(keys)" class="doc doc-heading doc-heading-parameter">                  <code>keys</code>
 <a href="#textual.binding.BindingsMap.from_keys(keys)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="#textual.binding.Binding">Binding</a>]]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="textual.binding.Binding" href="#textual.binding.Binding">Binding</a>]]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9092,7 +9097,7 @@ properties of a <code>Binding</code>.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" BindingsMap (textual.binding.BindingsMap)" href="#textual.binding.BindingsMap">BindingsMap</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.binding.BindingsMap" href="#textual.binding.BindingsMap">BindingsMap</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9115,12 +9120,12 @@ properties of a <code>Binding</code>.</p>
 
 
 <a href="#textual.binding.BindingsMap.get_bindings_for_key" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_bindings_for_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" key (textual.binding.BindingsMap.get_bindings_for_key(key))" href="#textual.binding.BindingsMap.get_bindings_for_key(key)">key</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_bindings_for_key</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.get_bindings_for_key(key)">key</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Get a list of bindings for a given key.</p>
+      <p>Get a list of bindings for a given key.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9165,7 +9170,7 @@ properties of a <code>Binding</code>.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" NoBinding (textual.binding.NoBinding)" href="#textual.binding.NoBinding">NoBinding</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.binding.NoBinding" href="#textual.binding.NoBinding">NoBinding</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9188,7 +9193,7 @@ properties of a <code>Binding</code>.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title=" Binding (textual.binding.Binding)" href="#textual.binding.Binding">Binding</a>]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="textual.binding.Binding" href="#textual.binding.Binding">Binding</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9215,12 +9220,12 @@ properties of a <code>Binding</code>.</p>
   </span>
 
 <a href="#textual.binding.BindingsMap.merge" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">merge</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" bindings (textual.binding.BindingsMap.merge(bindings))" href="#textual.binding.BindingsMap.merge(bindings)">bindings</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">merge</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.binding.BindingsMap.merge(bindings)">bindings</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Merge a bindings.</p>
+      <p>Merge a bindings.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -9239,7 +9244,7 @@ properties of a <code>Binding</code>.</p>
 <h4 id="textual.binding.BindingsMap.merge(bindings)" class="doc doc-heading doc-heading-parameter">                  <code>bindings</code>
 <a href="#textual.binding.BindingsMap.merge(bindings)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title=" BindingsMap (textual.binding.BindingsMap)" href="#textual.binding.BindingsMap">BindingsMap</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.binding.BindingsMap" href="#textual.binding.BindingsMap">BindingsMap</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9265,7 +9270,7 @@ properties of a <code>Binding</code>.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" BindingsMap (textual.binding.BindingsMap)" href="#textual.binding.BindingsMap">BindingsMap</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.binding.BindingsMap" href="#textual.binding.BindingsMap">BindingsMap</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9305,7 +9310,7 @@ properties of a <code>Binding</code>.</p>
 
 
 
-        <p>Binding key is in an invalid format.</p>
+      <p>Binding key is in an invalid format.</p>
 
 
 
@@ -9334,7 +9339,7 @@ properties of a <code>Binding</code>.</p>
 
 
 
-        <p>The result of applying a keymap.</p>
+      <p>The result of applying a keymap.</p>
 
 
 
@@ -9370,7 +9375,7 @@ properties of a <code>Binding</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>A list of bindings that were clashed and replaced by the keymap.</p>
+      <p>A list of bindings that were clashed and replaced by the keymap.</p>
     </div>
 
 </div>
@@ -9402,7 +9407,7 @@ properties of a <code>Binding</code>.</p>
 
 
 
-        <p>A binding was not found.</p>
+      <p>A binding was not found.</p>
 
 
 

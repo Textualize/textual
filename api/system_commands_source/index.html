@@ -6062,6 +6062,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.system_commands.SystemCommandsProvider(screen)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;screen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.system_commands.SystemCommandsProvider.discover" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;discover
@@ -6905,6 +6914,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.system_commands.SystemCommandsProvider(screen)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;screen
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.system_commands.SystemCommandsProvider.discover" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;discover
@@ -6970,9 +6988,9 @@ window.onload = async (event) => {
 <a id="textual.system_commands"></a>
     <div class="doc doc-contents first">
 
-        <p>This module contains <code>SystemCommands</code>, a command palette command provider for Textual system commands.</p>
+      <p>This module contains <code>SystemCommands</code>, a command palette command provider for Textual system commands.</p>
 <p>This is a simple command provider that makes the most obvious application
-actions available via the <a class="autorefs autorefs-internal" title=" CommandPalette" href="../command/#textual.command.CommandPalette">command palette</a>.</p>
+actions available via the <a class="autorefs autorefs-internal" title="            CommandPalette" href="../command/#textual.command.CommandPalette">command palette</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The App base class installs this automatically.</p>
@@ -7003,17 +7021,54 @@ actions available via the <a class="autorefs autorefs-internal" title=" Command
 
 
 <a href="#textual.system_commands.SystemCommandsProvider" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SystemCommandsProvider</span><span class="p">(</span><span class="n"><span title="textual.system_commands.SystemCommandsProvider(screen)">screen</span></span><span class="p">,</span> <span class="n"><span title="textual.system_commands.SystemCommandsProvider(match_style)">match_style</span></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SystemCommandsProvider</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.system_commands.SystemCommandsProvider(screen)">screen</a></span><span class="p">,</span> <span class="n">match_style</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title=" Provider (textual.command.Provider)" href="../command/#textual.command.Provider">Provider</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="textual.command.Provider" href="../command/#textual.command.Provider">Provider</a></code></p>
 
 
 
-        <p>A <a class="autorefs autorefs-internal" title=" Provider" href="../command/#textual.command.Provider">source</a> of command palette commands that run app-wide tasks.</p>
-<p>Used by default in <a class="autorefs autorefs-internal" title=" COMMANDS" href="../app/#textual.app.App.COMMANDS"><code>App.COMMANDS</code></a>.</p>
+      <p>A <a class="autorefs autorefs-internal" title="            Provider" href="../command/#textual.command.Provider">source</a> of command palette commands that run app-wide tasks.</p>
+<p>Used by default in <a class="autorefs autorefs-internal" title="            COMMANDS
+
+
+  
+      class-attribute
+  " href="../app/#textual.app.App.COMMANDS"><code>App.COMMANDS</code></a>.</p>
+
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.system_commands.SystemCommandsProvider(screen)" class="doc doc-heading doc-heading-parameter">                  <code>screen</code>
+<a href="#textual.system_commands.SystemCommandsProvider(screen)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A reference to the active screen.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -7050,7 +7105,7 @@ actions available via the <a class="autorefs autorefs-internal" title=" Command
 
     <div class="doc doc-contents ">
 
-        <p>Handle a request for the discovery commands for this provider.</p>
+      <p>Handle a request for the discovery commands for this provider.</p>
 
 
     <p><span class="doc-section-title">Yields:</span></p>
@@ -7064,7 +7119,7 @@ actions available via the <a class="autorefs autorefs-internal" title=" Command
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Hits (textual.command.Hits)" href="../command/#textual.command.Hits">Hits</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.command.Hits" href="../command/#textual.command.Hits">Hits</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7091,12 +7146,12 @@ actions available via the <a class="autorefs autorefs-internal" title=" Command
   </span>
 
 <a href="#textual.system_commands.SystemCommandsProvider.search" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">search</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title=" query (textual.system_commands.SystemCommandsProvider.search(query))" href="#textual.system_commands.SystemCommandsProvider.search(query)">query</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">search</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.system_commands.SystemCommandsProvider.search(query)">query</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Handle a request to search for system commands that match the query.</p>
+      <p>Handle a request to search for system commands that match the query.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -7141,7 +7196,7 @@ actions available via the <a class="autorefs autorefs-internal" title=" Command
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title=" Hits (textual.command.Hits)" href="../command/#textual.command.Hits">Hits</a></code>
+                  <code><a class="autorefs autorefs-internal" title="textual.command.Hits" href="../command/#textual.command.Hits">Hits</a></code>
             </td>
             <td>
               <div class="doc-md-description">

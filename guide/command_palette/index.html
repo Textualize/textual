@@ -7543,11 +7543,11 @@ This scheme allows the user to quickly get to a particular command with fewer ke
 </div>
 <h2 id="system-commands">System commands<a class="headerlink" href="#system-commands" title="Permanent link">&para;</a></h2>
 <p>Textual apps have a number of <em>system</em> commands enabled by default.
-These are declared in the <a class="autorefs autorefs-internal" title=" get_system_commands" href="../../api/app/#textual.app.App.get_system_commands"><code>App.get_system_commands</code></a> method.
+These are declared in the <a class="autorefs autorefs-internal" title="            get_system_commands" href="../../api/app/#textual.app.App.get_system_commands"><code>App.get_system_commands</code></a> method.
 You can implement this method in your App class to add more commands.</p>
 <p>To declare a command, define a <code>get_system_commands</code> method on your App.
 Textual will call this method with the screen that was active when the user summoned the command palette. </p>
-<p>You can add a command by yielding a <a class="autorefs autorefs-internal" title=" SystemCommand" href="../../api/app/#textual.app.SystemCommand"><code>SystemCommand</code></a> object which contains <code>title</code> and <code>help</code> text to be shown in the command palette, and <code>callback</code> which is a callable to run when the user selects the command.
+<p>You can add a command by yielding a <a class="autorefs autorefs-internal" title="            SystemCommand" href="../../api/app/#textual.app.SystemCommand"><code>SystemCommand</code></a> object which contains <code>title</code> and <code>help</code> text to be shown in the command palette, and <code>callback</code> which is a callable to run when the user selects the command.
 Additionally, there is a <code>discover</code> boolean which when <code>True</code> (the default) shows the command even if the search import is empty. When set to <code>False</code>, the command will show only when there is input.</p>
 <p>Here's how we would add a command to ring the terminal bell (a super useful piece of functionality):</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">command01.py</label><label for="__tabbed_2_2">Output</label></div>
@@ -7743,7 +7743,12 @@ Additionally, there is a <code>discover</code> boolean which when <code>True</co
 <p>This is a straightforward way of adding commands to your app.
 For more advanced integrations you can implement your own <em>command providers</em>.</p>
 <h2 id="command-providers">Command providers<a class="headerlink" href="#command-providers" title="Permanent link">&para;</a></h2>
-<p>To add your own command(s) to the command palette, define a <a class="autorefs autorefs-internal" title=" Provider" href="../../api/command/#textual.command.Provider"><code>command.Provider</code></a> class then add it to the <a class="autorefs autorefs-internal" title=" COMMANDS" href="../../api/app/#textual.app.App.COMMANDS"><code>COMMANDS</code></a> class var on your <code>App</code> class.</p>
+<p>To add your own command(s) to the command palette, define a <a class="autorefs autorefs-internal" title="            Provider" href="../../api/command/#textual.command.Provider"><code>command.Provider</code></a> class then add it to the <a class="autorefs autorefs-internal" title="            COMMANDS
+
+
+  
+      class-attribute
+  " href="../../api/app/#textual.app.App.COMMANDS"><code>COMMANDS</code></a> class var on your <code>App</code> class.</p>
 <p>Let's look at a simple example which adds the ability to open Python files via the command palette.</p>
 <p>The following example will display a blank screen initially, but if you bring up the command palette and start typing the name of a Python file, it will show the command to open it.</p>
 <div class="admonition tip">
@@ -7822,26 +7827,68 @@ For more advanced integrations you can implement your own <em>command providers<
 <ol>
 <li>This method is called when the command palette is first opened.</li>
 <li>Called on each key-press.</li>
-<li>Get a <a class="autorefs autorefs-internal" title=" Matcher" href="../../api/fuzzy_matcher/#textual.fuzzy.Matcher">Matcher</a> instance to compare against hits.</li>
+<li>Get a <a class="autorefs autorefs-internal" title="            Matcher" href="../../api/fuzzy_matcher/#textual.fuzzy.Matcher">Matcher</a> instance to compare against hits.</li>
 <li>Use the matcher to get a score.</li>
 <li>Highlights matching letters in the search.</li>
 <li>Adds our custom command provider and the default command provider.</li>
 </ol>
-<p>There are four methods you can override in a command provider: <a class="autorefs autorefs-internal" title=" startup" href="../../api/command/#textual.command.Provider.startup"><code>startup</code></a>, <a class="autorefs autorefs-internal" title=" search" href="../../api/command/#textual.command.Provider.search"><code>search</code></a>, <a class="autorefs autorefs-internal" title=" discover" href="../../api/command/#textual.command.Provider.discover"><code>discover</code></a> and <a class="autorefs autorefs-internal" title=" shutdown" href="../../api/command/#textual.command.Provider.shutdown"><code>shutdown</code></a>.
+<p>There are four methods you can override in a command provider: <a class="autorefs autorefs-internal" title="            startup
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.startup"><code>startup</code></a>, <a class="autorefs autorefs-internal" title="            search
+
+
+  
+      abstractmethod
+      async
+  " href="../../api/command/#textual.command.Provider.search"><code>search</code></a>, <a class="autorefs autorefs-internal" title="            discover
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.discover"><code>discover</code></a> and <a class="autorefs autorefs-internal" title="            shutdown
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.shutdown"><code>shutdown</code></a>.
 All of these methods should be coroutines (<code>async def</code>). Only <code>search</code> is required, the other methods are optional.
 Let's explore those methods in detail.</p>
 <h3 id="startup-method">startup method<a class="headerlink" href="#startup-method" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title=" startup" href="../../api/command/#textual.command.Provider.startup"><code>startup</code></a> method is called when the command palette is opened.
+<p>The <a class="autorefs autorefs-internal" title="            startup
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.startup"><code>startup</code></a> method is called when the command palette is opened.
 You can use this method as way of performing work that needs to be done prior to searching.
 In the example, we use this method to get the Python (.py) files in the current working directory.</p>
 <h3 id="search-method">search method<a class="headerlink" href="#search-method" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title=" search" href="../../api/command/#textual.command.Provider.search"><code>search</code></a> method is responsible for finding results (or <em>hits</em>) that match the user's input.
-This method should <em>yield</em> <a class="autorefs autorefs-internal" title=" Hit" href="../../api/command/#textual.command.Hit"><code>Hit</code></a> objects for any command that matches the <code>query</code> argument.</p>
-<p>Exactly how the matching is implemented is up to the author of the command provider, but we recommend using the builtin fuzzy matcher object, which you can get by calling <a class="autorefs autorefs-internal" title=" matcher" href="../../api/command/#textual.command.Provider.matcher"><code>matcher</code></a>.
-This object has a <a class="autorefs autorefs-internal" title=" match" href="../../api/fuzzy_matcher/#textual.fuzzy.Matcher.match"><code>match()</code></a> method which compares the user's search term against the potential command and returns a <em>score</em>.
+<p>The <a class="autorefs autorefs-internal" title="            search
+
+
+  
+      abstractmethod
+      async
+  " href="../../api/command/#textual.command.Provider.search"><code>search</code></a> method is responsible for finding results (or <em>hits</em>) that match the user's input.
+This method should <em>yield</em> <a class="autorefs autorefs-internal" title="            Hit
+
+
+  
+      dataclass
+  " href="../../api/command/#textual.command.Hit"><code>Hit</code></a> objects for any command that matches the <code>query</code> argument.</p>
+<p>Exactly how the matching is implemented is up to the author of the command provider, but we recommend using the builtin fuzzy matcher object, which you can get by calling <a class="autorefs autorefs-internal" title="            matcher" href="../../api/command/#textual.command.Provider.matcher"><code>matcher</code></a>.
+This object has a <a class="autorefs autorefs-internal" title="            match" href="../../api/fuzzy_matcher/#textual.fuzzy.Matcher.match"><code>match()</code></a> method which compares the user's search term against the potential command and returns a <em>score</em>.
 A score of zero means <em>no hit</em>, and you can discard the potential command.
 A score of above zero indicates the confidence in the result, where 1 is an exact match, and anything lower indicates a less confident match.</p>
-<p>The <a class="autorefs autorefs-internal" title=" Hit" href="../../api/command/#textual.command.Hit"><code>Hit</code></a> contains information about the score (used in ordering) and how the hit should be displayed, and an optional help string.
+<p>The <a class="autorefs autorefs-internal" title="            Hit
+
+
+  
+      dataclass
+  " href="../../api/command/#textual.command.Hit"><code>Hit</code></a> contains information about the score (used in ordering) and how the hit should be displayed, and an optional help string.
 It also contains a callback, which will be run if the user selects that command.</p>
 <p>In the example above, the callback is a lambda which calls the <code>open_file</code> method in the example app.</p>
 <div class="admonition note">
@@ -7851,7 +7898,12 @@ This is a deliberate design decision taken to prevent a single broken <code>Prov
 Errors in command providers will be logged to the <a href="../devtools/">console</a>.</p>
 </div>
 <h3 id="discover-method">discover method<a class="headerlink" href="#discover-method" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title=" discover" href="../../api/command/#textual.command.Provider.discover"><code>discover</code></a> method is responsible for providing results (or <em>discovery hits</em>) that should be shown to the user when the command palette input is empty;
+<p>The <a class="autorefs autorefs-internal" title="            discover
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.discover"><code>discover</code></a> method is responsible for providing results (or <em>discovery hits</em>) that should be shown to the user when the command palette input is empty;
 this is to aid in command discoverability.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -7861,12 +7913,37 @@ commands that might take time to generate are best left for <code>search</code> 
 <p><code>discover</code> is similar to <code>search</code> but with these differences:</p>
 <ul>
 <li><code>discover</code> accepts no parameters (instead of the search value)</li>
-<li><code>discover</code> yields instances of <a class="autorefs autorefs-internal" title=" DiscoveryHit" href="../../api/command/#textual.command.DiscoveryHit"><code>DiscoveryHit</code></a> (instead of instances of <a class="autorefs autorefs-internal" title=" Hit" href="../../api/command/#textual.command.Hit"><code>Hit</code></a>)</li>
+<li><code>discover</code> yields instances of <a class="autorefs autorefs-internal" title="            DiscoveryHit
+
+
+  
+      dataclass
+  " href="../../api/command/#textual.command.DiscoveryHit"><code>DiscoveryHit</code></a> (instead of instances of <a class="autorefs autorefs-internal" title="            Hit
+
+
+  
+      dataclass
+  " href="../../api/command/#textual.command.Hit"><code>Hit</code></a>)</li>
 </ul>
-<p>Instances of <a class="autorefs autorefs-internal" title=" DiscoveryHit" href="../../api/command/#textual.command.DiscoveryHit"><code>DiscoveryHit</code></a> contain information about how the hit should be displayed, an optional help string, and a callback which will be run if the user selects that command.</p>
+<p>Instances of <a class="autorefs autorefs-internal" title="            DiscoveryHit
+
+
+  
+      dataclass
+  " href="../../api/command/#textual.command.DiscoveryHit"><code>DiscoveryHit</code></a> contain information about how the hit should be displayed, an optional help string, and a callback which will be run if the user selects that command.</p>
 <h3 id="shutdown-method">shutdown method<a class="headerlink" href="#shutdown-method" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title=" shutdown" href="../../api/command/#textual.command.Provider.shutdown"><code>shutdown</code></a> method is called when the command palette is closed.
-You can use this as a hook to gracefully close any objects you created in <a class="autorefs autorefs-internal" title=" startup" href="../../api/command/#textual.command.Provider.startup"><code>startup</code></a>.</p>
+<p>The <a class="autorefs autorefs-internal" title="            shutdown
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.shutdown"><code>shutdown</code></a> method is called when the command palette is closed.
+You can use this as a hook to gracefully close any objects you created in <a class="autorefs autorefs-internal" title="            startup
+
+
+  
+      async
+  " href="../../api/command/#textual.command.Provider.startup"><code>startup</code></a>.</p>
 <h2 id="screen-commands">Screen commands<a class="headerlink" href="#screen-commands" title="Permanent link">&para;</a></h2>
 <p>You can also associate commands with a screen by adding a <code>COMMANDS</code> class var to your Screen class.</p>
 <p>Commands defined on a screen are only considered when that screen is active.
