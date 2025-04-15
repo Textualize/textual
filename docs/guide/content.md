@@ -312,6 +312,28 @@ Here's what that looks like:
 ```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="Play the [on $success 30% @click=app.bell]bell[/]"]}
 ```
 
+### Escaping
+
+If you precede an open bracket with a backslash (`\`), then Textual will not consider it to be a tag and the square bracket will be displayed without modification. 
+
+For example, the backslash in the following content prevents the following text from becoming bold, and the text `[bold]` will be in the output.
+
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="\[bold]This is not bold"]}
+```
+
+!!! tip "Escaping markup"
+
+    You can also use the [escape][textual.markup.escape] function to escape tags
+
+Some methods, such as [`notify()`][textual.widget.Widget.notify], have a `markup` switch that you can use to disable markup.
+You may want to use this if you want to output a Python repr strings, so that Textual doesn't interpret a list as a tag.
+
+Here's an example:
+
+```python
+# debug code: what is my_list at this point?
+self.notify(repr(my_list), markup=False)
+```
 
 ## Content class
 

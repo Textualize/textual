@@ -1,3 +1,8 @@
+"""
+Utilities related to content markup.
+
+"""
+
 from __future__ import annotations
 
 from textual.css.parse import substitute_references
@@ -171,7 +176,7 @@ def escape(
 
 
 def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
-    """Parse an encoded style.
+    """Parse a style with substituted variables.
 
     Args:
         style: Style encoded in a string.
