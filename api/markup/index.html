@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/events/mouse_move/">
+        <link rel="canonical" href="https://textual.textualize.io/api/markup/">
       
       
-        <link rel="prev" href="../mouse_down/">
+        <link rel="prev" href="../map_geometry/">
       
       
-        <link rel="next" href="../mouse_release/">
+        <link rel="next" href="../message_pump/">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
@@ -25,7 +25,7 @@
     
     
       
-        <title>MouseMove - Textual</title>
+        <title>textual.markup - Textual</title>
       
     
     
@@ -71,9 +71,9 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - MouseMove">
+<meta property="og:title" content="Textual - textual.markup">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/events/mouse_move/">
+<meta property="og:url" content="https://textual.textualize.io/api/markup/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -132,7 +132,7 @@ window.onload = async (event) => {
     <div data-md-component="skip">
       
         
-        <a href="#textual.events.MouseMove" class="md-skip">
+        <a href="#textual.markup" class="md-skip">
           Skip to content
         </a>
       
@@ -167,7 +167,7 @@ window.onload = async (event) => {
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              MouseMove
+              textual.markup
             
           </span>
         </div>
@@ -357,12 +357,10 @@ window.onload = async (event) => {
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../../reference/" class="md-tabs__link">
           
   
@@ -379,11 +377,13 @@ window.onload = async (event) => {
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../api/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
     
@@ -1177,8 +1177,6 @@ window.onload = async (event) => {
       
   
   
-    
-  
   
   
     
@@ -1199,17 +1197,14 @@ window.onload = async (event) => {
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           
@@ -1226,13 +1221,13 @@ window.onload = async (event) => {
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -1668,8 +1663,6 @@ window.onload = async (event) => {
                 
   
   
-    
-  
   
   
     
@@ -1739,16 +1732,16 @@ window.onload = async (event) => {
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../events/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1766,7 +1759,7 @@ window.onload = async (event) => {
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_3">
             <span class="md-nav__icon md-icon"></span>
             Events
@@ -1782,7 +1775,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../app_blur/" class="md-nav__link">
+      <a href="../../events/app_blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1804,7 +1797,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../app_focus/" class="md-nav__link">
+      <a href="../../events/app_focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1826,7 +1819,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../blur/" class="md-nav__link">
+      <a href="../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1848,7 +1841,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../click/" class="md-nav__link">
+      <a href="../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1870,7 +1863,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../descendant_blur/" class="md-nav__link">
+      <a href="../../events/descendant_blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1892,7 +1885,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../descendant_focus/" class="md-nav__link">
+      <a href="../../events/descendant_focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1914,7 +1907,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../enter/" class="md-nav__link">
+      <a href="../../events/enter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1936,7 +1929,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../focus/" class="md-nav__link">
+      <a href="../../events/focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1958,7 +1951,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../hide/" class="md-nav__link">
+      <a href="../../events/hide/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1980,7 +1973,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../key/" class="md-nav__link">
+      <a href="../../events/key/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2002,7 +1995,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../leave/" class="md-nav__link">
+      <a href="../../events/leave/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2024,7 +2017,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../load/" class="md-nav__link">
+      <a href="../../events/load/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2046,7 +2039,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mount/" class="md-nav__link">
+      <a href="../../events/mount/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2068,7 +2061,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mouse_capture/" class="md-nav__link">
+      <a href="../../events/mouse_capture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2090,7 +2083,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mouse_down/" class="md-nav__link">
+      <a href="../../events/mouse_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2109,31 +2102,10 @@ window.onload = async (event) => {
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    MouseMove
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../events/mouse_move/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2143,35 +2115,6 @@ window.onload = async (event) => {
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      See also
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2184,7 +2127,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mouse_release/" class="md-nav__link">
+      <a href="../../events/mouse_release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2206,7 +2149,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mouse_scroll_down/" class="md-nav__link">
+      <a href="../../events/mouse_scroll_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2228,7 +2171,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mouse_scroll_up/" class="md-nav__link">
+      <a href="../../events/mouse_scroll_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2250,7 +2193,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../mouse_up/" class="md-nav__link">
+      <a href="../../events/mouse_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2272,7 +2215,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../paste/" class="md-nav__link">
+      <a href="../../events/paste/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2294,7 +2237,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../print/" class="md-nav__link">
+      <a href="../../events/print/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2316,7 +2259,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../resize/" class="md-nav__link">
+      <a href="../../events/resize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2338,7 +2281,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../screen_resume/" class="md-nav__link">
+      <a href="../../events/screen_resume/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2360,7 +2303,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../screen_suspend/" class="md-nav__link">
+      <a href="../../events/screen_suspend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2382,7 +2325,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../show/" class="md-nav__link">
+      <a href="../../events/show/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2404,7 +2347,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../unmount/" class="md-nav__link">
+      <a href="../../events/unmount/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5159,6 +5102,8 @@ window.onload = async (event) => {
       
   
   
+    
+  
   
   
     
@@ -5261,19 +5206,22 @@ window.onload = async (event) => {
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../api/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -5285,13 +5233,13 @@ window.onload = async (event) => {
             </a>
             
               
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             API
@@ -5307,7 +5255,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/app/" class="md-nav__link">
+      <a href="../app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5329,7 +5277,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/await_complete/" class="md-nav__link">
+      <a href="../await_complete/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5351,7 +5299,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/await_remove/" class="md-nav__link">
+      <a href="../await_remove/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5373,7 +5321,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/binding/" class="md-nav__link">
+      <a href="../binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5395,7 +5343,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/cache/" class="md-nav__link">
+      <a href="../cache/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5417,7 +5365,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/color/" class="md-nav__link">
+      <a href="../color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5439,7 +5387,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/command/" class="md-nav__link">
+      <a href="../command/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5461,7 +5409,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../constants/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5483,7 +5431,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/containers/" class="md-nav__link">
+      <a href="../containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5505,7 +5453,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/content/" class="md-nav__link">
+      <a href="../content/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5527,7 +5475,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/coordinate/" class="md-nav__link">
+      <a href="../coordinate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5549,7 +5497,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/dom_node/" class="md-nav__link">
+      <a href="../dom_node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5571,7 +5519,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/events/" class="md-nav__link">
+      <a href="../events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5593,7 +5541,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/errors/" class="md-nav__link">
+      <a href="../errors/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5615,7 +5563,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/filter/" class="md-nav__link">
+      <a href="../filter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5637,7 +5585,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/fuzzy_matcher/" class="md-nav__link">
+      <a href="../fuzzy_matcher/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5659,7 +5607,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/geometry/" class="md-nav__link">
+      <a href="../geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5681,7 +5629,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/layout/" class="md-nav__link">
+      <a href="../layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5703,7 +5651,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/lazy/" class="md-nav__link">
+      <a href="../lazy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5725,7 +5673,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/logger/" class="md-nav__link">
+      <a href="../logger/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5747,7 +5695,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/logging/" class="md-nav__link">
+      <a href="../logging/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5769,7 +5717,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/map_geometry/" class="md-nav__link">
+      <a href="../map_geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5788,10 +5736,29 @@ window.onload = async (event) => {
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../api/markup/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    textual.markup
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -5801,6 +5768,159 @@ window.onload = async (event) => {
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;markup
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.MarkupError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MarkupError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.MarkupTokenizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MarkupTokenizer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.StyleTokenizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;StyleTokenizer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.escape" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;escape
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" escape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.escape(markup)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;markup
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.parse_style" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;parse_style
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" parse_style">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.parse_style(style)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;style
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.parse_style(variables)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;variables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.to_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;to_content
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" to_content">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.to_content(markup)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;markup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.to_content(style)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;style
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.to_content(template_variables)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;template_variables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -5813,7 +5933,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/message_pump/" class="md-nav__link">
+      <a href="../message_pump/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5835,7 +5955,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/message/" class="md-nav__link">
+      <a href="../message/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5857,7 +5977,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/on/" class="md-nav__link">
+      <a href="../on/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5879,7 +5999,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/pilot/" class="md-nav__link">
+      <a href="../pilot/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5901,7 +6021,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/query/" class="md-nav__link">
+      <a href="../query/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5923,7 +6043,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/reactive/" class="md-nav__link">
+      <a href="../reactive/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5945,7 +6065,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/renderables/" class="md-nav__link">
+      <a href="../renderables/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5967,7 +6087,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/screen/" class="md-nav__link">
+      <a href="../screen/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5989,7 +6109,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/scrollbar/" class="md-nav__link">
+      <a href="../scrollbar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6011,7 +6131,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/scroll_view/" class="md-nav__link">
+      <a href="../scroll_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6033,7 +6153,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/signal/" class="md-nav__link">
+      <a href="../signal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6055,7 +6175,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/strip/" class="md-nav__link">
+      <a href="../strip/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6077,7 +6197,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/suggester/" class="md-nav__link">
+      <a href="../suggester/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6099,7 +6219,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/system_commands_source/" class="md-nav__link">
+      <a href="../system_commands_source/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6121,7 +6241,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/timer/" class="md-nav__link">
+      <a href="../timer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6143,7 +6263,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/types/" class="md-nav__link">
+      <a href="../types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6165,7 +6285,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/validation/" class="md-nav__link">
+      <a href="../validation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6187,7 +6307,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/walk/" class="md-nav__link">
+      <a href="../walk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6209,7 +6329,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/widget/" class="md-nav__link">
+      <a href="../widget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6231,7 +6351,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/work/" class="md-nav__link">
+      <a href="../work/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6253,7 +6373,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/worker/" class="md-nav__link">
+      <a href="../worker/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6275,7 +6395,7 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../api/worker_manager/" class="md-nav__link">
+      <a href="../worker_manager/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6884,8 +7004,6 @@ window.onload = async (event) => {
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -6894,11 +7012,137 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
+  <a href="#textual.markup" class="md-nav__link">
     <span class="md-ellipsis">
-      See also
+      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;markup
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.MarkupError" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MarkupError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.MarkupTokenizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MarkupTokenizer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.StyleTokenizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;StyleTokenizer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.escape" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;escape
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" escape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.escape(markup)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;markup
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.parse_style" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;parse_style
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" parse_style">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.parse_style(style)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;style
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.parse_style(variables)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;variables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.markup.to_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;to_content
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" to_content">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.to_content(markup)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;markup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.to_content(style)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;style
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.markup.to_content(template_variables)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;template_variables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -6921,24 +7165,81 @@ window.onload = async (event) => {
   
 
 
-  <h1>MouseMove</h1>
+  <h1>textual.markup</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="textual.markup"></a>
+    <div class="doc doc-contents first">
+
+      <p>Utilities related to content markup.</p>
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
 
 <div class="doc doc-object doc-class">
 
 
 
-<a id="textual.events.MouseMove"></a>
-    <div class="doc doc-contents first">
+<h2 id="textual.markup.MarkupError" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">MarkupError</span>
+
+
+<a href="#textual.markup.MarkupError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a></code></p>
+              Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
 
 
 
-      <p>Sent when the mouse cursor moves.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
+      <p>An error occurred parsing content markup.</p>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.markup.MarkupTokenizer" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">MarkupTokenizer</span>
+
+
+<a href="#textual.markup.MarkupTokenizer" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MarkupTokenizer</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.css.tokenize.TokenizerState">TokenizerState</span></code></p>
+
+
+
+      <p>Tokenizes content markup.</p>
 
 
 
@@ -6964,18 +7265,352 @@ window.onload = async (event) => {
 
     </div>
 
-</div><p>See <a class="autorefs autorefs-internal" title="            MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a> for the full list of properties and methods.</p>
-<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../click/">Click</a></li>
-<li><a href="../enter/">Enter</a></li>
-<li><a href="../leave/">Leave</a></li>
-<li><a href="../mouse_down/">MouseDown</a></li>
-<li><a class="autorefs autorefs-internal" title="            MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a></li>
-<li><a href="../mouse_scroll_down/">MouseScrollDown</a></li>
-<li><a href="../mouse_scroll_up/">MouseScrollUp</a></li>
-<li><a href="../mouse_up/">MouseUp</a></li>
-</ul>
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.markup.StyleTokenizer" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">StyleTokenizer</span>
+
+
+<a href="#textual.markup.StyleTokenizer" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">StyleTokenizer</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="textual.css.tokenize.TokenizerState">TokenizerState</span></code></p>
+
+
+
+      <p>Tokenizes a style</p>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.markup.escape" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">escape</span>
+
+
+<a href="#textual.markup.escape" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">escape</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.markup.escape(markup)">markup</a></span><span class="p">,</span> <span class="n">_escape</span><span class="o">=</span><span class="n">sub</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Escapes text so that it won't be interpreted as markup.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.markup.escape(markup)" class="doc doc-heading doc-heading-parameter">                  <code>markup</code>
+<a href="#textual.markup.escape(markup)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Content to be inserted in to markup.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>str</code></td>            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Markup with square brackets escaped.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.markup.parse_style" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">parse_style</span>
+
+
+<a href="#textual.markup.parse_style" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">parse_style</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.markup.parse_style(style)">style</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.markup.parse_style(variables)">variables</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Parse a style with substituted variables.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.markup.parse_style(style)" class="doc doc-heading doc-heading-parameter">                  <code>style</code>
+<a href="#textual.markup.parse_style(style)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Style encoded in a string.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.markup.parse_style(variables)" class="doc doc-heading doc-heading-parameter">                  <code>variables</code>
+<a href="#textual.markup.parse_style(variables)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mapping of variables, or <code>None</code> to import from active app.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="textual.style.Style" href="../style/#textual.style.Style">Style</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A Style object.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="textual.markup.to_content" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">to_content</span>
+
+
+<a href="#textual.markup.to_content" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">to_content</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#textual.markup.to_content(markup)">markup</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.markup.to_content(style)">style</a></span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#textual.markup.to_content(template_variables)">template_variables</a></span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+      <p>Convert markup to Content.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.markup.to_content(markup)" class="doc doc-heading doc-heading-parameter">                  <code>markup</code>
+<a href="#textual.markup.to_content(markup)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>String containing markup.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.markup.to_content(style)" class="doc doc-heading doc-heading-parameter">                  <code>style</code>
+<a href="#textual.markup.to_content(style)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.style.Style" href="../style/#textual.style.Style">Style</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional base style.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.markup.to_content(template_variables)" class="doc doc-heading doc-heading-parameter">                  <code>template_variables</code>
+<a href="#textual.markup.to_content(template_variables)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mapping of string.Template variables</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="textual.markup.MarkupError" href="#textual.markup.MarkupError">MarkupError</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If the markup is invalid.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="textual.content.Content" href="../content/#textual.content.Content">Content</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Content that renders the markup.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -6996,7 +7631,7 @@ window.onload = async (event) => {
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 20, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">April 15, 2025</span>
   </span>
 
     
@@ -7026,7 +7661,7 @@ window.onload = async (event) => {
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../mouse_down/" class="md-footer__link md-footer__link--prev" aria-label="Previous: MouseDown">
+          <a href="../map_geometry/" class="md-footer__link md-footer__link--prev" aria-label="Previous: textual.map_geometry">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -7036,20 +7671,20 @@ window.onload = async (event) => {
                 Previous
               </span>
               <div class="md-ellipsis">
-                MouseDown
+                textual.map_geometry
               </div>
             </div>
           </a>
         
         
           
-          <a href="../mouse_release/" class="md-footer__link md-footer__link--next" aria-label="Next: MouseRelease">
+          <a href="../message_pump/" class="md-footer__link md-footer__link--next" aria-label="Next: textual.message_pump">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                MouseRelease
+                textual.message_pump
               </div>
             </div>
             <div class="md-footer__button md-icon">

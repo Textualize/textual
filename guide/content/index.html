@@ -1208,6 +1208,15 @@ window.onload = async (event) => {
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5435,6 +5444,10 @@ window.onload = async (event) => {
       
         
       
+        
+      
+        
+      
     
     
       
@@ -5665,6 +5678,28 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     textual.containers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/content/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    textual.content
     
   </span>
   
@@ -5929,6 +5964,28 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     textual.map_geometry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/markup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    textual.markup
     
   </span>
   
@@ -7157,6 +7214,15 @@ window.onload = async (event) => {
   <a href="#actions" class="md-nav__link">
     <span class="md-ellipsis">
       Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escaping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escaping
     </span>
   </a>
   
@@ -8750,24 +8816,161 @@ If you do need to close the tag explicitly, you can omit the action:</p>
     </g>
 </svg>
 </p>
+<h3 id="escaping">Escaping<a class="headerlink" href="#escaping" title="Permanent link">&para;</a></h3>
+<p>If you precede an open bracket with a backslash (<code>\</code>), then Textual will not consider it to be a tag and the square bracket will be displayed without modification. </p>
+<p>For example, the backslash in the following content prevents the following text from becoming bold, and the text <code>[bold]</code> will be in the output.</p>
+<p><svg class="rich-terminal" viewBox="0 0 994 440.4" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-234678647-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-234678647-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-234678647-r1 { fill: #e0e0e0 }
+.terminal-234678647-r2 { fill: #c5c8c6 }
+.terminal-234678647-r3 { fill: #0178d4 }
+.terminal-234678647-r4 { fill: #121212 }
+.terminal-234678647-r5 { fill: #797979 }
+.terminal-234678647-r6 { fill: #1e1e1e }
+.terminal-234678647-r7 { fill: #4ebf71 }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-234678647-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="389.4" />
+    </clipPath>
+    <clipPath id="terminal-234678647-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-234678647-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="438.4" rx="8"/><text class="terminal-234678647-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">Markup&#160;Playground</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-234678647-clip-terminal)">
+    <rect fill="#121212" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="1.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="36.6" y="25.9" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="134.2" y="25.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="622.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="646.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="658.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#797979" x="671" y="25.9" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="890.6" y="25.9" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="50.3" width="597.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="622.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="658.8" y="50.3" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#797979" x="951.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="74.7" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="36.6" y="74.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#e0e0e0" x="317.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="329.4" y="74.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="622.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="658.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="671" y="74.7" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="671" y="74.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#797979" x="951.6" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="99.1" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="622.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="658.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="671" y="99.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#797979" x="951.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="123.5" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="622.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="658.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="671" y="123.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#797979" x="951.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="147.9" width="597.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="622.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="658.8" y="147.9" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#797979" x="951.6" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="172.3" width="597.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="622.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="634.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="646.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="658.8" y="172.3" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="36.6" y="196.7" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="134.2" y="196.7" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="221.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="951.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="36.6" y="245.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="305" y="245.5" width="634.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="939.4" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="951.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="269.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="951.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="294.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="951.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="318.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="951.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="343.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="951.6" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="12.2" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="24.4" y="367.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="951.6" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="963.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-234678647-matrix">
+    <text class="terminal-234678647-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-234678647-line-0)">
+</text><text class="terminal-234678647-r3" x="12.2" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">▁</text><text class="terminal-234678647-r3" x="24.4" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">▁</text><text class="terminal-234678647-r4" x="36.6" y="44.4" textLength="97.6" clip-path="url(#terminal-234678647-line-1)">&#160;Markup&#160;</text><text class="terminal-234678647-r3" x="134.2" y="44.4" textLength="488" clip-path="url(#terminal-234678647-line-1)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-234678647-r3" x="622.2" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">▁</text><text class="terminal-234678647-r5" x="646.6" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">▁</text><text class="terminal-234678647-r5" x="658.8" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">▁</text><text class="terminal-234678647-r4" x="671" y="44.4" textLength="219.6" clip-path="url(#terminal-234678647-line-1)">&#160;Variables&#160;(JSON)&#160;</text><text class="terminal-234678647-r5" x="890.6" y="44.4" textLength="61" clip-path="url(#terminal-234678647-line-1)">▁▁▁▁▁</text><text class="terminal-234678647-r5" x="951.6" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">▁</text><text class="terminal-234678647-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-234678647-line-1)">
+</text><text class="terminal-234678647-r3" x="12.2" y="68.8" textLength="12.2" clip-path="url(#terminal-234678647-line-2)">▎</text><text class="terminal-234678647-r6" x="622.2" y="68.8" textLength="12.2" clip-path="url(#terminal-234678647-line-2)">▊</text><text class="terminal-234678647-r5" x="646.6" y="68.8" textLength="12.2" clip-path="url(#terminal-234678647-line-2)">▎</text><text class="terminal-234678647-r6" x="951.6" y="68.8" textLength="12.2" clip-path="url(#terminal-234678647-line-2)">▊</text><text class="terminal-234678647-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-234678647-line-2)">
+</text><text class="terminal-234678647-r3" x="12.2" y="93.2" textLength="12.2" clip-path="url(#terminal-234678647-line-3)">▎</text><text class="terminal-234678647-r1" x="36.6" y="93.2" textLength="280.6" clip-path="url(#terminal-234678647-line-3)">\[bold]This&#160;is&#160;not&#160;bold</text><text class="terminal-234678647-r6" x="622.2" y="93.2" textLength="12.2" clip-path="url(#terminal-234678647-line-3)">▊</text><text class="terminal-234678647-r5" x="646.6" y="93.2" textLength="12.2" clip-path="url(#terminal-234678647-line-3)">▎</text><text class="terminal-234678647-r6" x="951.6" y="93.2" textLength="12.2" clip-path="url(#terminal-234678647-line-3)">▊</text><text class="terminal-234678647-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-234678647-line-3)">
+</text><text class="terminal-234678647-r3" x="12.2" y="117.6" textLength="12.2" clip-path="url(#terminal-234678647-line-4)">▎</text><text class="terminal-234678647-r6" x="622.2" y="117.6" textLength="12.2" clip-path="url(#terminal-234678647-line-4)">▊</text><text class="terminal-234678647-r5" x="646.6" y="117.6" textLength="12.2" clip-path="url(#terminal-234678647-line-4)">▎</text><text class="terminal-234678647-r6" x="951.6" y="117.6" textLength="12.2" clip-path="url(#terminal-234678647-line-4)">▊</text><text class="terminal-234678647-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-234678647-line-4)">
+</text><text class="terminal-234678647-r3" x="12.2" y="142" textLength="12.2" clip-path="url(#terminal-234678647-line-5)">▎</text><text class="terminal-234678647-r6" x="622.2" y="142" textLength="12.2" clip-path="url(#terminal-234678647-line-5)">▊</text><text class="terminal-234678647-r5" x="646.6" y="142" textLength="12.2" clip-path="url(#terminal-234678647-line-5)">▎</text><text class="terminal-234678647-r6" x="951.6" y="142" textLength="12.2" clip-path="url(#terminal-234678647-line-5)">▊</text><text class="terminal-234678647-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-234678647-line-5)">
+</text><text class="terminal-234678647-r3" x="12.2" y="166.4" textLength="12.2" clip-path="url(#terminal-234678647-line-6)">▎</text><text class="terminal-234678647-r6" x="622.2" y="166.4" textLength="12.2" clip-path="url(#terminal-234678647-line-6)">▊</text><text class="terminal-234678647-r5" x="646.6" y="166.4" textLength="12.2" clip-path="url(#terminal-234678647-line-6)">▎</text><text class="terminal-234678647-r6" x="951.6" y="166.4" textLength="12.2" clip-path="url(#terminal-234678647-line-6)">▊</text><text class="terminal-234678647-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-234678647-line-6)">
+</text><text class="terminal-234678647-r3" x="12.2" y="190.8" textLength="12.2" clip-path="url(#terminal-234678647-line-7)">▔</text><text class="terminal-234678647-r3" x="24.4" y="190.8" textLength="597.8" clip-path="url(#terminal-234678647-line-7)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-234678647-r3" x="622.2" y="190.8" textLength="12.2" clip-path="url(#terminal-234678647-line-7)">▔</text><text class="terminal-234678647-r5" x="646.6" y="190.8" textLength="12.2" clip-path="url(#terminal-234678647-line-7)">▔</text><text class="terminal-234678647-r5" x="658.8" y="190.8" textLength="292.8" clip-path="url(#terminal-234678647-line-7)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-234678647-r5" x="951.6" y="190.8" textLength="12.2" clip-path="url(#terminal-234678647-line-7)">▔</text><text class="terminal-234678647-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-234678647-line-7)">
+</text><text class="terminal-234678647-r7" x="12.2" y="215.2" textLength="12.2" clip-path="url(#terminal-234678647-line-8)">▁</text><text class="terminal-234678647-r7" x="24.4" y="215.2" textLength="12.2" clip-path="url(#terminal-234678647-line-8)">▁</text><text class="terminal-234678647-r4" x="36.6" y="215.2" textLength="97.6" clip-path="url(#terminal-234678647-line-8)">&#160;Output&#160;</text><text class="terminal-234678647-r7" x="134.2" y="215.2" textLength="817.4" clip-path="url(#terminal-234678647-line-8)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-234678647-r7" x="951.6" y="215.2" textLength="12.2" clip-path="url(#terminal-234678647-line-8)">▁</text><text class="terminal-234678647-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-234678647-line-8)">
+</text><text class="terminal-234678647-r7" x="12.2" y="239.6" textLength="12.2" clip-path="url(#terminal-234678647-line-9)">▎</text><text class="terminal-234678647-r4" x="951.6" y="239.6" textLength="12.2" clip-path="url(#terminal-234678647-line-9)">▊</text><text class="terminal-234678647-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-234678647-line-9)">
+</text><text class="terminal-234678647-r7" x="12.2" y="264" textLength="12.2" clip-path="url(#terminal-234678647-line-10)">▎</text><text class="terminal-234678647-r1" x="36.6" y="264" textLength="268.4" clip-path="url(#terminal-234678647-line-10)">[bold]This&#160;is&#160;not&#160;bold</text><text class="terminal-234678647-r4" x="951.6" y="264" textLength="12.2" clip-path="url(#terminal-234678647-line-10)">▊</text><text class="terminal-234678647-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-234678647-line-10)">
+</text><text class="terminal-234678647-r7" x="12.2" y="288.4" textLength="12.2" clip-path="url(#terminal-234678647-line-11)">▎</text><text class="terminal-234678647-r4" x="951.6" y="288.4" textLength="12.2" clip-path="url(#terminal-234678647-line-11)">▊</text><text class="terminal-234678647-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-234678647-line-11)">
+</text><text class="terminal-234678647-r7" x="12.2" y="312.8" textLength="12.2" clip-path="url(#terminal-234678647-line-12)">▎</text><text class="terminal-234678647-r4" x="951.6" y="312.8" textLength="12.2" clip-path="url(#terminal-234678647-line-12)">▊</text><text class="terminal-234678647-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-234678647-line-12)">
+</text><text class="terminal-234678647-r7" x="12.2" y="337.2" textLength="12.2" clip-path="url(#terminal-234678647-line-13)">▎</text><text class="terminal-234678647-r4" x="951.6" y="337.2" textLength="12.2" clip-path="url(#terminal-234678647-line-13)">▊</text><text class="terminal-234678647-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-234678647-line-13)">
+</text><text class="terminal-234678647-r7" x="12.2" y="361.6" textLength="12.2" clip-path="url(#terminal-234678647-line-14)">▎</text><text class="terminal-234678647-r4" x="951.6" y="361.6" textLength="12.2" clip-path="url(#terminal-234678647-line-14)">▊</text><text class="terminal-234678647-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-234678647-line-14)">
+</text><text class="terminal-234678647-r7" x="12.2" y="386" textLength="12.2" clip-path="url(#terminal-234678647-line-15)">▔</text><text class="terminal-234678647-r7" x="24.4" y="386" textLength="927.2" clip-path="url(#terminal-234678647-line-15)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-234678647-r7" x="951.6" y="386" textLength="12.2" clip-path="url(#terminal-234678647-line-15)">▔</text>
+    </g>
+    </g>
+</svg>
+</p>
+<div class="admonition tip">
+<p class="admonition-title">Escaping markup</p>
+<p>You can also use the <a class="autorefs autorefs-internal" title="            escape" href="../../api/markup/#textual.markup.escape">escape</a> function to escape tags</p>
+</div>
+<p>Some methods, such as <a class="autorefs autorefs-internal" title="            notify" href="../../api/widget/#textual.widget.Widget.notify"><code>notify()</code></a>, have a <code>markup</code> switch that you can use to disable markup.
+You may want to use this if you want to output a Python repr strings, so that Textual doesn't interpret a list as a tag.</p>
+<p>Here's an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># debug code: what is my_list at this point?</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">my_list</span><span class="p">),</span> <span class="n">markup</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
 <h2 id="content-class">Content class<a class="headerlink" href="#content-class" title="Permanent link">&para;</a></h2>
 <p>Under the hood, Textual will convert markup into a <a class="autorefs autorefs-internal" title="            Content" href="../../api/content/#textual.content.Content">Content</a> instance.
 You can also return a Content object directly from <code>render()</code>.
 This can give you more flexibility beyond the markup.</p>
 <p>To clarify, here's a render method that returns a string with markup:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">WelcomeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>        <span class="k">return</span> <span class="s2">&quot;[b]Hello, World![/b]&quot;</span>
-</code></pre></div>
-<p>This is roughly the equivalent to the following code:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">WelcomeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
 <a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>        <span class="k">return</span> <span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;[b]Hello, World![/b]&quot;</span><span class="p">)</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>        <span class="k">return</span> <span class="s2">&quot;[b]Hello, World![/b]&quot;</span>
+</code></pre></div>
+<p>This is roughly the equivalent to the following code:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">WelcomeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>        <span class="k">return</span> <span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;[b]Hello, World![/b]&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="constructing-content">Constructing content<a class="headerlink" href="#constructing-content" title="Permanent link">&para;</a></h3>
 <p>The <a class="autorefs autorefs-internal" title="            Content" href="../../api/content/#textual.content.Content">Content</a> class accepts a default string in it's constructor.</p>
 <p>Here's an example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">Content</span><span class="p">(</span><span class="s2">&quot;hello, World!&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">Content</span><span class="p">(</span><span class="s2">&quot;hello, World!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Note that if you construct Content in this way, it <em>won't</em> process markup (any square brackets will be displayed literally).</p>
 <p>If you want markup, you can create a <code>Content</code> with the <a class="autorefs autorefs-internal" title="            from_markup
@@ -8776,22 +8979,22 @@ This can give you more flexibility beyond the markup.</p>
   
       classmethod
   " href="../../api/content/#textual.content.Content.from_markup">Content.from_markup</a> alternative constructor:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;hello, [bold]World[/bold]!&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;hello, [bold]World[/bold]!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="styling-content">Styling content<a class="headerlink" href="#styling-content" title="Permanent link">&para;</a></h3>
 <p>You can add styles to content with the <a class="autorefs autorefs-internal" title="            stylize" href="../../api/content/#textual.content.Content.stylize">stylize</a> or <a class="autorefs autorefs-internal" title="            stylize" href="../../api/content/#textual.content.Content.stylize">stylize_before</a> methods.</p>
 <p>For instance, in the following code we create content with the text "Hello, World!" and style "World" to be bold:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">Content</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">stylize</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">Content</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">stylize</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Note that <code>Content</code> is <em>immutable</em> and methods will return new instances rather than updating the current instance.</p>
 <h3 id="markup-variables">Markup variables<a class="headerlink" href="#markup-variables" title="Permanent link">&para;</a></h3>
 <p>You may be tempted to combine markup with Python's f-strings (or other string template system).
 Something along these lines:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">WelcomeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
-<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
-<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Will&quot;</span>
-<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hello [bold]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">[/bold]!&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">WelcomeWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Will&quot;</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Hello [bold]</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">[/bold]!&quot;</span>
 </code></pre></div>
 <p>While this is straightforward and intuitive, it can potentially break in subtle ways.
 If the 'name' variable contains square brackets, these may be interpreted as markup.
@@ -8805,7 +9008,7 @@ For instance if the user entered their name at some point as "[magenta italic]Wi
 If you supply variables as keyword arguments, these will be substituted in the markup using the same syntax as <a href="https://docs.python.org/3/library/string.html#template-strings">string.Template</a>.
 Any square brackets in the variables will be present in the output, but won't change the styles.</p>
 <p>Here's how we can fix the previous example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">return</span> <span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;hello [bold]$name[/bold]!&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">return</span> <span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;hello [bold]$name[/bold]!&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div>
 <p>You can experiment with this feature by entering a dictionary of variables in the variables text-area.</p>
 <p>Here's what that looks like:</p>
@@ -9125,42 +9328,42 @@ But you can display any of the objects in the <a href="https://github.com/Textua
 </p>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">rich.syntax</span><span class="w"> </span><span class="kn">import</span> <span class="n">Syntax</span>
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>
-<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span><span class="p">,</span> <span class="n">RenderResult</span>
-<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.reactive</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactive</span>
-<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">Widget</span>
-<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>
-<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>
-<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">CodeView</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
-<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Widget to display Python code.&quot;&quot;&quot;</span>
-<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>
-<a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>    <span class="n">DEFAULT_CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a><span class="s2">    CodeView { height: auto; }</span>
-<a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="s2">    &quot;&quot;&quot;</span>
-<a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a>
-<a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a>
-<a id="__codelineno-29-17" name="__codelineno-29-17" href="#__codelineno-29-17"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
-<a id="__codelineno-29-18" name="__codelineno-29-18" href="#__codelineno-29-18"></a>        <span class="c1"># Syntax is a Rich renderable that displays syntax highlighted code</span>
-<a id="__codelineno-29-19" name="__codelineno-29-19" href="#__codelineno-29-19"></a>        <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">line_numbers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent_guides</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a>        <span class="k">return</span> <span class="n">syntax</span>
-<a id="__codelineno-29-21" name="__codelineno-29-21" href="#__codelineno-29-21"></a>
-<a id="__codelineno-29-22" name="__codelineno-29-22" href="#__codelineno-29-22"></a>
-<a id="__codelineno-29-23" name="__codelineno-29-23" href="#__codelineno-29-23"></a><span class="k">class</span><span class="w"> </span><span class="nc">CodeApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-29-24" name="__codelineno-29-24" href="#__codelineno-29-24"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;App to demonstrate Rich renderables in Textual.&quot;&quot;&quot;</span>
-<a id="__codelineno-29-25" name="__codelineno-29-25" href="#__codelineno-29-25"></a>
-<a id="__codelineno-29-26" name="__codelineno-29-26" href="#__codelineno-29-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-29-27" name="__codelineno-29-27" href="#__codelineno-29-27"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="k">as</span> <span class="n">self_file</span><span class="p">:</span>
-<a id="__codelineno-29-28" name="__codelineno-29-28" href="#__codelineno-29-28"></a>            <span class="n">code</span> <span class="o">=</span> <span class="n">self_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<a id="__codelineno-29-29" name="__codelineno-29-29" href="#__codelineno-29-29"></a>        <span class="n">code_view</span> <span class="o">=</span> <span class="n">CodeView</span><span class="p">()</span>
-<a id="__codelineno-29-30" name="__codelineno-29-30" href="#__codelineno-29-30"></a>        <span class="n">code_view</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
-<a id="__codelineno-29-31" name="__codelineno-29-31" href="#__codelineno-29-31"></a>        <span class="k">yield</span> <span class="n">code_view</span>
-<a id="__codelineno-29-32" name="__codelineno-29-32" href="#__codelineno-29-32"></a>
-<a id="__codelineno-29-33" name="__codelineno-29-33" href="#__codelineno-29-33"></a>
-<a id="__codelineno-29-34" name="__codelineno-29-34" href="#__codelineno-29-34"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-29-35" name="__codelineno-29-35" href="#__codelineno-29-35"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">CodeApp</span><span class="p">()</span>
-<a id="__codelineno-29-36" name="__codelineno-29-36" href="#__codelineno-29-36"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">rich.syntax</span><span class="w"> </span><span class="kn">import</span> <span class="n">Syntax</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span><span class="p">,</span> <span class="n">RenderResult</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.reactive</span><span class="w"> </span><span class="kn">import</span> <span class="n">reactive</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">Widget</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">CodeView</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Widget to display Python code.&quot;&quot;&quot;</span>
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>    <span class="n">DEFAULT_CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="s2">    CodeView { height: auto; }</span>
+<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="s2">    &quot;&quot;&quot;</span>
+<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a>
+<a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a>    <span class="n">code</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a>
+<a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+<a id="__codelineno-30-18" name="__codelineno-30-18" href="#__codelineno-30-18"></a>        <span class="c1"># Syntax is a Rich renderable that displays syntax highlighted code</span>
+<a id="__codelineno-30-19" name="__codelineno-30-19" href="#__codelineno-30-19"></a>        <span class="n">syntax</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">line_numbers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent_guides</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-30-20" name="__codelineno-30-20" href="#__codelineno-30-20"></a>        <span class="k">return</span> <span class="n">syntax</span>
+<a id="__codelineno-30-21" name="__codelineno-30-21" href="#__codelineno-30-21"></a>
+<a id="__codelineno-30-22" name="__codelineno-30-22" href="#__codelineno-30-22"></a>
+<a id="__codelineno-30-23" name="__codelineno-30-23" href="#__codelineno-30-23"></a><span class="k">class</span><span class="w"> </span><span class="nc">CodeApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-30-24" name="__codelineno-30-24" href="#__codelineno-30-24"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;App to demonstrate Rich renderables in Textual.&quot;&quot;&quot;</span>
+<a id="__codelineno-30-25" name="__codelineno-30-25" href="#__codelineno-30-25"></a>
+<a id="__codelineno-30-26" name="__codelineno-30-26" href="#__codelineno-30-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-30-27" name="__codelineno-30-27" href="#__codelineno-30-27"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="k">as</span> <span class="n">self_file</span><span class="p">:</span>
+<a id="__codelineno-30-28" name="__codelineno-30-28" href="#__codelineno-30-28"></a>            <span class="n">code</span> <span class="o">=</span> <span class="n">self_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<a id="__codelineno-30-29" name="__codelineno-30-29" href="#__codelineno-30-29"></a>        <span class="n">code_view</span> <span class="o">=</span> <span class="n">CodeView</span><span class="p">()</span>
+<a id="__codelineno-30-30" name="__codelineno-30-30" href="#__codelineno-30-30"></a>        <span class="n">code_view</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+<a id="__codelineno-30-31" name="__codelineno-30-31" href="#__codelineno-30-31"></a>        <span class="k">yield</span> <span class="n">code_view</span>
+<a id="__codelineno-30-32" name="__codelineno-30-32" href="#__codelineno-30-32"></a>
+<a id="__codelineno-30-33" name="__codelineno-30-33" href="#__codelineno-30-33"></a>
+<a id="__codelineno-30-34" name="__codelineno-30-34" href="#__codelineno-30-34"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-30-35" name="__codelineno-30-35" href="#__codelineno-30-35"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">CodeApp</span><span class="p">()</span>
+<a id="__codelineno-30-36" name="__codelineno-30-36" href="#__codelineno-30-36"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
@@ -9185,7 +9388,7 @@ But you can display any of the objects in the <a href="https://github.com/Textua
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">April 11, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">April 15, 2025</span>
   </span>
 
     
