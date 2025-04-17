@@ -60,7 +60,7 @@ class Tint:
                 yield segment
             else:
                 style = (
-                    truecolor_style(style, background)
+                    truecolor_style(style, background.rich_color)
                     if style is not None
                     else NULL_STYLE
                 )
