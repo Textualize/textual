@@ -2115,33 +2115,55 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             App return value.
         """
-
-        async def run_app() -> None:
-            """Run the app."""
-            self._loop = asyncio.get_running_loop()
-            self._thread_id = threading.get_ident()
-            with self._context():
-                try:
-                    await self.run_async(
-                        headless=headless,
-                        inline=inline,
-                        inline_no_clear=inline_no_clear,
-                        mouse=mouse,
-                        size=size,
-                        auto_pilot=auto_pilot,
-                    )
-                finally:
-                    self._loop = None
-                    self._thread_id = 0
-
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app())
+            return asyncio.run(self.arun())
         else:
             # However, this works with Python<3.10:
             event_loop = asyncio.get_event_loop()
-            event_loop.run_until_complete(run_app())
+            return event_loop.run_until_complete(self.arun())
         return self.return_value
+
+    def arun(
+        self,
+        *,
+        headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = True,
+        size: tuple[int, int] | None = None,
+        auto_pilot: AutopilotCallbackType | None = None,
+    ) -> ReturnType | None:
+        """Run the app.
+
+        Args:
+            headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
+            size: Force terminal size to `(WIDTH, HEIGHT)`,
+                or None to auto-detect.
+            auto_pilot: An auto pilot coroutine.
+
+        Returns:
+            App return value.
+        """
+        self._loop = asyncio.get_running_loop()
+        self._thread_id = threading.get_ident()
+        with self._context():
+            try:
+                await self.run_async(
+                    headless=headless,
+                    inline=inline,
+                    inline_no_clear=inline_no_clear,
+                    mouse=mouse,
+                    size=size,
+                    auto_pilot=auto_pilot,
+                )
+                return self.return_value
+            finally:
+                self._loop = None
+                self._thread_id = 0
 
     async def _on_css_change(self) -> None:
         """Callback for the file monitor, called when CSS files change."""
