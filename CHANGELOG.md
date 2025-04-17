@@ -5,24 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [3.1.0] - 2025-04-12
 
 ### Fixed
 
 - Fixed markup escaping edge cases https://github.com/Textualize/textual/pull/5697
 - Fixed incorrect auto height in Collapsible https://github.com/Textualize/textual/pull/5703
+- Fixed issue with keymaps and single-letter keys https://github.com/Textualize/textual/pull/5726
+- Fixed `OptionList` size after removing or clearing options https://github.com/Textualize/textual/issues/5728
+- Fixed footer / key panel not updating when keymaps are applied https://github.com/Textualize/textual/pull/5724
+- Fixed alignment not being applied when there are min and max limits on dimensions https://github.com/Textualize/textual/pull/5732
+- Fixed issues with OptionList scrollbar not updating https://github.com/Textualize/textual/pull/5736
+- Fixed allow_focus method not overriding `can_focus()` https://github.com/Textualize/textual/pull/5737
+- Fixed overlap of Input / TextArea selection with arbitrary text selection https://github.com/Textualize/textual/pull/5739
 
 ### Changed
 
 - Collapsible title now accepts str, Text, or Content https://github.com/Textualize/textual/pull/5697
 - Rich Text objects will be converted to Content in OptionList and other widgets https://github.com/Textualize/textual/pull/5712
 - Textual will always convert dim attributes to RGB by default https://github.com/Textualize/textual/pull/5715
-- Notifications will now use Textual markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
+- Notifications will now use content markup (previously they used Console markup) https://github.com/Textualize/textual/pull/5719
 
 ### Added
 
 - Added `TEXTUAL_DIM_FACTOR` env var to set the opacity of the 'dim' ANSI attribute https://github.com/Textualize/textual/pull/5715
 - `notify()` now accepts a `markup` parameter to disable rendering the message as markup https://github.com/Textualize/textual/pull/5719
+- Added `Screen.text_selection_started_signal` https://github.com/Textualize/textual/pull/5739
+- Added `App.clear_selection()` helper method to clear arbitrary text selection of active screen https://github.com/Textualize/textual/pull/5739
 
 ## [3.0.1] - 2025-04-01
 
@@ -2837,6 +2846,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[3.1.0]: https://github.com/Textualize/textual/compare/v3.0.1...v3.1.0
 [3.0.1]: https://github.com/Textualize/textual/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/Textualize/textual/compare/v2.1.2...v3.0.0
 [2.1.2]: https://github.com/Textualize/textual/compare/v2.1.1...v2.1.2

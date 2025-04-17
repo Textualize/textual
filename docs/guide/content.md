@@ -15,11 +15,11 @@ In this chapter, we will cover all these methods.
 When building a custom widget you can embed color and style information in the string returned from the Widget's [`render()`][textual.widget.Widget.render] method.
 Markup is specified as a string which contains 
 Text enclosed in square brackets (`[]`) won't appear in the output, but will modify the style of the text that follows.
-This is known as *Textual markup*.
+This is known as *content markup*.
 
-Before we explore Textual markup in detail, let's first demonstrate some of what it can do.
+Before we explore content markup in detail, let's first demonstrate some of what it can do.
 In the following example, we have two widgets.
-The top has Textual markup enabled, while the bottom widget has Textual markup *disabled*.
+The top has content markup enabled, while the bottom widget has content markup *disabled*.
 
 Notice how the markup *tags* change the style in the first widget, but are left unaltered in the second:
 
@@ -40,7 +40,7 @@ Notice how the markup *tags* change the style in the first widget, but are left 
 
 ### Playground
 
-Textual comes with a markup playground where you can enter Textual markup and see the result's live.
+Textual comes with a markup playground where you can enter content markup and see the result's live.
 To launch the playground, run the following command:
 
 ```
@@ -312,6 +312,28 @@ Here's what that looks like:
 ```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="Play the [on $success 30% @click=app.bell]bell[/]"]}
 ```
 
+### Escaping
+
+If you precede an open bracket with a backslash (`\`), then Textual will not consider it to be a tag and the square bracket will be displayed without modification. 
+
+For example, the backslash in the following content prevents the following text from becoming bold, and the text `[bold]` will be in the output.
+
+```{.textual path="docs/examples/guide/content/playground.py" lines=16 type="\[bold]This is not bold"]}
+```
+
+!!! tip "Escaping markup"
+
+    You can also use the [escape][textual.markup.escape] function to escape tags
+
+Some methods, such as [`notify()`][textual.widget.Widget.notify], have a `markup` switch that you can use to disable markup.
+You may want to use this if you want to output a Python repr strings, so that Textual doesn't interpret a list as a tag.
+
+Here's an example:
+
+```python
+# debug code: what is my_list at this point?
+self.notify(repr(my_list), markup=False)
+```
 
 ## Content class
 

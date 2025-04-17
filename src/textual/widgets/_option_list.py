@@ -11,7 +11,7 @@ from textual._loop import loop_last
 from textual.binding import Binding, BindingType
 from textual.cache import LRUCache
 from textual.css.styles import RulesMap
-from textual.geometry import Region, Size, clamp
+from textual.geometry import Region, Size, Spacing, clamp
 from textual.message import Message
 from textual.reactive import reactive
 from textual.scroll_view import ScrollView
@@ -261,7 +261,7 @@ class OptionList(ScrollView, can_focus=True):
             id: The ID of the OptionList in the DOM.
             classes: Initial CSS classes.
             disabled: Disable the widget?
-            markup: Strips should be rendered as Textual markup if `True`, or plain text if `False`.
+            markup: Strips should be rendered as content markup if `True`, or plain text if `False`.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._markup = markup
@@ -272,7 +272,7 @@ class OptionList(ScrollView, can_focus=True):
         self._option_to_index: dict[Option, int] = {}
         """Maps an Option to it's index in self._options."""
 
-        self._option_render_cache: LRUCache[tuple[Option, Style], list[Strip]]
+        self._option_render_cache: LRUCache[tuple[Option, Style, Spacing], list[Strip]]
         self._option_render_cache = LRUCache(maxsize=1024 * 2)
         """Caches rendered options."""
 
@@ -311,6 +311,8 @@ class OptionList(ScrollView, can_focus=True):
         self._option_to_index.clear()
         self.highlighted = None
         self.refresh()
+        self.scroll_to(0, 0, animate=False)
+        self._update_lines()
         return self
 
     def add_options(self, new_options: Iterable[OptionListContent]) -> Self:
@@ -534,7 +536,7 @@ class OptionList(ScrollView, can_focus=True):
             del self._id_to_option[option._id]
         del self._option_to_index[option]
         self.highlighted = self.highlighted
-        self.refresh()
+        self._clear_caches()
         return self
 
     def _pre_remove_option(self, option: Option, index: int) -> None:
@@ -656,7 +658,7 @@ class OptionList(ScrollView, can_focus=True):
         self.refresh()
 
     def notify_style_update(self) -> None:
-        self._clear_caches()
+        self.refresh()
         super().notify_style_update()
 
     def _on_resize(self):
@@ -739,7 +741,7 @@ class OptionList(ScrollView, can_focus=True):
         padding = self.get_component_styles("option-list--option").padding
         render_width = self.scrollable_content_region.width
         width = render_width - self._get_left_gutter_width()
-        cache_key = (option, style)
+        cache_key = (option, style, padding)
         if (strips := self._option_render_cache.get(cache_key)) is None:
             visual = self._get_visual(option)
             if padding:
@@ -759,8 +761,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def _update_lines(self) -> None:
         """Update internal structures when new lines are added."""
-        if not self.options or not self.scrollable_content_region:
-            # No options -- nothing to
+        if not self.scrollable_content_region:
             return
 
         line_cache = self._line_cache

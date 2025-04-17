@@ -107,6 +107,7 @@ from textual.keys import (
     REPLACED_KEYS,
     _character_to_key,
     _get_unicode_name_from_key,
+    _normalize_key_list,
     format_key,
 )
 from textual.messages import CallbackType, Prune
@@ -3697,6 +3698,13 @@ class App(Generic[ReturnType], DOMNode):
                 )
                 return
 
+    @classmethod
+    def _normalize_keymap(cls, keymap: Keymap) -> Keymap:
+        """Normalizes the keys in a keymap, so they use long form, i.e. "question_mark" rather than "?"."""
+        return {
+            binding_id: _normalize_key_list(keys) for binding_id, keys in keymap.items()
+        }
+
     def set_keymap(self, keymap: Keymap) -> None:
         """Set the keymap, a mapping of binding IDs to key strings.
 
@@ -3709,7 +3717,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             keymap: A mapping of binding IDs to key strings.
         """
-        self._keymap = keymap
+
+        self._keymap = self._normalize_keymap(keymap)
+        self.refresh_bindings()
 
     def update_keymap(self, keymap: Keymap) -> None:
         """Update the App's keymap, merging with `keymap`.
@@ -3720,7 +3730,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             keymap: A mapping of binding IDs to key strings.
         """
-        self._keymap = {**self._keymap, **keymap}
+
+        self._keymap = {**self._keymap, **self._normalize_keymap(keymap)}
+        self.refresh_bindings()
 
     def handle_bindings_clash(
         self, clashed_bindings: set[Binding], node: DOMNode
@@ -4278,6 +4290,13 @@ class App(Generic[ReturnType], DOMNode):
             # Update the toast rack.
             self.call_later(toast_rack.show, self._notifications)
 
+    def clear_selection(self) -> None:
+        """Clear text selection on the active screen."""
+        try:
+            self.screen.clear_selection()
+        except NoScreen:
+            pass
+
     def notify(
         self,
         message: str,
@@ -4299,7 +4318,7 @@ class App(Generic[ReturnType], DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout (in seconds) for the notification, or `None` for default.
-            markup: Render the message as Textual markup?
+            markup: Render the message as content markup?
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],

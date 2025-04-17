@@ -1,3 +1,8 @@
+"""
+Utilities related to content markup.
+
+"""
+
 from __future__ import annotations
 
 from textual.css.parse import substitute_references
@@ -27,7 +32,7 @@ if TYPE_CHECKING:
 
 
 class MarkupError(Exception):
-    """An error occurred parsing Textual markup."""
+    """An error occurred parsing content markup."""
 
 
 expect_markup_tag = (
@@ -73,7 +78,7 @@ expect_markup_expression = (
 
 
 class MarkupTokenizer(TokenizerState):
-    """Tokenizes Textual markup."""
+    """Tokenizes content markup."""
 
     EXPECT = expect_markup.expect_eof()
     STATE_MAP = {
@@ -171,7 +176,7 @@ def escape(
 
 
 def parse_style(style: str, variables: dict[str, str] | None = None) -> Style:
-    """Parse an encoded style.
+    """Parse a style with substituted variables.
 
     Args:
         style: Style encoded in a string.

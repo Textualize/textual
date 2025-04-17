@@ -10,6 +10,7 @@ from textual.binding import (
     InvalidBinding,
     NoBinding,
 )
+from textual.screen import Screen
 
 BINDING1 = Binding("a,b", action="action1", description="description1")
 BINDING2 = Binding("c", action="action2", description="description2")
@@ -102,3 +103,37 @@ def test_invalid_binding():
 
         class BrokenApp(App):
             BINDINGS = [(", ,", "foo", "Broken")]
+
+
+async def test_keymap_update() -> None:
+    """Check that when keymaps are updated, the bindings_updated signal is sent."""
+
+    bindings_updated: list[Screen] = []
+
+    class KeymapApp(App):
+        BINDINGS = [Binding("q", "quit", "Quit", id="quit")]
+
+    def signal_bindings_updated(screen: Screen) -> None:
+        bindings_updated.append(screen)
+
+    app = KeymapApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        app.screen.bindings_updated_signal.subscribe(app, signal_bindings_updated)
+        assert not bindings_updated
+        app.set_keymap({"quit": "f1"})
+        await pilot.pause()
+        assert bindings_updated == [app.screen]
+        app.set_keymap({"quit": "f1"})
+        await pilot.pause()
+        assert bindings_updated == [app.screen, app.screen]
+
+
+async def test_keymap_key() -> None:
+    app: App[None] = App()
+
+    async with app.run_test():
+        app.set_keymap({"foo": "?,space"})
+        assert app._keymap == {"foo": "question_mark,space"}
+        app.update_keymap({"bar": "$"})
+        assert app._keymap == {"bar": "dollar_sign", "foo": "question_mark,space"}

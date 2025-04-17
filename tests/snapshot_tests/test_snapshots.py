@@ -3842,7 +3842,7 @@ def test_select_list_in_collapsible(snap_compare):
             yield CustomWidget()
             yield Footer()
 
-    snap_compare(MyApp())
+    assert snap_compare(MyApp())
 
 
 def test_enforce_visual(snap_compare):
@@ -3873,7 +3873,7 @@ def test_enforce_visual(snap_compare):
         def compose(self) -> ComposeResult:
             yield OptionList(*[OverflowOption() for _ in range(100)])
 
-    snap_compare(OptionListOverflowApp())
+    assert snap_compare(OptionListOverflowApp())
 
 
 def test_notifications_markup(snap_compare):
@@ -3892,4 +3892,113 @@ def test_notifications_markup(snap_compare):
                 timeout=100,
             )
 
-    snap_compare(ToastApp())
+    assert snap_compare(ToastApp())
+
+
+def test_option_list_size_when_options_removed(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5728
+
+    You should see the height of the OptionList has updated correctly after
+    half of its options are removed.
+    """
+
+    class OptionListApp(App):
+        BINDINGS = [("x", "remove_options", "Remove options")]
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(*[f"Option {n}" for n in range(30)])
+            yield Footer()
+
+        def action_remove_options(self) -> None:
+            option_list = self.query_one(OptionList)
+            for _ in range(15):
+                option_list.remove_option_at_index(0)
+
+    assert snap_compare(OptionListApp(), press=["x"])
+
+
+def test_option_list_size_when_options_cleared(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5728
+
+    You should see the height of the OptionList has updated correctly after
+    its options are cleared.
+    """
+
+    class OptionListApp(App):
+        BINDINGS = [("x", "clear_options", "Clear options")]
+
+        def compose(self) -> ComposeResult:
+            yield OptionList(*[f"Option {n}" for n in range(30)])
+            yield Footer()
+
+        def action_clear_options(self) -> None:
+            self.query_one(OptionList).clear_options()
+
+    assert snap_compare(OptionListApp(), press=["x"])
+
+
+def test_alignment_with_auto_and_min_height(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5608
+    You should see a blue label that is centered both horizontally and vertically
+    within a pink container. The container has auto width and height, but also
+    a min-width of 20 and a min-height of 3.
+    """
+
+    class AlignmentApp(App):
+        CSS = """
+        Container {
+            align: center middle;
+            height: auto;
+            min-height: 3;
+            width: auto;
+            min-width: 20;
+            background: pink;
+        }
+        Label {
+            background: blue;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container():
+                yield Label("centered")
+
+    assert snap_compare(AlignmentApp())
+
+
+def test_allow_focus(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5609
+
+    You should see two placeholders split vertically.
+    The top should have the label "FOCUSABLE", and have a heavy red border.
+    The bottom should have the label "NON FOCUSABLE" and have the default border.
+    """
+
+    class Focusable(Placeholder, can_focus=False):
+        """Override can_focus from False to True"""
+
+        def allow_focus(self) -> bool:
+            return True
+
+    class NonFocusable(Placeholder, can_focus=True):
+        """Override can_focus from True to False"""
+
+        def allow_focus(self) -> bool:
+            return False
+
+    class FocusApp(App):
+        CSS = """
+        Placeholder {
+            height: 1fr;
+        }
+        *:can-focus {
+            border: heavy red;
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Focusable("FOCUSABLE")
+            yield NonFocusable("NON FOCUSABLE")
+
+    assert snap_compare(FocusApp())
