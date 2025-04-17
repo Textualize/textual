@@ -43,9 +43,9 @@ class Signal(Generic[SignalT]):
         """
         self._owner = ref(owner)
         self._name = name
-        self._subscriptions: WeakKeyDictionary[DOMNode, list[SignalCallbackType]] = (
-            WeakKeyDictionary()
-        )
+        self._subscriptions: WeakKeyDictionary[
+            DOMNode, list[SignalCallbackType[SignalT]]
+        ] = WeakKeyDictionary()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "owner", self.owner
@@ -60,7 +60,7 @@ class Signal(Generic[SignalT]):
     def subscribe(
         self,
         node: DOMNode,
-        callback: SignalCallbackType,
+        callback: SignalCallbackType[SignalT],
         immediate: bool = False,
     ) -> None:
         """Subscribe a node to this signal.
@@ -84,13 +84,13 @@ class Signal(Generic[SignalT]):
 
         if immediate:
 
-            def signal_callback(data: object) -> None:
+            def signal_callback(data: SignalT) -> None:
                 """Invoke the callback immediately."""
                 callback(data)
 
         else:
 
-            def signal_callback(data: object) -> None:
+            def signal_callback(data: SignalT) -> None:
                 """Post the callback to the node, to call at the next opertunity."""
                 node.call_next(callback, data)
 
