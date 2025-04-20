@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import weakref
 from asyncio import CancelledError, Event, Task, create_task, sleep
-from functools import partial
 from typing import Callable, NamedTuple
 
 try:
@@ -61,7 +60,7 @@ class SyntaxAwareDocument(Document):
         """The tree-sitter Parser or None if tree-sitter is unavailable."""
 
         self._syntax_tree: Tree = self._parser.parse(
-            partial(self._read_callable, lines=self.lines)
+            self.text.encode("utf-8")
         )  # type: ignore
         """The tree-sitter Tree (syntax tree) built from the document."""
 
@@ -165,7 +164,7 @@ class SyntaxAwareDocument(Document):
         )
         return replace_result
 
-    def reparse(self, timeout_us: int, lines: list[str], syntax_tree=None) -> bool:
+    def reparse(self, timeout_us: int, text: bytes) -> bool:
         """Reparse the document.
 
         Args:
@@ -176,13 +175,12 @@ class SyntaxAwareDocument(Document):
             True if parsing succeeded and False if a timeout occurred.
         """
         assert timeout_us > 0
-        read_source = partial(self._read_callable, lines=lines)
         tree = self._syntax_tree
         saved_timeout = self._parser.timeout_micros
         try:
             self._parser.timeout_micros = timeout_us
             try:
-                tree = self._parser.parse(read_source, tree)  # type: ignore[arg-type]
+                tree = self._parser.parse(text, tree)  # type: ignore[arg-type]
             except ValueError:
                 # The only known cause is a timeout.
                 return False
@@ -194,7 +192,7 @@ class SyntaxAwareDocument(Document):
                         self._syntax_tree = tree
 
                     changed_ranges = self._syntax_tree.changed_ranges(tree)
-                    self._syntax_tree_update_callback(self._syntax_tree, len(lines))
+                    self._syntax_tree_update_callback(self._syntax_tree)
                 else:
                     self._syntax_tree = tree
                 return True
@@ -256,50 +254,6 @@ class SyntaxAwareDocument(Document):
             bytes_on_left = 0
         return row, bytes_on_left
 
-    def _read_callable(
-        self,
-        byte_offset: int,
-        point: tuple[int, int],
-        lines: list[str],
-    ) -> bytes:
-        """A callable which informs tree-sitter about the document content.
-
-        This is passed to tree-sitter which will call it frequently to retrieve
-        the bytes from the document.
-
-        Args:
-            byte_offset: The number of (utf-8) bytes from the start of the document.
-            point: A tuple (row index, column *byte* offset). Note that this differs
-                from our Location tuple which is (row_index, column codepoint offset).
-            lines: The lines of the document being parsed.
-
-        Returns:
-            All the utf-8 bytes between the byte_offset/point and the end of the current
-                line _including_ the line separator character(s). Returns None if the
-                offset/point requested by tree-sitter doesn't correspond to a byte.
-        """
-        row, column = point
-        newline = self.newline
-
-        row_out_of_bounds = row >= len(lines)
-        if row_out_of_bounds:
-            return b""
-        else:
-            row_text = lines[row]
-
-        encoded_row = _utf8_encode(row_text)
-        encoded_row_length = len(encoded_row)
-
-        if column < encoded_row_length:
-            return encoded_row[column:] + _utf8_encode(newline)
-        elif column == encoded_row_length:
-            return _utf8_encode(newline[0])
-        elif column == encoded_row_length + 1:
-            if newline == "\r\n":
-                return b"\n"
-
-        return b""
-
 
 class BackgroundSyntaxParser:
     """A provider of incremental background parsing for syntax highlighting.
@@ -357,15 +311,15 @@ class BackgroundSyntaxParser:
 
         # In order to allow the user to continue editing without interruption, we reparse
         # a snapshot of the TextArea's document.
-        copy_of_text_for_parsing = document.copy_of_lines()
+        copy_of_text_for_parsing = document.text.encode("utf-8")
 
-        # Use tree-sitter's parser timeout mechanism, when necessary, break the
-        # full reparse into multiple steps. Most of the time, tree-sitter is so
-        # fast that no looping occurs.
+        # Use tree-sitter's parser timeout mechanism to break the full reparse
+        # into multiple steps. Most of the time, tree-sitter is so fast that no
+        # looping occurs.
         parsed_ok = False
         while not parsed_ok:
             parsed_ok = document.reparse(
-                self.PARSE_TIMEOUT_MICROSECONDS, lines=copy_of_text_for_parsing
+                self.PARSE_TIMEOUT_MICROSECONDS, text=copy_of_text_for_parsing
             )
             if not parsed_ok:
                 # Sleeping for zero seconds allows other tasks, I/O, *etc.* to execute,

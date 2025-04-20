@@ -1208,7 +1208,7 @@ TextArea {
         # Otherwise we capture all printable keys
         return character is not None and character.isprintable()
 
-    def _handle_syntax_tree_update(self, tree: Tree, line_count: int) -> None:
+    def _handle_syntax_tree_update(self, tree: Tree) -> None:
         """Reflect changes to the syntax tree."""
         self._trigger_repaint()
 
@@ -1693,11 +1693,6 @@ TextArea {
             return self._do_prepare_for_repaint()
 
     def _do_prepare_for_repaint(self) -> Collection[Region]:
-        # TODO:
-        #   This is being used as a hook to prepare for an imminent screen
-        #   update, which is not the intended use of this method. A proper
-        #   'prepare for screen update' hook.
-
         is_syntax_aware = self.is_syntax_aware
         if is_syntax_aware:
             highlights = self._highlights
@@ -1849,7 +1844,7 @@ TextArea {
                         range_end = min(sel_end, text_length)
                         if not line_text and yy != cursor_y:
                             # Make sure that empty line show up as selected.
-                            line_text = TextReprString("▌")
+                            line_text = TextReprString.create("▌")
                             select_range = range(1, 0, -1)
                         elif sel_start < sel_end:
                             # The selection covers part of this line section.
