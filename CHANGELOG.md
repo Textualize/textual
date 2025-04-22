@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+
+## [3.1.1] - 2024-04-22
 
 ### Fixed
 
+- Fixed issue with tint filter https://github.com/Textualize/textual/pull/5757
 - Fixed a crash when setting keymap before app mount https://github.com/Textualize/textual/issues/5742
 
 ## [3.1.0] - 2025-04-12
@@ -2852,6 +2854,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[3.1.1]: https://github.com/Textualize/textual/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/Textualize/textual/compare/v3.0.1...v3.1.0
 [3.0.1]: https://github.com/Textualize/textual/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/Textualize/textual/compare/v2.1.2...v3.0.0
