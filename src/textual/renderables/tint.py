@@ -52,6 +52,7 @@ class Tint:
         _Segment = Segment
 
         truecolor_style = ANSIToTruecolor(ansi_theme).truecolor_style
+        background_rich_color = background.rich_color
 
         NULL_STYLE = Style()
         for segment in segments:
@@ -60,7 +61,7 @@ class Tint:
                 yield segment
             else:
                 style = (
-                    truecolor_style(style, background)
+                    truecolor_style(style, background_rich_color)
                     if style is not None
                     else NULL_STYLE
                 )

@@ -202,12 +202,13 @@ class DimFilter(LineFilter):
         _Segment = Segment
         _dim_style = dim_style
         factor = self.dim_factor
+        background_rich_color = background.rich_color
 
         return [
             (
                 _Segment(
                     segment.text,
-                    _dim_style(segment.style, background, factor),
+                    _dim_style(segment.style, background_rich_color, factor),
                     None,
                 )
                 if segment.style is not None and segment.style.dim
