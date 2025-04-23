@@ -223,7 +223,7 @@ class Tile(containers.Vertical):
             width, height = self.tile_size
             self.styles.width = width
             self.styles.height = height
-            column, row = self.position
+            column, row = self.start_position
             self.set_scroll(column * width, row * height)
         self.offset = self.position * self.tile_size
 
