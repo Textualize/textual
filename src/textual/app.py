@@ -2688,7 +2688,7 @@ class App(Generic[ReturnType], DOMNode):
         except LookupError:
             message_pump = self.app
 
-        future = AwaitScreen()
+        future: AwaitScreen[ScreenResultType] = AwaitScreen()
         next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
