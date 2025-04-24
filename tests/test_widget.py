@@ -628,7 +628,6 @@ def test_lazy_loading() -> None:
         from textual.widgets import Foo  # nopycln: import
 
     from textual import widgets
-    from textual.widgets import Label
 
     assert not hasattr(widgets, "foo")
     assert not hasattr(widgets, "bar")
