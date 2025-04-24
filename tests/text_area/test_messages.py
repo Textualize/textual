@@ -35,6 +35,7 @@ def get_selection_changed_messages(
     ]
 
 
+@pytest.mark.anyio
 async def test_changed_message_edit_via_api():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -50,6 +51,7 @@ async def test_changed_message_edit_via_api():
         ]
 
 
+@pytest.mark.anyio
 async def test_changed_message_via_typing():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -64,6 +66,7 @@ async def test_changed_message_via_typing():
         ]
 
 
+@pytest.mark.anyio
 async def test_changed_message_edit_via_assignment():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -77,6 +80,7 @@ async def test_changed_message_edit_via_assignment():
         assert get_selection_changed_messages(app.messages) == []
 
 
+@pytest.mark.anyio
 async def test_selection_changed_via_api():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -91,6 +95,7 @@ async def test_selection_changed_via_api():
         ]
 
 
+@pytest.mark.anyio
 async def test_selection_changed_via_typing():
     app = TextAreaApp()
     async with app.run_test() as pilot:

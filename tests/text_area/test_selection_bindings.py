@@ -29,6 +29,7 @@ async def app(request):
     return TextAreaApp(read_only=request.param)
 
 
+@pytest.mark.anyio
 async def test_mouse_click(app: TextAreaApp):
     """When you click the TextArea, the cursor moves to the expected location."""
     async with app.run_test() as pilot:
@@ -37,6 +38,7 @@ async def test_mouse_click(app: TextAreaApp):
         assert text_area.selection == Selection.cursor((1, 0))
 
 
+@pytest.mark.anyio
 async def test_mouse_click_clamp_from_right(app: TextAreaApp):
     """When you click to the right of the document bounds, the cursor is clamped
     to within the document bounds."""
@@ -46,6 +48,7 @@ async def test_mouse_click_clamp_from_right(app: TextAreaApp):
         assert text_area.selection == Selection.cursor((4, 0))
 
 
+@pytest.mark.anyio
 async def test_mouse_click_gutter_clamp(app: TextAreaApp):
     """When you click the gutter, it selects the start of the line."""
     async with app.run_test() as pilot:
@@ -54,6 +57,7 @@ async def test_mouse_click_gutter_clamp(app: TextAreaApp):
         assert text_area.selection == Selection.cursor((2, 0))
 
 
+@pytest.mark.anyio
 async def test_cursor_movement_basic():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -73,6 +77,7 @@ async def test_cursor_movement_basic():
         assert text_area.selection == Selection.cursor((0, 0))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_right(app: TextAreaApp):
     """When you press shift+right the selection is updated correctly."""
     async with app.run_test() as pilot:
@@ -81,6 +86,7 @@ async def test_cursor_selection_right(app: TextAreaApp):
         assert text_area.selection == Selection((0, 0), (0, 3))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_right_to_previous_line(app: TextAreaApp):
     """When you press shift+right resulting in the cursor moving to the next line,
     the selection is updated correctly."""
@@ -91,6 +97,7 @@ async def test_cursor_selection_right_to_previous_line(app: TextAreaApp):
         assert text_area.selection == Selection((0, 15), (1, 2))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_left(app: TextAreaApp):
     """When you press shift+left the selection is updated correctly."""
     async with app.run_test() as pilot:
@@ -100,6 +107,7 @@ async def test_cursor_selection_left(app: TextAreaApp):
         assert text_area.selection == Selection((2, 5), (2, 2))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_left_to_previous_line(app: TextAreaApp):
     """When you press shift+left resulting in the cursor moving back to the previous line,
     the selection is updated correctly."""
@@ -113,6 +121,7 @@ async def test_cursor_selection_left_to_previous_line(app: TextAreaApp):
         assert text_area.selection == Selection((2, 2), (1, end_of_previous_line))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_up(app: TextAreaApp):
     """When you press shift+up the selection is updated correctly."""
     async with app.run_test() as pilot:
@@ -123,6 +132,7 @@ async def test_cursor_selection_up(app: TextAreaApp):
         assert text_area.selection == Selection((2, 3), (1, 3))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_up_when_cursor_on_first_line(app: TextAreaApp):
     """When you press shift+up the on the first line, it selects to the start."""
     async with app.run_test() as pilot:
@@ -135,6 +145,7 @@ async def test_cursor_selection_up_when_cursor_on_first_line(app: TextAreaApp):
         assert text_area.selection == Selection((0, 4), (0, 0))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_down(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -144,6 +155,7 @@ async def test_cursor_selection_down(app: TextAreaApp):
         assert text_area.selection == Selection((2, 5), (3, 5))
 
 
+@pytest.mark.anyio
 async def test_cursor_selection_down_when_cursor_on_last_line(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -156,6 +168,7 @@ async def test_cursor_selection_down_when_cursor_on_last_line(app: TextAreaApp):
         assert text_area.selection == Selection((1, 2), (1, 5))
 
 
+@pytest.mark.anyio
 async def test_cursor_word_right(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -166,6 +179,7 @@ async def test_cursor_word_right(app: TextAreaApp):
         assert text_area.selection == Selection.cursor((0, 3))
 
 
+@pytest.mark.anyio
 async def test_cursor_word_right_select(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -176,6 +190,7 @@ async def test_cursor_word_right_select(app: TextAreaApp):
         assert text_area.selection == Selection((0, 0), (0, 3))
 
 
+@pytest.mark.anyio
 async def test_cursor_word_left(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -187,6 +202,7 @@ async def test_cursor_word_left(app: TextAreaApp):
         assert text_area.selection == Selection.cursor((0, 4))
 
 
+@pytest.mark.anyio
 async def test_cursor_word_left_select(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -199,6 +215,7 @@ async def test_cursor_word_left_select(app: TextAreaApp):
 
 
 @pytest.mark.parametrize("key", ["end", "ctrl+e"])
+@pytest.mark.anyio
 async def test_cursor_to_line_end(key, app: TextAreaApp):
     """You can use the keyboard to jump the cursor to the end of the current line."""
     async with app.run_test() as pilot:
@@ -211,6 +228,7 @@ async def test_cursor_to_line_end(key, app: TextAreaApp):
 
 
 @pytest.mark.parametrize("key", ["home", "ctrl+a"])
+@pytest.mark.anyio
 async def test_cursor_to_line_home_basic_behaviour(key, app: TextAreaApp):
     """You can use the keyboard to jump the cursor to the start of the current line."""
     async with app.run_test() as pilot:
@@ -232,6 +250,7 @@ async def test_cursor_to_line_home_basic_behaviour(key, app: TextAreaApp):
         ((0, 15), (0, 4)),
     ],
 )
+@pytest.mark.anyio
 async def test_cursor_line_home_smart_home(
     cursor_start, cursor_destination, app: TextAreaApp
 ):
@@ -246,6 +265,7 @@ async def test_cursor_line_home_smart_home(
         assert text_area.selection == Selection.cursor(cursor_destination)
 
 
+@pytest.mark.anyio
 async def test_cursor_page_down(app: TextAreaApp):
     """Pagedown moves the cursor down 1 page, retaining column index."""
     async with app.run_test() as pilot:
@@ -257,6 +277,7 @@ async def test_cursor_page_down(app: TextAreaApp):
         assert text_area.selection == Selection.cursor((app.size.height - margin, 1))
 
 
+@pytest.mark.anyio
 async def test_cursor_page_up(app: TextAreaApp):
     """Pageup moves the cursor up 1 page, retaining column index."""
     async with app.run_test() as pilot:
@@ -270,6 +291,7 @@ async def test_cursor_page_up(app: TextAreaApp):
         )
 
 
+@pytest.mark.anyio
 async def test_cursor_vertical_movement_visual_alignment_snapping(app: TextAreaApp):
     """When you move the cursor vertically, it should stay vertically
     aligned even when double-width characters are used."""
@@ -290,6 +312,7 @@ async def test_cursor_vertical_movement_visual_alignment_snapping(app: TextAreaA
         assert text_area.selection == Selection.cursor((1, 3))
 
 
+@pytest.mark.anyio
 async def test_select_line_binding(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
@@ -300,6 +323,7 @@ async def test_select_line_binding(app: TextAreaApp):
         assert text_area.selection == Selection((2, 0), (2, 56))
 
 
+@pytest.mark.anyio
 async def test_select_all_binding(app: TextAreaApp):
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)

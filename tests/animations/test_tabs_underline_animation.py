@@ -14,6 +14,7 @@ class TabbedContentApp(App[None]):
                 yield Label("Hey!")
 
 
+@pytest.mark.anyio
 async def test_tabs_underline_animates_on_full() -> None:
     """The underline takes some time to move when animated."""
     app = TabbedContentApp()
@@ -30,6 +31,7 @@ async def test_tabs_underline_animates_on_full() -> None:
         assert "highlight_end" in animations
 
 
+@pytest.mark.anyio
 async def test_tabs_underline_animates_on_basic() -> None:
     """The underline takes some time to move when animated."""
     app = TabbedContentApp()
@@ -46,6 +48,7 @@ async def test_tabs_underline_animates_on_basic() -> None:
         assert "highlight_end" in animations
 
 
+@pytest.mark.anyio
 async def test_tabs_underline_does_not_animate_on_none() -> None:
     """The underline jumps to its final position when not animated."""
     app = TabbedContentApp()

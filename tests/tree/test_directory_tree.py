@@ -28,6 +28,7 @@ class DirectoryTreeApp(App[None]):
         self.messages.append(event.__class__.__name__)
 
 
+@pytest.mark.anyio
 async def test_directory_tree_file_selected_message(tmp_path: Path) -> None:
     """Selecting a file should result in a file selected message being emitted."""
 
@@ -51,6 +52,7 @@ async def test_directory_tree_file_selected_message(tmp_path: Path) -> None:
         assert pilot.app.messages == ["FileSelected"]
 
 
+@pytest.mark.anyio
 async def test_directory_tree_directory_selected_message(tmp_path: Path) -> None:
     """Selecting a directory should result in a directory selected message being emitted."""
 
@@ -82,6 +84,7 @@ async def test_directory_tree_directory_selected_message(tmp_path: Path) -> None
         assert pilot.app.messages == ["DirectorySelected", "DirectorySelected"]
 
 
+@pytest.mark.anyio
 async def test_directory_tree_reload_node(tmp_path: Path) -> None:
     """Reloading a node of a directory tree should display newly created file inside the directory."""
 
@@ -126,6 +129,7 @@ async def test_directory_tree_reload_node(tmp_path: Path) -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_directory_tree_reload_other_node(tmp_path: Path) -> None:
     """Reloading a node of a directory tree should not reload content of other directory."""
 
@@ -177,6 +181,7 @@ async def test_directory_tree_reload_other_node(tmp_path: Path) -> None:
         assert unaffected_node.children[0].label == Text(NOT_RELOADED_FILE3_NAME)
 
 
+@pytest.mark.anyio
 async def test_directory_tree_reloading_preserves_state(tmp_path: Path) -> None:
     """Regression test for https://github.com/Textualize/textual/issues/4122.
 

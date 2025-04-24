@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widget import Widget
 
 
+@pytest.mark.anyio
 async def test_border_subtitle():
     class BorderWidget(Widget):
         BORDER_TITLE = "foo"

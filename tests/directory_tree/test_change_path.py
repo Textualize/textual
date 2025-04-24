@@ -10,6 +10,7 @@ class DirectoryTreeApp(App[None]):
         yield DirectoryTree(".")
 
 
+@pytest.mark.anyio
 async def test_change_directory_tree_path(tmpdir: Path) -> None:
     """The DirectoryTree should react to the path changing."""
 

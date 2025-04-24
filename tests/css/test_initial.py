@@ -31,6 +31,7 @@ class CustomWidget3(CustomWidget2):
     pass
 
 
+@pytest.mark.anyio
 async def test_initial_default():
     class InitialApp(App):
         def compose(self) -> ComposeResult:
@@ -53,6 +54,7 @@ async def test_initial_default():
         assert custom2.styles.background == default_background
 
 
+@pytest.mark.anyio
 async def test_initial():
     class InitialApp(App):
         CSS = """

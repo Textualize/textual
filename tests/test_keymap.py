@@ -41,6 +41,7 @@ class Counter(App[None]):
         self.clashed_node = node
 
 
+@pytest.mark.anyio
 async def test_keymap_default_binding_replaces_old_binding():
     app = Counter({"app.increment": "right,k"})
     async with app.run_test() as pilot:
@@ -53,6 +54,7 @@ async def test_keymap_default_binding_replaces_old_binding():
         assert app.count == 2
 
 
+@pytest.mark.anyio
 async def test_keymap_sends_message_when_clash():
     app = Counter({"app.increment": "d"})
     async with app.run_test() as pilot:
@@ -66,6 +68,7 @@ async def test_keymap_sends_message_when_clash():
         assert clash.id == "app.increment"
 
 
+@pytest.mark.anyio
 async def test_keymap_with_unknown_id_is_noop():
     app = Counter({"this.is.an.unknown.id": "d"})
     async with app.run_test() as pilot:
@@ -73,6 +76,7 @@ async def test_keymap_with_unknown_id_is_noop():
         assert app.count == -1
 
 
+@pytest.mark.anyio
 async def test_keymap_inherited_bindings_same_id():
     """When a child widget inherits from a parent widget, if they have
     a binding with the same ID, then both parent and child bindings will
@@ -134,6 +138,7 @@ async def test_keymap_inherited_bindings_same_id():
         assert child_counter == 1
 
 
+@pytest.mark.anyio
 async def test_keymap_child_with_different_id_overridden():
     """Ensures that overriding a parent binding doesn't influence a child
     binding with a different ID."""
@@ -194,6 +199,7 @@ async def test_keymap_child_with_different_id_overridden():
         assert child_counter == 1
 
 
+@pytest.mark.anyio
 async def test_set_keymap_before_app_mount():
     """Ensure we can set the keymap before mount without crash.
 

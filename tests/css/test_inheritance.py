@@ -25,6 +25,7 @@ class Widget2(Widget1):
 @pytest.mark.xfail(
     reason="Overlapping styles should prioritize the most recent widget in the inheritance chain"
 )
+@pytest.mark.anyio
 async def test_inheritance():
     class InheritanceApp(App):
         def compose(self) -> ComposeResult:

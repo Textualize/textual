@@ -33,6 +33,7 @@ wiggle room.
 """
 
 
+@pytest.mark.anyio
 async def test_no_tip_gets_no_tooltip() -> None:
     """If there is no tooltip, none should show."""
     async with TooltipApp().run_test(tooltips=True) as pilot:
@@ -43,6 +44,7 @@ async def test_no_tip_gets_no_tooltip() -> None:
         assert pilot.app.query_one("#textual-tooltip").display is False
 
 
+@pytest.mark.anyio
 async def test_tip_gets_a_tooltip() -> None:
     """If there is a tooltip, it should show."""
     async with TooltipApp().run_test(tooltips=True) as pilot:
@@ -53,6 +55,7 @@ async def test_tip_gets_a_tooltip() -> None:
         assert pilot.app.query_one("#textual-tooltip").display is True
 
 
+@pytest.mark.anyio
 async def test_mouse_move_removes_a_tooltip() -> None:
     """If there is a mouse move when there is a tooltip, it should disappear."""
     async with TooltipApp().run_test(tooltips=True) as pilot:
@@ -66,6 +69,7 @@ async def test_mouse_move_removes_a_tooltip() -> None:
         assert pilot.app.query_one("#textual-tooltip").display is False
 
 
+@pytest.mark.anyio
 async def test_removing_tipper_should_remove_tooltip() -> None:
     """If the tipping widget is removed, it should remove the tooltip."""
     async with TooltipApp().run_test(tooltips=True) as pilot:
@@ -79,6 +83,7 @@ async def test_removing_tipper_should_remove_tooltip() -> None:
         assert pilot.app.query_one("#textual-tooltip").display is False
 
 
+@pytest.mark.anyio
 async def test_making_tipper_invisible_should_remove_tooltip() -> None:
     """If the tipping widget is made invisible, it should remove the tooltip."""
     async with TooltipApp().run_test(tooltips=True) as pilot:
@@ -92,6 +97,7 @@ async def test_making_tipper_invisible_should_remove_tooltip() -> None:
         assert pilot.app.query_one("#textual-tooltip").display is False
 
 
+@pytest.mark.anyio
 async def test_making_tipper_not_displayed_should_remove_tooltip() -> None:
     """If the tipping widget is made display none, it should remove the tooltip."""
     async with TooltipApp().run_test(tooltips=True) as pilot:
@@ -105,6 +111,7 @@ async def test_making_tipper_not_displayed_should_remove_tooltip() -> None:
         assert pilot.app.query_one("#textual-tooltip").display is False
 
 
+@pytest.mark.anyio
 async def test_making_tipper_shuffle_away_should_remove_tooltip() -> None:
     """If the tipping widget moves from under the cursor, it should remove the tooltip."""
     async with TooltipApp().run_test(tooltips=True) as pilot:

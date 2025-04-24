@@ -17,6 +17,7 @@ class CommandPaletteApp(App[None]):
         self.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_escape_closes_when_no_list_visible() -> None:
     """Pressing escape when no list is visible should close the command palette."""
     async with CommandPaletteApp().run_test() as pilot:

@@ -13,6 +13,7 @@ class RemoveOnTimerApp(App[None]):
             self.mount(SelfRemovingLabel("I will remove myself!"))
 
 
+@pytest.mark.anyio
 async def test_multiple_simultaneous_removals():
     """Regression test for https://github.com/Textualize/textual/issues/2854."""
     # The app should run and finish without raising any errors.

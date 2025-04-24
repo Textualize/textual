@@ -24,6 +24,7 @@ class OptionListApp(App[None]):
         self.messages.append(event.__class__.__name__)
 
 
+@pytest.mark.anyio
 async def test_option_list_clicking_separator() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/4710"""
     app = OptionListApp()

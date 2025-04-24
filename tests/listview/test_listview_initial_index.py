@@ -18,6 +18,7 @@ from textual.widgets import Label, ListItem, ListView
         (8, 1),
     ],
 )
+@pytest.mark.anyio
 async def test_listview_initial_index(initial_index, expected_index) -> None:
     """Regression test for https://github.com/Textualize/textual/issues/4449"""
 

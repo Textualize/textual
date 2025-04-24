@@ -19,6 +19,7 @@ class SwitcherApp(App[None]):
                 yield Widget(id=f"w{n}")
 
 
+@pytest.mark.anyio
 async def test_no_initial_display() -> None:
     """Test starting a content switcher with nothing shown."""
     async with SwitcherApp().run_test() as pilot:
@@ -29,6 +30,7 @@ async def test_no_initial_display() -> None:
         assert pilot.app.query_one(ContentSwitcher).visible_content is None
 
 
+@pytest.mark.anyio
 async def test_initial_display() -> None:
     """Test starting a content switcher with a widget initially shown."""
     async with SwitcherApp("w3").run_test() as pilot:
@@ -40,6 +42,7 @@ async def test_initial_display() -> None:
         ).visible_content is pilot.app.query_one("#w3")
 
 
+@pytest.mark.anyio
 async def test_no_initial_display_then_set() -> None:
     """Test starting a content switcher with nothing shown then setting the display."""
     async with SwitcherApp().run_test() as pilot:
@@ -57,6 +60,7 @@ async def test_no_initial_display_then_set() -> None:
         ).visible_content is pilot.app.query_one("#w3")
 
 
+@pytest.mark.anyio
 async def test_initial_display_then_change() -> None:
     """Test starting a content switcher with a widget initially shown then changing it."""
     async with SwitcherApp("w3").run_test() as pilot:
@@ -75,6 +79,7 @@ async def test_initial_display_then_change() -> None:
         ).visible_content is pilot.app.query_one("#w2")
 
 
+@pytest.mark.anyio
 async def test_initial_display_then_hide() -> None:
     """Test starting a content switcher with a widget initially shown then hide all."""
     async with SwitcherApp("w3").run_test() as pilot:
@@ -91,6 +96,7 @@ async def test_initial_display_then_hide() -> None:
 @pytest.mark.xfail(
     reason="The expected exception doesn't appear to make it to pytest -- perhaps related to https://github.com/Textualize/textual/issues/1972"
 )
+@pytest.mark.anyio
 async def test_initial_display_unknown_id() -> None:
     """Test setting an initial display to an unknown widget ID."""
     with pytest.raises(NoMatches):
@@ -98,6 +104,7 @@ async def test_initial_display_unknown_id() -> None:
             pass
 
 
+@pytest.mark.anyio
 async def test_set_current_to_unknown_id() -> None:
     """Test attempting to switch to an unknown widget ID."""
     async with SwitcherApp().run_test() as pilot:
@@ -109,6 +116,7 @@ async def test_set_current_to_unknown_id() -> None:
             pilot.app.query_one(ContentSwitcher).current = "does-not-exist"
 
 
+@pytest.mark.anyio
 async def test_add_content() -> None:
     async with SwitcherApp().run_test() as pilot:
         switcher = pilot.app.query_one(ContentSwitcher)

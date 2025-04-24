@@ -4,6 +4,7 @@ from textual.events import Click, MouseDown, MouseUp
 from textual.widgets import Button
 
 
+@pytest.mark.anyio
 async def test_driver_mouse_down_up_click():
     """Mouse down and up should issue a click."""
 
@@ -27,6 +28,7 @@ async def test_driver_mouse_down_up_click():
         assert isinstance(app.messages[2], Click)
 
 
+@pytest.mark.anyio
 async def test_driver_mouse_down_up_click_widget():
     """Mouse down and up should issue a click when they're on a widget."""
 
@@ -47,6 +49,7 @@ async def test_driver_mouse_down_up_click_widget():
         assert len(app.messages) == 1
 
 
+@pytest.mark.anyio
 async def test_driver_mouse_down_drag_inside_widget_up_click():
     """Mouse down and up should issue a click, even if the mouse moves but remains
     inside the same widget."""
@@ -88,6 +91,7 @@ async def test_driver_mouse_down_drag_inside_widget_up_click():
         assert len(app.messages) == 1
 
 
+@pytest.mark.anyio
 async def test_driver_mouse_down_drag_outside_widget_up_click():
     """Mouse down and up don't issue a click if the mouse moves outside of the initial widget."""
 

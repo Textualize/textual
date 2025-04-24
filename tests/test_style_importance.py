@@ -33,6 +33,7 @@ class StyleApp(App[None]):
         yield Container(classes="more-specific")
 
 
+@pytest.mark.anyio
 async def test_border_importance():
     """Border without sides should support !important"""
     async with StyleApp().run_test() as pilot:
@@ -44,6 +45,7 @@ async def test_border_importance():
         assert border.right == desired
 
 
+@pytest.mark.anyio
 async def test_outline_importance():
     """Outline without sides should support !important"""
     async with StyleApp().run_test() as pilot:
@@ -55,12 +57,14 @@ async def test_outline_importance():
         assert outline.right == desired
 
 
+@pytest.mark.anyio
 async def test_align_importance():
     """Align without direction should support !important"""
     async with StyleApp().run_test() as pilot:
         assert pilot.app.query_one(Container).styles.align == ("right", "bottom")
 
 
+@pytest.mark.anyio
 async def test_content_align_importance():
     """Content align without direction should support !important"""
     async with StyleApp().run_test() as pilot:
@@ -70,6 +74,7 @@ async def test_content_align_importance():
         )
 
 
+@pytest.mark.anyio
 async def test_offset_importance():
     """Offset without direction should support !important"""
     async with StyleApp().run_test() as pilot:
@@ -78,6 +83,7 @@ async def test_offset_importance():
         )
 
 
+@pytest.mark.anyio
 async def test_overflow_importance():
     """Overflow without direction should support !important"""
     async with StyleApp().run_test() as pilot:
@@ -85,6 +91,7 @@ async def test_overflow_importance():
         assert pilot.app.query_one(Container).styles.overflow_y == "hidden"
 
 
+@pytest.mark.anyio
 async def test_padding_importance():
     """Padding without sides should support !important"""
     async with StyleApp().run_test() as pilot:
@@ -95,6 +102,7 @@ async def test_padding_importance():
         assert padding.right == 20
 
 
+@pytest.mark.anyio
 async def test_scrollbar_size_importance():
     """Scrollbar size without direction should support !important"""
     async with StyleApp().run_test() as pilot:

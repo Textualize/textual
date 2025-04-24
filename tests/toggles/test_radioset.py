@@ -27,6 +27,7 @@ class RadioSetApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_radio_sets_initial_state():
     """The initial states of the radio sets should be as we specified."""
     async with RadioSetApp().run_test() as pilot:
@@ -37,6 +38,7 @@ async def test_radio_sets_initial_state():
         assert pilot.app.events_received == []
 
 
+@pytest.mark.anyio
 async def test_click_sets_focus():
     """Clicking within a radio set should set focus."""
     async with RadioSetApp().run_test() as pilot:
@@ -46,6 +48,7 @@ async def test_click_sets_focus():
         assert pilot.app.screen.focused == pilot.app.query_one("#from_buttons")
 
 
+@pytest.mark.anyio
 async def test_radio_sets_toggle():
     """Test the status of the radio sets after they've been toggled."""
     async with RadioSetApp().run_test() as pilot:
@@ -62,6 +65,7 @@ async def test_radio_sets_toggle():
         ]
 
 
+@pytest.mark.anyio
 async def test_radioset_same_button_mash():
     """Mashing the same button should have no effect."""
     async with RadioSetApp().run_test() as pilot:
@@ -71,6 +75,7 @@ async def test_radioset_same_button_mash():
         assert pilot.app.events_received == []
 
 
+@pytest.mark.anyio
 async def test_radioset_inner_navigation():
     """Using the cursor keys should navigate between buttons in a set."""
     async with RadioSetApp().run_test() as pilot:
@@ -96,6 +101,7 @@ async def test_radioset_inner_navigation():
         assert pilot.app.query_one("#from_strings", RadioSet)._selected == 1
 
 
+@pytest.mark.anyio
 async def test_radioset_inner_navigation_post_build():
     class EmptyRadioSetApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -113,6 +119,7 @@ async def test_radioset_inner_navigation_post_build():
         assert pilot.app.query_one(RadioSet)._selected == 4
 
 
+@pytest.mark.anyio
 async def test_radioset_breakout_navigation():
     """Shift/Tabbing while in a radioset should move to the previous/next focsuable after the set itself."""
     async with RadioSetApp().run_test() as pilot:
@@ -130,6 +137,7 @@ class BadRadioSetApp(App[None]):
                 yield RadioButton(str(n), True)
 
 
+@pytest.mark.anyio
 async def test_there_can_only_be_one():
     """Adding multiple 'on' buttons should result in only one on."""
     async with BadRadioSetApp().run_test() as pilot:
@@ -155,6 +163,7 @@ class RadioSetDisabledButtonsApp(App[None]):
         self.selected.append(str(radio_set.pressed.label))
 
 
+@pytest.mark.anyio
 async def test_keyboard_navigation_with_disabled_buttons():
     """Regression test for https://github.com/Textualize/textual/issues/3839."""
 

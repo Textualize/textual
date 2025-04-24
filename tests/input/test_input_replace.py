@@ -21,6 +21,7 @@ DELETIONS = _FORWARD_DELETIONS + _REVERSE_DELETIONS
 
 
 @pytest.mark.parametrize("selection,value_after", DELETIONS)
+@pytest.mark.anyio
 async def test_input_delete(selection: tuple[int, int], value_after: str):
     class InputApp(App[None]):
         TEST_TEXT = "0123456789"
@@ -50,6 +51,7 @@ REPLACEMENTS = _FORWARD_REPLACEMENTS + _REVERSE_REPLACEMENTS
 
 
 @pytest.mark.parametrize("selection,replacement,result", REPLACEMENTS)
+@pytest.mark.anyio
 async def test_input_replace(selection: tuple[int, int], replacement: str, result: str):
     class InputApp(App[None]):
         TEST_TEXT = "0123456789"

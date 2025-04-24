@@ -78,6 +78,7 @@ def ModesApp():
     return ModesApp
 
 
+@pytest.mark.anyio
 async def test_mode_setup(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
@@ -85,6 +86,7 @@ async def test_mode_setup(ModesApp: Type[App]):
         assert str(app.screen.query_one(Label).renderable) == "one"
 
 
+@pytest.mark.anyio
 async def test_switch_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
@@ -94,6 +96,7 @@ async def test_switch_mode(ModesApp: Type[App]):
         assert str(app.screen.query_one(Label).renderable) == "one"
 
 
+@pytest.mark.anyio
 async def test_switch_same_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
@@ -103,6 +106,7 @@ async def test_switch_same_mode(ModesApp: Type[App]):
         assert str(app.screen.query_one(Label).renderable) == "one"
 
 
+@pytest.mark.anyio
 async def test_switch_unknown_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
@@ -110,6 +114,7 @@ async def test_switch_unknown_mode(ModesApp: Type[App]):
             await app.switch_mode("unknown mode here")
 
 
+@pytest.mark.anyio
 async def test_remove_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
@@ -120,6 +125,7 @@ async def test_remove_mode(ModesApp: Type[App]):
         assert "one" not in app._modes
 
 
+@pytest.mark.anyio
 async def test_remove_active_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
@@ -127,6 +133,7 @@ async def test_remove_active_mode(ModesApp: Type[App]):
             app.remove_mode("one")
 
 
+@pytest.mark.anyio
 async def test_add_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
@@ -136,6 +143,7 @@ async def test_add_mode(ModesApp: Type[App]):
         assert str(app.screen.query_one(Label).renderable) == "three"
 
 
+@pytest.mark.anyio
 async def test_add_mode_duplicated(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
@@ -143,6 +151,7 @@ async def test_add_mode_duplicated(ModesApp: Type[App]):
             app.add_mode("one", lambda: BaseScreen("one"))
 
 
+@pytest.mark.anyio
 async def test_screen_stack_preserved(ModesApp: Type[App]):
     fruits = []
     N = 5
@@ -168,6 +177,7 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
             await pilot.press("o")
 
 
+@pytest.mark.anyio
 async def test_multiple_mode_callbacks():
     written = []
 

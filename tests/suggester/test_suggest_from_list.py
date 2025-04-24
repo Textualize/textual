@@ -17,6 +17,7 @@ class LogListNode(DOMNode):
         self.log_list.append((message.suggestion, message.value))
 
 
+@pytest.mark.anyio
 async def test_first_suggestion_has_priority():
     suggester = SuggestFromList(countries)
 
@@ -24,6 +25,7 @@ async def test_first_suggestion_has_priority():
 
 
 @pytest.mark.parametrize("value", ["s", "S", "sc", "sC", "Sc", "SC"])
+@pytest.mark.anyio
 async def test_case_insensitive_suggestions(value):
     suggester = SuggestFromList(countries, case_sensitive=False)
     log = []
@@ -47,6 +49,7 @@ async def test_case_insensitive_suggestions(value):
         "PORT",
     ],
 )
+@pytest.mark.anyio
 async def test_first_suggestion_has_priority_case_insensitive(value):
     suggester = SuggestFromList(countries, case_sensitive=False)
     log = []

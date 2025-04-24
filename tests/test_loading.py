@@ -20,6 +20,7 @@ class LoadingApp(App[None]):
         self.query_one(VerticalScroll).loading = True
 
 
+@pytest.mark.anyio
 async def test_loading_disables_and_remove_scrollbars():
     app = LoadingApp()
     async with app.run_test() as pilot:

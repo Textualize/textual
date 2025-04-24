@@ -18,6 +18,7 @@ class OptionListApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_no_hover() -> None:
     """When the mouse isn't over the OptionList _mouse_hovering_over should be None."""
     async with OptionListApp().run_test() as pilot:
@@ -25,6 +26,7 @@ async def test_no_hover() -> None:
         assert pilot.app.query_one(OptionList)._mouse_hovering_over is None
 
 
+@pytest.mark.anyio
 async def test_hover_highlight() -> None:
     """The mouse hover value should react to the mouse hover over a highlighted option."""
     async with OptionListApp().run_test() as pilot:
@@ -34,6 +36,7 @@ async def test_hover_highlight() -> None:
         assert option_list._mouse_hovering_over == option_list.highlighted
 
 
+@pytest.mark.anyio
 async def test_hover_no_highlight() -> None:
     """The mouse hover value should react to the mouse hover over a non-highlighted option."""
     async with OptionListApp().run_test() as pilot:
@@ -43,6 +46,7 @@ async def test_hover_no_highlight() -> None:
         assert option_list._mouse_hovering_over != option_list.highlighted
 
 
+@pytest.mark.anyio
 async def test_hover_disabled() -> None:
     """The mouse hover value should react to the mouse hover over a disabled option."""
     async with OptionListApp().run_test() as pilot:
@@ -55,6 +59,7 @@ async def test_hover_disabled() -> None:
         assert option_list._mouse_hovering_over != option_list.highlighted
 
 
+@pytest.mark.anyio
 async def test_hover_then_leave() -> None:
     """After a mouse has been over an OptionList and left _mouse_hovering_over should be None again."""
     async with OptionListApp().run_test() as pilot:

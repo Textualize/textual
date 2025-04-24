@@ -15,6 +15,7 @@ class TallApp(App[None]):
                 yield Label()
 
 
+@pytest.mark.anyio
 async def test_scrolling_animates_on_full() -> None:
     app = TallApp()
     app.animation_level = "full"
@@ -33,6 +34,7 @@ async def test_scrolling_animates_on_full() -> None:
         assert animator.is_being_animated(vertical_scroll, "scroll_y")
 
 
+@pytest.mark.anyio
 async def test_scrolling_animates_on_basic() -> None:
     app = TallApp()
     app.animation_level = "basic"
@@ -51,6 +53,7 @@ async def test_scrolling_animates_on_basic() -> None:
         assert animator.is_being_animated(vertical_scroll, "scroll_y")
 
 
+@pytest.mark.anyio
 async def test_scrolling_does_not_animate_on_none() -> None:
     app = TallApp()
     app.animation_level = "none"

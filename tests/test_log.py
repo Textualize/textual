@@ -9,6 +9,7 @@ def test_process_line():
     assert log._process_line("\0foo") == "�foo"
 
 
+@pytest.mark.anyio
 async def test_disabled_log_no_attribute_error() -> None:
     """Ensure that initializing the log with disabled=True does not
     raise an AttributeError.

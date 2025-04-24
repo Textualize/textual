@@ -9,6 +9,7 @@ class TreeApp(App[None]):
         yield Footer()
 
 
+@pytest.mark.anyio
 async def test_shutdown():
     # regression test for https://github.com/Textualize/textual/issues/4634
     # Testing that an app with the footer doesn't deadlock

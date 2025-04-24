@@ -14,6 +14,7 @@ class FocusBlurApp(App[None]):
             yield Input(id=f"input-{n}")
 
 
+@pytest.mark.anyio
 async def test_app_blur() -> None:
     """Test that AppBlur removes focus."""
     async with FocusBlurApp().run_test() as pilot:
@@ -24,6 +25,7 @@ async def test_app_blur() -> None:
         assert pilot.app.focused is None
 
 
+@pytest.mark.anyio
 async def test_app_focus_restores_focus() -> None:
     """Test that AppFocus restores the correct focus."""
     async with FocusBlurApp().run_test() as pilot:
@@ -38,6 +40,7 @@ async def test_app_focus_restores_focus() -> None:
         assert pilot.app.focused.id == "input-4"
 
 
+@pytest.mark.anyio
 async def test_app_focus_restores_none_focus() -> None:
     """Test that AppFocus doesn't set focus if nothing was focused."""
     async with FocusBlurApp().run_test() as pilot:
@@ -50,6 +53,7 @@ async def test_app_focus_restores_none_focus() -> None:
         assert pilot.app.focused is None
 
 
+@pytest.mark.anyio
 async def test_app_focus_handles_missing_widget() -> None:
     """Test that AppFocus works even when the last-focused widget has gone away."""
     async with FocusBlurApp().run_test() as pilot:
@@ -64,6 +68,7 @@ async def test_app_focus_handles_missing_widget() -> None:
         assert pilot.app.focused is None
 
 
+@pytest.mark.anyio
 async def test_app_focus_defers_to_new_focus() -> None:
     """Test that AppFocus doesn't undo a fresh focus done while the app is in AppBlur state."""
     async with FocusBlurApp().run_test() as pilot:

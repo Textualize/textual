@@ -23,6 +23,7 @@ class TextAreaApp(App[None]):
         ["A", "delete", "backspace"],
     ),
 )
+@pytest.mark.anyio
 async def test_issue_4301_reproduction(selection: Selection, edit: str) -> None:
     """Test https://github.com/Textualize/textual/issues/4301"""
 

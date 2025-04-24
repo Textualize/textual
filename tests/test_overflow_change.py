@@ -4,6 +4,7 @@ from textual.app import App
 from textual.containers import VerticalScroll
 
 
+@pytest.mark.anyio
 async def test_overflow_change_updates_virtual_size_appropriately():
     class MyApp(App):
         def compose(self):

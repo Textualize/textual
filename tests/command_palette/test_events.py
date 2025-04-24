@@ -38,12 +38,14 @@ class AppWithActiveCommandPalette(App[None]):
         self.events.append(event)
 
 
+@pytest.mark.anyio
 async def test_command_palette_opened_event():
     app = AppWithActiveCommandPalette()
     async with app.run_test():
         assert app.events == [CommandPalette.Opened()]
 
 
+@pytest.mark.anyio
 async def test_command_palette_closed_event():
     app = AppWithActiveCommandPalette()
     async with app.run_test() as pilot:
@@ -51,6 +53,7 @@ async def test_command_palette_closed_event():
         assert app.events == [CommandPalette.Opened(), CommandPalette.Closed(False)]
 
 
+@pytest.mark.anyio
 async def test_command_palette_closed_event_value():
     app = AppWithActiveCommandPalette()
     async with app.run_test() as pilot:
@@ -64,6 +67,7 @@ async def test_command_palette_closed_event_value():
         ]
 
 
+@pytest.mark.anyio
 async def test_command_palette_option_highlighted_event():
     app = AppWithActiveCommandPalette()
     async with app.run_test() as pilot:

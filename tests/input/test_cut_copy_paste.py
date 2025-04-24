@@ -7,6 +7,7 @@ class InputApp(App):
         yield Input()
 
 
+@pytest.mark.anyio
 async def test_cut():
     """Check that cut removes text and places it in the clipboard."""
     app = InputApp()
@@ -20,6 +21,7 @@ async def test_cut():
         assert app.clipboard == "rl"
 
 
+@pytest.mark.anyio
 async def test_copy():
     """Check that copy places text in the clipboard."""
     app = InputApp()
@@ -33,6 +35,7 @@ async def test_copy():
         assert app.clipboard == "rl"
 
 
+@pytest.mark.anyio
 async def test_paste():
     """Check that paste copies text from the local clipboard."""
     app = InputApp()

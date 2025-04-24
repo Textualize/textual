@@ -34,6 +34,7 @@ class ListViewApp(App[None]):
         yield MyListView(self._items)
 
 
+@pytest.mark.anyio
 async def test_empty_inherited_list_view() -> None:
     """An empty self-populating inherited ListView should work as expected."""
     async with ListViewApp().run_test() as pilot:
@@ -43,6 +44,7 @@ async def test_empty_inherited_list_view() -> None:
         assert pilot.app.query_one(MyListView).index is None
 
 
+@pytest.mark.anyio
 async def test_populated_inherited_list_view() -> None:
     """A self-populating inherited ListView should work as normal."""
     async with ListViewApp(30).run_test() as pilot:
@@ -52,6 +54,7 @@ async def test_populated_inherited_list_view() -> None:
         assert pilot.app.query_one(MyListView).index == 1
 
 
+@pytest.mark.anyio
 async def test_actions_work_when_list_view_empty() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/2265"""
     async with ListViewApp().run_test() as pilot:

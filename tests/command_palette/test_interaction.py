@@ -18,6 +18,7 @@ class CommandPaletteApp(App[None]):
         self.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_initial_list_no_highlight() -> None:
     """When the list initially appears, the first item is highlghted."""
     async with CommandPaletteApp().run_test() as pilot:
@@ -28,6 +29,7 @@ async def test_initial_list_no_highlight() -> None:
         assert pilot.app.screen.query_one(CommandList).highlighted == 0
 
 
+@pytest.mark.anyio
 async def test_down_arrow_selects_an_item() -> None:
     """Typing in a search value then pressing down should select a command."""
     async with CommandPaletteApp().run_test() as pilot:
@@ -40,6 +42,7 @@ async def test_down_arrow_selects_an_item() -> None:
         assert pilot.app.screen.query_one(CommandList).highlighted == 1
 
 
+@pytest.mark.anyio
 async def test_enter_selects_an_item() -> None:
     """Typing in a search value then pressing enter should dismiss the command palette."""
     async with CommandPaletteApp().run_test() as pilot:

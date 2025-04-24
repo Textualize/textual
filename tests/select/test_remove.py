@@ -8,6 +8,7 @@ I will face my fear.
 I will permit it to pass over me and through me.""".splitlines()
 
 
+@pytest.mark.anyio
 async def test_select_remove():
     # Regression test for https://github.com/Textualize/textual/issues/4782
     class SelectApp(App):

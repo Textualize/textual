@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Button, Static
 
 
+@pytest.mark.anyio
 async def test_text_style_inheritance():
     """Check that changes to text style are inherited in children."""
 

@@ -3,6 +3,7 @@ from rgb import RGBApp
 from textual.color import Color
 
 
+@pytest.mark.anyio
 async def test_keys():  # (1)!
     """Test pressing keys has the desired result."""
     app = RGBApp()
@@ -25,6 +26,7 @@ async def test_keys():  # (1)!
         assert app.screen.styles.background == Color.parse("blue")
 
 
+@pytest.mark.anyio
 async def test_buttons():
     """Test pressing keys has the desired result."""
     app = RGBApp()

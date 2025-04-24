@@ -15,6 +15,7 @@ def test_worker_manager_init():
     assert list(reversed(app.workers)) == []
 
 
+@pytest.mark.anyio
 async def test_run_worker_async() -> None:
     """Check self.run_worker"""
     worker_events: list[Worker.StateChanged] = []
@@ -59,6 +60,7 @@ async def test_run_worker_async() -> None:
     ]
 
 
+@pytest.mark.anyio
 async def test_run_worker_thread_non_async() -> None:
     """Check self.run_worker"""
     worker_events: list[Worker.StateChanged] = []
@@ -96,6 +98,7 @@ async def test_run_worker_thread_non_async() -> None:
     ]
 
 
+@pytest.mark.anyio
 async def test_run_worker_thread_async() -> None:
     """Check self.run_worker"""
     worker_events: list[Worker.StateChanged] = []

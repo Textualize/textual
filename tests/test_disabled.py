@@ -45,6 +45,7 @@ class DisableApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_all_initially_enabled() -> None:
     """All widgets should start out enabled."""
     async with DisableApp().run_test() as pilot:
@@ -53,6 +54,7 @@ async def test_all_initially_enabled() -> None:
         )
 
 
+@pytest.mark.anyio
 async def test_enabled_widgets_have_enabled_pseudo_class() -> None:
     """All enabled widgets should have the :enabled pseudoclass."""
     async with DisableApp().run_test() as pilot:
@@ -62,6 +64,7 @@ async def test_enabled_widgets_have_enabled_pseudo_class() -> None:
         )
 
 
+@pytest.mark.anyio
 async def test_all_individually_disabled() -> None:
     """Post-disable all widgets should report being disabled."""
     async with DisableApp().run_test() as pilot:
@@ -72,6 +75,7 @@ async def test_all_individually_disabled() -> None:
         )
 
 
+@pytest.mark.anyio
 async def test_disabled_widgets_have_disabled_pseudo_class() -> None:
     """All disabled widgets should have the :disabled pseudoclass."""
     async with DisableApp().run_test() as pilot:
@@ -83,6 +87,7 @@ async def test_disabled_widgets_have_disabled_pseudo_class() -> None:
         )
 
 
+@pytest.mark.anyio
 async def test_disable_via_container() -> None:
     """All child widgets should appear (to CSS) as disabled by a container being disabled."""
     async with DisableApp().run_test() as pilot:
@@ -137,6 +142,7 @@ class ChildrenNoFocusDisabledContainer(App[None]):
         Switch,
     ],
 )
+@pytest.mark.anyio
 async def test_children_loses_focus_if_container_is_disabled(widget):
     """Regression test for https://github.com/Textualize/textual/issues/2772."""
     app = ChildrenNoFocusDisabledContainer()

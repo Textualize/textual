@@ -4,6 +4,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Label
 
 
+@pytest.mark.anyio
 async def test_issue_4248() -> None:
     """Various forms of click parameters should be fine."""
 

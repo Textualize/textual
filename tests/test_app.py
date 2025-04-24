@@ -32,6 +32,7 @@ class MyApp(App):
         yield Button("Click me!")
 
 
+@pytest.mark.anyio
 async def test_hover_update_styles():
     app = MyApp(ansi_color=False)
     async with app.run_test() as pilot:
@@ -94,6 +95,7 @@ def test_setting_sub_title():
     assert app.sub_title == "[True, False, 2]"
 
 
+@pytest.mark.anyio
 async def test_default_return_code_is_zero():
     app = App()
     async with app.run_test():
@@ -101,6 +103,7 @@ async def test_default_return_code_is_zero():
     assert app.return_code == 0
 
 
+@pytest.mark.anyio
 async def test_return_code_is_one_after_crash():
     class MyApp(App):
         def key_p(self):
@@ -113,6 +116,7 @@ async def test_return_code_is_one_after_crash():
     assert app.return_code == 1
 
 
+@pytest.mark.anyio
 async def test_set_return_code():
     app = App()
     async with app.run_test():
@@ -125,12 +129,14 @@ def test_no_return_code_before_running():
     assert app.return_code is None
 
 
+@pytest.mark.anyio
 async def test_no_return_code_while_running():
     app = App()
     async with app.run_test():
         assert app.return_code is None
 
 
+@pytest.mark.anyio
 async def test_ansi_theme():
     app = App()
     async with app.run_test():
@@ -152,6 +158,7 @@ async def test_ansi_theme():
         assert app.ansi_theme == DIMMED_MONOKAI
 
 
+@pytest.mark.anyio
 async def test_early_exit():
     """Test exiting early doesn't cause issues."""
     from textual.app import App
@@ -184,6 +191,7 @@ def test_early_exit_inline():
     app.run(inline=True, inline_no_clear=True)
 
 
+@pytest.mark.anyio
 async def test_search_with_simple_commands():
     """Test search with a list of SimpleCommands and ensure callbacks are invoked."""
     called = False
@@ -203,6 +211,7 @@ async def test_search_with_simple_commands():
         assert called
 
 
+@pytest.mark.anyio
 async def test_search_with_tuples():
     """Test search with a list of tuples and ensure callbacks are invoked.
     In this case we also have no help text in the tuples.
@@ -224,6 +233,7 @@ async def test_search_with_tuples():
         assert called
 
 
+@pytest.mark.anyio
 async def test_search_with_empty_list():
     """Test search with an empty command list doesn't crash."""
     app = App[None]()
@@ -243,6 +253,7 @@ async def raw_click(pilot: Pilot, selector: str, times: int = 1):
 
 
 @pytest.mark.parametrize("number_of_clicks,final_count", [(1, 1), (2, 3), (3, 6)])
+@pytest.mark.anyio
 async def test_click_chain_initial_repeated_clicks(
     number_of_clicks: int, final_count: int
 ):
@@ -268,6 +279,7 @@ async def test_click_chain_initial_repeated_clicks(
         assert click_count == final_count
 
 
+@pytest.mark.anyio
 async def test_click_chain_different_offset():
     click_count = 0
 
@@ -294,6 +306,7 @@ async def test_click_chain_different_offset():
         assert click_count == 3
 
 
+@pytest.mark.anyio
 async def test_click_chain_offset_changes_mid_chain():
     """If we're in the middle of a click chain (e.g. we've double clicked), and the third click
     comes in at a different offset, that third click should be considered a single click.
@@ -320,6 +333,7 @@ async def test_click_chain_offset_changes_mid_chain():
         assert click_count == 1
 
 
+@pytest.mark.anyio
 async def test_click_chain_time_outwith_threshold():
     click_count = 0
 

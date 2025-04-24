@@ -12,6 +12,7 @@ from textual.containers import (
 from textual.widgets import Label
 
 
+@pytest.mark.anyio
 async def test_horizontal_vs_horizontalscroll_scrolling():
     """Check the default scrollbar behaviours for `Horizontal` and `HorizontalScroll`."""
 
@@ -41,6 +42,7 @@ async def test_horizontal_vs_horizontalscroll_scrolling():
         assert horizontal_scroll.scrollbars_enabled == (False, True)
 
 
+@pytest.mark.anyio
 async def test_vertical_vs_verticalscroll_scrolling():
     """Check the default scrollbar behaviours for `Vertical` and `VerticalScroll`."""
 
@@ -70,6 +72,7 @@ async def test_vertical_vs_verticalscroll_scrolling():
         assert vertical_scroll.scrollbars_enabled == (True, False)
 
 
+@pytest.mark.anyio
 async def test_center_container():
     """Check the size of the container `Center`."""
 
@@ -85,6 +88,7 @@ async def test_center_container():
         assert center.size.height == 3
 
 
+@pytest.mark.anyio
 async def test_middle_container():
     """Check the size of the container `Middle`."""
 
@@ -100,6 +104,7 @@ async def test_middle_container():
         assert middle.size.height == app.size.height
 
 
+@pytest.mark.anyio
 async def test_scrollbar_zero_thickness():
     """Ensuring that scrollbars can be set to zero thickness."""
 

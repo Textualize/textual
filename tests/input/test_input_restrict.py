@@ -60,6 +60,7 @@ def test_input_integer_type():
     assert not re.fullmatch(integer, "foo")
 
 
+@pytest.mark.anyio
 async def test_bad_type():
     """Check an invalid type raises a ValueError."""
 
@@ -74,6 +75,7 @@ async def test_bad_type():
             pass
 
 
+@pytest.mark.anyio
 async def test_max_length():
     """Check max_length limits characters."""
 
@@ -104,6 +106,7 @@ async def test_max_length():
         assert input_widget.value == "12340"
 
 
+@pytest.mark.anyio
 async def test_restrict():
     """Test restriction by regex."""
 
@@ -129,6 +132,7 @@ async def test_restrict():
         assert input_widget.value == "abca"
 
 
+@pytest.mark.anyio
 async def test_restrict_type():
     class InputApp(App):
         def compose(self) -> ComposeResult:

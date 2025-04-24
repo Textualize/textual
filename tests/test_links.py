@@ -3,6 +3,7 @@ from textual.screen import Screen
 from textual.widgets import Label
 
 
+@pytest.mark.anyio
 async def test_links() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/4536"""
     messages: list[str] = []

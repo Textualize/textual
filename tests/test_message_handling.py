@@ -3,6 +3,7 @@ from textual.message import Message
 from textual.widget import Widget
 
 
+@pytest.mark.anyio
 async def test_message_inheritance_namespace():
     """Inherited messages get their correct namespaces.
 

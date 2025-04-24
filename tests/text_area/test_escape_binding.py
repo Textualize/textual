@@ -18,6 +18,7 @@ class TextAreaDialogApp(App):
         self.push_screen(TextAreaDialog())
 
 
+@pytest.mark.anyio
 async def test_escape_key_when_tab_behavior_is_focus():
     """Regression test for https://github.com/Textualize/textual/issues/4110
 
@@ -37,6 +38,7 @@ async def test_escape_key_when_tab_behavior_is_focus():
         assert not isinstance(pilot.app.screen, TextAreaDialog)
 
 
+@pytest.mark.anyio
 async def test_escape_key_when_tab_behavior_is_indent():
     """When the `tab_behavior` of TextArea is indent rather than switch focus,
     pressing <Escape> should instead shift focus.

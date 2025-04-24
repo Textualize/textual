@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Switch
 
 
+@pytest.mark.anyio
 async def test_switch_click_doesnt_bubble_up():
     """Regression test for https://github.com/Textualize/textual/issues/2366"""
 

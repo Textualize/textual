@@ -47,6 +47,7 @@ class ManyLabelsApp(App):
         yield Button()
 
 
+@pytest.mark.anyio
 async def test_pilot_press_ascii_chars():
     """Test that the pilot can press most ASCII characters as keys."""
     keys_pressed = []
@@ -61,6 +62,7 @@ async def test_pilot_press_ascii_chars():
             assert keys_pressed[-1] == char
 
 
+@pytest.mark.anyio
 async def test_pilot_exception_catching_app_compose():
     """Ensuring that test frameworks are aware of exceptions
     inside compose methods when running via Pilot run_test()."""
@@ -75,6 +77,7 @@ async def test_pilot_exception_catching_app_compose():
             pass
 
 
+@pytest.mark.anyio
 async def test_pilot_exception_catching_widget_compose():
     class SomeScreen(Screen[None]):
         def compose(self) -> ComposeResult:
@@ -90,6 +93,7 @@ async def test_pilot_exception_catching_widget_compose():
             pass
 
 
+@pytest.mark.anyio
 async def test_pilot_exception_catching_action():
     """Ensure that exceptions inside action handlers are presented
     to the test framework when running via Pilot run_test()."""
@@ -105,6 +109,7 @@ async def test_pilot_exception_catching_action():
             await pilot.press("b")
 
 
+@pytest.mark.anyio
 async def test_pilot_exception_catching_worker():
     class SimpleAppThatCrashes(App[None]):
         def on_mount(self) -> None:
@@ -120,6 +125,7 @@ async def test_pilot_exception_catching_worker():
         assert exc.type is ZeroDivisionError
 
 
+@pytest.mark.anyio
 async def test_pilot_click_screen():
     """Regression test for https://github.com/Textualize/textual/issues/3395.
 
@@ -129,6 +135,7 @@ async def test_pilot_click_screen():
         await pilot.click()
 
 
+@pytest.mark.anyio
 async def test_pilot_hover_screen():
     """Regression test for https://github.com/Textualize/textual/issues/3395.
 
@@ -215,6 +222,7 @@ async def test_pilot_hover_screen():
         ("mouse_up", (5, 5), (7, -1)),  # Top-right of screen.
     ],
 )
+@pytest.mark.anyio
 async def test_pilot_target_outside_screen_errors(method, screen_size, offset):
     """Make sure that targeting a click/hover completely outside of the screen errors."""
     app = App()
@@ -268,6 +276,7 @@ async def test_pilot_target_outside_screen_errors(method, screen_size, offset):
         ("mouse_up", (40, 12)),  # Right in the middle.
     ],
 )
+@pytest.mark.anyio
 async def test_pilot_target_inside_screen_is_fine_with_correct_coordinate_system(
     method, offset
 ):
@@ -304,6 +313,7 @@ async def test_pilot_target_inside_screen_is_fine_with_correct_coordinate_system
         ("mouse_up", Button),
     ],
 )
+@pytest.mark.anyio
 async def test_pilot_target_on_widget_that_is_not_visible_errors(method, target):
     """Make sure that clicking a widget that is not scrolled into view raises an error."""
     app = ManyLabelsApp()
@@ -317,6 +327,7 @@ async def test_pilot_target_on_widget_that_is_not_visible_errors(method, target)
 
 
 @pytest.mark.parametrize("method", ["click", "hover", "mouse_down", "mouse_up"])
+@pytest.mark.anyio
 async def test_pilot_target_widget_under_another_widget(method):
     """The targeting method should return False when the targeted widget is covered."""
 
@@ -343,6 +354,7 @@ async def test_pilot_target_widget_under_another_widget(method):
 
 
 @pytest.mark.parametrize("method", ["click", "hover", "mouse_down", "mouse_up"])
+@pytest.mark.anyio
 async def test_pilot_target_visible_widget(method):
     """The targeting method should return True when the targeted widget is hit."""
 
@@ -381,6 +393,7 @@ async def test_pilot_target_visible_widget(method):
         ("mouse_up", (70, 0)),
     ],
 )
+@pytest.mark.anyio
 async def test_pilot_target_screen_always_true(method, offset):
     app = ManyLabelsApp()
     async with app.run_test(size=(80, 24)) as pilot:
@@ -388,6 +401,7 @@ async def test_pilot_target_screen_always_true(method, offset):
         assert (await pilot_method(offset=offset)) is True
 
 
+@pytest.mark.anyio
 async def test_pilot_resize_terminal():
     app = App()
     async with app.run_test(size=(80, 24)) as pilot:
@@ -400,6 +414,7 @@ async def test_pilot_resize_terminal():
         assert app.screen.size == (27, 15)
 
 
+@pytest.mark.anyio
 async def test_fail_early():
     # https://github.com/Textualize/textual/issues/3282
     class MyApp(App):
@@ -411,6 +426,7 @@ async def test_fail_early():
             await pilot.press("enter")
 
 
+@pytest.mark.anyio
 async def test_click_by_widget():
     """Test that click accept a Widget instance."""
     pressed = False
@@ -429,6 +445,7 @@ async def test_click_by_widget():
 
 
 @pytest.mark.parametrize("times", [1, 2, 3])
+@pytest.mark.anyio
 async def test_click_times(times: int):
     """Test that Pilot.click() can be called with a `times` argument."""
 

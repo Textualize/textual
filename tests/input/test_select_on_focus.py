@@ -13,6 +13,7 @@ class InputApp(App[None]):
         yield Input("Hello, world!")
 
 
+@pytest.mark.anyio
 async def test_focus_from_app_focus_does_not_select():
     """When an Input has focused and the *app* is blurred and then focused (e.g. by pressing
     alt+tab or focusing another terminal pane), then the content of the Input should not be

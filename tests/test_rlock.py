@@ -5,6 +5,7 @@ import pytest
 from textual.rlock import RLock
 
 
+@pytest.mark.anyio
 async def test_simple_lock():
     lock = RLock()
     # Starts not locked
@@ -30,6 +31,7 @@ async def test_simple_lock():
         lock.release()
 
 
+@pytest.mark.anyio
 async def test_multiple_tasks() -> None:
     """Check RLock prevents other tasks from acquiring lock."""
     lock = RLock()
@@ -37,6 +39,7 @@ async def test_multiple_tasks() -> None:
     started: list[int] = []
     done: list[int] = []
 
+    @pytest.mark.anyio
     async def test_task(n: int) -> None:
         started.append(n)
         async with lock:

@@ -30,6 +30,7 @@ class RefreshApp(App[None]):
         self.query_one(HistoryTree).root.expand_all()
 
 
+@pytest.mark.anyio
 async def test_initial_state() -> None:
     """Initially all the visible nodes should have had a render call."""
     app = RefreshApp()
@@ -37,6 +38,7 @@ async def test_initial_state() -> None:
         assert app.query_one(HistoryTree).render_hits == {(0, 0), (1, 0), (2, 0)}
 
 
+@pytest.mark.anyio
 async def test_root_refresh() -> None:
     """A refresh of the root node should cause a subsequent render call."""
     async with RefreshApp().run_test() as pilot:
@@ -47,6 +49,7 @@ async def test_root_refresh() -> None:
         assert (0, 1) in pilot.app.query_one(HistoryTree).render_hits
 
 
+@pytest.mark.anyio
 async def test_child_refresh() -> None:
     """A refresh of the child node should cause a subsequent render call."""
     async with RefreshApp().run_test() as pilot:
@@ -57,6 +60,7 @@ async def test_child_refresh() -> None:
         assert (1, 1) in pilot.app.query_one(HistoryTree).render_hits
 
 
+@pytest.mark.anyio
 async def test_grandchild_refresh() -> None:
     """A refresh of the grandchild node should cause a subsequent render call."""
     async with RefreshApp().run_test() as pilot:

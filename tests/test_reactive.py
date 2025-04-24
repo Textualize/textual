@@ -14,6 +14,7 @@ OLD_VALUE = 5_000
 NEW_VALUE = 1_000_000
 
 
+@pytest.mark.anyio
 async def test_watch():
     """Test that changes to a watched reactive attribute happen immediately."""
 
@@ -37,6 +38,7 @@ async def test_watch():
         assert app.watcher_call_count == 0
 
 
+@pytest.mark.anyio
 async def test_watch_async_init_false():
     """Ensure that async watchers are called eventually when set by user code"""
 
@@ -65,6 +67,7 @@ async def test_watch_async_init_false():
         assert app.watcher_new_value == NEW_VALUE  # new_value passed to watch method
 
 
+@pytest.mark.anyio
 async def test_watch_async_init_true():
     """Ensure that when init is True in a reactive, its async watcher gets called
     by Textual eventually, even when the user does not set the value themselves."""
@@ -94,6 +97,7 @@ async def test_watch_async_init_true():
     assert app.watcher_new_value == OLD_VALUE  # The value wasn't changed
 
 
+@pytest.mark.anyio
 async def test_watch_init_false_always_update_false():
     class WatcherInitFalse(App):
         count = reactive(0, init=False)
@@ -112,6 +116,7 @@ async def test_watch_init_false_always_update_false():
         assert app.watcher_call_count == 1
 
 
+@pytest.mark.anyio
 async def test_watch_init_true():
     class WatcherInitTrue(App):
         count = var(OLD_VALUE)
@@ -130,6 +135,7 @@ async def test_watch_init_true():
         assert app.watcher_call_count == 2  # Watcher is NOT called again
 
 
+@pytest.mark.anyio
 async def test_reactive_always_update():
     calls = []
 
@@ -157,6 +163,7 @@ async def test_reactive_always_update():
         assert calls == ["first_name Darren", "first_name abc", "last_name def"]
 
 
+@pytest.mark.anyio
 async def test_reactive_with_callable_default():
     """A callable can be supplied as the default value for a reactive.
     Textual will call it in order to retrieve the default value."""
@@ -174,6 +181,7 @@ async def test_reactive_with_callable_default():
         assert app.watcher_called_with == 123
 
 
+@pytest.mark.anyio
 async def test_validate_init_true():
     """When init is True for a reactive attribute, Textual should call the validator
     AND the watch method when the app starts."""
@@ -194,6 +202,7 @@ async def test_validate_init_true():
         assert validator_call_count == 1
 
 
+@pytest.mark.anyio
 async def test_validate_init_true_set_before_dom_ready():
     """When init is True for a reactive attribute, Textual should call the validator
     AND the watch method when the app starts."""
@@ -214,6 +223,7 @@ async def test_validate_init_true_set_before_dom_ready():
         assert validator_call_count == 1
 
 
+@pytest.mark.anyio
 async def test_reactive_compute_first_time_set():
     class ReactiveComputeFirstTimeSet(App):
         number = reactive(1)
@@ -227,6 +237,7 @@ async def test_reactive_compute_first_time_set():
         assert app.double_number == 2
 
 
+@pytest.mark.anyio
 async def test_reactive_method_call_order():
     class CallOrder(App):
         count = reactive(OLD_VALUE, init=False)
@@ -262,6 +273,7 @@ async def test_reactive_method_call_order():
         assert app.count_times_ten == (NEW_VALUE + 1) * 10
 
 
+@pytest.mark.anyio
 async def test_premature_reactive_call():
     watcher_called = False
 
@@ -286,6 +298,7 @@ async def test_premature_reactive_call():
         app.exit()
 
 
+@pytest.mark.anyio
 async def test_reactive_inheritance():
     """Check that inheritance works as expected for reactives."""
 
@@ -330,6 +343,7 @@ async def test_reactive_inheritance():
     assert tertiary.baz == "baz"
 
 
+@pytest.mark.anyio
 async def test_compute():
     """Check compute method is called."""
 
@@ -360,6 +374,7 @@ async def test_compute():
             app.count_double = 100
 
 
+@pytest.mark.anyio
 async def test_watch_compute():
     """Check that watching a computed attribute works."""
 
@@ -393,6 +408,7 @@ async def test_watch_compute():
     assert watch_called == [True, True, False, False, True, True, False, False]
 
 
+@pytest.mark.anyio
 async def test_public_and_private_watch() -> None:
     """If a reactive/var has public and private watches both should get called."""
 
@@ -415,6 +431,7 @@ async def test_public_and_private_watch() -> None:
         assert calls["public"] is True
 
 
+@pytest.mark.anyio
 async def test_private_validate() -> None:
     calls: dict[str, bool] = {"private": False}
 
@@ -430,6 +447,7 @@ async def test_private_validate() -> None:
         assert calls["private"] is True
 
 
+@pytest.mark.anyio
 async def test_public_and_private_validate() -> None:
     """If a reactive/var has public and private validate both should get called."""
 
@@ -452,6 +470,7 @@ async def test_public_and_private_validate() -> None:
         assert calls["public"] is True
 
 
+@pytest.mark.anyio
 async def test_public_and_private_validate_order() -> None:
     """The private validate should be called first."""
 
@@ -473,6 +492,7 @@ async def test_public_and_private_validate_order() -> None:
         assert pilot.app.value == 73
 
 
+@pytest.mark.anyio
 async def test_public_and_private_compute() -> None:
     """If a reactive/var has public and private compute both should get called."""
 
@@ -488,6 +508,7 @@ async def test_public_and_private_compute() -> None:
                 pass
 
 
+@pytest.mark.anyio
 async def test_private_compute() -> None:
     class PrivateComputeTest(App):
         double = var(0, init=False)
@@ -501,6 +522,7 @@ async def test_private_compute() -> None:
         assert pilot.app.double == 10
 
 
+@pytest.mark.anyio
 async def test_async_reactive_watch_callbacks_go_on_the_watcher():
     """Regression test for https://github.com/Textualize/textual/issues/3036.
 
@@ -540,6 +562,7 @@ async def test_async_reactive_watch_callbacks_go_on_the_watcher():
         assert from_app
 
 
+@pytest.mark.anyio
 async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
     """Regression test for https://github.com/Textualize/textual/issues/3036.
 
@@ -579,6 +602,7 @@ async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
         assert from_app
 
 
+@pytest.mark.anyio
 async def test_set_reactive():
     """Test set_reactive doesn't call watchers."""
 
@@ -602,6 +626,7 @@ async def test_set_reactive():
         assert app.query_one(MyWidget).foo == "foobar"
 
 
+@pytest.mark.anyio
 async def test_no_duplicate_external_watchers() -> None:
     """Make sure we skip duplicated watchers."""
 
@@ -630,6 +655,7 @@ async def test_no_duplicate_external_watchers() -> None:
         assert counter == 2
 
 
+@pytest.mark.anyio
 async def test_external_watch_init_does_not_propagate() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3878.
 
@@ -668,6 +694,7 @@ async def test_external_watch_init_does_not_propagate() -> None:
         assert logs.count("test_2") == 1
 
 
+@pytest.mark.anyio
 async def test_external_watch_init_does_not_propagate_to_externals() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3878.
 
@@ -709,6 +736,7 @@ async def test_external_watch_init_does_not_propagate_to_externals() -> None:
         assert logs == ["first", "second", "first", "second"]
 
 
+@pytest.mark.anyio
 async def test_message_sender_from_reactive() -> None:
     """Test that the sender of a message comes from the reacting widget."""
 
@@ -745,6 +773,7 @@ async def test_message_sender_from_reactive() -> None:
         assert message_senders == [pilot.app.query_one(TestWidget)]
 
 
+@pytest.mark.anyio
 async def test_mutate_reactive() -> None:
     """Test explicitly mutating reactives"""
 
@@ -785,6 +814,7 @@ async def test_mutate_reactive() -> None:
         assert watched_names == [[], ["Paul"], ["Jessica"]]
 
 
+@pytest.mark.anyio
 async def test_mutate_reactive_data_bind() -> None:
     """https://github.com/Textualize/textual/issues/4825"""
 

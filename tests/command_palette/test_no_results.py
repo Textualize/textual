@@ -10,6 +10,7 @@ class CommandPaletteApp(App[None]):
         self.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_no_results() -> None:
     """Receiving no results from a search for a command should not be a problem."""
     async with CommandPaletteApp().run_test() as pilot:

@@ -17,6 +17,7 @@ class SelectApp(App[None]):
         yield Select[int](SELECT_OPTIONS, value=self.initial_value)
 
 
+@pytest.mark.anyio
 async def test_initial_value_is_validated():
     """The initial value should be respected if it is a legal value.
 
@@ -27,6 +28,7 @@ async def test_initial_value_is_validated():
         assert app.query_one(Select).value == 1
 
 
+@pytest.mark.anyio
 async def test_value_unknown_option_raises_error():
     """Setting the value to an unknown value raises an error."""
     app = SelectApp()
@@ -35,6 +37,7 @@ async def test_value_unknown_option_raises_error():
             app.query_one(Select).value = "french fries"
 
 
+@pytest.mark.anyio
 async def test_initial_value_inside_compose_is_validated():
     """Setting the value to an unknown value inside compose should raise an error."""
 
@@ -50,6 +53,7 @@ async def test_initial_value_inside_compose_is_validated():
             pass
 
 
+@pytest.mark.anyio
 async def test_value_assign_to_blank():
     """Setting the value to BLANK should work with default `allow_blank` value."""
     app = SelectApp(1)
@@ -60,6 +64,7 @@ async def test_value_assign_to_blank():
         assert select.is_blank()
 
 
+@pytest.mark.anyio
 async def test_initial_value_is_picked_if_allow_blank_is_false():
     """The initial value should be picked by default if allow_blank=False."""
 
@@ -72,6 +77,7 @@ async def test_initial_value_is_picked_if_allow_blank_is_false():
         assert app.query_one(Select).value == 0
 
 
+@pytest.mark.anyio
 async def test_initial_value_is_picked_if_allow_blank_is_false():
     """The initial value should be respected even if allow_blank=False."""
 
@@ -84,6 +90,7 @@ async def test_initial_value_is_picked_if_allow_blank_is_false():
         assert app.query_one(Select).value == 2
 
 
+@pytest.mark.anyio
 async def test_set_value_to_blank_with_allow_blank_false():
     """Setting the value to BLANK with allow_blank=False should raise an error."""
 
@@ -97,6 +104,7 @@ async def test_set_value_to_blank_with_allow_blank_false():
             app.query_one(Select).value = Select.BLANK
 
 
+@pytest.mark.anyio
 async def test_set_options_resets_value_to_blank():
     """Resetting the options should reset the value to BLANK."""
 
@@ -112,6 +120,7 @@ async def test_set_options_resets_value_to_blank():
         assert select.is_blank()
 
 
+@pytest.mark.anyio
 async def test_set_options_resets_value_if_allow_blank_is_false():
     """Resetting the options should reset the value if allow_blank=False."""
 

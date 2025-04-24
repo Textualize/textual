@@ -105,6 +105,7 @@ def test_invalid_binding():
             BINDINGS = [(", ,", "foo", "Broken")]
 
 
+@pytest.mark.anyio
 async def test_keymap_update() -> None:
     """Check that when keymaps are updated, the bindings_updated signal is sent."""
 
@@ -129,6 +130,7 @@ async def test_keymap_update() -> None:
         assert bindings_updated == [app.screen, app.screen]
 
 
+@pytest.mark.anyio
 async def test_keymap_key() -> None:
     app: App[None] = App()
 

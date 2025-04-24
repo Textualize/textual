@@ -17,6 +17,7 @@ class SuggestionsApp(App[ComposeResult]):
         yield self.input
 
 
+@pytest.mark.anyio
 async def test_no_suggestions():
     app = SuggestionsApp([])
     async with app.run_test() as pilot:
@@ -25,6 +26,7 @@ async def test_no_suggestions():
         assert app.input._suggestion == ""
 
 
+@pytest.mark.anyio
 async def test_suggestion():
     app = SuggestionsApp(["hello"])
     async with app.run_test() as pilot:
@@ -33,6 +35,7 @@ async def test_suggestion():
             assert app.input._suggestion == "hello"
 
 
+@pytest.mark.anyio
 async def test_accept_suggestion():
     app = SuggestionsApp(["hello"])
     async with app.run_test() as pilot:
@@ -41,12 +44,14 @@ async def test_accept_suggestion():
         assert app.input.value == "hello"
 
 
+@pytest.mark.anyio
 async def test_no_suggestion_on_empty_value():
     app = SuggestionsApp(["hello"])
     async with app.run_test():
         assert app.input._suggestion == ""
 
 
+@pytest.mark.anyio
 async def test_no_suggestion_on_empty_value_after_deleting():
     app = SuggestionsApp(["hello"])
     async with app.run_test() as pilot:
@@ -55,6 +60,7 @@ async def test_no_suggestion_on_empty_value_after_deleting():
         assert app.input._suggestion == ""
 
 
+@pytest.mark.anyio
 async def test_suggestion_shows_up_after_deleting_extra_chars():
     app = SuggestionsApp(["hello"])
     async with app.run_test() as pilot:
@@ -64,6 +70,7 @@ async def test_suggestion_shows_up_after_deleting_extra_chars():
         assert app.input._suggestion == "hello"
 
 
+@pytest.mark.anyio
 async def test_suggestion_shows_up_after_deleting_extra_chars_in_middle_of_word():
     app = SuggestionsApp(["hello"])
     async with app.run_test() as pilot:
@@ -85,6 +92,7 @@ async def test_suggestion_shows_up_after_deleting_extra_chars_in_middle_of_word(
         (string.punctuation[::3], 5),
     ],
 )
+@pytest.mark.anyio
 async def test_suggestion_with_special_characters(suggestion: str, truncate_at: int):
     app = SuggestionsApp([suggestion])
     async with app.run_test() as pilot:
@@ -92,6 +100,7 @@ async def test_suggestion_with_special_characters(suggestion: str, truncate_at: 
         assert app.input._suggestion == suggestion
 
 
+@pytest.mark.anyio
 async def test_suggestion_priority():
     app = SuggestionsApp(["dog", "dad"])
     async with app.run_test() as pilot:

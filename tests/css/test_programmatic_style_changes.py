@@ -16,6 +16,7 @@ from textual.widgets import Label
         ("grid_columns", "1fr 3fr"),
     ],
 )
+@pytest.mark.anyio
 async def test_programmatic_style_change_updates_children(style: str, value: object):
     """Regression test for #1607 https://github.com/Textualize/textual/issues/1607
 
@@ -62,6 +63,7 @@ async def test_programmatic_style_change_updates_children(style: str, value: obj
         ("align", ("right", "bottom")),
     ],
 )
+@pytest.mark.anyio
 async def test_programmatic_align_change_updates_children_position(
     style: str, value: str
 ):

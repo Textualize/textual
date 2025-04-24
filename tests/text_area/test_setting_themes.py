@@ -11,6 +11,7 @@ class TextAreaApp(App[None]):
         yield TextArea("print('hello')", language="python")
 
 
+@pytest.mark.anyio
 async def test_default_theme():
     app = TextAreaApp()
 
@@ -19,6 +20,7 @@ async def test_default_theme():
         assert text_area.theme is "css"
 
 
+@pytest.mark.anyio
 async def test_setting_builtin_themes():
     class MyTextAreaApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -34,6 +36,7 @@ async def test_setting_builtin_themes():
         assert text_area.theme == "monokai"
 
 
+@pytest.mark.anyio
 async def test_setting_unknown_theme_raises_exception():
     app = TextAreaApp()
     async with app.run_test():
@@ -42,6 +45,7 @@ async def test_setting_unknown_theme_raises_exception():
             text_area.theme = "this-theme-doesnt-exist"
 
 
+@pytest.mark.anyio
 async def test_registering_and_setting_theme():
     app = TextAreaApp()
 

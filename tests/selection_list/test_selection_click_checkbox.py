@@ -22,6 +22,7 @@ class SelectionListApp(App[None]):
         self.clicks.append(event.selection_index)
 
 
+@pytest.mark.anyio
 async def test_click_on_prompt() -> None:
     """It should be possible to toggle a selection by clicking on the prompt."""
     async with SelectionListApp().run_test() as pilot:
@@ -31,6 +32,7 @@ async def test_click_on_prompt() -> None:
         assert pilot.app.clicks == [0]
 
 
+@pytest.mark.anyio
 async def test_click_on_checkbox() -> None:
     """It should be possible to toggle a selection by clicking on the checkbox."""
     async with SelectionListApp().run_test() as pilot:

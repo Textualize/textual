@@ -16,6 +16,7 @@ class AnimApp(App):
         yield Static("foo", id="foo")
 
 
+@pytest.mark.anyio
 async def test_animate_height() -> None:
     """Test animating styles.height works."""
 
@@ -39,6 +40,7 @@ async def test_animate_height() -> None:
         assert static.styles.height.value == 100
 
 
+@pytest.mark.anyio
 async def test_scheduling_animation() -> None:
     """Test that scheduling an animation works."""
 
@@ -58,6 +60,7 @@ async def test_scheduling_animation() -> None:
         assert styles.background.rgb == (255, 255, 255)
 
 
+@pytest.mark.anyio
 async def test_wait_for_current_animations() -> None:
     """Test that we can wait only for the current animations taking place."""
 
@@ -77,6 +80,7 @@ async def test_wait_for_current_animations() -> None:
         assert elapsed < (delay / 2)
 
 
+@pytest.mark.anyio
 async def test_wait_for_current_and_scheduled_animations() -> None:
     """Test that we can wait for current and scheduled animations."""
 
@@ -95,6 +99,7 @@ async def test_wait_for_current_and_scheduled_animations() -> None:
         assert styles.background.rgb == (0, 0, 0)
 
 
+@pytest.mark.anyio
 async def test_reverse_animations() -> None:
     """Test that you can create reverse animations.
 
@@ -127,6 +132,7 @@ async def test_reverse_animations() -> None:
         assert styles.background.rgb == (0, 0, 0)
 
 
+@pytest.mark.anyio
 async def test_schedule_reverse_animations() -> None:
     """Test that you can schedule reverse animations.
 
@@ -171,6 +177,7 @@ class CancelAnimApp(App[None]):
         yield CancelAnimWidget()
 
 
+@pytest.mark.anyio
 async def test_cancel_app_animation() -> None:
     """It should be possible to cancel a running app animation."""
 
@@ -182,6 +189,7 @@ async def test_cancel_app_animation() -> None:
         assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
 
 
+@pytest.mark.anyio
 async def test_cancel_app_non_animation() -> None:
     """It should be possible to attempt to cancel a non-running app animation."""
 
@@ -191,6 +199,7 @@ async def test_cancel_app_non_animation() -> None:
         assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
 
 
+@pytest.mark.anyio
 async def test_cancel_widget_animation() -> None:
     """It should be possible to cancel a running widget animation."""
 
@@ -203,6 +212,7 @@ async def test_cancel_widget_animation() -> None:
         assert not pilot.app.animator.is_being_animated(widget, "counter")
 
 
+@pytest.mark.anyio
 async def test_cancel_widget_non_animation() -> None:
     """It should be possible to attempt to cancel a non-running widget animation."""
 

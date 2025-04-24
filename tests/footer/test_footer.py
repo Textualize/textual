@@ -4,6 +4,7 @@ from textual.widget import Widget
 from textual.widgets import Button, Footer
 
 
+@pytest.mark.anyio
 async def test_footer_bindings() -> None:
     app_binding_count = 0
 

@@ -51,6 +51,7 @@ class ModalApp(App):
         self.push_screen(QuitScreen(), check_quit)
 
 
+@pytest.mark.anyio
 async def test_command_dismiss():
     """Regression test for https://github.com/Textualize/textual/issues/5512"""
     app = ModalApp()

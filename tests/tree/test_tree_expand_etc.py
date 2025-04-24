@@ -19,6 +19,7 @@ class TreeApp(App[None]):
             node = node.add(str(n))
 
 
+@pytest.mark.anyio
 async def test_tree_node_expand() -> None:
     """Expanding one node should not expand all nodes."""
     async with TreeApp().run_test() as pilot:
@@ -30,6 +31,7 @@ async def test_tree_node_expand() -> None:
             check_node = check_node.children[0]
 
 
+@pytest.mark.anyio
 async def test_tree_node_expand_all() -> None:
     """Expanding all on a node should expand all child nodes too."""
     async with TreeApp().run_test() as pilot:
@@ -42,6 +44,7 @@ async def test_tree_node_expand_all() -> None:
             check_node = check_node.children[0]
 
 
+@pytest.mark.anyio
 async def test_tree_node_collapse() -> None:
     """Collapsing one node should not collapse all nodes."""
     async with TreeApp().run_test() as pilot:
@@ -54,6 +57,7 @@ async def test_tree_node_collapse() -> None:
             check_node = check_node.children[0]
 
 
+@pytest.mark.anyio
 async def test_tree_node_collapse_all() -> None:
     """Collapsing all on a node should collapse all child noes too."""
     async with TreeApp().run_test() as pilot:
@@ -67,6 +71,7 @@ async def test_tree_node_collapse_all() -> None:
             check_node = check_node.children[0]
 
 
+@pytest.mark.anyio
 async def test_tree_node_toggle() -> None:
     """Toggling one node should not toggle all nodes."""
     async with TreeApp().run_test() as pilot:
@@ -83,6 +88,7 @@ async def test_tree_node_toggle() -> None:
             check_node = check_node.children[0]
 
 
+@pytest.mark.anyio
 async def test_tree_node_toggle_all() -> None:
     """Toggling all on a node should toggle all child nodes too."""
     async with TreeApp().run_test() as pilot:

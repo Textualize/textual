@@ -18,6 +18,7 @@ class TextAreaApp(App):
         yield text_area
 
 
+@pytest.mark.anyio
 async def test_default_selection():
     """The cursor starts at (0, 0) in the document."""
     app = TextAreaApp()
@@ -26,6 +27,7 @@ async def test_default_selection():
         assert text_area.selection == Selection.cursor((0, 0))
 
 
+@pytest.mark.anyio
 async def test_cursor_location_get():
     app = TextAreaApp()
     async with app.run_test():
@@ -34,6 +36,7 @@ async def test_cursor_location_get():
         assert text_area.cursor_location == (2, 2)
 
 
+@pytest.mark.anyio
 async def test_cursor_location_set():
     app = TextAreaApp()
     async with app.run_test():
@@ -43,6 +46,7 @@ async def test_cursor_location_set():
         assert text_area.selection == Selection.cursor(target)
 
 
+@pytest.mark.anyio
 async def test_cursor_location_set_while_selecting():
     """If you set the cursor_location while a selection is in progress,
     the start/anchor point of the selection will remain where it is."""
@@ -55,6 +59,7 @@ async def test_cursor_location_set_while_selecting():
         assert text_area.selection == Selection((0, 0), target)
 
 
+@pytest.mark.anyio
 async def test_move_cursor_select():
     app = TextAreaApp()
     async with app.run_test():
@@ -64,6 +69,7 @@ async def test_move_cursor_select():
         assert text_area.selection == Selection((1, 1), (2, 3))
 
 
+@pytest.mark.anyio
 async def test_move_cursor_relative():
     app = TextAreaApp()
     async with app.run_test():
@@ -79,6 +85,7 @@ async def test_move_cursor_relative():
         assert text_area.selection == Selection.cursor((4, 0))
 
 
+@pytest.mark.anyio
 async def test_selected_text_forward():
     """Selecting text from top to bottom results in the correct selected_text."""
     app = TextAreaApp()
@@ -94,6 +101,7 @@ Fear is the mind-killer.
         )
 
 
+@pytest.mark.anyio
 async def test_selected_text_backward():
     """Selecting text from bottom to top results in the correct selected_text."""
     app = TextAreaApp()
@@ -109,6 +117,7 @@ Fear is the mind-killer.
         )
 
 
+@pytest.mark.anyio
 async def test_selected_text_multibyte():
     app = TextAreaApp()
     async with app.run_test():
@@ -118,6 +127,7 @@ async def test_selected_text_multibyte():
         assert text_area.selected_text == "んに"
 
 
+@pytest.mark.anyio
 async def test_selection_clamp():
     """When you set the selection reactive, it's clamped to within the document bounds."""
     app = TextAreaApp()
@@ -135,6 +145,7 @@ async def test_selection_clamp():
         ((1, 0), (0, 16)),
     ],
 )
+@pytest.mark.anyio
 async def test_get_cursor_left_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
@@ -152,6 +163,7 @@ async def test_get_cursor_left_location(start, end):
         ((4, 0), (4, 0)),
     ],
 )
+@pytest.mark.anyio
 async def test_get_cursor_right_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
@@ -168,6 +180,7 @@ async def test_get_cursor_right_location(start, end):
         ((2, 56), (1, 24)),  # snap to end of row above
     ],
 )
+@pytest.mark.anyio
 async def test_get_cursor_up_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
@@ -187,6 +200,7 @@ async def test_get_cursor_up_location(start, end):
         ((2, 56), (3, 20)),  # snap to end of row below
     ],
 )
+@pytest.mark.anyio
 async def test_get_cursor_down_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
@@ -219,6 +233,7 @@ async def test_get_cursor_down_location(start, end):
         ((1, 14), (1, 11)),
     ],
 )
+@pytest.mark.anyio
 async def test_cursor_word_left_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
@@ -249,6 +264,7 @@ async def test_cursor_word_left_location(start, end):
         ((1, 14), (1, 14)),
     ],
 )
+@pytest.mark.anyio
 async def test_cursor_word_right_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
@@ -266,6 +282,7 @@ async def test_cursor_word_right_location(start, end):
         ("", Selection((0, 0), (0, 0))),
     ],
 )
+@pytest.mark.anyio
 async def test_select_all(content, expected_selection):
     app = TextAreaApp()
     async with app.run_test():
@@ -287,6 +304,7 @@ async def test_select_all(content, expected_selection):
         (0, "", Selection((0, 0), (0, 0))),
     ],
 )
+@pytest.mark.anyio
 async def test_select_line(index, content, expected_selection):
     app = TextAreaApp()
     async with app.run_test():
@@ -298,6 +316,7 @@ async def test_select_line(index, content, expected_selection):
         assert text_area.selection == expected_selection
 
 
+@pytest.mark.anyio
 async def test_cursor_screen_offset_and_terminal_cursor_position_update():
     class TextAreaCursorScreenOffset(App):
         def compose(self) -> ComposeResult:
@@ -318,6 +337,7 @@ async def test_cursor_screen_offset_and_terminal_cursor_position_update():
         assert app.cursor_position == (6, 2)
 
 
+@pytest.mark.anyio
 async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
     class TextAreaCursorScreenOffset(App):
         def compose(self) -> ComposeResult:
@@ -336,6 +356,7 @@ async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
         assert app.cursor_position == (5, 1)
 
 
+@pytest.mark.anyio
 async def test_mouse_selection_with_tab_characters():
     """Regression test for https://github.com/Textualize/textual/issues/5212"""
 

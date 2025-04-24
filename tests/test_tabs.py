@@ -8,11 +8,13 @@ from textual.widgets import Tab, Tabs
 from textual.widgets._tabs import Underline
 
 
+@pytest.mark.anyio
 async def test_tab_label():
     """It should be possible to access a tab's label."""
     assert Tab("Pilot").label_text == "Pilot"
 
 
+@pytest.mark.anyio
 async def test_tab_relabel():
     """It should be possible to relabel a tab."""
     tab = Tab("Pilot")
@@ -21,6 +23,7 @@ async def test_tab_relabel():
     assert tab.label_text == "Aeryn"
 
 
+@pytest.mark.anyio
 async def test_compose_empty_tabs():
     """It should be possible to create an empty Tabs."""
 
@@ -33,6 +36,7 @@ async def test_compose_empty_tabs():
         assert pilot.app.query_one(Tabs).active_tab is None
 
 
+@pytest.mark.anyio
 async def test_compose_tabs_from_strings():
     """It should be possible to create a Tabs from some strings."""
 
@@ -47,6 +51,7 @@ async def test_compose_tabs_from_strings():
         assert tabs.active_tab.id == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_compose_tabs_from_tabs():
     """It should be possible to create a Tabs from some Tabs."""
 
@@ -66,6 +71,7 @@ async def test_compose_tabs_from_tabs():
         assert tabs.active_tab.id == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_add_tabs_later():
     """It should be possible to add tabs later on in the app's cycle."""
 
@@ -87,6 +93,7 @@ async def test_add_tabs_later():
         assert tabs.active_tab.id == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_add_tab_before():
     """It should be possible to add a tab before another tab."""
 
@@ -112,6 +119,7 @@ async def test_add_tab_before():
         assert tabs.active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_add_tab_before_badly():
     """Test exceptions from badly adding a tab before another."""
 
@@ -139,6 +147,7 @@ async def test_add_tab_before_badly():
         assert tabs.active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_add_tab_after():
     """It should be possible to add a tab after another tab."""
 
@@ -164,6 +173,7 @@ async def test_add_tab_after():
         assert tabs.active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_add_tab_after_badly():
     """Test exceptions from badly adding a tab after another."""
 
@@ -191,6 +201,7 @@ async def test_add_tab_after_badly():
         assert tabs.active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_add_tab_before_and_after():
     """Attempting to add a tab before and after another is an error."""
 
@@ -208,6 +219,7 @@ async def test_add_tab_before_and_after():
             tabs.add_tab("John", before="tab-1", after="tab-1")
 
 
+@pytest.mark.anyio
 async def test_remove_tabs():
     """It should be possible to remove tabs."""
 
@@ -247,6 +259,7 @@ async def test_remove_tabs():
         assert tabs.active_tab is None
 
 
+@pytest.mark.anyio
 async def test_remove_tabs_reversed():
     """It should be possible to remove tabs."""
 
@@ -280,6 +293,7 @@ async def test_remove_tabs_reversed():
         assert tabs.active_tab is None
 
 
+@pytest.mark.anyio
 async def test_clear_tabs():
     """It should be possible to clear all tabs."""
 
@@ -297,6 +311,7 @@ async def test_clear_tabs():
         assert tabs.active_tab is None
 
 
+@pytest.mark.anyio
 async def test_change_active_from_code():
     """It should be possible to change the active tab from code.."""
 
@@ -320,6 +335,7 @@ async def test_change_active_from_code():
         assert tabs.active_tab is None
 
 
+@pytest.mark.anyio
 async def test_navigate_tabs_with_keyboard():
     """It should be possible to navigate tabs with the keyboard."""
 
@@ -350,6 +366,7 @@ async def test_navigate_tabs_with_keyboard():
         assert tabs.active == tabs.active_tab.id
 
 
+@pytest.mark.anyio
 async def test_navigate_empty_tabs_with_keyboard():
     """It should be possible to navigate an empty tabs with the keyboard."""
 
@@ -372,6 +389,7 @@ async def test_navigate_empty_tabs_with_keyboard():
         assert tabs.active == ""
 
 
+@pytest.mark.anyio
 async def test_navigate_tabs_with_mouse():
     """It should be possible to navigate tabs with the mouse."""
 
@@ -417,12 +435,14 @@ class TabsMessageCatchApp(App[None]):
         assert event.control is event.tabs
 
 
+@pytest.mark.anyio
 async def test_startup_messages():
     """On startup there should be a tab activated message."""
     async with TabsMessageCatchApp().run_test() as pilot:
         assert pilot.app.intended_handlers == ["on_tabs_tab_activated"]
 
 
+@pytest.mark.anyio
 async def test_change_tab_with_code_messages():
     """Changing tab in code should result in an activated tab message."""
     async with TabsMessageCatchApp().run_test() as pilot:
@@ -434,6 +454,7 @@ async def test_change_tab_with_code_messages():
         ]
 
 
+@pytest.mark.anyio
 async def test_remove_tabs_messages():
     """Removing tabs should result in various messages."""
     async with TabsMessageCatchApp().run_test() as pilot:
@@ -451,6 +472,7 @@ async def test_remove_tabs_messages():
         ]
 
 
+@pytest.mark.anyio
 async def test_reverse_remove_tabs_messages():
     """Removing tabs should result in various messages."""
     async with TabsMessageCatchApp().run_test() as pilot:
@@ -465,6 +487,7 @@ async def test_reverse_remove_tabs_messages():
         ]
 
 
+@pytest.mark.anyio
 async def test_keyboard_navigation_messages():
     """Keyboard navigation should result in the expected messages."""
     async with TabsMessageCatchApp().run_test() as pilot:
@@ -479,6 +502,7 @@ async def test_keyboard_navigation_messages():
         ]
 
 
+@pytest.mark.anyio
 async def test_mouse_navigation_messages():
     """Mouse navigation should result in the expected messages."""
     async with TabsMessageCatchApp().run_test() as pilot:
@@ -493,6 +517,7 @@ async def test_mouse_navigation_messages():
         ]
 
 
+@pytest.mark.anyio
 async def test_disabled_tab_is_not_activated_by_clicking_underline():
     """Regression test for https://github.com/Textualize/textual/issues/4701"""
 

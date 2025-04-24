@@ -19,6 +19,7 @@ class ValidWidget(Widget):
         self.called_by = self.key_ctrl_i
 
 
+@pytest.mark.anyio
 async def test_dispatch_key_valid_key():
     widget = ValidWidget()
     result = await dispatch_key(widget, Key(key="x", character="x"))
@@ -26,6 +27,7 @@ async def test_dispatch_key_valid_key():
     assert widget.called_by == widget.key_x
 
 
+@pytest.mark.anyio
 async def test_dispatch_key_valid_key_alias():
     """When you press tab or ctrl+i, it comes through as a tab key event, but handlers for
     tab and ctrl+i are both considered valid."""
@@ -51,6 +53,7 @@ class DuplicateHandlersWidget(Widget):
         self.called_by = self.key_ctrl_i
 
 
+@pytest.mark.anyio
 async def test_dispatch_key_raises_when_conflicting_handler_aliases():
     """If you've got a handler for e.g. ctrl+i and a handler for tab, that's probably a mistake.
     In the terminal, they're the same thing, so we fail fast via exception here."""
@@ -72,6 +75,7 @@ class PreventTestApp(App):
         self.input_changed_events.append(event)
 
 
+@pytest.mark.anyio
 async def test_message_queue_size():
     """Test message queue size property."""
     app = App()
@@ -91,6 +95,7 @@ async def test_message_queue_size():
         assert app.message_queue_size == 0
 
 
+@pytest.mark.anyio
 async def test_prevent() -> None:
     app = PreventTestApp()
 
@@ -110,6 +115,7 @@ async def test_prevent() -> None:
         assert app.input_changed_events[0].value == "foo"
 
 
+@pytest.mark.anyio
 async def test_prevent_with_call_next() -> None:
     """Test for https://github.com/Textualize/textual/issues/3166.
 
@@ -146,6 +152,7 @@ async def test_prevent_with_call_next() -> None:
         assert hits == 2
 
 
+@pytest.mark.anyio
 async def test_prevent_default():
     """Test that prevent_default doesn't apply when a message is bubbled."""
 

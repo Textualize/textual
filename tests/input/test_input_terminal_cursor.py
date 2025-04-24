@@ -13,6 +13,7 @@ class InputApp(App):
         yield Input("こんにちは!", select_on_focus=False)
 
 
+@pytest.mark.anyio
 async def test_initial_terminal_cursor_position():
     app = InputApp()
     async with app.run_test():
@@ -20,6 +21,7 @@ async def test_initial_terminal_cursor_position():
         assert app.cursor_position == Offset(21, 5)
 
 
+@pytest.mark.anyio
 async def test_terminal_cursor_position_update_on_cursor_move():
     app = InputApp()
     async with app.run_test():

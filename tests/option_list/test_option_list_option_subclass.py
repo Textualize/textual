@@ -22,6 +22,7 @@ class OptionListApp(App[None]):
         yield OptionList(*[OptionWithExtras(n) for n in range(100)])
 
 
+@pytest.mark.anyio
 async def test_option_list_with_subclassed_options() -> None:
     """It should be possible to build an option list with subclassed options."""
     async with OptionListApp().run_test() as pilot:

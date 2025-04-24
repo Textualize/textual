@@ -17,6 +17,7 @@ class CommandPaletteApp(App[None]):
         self.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_clicking_outside_command_palette_closes_it() -> None:
     """Clicking 'outside' the command palette should make it go away."""
     async with CommandPaletteApp().run_test() as pilot:

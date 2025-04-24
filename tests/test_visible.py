@@ -3,6 +3,7 @@ from textual.containers import VerticalScroll
 from textual.widget import Widget
 
 
+@pytest.mark.anyio
 async def test_visibility_changes() -> None:
     """Test changing visibility via code and CSS.
 
@@ -44,6 +45,7 @@ async def test_visibility_changes() -> None:
         assert pilot.app.query_one("#hide-via-css").visible is False
 
 
+@pytest.mark.anyio
 async def test_visible_is_inherited() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3071"""
 

@@ -7,6 +7,7 @@ class InputApp(App):
         yield Input("Hello, World!")
 
 
+@pytest.mark.anyio
 async def test_input_clear():
     async with InputApp().run_test() as pilot:
         input_widget = pilot.app.query_one(Input)
