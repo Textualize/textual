@@ -4002,3 +4002,22 @@ def test_allow_focus(snap_compare):
             yield NonFocusable("NON FOCUSABLE")
 
     assert snap_compare(FocusApp())
+
+
+def test_tint(snap_compare):
+    """Test that tint applied to dim text doesn't break.
+
+    You should see the text Hello, World with a 50% green tint."""
+
+    class TintApp(App):
+        CSS = """
+        Label {            
+            tint: green 50%;
+            text-style: dim;            
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Hello, World")
+
+    assert snap_compare(TintApp())

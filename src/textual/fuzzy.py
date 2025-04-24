@@ -219,7 +219,7 @@ class Matcher:
             candidate: The candidate string to match against the query.
 
         Returns:
-            A [rich.text.Text][`Text`] object with highlighted matches.
+            A [`Text`][rich.text.Text] object with highlighted matches.
         """
         content = Content.from_markup(candidate)
         score, offsets = self.fuzzy_search.match(self.query, candidate)
