@@ -2671,7 +2671,7 @@ class App(Generic[ReturnType], DOMNode):
             NoActiveWorker: If using `wait_for_dismiss` outside of a worker.
 
         Returns:
-            An optional awaitable that awaits the mounting of the screen and its children, or an asyncio Future
+            An optional awaitable that awaits the mounting of the screen and its children, or an awaitable
                 to await the result of the screen.
         """
         if not isinstance(screen, (Screen, str)):
