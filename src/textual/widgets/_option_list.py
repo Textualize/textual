@@ -732,8 +732,8 @@ class OptionList(ScrollView, can_focus=True):
         """Get rendered option with a given style.
 
         Args:
+            option: An option.
             style: Style of render.
-            index: Index of the option.
 
         Returns:
             A list of strips.
