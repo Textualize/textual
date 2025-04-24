@@ -8,6 +8,7 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
+import enum
 import asyncio
 from functools import partial
 from operator import attrgetter
@@ -23,6 +24,8 @@ from typing import (
     Optional,
     TypeVar,
     Union,
+    Literal,
+    Generator,
 )
 
 import rich.repr
@@ -82,6 +85,27 @@ ScreenResultCallbackType = Union[
 ]
 """Type of a screen result callback function."""
 
+class _Unset(enum.Enum):
+    UNSET = enum.auto()
+
+class AwaitScreen(Generic[ScreenResultType]):
+    def __init__(self) -> None:
+        self._event = asyncio.Event()
+        self._result: ScreenResultType | Literal[_Unset.UNSET] = _Unset.UNSET
+
+    async def wait(self) -> ScreenResultType:
+        await self._event.wait()
+        assert self._result is not _Unset.UNSET
+        return self._result
+
+    def __await__(self) -> Generator[Any, Any, ScreenResultType]:
+        return self.wait().__await__()
+
+    def set_result(self, result):
+        assert self._result is _Unset.UNSET
+        self._result = result
+        self._event.set()
+
 
 @rich.repr.auto
 class ResultCallback(Generic[ScreenResultType]):
@@ -91,7 +115,7 @@ class ResultCallback(Generic[ScreenResultType]):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: asyncio.Future[ScreenResultType] | None = None,
+        future: AwaitScreen[ScreenResultType] | None = None,
     ) -> None:
         """Initialise the result callback object.
 
@@ -1161,7 +1185,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: asyncio.Future[ScreenResultType | None] | None = None,
+        future: AwaitScreen[ScreenResultType] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 

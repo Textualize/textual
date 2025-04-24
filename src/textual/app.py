@@ -120,6 +120,7 @@ from textual.screen import (
     ScreenResultCallbackType,
     ScreenResultType,
     SystemModalScreen,
+    AwaitScreen,
 )
 from textual.signal import Signal
 from textual.theme import BUILTIN_THEMES, Theme, ThemeProvider
@@ -2650,14 +2651,14 @@ class App(Generic[ReturnType], DOMNode):
             screen: Screen[ScreenResultType] | str,
             callback: ScreenResultCallbackType[ScreenResultType] | None = None,
             wait_for_dismiss: Literal[True] = True,
-        ) -> asyncio.Future[ScreenResultType]: ...
+        ) -> AwaitScreen[ScreenResultType]: ...
 
     def push_screen(
         self,
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: bool = False,
-    ) -> AwaitMount | asyncio.Future[ScreenResultType]:
+    ) -> AwaitMount | AwaitScreen[ScreenResultType]:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
@@ -2678,14 +2679,6 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            # Mainly for testing, when push_screen isn't called in an async context
-            future: asyncio.Future[ScreenResultType] = asyncio.Future()
-        else:
-            future = loop.create_future()
-
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
@@ -2695,6 +2688,7 @@ class App(Generic[ReturnType], DOMNode):
         except LookupError:
             message_pump = self.app
 
+        future = AwaitScreen()
         next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
