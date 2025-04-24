@@ -3,6 +3,8 @@ Tests for the tabs underline animation, which is considered a basic animation.
 (An animation that also plays on the level BASIC.)
 """
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Label, TabbedContent, Tabs
 

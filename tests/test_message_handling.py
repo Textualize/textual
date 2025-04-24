@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.message import Message
 from textual.widget import Widget

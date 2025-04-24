@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.events import Paste

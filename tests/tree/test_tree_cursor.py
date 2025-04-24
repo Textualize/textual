@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Tree

@@ -3,6 +3,8 @@ Tests for the loading indicator animation, which is considered a basic animation
 (An animation that also plays on the level BASIC.)
 """
 
+import pytest
+
 from textual.app import App
 
 

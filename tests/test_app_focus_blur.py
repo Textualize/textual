@@ -1,5 +1,7 @@
 """Test the workings of reacting to AppFocus and AppBlur."""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.events import AppBlur, AppFocus
 from textual.widgets import Input

@@ -5,6 +5,8 @@ Make sure that calls to render only happen after a widget being mounted.
 
 import asyncio
 
+import pytest
+
 from textual.app import App
 from textual.widget import Widget
 

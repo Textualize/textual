@@ -2,6 +2,8 @@
 
 from asyncio import sleep
 
+import pytest
+
 from textual import work
 from textual.app import App
 from textual.command import Hit, Hits, Provider

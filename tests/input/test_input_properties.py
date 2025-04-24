@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from rich.highlighter import JSONHighlighter
 from rich.text import Text
 

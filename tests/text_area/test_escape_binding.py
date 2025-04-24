@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Button, TextArea

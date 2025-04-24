@@ -1,3 +1,4 @@
+import pytest
 from rgb import RGBApp
 
 from textual.color import Color

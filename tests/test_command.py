@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable
 
+import pytest
+
 from textual.app import App, ComposeResult, SystemCommand
 from textual.containers import Grid
 from textual.screen import ModalScreen, Screen

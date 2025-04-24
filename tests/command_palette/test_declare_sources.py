@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen

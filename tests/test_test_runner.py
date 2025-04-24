@@ -1,3 +1,5 @@
+import pytest
+
 from textual import events
 from textual.app import App
 

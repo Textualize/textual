@@ -1,5 +1,7 @@
 """Test https://github.com/Textualize/textual/issues/4248"""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Label
 

@@ -1,3 +1,4 @@
+import pytest
 from rich.text import Text
 
 from textual.app import App

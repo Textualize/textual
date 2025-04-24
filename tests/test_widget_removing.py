@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Container, Vertical
 from textual.widgets import Button, Label, Static

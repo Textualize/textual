@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.containers import Horizontal
 from textual.widgets import Footer, Tree

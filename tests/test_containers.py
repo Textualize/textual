@@ -1,5 +1,7 @@
 """Test basic functioning of some containers."""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import (
     Center,

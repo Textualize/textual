@@ -2,6 +2,8 @@
 Test that generic animations can be disabled.
 """
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.widgets import Label

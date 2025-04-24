@@ -1,5 +1,7 @@
 from time import perf_counter
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.reactive import var
 from textual.widgets import Static

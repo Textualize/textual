@@ -1,5 +1,6 @@
 """Tests for the tooltips."""
 
+import pytest
 from typing_extensions import Final
 
 from textual.app import App, ComposeResult

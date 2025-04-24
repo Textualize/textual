@@ -1,3 +1,5 @@
+import pytest
+
 from textual import on
 from textual.app import App
 from textual.events import Click, MouseDown, MouseUp

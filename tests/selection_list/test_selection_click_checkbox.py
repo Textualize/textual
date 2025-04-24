@@ -1,5 +1,7 @@
 """See https://github.com/Textualize/textual/pull/2930 for the introduction of these tests."""
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.geometry import Offset

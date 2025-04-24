@@ -1,5 +1,7 @@
 from typing import List
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.events import Event

@@ -8,6 +8,8 @@ that have been modified by the child class.
 
 from __future__ import annotations
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList, SelectionList

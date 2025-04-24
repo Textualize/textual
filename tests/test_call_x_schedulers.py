@@ -1,5 +1,7 @@
 import asyncio
 
+import pytest
+
 from textual._context import active_message_pump
 from textual.app import App
 from textual.message_pump import MessagePump

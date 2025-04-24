@@ -1,5 +1,7 @@
 """See https://github.com/Textualize/textual/issues/2900 for the reason behind these tests."""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import SelectionList
 

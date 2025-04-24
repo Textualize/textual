@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from textual.file_monitor import FileMonitor
 
 

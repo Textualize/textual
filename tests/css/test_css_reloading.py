@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Label

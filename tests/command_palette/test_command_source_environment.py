@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.command import Hit, Hits, Provider
 from textual.screen import Screen

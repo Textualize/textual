@@ -1,3 +1,4 @@
+import pytest
 from rich.style import Style
 from rich.text import Text
 

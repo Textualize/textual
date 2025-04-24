@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.command import CommandList, CommandPalette, Hit, Hits, Provider
 

@@ -1,5 +1,7 @@
 """Test that setting a toggle button's label has the desired effect."""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.content import Content
 from textual.widgets import Checkbox, RadioButton, RadioSet

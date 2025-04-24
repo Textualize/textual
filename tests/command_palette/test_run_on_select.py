@@ -1,5 +1,7 @@
 from functools import partial
 
+import pytest
+
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.widgets import Input

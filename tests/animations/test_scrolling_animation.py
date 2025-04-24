@@ -3,6 +3,8 @@ Tests for scrolling animations, which are considered a basic animation.
 (An animation that also plays on the level BASIC.)
 """
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import VerticalScroll
 from textual.widgets import Label

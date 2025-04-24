@@ -1,5 +1,7 @@
 """The standard path of selecting text on focus is well covered by snapshot tests."""
 
+import pytest
+
 from textual import events
 from textual.app import App, ComposeResult
 from textual.widgets import Input

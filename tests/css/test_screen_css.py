@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.color import Color
 from textual.screen import Screen

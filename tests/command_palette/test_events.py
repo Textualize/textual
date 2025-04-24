@@ -1,6 +1,8 @@
 from typing import Union
 from unittest import mock
 
+import pytest
+
 from textual import on
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
