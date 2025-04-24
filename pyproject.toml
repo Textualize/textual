@@ -93,6 +93,7 @@ syntax = [
 ]
 
 [tool.poetry.group.dev.dependencies]
+anyio = "^4.5.2" # can be upgraded to 4.9 when 3.8 support is dropped
 black = "24.4.2"
 griffe = "0.32.3"
 httpx = "^0.23.1"
