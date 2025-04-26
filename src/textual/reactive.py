@@ -405,6 +405,7 @@ class reactive(Reactive[ReactiveType]):
         repaint: Perform a repaint on change.
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
+        recompose: Compose the widget again when the attribute changes.
         bindings: Refresh bindings when the reactive changes.
     """
 
