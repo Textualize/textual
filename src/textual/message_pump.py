@@ -1,5 +1,4 @@
 """
-
 A `MessagePump` is a base class for any object which processes messages, which includes Widget, Screen, and App.
 
 !!! tip
@@ -26,6 +25,7 @@ from typing import (
     Type,
     TypeVar,
     cast,
+    Self,
 )
 from weakref import WeakSet
 
@@ -113,7 +113,7 @@ class _MessagePumpMeta(type):
 class MessagePump(metaclass=_MessagePumpMeta):
     """Base class which supplies a message pump."""
 
-    def __init__(self, parent: MessagePump | None = None) -> None:
+    def __init__(self, parent: Self | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
         self._parent = parent
         self._running: bool = False
