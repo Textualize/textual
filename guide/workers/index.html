@@ -7347,7 +7347,7 @@ Textual's Worker API makes concurrency far less error prone and easier to reason
 <p>If you were to run this app, you should see weather information update as you type.
 But you may find that the input is not as responsive as usual, with a noticeable delay between pressing a key and seeing it echoed in screen.
 This is because we are making a request to the weather API within a message handler, and the app will not be able to process other messages until the request has completed (which may be anything from a few hundred milliseconds to several seconds later).</p>
-<p>To resolve this we can use the <a class="autorefs autorefs-internal" title="            run_worker" href="../../api/dom_node/#textual.dom.DOMNode.run_worker">run_worker</a> method which runs the <code>update_weather</code> coroutine (<code>async def</code> function) in the background. Here's the code:</p>
+<p>To resolve this we can use the <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.run_worker">run_worker</a> method which runs the <code>update_weather</code> coroutine (<code>async def</code> function) in the background. Here's the code:</p>
 <div class="highlight"><span class="filename">weather02.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
@@ -7390,16 +7390,16 @@ This is because we are making a request to the weather API within a message hand
 <a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <p>This one line change will make typing as responsive as you would expect from any app.</p>
-<p>The <code>run_worker</code> method schedules a new <em>worker</em> to run <code>update_weather</code>, and returns a <a class="autorefs autorefs-internal" title="            Worker" href="../../api/worker/#textual.worker.Worker">Worker</a> object. This happens almost immediately, so it won't prevent other messages from being processed. The <code>update_weather</code> function is now running concurrently, and will finish a second or two later.</p>
+<p>The <code>run_worker</code> method schedules a new <em>worker</em> to run <code>update_weather</code>, and returns a <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker">Worker</a> object. This happens almost immediately, so it won't prevent other messages from being processed. The <code>update_weather</code> function is now running concurrently, and will finish a second or two later.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The <a class="autorefs autorefs-internal" title="            Worker" href="../../api/worker/#textual.worker.Worker">Worker</a> object has a few useful methods on it, but you can often ignore it as we did in <code>weather02.py</code>.</p>
+<p>The <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker">Worker</a> object has a few useful methods on it, but you can often ignore it as we did in <code>weather02.py</code>.</p>
 </div>
 <p>The call to <code>run_worker</code> also sets <code>exclusive=True</code> which solves an additional problem with concurrent network requests: when pulling data from the network, there is no guarantee that you will receive the responses in the same order as the requests.
 For instance, if you start typing "Paris", you may get the response for "Pari" <em>after</em> the response for "Paris", which could show the wrong weather information.
 The <code>exclusive</code> flag tells Textual to cancel all previous workers before starting the new one.</p>
 <h3 id="work-decorator">Work decorator<a class="headerlink" href="#work-decorator" title="Permanent link">&para;</a></h3>
-<p>An alternative to calling <code>run_worker</code> manually is the <a class="autorefs autorefs-internal" title="            work" href="../../api/logger/#textual.work">work</a> decorator, which automatically generates a worker from the decorated method.</p>
+<p>An alternative to calling <code>run_worker</code> manually is the <a class="autorefs autorefs-internal" href="../../api/logger/#textual.work">work</a> decorator, which automatically generates a worker from the decorated method.</p>
 <p>Let's use this decorator in our weather app:</p>
 <div class="highlight"><span class="filename">weather03.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
@@ -7453,27 +7453,22 @@ Note that even though <code>update_weather</code> is an <code>async def</code> f
 <h3 id="worker-return-values">Worker return values<a class="headerlink" href="#worker-return-values" title="Permanent link">&para;</a></h3>
 <p>When you run a worker, the return value of the function won't be available until the work has completed.
 You can check the return value of a worker with the <code>worker.result</code> attribute which will initially be <code>None</code>, but will be replaced with the return value of the function when it completes.</p>
-<p>If you need the return value you can call <a class="autorefs autorefs-internal" title="            wait
-
-
-  
-      async
-  " href="../../api/worker/#textual.worker.Worker.wait">worker.wait</a> which is a coroutine that will wait for the work to complete.
+<p>If you need the return value you can call <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker.wait">worker.wait</a> which is a coroutine that will wait for the work to complete.
 But note that if you do this in a message handler it will also prevent the widget from updating until the worker returns.
 Often a better approach is to handle <a href="#worker-events">worker events</a> which will notify your app when a worker completes, and the return value is available without waiting.</p>
 <h3 id="cancelling-workers">Cancelling workers<a class="headerlink" href="#cancelling-workers" title="Permanent link">&para;</a></h3>
-<p>You can cancel a worker at any time before it is finished by calling <a class="autorefs autorefs-internal" title="            cancel" href="../../api/worker/#textual.worker.Worker.cancel">Worker.cancel</a>.
+<p>You can cancel a worker at any time before it is finished by calling <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker.cancel">Worker.cancel</a>.
 This will raise a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.CancelledError">CancelledError</a> within the coroutine, and should cause it to exit prematurely.</p>
 <h3 id="worker-errors">Worker errors<a class="headerlink" href="#worker-errors" title="Permanent link">&para;</a></h3>
 <p>The default behavior when a worker encounters an exception is to exit the app and display the traceback in the terminal.
 You can also create workers which will <em>not</em> immediately exit on exception, by setting <code>exit_on_error=False</code> on the call to <code>run_worker</code> or the <code>@work</code> decorator.</p>
 <h3 id="worker-lifetime">Worker lifetime<a class="headerlink" href="#worker-lifetime" title="Permanent link">&para;</a></h3>
-<p>Workers are managed by a single <a class="autorefs autorefs-internal" title="            WorkerManager" href="../../api/worker_manager/#textual.worker_manager.WorkerManager">WorkerManager</a> instance, which you can access via <code>app.workers</code>.
+<p>Workers are managed by a single <a class="autorefs autorefs-internal" href="../../api/worker_manager/#textual.worker_manager.WorkerManager">WorkerManager</a> instance, which you can access via <code>app.workers</code>.
 This is a container-like object which you iterate over to see your active workers.</p>
 <p>Workers are tied to the DOM node (widget, screen, or app) where they are created.
 This means that if you remove the widget or pop the screen where they are created, then the tasks will be cleaned up automatically.
 Similarly if you exit the app, any running tasks will be cancelled.</p>
-<p>Worker objects have a <code>state</code> attribute which will contain a <a class="autorefs autorefs-internal" title="            WorkerState" href="../../api/worker/#textual.worker.WorkerState">WorkerState</a> enumeration that indicates what the worker is doing at any given time.
+<p>Worker objects have a <code>state</code> attribute which will contain a <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.WorkerState">WorkerState</a> enumeration that indicates what the worker is doing at any given time.
 The <code>state</code> attribute will contain one of the following values:</p>
 <table>
 <thead>
@@ -7527,7 +7522,7 @@ The <code>state</code> attribute will contain one of the following values:</p>
 </div>
 
 <h3 id="worker-events">Worker events<a class="headerlink" href="#worker-events" title="Permanent link">&para;</a></h3>
-<p>When a worker changes state, it sends a <a class="autorefs autorefs-internal" title="            StateChanged" href="../../api/worker/#textual.worker.Worker.StateChanged">Worker.StateChanged</a> event to the widget where the worker was created.
+<p>When a worker changes state, it sends a <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker.StateChanged">Worker.StateChanged</a> event to the widget where the worker was created.
 You can handle this message by defining an <code>on_worker_state_changed</code> event handler.
 For instance, here is how we might log the state of the worker that updates the weather:</p>
 <div class="highlight"><span class="filename">weather04.py</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
@@ -7591,7 +7586,7 @@ This works well if you are using an async API like <code>httpx</code>, but if yo
 <p>You can create threads by setting <code>thread=True</code> on the <code>run_worker</code> method or the <code>work</code> decorator.
 The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing code for thread workers.</p>
 <p>The first difference is that you should avoid calling methods on your UI directly, or setting reactive variables.
-You can work around this with the <a class="autorefs autorefs-internal" title="            call_from_thread" href="../../api/app/#textual.app.App.call_from_thread">App.call_from_thread</a> method which schedules a call in the main thread.</p>
+You can work around this with the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.call_from_thread">App.call_from_thread</a> method which schedules a call in the main thread.</p>
 <p>The second difference is that you can't cancel threads in the same way as coroutines, but you <em>can</em> manually check if the worker was cancelled.</p>
 <p>Let's demonstrate thread workers by replacing <code>httpx</code> with <code>urllib.request</code> (in the standard library).
 The <code>urllib</code> module is not async aware, so we will need to use threads:</p>
@@ -7651,14 +7646,14 @@ The <code>urllib</code> module is not async aware, so we will need to use thread
 </code></pre></div>
 <p>In this example, the <code>update_weather</code> is not asynchronous (i.e. a regular function).
 The <code>@work</code> decorator has <code>thread=True</code> which makes it a thread worker.
-Note the use of <a class="autorefs autorefs-internal" title="            get_current_worker" href="../../api/worker/#textual.worker.get_current_worker">get_current_worker</a> which the function uses to check if it has been cancelled or not.</p>
+Note the use of <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.get_current_worker">get_current_worker</a> which the function uses to check if it has been cancelled or not.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Textual will raise an exception if you add the <code>work</code> decorator to a regular function without <code>thread=True</code>.</p>
 </div>
 <h4 id="posting-messages">Posting messages<a class="headerlink" href="#posting-messages" title="Permanent link">&para;</a></h4>
-<p>Most Textual functions are not thread-safe which means you will need to use <a class="autorefs autorefs-internal" title="            call_from_thread" href="../../api/app/#textual.app.App.call_from_thread">call_from_thread</a> to run them from a thread worker.
-An exception would be <a class="autorefs autorefs-internal" title="            post_message" href="../../api/widget/#textual.widget.Widget.post_message">post_message</a> which <em>is</em> thread-safe.
+<p>Most Textual functions are not thread-safe which means you will need to use <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.call_from_thread">call_from_thread</a> to run them from a thread worker.
+An exception would be <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.post_message">post_message</a> which <em>is</em> thread-safe.
 If your worker needs to make multiple updates to the UI, it is a good idea to send <a href="../events/">custom messages</a> and let the message handler update the state of the UI.</p>
 
 

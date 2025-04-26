@@ -7653,7 +7653,7 @@ window.onload = async (event) => {
 <li>RGB decimal color start with <code>rgb</code> followed by a tuple of three numbers in the range 0 to 255. For example <code>rgb(255,0,0)</code> is intense red, and <code>rgb(153,50,204)</code> is <em>dark orchid</em>.</li>
 <li>HSL colors start with <code>hsl</code> followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example <code>hsl(0,100%,50%)</code> is intense red and <code>hsl(280,60%,49%)</code> is <em>dark orchid</em>.</li>
 </ul>
-<p>The background and color styles also accept a <a class="autorefs autorefs-internal" title="            Color" href="../../api/color/#textual.color.Color">Color</a> object which can be used to create colors dynamically.</p>
+<p>The background and color styles also accept a <a class="autorefs autorefs-internal" href="../../api/color/#textual.color.Color">Color</a> object which can be used to create colors dynamically.</p>
 <p>The following example adds three widgets and sets their color styles.</p>
 <div class="highlight"><span class="filename">colors01.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.color</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
@@ -7840,7 +7840,7 @@ window.onload = async (event) => {
 <ul>
 <li>You can set the alpha value of a color by adding a fourth digit or pair of digits to a hex color. The extra digits form an alpha component which ranges from 0 for completely transparent to 255 (completely opaque). Any value between 0 and 255 will be translucent. For example <code>"#9932CC7f"</code> is a dark orchid which is roughly 50% translucent.</li>
 <li>You can also set alpha with the <code>rgba</code> format, which is identical to <code>rgb</code> with the additional of a fourth value that should be between 0 and 1, where 0 is invisible and 1 is opaque. For example <code>"rgba(192,78,96,0.5)"</code>.</li>
-<li>You can add the <code>a</code> parameter on a <a class="autorefs autorefs-internal" title="            Color" href="../../api/color/#textual.color.Color">Color</a> object. For example <code>Color(192, 78, 96, a=0.5)</code> creates a translucent dark orchid.</li>
+<li>You can add the <code>a</code> parameter on a <a class="autorefs autorefs-internal" href="../../api/color/#textual.color.Color">Color</a> object. For example <code>Color(192, 78, 96, a=0.5)</code> creates a translucent dark orchid.</li>
 </ul>
 <p>The following example shows what happens when you set alpha on background colors:</p>
 <div class="highlight"><span class="filename">colors01.py</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>

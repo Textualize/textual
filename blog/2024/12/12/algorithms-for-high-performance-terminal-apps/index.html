@@ -7328,12 +7328,7 @@ Everything else we had to build from scratch. From the most basic <a href="https
 <p>I wanted to write-up some of the solutions we came up with, and the 1.0 milestone we just passed makes this a perfect time.</p>
 <!-- more -->
 
-<p>If you haven't followed along with Textual's development, here is a demo of what it can do.
-This is a Textual app, running remotely, served by your browser:</p>
-<p><a href="https://textual-web.io/textualize/demo" target="_blank">
-Launch Textual Demo
-</a></p>
-<p>I cheaped out on the VMs &mdash; so if the demo is down, you could run it locally (with <a href="https://docs.astral.sh/uv/">uv</a>):</p>
+<p>Run the demo with a single line (with <a href="https://docs.astral.sh/uv/">uv</a> is installed):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uvx --python 3.12 textual-demo
 </code></pre></div>
 <h2 id="the-compositor">The Compositor<a class="headerlink" href="#the-compositor" title="Permanent link">&para;</a></h2>
@@ -7592,7 +7587,7 @@ The algorithm it uses may be familiar if you have done any classic game-dev.</p>
 
 <p>Here we have 8 widgets, where only 3 or 4 will be visible at any given time, depending on the position of the scrollbar.
 We want to avoid doing work on widgets which will not be seen in the next frame.</p>
-<p>A naive solution to this would be to check each widget's <a class="autorefs autorefs-internal" title="            Region" href="../../../../../api/geometry/#textual.geometry.Region">Region</a> to see if it overlaps with the visible area.
+<p>A naive solution to this would be to check each widget's <a class="autorefs autorefs-internal" href="../../../../../api/geometry/#textual.geometry.Region">Region</a> to see if it overlaps with the visible area.
 This is a perfectly reasonable solution, but it won't scale well.
 If we get in to the 1000s of widgets territory, it may become significant &mdash; and we may have to do this 30 times a second if we are scrolling.</p>
 <h3 id="the-grid">The Grid<a class="headerlink" href="#the-grid" title="Permanent link">&para;</a></h3>
@@ -7721,7 +7716,7 @@ If we need to know precisely which widgets are visible we can check their region
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 12, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">April 26, 2025</span>
   </span>
 
     

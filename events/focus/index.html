@@ -1945,6 +1945,18 @@ window.onload = async (event) => {
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Focus
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1955,6 +1967,34 @@ window.onload = async (event) => {
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -6847,6 +6887,23 @@ window.onload = async (event) => {
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -6864,17 +6921,17 @@ window.onload = async (event) => {
   
 
 
+  <h1>Focus</h1>
+
 <div class="doc doc-object doc-class">
 
 
-
 <a id="textual.events.Focus"></a>
-    <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../api/events/#textual.events.Event">Event</a></code></p>
+  <div class="doc doc-contents first">
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../api/events/#textual.events.Event">Event</a></code></p>
 
-
-
+  
       <p>Sent when a widget is focussed.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
@@ -6882,46 +6939,40 @@ window.onload = async (event) => {
 </ul>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
         <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-<h1 id="textual.events.Focus(from_app_focus)" class="doc doc-heading doc-heading-parameter">                  <code>from_app_focus</code>
-<a href="#textual.events.Focus(from_app_focus)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>True if this focus event has been sent because the app itself has
+          <td><code>from_app_focus</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>True if this focus event has been sent because the app itself has
 regained focus (via an AppFocus event). False if the focus came from within
 the Textual app (e.g. via the user pressing tab or a programmatic setting
 of the focused widget).</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-
-
-
-
-
-
+  
 
   <div class="doc doc-children">
 
@@ -6937,7 +6988,7 @@ of the focused widget).</p>
 
   </div>
 
-    </div>
+  </div>
 
 </div><h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>

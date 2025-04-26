@@ -7775,10 +7775,10 @@ window.onload = async (event) => {
 <p>Both Header and Footer are children of the Screen object.</p>
 <p>To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going to import and use a few more builtin widgets:</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="            Container" href="../../api/containers/#textual.containers.Container"><code>textual.containers.Container</code></a> For our top-level dialog.</li>
-<li><a class="autorefs autorefs-internal" title="            Horizontal" href="../../api/containers/#textual.containers.Horizontal"><code>textual.containers.Horizontal</code></a> To arrange widgets left to right.</li>
-<li><a class="autorefs autorefs-internal" title=" Static" href="../../widgets/static/#textual.widgets.Static"><code>textual.widgets.Static</code></a> For simple content.</li>
-<li><a class="autorefs autorefs-internal" title=" Button" href="../../widgets/button/#textual.widgets.Button"><code>textual.widgets.Button</code></a> For a clickable button.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Container"><code>textual.containers.Container</code></a> For our top-level dialog.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Horizontal"><code>textual.containers.Horizontal</code></a> To arrange widgets left to right.</li>
+<li><a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets.Static"><code>textual.widgets.Static</code></a> For simple content.</li>
+<li><a class="autorefs autorefs-internal" href="../../widgets/button/#textual.widgets.Button"><code>textual.widgets.Button</code></a> For a clickable button.</li>
 </ul>
 <div class="highlight"><span class="filename">dom3.py</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.containers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Horizontal</span>
@@ -8296,17 +8296,11 @@ Hence if both rules were in a stylesheet, <code>Alert</code> widgets would have 
 </code></pre></div>
 <p>Unlike the <code>id</code> attribute, a widget's classes can be changed after the widget was created. Adding and removing CSS classes is the recommended way of changing the display while your app is running. There are a few methods you can use to manage CSS classes.</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="            add_class" href="../../api/dom_node/#textual.dom.DOMNode.add_class">add_class()</a> Adds one or more classes to a widget.</li>
-<li><a class="autorefs autorefs-internal" title="            remove_class" href="../../api/dom_node/#textual.dom.DOMNode.remove_class">remove_class()</a> Removes class name(s) from a widget.</li>
-<li><a class="autorefs autorefs-internal" title="            toggle_class" href="../../api/dom_node/#textual.dom.DOMNode.toggle_class">toggle_class()</a> Removes a class name if it is present, or adds the name if it's not already present.</li>
-<li><a class="autorefs autorefs-internal" title="            has_class" href="../../api/dom_node/#textual.dom.DOMNode.has_class">has_class()</a> Checks if one or more classes are set on a widget.</li>
-<li><a class="autorefs autorefs-internal" title="            classes
-
-
-  
-      class-attribute
-      instance-attribute
-  " href="../../api/dom_node/#textual.dom.DOMNode.classes">classes</a> Is a frozen set of the class(es) set on a widget.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.add_class">add_class()</a> Adds one or more classes to a widget.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.remove_class">remove_class()</a> Removes class name(s) from a widget.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.toggle_class">toggle_class()</a> Removes a class name if it is present, or adds the name if it's not already present.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.has_class">has_class()</a> Checks if one or more classes are set on a widget.</li>
+<li><a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.classes">classes</a> Is a frozen set of the class(es) set on a widget.</li>
 </ul>
 <h3 id="universal-selector">Universal selector<a class="headerlink" href="#universal-selector" title="Permanent link">&para;</a></h3>
 <p>The <em>universal</em> selector is denoted by an asterisk and will match <em>all</em> widgets.</p>

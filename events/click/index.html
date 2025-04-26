@@ -1857,6 +1857,18 @@ window.onload = async (event) => {
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Click
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1867,6 +1879,43 @@ window.onload = async (event) => {
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#double-triple-clicks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Double &amp; triple clicks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -6847,6 +6896,32 @@ window.onload = async (event) => {
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#double-triple-clicks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Double &amp; triple clicks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -6864,17 +6939,17 @@ window.onload = async (event) => {
   
 
 
+  <h1>Click</h1>
+
 <div class="doc doc-object doc-class">
 
 
-
 <a id="textual.events.Click"></a>
-    <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a></code></p>
+  <div class="doc doc-contents first">
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a></code></p>
 
-
-
+  
       <p>Sent when a widget is clicked.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
@@ -6882,43 +6957,37 @@ window.onload = async (event) => {
 </ul>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
         <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
+          <td><code>chain</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The number of clicks in the chain. 2 is a double click, 3 is a triple click, etc.</p>
+            </div>
+          </td>
+          <td>
+                <code>1</code>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-<h1 id="textual.events.Click(chain)" class="doc doc-heading doc-heading-parameter">                  <code>chain</code>
-<a href="#textual.events.Click(chain)" class="headerlink" title="Permanent link">&para;</a></h1>            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The number of clicks in the chain. 2 is a double click, 3 is a triple click, etc.</p>
-              </div>
-            </td>
-            <td>
-                  <code>1</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+    </tbody>
+  </table>
 
 
-
-
-
-
-
-
+  
 
   <div class="doc doc-children">
 
@@ -6934,20 +7003,20 @@ window.onload = async (event) => {
 
   </div>
 
-    </div>
+  </div>
 
 </div><h2 id="double-triple-clicks">Double &amp; triple clicks<a class="headerlink" href="#double-triple-clicks" title="Permanent link">&para;</a></h2>
 <p>The <code>chain</code> attribute on the <code>Click</code> event can be used to determine the number of clicks that occurred in quick succession.
 A value of <code>1</code> indicates a single click, <code>2</code> indicates a double click, and so on.</p>
 <p>By default, clicks must occur within 500ms of each other for them to be considered a chain.
 You can change this value by setting the <code>CLICK_CHAIN_TIME_THRESHOLD</code> class variable on your <code>App</code> subclass.</p>
-<p>See <a class="autorefs autorefs-internal" title="            MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a> for the list of properties and methods on the parent class.</p>
+<p>See <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a> for the list of properties and methods on the parent class.</p>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../enter/">Enter</a></li>
 <li><a href="../leave/">Leave</a></li>
 <li><a href="../mouse_down/">MouseDown</a></li>
-<li><a class="autorefs autorefs-internal" title="            MouseEvent" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a></li>
+<li><a class="autorefs autorefs-internal" href="../../api/events/#textual.events.MouseEvent">MouseEvent</a></li>
 <li><a href="../mouse_move/">MouseMove</a></li>
 <li><a href="../mouse_scroll_down/">MouseScrollDown</a></li>
 <li><a href="../mouse_scroll_up/">MouseScrollUp</a></li>

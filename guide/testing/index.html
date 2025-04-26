@@ -7526,14 +7526,9 @@ Clicking one of those buttons or pressing a corresponding <span class="keys"><kb
 </div>
 <p>Although it is straightforward to test an app like this manually, it is not practical to click every button and hit every key in your app after changing a single line of code.
 Tests allow us to automate such testing so we can quickly simulate user interactions and check the result.</p>
-<p>To test our simple app we will use the <a class="autorefs autorefs-internal" title="            run_test
-
-
-  
-      async
-  " href="../../api/app/#textual.app.App.run_test"><code>run_test()</code></a> method on the <code>App</code> class.
-This replaces the usual call to <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run"><code>run()</code></a> and will run the app in <em>headless</em> mode, which prevents Textual from updating the terminal but otherwise behaves as normal.</p>
-<p>The <code>run_test()</code> method is an <em>async context manager</em> which returns a <a class="autorefs autorefs-internal" title="            Pilot" href="../../api/pilot/#textual.pilot.Pilot"><code>Pilot</code></a> object.
+<p>To test our simple app we will use the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run_test"><code>run_test()</code></a> method on the <code>App</code> class.
+This replaces the usual call to <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run"><code>run()</code></a> and will run the app in <em>headless</em> mode, which prevents Textual from updating the terminal but otherwise behaves as normal.</p>
+<p>The <code>run_test()</code> method is an <em>async context manager</em> which returns a <a class="autorefs autorefs-internal" href="../../api/pilot/#textual.pilot.Pilot"><code>Pilot</code></a> object.
 You can use this object to interact with the app as if you were operating it with a keyboard and mouse.</p>
 <p>Let's look at the tests for the example above:</p>
 <div class="highlight"><span class="filename">test_rgb.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">rgb</span><span class="w"> </span><span class="kn">import</span> <span class="n">RGBApp</span>
@@ -7589,24 +7584,14 @@ You can use this object to interact with the app as if you were operating it wit
 <p>There are two tests defined in <code>test_rgb.py</code>.
 The first to test keys and the second to test button clicks.
 Both tests first construct an instance of the app and then call <code>run_test()</code> to get a Pilot object.
-The <code>test_keys</code> function simulates key presses with <a class="autorefs autorefs-internal" title="            press
-
-
-  
-      async
-  " href="../../api/pilot/#textual.pilot.Pilot.press"><code>Pilot.press</code></a>, and <code>test_buttons</code> simulates button clicks with <a class="autorefs autorefs-internal" title="            click
-
-
-  
-      async
-  " href="../../api/pilot/#textual.pilot.Pilot.click"><code>Pilot.click</code></a>.</p>
+The <code>test_keys</code> function simulates key presses with <a class="autorefs autorefs-internal" href="../../api/pilot/#textual.pilot.Pilot.press"><code>Pilot.press</code></a>, and <code>test_buttons</code> simulates button clicks with <a class="autorefs autorefs-internal" href="../../api/pilot/#textual.pilot.Pilot.click"><code>Pilot.click</code></a>.</p>
 <p>After simulating a user interaction, Textual tests will typically check the state has been updated with an <code>assert</code> statement.
 The <code>pytest</code> module will record any failures of these assert statements as a test fail.</p>
 <p>If you run the tests with <code>pytest test_rgb.py</code> you should get 2 passes, which will confirm that the user will be able to click buttons or press the keys to change the background color.</p>
 <p>If you later update this app, and accidentally break this functionality, one or more of your tests will fail.
 Knowing which test has failed will help you quickly track down where your code was broken.</p>
 <h2 id="simulating-key-presses">Simulating key presses<a class="headerlink" href="#simulating-key-presses" title="Permanent link">&para;</a></h2>
-<p>We've seen how the <a class="autorefs autorefs-internal" title="            Pilot" href="../../api/pilot/#textual.pilot.Pilot"><code>press</code></a> method simulates keys.
+<p>We've seen how the <a class="autorefs autorefs-internal" href="../../api/pilot/#textual.pilot.Pilot"><code>press</code></a> method simulates keys.
 You can also supply multiple keys to simulate the user typing into the app.
 Here's an example of simulating the user typing the word "hello".</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
@@ -7615,12 +7600,7 @@ Here's an example of simulating the user typing the word "hello".</p>
 You can also use the name for non-printable keys (such as "enter") and the "ctrl+" modifier.
 These are the same identifiers as used for key events, which you can experiment with by running <code>textual keys</code>.</p>
 <h2 id="simulating-clicks">Simulating clicks<a class="headerlink" href="#simulating-clicks" title="Permanent link">&para;</a></h2>
-<p>You can simulate mouse clicks in a similar way with <a class="autorefs autorefs-internal" title="            click
-
-
-  
-      async
-  " href="../../api/pilot/#textual.pilot.Pilot.click"><code>Pilot.click</code></a>.
+<p>You can simulate mouse clicks in a similar way with <a class="autorefs autorefs-internal" href="../../api/pilot/#textual.pilot.Pilot.click"><code>Pilot.click</code></a>.
 If you supply a CSS selector Textual will simulate clicking on the matching widget.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -7654,12 +7634,7 @@ Here's how you could simulate ctrl-clicking a widget with an ID of "slider":</p>
 <h2 id="changing-the-screen-size">Changing the screen size<a class="headerlink" href="#changing-the-screen-size" title="Permanent link">&para;</a></h2>
 <p>The default size of a simulated app is (80, 24).
 You may want to test what happens when the app has a different size.
-To do this, set the <code>size</code> parameter of <a class="autorefs autorefs-internal" title="            run_test
-
-
-  
-      async
-  " href="../../api/app/#textual.app.App.run_test"><code>run_test</code></a> to a different size.
+To do this, set the <code>size</code> parameter of <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run_test"><code>run_test</code></a> to a different size.
 For example, here is how you would simulate a terminal resized to 100 columns and 50 lines:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">run_test</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span> <span class="k">as</span> <span class="n">pilot</span><span class="p">:</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="o">...</span>
@@ -7668,12 +7643,7 @@ For example, here is how you would simulate a terminal resized to 100 columns an
 <p>Some actions in a Textual app won't change the state immediately.
 For instance, messages may take a moment to bubble from the widget that sent them.
 If you were to post a message and immediately <code>assert</code> you may find that it fails because the message hasn't yet been processed.</p>
-<p>You can generally solve this by calling <a class="autorefs autorefs-internal" title="            pause
-
-
-  
-      async
-  " href="../../api/pilot/#textual.pilot.Pilot.pause"><code>pause()</code></a> which will wait for all pending messages to be processed.
+<p>You can generally solve this by calling <a class="autorefs autorefs-internal" href="../../api/pilot/#textual.pilot.Pilot.pause"><code>pause()</code></a> which will wait for all pending messages to be processed.
 You can also supply a <code>delay</code> parameter, which will insert a delay prior to waiting for pending messages.</p>
 <h2 id="textuals-tests">Textual's tests<a class="headerlink" href="#textuals-tests" title="Permanent link">&para;</a></h2>
 <p>Textual itself has a large battery of tests.
