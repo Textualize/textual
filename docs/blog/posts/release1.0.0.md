@@ -28,14 +28,7 @@ I wanted to write-up some of the solutions we came up with, and the 1.0 mileston
 
 <!-- more -->
 
-If you haven't followed along with Textual's development, here is a demo of what it can do.
-This is a Textual app, running remotely, served by your browser:
-
-<a href="https://textual-web.io/textualize/demo" target="_blank">
-Launch Textual Demo
-</a>
-
-I cheaped out on the VMs &mdash; so if the demo is down, you could run it locally (with [uv](https://docs.astral.sh/uv/)):
+Run the demo with a single line (with [uv](https://docs.astral.sh/uv/) is installed):
 
 ```
 uvx --python 3.12 textual-demo
