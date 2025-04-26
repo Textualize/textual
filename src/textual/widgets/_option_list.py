@@ -165,7 +165,7 @@ class OptionList(ScrollView, can_focus=True):
         }
         & > .option-list--option-hover {
             background: $block-hover-background;
-        }        
+        }
     }
     """
 
@@ -732,8 +732,8 @@ class OptionList(ScrollView, can_focus=True):
         """Get rendered option with a given style.
 
         Args:
+            option: An option.
             style: Style of render.
-            index: Index of the option.
 
         Returns:
             A list of strips.
@@ -784,8 +784,10 @@ class OptionList(ScrollView, can_focus=True):
                 )
 
         last_divider = self.options and self.options[-1]._divider
-        self.virtual_size = Size(width, len(lines) - (1 if last_divider else 0))
-        self._scroll_update(self.virtual_size)
+        virtual_size = Size(width, len(lines) - (1 if last_divider else 0))
+        if virtual_size != self.virtual_size:
+            self.virtual_size = virtual_size
+            self._scroll_update(virtual_size)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
