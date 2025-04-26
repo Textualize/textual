@@ -5,9 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
 ### Fixed
 
 - Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
+- Fixed `Button` allowing text selection https://github.com/Textualize/textual/pull/5770
 
 ## [3.1.1] - 2025-04-22
 
