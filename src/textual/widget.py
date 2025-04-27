@@ -447,12 +447,19 @@ class Widget(DOMNode):
         self._content_height_cache: tuple[object, int] = (None, 0)
 
         self._arrangement_cache: FIFOCache[
-            tuple[Size, int, Widget], DockArrangeResult
+            tuple[Size, int], DockArrangeResult
         ] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
-        self._visual_style_cache: dict[tuple[str, ...], VisualStyle] = {}
+        self._visual_style_cache: dict[
+            tuple[
+                tuple[int, ...],
+                tuple[str, ...],
+                bool,
+            ],
+            VisualStyle,
+        ] = {}
 
         self._tooltip: VisualType | None = None
         """The tooltip content."""
@@ -979,15 +986,14 @@ class Widget(DOMNode):
             )
         return child
 
-    if TYPE_CHECKING:
 
-        @overload
-        def get_widget_by_id(self, id: str) -> Widget: ...
+    @overload
+    def get_widget_by_id(self, id: str) -> Widget: ...
 
-        @overload
-        def get_widget_by_id(
-            self, id: str, expect_type: type[ExpectType]
-        ) -> ExpectType: ...
+    @overload
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType]
+    ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1090,7 +1096,7 @@ class Widget(DOMNode):
             def iter_styles() -> Iterable[StylesBase]:
                 """Iterate over the styles from the DOM and additional components styles."""
                 if partial:
-                    node = self
+                    node: DOMNode = self
                 else:
                     for node in reversed(self.ancestors_with_self):
                         yield node.styles
