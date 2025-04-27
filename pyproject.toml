@@ -49,7 +49,7 @@ markdown-it-py = { extras = ["linkify"], version = ">=2.1.0" }
 mdit-py-plugins = "*"
 rich = ">=14.2.0"
 #rich = {path="../rich", develop=true}
-typing-extensions = "^4.4.0"
+typing-extensions = "^4.12.0"
 platformdirs = ">=3.6.0,<5"
 
 # start of [syntax] extras
