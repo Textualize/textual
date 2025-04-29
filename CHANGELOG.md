@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
+- Added `:first-child` and `:last-child` pseudo classes https://github.com/Textualize/textual/pull/5776
 
 ## [3.1.1] - 2025-04-22
 
