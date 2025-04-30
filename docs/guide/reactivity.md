@@ -65,7 +65,7 @@ You may want to add explicit type hints if the attribute type is a superset of t
 
 ## Smart refresh
 
-The first superpower we will look at is "smart refresh". When you modify a reactive attribute, Textual will make note of the fact that it has changed and refresh automatically.
+The first superpower we will look at is "smart refresh". When you modify a reactive attribute, Textual will make note of the fact that it has changed and refresh automatically. It does this by calling the `render()` method of the widget that contains the reactive. A typical render method will make use of the reactive's value although that is not strictly necessary.
 
 !!! information
 
@@ -95,6 +95,10 @@ The `Name` widget has a reactive `who` attribute. When the app modifies that att
 !!! information
 
     Textual will check if a value has really changed, so assigning the same value wont prompt an unnecessary refresh.
+
+!!! information
+
+    [Compound widgets](widgets.md/#compound-widgets) do not contain a `render()` method, but rather a `compose()` method. Smart refresh will do nothing, but you can use a [watch method](#watch-methods) to run code to update child widgets if needed. Alternatively, you can use [recompose](#recompose) to remove all child widgets and call `compose()` again.
 
 ### Disabling refresh
 
