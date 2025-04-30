@@ -488,7 +488,9 @@ class App(Generic[ReturnType], DOMNode):
     This allows for styles to be responsive to the dimensions of the terminal.
     For instance, you might want to show less information, or fewer columns on a narrow displays -- or more information when the terminal is sized wider than usual.
     
-    A breakpoint consists of a tuple containing the width where the class is applied, and the name of the class to set.
+    A breakpoint consists of a tuple containing the minimum width where the class should applied, and the name of the class to set.
+
+    Note that only one class name is set, and if you should avoid having more than one breakpoint set for the same size.
 
     Example:
         ```python
