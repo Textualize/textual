@@ -295,11 +295,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             & > SelectCurrent {
                 padding: 0 1 0 0;
                 border: none !important;
-            }
-            # & > SelectOverlay {
-            #     padding: 0;
-            #     border: none !important;
-            # }
+            }            
         }
         
         .up-arrow {
