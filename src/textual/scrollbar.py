@@ -216,9 +216,10 @@ class ScrollBarRender:
                         )
 
             else:
-                segments = [_Segment(blank * width_thickness, _Style(bgcolor=back))] * (
-                    int(size)
-                )
+                # Render a slim horizontal bar
+                segments = [
+                    _Segment(blank * width_thickness, _Style(bgcolor=back))
+                ] * int(size)
 
                 for i in range(start_index, end_index):
                     segments[i] = _Segment(
