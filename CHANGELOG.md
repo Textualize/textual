@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `toggle_class` parameter to reactives https://github.com/Textualize/textual/pull/5778
 - Added `compact` parameter and reactive to `Button`, `Input`, `ToggleButton`, `RadioSet`, `OptionList`, `TextArea` https://github.com/Textualize/textual/pull/5778
-- Added `HORIZONTAL_BREAKPOINTS` and `VERTICAL_BREAKPOINTS` to `App` and `Screen`
+- Added `HORIZONTAL_BREAKPOINTS` and `VERTICAL_BREAKPOINTS` to `App` and `Screen` https://github.com/Textualize/textual/pull/5779
 
 ### Changed
 
