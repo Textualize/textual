@@ -482,6 +482,26 @@ class App(Generic[ReturnType], DOMNode):
     SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
     """Class to apply to suspended screens, or empty string for no class."""
 
+    HORIZONTAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
+    """List of horizontal breakpoints for responsive classes.
+    
+    A breakpoint consists of a tuple containing the width where the class is set, and the classname to set.
+
+    Example:
+        ```python
+        # Up to 80 cells wide, the app has the class "-normal"
+        # 80 - 119 cells wide, the app has the class "-wide"
+        # 120 cells or wider, the app has the class "-very-wide"
+        [(0, "-normal"), (80, "-wide"), (120, "-very-wide")]
+        ```
+    
+    """
+    VERTICAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
+    """List of vertical breakpoints for responsive classes.
+    
+    Contents are the same as `HORIZONTAL_BREAKPOINTS`, but the integer is compared to the height, rather than the width.
+    """
+
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
