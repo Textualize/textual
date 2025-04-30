@@ -8,14 +8,12 @@ HELP = """\
 A demonstration of how to make an app respond to the dimensions of the terminal.
 
 Try resizing the terminal, then have a look at the source to see how it works!
-
-`ctrl+q` to quit.
-
 """
 
 
 class BreakpointApp(App):
 
+    # A breakpoint consists of a width and a class name to set
     HORIZONTAL_BREAKPOINTS = [
         (0, "-narrow"),
         (40, "-normal"),
@@ -24,10 +22,10 @@ class BreakpointApp(App):
     ]
 
     CSS = """
-    Screen {
-        overflow-y: auto;
+    Screen {        
         Placeholder { padding: 2; }
         Grid { grid-rows: auto; height: auto; }
+        # Change the styles according to the breakpoint classes
         &.-narrow {
             Grid { grid-size: 1; }
         }
