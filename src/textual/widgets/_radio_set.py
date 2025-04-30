@@ -12,7 +12,7 @@ from textual.binding import Binding, BindingType
 from textual.containers import VerticalScroll
 from textual.events import Click, Mount
 from textual.message import Message
-from textual.reactive import var
+from textual.reactive import reactive, var
 from textual.widgets._radio_button import RadioButton
 
 
@@ -32,14 +32,20 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
     RadioSet {
         border: tall $border-blurred;
         background: $surface;
-        padding: 0 1;
+        padding: 0 1;        
         height: auto;
-        width: auto;
+        width: 1fr;
+
+        &.-textual-compact {
+            border: none !important;
+            padding: 0;
+        }
 
         & > RadioButton {
             background: transparent;
             border: none;
             padding: 0;
+            width: 1fr;
 
             & > .toggle--button {
                 color: $panel-darken-2;
@@ -87,6 +93,9 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
     _selected: var[int | None] = var[Optional[int]](None)
     """The index of the currently-selected radio button."""
 
+    compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
+    """Enable compact display?"""
+
     @rich.repr.auto
     class Changed(Message):
         """Posted when the pressed button in the set changes.
@@ -133,6 +142,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ) -> None:
         """Initialise the radio set.
 
@@ -143,6 +153,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             classes: The CSS classes of the radio set.
             disabled: Whether the radio set is disabled or not.
             tooltip: Optional tooltip.
+            compact: Enable compact radio set style
 
         Note:
             When a `str` label is provided, a
@@ -163,6 +174,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         )
         if tooltip is not None:
             self.tooltip = tooltip
+        self.compact = compact
 
     def _on_mount(self, _: Mount) -> None:
         """Perform some processing once mounted in the DOM."""
