@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `toggle_class` parameter to reactives
-- Added `compact` parameter and reactive to `Button`, `Input`, `ToggleButton`, `RadioSet`, `OptionList`
+- Added `compact` parameter and reactive to `Button`, `Input`, `ToggleButton`, `RadioSet`, `OptionList`, `TextArea`
 
 ### Changed
 
