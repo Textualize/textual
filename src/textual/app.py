@@ -484,22 +484,25 @@ class App(Generic[ReturnType], DOMNode):
 
     HORIZONTAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
     """List of horizontal breakpoints for responsive classes.
+
+    This allows for styles to be responsive to the dimensions of the terminal.
+    For instance, you might want to show less information, or fewer columns on a narrow displays -- or more information when the terminal is sized wider than usual.
     
-    A breakpoint consists of a tuple containing the width where the class is set, and the classname to set.
+    A breakpoint consists of a tuple containing the width where the class is applied, and the name of the class to set.
 
     Example:
         ```python
         # Up to 80 cells wide, the app has the class "-normal"
         # 80 - 119 cells wide, the app has the class "-wide"
         # 120 cells or wider, the app has the class "-very-wide"
-        [(0, "-normal"), (80, "-wide"), (120, "-very-wide")]
+        HORIZONTAL_BREAKPOINTS = [(0, "-normal"), (80, "-wide"), (120, "-very-wide")]
         ```
     
     """
     VERTICAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
     """List of vertical breakpoints for responsive classes.
     
-    Contents are the same as `HORIZONTAL_BREAKPOINTS`, but the integer is compared to the height, rather than the width.
+    Contents are the same as [`HORIZONTAL_BREAKPOINTS`][textual.app.App.HORIZONTAL_BREAKPOINTS], but the integer is compared to the height, rather than the width.
     """
 
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
