@@ -4023,6 +4023,57 @@ def test_tint(snap_compare):
     assert snap_compare(TintApp())
 
 
+@pytest.mark.parametrize(
+    "size",
+    [
+        (30, 20),
+        (40, 30),
+        (80, 40),
+        (130, 50),
+    ],
+)
+def test_breakpoints(snap_compare, size):
+    """Test HORIZONTAL_BREAKPOINTS
+
+    You should see four terminals of different sizes with a grid of placeholders.
+    The first should have a single column, then two columns, then 4, then 6.
+
+    """
+
+    class BreakpointApp(App):
+
+        HORIZONTAL_BREAKPOINTS = [
+            (0, "-narrow"),
+            (40, "-normal"),
+            (80, "-wide"),
+            (120, "-very-wide"),
+        ]
+
+        CSS = """
+        Screen {
+            &.-narrow {
+                Grid { grid-size: 1; }
+            }
+            &.-normal {
+                Grid { grid-size: 2; }
+            }
+            &.-wide {
+                Grid { grid-size: 4; }
+            }
+            &.-very-wide {
+                Grid { grid-size: 6; }
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Grid():
+                for n in range(16):
+                    yield Placeholder(f"Placeholder {n+1}")
+
+    assert snap_compare(BreakpointApp(), terminal_size=size)
+
+
 def test_compact(snap_compare):
     """Test compact styles.
 
