@@ -73,12 +73,32 @@ class ScrollTo(ScrollMessage, verbose=True):
 
 
 class ScrollBarRender:
-    VERTICAL_BARS: ClassVar[list[str]] = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
+    VERTICAL_BARS: ClassVar[list[str]] = [
+        "▁",
+        "▂",
+        "▃",
+        "▄",
+        "▅",
+        "▆",
+        "▇",
+        " ",
+    ]
     """Glyphs used for vertical scrollbar ends, for smoother display."""
-    HORIZONTAL_BARS: ClassVar[list[str]] = ["▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
+    HORIZONTAL_BARS: ClassVar[list[str]] = [
+        "▉",
+        "▊",
+        "▋",
+        "▌",
+        "▍",
+        "▎",
+        "▏",
+        " ",
+    ]
     """Glyphs used for horizontal scrollbar ends, for smoother display."""
     BLANK_GLYPH: ClassVar[str] = " "
     """Glyph used for the main body of the scrollbar"""
+    SLIM_HORIZONTAL_BAR: ClassVar[str] | None = None
+    """Glyph used to render a slim horizontal scrollbar"""
 
     def __init__(
         self,
@@ -146,43 +166,64 @@ class ScrollBarRender:
 
             segments = [upper_back_segment] * int(size)
             segments[end_index:] = [lower_back_segment] * (size - end_index)
-
-            segments[start_index:end_index] = [
-                _Segment(blank, _Style(color=bar, reverse=True, meta=foreground_meta))
-            ] * (end_index - start_index)
-
-            # Apply the smaller bar characters to head and tail of scrollbar for more "granularity"
-            if start_index < len(segments):
-                bar_character = bars[len_bars - 1 - start_bar]
-                if bar_character != " ":
-                    segments[start_index] = _Segment(
-                        bar_character * width_thickness,
-                        (
-                            _Style(bgcolor=back, color=bar, meta=foreground_meta)
-                            if vertical
-                            else _Style(
-                                bgcolor=back,
-                                color=bar,
-                                meta=foreground_meta,
-                                reverse=True,
-                            )
-                        ),
+            if vertical or cls.SLIM_HORIZONTAL_BAR is None:
+                segments[start_index:end_index] = [
+                    _Segment(
+                        blank,
+                        _Style(color=bar, reverse=True, meta=foreground_meta),
                     )
-            if end_index < len(segments):
-                bar_character = bars[len_bars - 1 - end_bar]
-                if bar_character != " ":
-                    segments[end_index] = _Segment(
-                        bar_character * width_thickness,
-                        (
-                            _Style(
-                                bgcolor=back,
-                                color=bar,
-                                meta=foreground_meta,
-                                reverse=True,
-                            )
-                            if vertical
-                            else _Style(bgcolor=back, color=bar, meta=foreground_meta)
-                        ),
+                ] * (end_index - start_index)
+                # Apply the smaller bar characters to head and tail of scrollbar for more "granularity"
+                if start_index < len(segments):
+                    bar_character = bars[len_bars - 1 - start_bar]
+                    if bar_character != " ":
+                        segments[start_index] = _Segment(
+                            bar_character * width_thickness,
+                            (
+                                _Style(
+                                    bgcolor=back,
+                                    color=bar,
+                                    meta=foreground_meta,
+                                )
+                                if vertical
+                                else _Style(
+                                    bgcolor=back,
+                                    color=bar,
+                                    meta=foreground_meta,
+                                    reverse=True,
+                                )
+                            ),
+                        )
+                if end_index < len(segments):
+                    bar_character = bars[len_bars - 1 - end_bar]
+                    if bar_character != " ":
+                        segments[end_index] = _Segment(
+                            bar_character * width_thickness,
+                            (
+                                _Style(
+                                    bgcolor=back,
+                                    color=bar,
+                                    meta=foreground_meta,
+                                    reverse=True,
+                                )
+                                if vertical
+                                else _Style(
+                                    bgcolor=back,
+                                    color=bar,
+                                    meta=foreground_meta,
+                                )
+                            ),
+                        )
+
+            else:
+                segments = [_Segment(blank * width_thickness, _Style(bgcolor=back))] * (
+                    int(size)
+                )
+
+                for i in range(start_index, end_index):
+                    segments[i] = _Segment(
+                        cls.SLIM_HORIZONTAL_BAR * width_thickness,
+                        _Style(bgcolor=back, color=bar, meta=foreground_meta),
                     )
         else:
             style = _Style(bgcolor=back)
@@ -252,7 +293,11 @@ class ScrollBar(Widget):
     ALLOW_SELECT = False
 
     def __init__(
-        self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
+        self,
+        vertical: bool = True,
+        name: str | None = None,
+        *,
+        thickness: int = 1,
     ) -> None:
         self.vertical = vertical
         self.thickness = thickness
