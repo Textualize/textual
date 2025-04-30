@@ -4026,10 +4026,10 @@ def test_tint(snap_compare):
 @pytest.mark.parametrize(
     "size",
     [
-        (30, 40),
-        (40, 40),
-        (80, 80),
-        (130, 80),
+        (30, 20),
+        (40, 30),
+        (80, 40),
+        (130, 50),
     ],
 )
 def test_breakpoints(snap_compare, size):
