@@ -61,6 +61,11 @@ class ToggleButton(Static, can_focus=True):
         text-wrap: nowrap;
         text-overflow: ellipsis;
 
+        &.-textual-compact {
+            border: none !important;
+            padding: 0;
+        }
+
         & > .toggle--button {
             color: $panel-darken-2;
             background: $panel;
@@ -100,6 +105,9 @@ class ToggleButton(Static, can_focus=True):
     value: reactive[bool] = reactive(False, init=False)
     """The value of the button. `True` for on, `False` for off."""
 
+    compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
+    """Enable compact display?"""
+
     def __init__(
         self,
         label: ContentText = "",
@@ -111,6 +119,7 @@ class ToggleButton(Static, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ) -> None:
         """Initialise the toggle.
 
@@ -123,6 +132,7 @@ class ToggleButton(Static, can_focus=True):
             classes: The CSS classes of the toggle.
             disabled: Whether the button is disabled or not.
             tooltip: RenderableType | None = None,
+            compact: Show a compact button.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._button_first = button_first
@@ -132,6 +142,7 @@ class ToggleButton(Static, can_focus=True):
         self._label = self._make_label(label)
         if tooltip is not None:
             self.tooltip = tooltip
+        self.compact = compact
 
     def _make_label(self, label: ContentText) -> Content:
         """Make label content.

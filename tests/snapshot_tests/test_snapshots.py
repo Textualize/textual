@@ -4021,3 +4021,36 @@ def test_tint(snap_compare):
             yield Label("Hello, World")
 
     assert snap_compare(TintApp())
+
+
+def test_compact(snap_compare):
+    """Test compact styles.
+
+    You should see a screen split vertically.
+
+    The left side has regular widgets, the right side has the corresponding compact widgets.
+
+    """
+
+    class CompactApp(App):
+
+        def compose(self) -> ComposeResult:
+            with Horizontal():
+
+                with Vertical():
+                    yield Button("Foo")
+                    yield Input("hello")
+                    yield Select.from_values(["Foo", "Bar"])
+                    yield RadioSet("FOO", "BAR")
+                    yield SelectionList(("FOO", "FOO"), ("BAR", "BAR"))
+                    yield TextArea("Edit me")
+
+                with Vertical():
+                    yield Button("Bar", compact=True)
+                    yield Input("world", compact=True)
+                    yield Select.from_values(["Foo", "Bar"], compact=True)
+                    yield RadioSet("FOO", "BAR", compact=True)
+                    yield SelectionList(("FOO", "FOO"), ("BAR", "BAR"), compact=True)
+                    yield TextArea("Edit me", compact=True)
+
+    assert snap_compare(CompactApp())

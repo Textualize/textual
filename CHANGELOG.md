@@ -5,9 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
 ### Fixed
 
 - Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
+
+### Added
+
+- Added `toggle_class` parameter to reactives https://github.com/Textualize/textual/pull/5778
+- Added `compact` parameter and reactive to `Button`, `Input`, `ToggleButton`, `RadioSet`, `OptionList`, `TextArea` https://github.com/Textualize/textual/pull/5778
+
+### Changed
+
+- `RadioSet` now has a default width of `1fr` https://github.com/Textualize/textual/pull/5778
 
 ## [3.1.1] - 2025-04-22
 
