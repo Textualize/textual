@@ -150,9 +150,6 @@ WINDOWS = sys.platform == "win32"
 if constants.DEBUG:
     warnings.simplefilter("always", ResourceWarning)
 
-# `asyncio.get_event_loop()` is deprecated since Python 3.10:
-_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
-
 ComposeResult = Iterable[Widget]
 RenderResult: TypeAlias = "RenderableType | Visual | SupportsVisual"
 """Result of Widget.render()"""
@@ -2154,13 +2151,8 @@ class App(Generic[ReturnType], DOMNode):
                 auto_pilot=auto_pilot,
             )
 
-        if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
-            # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app(), loop_factory=None if loop is None else lambda: loop)
-        else:
-            # However, this works with Python<3.10:
-            event_loop = asyncio.get_event_loop() if loop is None else loop
-            event_loop.run_until_complete(run_app())
+        event_loop = asyncio.get_event_loop() if loop is None else loop
+        event_loop.run_until_complete(run_app())
         return self.return_value
 
     async def _on_css_change(self) -> None:
