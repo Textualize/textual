@@ -353,3 +353,15 @@ def test_app_loop() -> None:
     app = MyApp()
     result = app.run(loop=asyncio.new_event_loop())
     assert result == 42
+
+
+async def test_app_run_async() -> None:
+    """Check run_async runs without issues."""
+
+    class MyApp(App[int]):
+        def on_mount(self) -> None:
+            self.exit(42)
+
+    app = MyApp()
+    result = await app.run_async()
+    assert result == 42
