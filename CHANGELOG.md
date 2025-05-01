@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
-- Log messages could be written to stdout when there was no app, which could happen when using run_async or threads. Now they will be supressed, unless the env var `TEXTUAL_DEBUG` is set
+- Log messages could be written to stdout when there was no app, which could happen when using run_async or threads. Now they will be suppressed, unless the env var `TEXTUAL_DEBUG` is set
 
 ### Added
 

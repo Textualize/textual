@@ -2126,7 +2126,7 @@ class App(Generic[ReturnType], DOMNode):
         mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
-        loop_factory: Callable[[], AbstractEventLoop] | None = None,
+        loop: AbstractEventLoop | None = None,
     ) -> ReturnType | None:
         """Run the app.
 
@@ -2138,7 +2138,7 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
-            loop_factory: Callable which returns a new asyncio Loop, or `None` to use default.
+            loop: Asyncio loop instance, or `None` to use default.
         Returns:
             App return value.
         """
@@ -2156,12 +2156,10 @@ class App(Generic[ReturnType], DOMNode):
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app(), loop_factory=loop_factory)
+            asyncio.run(run_app(), loop_factory=None if loop is None else lambda: loop)
         else:
             # However, this works with Python<3.10:
-            event_loop = (
-                asyncio.get_event_loop() if loop_factory is None else loop_factory()
-            )
+            event_loop = asyncio.get_event_loop() if loop is None else loop
             event_loop.run_until_complete(run_app())
         return self.return_value
 
