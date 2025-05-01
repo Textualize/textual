@@ -7505,7 +7505,7 @@ window.onload = async (event) => {
 </div>
 <h2 id="custom-widgets">Custom widgets<a class="headerlink" href="#custom-widgets" title="Permanent link">&para;</a></h2>
 <p>There is a growing collection of <a href="../../widgets/">builtin widgets</a> in Textual, but you can build entirely custom widgets that work in the same way.</p>
-<p>The first step in building a widget is to import and extend a widget class. This can either be <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget">Widget</a> which is the base class of all widgets, or one of its subclasses.</p>
+<p>The first step in building a widget is to import and extend a widget class. This can either be <a class="autorefs autorefs-internal" title="            Widget" href="../../api/widget/#textual.widget.Widget">Widget</a> which is the base class of all widgets, or one of its subclasses.</p>
 <p>Let's create a simple custom widget to display a greeting.</p>
 <div class="highlight"><span class="filename">hello01.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span><span class="p">,</span> <span class="n">RenderResult</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widget</span><span class="w"> </span><span class="kn">import</span> <span class="n">Widget</span>
@@ -7527,7 +7527,7 @@ window.onload = async (event) => {
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">CustomApp</span><span class="p">()</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>The highlighted lines define a custom widget class with just a <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.render">render()</a> method.
+<p>The highlighted lines define a custom widget class with just a <a class="autorefs autorefs-internal" title="            render" href="../../api/widget/#textual.widget.Widget.render">render()</a> method.
 Textual will display whatever is returned from render in the <a href="../content/">content</a> area of your widget.</p>
 <p>Note that the text contains tags in square brackets, i.e. <code>[b]</code>.
 This is <a href="../content/#markup">content markup</a> which allows you to embed various styles within your content.
@@ -7886,7 +7886,7 @@ If you run this you will find that <code>World</code> is in bold.</p>
 </svg>
 </p>
 <h2 id="static-widget">Static widget<a class="headerlink" href="#static-widget" title="Permanent link">&para;</a></h2>
-<p>While you can extend the Widget class, a subclass will typically be a better starting point. The <a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets.Static">Static</a> class is a widget subclass which caches the result of render, and provides an <a class="autorefs autorefs-internal" href="../../widgets/static/#textual.widgets._static.Static.update">update()</a> method to update the content area.</p>
+<p>While you can extend the Widget class, a subclass will typically be a better starting point. The <a class="autorefs autorefs-internal" title=" Static" href="../../widgets/static/#textual.widgets.Static">Static</a> class is a widget subclass which caches the result of render, and provides an <a class="autorefs autorefs-internal" title="            update" href="../../widgets/static/#textual.widgets.Static.update">update()</a> method to update the content area.</p>
 <p>Let's use Static to create a widget which cycles through "hello" in various languages.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">hello03.py</label><label for="__tabbed_2_2">hello03.tcss</label><label for="__tabbed_2_3">Output</label></div>
 <div class="tabbed-content">
@@ -8585,14 +8585,36 @@ Links in markup use the following format:</p>
 </div>
 <p>If you run this example you will see that the greeting has been underlined, which indicates it is clickable. If you click on the greeting it will run the <code>next_word</code> action which updates the next word.</p>
 <h2 id="border-titles">Border titles<a class="headerlink" href="#border-titles" title="Permanent link">&para;</a></h2>
-<p>Every widget has a <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.border_title"><code>border_title</code></a> and <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.border_subtitle"><code>border_subtitle</code></a> attribute.
+<p>Every widget has a <a class="autorefs autorefs-internal" title="            border_title
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../../api/widget/#textual.widget.Widget.border_title"><code>border_title</code></a> and <a class="autorefs autorefs-internal" title="            border_subtitle
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../../api/widget/#textual.widget.Widget.border_subtitle"><code>border_subtitle</code></a> attribute.
 Setting <code>border_title</code> will display text within the top border, and setting <code>border_subtitle</code> will display text within the bottom border.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Border titles will only display if the widget has a <a href="../../styles/border/">border</a> enabled.</p>
 </div>
 <p>The default value for these attributes is empty string, which disables the title.
-You can change the default value for the title attributes with the <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.BORDER_TITLE"><code>BORDER_TITLE</code></a> and <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.BORDER_SUBTITLE"><code>BORDER_SUBTITLE</code></a> class variables.</p>
+You can change the default value for the title attributes with the <a class="autorefs autorefs-internal" title="            BORDER_TITLE
+
+
+  
+      class-attribute
+  " href="../../api/widget/#textual.widget.Widget.BORDER_TITLE"><code>BORDER_TITLE</code></a> and <a class="autorefs autorefs-internal" title="            BORDER_SUBTITLE
+
+
+  
+      class-attribute
+  " href="../../api/widget/#textual.widget.Widget.BORDER_SUBTITLE"><code>BORDER_SUBTITLE</code></a> class variables.</p>
 <p>Let's demonstrate setting a title, both as a class variable and a instance variable:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">hello06.py</label><label for="__tabbed_5_2">hello06.tcss</label><label for="__tabbed_5_3">Output</label></div>
 <div class="tabbed-content">
@@ -9485,7 +9507,7 @@ These new bindings are linked to the <code>change_count</code> action, which upd
 </div>
 </div>
 <h2 id="content-size">Content size<a class="headerlink" href="#content-size" title="Permanent link">&para;</a></h2>
-<p>Textual will auto-detect the dimensions of the content area from rich renderables if width or height is set to <code>auto</code>. You can override auto dimensions by implementing <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.get_content_width">get_content_width()</a> or <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.get_content_height">get_content_height()</a>.</p>
+<p>Textual will auto-detect the dimensions of the content area from rich renderables if width or height is set to <code>auto</code>. You can override auto dimensions by implementing <a class="autorefs autorefs-internal" title="            get_content_width" href="../../api/widget/#textual.widget.Widget.get_content_width">get_content_width()</a> or <a class="autorefs autorefs-internal" title="            get_content_height" href="../../api/widget/#textual.widget.Widget.get_content_height">get_content_height()</a>.</p>
 <p>Let's modify the default width for the fizzbuzz example. By default, the table will be just wide enough to fix the columns. Let's force it to be 50 characters wide.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="9:3"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><input id="__tabbed_9_3" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">fizzbuzz02.py</label><label for="__tabbed_9_2">fizzbuzz02.tcss</label><label for="__tabbed_9_3">Output</label></div>
 <div class="tabbed-content">
@@ -9706,7 +9728,13 @@ You can use tooltips to add supplementary information or help messages.</p>
 <p>It is best not to rely on tooltips for essential information.
 Some users prefer to use the keyboard exclusively and may never see tooltips.</p>
 </div>
-<p>To add a tooltip, assign to the widget's <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.tooltip"><code>tooltip</code></a> property.
+<p>To add a tooltip, assign to the widget's <a class="autorefs autorefs-internal" title="            tooltip
+
+
+  
+      property
+      writable
+  " href="../../api/widget/#textual.widget.Widget.tooltip"><code>tooltip</code></a> property.
 You can set text or any other <a href="https://github.com/Textualize/rich">Rich</a> renderable.</p>
 <p>The following example adds a tooltip to a button:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="10:3"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><input id="__tabbed_10_3" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">tooltip01.py</label><label for="__tabbed_10_2">Output (before hover)</label><label for="__tabbed_10_3">Output (after hover)</label></div>
@@ -10405,7 +10433,13 @@ Add a rule to your CSS that targets <code>Tooltip</code>. Here's an example:</p>
 </div>
 </div>
 <h2 id="loading-indicator">Loading indicator<a class="headerlink" href="#loading-indicator" title="Permanent link">&para;</a></h2>
-<p>Widgets have a <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.loading"><code>loading</code></a> reactive which when set to <code>True</code> will temporarily replace your widget with a <a href="../../widgets/loading_indicator/"><code>LoadingIndicator</code></a>.</p>
+<p>Widgets have a <a class="autorefs autorefs-internal" title="            loading
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../../api/widget/#textual.widget.Widget.loading"><code>loading</code></a> reactive which when set to <code>True</code> will temporarily replace your widget with a <a href="../../widgets/loading_indicator/"><code>LoadingIndicator</code></a>.</p>
 <p>You can use this to indicate to the user that the app is currently working on getting data, and there will be content when that data is available.
 Let's look at an example of this.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><input id="__tabbed_12_2" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">loading01.py</label><label for="__tabbed_12_2">Output</label></div>
@@ -10494,136 +10528,138 @@ Let's look at an example of this.</p>
         font-weight: 700;
     }
 
-    .terminal-4223877674-matrix {
+    .terminal-4187505120-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-4223877674-title {
+    .terminal-4187505120-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-4223877674-r1 { fill: #0178d4 }
-.terminal-4223877674-r2 { fill: #c5c8c6 }
-.terminal-4223877674-r3 { fill: #2a88e6 }
-.terminal-4223877674-r4 { fill: #212e38 }
-.terminal-4223877674-r5 { fill: #20313f }
-.terminal-4223877674-r6 { fill: #1c384d }
-.terminal-4223877674-r7 { fill: #184263 }
+    .terminal-4187505120-r1 { fill: #0178d4 }
+.terminal-4187505120-r2 { fill: #c5c8c6 }
+.terminal-4187505120-r3 { fill: #2987e5 }
+.terminal-4187505120-r4 { fill: #212e37 }
+.terminal-4187505120-r5 { fill: #20313f }
+.terminal-4187505120-r6 { fill: #1c384d }
+.terminal-4187505120-r7 { fill: #184263 }
+.terminal-4187505120-r8 { fill: #212e38 }
+.terminal-4187505120-r9 { fill: #2a88e6 }
     </style>
 
     <defs>
-    <clipPath id="terminal-4223877674-clip-terminal">
+    <clipPath id="terminal-4187505120-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-4223877674-line-0">
+    <clipPath id="terminal-4187505120-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-1">
+<clipPath id="terminal-4187505120-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-2">
+<clipPath id="terminal-4187505120-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-3">
+<clipPath id="terminal-4187505120-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-4">
+<clipPath id="terminal-4187505120-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-5">
+<clipPath id="terminal-4187505120-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-6">
+<clipPath id="terminal-4187505120-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-7">
+<clipPath id="terminal-4187505120-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-8">
+<clipPath id="terminal-4187505120-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-9">
+<clipPath id="terminal-4187505120-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-10">
+<clipPath id="terminal-4187505120-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-11">
+<clipPath id="terminal-4187505120-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-12">
+<clipPath id="terminal-4187505120-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-13">
+<clipPath id="terminal-4187505120-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-14">
+<clipPath id="terminal-4187505120-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-15">
+<clipPath id="terminal-4187505120-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-16">
+<clipPath id="terminal-4187505120-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-17">
+<clipPath id="terminal-4187505120-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-18">
+<clipPath id="terminal-4187505120-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-19">
+<clipPath id="terminal-4187505120-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-20">
+<clipPath id="terminal-4187505120-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-21">
+<clipPath id="terminal-4187505120-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-4223877674-line-22">
+<clipPath id="terminal-4187505120-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-4223877674-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">DataApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-4187505120-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">DataApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-4223877674-clip-terminal)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-4187505120-clip-terminal)">
     <rect fill="#262626" x="0" y="1.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="1.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="25.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="25.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="50.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="50.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="74.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="74.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="99.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="99.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="123.5" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="183" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="207.4" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="231.8" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="256.2" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="280.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="292.8" y="123.5" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="123.5" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="671" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="695.4" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="719.8" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="744.2" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="768.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="780.8" y="123.5" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="147.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="147.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="172.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="172.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="196.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="196.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="221.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="221.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="245.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="245.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="269.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="269.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="294.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="294.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="318.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="318.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="343.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="343.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="367.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="367.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="391.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="391.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="416.3" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="183" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="207.4" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="231.8" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="256.2" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="280.6" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="292.8" y="416.3" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="416.3" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="671" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="695.4" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="719.8" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="744.2" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="768.6" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="780.8" y="416.3" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="440.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="440.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="465.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="465.1" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="489.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="489.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="513.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="513.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="538.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="538.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="0" y="562.7" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="488" y="562.7" width="488" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-4223877674-matrix">
-    <text class="terminal-4223877674-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-4223877674-line-0)">
-</text><text class="terminal-4223877674-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-4223877674-line-1)">
-</text><text class="terminal-4223877674-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-2)">
-</text><text class="terminal-4223877674-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-4223877674-line-3)">
-</text><text class="terminal-4223877674-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-4223877674-line-4)">
-</text><text class="terminal-4223877674-r3" x="183" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r4" x="207.4" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r5" x="231.8" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r6" x="256.2" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r7" x="280.6" y="142" textLength="12.2" clip-path="url(#terminal-4223877674-line-5)">●</text><text class="terminal-4223877674-r3" x="671" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r4" x="695.4" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r5" x="719.8" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r6" x="744.2" y="142" textLength="24.4" clip-path="url(#terminal-4223877674-line-5)">●&#160;</text><text class="terminal-4223877674-r7" x="768.6" y="142" textLength="12.2" clip-path="url(#terminal-4223877674-line-5)">●</text><text class="terminal-4223877674-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-4223877674-line-5)">
-</text><text class="terminal-4223877674-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-4223877674-line-6)">
-</text><text class="terminal-4223877674-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-7)">
-</text><text class="terminal-4223877674-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-4223877674-line-8)">
-</text><text class="terminal-4223877674-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-4223877674-line-9)">
-</text><text class="terminal-4223877674-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-4223877674-line-10)">
-</text><text class="terminal-4223877674-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-4223877674-line-11)">
-</text><text class="terminal-4223877674-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-12)">
-</text><text class="terminal-4223877674-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-4223877674-line-13)">
-</text><text class="terminal-4223877674-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-4223877674-line-14)">
-</text><text class="terminal-4223877674-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-4223877674-line-15)">
-</text><text class="terminal-4223877674-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-4223877674-line-16)">
-</text><text class="terminal-4223877674-r3" x="183" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r4" x="207.4" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r5" x="231.8" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r6" x="256.2" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r7" x="280.6" y="434.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-17)">●</text><text class="terminal-4223877674-r3" x="671" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r4" x="695.4" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r5" x="719.8" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r6" x="744.2" y="434.8" textLength="24.4" clip-path="url(#terminal-4223877674-line-17)">●&#160;</text><text class="terminal-4223877674-r7" x="768.6" y="434.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-17)">●</text><text class="terminal-4223877674-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-17)">
-</text><text class="terminal-4223877674-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-4223877674-line-18)">
-</text><text class="terminal-4223877674-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-4223877674-line-19)">
-</text><text class="terminal-4223877674-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-4223877674-line-20)">
-</text><text class="terminal-4223877674-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-4223877674-line-21)">
-</text><text class="terminal-4223877674-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-4223877674-line-22)">
+    <g class="terminal-4187505120-matrix">
+    <text class="terminal-4187505120-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-4187505120-line-0)">
+</text><text class="terminal-4187505120-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-4187505120-line-1)">
+</text><text class="terminal-4187505120-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-2)">
+</text><text class="terminal-4187505120-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-4187505120-line-3)">
+</text><text class="terminal-4187505120-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-4187505120-line-4)">
+</text><text class="terminal-4187505120-r3" x="183" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r4" x="207.4" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r5" x="231.8" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r6" x="256.2" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r7" x="280.6" y="142" textLength="12.2" clip-path="url(#terminal-4187505120-line-5)">●</text><text class="terminal-4187505120-r3" x="671" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r8" x="695.4" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r5" x="719.8" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r6" x="744.2" y="142" textLength="24.4" clip-path="url(#terminal-4187505120-line-5)">●&#160;</text><text class="terminal-4187505120-r7" x="768.6" y="142" textLength="12.2" clip-path="url(#terminal-4187505120-line-5)">●</text><text class="terminal-4187505120-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-4187505120-line-5)">
+</text><text class="terminal-4187505120-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-4187505120-line-6)">
+</text><text class="terminal-4187505120-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-7)">
+</text><text class="terminal-4187505120-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-4187505120-line-8)">
+</text><text class="terminal-4187505120-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-4187505120-line-9)">
+</text><text class="terminal-4187505120-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-4187505120-line-10)">
+</text><text class="terminal-4187505120-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-4187505120-line-11)">
+</text><text class="terminal-4187505120-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-12)">
+</text><text class="terminal-4187505120-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-4187505120-line-13)">
+</text><text class="terminal-4187505120-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-4187505120-line-14)">
+</text><text class="terminal-4187505120-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-4187505120-line-15)">
+</text><text class="terminal-4187505120-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-4187505120-line-16)">
+</text><text class="terminal-4187505120-r9" x="183" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r8" x="207.4" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r5" x="231.8" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r6" x="256.2" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r7" x="280.6" y="434.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-17)">●</text><text class="terminal-4187505120-r9" x="671" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r8" x="695.4" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r5" x="719.8" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r6" x="744.2" y="434.8" textLength="24.4" clip-path="url(#terminal-4187505120-line-17)">●&#160;</text><text class="terminal-4187505120-r7" x="768.6" y="434.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-17)">●</text><text class="terminal-4187505120-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-17)">
+</text><text class="terminal-4187505120-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-4187505120-line-18)">
+</text><text class="terminal-4187505120-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-4187505120-line-19)">
+</text><text class="terminal-4187505120-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-4187505120-line-20)">
+</text><text class="terminal-4187505120-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-4187505120-line-21)">
+</text><text class="terminal-4187505120-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-4187505120-line-22)">
 </text>
     </g>
     </g>
@@ -10648,7 +10684,7 @@ Textual offers an alternative API which reduces the amount of work required to r
 <p>The Line API requires a little more work that typical Rich renderables, but can produce powerful widgets such as the builtin <a href="../../widgets/data_table/">DataTable</a> which can handle thousands or even millions of rows.</p>
 </div>
 <h3 id="render-line-method">Render Line method<a class="headerlink" href="#render-line-method" title="Permanent link">&para;</a></h3>
-<p>To build a widget with the line API, implement a <code>render_line</code> method rather than a <code>render</code> method. The <code>render_line</code> method takes a single integer argument <code>y</code> which is an offset from the top of the widget, and should return a <a class="autorefs autorefs-internal" href="../../api/strip/#textual.strip.Strip">Strip</a> object containing that line's content.
+<p>To build a widget with the line API, implement a <code>render_line</code> method rather than a <code>render</code> method. The <code>render_line</code> method takes a single integer argument <code>y</code> which is an offset from the top of the widget, and should return a <a class="autorefs autorefs-internal" title="            Strip" href="../../api/strip/#textual.strip.Strip">Strip</a> object containing that line's content.
 Textual will call this method as required to get content for every row of characters in the widget.</p>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 828.872245097938 437.66279775482764" width="828.872245097938" height="437.66279775482764">
@@ -10903,7 +10939,7 @@ Textual will call this method as required to get content for every row of charac
 
 <p>Both Rich and Textual work with segments to generate content. A Textual app is the result of combining hundreds, or perhaps thousands, of segments,</p>
 <h4 id="strips">Strips<a class="headerlink" href="#strips" title="Permanent link">&para;</a></h4>
-<p>A <a class="autorefs autorefs-internal" href="../../api/strip/#textual.strip.Strip">Strip</a> is a container for a number of segments covering a single <em>line</em> (or row) in the Widget. A Strip will contain at least one segment, but often many more.</p>
+<p>A <a class="autorefs autorefs-internal" title="            Strip" href="../../api/strip/#textual.strip.Strip">Strip</a> is a container for a number of segments covering a single <em>line</em> (or row) in the Widget. A Strip will contain at least one segment, but often many more.</p>
 <p>A <code>Strip</code> is constructed from a list of <code>Segment</code> objects. Here's now you might construct a strip that displays the text "Hello, World!", but with the second word in bold:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">segments</span> <span class="o">=</span> <span class="p">[</span>
 <a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>    <span class="n">Segment</span><span class="p">(</span><span class="s2">&quot;Hello, &quot;</span><span class="p">),</span>
@@ -11141,9 +11177,9 @@ Textual will call this method as required to get content for every row of charac
 <p class="admonition-title">Tip</p>
 <p>Component classes typically begin with the name of the widget followed by <em>two</em> hyphens. This is a convention to avoid potential name clashes.</p>
 </div>
-<p>The <code>render_line</code> method calls <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.get_component_rich_style">get_component_rich_style</a> to get <code>Style</code> objects from the CSS, which we apply to the segments to create a more colorful looking checkerboard.</p>
+<p>The <code>render_line</code> method calls <a class="autorefs autorefs-internal" title="            get_component_rich_style" href="../../api/widget/#textual.widget.Widget.get_component_rich_style">get_component_rich_style</a> to get <code>Style</code> objects from the CSS, which we apply to the segments to create a more colorful looking checkerboard.</p>
 <h3 id="scrolling">Scrolling<a class="headerlink" href="#scrolling" title="Permanent link">&para;</a></h3>
-<p>A Line API widget can be made to scroll by extending the <a class="autorefs autorefs-internal" href="../../api/scroll_view/#textual.scroll_view.ScrollView">ScrollView</a> class (rather than <code>Widget</code>).
+<p>A Line API widget can be made to scroll by extending the <a class="autorefs autorefs-internal" title="            ScrollView" href="../../api/scroll_view/#textual.scroll_view.ScrollView">ScrollView</a> class (rather than <code>Widget</code>).
 The <code>ScrollView</code> class will do most of the work, but we will need to manage the following details:</p>
 <ol>
 <li>The <code>ScrollView</code> class requires a <em>virtual size</em>, which is the size of the scrollable content and should be set via the <code>virtual_size</code> property. If this is larger than the widget then Textual will add scrollbars.</li>
@@ -11378,11 +11414,11 @@ The <code>ScrollView</code> class will do most of the work, but we will need to 
 </div>
 </div>
 <p>The virtual size is set in the constructor to match the total size of the board, which will enable scrollbars (unless you have your terminal zoomed out very far). You can update the <code>virtual_size</code> attribute dynamically as required, but our checkerboard isn't going to change size so we only need to set it once.</p>
-<p>The <code>render_line</code> method gets the <em>scroll offset</em> which is an <a class="autorefs autorefs-internal" href="../../api/geometry/#textual.geometry.Offset">Offset</a> containing the current position of the scrollbars. We add <code>scroll_offset.y</code> to the <code>y</code> argument because <code>y</code> is relative to the top of the widget, and we need a Y coordinate relative to the scrollable content.</p>
+<p>The <code>render_line</code> method gets the <em>scroll offset</em> which is an <a class="autorefs autorefs-internal" title="            Offset" href="../../api/geometry/#textual.geometry.Offset">Offset</a> containing the current position of the scrollbars. We add <code>scroll_offset.y</code> to the <code>y</code> argument because <code>y</code> is relative to the top of the widget, and we need a Y coordinate relative to the scrollable content.</p>
 <p>We also need to compensate for the position of the horizontal scrollbar. This is done in the call to <code>strip.crop</code> which <em>crops</em> the strip to the visible area between <code>scroll_x</code> and <code>scroll_x + self.size.width</code>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p><a class="autorefs autorefs-internal" href="../../api/strip/#textual.strip.Strip">Strip</a> objects are immutable, so methods will return a new Strip rather than modifying the original.</p>
+<p><a class="autorefs autorefs-internal" title="            Strip" href="../../api/strip/#textual.strip.Strip">Strip</a> objects are immutable, so methods will return a new Strip rather than modifying the original.</p>
 </div>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060.252476567575 677.865985128126" width="1060.252476567575" height="677.865985128126">
@@ -11680,15 +11716,15 @@ Here's the code:</p>
 </div>
 <p>We've added a style to the checkerboard which is the color of the highlighted square, with a default of "darkred".
 We will need this when we come to render the highlighted square.</p>
-<p>We've also added a <a href="../reactivity/">reactive variable</a> called <code>cursor_square</code> which will hold the coordinate of the square underneath the mouse. Note that we have used <a class="autorefs autorefs-internal" href="../../api/reactive/#textual.reactive.var">var</a> which gives us reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.</p>
-<p>The <code>on_mouse_move</code> handler takes the mouse coordinates from the <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.MouseMove">MouseMove</a> object and calculates the coordinate of the square underneath the mouse. There's a little math here, so let's break it down.</p>
+<p>We've also added a <a href="../reactivity/">reactive variable</a> called <code>cursor_square</code> which will hold the coordinate of the square underneath the mouse. Note that we have used <a class="autorefs autorefs-internal" title="            var" href="../../api/reactive/#textual.reactive.var">var</a> which gives us reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.</p>
+<p>The <code>on_mouse_move</code> handler takes the mouse coordinates from the <a class="autorefs autorefs-internal" title="            MouseMove" href="../../api/events/#textual.events.MouseMove">MouseMove</a> object and calculates the coordinate of the square underneath the mouse. There's a little math here, so let's break it down.</p>
 <ul>
 <li>The event contains the coordinates of the mouse relative to the top left of the widget, but we need the coordinate relative to the top left of board which depends on the position of the scrollbars.
 We can perform this conversion by adding <code>self.scroll_offset</code> to <code>event.offset</code>.</li>
 <li>Once we have the board coordinate underneath the mouse we divide the x coordinate by 8 and divide the y coordinate by 4 to give us the coordinate of a square.</li>
 </ul>
 <p>If the cursor square coordinate calculated in <code>on_mouse_move</code> changes, Textual will call <code>watch_cursor_square</code> with the previous coordinate and new coordinate of the square. This method works out the regions of the widget to update and essentially does the reverse of the steps we took to go from mouse coordinates to square coordinates.
-The <code>get_square_region</code> function calculates a <a class="autorefs autorefs-internal" href="../../api/geometry/#textual.geometry.Region">Region</a> object for each square and uses them as a positional argument in a call to <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.refresh">refresh</a>. Passing Region objects to <code>refresh</code> tells Textual to update only the cells underneath those regions, and not the entire widget.</p>
+The <code>get_square_region</code> function calculates a <a class="autorefs autorefs-internal" title="            Region" href="../../api/geometry/#textual.geometry.Region">Region</a> object for each square and uses them as a positional argument in a call to <a class="autorefs autorefs-internal" title="            refresh" href="../../api/widget/#textual.widget.Widget.refresh">refresh</a>. Passing Region objects to <code>refresh</code> tells Textual to update only the cells underneath those regions, and not the entire widget.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Textual is smart about performing updates. If you refresh multiple regions, Textual will combine them into as few non-overlapping regions as possible.</p>
@@ -12283,7 +12319,7 @@ As a rule of thumb, a widget should handle one piece of data, which is why we ha
 <div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">action_set_true</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Switch</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div>
-<p>If a child needs to update a parent, it should send a message with <a class="autorefs autorefs-internal" href="../../api/message_pump/#textual.message_pump.MessagePump.post_message">post_message</a>.</p>
+<p>If a child needs to update a parent, it should send a message with <a class="autorefs autorefs-internal" title="            post_message" href="../../api/message_pump/#textual.message_pump.MessagePump.post_message">post_message</a>.</p>
 <p>Here's an example of posting message:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">on_click</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">post_message</span><span class="p">(</span><span class="n">MyWidget</span><span class="o">.</span><span class="n">Change</span><span class="p">(</span><span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
@@ -12592,7 +12628,7 @@ As a rule of thumb, a widget should handle one piece of data, which is why we ha
 </div>
 </div>
 <ul>
-<li>The <code>BitSwitch</code> widget now has an <code>on_switch_changed</code> method which will handle a <a class="autorefs autorefs-internal" href="../../widgets/switch/#textual.widgets._switch.Switch.Changed"><code>Switch.Changed</code></a> message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, <code>BitSwitch.BitChanged</code>.</li>
+<li>The <code>BitSwitch</code> widget now has an <code>on_switch_changed</code> method which will handle a <a class="autorefs autorefs-internal" title="            Changed" href="../../widgets/switch/#textual.widgets.Switch.Changed"><code>Switch.Changed</code></a> message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, <code>BitSwitch.BitChanged</code>.</li>
 <li>The <code>ByteEditor</code> widget handles the <code>BitSwitch.Changed</code> message by calculating the decimal value and setting it on the input.</li>
 </ul>
 <p>The following is a (simplified) DOM diagram to show how the new message is processed:</p>

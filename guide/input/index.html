@@ -7383,7 +7383,7 @@ window.onload = async (event) => {
 <p>&mdash; Johnny Five</p>
 </div>
 <h2 id="keyboard-input">Keyboard input<a class="headerlink" href="#keyboard-input" title="Permanent link">&para;</a></h2>
-<p>The most fundamental way to receive input is via <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.Key">Key</a> events which are sent to your app when the user presses a key. Let's write an app to show key events as you type.</p>
+<p>The most fundamental way to receive input is via <a class="autorefs autorefs-internal" title="            Key" href="../../api/events/#textual.events.Key">Key</a> events which are sent to your app when the user presses a key. Let's write an app to show key events as you type.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">key01.py</label><label for="__tabbed_1_2">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -7852,7 +7852,7 @@ window.onload = async (event) => {
 Note that <code>can_focus=True</code> does not mean the widget will <em>always</em> be focusable.
 For example, a disabled widget cannot receive focus even if <code>can_focus</code> is <code>True</code>.</p>
 <h3 id="controlling-focus">Controlling focus<a class="headerlink" href="#controlling-focus" title="Permanent link">&para;</a></h3>
-<p>Textual will handle keyboard focus automatically, but you can tell Textual to focus a widget by calling the widget's <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.focus">focus()</a> method.
+<p>Textual will handle keyboard focus automatically, but you can tell Textual to focus a widget by calling the widget's <a class="autorefs autorefs-internal" title="            focus" href="../../api/widget/#textual.widget.Widget.focus">focus()</a> method.
 By default, Textual will focus the first focusable widget when the app starts.</p>
 <h3 id="focus-events">Focus events<a class="headerlink" href="#focus-events" title="Permanent link">&para;</a></h3>
 <p>When a widget receives focus, it is sent a <a href="../../events/focus/">Focus</a> event. When a widget loses focus it is sent a <a href="../../events/blur/">Blur</a> event.</p>
@@ -8077,7 +8077,12 @@ For example, <code>("r,t", "add_bar('red')", "Add Red")</code> means both <span 
 <p>When you press a key, Textual will first check for a matching binding in the <code>BINDINGS</code> list of the currently focused widget.
 If no match is found, it will search upwards through the DOM all the way up to the <code>App</code> looking for a match.</p>
 <h3 id="binding-class">Binding class<a class="headerlink" href="#binding-class" title="Permanent link">&para;</a></h3>
-<p>The tuple of three strings may be enough for simple bindings, but you can also replace the tuple with a <a class="autorefs autorefs-internal" href="../../api/binding/#textual.binding.Binding">Binding</a> instance which exposes a few more options.</p>
+<p>The tuple of three strings may be enough for simple bindings, but you can also replace the tuple with a <a class="autorefs autorefs-internal" title="            Binding
+
+
+  
+      dataclass
+  " href="../../api/binding/#textual.binding.Binding">Binding</a> instance which exposes a few more options.</p>
 <h3 id="priority-bindings">Priority bindings<a class="headerlink" href="#priority-bindings" title="Permanent link">&para;</a></h3>
 <p>Individual bindings may be marked as a <em>priority</em>, which means they will be checked prior to the bindings of the focused widget. This feature is often used to create hot-keys on the app or screen. Such bindings can not be disabled by binding the same key on a widget.</p>
 <p>You can create priority key bindings by setting <code>priority=True</code> on the Binding object. Textual uses this feature to add a default binding for <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> so there is always a way to exit the app. Here's the <code>BINDINGS</code> from the App base class. Note the quit binding is set as a priority:</p>
@@ -8178,8 +8183,8 @@ It wouldn't be a good user experience if the save key did nothing, or raised an 
 <p>If you run <code>mouse01.py</code> you should find that it logs the mouse move event, and keeps a widget pinned directly under the cursor.</p>
 <p>The <code>on_mouse_move</code> handler sets the <a href="../../styles/offset/">offset</a> style of the ball (a rectangular one) to match the mouse coordinates.</p>
 <h3 id="mouse-capture">Mouse capture<a class="headerlink" href="#mouse-capture" title="Permanent link">&para;</a></h3>
-<p>In the <code>mouse01.py</code> example there was a call to <code>capture_mouse()</code> in the mount handler. Textual will send mouse move events to the widget directly under the cursor. You can tell Textual to send all mouse events to a widget regardless of the position of the mouse cursor by calling <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.capture_mouse">capture_mouse</a>.</p>
-<p>Call <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.release_mouse">release_mouse</a> to restore the default behavior.</p>
+<p>In the <code>mouse01.py</code> example there was a call to <code>capture_mouse()</code> in the mount handler. Textual will send mouse move events to the widget directly under the cursor. You can tell Textual to send all mouse events to a widget regardless of the position of the mouse cursor by calling <a class="autorefs autorefs-internal" title="            capture_mouse" href="../../api/widget/#textual.widget.Widget.capture_mouse">capture_mouse</a>.</p>
+<p>Call <a class="autorefs autorefs-internal" title="            release_mouse" href="../../api/widget/#textual.widget.Widget.release_mouse">release_mouse</a> to restore the default behavior.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>If you capture the mouse, be aware you might get negative mouse coordinates if the cursor is to the left of the widget.</p>

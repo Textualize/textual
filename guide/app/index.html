@@ -7360,7 +7360,7 @@ window.onload = async (event) => {
 <h1 id="app-basics">App Basics<a class="headerlink" href="#app-basics" title="Permanent link">&para;</a></h1>
 <p>In this chapter we will cover how to use Textual's App class to create an application. Just enough to get you up to speed. We will go into more detail in the following chapters.</p>
 <h2 id="the-app-class">The App class<a class="headerlink" href="#the-app-class" title="Permanent link">&para;</a></h2>
-<p>The first step in building a Textual app is to import the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App">App</a> class and create a subclass. Let's look at the simplest app class:</p>
+<p>The first step in building a Textual app is to import the <a class="autorefs autorefs-internal" title="            App" href="../../api/app/#textual.app.App">App</a> class and create a subclass. Let's look at the simplest app class:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -7368,7 +7368,7 @@ window.onload = async (event) => {
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">pass</span>
 </code></pre></div>
 <h3 id="the-run-method">The run method<a class="headerlink" href="#the-run-method" title="Permanent link">&para;</a></h3>
-<p>To run an app we create an instance and call <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run">run()</a>.</p>
+<p>To run an app we create an instance and call <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">run()</a>.</p>
 <div class="highlight"><span class="filename">simple02.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -7537,7 +7537,7 @@ window.onload = async (event) => {
     </g>
 </svg>
 </p>
-<p>When you call <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run">App.run()</a> Textual puts the terminal into a special state called <em>application mode</em>. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the <em>screen</em>).</p>
+<p>When you call <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">App.run()</a> Textual puts the terminal into a special state called <em>application mode</em>. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the <em>screen</em>).</p>
 <p>If you hit <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.</p>
 <h4 id="run-inline">Run inline<a class="headerlink" href="#run-inline" title="Permanent link">&para;</a></h4>
 <div class="admonition tip">
@@ -7545,7 +7545,7 @@ window.onload = async (event) => {
 </div>
 <p>You can also run apps in <em>inline</em> mode, which will cause the app to appear beneath the prompt (and won't go into application mode).
 Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.</p>
-<p>To run an app in inline mode set the <code>inline</code> parameter to <code>True</code> when you call <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run">App.run()</a>. See <a href="../../how-to/style-inline-apps/">Style Inline Apps</a> for how to apply additional styles to inline apps.</p>
+<p>To run an app in inline mode set the <code>inline</code> parameter to <code>True</code> when you call <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">App.run()</a>. See <a href="../../how-to/style-inline-apps/">Style Inline Apps</a> for how to apply additional styles to inline apps.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Inline mode is not currently supported on Windows.</p>
@@ -7556,7 +7556,7 @@ Inline apps are useful for tools that integrate closely with the typical workflo
 </div>
 <p>Terminals support 16 theme-able <em>ANSI</em> colors, which you can personalize from your terminal settings.
 By default, Textual will replace these colors with its own color choices (see the <a href="../../FAQ/#why-doesnt-textual-support-ansi-themes">FAQ for details</a>).</p>
-<p>You can disable this behavior by setting <code>ansi_color=True</code> in the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App">App constructor</a>.</p>
+<p>You can disable this behavior by setting <code>ansi_color=True</code> in the <a class="autorefs autorefs-internal" title="            App" href="../../api/app/#textual.app.App">App constructor</a>.</p>
 <p>We recommend the default behavior for full-screen apps, but you may want to preserve ANSI colors in <a href="#run-inline">inline</a> apps.</p>
 <h2 id="events">Events<a class="headerlink" href="#events" title="Permanent link">&para;</a></h2>
 <p>Textual has an <a href="../events/">event system</a> you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with <code>on_</code> followed by the name of the event.</p>
@@ -7745,10 +7745,10 @@ By default, Textual will replace these colors with its own color choices (see th
     </g>
 </svg>
 </p>
-<p>When you press a key, the key event handler (<code>on_key</code>) which will receive a <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.Key">Key</a> instance.
+<p>When you press a key, the key event handler (<code>on_key</code>) which will receive a <a class="autorefs autorefs-internal" title="            Key" href="../../api/events/#textual.events.Key">Key</a> instance.
 If you don't require the event in your handler, you can omit it.</p>
 <p>Events may contain additional information which you can inspect in the handler.
-In the case of the <a class="autorefs autorefs-internal" href="../../api/events/#textual.events.Key">Key</a> event, there is a <code>key</code> attribute which is the name of the key that was pressed.
+In the case of the <a class="autorefs autorefs-internal" title="            Key" href="../../api/events/#textual.events.Key">Key</a> event, there is a <code>key</code> attribute which is the name of the key that was pressed.
 The <code>on_key</code> method above uses this attribute to change the background color if any of the keys from <span class="keys"><kbd class="key-0">0</kbd></span> to <span class="keys"><kbd class="key-9">9</kbd></span> are pressed.</p>
 <h3 id="async-events">Async events<a class="headerlink" href="#async-events" title="Permanent link">&para;</a></h3>
 <p>Textual is powered by Python's <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> framework which uses the <code>async</code> and <code>await</code> keywords.</p>
@@ -7761,7 +7761,7 @@ The <code>on_key</code> method above uses this attribute to change the backgroun
 <p>Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.</p>
 <p>Widgets can be as simple as a piece of text, a button, or a fully-fledged component like a text editor or file browser (which may contain widgets of their own).</p>
 <h3 id="composing">Composing<a class="headerlink" href="#composing" title="Permanent link">&para;</a></h3>
-<p>To add widgets to your app implement a <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.compose"><code>compose()</code></a> method which should return an iterable of <code>Widget</code> instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
+<p>To add widgets to your app implement a <a class="autorefs autorefs-internal" title="            compose" href="../../api/app/#textual.app.App.compose"><code>compose()</code></a> method which should return an iterable of <code>Widget</code> instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
 <p>The following example imports a builtin <code>Welcome</code> widget and yields it from <code>App.compose()</code>.</p>
 <div class="highlight"><span class="filename">widgets01.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Welcome</span>
@@ -7938,9 +7938,9 @@ The <code>on_key</code> method above uses this attribute to change the backgroun
     </g>
 </svg>
 </p>
-<p>Notice the <code>on_button_pressed</code> method which handles the <a class="autorefs autorefs-internal" href="../../widgets/button/#textual.widgets.Button">Button.Pressed</a> event sent by a button contained in the <code>Welcome</code> widget. The handler calls <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.exit">App.exit()</a> to exit the app.</p>
+<p>Notice the <code>on_button_pressed</code> method which handles the <a class="autorefs autorefs-internal" title=" Button" href="../../widgets/button/#textual.widgets.Button">Button.Pressed</a> event sent by a button contained in the <code>Welcome</code> widget. The handler calls <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> to exit the app.</p>
 <h3 id="mounting">Mounting<a class="headerlink" href="#mounting" title="Permanent link">&para;</a></h3>
-<p>While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.mount">mount()</a> which will add a new widget to the UI.</p>
+<p>While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling <a class="autorefs autorefs-internal" title="            mount" href="../../api/widget/#textual.widget.Widget.mount">mount()</a> which will add a new widget to the UI.</p>
 <p>Here's an app which adds a welcome widget in response to any key press:</p>
 <div class="highlight"><span class="filename">widgets02.py</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Welcome</span>
@@ -8143,7 +8143,7 @@ It will also attempt to modify the Button in the Welcome widget by changing its 
 <ol>
 <li>See <a href="../queries/">queries</a> for more information on the <code>query_one</code> method.</li>
 </ol>
-<p>If you run this example, you will find that Textual raises a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception when you press a key.
+<p>If you run this example, you will find that Textual raises a <a class="autorefs autorefs-internal" title="            NoMatches" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception when you press a key.
 This is because the mount process has not yet completed when we attempt to change the button.</p>
 <p>To solve this we can optionally await the result of <code>mount()</code>, which requires we make the function <code>async</code>.
 This guarantees that by the following line, the Button has been mounted, and we can change its label.</p>
@@ -8321,7 +8321,7 @@ This guarantees that by the following line, the Button has been mounted, and we 
 </svg>
 </p>
 <h2 id="exiting">Exiting<a class="headerlink" href="#exiting" title="Permanent link">&para;</a></h2>
-<p>An app will run until you call <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.exit">App.exit()</a> which will exit application mode and the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run">run</a> method will return. If this is the last line in your code you will return to the command prompt.</p>
+<p>An app will run until you call <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> which will exit application mode and the <a class="autorefs autorefs-internal" title="            run" href="../../api/app/#textual.app.App.run">run</a> method will return. If this is the last line in your code you will return to the command prompt.</p>
 <p>The exit method will also accept an optional positional value to be returned by <code>run()</code>. The following example uses this to return the <code>id</code> (identifier) of a clicked button.</p>
 <div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
@@ -8522,13 +8522,13 @@ This guarantees that by the following line, the Button has been mounted, and we 
 <a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
-<p>The addition of <code>[str]</code> tells mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.exit">App.exit()</a> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>. Replace the <code>str</code> in <code>[str]</code> with the type of the value you intend to call the exit method with.</p>
+<p>The addition of <code>[str]</code> tells mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit">App.exit()</a> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>. Replace the <code>str</code> in <code>[str]</code> with the type of the value you intend to call the exit method with.</p>
 <div class="admonition note">
 <p class="admonition-title">Typing in Textual</p>
 <p>Type annotations are entirely optional (but recommended) with Textual.</p>
 </div>
 <h3 id="return-code">Return code<a class="headerlink" href="#return-code" title="Permanent link">&para;</a></h3>
-<p>When you exit a Textual app with <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.exit"><code>App.exit()</code></a>, you can optionally specify a <em>return code</em> with the <code>return_code</code> parameter.</p>
+<p>When you exit a Textual app with <a class="autorefs autorefs-internal" title="            exit" href="../../api/app/#textual.app.App.exit"><code>App.exit()</code></a>, you can optionally specify a <em>return code</em> with the <code>return_code</code> parameter.</p>
 <div class="admonition info">
 <p class="admonition-title">What are return codes?</p>
 <p>Returns codes are a standard feature provided by your operating system.
