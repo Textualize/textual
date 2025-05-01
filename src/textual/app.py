@@ -18,7 +18,7 @@ import sys
 import threading
 import uuid
 import warnings
-from asyncio import Task, create_task
+from asyncio import AbstractEventLoop, Task, create_task
 from concurrent.futures import Future
 from contextlib import (
     asynccontextmanager,
@@ -2059,7 +2059,6 @@ class App(Generic[ReturnType], DOMNode):
         from textual.pilot import Pilot
 
         app = self
-
         auto_pilot_task: Task | None = None
 
         if auto_pilot is None and constants.PRESS:
@@ -2092,27 +2091,29 @@ class App(Generic[ReturnType], DOMNode):
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
 
-        try:
-            app._loop = asyncio.get_running_loop()
-            app._thread_id = threading.get_ident()
-
-            await app._process_messages(
-                ready_callback=None if auto_pilot is None else app_ready,
-                headless=headless,
-                inline=inline,
-                inline_no_clear=inline_no_clear,
-                mouse=mouse,
-                terminal_size=size,
-            )
-        finally:
+        app._loop = asyncio.get_running_loop()
+        app._thread_id = threading.get_ident()
+        with app._context():
             try:
-                if auto_pilot_task is not None:
-                    await auto_pilot_task
+                await app._process_messages(
+                    ready_callback=None if auto_pilot is None else app_ready,
+                    headless=headless,
+                    inline=inline,
+                    inline_no_clear=inline_no_clear,
+                    mouse=mouse,
+                    terminal_size=size,
+                )
             finally:
                 try:
-                    await asyncio.shield(app._shutdown())
-                except asyncio.CancelledError:
-                    pass
+                    if auto_pilot_task is not None:
+                        await auto_pilot_task
+                finally:
+                    try:
+                        await asyncio.shield(app._shutdown())
+                    except asyncio.CancelledError:
+                        pass
+                app._loop = None
+                app._thread_id = 0
 
         return app.return_value
 
@@ -2125,6 +2126,7 @@ class App(Generic[ReturnType], DOMNode):
         mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
+        loop_factory: Callable[[], AbstractEventLoop] | None = None,
     ) -> ReturnType | None:
         """Run the app.
 
@@ -2136,35 +2138,30 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
-
+            loop_factory: Callable which returns a new asyncio Loop, or `None` to use default.
         Returns:
             App return value.
         """
 
         async def run_app() -> None:
             """Run the app."""
-            self._loop = asyncio.get_running_loop()
-            self._thread_id = threading.get_ident()
-            with self._context():
-                try:
-                    await self.run_async(
-                        headless=headless,
-                        inline=inline,
-                        inline_no_clear=inline_no_clear,
-                        mouse=mouse,
-                        size=size,
-                        auto_pilot=auto_pilot,
-                    )
-                finally:
-                    self._loop = None
-                    self._thread_id = 0
+            await self.run_async(
+                headless=headless,
+                inline=inline,
+                inline_no_clear=inline_no_clear,
+                mouse=mouse,
+                size=size,
+                auto_pilot=auto_pilot,
+            )
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app())
+            asyncio.run(run_app(), loop_factory=loop_factory)
         else:
             # However, this works with Python<3.10:
-            event_loop = asyncio.get_event_loop()
+            event_loop = (
+                asyncio.get_event_loop() if loop_factory is None else loop_factory()
+            )
             event_loop.run_until_complete(run_app())
         return self.return_value
 
