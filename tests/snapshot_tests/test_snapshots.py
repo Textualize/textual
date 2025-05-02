@@ -2554,6 +2554,38 @@ def test_pseudo_classes(snap_compare):
 
     assert snap_compare(PSApp())
 
+def test_child_pseudo_classes(snap_compare):
+    """Test pseudo classes added in https://github.com/Textualize/textual/pull/XXXX
+
+    You should see 2 labels and 3 buttons
+
+    The first label should have a red border.
+
+    The last button should have a green border.
+    """
+
+    class CPSApp(App):
+        CSS = """
+        Label { width: 1fr; height: 1fr; }
+        Button { width: 1fr; height: 1fr; }
+        Label:first-child { border:heavy red; }
+        Label:last-child { border:heavy orange; }
+        Button:first-child { border:heavy yellow; }
+        Button:last-child { border:heavy green; }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Label 1")
+            yield Label("Label 2")
+            yield Button("Button 1")
+            yield Button("Button 2")
+
+        def on_mount(self) -> None:
+            # Mounting a new widget should update previous widgets, as the last child has changed
+            self.mount(Button("HELLO"))
+
+    assert snap_compare(CPSApp())
+
 
 def test_split_segments_infinite_loop(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5151

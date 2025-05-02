@@ -224,7 +224,7 @@ class DOMNode(MessagePump):
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
         self._has_order_style: bool = False
-        """The node has an ordered dependent pseudo-style (`:odd`, `:even`, `:first-of-type`, `:last-of-type`)"""
+        """The node has an ordered dependent pseudo-style (`:odd`, `:even`, `:first-of-type`, `:last-of-type`, `:first-child`, `:last-child`)"""
         self._has_odd_or_even: bool = False
         """The node has the pseudo class `odd` or `even`."""
         self._reactive_connect: (

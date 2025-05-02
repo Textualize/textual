@@ -44,6 +44,7 @@ async def test_hover_update_styles():
             "enabled",
             "first-of-type",
             "last-of-type",
+            "last-child",
             "even",
         }
 
@@ -60,6 +61,7 @@ async def test_hover_update_styles():
             "hover",
             "first-of-type",
             "last-of-type",
+            "last-child",
             "even",
         }
         assert button.styles.background != initial_background
