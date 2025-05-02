@@ -1375,7 +1375,7 @@ class Screen(Generic[ScreenResultType], Widget):
         if horizontal_breakpoints:
             self._set_breakpoints(width, horizontal_breakpoints)
         if vertical_breakpoints:
-            self._set_breakpoints(height, horizontal_breakpoints)
+            self._set_breakpoints(height, vertical_breakpoints)
 
     def _set_breakpoints(
         self, dimension: int, breakpoints: list[tuple[int, str]]
