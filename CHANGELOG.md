@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
-- Added `:first-child` and `:last-child` pseudo classes https://github.com/Textualize/textual/pull/5776
 - Log messages could be written to stdout when there was no app, which could happen when using run_async or threads. Now they will be suppressed, unless the env var `TEXTUAL_DEBUG` is set https://github.com/Textualize/textual/pull/5782
 
 ### Added
 
+- Added `:first-child` and `:last-child` pseudo classes https://github.com/Textualize/textual/pull/5776
 - Added `toggle_class` parameter to reactives https://github.com/Textualize/textual/pull/5778
 - Added `compact` parameter and reactive to `Button`, `Input`, `ToggleButton`, `RadioSet`, `OptionList`, `TextArea` https://github.com/Textualize/textual/pull/5778
 - Added `HORIZONTAL_BREAKPOINTS` and `VERTICAL_BREAKPOINTS` to `App` and `Screen` https://github.com/Textualize/textual/pull/5779
