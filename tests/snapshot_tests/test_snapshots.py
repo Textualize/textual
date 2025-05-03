@@ -4081,23 +4081,42 @@ def test_breakpoints(snap_compare, size):
             (120, "-very-wide"),
         ]
 
+        VERTICAL_BREAKPOINTS = [
+            (0, "-low"),
+            (30, "-middle"),
+            (40, "-high"),
+            (50, "-very-high"),
+        ]
+        
         CSS = """
         Screen {
             &.-narrow {
-                Grid { grid-size: 1; }
+                Grid { grid-columns: 20; }
             }
             &.-normal {
-                Grid { grid-size: 2; }
+                Grid { grid-columns: 40; }
             }
             &.-wide {
-                Grid { grid-size: 4; }
+                Grid { grid-columns: 80; }
             }
             &.-very-wide {
-                Grid { grid-size: 6; }
+                Grid { grid-columns: 120; }
+            }
+            &.-low {
+                Grid { grid-rows: 1; }
+            }
+            &.-middle {
+                Grid { grid-rows: 2; }
+            }
+            &.-high {
+                Grid { grid-rows: 4; }
+            }
+            &.-very-high {
+                Grid { grid-rows: 6; }
             }
         }
         """
-
+        
         def compose(self) -> ComposeResult:
             with Grid():
                 for n in range(16):
