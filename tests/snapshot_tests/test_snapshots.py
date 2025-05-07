@@ -4064,7 +4064,7 @@ def test_tint(snap_compare):
         (130, 50),
     ],
 )
-def test_breakpoints(snap_compare, size):
+def test_breakpoints_horizontal(snap_compare, size):
     """Test HORIZONTAL_BREAKPOINTS
 
     You should see four terminals of different sizes with a grid of placeholders.
@@ -4081,42 +4081,23 @@ def test_breakpoints(snap_compare, size):
             (120, "-very-wide"),
         ]
 
-        VERTICAL_BREAKPOINTS = [
-            (0, "-low"),
-            (30, "-middle"),
-            (40, "-high"),
-            (50, "-very-high"),
-        ]
-        
         CSS = """
         Screen {
             &.-narrow {
-                Grid { grid-columns: 20; }
+                Grid { grid-size: 1; }
             }
             &.-normal {
-                Grid { grid-columns: 40; }
+                Grid { grid-size: 2; }
             }
             &.-wide {
-                Grid { grid-columns: 80; }
+                Grid { grid-size: 4; }
             }
             &.-very-wide {
-                Grid { grid-columns: 120; }
-            }
-            &.-low {
-                Grid { grid-rows: 1; }
-            }
-            &.-middle {
-                Grid { grid-rows: 2; }
-            }
-            &.-high {
-                Grid { grid-rows: 4; }
-            }
-            &.-very-high {
-                Grid { grid-rows: 6; }
+                Grid { grid-size: 6; }
             }
         }
         """
-        
+
         def compose(self) -> ComposeResult:
             with Grid():
                 for n in range(16):
@@ -4124,6 +4105,55 @@ def test_breakpoints(snap_compare, size):
 
     assert snap_compare(BreakpointApp(), terminal_size=size)
 
+@pytest.mark.parametrize(
+    "size",
+    [
+        (30, 20),
+        (40, 30),
+        (80, 40),
+        (130, 50),
+    ],
+)
+def test_breakpoints_vertical(snap_compare, size):
+    """Test VERTICAL_BREAKPOINTS
+
+    You should see four terminals of different sizes with a grid of placeholders.
+    The first should have a single column, then two columns, then 4, then 6.
+
+    """
+
+    class BreakpointApp(App):
+
+        VERTICAL_BREAKPOINTS = [
+            (0, "-low"),
+            (30, "-middle"),
+            (40, "-high"),
+            (50, "-very-high"),
+        ]
+
+        CSS = """
+        Screen {
+            &.-low {
+                Grid { grid-size: 1; }
+            }
+            &.-middle {
+                Grid { grid-size: 2; }
+            }
+            &.-high {
+                Grid { grid-size: 4; }
+            }
+            &.-very-high {
+                Grid { grid-size: 6; }
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Grid():
+                for n in range(16):
+                    yield Placeholder(f"Placeholder {n+1}")
+
+    assert snap_compare(BreakpointApp(), terminal_size=size)
 
 def test_compact(snap_compare):
     """Test compact styles.
