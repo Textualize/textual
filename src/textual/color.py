@@ -53,7 +53,7 @@ _TRUECOLOR = ColorType.TRUECOLOR
 
 
 class HSL(NamedTuple):
-    """A color in HLS (Hue, Saturation, Lightness) format."""
+    """A color in HSL (Hue, Saturation, Lightness) format."""
 
     h: float
     """Hue in range 0 to 1."""
@@ -199,12 +199,12 @@ class Color(NamedTuple):
 
     @classmethod
     def from_hsl(cls, h: float, s: float, l: float) -> Color:
-        """Create a color from HLS components.
+        """Create a color from HSL components.
 
         Args:
             h: Hue.
-            l: Lightness.
             s: Saturation.
+            l: Lightness.
 
         Returns:
             A new color.
