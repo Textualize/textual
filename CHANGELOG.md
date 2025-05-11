@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `VERTICAL_BREAKPOINTS` doesn't work https://github.com/Textualize/textual/pull/5785
+
 ## [3.2.0] - 2025-05-02
 
 ### Fixed
