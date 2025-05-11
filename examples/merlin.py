@@ -163,7 +163,7 @@ class MerlinApp(App):
                 self.query_one(f"#switch-{toggle_no}", Switch).toggle()
         # Check the win
         if self.check_win():
-            self.query_one("Screen").add_class("-win")
+            self.screen.add_class("-win")
             self.query_one(Timer).running = False
             self.notify("You win!", title="congratulations", severity="information")
 

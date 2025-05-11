@@ -76,6 +76,8 @@ VALID_PSEUDO_CLASSES: Final = {
     "nocolor",
     "first-of-type",
     "last-of-type",
+    "first-child",
+    "last-child",
     "odd",
     "even",
 }

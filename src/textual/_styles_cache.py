@@ -202,6 +202,7 @@ class StylesCache:
             crop: Region to crop to.
             filters: Additional post-processing for the segments.
             opacity: Widget opacity.
+            ansi_theme: Theme for ANSI colors.
 
         Returns:
             Rendered lines.

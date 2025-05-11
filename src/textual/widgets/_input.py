@@ -177,9 +177,19 @@ class Input(ScrollView):
         height: 3;
         scrollbar-size-horizontal: 0;
 
+        &.-textual-compact {
+            border: none !important;
+            height: 1;
+            padding: 0;
+            &.-invalid {
+                background-tint: $error 20%;
+            }
+        }
+
         &:focus {
-            border: tall $border;
+            border: tall $border;            
             background-tint: $foreground 5%;
+            
         }
         &>.input--cursor {
             background: $input-cursor-background;
@@ -253,6 +263,8 @@ class Input(ScrollView):
     """The maximum length of the input, in characters."""
     valid_empty = var(False)
     """Empty values should pass validation."""
+    compact = reactive(False, toggle_class="-textual-compact")
+    """Make the input compact (without borders)."""
 
     @dataclass
     class Changed(Message):
@@ -342,6 +354,7 @@ class Input(ScrollView):
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ) -> None:
         """Initialise the `Input` widget.
 
@@ -366,6 +379,7 @@ class Input(ScrollView):
             classes: Optional initial classes for the widget.
             disabled: Whether the input is disabled or not.
             tooltip: Optional tooltip.
+            compact: Enable compact style (without borders).
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -430,6 +444,8 @@ class Input(ScrollView):
 
         if tooltip is not None:
             self.tooltip = tooltip
+
+        self.compact = compact
 
         self.select_on_focus = select_on_focus
 

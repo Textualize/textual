@@ -18,7 +18,7 @@ import sys
 import threading
 import uuid
 import warnings
-from asyncio import Task, create_task
+from asyncio import AbstractEventLoop, Task, create_task
 from concurrent.futures import Future
 from contextlib import (
     asynccontextmanager,
@@ -149,9 +149,6 @@ WINDOWS = sys.platform == "win32"
 # asyncio will warn against resources not being cleared
 if constants.DEBUG:
     warnings.simplefilter("always", ResourceWarning)
-
-# `asyncio.get_event_loop()` is deprecated since Python 3.10:
-_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 ComposeResult = Iterable[Widget]
 RenderResult: TypeAlias = "RenderableType | Visual | SupportsVisual"
@@ -481,6 +478,31 @@ class App(Generic[ReturnType], DOMNode):
 
     SUSPENDED_SCREEN_CLASS: ClassVar[str] = ""
     """Class to apply to suspended screens, or empty string for no class."""
+
+    HORIZONTAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
+    """List of horizontal breakpoints for responsive classes.
+
+    This allows for styles to be responsive to the dimensions of the terminal.
+    For instance, you might want to show less information, or fewer columns on a narrow displays -- or more information when the terminal is sized wider than usual.
+    
+    A breakpoint consists of a tuple containing the minimum width where the class should applied, and the name of the class to set.
+
+    Note that only one class name is set, and if you should avoid having more than one breakpoint set for the same size.
+
+    Example:
+        ```python
+        # Up to 80 cells wide, the app has the class "-normal"
+        # 80 - 119 cells wide, the app has the class "-wide"
+        # 120 cells or wider, the app has the class "-very-wide"
+        HORIZONTAL_BREAKPOINTS = [(0, "-normal"), (80, "-wide"), (120, "-very-wide")]
+        ```
+    
+    """
+    VERTICAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
+    """List of vertical breakpoints for responsive classes.
+    
+    Contents are the same as [`HORIZONTAL_BREAKPOINTS`][textual.app.App.HORIZONTAL_BREAKPOINTS], but the integer is compared to the height, rather than the width.
+    """
 
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
@@ -2034,7 +2056,6 @@ class App(Generic[ReturnType], DOMNode):
         from textual.pilot import Pilot
 
         app = self
-
         auto_pilot_task: Task | None = None
 
         if auto_pilot is None and constants.PRESS:
@@ -2067,27 +2088,29 @@ class App(Generic[ReturnType], DOMNode):
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
 
-        try:
-            app._loop = asyncio.get_running_loop()
-            app._thread_id = threading.get_ident()
-
-            await app._process_messages(
-                ready_callback=None if auto_pilot is None else app_ready,
-                headless=headless,
-                inline=inline,
-                inline_no_clear=inline_no_clear,
-                mouse=mouse,
-                terminal_size=size,
-            )
-        finally:
+        app._loop = asyncio.get_running_loop()
+        app._thread_id = threading.get_ident()
+        with app._context():
             try:
-                if auto_pilot_task is not None:
-                    await auto_pilot_task
+                await app._process_messages(
+                    ready_callback=None if auto_pilot is None else app_ready,
+                    headless=headless,
+                    inline=inline,
+                    inline_no_clear=inline_no_clear,
+                    mouse=mouse,
+                    terminal_size=size,
+                )
             finally:
                 try:
-                    await asyncio.shield(app._shutdown())
-                except asyncio.CancelledError:
-                    pass
+                    if auto_pilot_task is not None:
+                        await auto_pilot_task
+                finally:
+                    try:
+                        await asyncio.shield(app._shutdown())
+                    except asyncio.CancelledError:
+                        pass
+                app._loop = None
+                app._thread_id = 0
 
         return app.return_value
 
@@ -2100,6 +2123,7 @@ class App(Generic[ReturnType], DOMNode):
         mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
+        loop: AbstractEventLoop | None = None,
     ) -> ReturnType | None:
         """Run the app.
 
@@ -2111,36 +2135,24 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
-
+            loop: Asyncio loop instance, or `None` to use default.
         Returns:
             App return value.
         """
 
         async def run_app() -> None:
             """Run the app."""
-            self._loop = asyncio.get_running_loop()
-            self._thread_id = threading.get_ident()
-            with self._context():
-                try:
-                    await self.run_async(
-                        headless=headless,
-                        inline=inline,
-                        inline_no_clear=inline_no_clear,
-                        mouse=mouse,
-                        size=size,
-                        auto_pilot=auto_pilot,
-                    )
-                finally:
-                    self._loop = None
-                    self._thread_id = 0
+            await self.run_async(
+                headless=headless,
+                inline=inline,
+                inline_no_clear=inline_no_clear,
+                mouse=mouse,
+                size=size,
+                auto_pilot=auto_pilot,
+            )
 
-        if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
-            # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app())
-        else:
-            # However, this works with Python<3.10:
-            event_loop = asyncio.get_event_loop()
-            event_loop.run_until_complete(run_app())
+        event_loop = asyncio.get_event_loop() if loop is None else loop
+        event_loop.run_until_complete(run_app())
         return self.return_value
 
     async def _on_css_change(self) -> None:

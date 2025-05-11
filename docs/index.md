@@ -24,7 +24,7 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 Textual is a *Rapid Application Development* framework for Python, built by [Textualize.io](https://www.textualize.io).
 
 
-Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal *or* a [web browser](https://github.com/Textualize/textual-web)!
+Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal *or* a [web browser](https://github.com/Textualize/textual-serve)!
 
 
 
@@ -77,14 +77,6 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 </div>
 
-
----
-
-# Live Demo
-
-The official [Textual demo](https://github.com/textualize/textual-demo).
-
-<div class="textual-web-demo" data-app="demo"></div>
 
 
 ---

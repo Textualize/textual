@@ -37,21 +37,6 @@ Here's what the finished app will look like:
     This is the [Command Palette](./guide/command_palette.md).
     You can think of it as a dedicated command prompt for your app.
 
-### Try it out!
-
-The following is *not* a screenshot, but a fully interactive Textual app running in your browser.
-
-
-!!! textualize "Try in Textual-web"
-
-    <div class="textual-web-demo" data-app="tutorial"></div>
-
-
-!!! tip
-
-    See [textual-web](https://github.com/Textualize/textual-web) if you are interested in publishing your Textual apps on the web.
-
-
 ### Get the code
 
 If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) then check out the [Textual](https://github.com/Textualize/textual) repository:

@@ -6,7 +6,7 @@ The packaging process for Textual apps is much the same as any Python library, w
 
 !!! tip
 
-    An alternative to packaging your app is to turn it into a web application with [textual-web](https://github.com/Textualize/textual-web).
+    An alternative to packaging your app is to turn it into a web application with [textual-serve](https://github.com/Textualize/textual-serve).
 
 In this How To we will cover how to use [Hatch](https://github.com/pypa/hatch) to package an example application.
 

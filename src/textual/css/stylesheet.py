@@ -459,6 +459,8 @@ class Stylesheet:
     _EXCLUDE_PSEUDO_CLASSES_FROM_CACHE: Final[set[str]] = {
         "first-of-type",
         "last-of-type",
+        "first-child",
+        "last-child",
         "odd",
         "even",
         "focus-within",
@@ -503,7 +505,7 @@ class Stylesheet:
         node._has_hover_style = "hover" in all_pseudo_classes
         node._has_focus_within = "focus-within" in all_pseudo_classes
         node._has_order_style = not all_pseudo_classes.isdisjoint(
-            {"first-of-type", "last-of-type"}
+            {"first-of-type", "last-of-type", "first-child", "last-child"}
         )
         node._has_odd_or_even = (
             "odd" in all_pseudo_classes or "even" in all_pseudo_classes

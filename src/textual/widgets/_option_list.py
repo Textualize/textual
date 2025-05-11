@@ -139,6 +139,13 @@ class OptionList(ScrollView, can_focus=True):
         border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
+        &.-textual-compact {
+            border: none !important;
+            padding: 0;
+            & > .option-list--option {
+                padding: 0;
+            }
+        }
         & > .option-list--option-highlighted {
             color: $block-cursor-blurred-foreground;
             background: $block-cursor-blurred-background;
@@ -191,6 +198,9 @@ class OptionList(ScrollView, can_focus=True):
 
     _mouse_hovering_over: reactive[int | None] = reactive(None)
     """The index of the option under the mouse or `None`."""
+
+    compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
+    """Enable compact display?"""
 
     class OptionMessage(Message):
         """Base class for all option messages."""
@@ -252,6 +262,7 @@ class OptionList(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         markup: bool = True,
+        compact: bool = False,
     ):
         """Initialize an OptionList.
 
@@ -262,9 +273,11 @@ class OptionList(ScrollView, can_focus=True):
             classes: Initial CSS classes.
             disabled: Disable the widget?
             markup: Strips should be rendered as content markup if `True`, or plain text if `False`.
+            compact: Enable compact style?
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._markup = markup
+        self.compact = compact
         self._options: list[Option] = []
         """List of options."""
         self._id_to_option: dict[str, Option] = {}

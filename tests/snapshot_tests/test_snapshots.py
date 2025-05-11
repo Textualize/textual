@@ -2554,6 +2554,38 @@ def test_pseudo_classes(snap_compare):
 
     assert snap_compare(PSApp())
 
+def test_child_pseudo_classes(snap_compare):
+    """Test pseudo classes added in https://github.com/Textualize/textual/pull/XXXX
+
+    You should see 2 labels and 3 buttons
+
+    The first label should have a red border.
+
+    The last button should have a green border.
+    """
+
+    class CPSApp(App):
+        CSS = """
+        Label { width: 1fr; height: 1fr; }
+        Button { width: 1fr; height: 1fr; }
+        Label:first-child { border:heavy red; }
+        Label:last-child { border:heavy orange; }
+        Button:first-child { border:heavy yellow; }
+        Button:last-child { border:heavy green; }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Label 1")
+            yield Label("Label 2")
+            yield Button("Button 1")
+            yield Button("Button 2")
+
+        def on_mount(self) -> None:
+            # Mounting a new widget should update previous widgets, as the last child has changed
+            self.mount(Button("HELLO"))
+
+    assert snap_compare(CPSApp())
+
 
 def test_split_segments_infinite_loop(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/5151
@@ -4021,3 +4053,87 @@ def test_tint(snap_compare):
             yield Label("Hello, World")
 
     assert snap_compare(TintApp())
+
+
+@pytest.mark.parametrize(
+    "size",
+    [
+        (30, 20),
+        (40, 30),
+        (80, 40),
+        (130, 50),
+    ],
+)
+def test_breakpoints(snap_compare, size):
+    """Test HORIZONTAL_BREAKPOINTS
+
+    You should see four terminals of different sizes with a grid of placeholders.
+    The first should have a single column, then two columns, then 4, then 6.
+
+    """
+
+    class BreakpointApp(App):
+
+        HORIZONTAL_BREAKPOINTS = [
+            (0, "-narrow"),
+            (40, "-normal"),
+            (80, "-wide"),
+            (120, "-very-wide"),
+        ]
+
+        CSS = """
+        Screen {
+            &.-narrow {
+                Grid { grid-size: 1; }
+            }
+            &.-normal {
+                Grid { grid-size: 2; }
+            }
+            &.-wide {
+                Grid { grid-size: 4; }
+            }
+            &.-very-wide {
+                Grid { grid-size: 6; }
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Grid():
+                for n in range(16):
+                    yield Placeholder(f"Placeholder {n+1}")
+
+    assert snap_compare(BreakpointApp(), terminal_size=size)
+
+
+def test_compact(snap_compare):
+    """Test compact styles.
+
+    You should see a screen split vertically.
+
+    The left side has regular widgets, the right side has the corresponding compact widgets.
+
+    """
+
+    class CompactApp(App):
+
+        def compose(self) -> ComposeResult:
+            with Horizontal():
+
+                with Vertical():
+                    yield Button("Foo")
+                    yield Input("hello")
+                    yield Select.from_values(["Foo", "Bar"])
+                    yield RadioSet("FOO", "BAR")
+                    yield SelectionList(("FOO", "FOO"), ("BAR", "BAR"))
+                    yield TextArea("Edit me")
+
+                with Vertical():
+                    yield Button("Bar", compact=True)
+                    yield Input("world", compact=True)
+                    yield Select.from_values(["Foo", "Bar"], compact=True)
+                    yield RadioSet("FOO", "BAR", compact=True)
+                    yield SelectionList(("FOO", "FOO"), ("BAR", "BAR"), compact=True)
+                    yield TextArea("Edit me", compact=True)
+
+    assert snap_compare(CompactApp())

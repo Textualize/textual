@@ -113,6 +113,9 @@ TextArea {
     padding: 0 1;
     color: $foreground;
     background: $surface;
+    &.-textual-compact {
+        border: none !important;
+    }
     & .text-area--cursor {
         text-style: $input-cursor-text-style;
     }
@@ -368,6 +371,9 @@ TextArea {
     The document can still be edited programmatically via the API.
     """
 
+    compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
+    """Enable compact display?"""
+
     _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
@@ -420,6 +426,7 @@ TextArea {
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ) -> None:
         """Construct a new `TextArea`.
 
@@ -438,6 +445,7 @@ TextArea {
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
             tooltip: Optional tooltip.
+            compact: Enable compact style (without borders).
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -512,6 +520,8 @@ TextArea {
         if tooltip is not None:
             self.tooltip = tooltip
 
+        self.compact = compact
+
     @classmethod
     def code_editor(
         cls,
@@ -530,6 +540,7 @@ TextArea {
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ) -> TextArea:
         """Construct a new `TextArea` with sensible defaults for editing code.
 
@@ -549,6 +560,7 @@ TextArea {
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
             tooltip: Optional tooltip
+            compact: Enable compact style (without borders).
         """
         return cls(
             text,
@@ -565,6 +577,7 @@ TextArea {
             classes=classes,
             disabled=disabled,
             tooltip=tooltip,
+            compact=compact,
         )
 
     @staticmethod
