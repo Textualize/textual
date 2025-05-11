@@ -118,21 +118,21 @@ class ResultCallback(Generic[ScreenResultType]):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: AwaitScreen[ScreenResultType] | None = None,
+        await_screen: AwaitScreen[ScreenResultType] | None = None,
     ) -> None:
         """Initialise the result callback object.
 
         Args:
             requester: The object making a request for the callback.
             callback: The callback function.
-            future: A Future to hold the result.
+            await_screen: An AwaitScreen to hold the result.
         """
         self.requester = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
-        self.future = future
-        """A future for the result"""
+        self.await_screen = await_screen
+        """An AwaitScreen for the result"""
 
     def __call__(self, result: ScreenResultType) -> None:
         """Call the callback, passing the given result.
@@ -1188,17 +1188,17 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: AwaitScreen[ScreenResultType] | None = None,
+        await_screen: AwaitScreen[ScreenResultType] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 
         Args:
             requester: The object requesting the callback.
             callback: The callback.
-            future: A Future to hold the result.
+            await_screen: An AwaitScreen to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[Optional[ScreenResultType]](requester, callback, future)
+            ResultCallback[Optional[ScreenResultType]](requester, callback, await_screen)
         )
 
     async def _message_loop_exit(self) -> None:
