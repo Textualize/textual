@@ -118,7 +118,7 @@ Let's examine `stopwatch01.py` in more detail.
 ```
 
 The first line imports `App` class, which is the base class for all Textual apps.
-The second line imports two builtin widgets: [`Footer`](widgets/footer.md) which shows a bar at the bottom of the screen with bound keys, and [`Header`](widgets/header) which shows a title at the top of the screen.
+The second line imports two builtin widgets: [`Footer`](widgets/footer.md) which shows a bar at the bottom of the screen with bound keys, and [`Header`](widgets/header.md) which shows a title at the top of the screen.
 Widgets are re-usable components responsible for managing a part of the screen.
 We will cover how to build widgets in this tutorial.
 

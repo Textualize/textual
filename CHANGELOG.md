@@ -5,12 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
 
 ### Fixed
 
-- Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
+- Fixed `VERTICAL_BREAKPOINTS` doesn't work https://github.com/Textualize/textual/pull/5785
 - Fixed `Button` allowing text selection https://github.com/Textualize/textual/pull/5770
+
+## [3.2.0] - 2025-05-02
+
+### Fixed
+
+- Fixed `OptionList` causing excessive redrawing https://github.com/Textualize/textual/pull/5766
+- Log messages could be written to stdout when there was no app, which could happen when using run_async or threads. Now they will be suppressed, unless the env var `TEXTUAL_DEBUG` is set https://github.com/Textualize/textual/pull/5782
+
+### Added
+
+- Added `:first-child` and `:last-child` pseudo classes https://github.com/Textualize/textual/pull/5776
+- Added `toggle_class` parameter to reactives https://github.com/Textualize/textual/pull/5778
+- Added `compact` parameter and reactive to `Button`, `Input`, `ToggleButton`, `RadioSet`, `OptionList`, `TextArea` https://github.com/Textualize/textual/pull/5778
+- Added `HORIZONTAL_BREAKPOINTS` and `VERTICAL_BREAKPOINTS` to `App` and `Screen` https://github.com/Textualize/textual/pull/5779
+
+### Changed
+
+- `RadioSet` now has a default width of `1fr` https://github.com/Textualize/textual/pull/5778
 
 ## [3.1.1] - 2025-04-22
 
@@ -2860,6 +2879,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[3.2.0]: https://github.com/Textualize/textual/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/Textualize/textual/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/Textualize/textual/compare/v3.0.1...v3.1.0
 [3.0.1]: https://github.com/Textualize/textual/compare/v3.0.0...v3.0.1

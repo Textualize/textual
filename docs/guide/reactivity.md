@@ -65,7 +65,7 @@ You may want to add explicit type hints if the attribute type is a superset of t
 
 ## Smart refresh
 
-The first superpower we will look at is "smart refresh". When you modify a reactive attribute, Textual will make note of the fact that it has changed and refresh automatically.
+The first superpower we will look at is "smart refresh". When you modify a reactive attribute, Textual will make note of the fact that it has changed and refresh automatically by calling the widget's [`render()`][textual.widget.Widget.render] method to get updated content.
 
 !!! information
 

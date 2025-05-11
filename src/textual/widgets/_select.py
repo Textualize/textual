@@ -12,7 +12,7 @@ from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.css.query import NoMatches
 from textual.message import Message
-from textual.reactive import var
+from textual.reactive import reactive, var
 from textual.timer import Timer
 from textual.widgets import Static
 from textual.widgets._option_list import Option, OptionList
@@ -185,6 +185,10 @@ class SelectCurrent(Horizontal):
         height: auto;
         padding: 0 2;
 
+        &.-textual-compact {
+            border: none !important;
+        }
+
         &:ansi {
             border: tall ansi_blue;
             color: ansi_default;
@@ -286,6 +290,13 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     Select {
         height: auto;
         color: $foreground;
+
+        &.-textual-compact {
+            & > SelectCurrent {
+                padding: 0 1 0 0;
+                border: none !important;
+            }            
+        }
         
         .up-arrow {
             display: none;
@@ -344,6 +355,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     exception.
     """
 
+    compact = reactive(False, toggle_class="-textual-compact")
+    """Make the select compact (without borders)."""
+
     @rich.repr.auto
     class Changed(Message):
         """Posted when the select value was changed.
@@ -385,6 +399,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ):
         """Initialize the Select control.
 
@@ -404,6 +419,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
             tooltip: Optional tooltip.
+            compact: Enable compact select (without borders).
 
         Raises:
             EmptySelectError: If no options are provided and `allow_blank` is `False`.
@@ -416,6 +432,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._type_to_search = type_to_search
         if tooltip is not None:
             self.tooltip = tooltip
+        self.compact = compact
 
     @classmethod
     def from_values(
@@ -430,6 +447,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        compact: bool = False,
     ) -> Select[SelectType]:
         """Initialize the Select control with values specified by an arbitrary iterable
 
@@ -450,6 +468,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
+            compact: Enable compact style?
 
         Returns:
             A new Select widget with the provided values as options.
@@ -466,6 +485,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             id=id,
             classes=classes,
             disabled=disabled,
+            compact=compact,
         )
 
     @property
@@ -587,7 +607,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
         yield SelectCurrent(self.prompt)
-        yield SelectOverlay(type_to_search=self._type_to_search)
+        yield SelectOverlay(type_to_search=self._type_to_search).data_bind(
+            compact=Select.compact
+        )
 
     def _on_mount(self, _event: events.Mount) -> None:
         """Set initial values."""

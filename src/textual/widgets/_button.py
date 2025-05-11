@@ -61,6 +61,10 @@ class Button(Widget, can_focus=True):
         text-style: bold;
         line-pad: 1;
 
+        &.-textual-compact {
+            border: none !important;
+        }
+
         &:disabled {            
             text-opacity: 0.6;
         }
@@ -162,6 +166,9 @@ class Button(Widget, can_focus=True):
     variant = reactive("default", init=False)
     """The variant name for the button."""
 
+    compact = reactive(False, toggle_class="-textual-compact")
+    """Make the button compact (without borders)."""
+
     class Pressed(Message):
         """Event sent when a `Button` is pressed and there is no Button action.
 
@@ -193,6 +200,7 @@ class Button(Widget, can_focus=True):
         disabled: bool = False,
         tooltip: RenderableType | None = None,
         action: str | None = None,
+        compact: bool = False,
     ):
         """Create a Button widget.
 
@@ -205,6 +213,7 @@ class Button(Widget, can_focus=True):
             disabled: Whether the button is disabled or not.
             tooltip: Optional tooltip.
             action: Optional action to run when clicked.
+            compact: Enable compact button style.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -214,6 +223,7 @@ class Button(Widget, can_focus=True):
         self.label = Content.from_text(label)
         self.variant = variant
         self.action = action
+        self.compact = compact
         self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
 
