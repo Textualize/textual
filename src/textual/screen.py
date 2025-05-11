@@ -89,6 +89,9 @@ class _Unset(enum.Enum):
     UNSET = enum.auto()
 
 class AwaitScreen(Generic[ScreenResultType]):
+    """
+    An Awaitable object that resumes with the result of a Screen.
+    """
     def __init__(self) -> None:
         self._event = asyncio.Event()
         self._result: ScreenResultType | Literal[_Unset.UNSET] = _Unset.UNSET
