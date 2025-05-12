@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
+from typing import TYPE_CHECKING, ClassVar, Iterable, Literal, NamedTuple
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import RenderableType
 from rich.highlighter import Highlighter
 from rich.text import Text
-from typing_extensions import Literal
 
 from textual import events
 from textual.expand_tabs import expand_tabs_inline

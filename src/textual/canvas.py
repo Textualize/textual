@@ -13,11 +13,11 @@ from array import array
 from collections import defaultdict
 from dataclasses import dataclass
 from operator import itemgetter
-from typing import NamedTuple, Sequence
+from typing import Literal, NamedTuple, Sequence
 
 from rich.segment import Segment
 from rich.style import Style
-from typing_extensions import Literal, TypeAlias
+from typing_extensions import TypeAlias
 
 from textual._box_drawing import BOX_CHARACTERS, Quad, combine_quads
 from textual.color import Color

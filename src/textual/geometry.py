@@ -11,6 +11,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Collection,
+    Final,
     Literal,
     NamedTuple,
     Tuple,
@@ -18,8 +19,6 @@ from typing import (
     Union,
     cast,
 )
-
-from typing_extensions import Final
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias

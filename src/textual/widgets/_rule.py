@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, Literal
 
 from rich.console import Console, ConsoleOptions
 from rich.segment import Segment
 from rich.style import Style
-from typing_extensions import Literal
 
 from textual.app import RenderResult
 from textual.css._error_tools import friendly_list
