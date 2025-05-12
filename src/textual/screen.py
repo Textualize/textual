@@ -154,8 +154,8 @@ class Screen(Generic[ScreenResultType], Widget):
     Screen {
         layout: vertical;
         overflow-y: auto;
-        background: $background;        
-        
+        background: $background;
+
         &:inline {
             height: auto;
             min-height: 1;
@@ -167,7 +167,7 @@ class Screen(Generic[ScreenResultType], Widget):
             background: ansi_default;
             color: ansi_default;
 
-            &.-screen-suspended {                                            
+            &.-screen-suspended {
                 text-style: dim;
                 ScrollBar {
                     text-style: not dim;
@@ -175,7 +175,7 @@ class Screen(Generic[ScreenResultType], Widget):
             }
         }
         .screen--selection {
-            background: $primary 50%;            
+            background: $primary 50%;
         }
     }
     """
@@ -1851,7 +1851,7 @@ class ModalScreen(Screen[ScreenResultType]):
         overflow-y: auto;
         background: $background 60%;
         &:ansi {
-            background: transparent;                   
+            background: transparent;
         }
     }
     """
