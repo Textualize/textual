@@ -2159,7 +2159,17 @@ class App(Generic[ReturnType], DOMNode):
                 # eagerly bind the event loop, and result in Future bound to wrong
                 # loop errors.
                 return asyncio.run(run_app())
-            return asyncio.get_event_loop().run_until_complete(run_app())
+            try:
+                global_loop = asyncio.get_event_loop()
+            except RuntimeError:
+                # the global event loop may have been destroyed by someone running
+                # asyncio.run(), or asyncio.set_event_loop(None), in which case
+                # we need to use asyncio.run() also. (We run this outside the
+                # context of an exception handler)
+                pass
+            else:
+                return global_loop.run_until_complete(run_app())
+            return asyncio.run(run_app())
         return loop.run_until_complete(run_app())
 
     async def _on_css_change(self) -> None:
