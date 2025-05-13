@@ -150,6 +150,9 @@ WINDOWS = sys.platform == "win32"
 if constants.DEBUG:
     warnings.simplefilter("always", ResourceWarning)
 
+# `asyncio.get_event_loop()` is deprecated since Python 3.10:
+_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
+
 ComposeResult = Iterable[Widget]
 RenderResult: TypeAlias = "RenderableType | Visual | SupportsVisual"
 """Result of Widget.render()"""
@@ -2140,9 +2143,9 @@ class App(Generic[ReturnType], DOMNode):
             App return value.
         """
 
-        async def run_app() -> None:
+        async def run_app() -> ReturnType | None:
             """Run the app."""
-            await self.run_async(
+            return await self.run_async(
                 headless=headless,
                 inline=inline,
                 inline_no_clear=inline_no_clear,
@@ -2150,10 +2153,14 @@ class App(Generic[ReturnType], DOMNode):
                 size=size,
                 auto_pilot=auto_pilot,
             )
-
-        event_loop = asyncio.get_event_loop() if loop is None else loop
-        event_loop.run_until_complete(run_app())
-        return self.return_value
+        if loop is None:
+            if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
+                # N.B. This does work with Python<3.10, but global Locks, Events, etc
+                # eagerly bind the event loop, and result in Future bound to wrong
+                # loop errors.
+                return asyncio.run(run_app())
+            return asyncio.get_event_loop().run_until_complete(run_app())
+        return loop.run_until_complete(run_app())
 
     async def _on_css_change(self) -> None:
         """Callback for the file monitor, called when CSS files change."""
