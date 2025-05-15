@@ -3,6 +3,8 @@ Tests for the indeterminate progress bar animation, which is considered a basic
 animation. (An animation that also plays on the level BASIC.)
 """
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import ProgressBar
 from textual.widgets._progress_bar import Bar
@@ -13,6 +15,7 @@ class ProgressBarApp(App[None]):
         yield ProgressBar()
 
 
+@pytest.mark.anyio
 async def test_progress_bar_animates_on_full() -> None:
     """An indeterminate progress bar is not fully highlighted when animating."""
     app = ProgressBarApp()
@@ -24,6 +27,7 @@ async def test_progress_bar_animates_on_full() -> None:
         assert start != 0 or end != app.query_one(Bar).size.width
 
 
+@pytest.mark.anyio
 async def test_progress_bar_animates_on_basic() -> None:
     """An indeterminate progress bar is not fully highlighted when animating."""
     app = ProgressBarApp()
@@ -35,6 +39,7 @@ async def test_progress_bar_animates_on_basic() -> None:
         assert start != 0 or end != app.query_one(Bar).size.width
 
 
+@pytest.mark.anyio
 async def test_progress_bar_does_not_animate_on_none() -> None:
     """An indeterminate progress bar is fully highlighted when not animating."""
     app = ProgressBarApp()

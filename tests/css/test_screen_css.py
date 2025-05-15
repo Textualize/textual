@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.color import Color
 from textual.screen import Screen
@@ -69,6 +71,7 @@ def check_colors_after_screen_css(app: BaseApp):
     assert app.screen.query_one("#screen-css").styles.background == RED
 
 
+@pytest.mark.anyio
 async def test_screen_pushing_and_popping_does_not_reparse_css():
     """Check that pushing and popping the same screen doesn't trigger CSS reparses."""
 
@@ -103,6 +106,7 @@ async def test_screen_pushing_and_popping_does_not_reparse_css():
         assert counter == 1
 
 
+@pytest.mark.anyio
 async def test_screen_css_push_screen_instance():
     """Check that screen CSS is loaded and applied when pushing a screen instance."""
 
@@ -122,6 +126,7 @@ async def test_screen_css_push_screen_instance():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_push_screen_instance_by_name():
     """Check that screen CSS is loaded and applied when pushing a screen name that points to a screen instance."""
 
@@ -143,6 +148,7 @@ async def test_screen_css_push_screen_instance_by_name():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_push_screen_type_by_name():
     """Check that screen CSS is loaded and applied when pushing a screen name that points to a screen class."""
 
@@ -164,6 +170,7 @@ async def test_screen_css_push_screen_type_by_name():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_switch_screen_instance():
     """Check that screen CSS is loaded and applied when switching to a screen instance."""
 
@@ -183,6 +190,7 @@ async def test_screen_css_switch_screen_instance():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_switch_screen_instance_by_name():
     """Check that screen CSS is loaded and applied when switching a screen name that points to a screen instance."""
 
@@ -204,6 +212,7 @@ async def test_screen_css_switch_screen_instance_by_name():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_switch_screen_type_by_name():
     """Check that screen CSS is loaded and applied when switching a screen name that points to a screen class."""
 
@@ -225,6 +234,7 @@ async def test_screen_css_switch_screen_type_by_name():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_switch_mode_screen_instance():
     """Check that screen CSS is loaded and applied when switching to a mode with a screen instance."""
 
@@ -250,6 +260,7 @@ async def test_screen_css_switch_mode_screen_instance():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_switch_mode_screen_instance_by_name():
     """Check that screen CSS is loaded and applied when switching to a mode with a screen instance name."""
 
@@ -279,6 +290,7 @@ async def test_screen_css_switch_mode_screen_instance_by_name():
         check_colors_after_screen_css(app)
 
 
+@pytest.mark.anyio
 async def test_screen_css_switch_mode_screen_type_by_name():
     """Check that screen CSS is loaded and applied when switching to a mode with a screen type name."""
 

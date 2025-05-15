@@ -1,8 +1,11 @@
+import pytest
+
 from textual.app import App
 from textual.screen import Screen
 from textual.widgets import Header
 
 
+@pytest.mark.anyio
 async def test_screen_title_none_is_ignored():
     class MyScreen(Screen):
         def compose(self):
@@ -19,6 +22,7 @@ async def test_screen_title_none_is_ignored():
         assert app.screen.query_one("HeaderTitle").text == "app title"
 
 
+@pytest.mark.anyio
 async def test_screen_title_overrides_app_title():
     class MyScreen(Screen):
         TITLE = "screen title"
@@ -37,6 +41,7 @@ async def test_screen_title_overrides_app_title():
         assert app.screen.query_one("HeaderTitle").text == "screen title"
 
 
+@pytest.mark.anyio
 async def test_screen_title_reactive_updates_title():
     class MyScreen(Screen):
         TITLE = "screen title"
@@ -57,6 +62,7 @@ async def test_screen_title_reactive_updates_title():
         assert app.screen.query_one("HeaderTitle").text == "new screen title"
 
 
+@pytest.mark.anyio
 async def test_app_title_reactive_does_not_update_title_when_screen_title_is_set():
     class MyScreen(Screen):
         TITLE = "screen title"
@@ -77,6 +83,7 @@ async def test_app_title_reactive_does_not_update_title_when_screen_title_is_set
         assert app.screen.query_one("HeaderTitle").text == "screen title"
 
 
+@pytest.mark.anyio
 async def test_screen_sub_title_none_is_ignored():
     class MyScreen(Screen):
         def compose(self):
@@ -93,6 +100,7 @@ async def test_screen_sub_title_none_is_ignored():
         assert app.screen.query_one("HeaderTitle").sub_text == "app sub-title"
 
 
+@pytest.mark.anyio
 async def test_screen_sub_title_overrides_app_sub_title():
     class MyScreen(Screen):
         SUB_TITLE = "screen sub-title"
@@ -111,6 +119,7 @@ async def test_screen_sub_title_overrides_app_sub_title():
         assert app.screen.query_one("HeaderTitle").sub_text == "screen sub-title"
 
 
+@pytest.mark.anyio
 async def test_screen_sub_title_reactive_updates_sub_title():
     class MyScreen(Screen):
         SUB_TITLE = "screen sub-title"
@@ -131,6 +140,7 @@ async def test_screen_sub_title_reactive_updates_sub_title():
         assert app.screen.query_one("HeaderTitle").sub_text == "new screen sub-title"
 
 
+@pytest.mark.anyio
 async def test_app_sub_title_reactive_does_not_update_sub_title_when_screen_sub_title_is_set():
     class MyScreen(Screen):
         SUB_TITLE = "screen sub-title"

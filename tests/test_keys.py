@@ -24,6 +24,7 @@ def test_character_to_key(character: str, key: str) -> None:
     assert _character_to_key(character) == key
 
 
+@pytest.mark.anyio
 async def test_character_bindings():
     """Test you can bind to a character as well as a longer key name."""
     counter = 0

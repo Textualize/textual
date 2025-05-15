@@ -29,6 +29,7 @@ class SelectionListApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_all_parameters_become_selctions() -> None:
     """All input parameters to a list should become selections."""
     async with SelectionListApp().run_test() as pilot:
@@ -38,6 +39,7 @@ async def test_all_parameters_become_selctions() -> None:
             assert isinstance(selections.get_option_at_index(n), Selection)
 
 
+@pytest.mark.anyio
 async def test_get_selection_by_index() -> None:
     """It should be possible to get a selection by index."""
     async with SelectionListApp().run_test() as pilot:
@@ -47,6 +49,7 @@ async def test_get_selection_by_index() -> None:
         assert str(option_list.get_option_at_index(-1).prompt) == "4"
 
 
+@pytest.mark.anyio
 async def test_get_selection_by_id() -> None:
     """It should be possible to get a selection by ID."""
     async with SelectionListApp().run_test() as pilot:
@@ -55,6 +58,7 @@ async def test_get_selection_by_id() -> None:
         assert str(option_list.get_option("4").prompt) == "4"
 
 
+@pytest.mark.anyio
 async def test_add_later() -> None:
     """It should be possible to add more items to a selection list."""
     async with SelectionListApp().run_test() as pilot:
@@ -72,6 +76,7 @@ async def test_add_later() -> None:
         assert selections.option_count == 11
 
 
+@pytest.mark.anyio
 async def test_add_later_selcted_state() -> None:
     """When adding selections later the selected collection should get updated."""
     async with SelectionListApp().run_test() as pilot:
@@ -83,6 +88,7 @@ async def test_add_later_selcted_state() -> None:
         assert selections.selected == [2, 4, 5, 6]
 
 
+@pytest.mark.anyio
 async def test_add_non_selections() -> None:
     """Adding options that aren't selections should result in errors."""
     async with SelectionListApp().run_test() as pilot:
@@ -99,6 +105,7 @@ async def test_add_non_selections() -> None:
             selections.add_option(("Nope", 0, False, 23))
 
 
+@pytest.mark.anyio
 async def test_clear_options() -> None:
     """Clearing the options should also clear the selections."""
     async with SelectionListApp().run_test() as pilot:
@@ -107,6 +114,7 @@ async def test_clear_options() -> None:
         assert selections.selected == []
 
 
+@pytest.mark.anyio
 async def test_options_are_available_soon() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3903."""
 
@@ -115,6 +123,7 @@ async def test_options_are_available_soon() -> None:
     assert selection_list.get_option("some_id") is selection
 
 
+@pytest.mark.anyio
 async def test_removing_option_updates_indexes() -> None:
     async with SelectionListApp().run_test() as pilot:
         selections = pilot.app.query_one(SelectionList)

@@ -34,6 +34,7 @@ class NestedApp(App):
             yield Label("World", classes="paul")
 
 
+@pytest.mark.anyio
 async def test_nest_app():
     """Test nested CSS works as expected."""
     app = NestedApp()
@@ -59,6 +60,7 @@ class ListOfNestedSelectorsApp(App[None]):
         yield Label("three", classes="heh")
 
 
+@pytest.mark.anyio
 async def test_lists_of_selectors_in_nested_css() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3969."""
     app = ListOfNestedSelectorsApp()
@@ -83,6 +85,7 @@ class DeclarationAfterNestedApp(App[None]):
         yield Label("one")
 
 
+@pytest.mark.anyio
 async def test_rule_declaration_after_nested() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3999."""
     app = DeclarationAfterNestedApp()
@@ -157,6 +160,7 @@ class PseudoClassesInNestedApp(App[None]):
             yield Label("Hello, world!", id="eight", classes="second_half")
 
 
+@pytest.mark.anyio
 async def test_pseudo_classes_work_in_nested_css() -> None:
     """Makes sure pseudo-classes are correctly understood in nested TCSS.
 

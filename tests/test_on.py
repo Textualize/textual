@@ -13,6 +13,7 @@ from textual.widget import Widget
 from textual.widgets import Button, TabbedContent, TabPane
 
 
+@pytest.mark.anyio
 async def test_on_button_pressed() -> None:
     """Test handlers with @on decorator."""
 
@@ -55,6 +56,7 @@ async def test_on_button_pressed() -> None:
     ]
 
 
+@pytest.mark.anyio
 async def test_on_inheritance() -> None:
     """Test on decorator and inheritance."""
     pressed: list[str] = []
@@ -122,6 +124,7 @@ def test_on_attribute_not_listed() -> None:
             pass
 
 
+@pytest.mark.anyio
 async def test_on_arbitrary_attributes() -> None:
     log: list[str] = []
 
@@ -169,6 +172,7 @@ class MessageSender(Widget):
         self.post_message(self.Child(self))
 
 
+@pytest.mark.anyio
 async def test_fire_on_inherited_message() -> None:
     """Handlers should fire when descendant messages are posted."""
 
@@ -196,6 +200,7 @@ async def test_fire_on_inherited_message() -> None:
     assert posted == ["parent", "child", "parent"]
 
 
+@pytest.mark.anyio
 async def test_fire_inherited_on_single_handler() -> None:
     """Test having parent/child messages on a single handler."""
 
@@ -220,6 +225,7 @@ async def test_fire_inherited_on_single_handler() -> None:
     assert posted == ["either Parent", "either Child"]
 
 
+@pytest.mark.anyio
 async def test_fire_inherited_on_single_handler_multi_selector() -> None:
     """Test having parent/child messages on a single handler but with different selectors."""
 
@@ -274,6 +280,7 @@ async def test_fire_inherited_on_single_handler_multi_selector() -> None:
     ]
 
 
+@pytest.mark.anyio
 async def test_fire_inherited_and_on_methods() -> None:
     posted: list[str] = []
 
@@ -328,6 +335,7 @@ class MixinMessageSender(Widget):
         self.post_message(self.Child())
 
 
+@pytest.mark.anyio
 async def test_fire_on_inherited_message_plus_mixins() -> None:
     """Handlers should fire when descendant messages are posted, without mixins messing things up."""
 
@@ -355,6 +363,7 @@ async def test_fire_on_inherited_message_plus_mixins() -> None:
     assert posted == ["parent", "child", "parent"]
 
 
+@pytest.mark.anyio
 async def test_on_with_enter_and_leave_events():
     class EnterLeaveApp(App):
         messages = []

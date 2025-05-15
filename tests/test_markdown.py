@@ -78,6 +78,7 @@ class MarkdownApp(App[None]):
         ),
     ],
 )
+@pytest.mark.anyio
 async def test_markdown_nodes(
     document: str, expected_nodes: list[Widget | list[Widget]]
 ) -> None:
@@ -95,6 +96,7 @@ async def test_markdown_nodes(
         ] == expected_nodes
 
 
+@pytest.mark.anyio
 async def test_softbreak_split_links_rendered_correctly() -> None:
     """Test for https://github.com/Textualize/textual/issues/2805"""
 
@@ -119,6 +121,7 @@ URL](https://example.com)\
     assert paragraph._text.spans == expected_spans
 
 
+@pytest.mark.anyio
 async def test_load_non_existing_file() -> None:
     """Loading a file that doesn't exist should result in the obvious error."""
     async with MarkdownApp("").run_test() as pilot:
@@ -135,6 +138,7 @@ async def test_load_non_existing_file() -> None:
         ("hello-there", True),
     ],
 )
+@pytest.mark.anyio
 async def test_goto_anchor(anchor: str, found: bool) -> None:
     """Going to anchors should return a boolean: whether the anchor was found."""
     document = "# Hello There\n\nGeneral.\n"
@@ -143,6 +147,7 @@ async def test_goto_anchor(anchor: str, found: bool) -> None:
         assert markdown.goto_anchor(anchor) is found
 
 
+@pytest.mark.anyio
 async def test_update_of_document_posts_table_of_content_update_message() -> None:
     """Updating the document should post a TableOfContentsUpdated message."""
 
@@ -166,6 +171,7 @@ async def test_update_of_document_posts_table_of_content_update_message() -> Non
         assert messages == ["TableOfContentsUpdated", "TableOfContentsUpdated"]
 
 
+@pytest.mark.anyio
 async def test_link_in_markdown_table_posts_message_when_clicked():
     """A link inside a markdown table should post a `Markdown.LinkClicked`
     message when clicked.
@@ -199,6 +205,7 @@ async def test_link_in_markdown_table_posts_message_when_clicked():
         assert app.messages == ["LinkClicked"]
 
 
+@pytest.mark.anyio
 async def test_markdown_quoting():
     # https://github.com/Textualize/textual/issues/3350
     links = []

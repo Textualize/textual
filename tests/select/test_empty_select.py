@@ -5,6 +5,7 @@ from textual.widgets import Select
 from textual.widgets.select import EmptySelectError
 
 
+@pytest.mark.anyio
 async def test_empty_select_is_ok_with_blanks():
     class SelectApp(App[None]):
         def compose(self):
@@ -16,6 +17,7 @@ async def test_empty_select_is_ok_with_blanks():
         assert app.query_one(Select).is_blank()
 
 
+@pytest.mark.anyio
 async def test_empty_set_options_is_ok_with_blanks():
     class SelectApp(App[None]):
         def compose(self):
@@ -29,6 +31,7 @@ async def test_empty_set_options_is_ok_with_blanks():
         assert select.is_blank()  # Sanity check.
 
 
+@pytest.mark.anyio
 async def test_empty_select_raises_exception_if_allow_blank_is_false():
     class SelectApp(App[None]):
         def compose(self):
@@ -40,6 +43,7 @@ async def test_empty_select_raises_exception_if_allow_blank_is_false():
             pass
 
 
+@pytest.mark.anyio
 async def test_empty_set_options_raises_exception_if_allow_blank_is_false():
     class SelectApp(App[None]):
         def compose(self):

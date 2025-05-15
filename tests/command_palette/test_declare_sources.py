@@ -1,9 +1,12 @@
+import pytest
+
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
 from textual.system_commands import SystemCommandsProvider
 
 
+@pytest.mark.anyio
 async def test_sources_with_no_known_screen() -> None:
     """A command palette with no known screen should have an empty source set."""
     assert CommandPalette()._provider_classes == set()
@@ -26,6 +29,7 @@ class AppWithNoSources(AppWithActiveCommandPalette):
     pass
 
 
+@pytest.mark.anyio
 async def test_no_app_command_sources() -> None:
     """An app with no sources declared should work fine."""
     async with AppWithNoSources().run_test() as pilot:
@@ -37,6 +41,7 @@ class AppWithSources(AppWithActiveCommandPalette):
     COMMANDS = {ExampleCommandSource}
 
 
+@pytest.mark.anyio
 async def test_app_command_sources() -> None:
     """Command sources declared on an app should be in the command palette."""
     async with AppWithSources().run_test() as pilot:
@@ -58,6 +63,7 @@ class ScreenWithNoSources(Screen[None]):
         self.app.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_no_screen_command_sources() -> None:
     """An app with a screen with no sources declared should work fine."""
     async with AppWithInitialScreen(ScreenWithNoSources()).run_test() as pilot:
@@ -69,6 +75,7 @@ class ScreenWithSources(ScreenWithNoSources):
     COMMANDS = {ExampleCommandSource}
 
 
+@pytest.mark.anyio
 async def test_screen_command_sources() -> None:
     """Command sources declared on a screen should be in the command palette."""
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
@@ -90,6 +97,7 @@ class CombinedSourceApp(App[None]):
         self.push_screen(ScreenWithSources())
 
 
+@pytest.mark.anyio
 async def test_app_and_screen_command_sources_combine() -> None:
     """If an app and the screen have command sources they should combine."""
     async with CombinedSourceApp().run_test() as pilot:

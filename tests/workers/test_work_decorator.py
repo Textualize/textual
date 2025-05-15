@@ -55,16 +55,19 @@ async def work_with(launcher: Callable[[WorkApp], WorkType]) -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_async_work() -> None:
     """It should be possible to decorate an async method as an async worker."""
     await work_with(lambda app: app.async_work)
 
 
+@pytest.mark.anyio
 async def test_async_thread_work() -> None:
     """It should be possible to decorate an async method as a thread worker."""
     await work_with(lambda app: app.async_thread_work)
 
 
+@pytest.mark.anyio
 async def test_thread_work() -> None:
     """It should be possible to decorate a non-async method as a thread worker."""
     await work_with(lambda app: app.thread_work)
@@ -170,6 +173,7 @@ class NestedWorkersApp(App[None]):
         ),
     ],
 )
+@pytest.mark.anyio
 async def test_calling_workers_from_within_workers(call_stack: Tuple[str]):
     """Regression test for https://github.com/Textualize/textual/issues/3472.
 

@@ -20,6 +20,7 @@ class DataBindApp(App):
         yield FooLabel(id="label2")  # Not bound
 
 
+@pytest.mark.anyio
 async def test_data_binding():
     app = DataBindApp()
     async with app.run_test() as pilot:
@@ -70,6 +71,7 @@ async def test_data_binding():
         assert label2.foo == "Spam"
 
 
+@pytest.mark.anyio
 async def test_data_binding_missing_reactive():
 
     class DataBindErrorApp(App):

@@ -1,3 +1,5 @@
+import pytest
+
 from textual import on
 from textual.app import App
 from textual.widgets import Select
@@ -17,6 +19,7 @@ class SelectApp(App[None]):
         self.changed_messages.append(event)
 
 
+@pytest.mark.anyio
 async def test_message_control():
     app = SelectApp()
     async with app.run_test() as pilot:
@@ -27,6 +30,7 @@ async def test_message_control():
         assert message.control is app.query_one(Select)
 
 
+@pytest.mark.anyio
 async def test_selecting_posts_message():
     app = SelectApp()
     async with app.run_test() as pilot:
@@ -42,6 +46,7 @@ async def test_selecting_posts_message():
         assert len(app.changed_messages) == 2
 
 
+@pytest.mark.anyio
 async def test_same_selection_does_not_post_message():
     app = SelectApp()
     async with app.run_test() as pilot:
@@ -57,6 +62,7 @@ async def test_same_selection_does_not_post_message():
         assert len(app.changed_messages) == 1
 
 
+@pytest.mark.anyio
 async def test_setting_value_posts_message() -> None:
     """Setting the value of a Select should post a message."""
 
