@@ -505,7 +505,7 @@ def test_option_list_tables(snap_compare):
 
 
 def test_option_list_build(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py")
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py", press=["a"])
 
 
 def test_option_list_replace_prompt_from_single_line_to_single_line(snap_compare):

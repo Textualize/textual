@@ -10,6 +10,8 @@ from textual.widgets.option_list import Option
 
 class OptionListApp(App[None]):
 
+    BINDINGS = [("a", "add", "add")]
+
     def compose( self ) -> ComposeResult:
         with Horizontal():
             yield OptionList(
@@ -20,6 +22,7 @@ class OptionListApp(App[None]):
             )
             yield OptionList(id="later-individual")
             yield OptionList(id="later-at-once")
+            yield OptionList(id="after-mount")
 
     def on_mount(self) -> None:
         options: list[None | str | Text | Option] = [
@@ -33,6 +36,16 @@ class OptionListApp(App[None]):
             option_list.add_option(option)
         option_list.highlighted = 0
         option_list = self.query_one("#later-at-once", OptionList)
+        option_list.add_options([
+            "One",
+            Option("Two"),
+            None,
+            Text.from_markup("[red]Three[/]"),
+        ])
+        option_list.highlighted = 0
+
+    def action_add(self):
+        option_list = self.query_one("#after-mount", OptionList)
         option_list.add_options([
             "One",
             Option("Two"),

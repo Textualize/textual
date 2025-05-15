@@ -373,6 +373,7 @@ class OptionList(ScrollView, can_focus=True):
                 self._id_to_option[option._id] = option
             add_option(option)
         if self.is_mounted:
+            self.refresh(layout=self.styles.auto_dimensions)
             self._update_lines()
         return self
 
