@@ -2236,7 +2236,7 @@ files = [
 name = "tree-sitter"
 version = "0.23.2"
 description = "Python bindings to the Tree-sitter parsing library"
-optional = true
+optional = false
 python-versions = ">=3.9"
 files = [
     {file = "tree-sitter-0.23.2.tar.gz", hash = "sha256:66bae8dd47f1fed7bdef816115146d3a41c39b5c482d7bad36d9ba1def088450"},
@@ -2855,4 +2855,4 @@ syntax = ["tree-sitter", "tree-sitter-bash", "tree-sitter-css", "tree-sitter-go"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "db29b377e8fcedd9730b54f573ba175c8743e06fa57da2dee8a4e62bc2a6faa7"
+content-hash = "3dc11349b4c4a0c407ed1b407d2f822159b3dc3a3e5fe26e4c560cadec458181"

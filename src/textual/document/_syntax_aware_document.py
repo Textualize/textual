@@ -82,14 +82,16 @@ class SyntaxAwareDocument(Document):
         Returns:
             A tuple containing the nodes and text captured by the query.
         """
-        captures_kwargs = {}
-        if start_point is not None:
-            captures_kwargs["start_point"] = start_point
-        if end_point is not None:
-            captures_kwargs["end_point"] = end_point
 
-        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
-        return captures
+        if start_point is None:
+            start_point = self._syntax_tree.included_ranges[0].start_point
+
+        if end_point is None:
+            end_point = self._syntax_tree.included_ranges[-1].end_point
+
+        return query.set_point_range((start_point, end_point)).captures(
+            self._syntax_tree.root_node
+        )
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
