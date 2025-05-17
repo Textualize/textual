@@ -2153,6 +2153,7 @@ class App(Generic[ReturnType], DOMNode):
                 size=size,
                 auto_pilot=auto_pilot,
             )
+
         if loop is None:
             if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
                 # N.B. This does work with Python<3.10, but global Locks, Events, etc
