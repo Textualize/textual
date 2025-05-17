@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `VERTICAL_BREAKPOINTS` doesn't work https://github.com/Textualize/textual/pull/5785
 - Fixed `Button` allowing text selection https://github.com/Textualize/textual/pull/5770
+- Fixed running `App.run` after `asyncio.run` https://github.com/Textualize/textual/pull/5799
+- Fixed triggering a deprecation warning in py >= 3.10 https://github.com/Textualize/textual/pull/5799
 
 ## [3.2.0] - 2025-05-02
 
