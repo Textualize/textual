@@ -139,6 +139,13 @@ class OptionList(ScrollView, can_focus=True):
         border: tall $border-blurred;
         padding: 0 1;
         background: $surface;
+        &.-textual-compact {
+            border: none !important;
+            padding: 0;
+            & > .option-list--option {
+                padding: 0;
+            }
+        }
         & > .option-list--option-highlighted {
             color: $block-cursor-blurred-foreground;
             background: $block-cursor-blurred-background;
@@ -165,7 +172,7 @@ class OptionList(ScrollView, can_focus=True):
         }
         & > .option-list--option-hover {
             background: $block-hover-background;
-        }        
+        }
     }
     """
 
@@ -191,6 +198,9 @@ class OptionList(ScrollView, can_focus=True):
 
     _mouse_hovering_over: reactive[int | None] = reactive(None)
     """The index of the option under the mouse or `None`."""
+
+    compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
+    """Enable compact display?"""
 
     class OptionMessage(Message):
         """Base class for all option messages."""
@@ -252,6 +262,7 @@ class OptionList(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         markup: bool = True,
+        compact: bool = False,
     ):
         """Initialize an OptionList.
 
@@ -262,9 +273,11 @@ class OptionList(ScrollView, can_focus=True):
             classes: Initial CSS classes.
             disabled: Disable the widget?
             markup: Strips should be rendered as content markup if `True`, or plain text if `False`.
+            compact: Enable compact style?
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._markup = markup
+        self.compact = compact
         self._options: list[Option] = []
         """List of options."""
         self._id_to_option: dict[str, Option] = {}
@@ -360,6 +373,7 @@ class OptionList(ScrollView, can_focus=True):
                 self._id_to_option[option._id] = option
             add_option(option)
         if self.is_mounted:
+            self.refresh(layout=self.styles.auto_dimensions)
             self._update_lines()
         return self
 
@@ -732,8 +746,8 @@ class OptionList(ScrollView, can_focus=True):
         """Get rendered option with a given style.
 
         Args:
+            option: An option.
             style: Style of render.
-            index: Index of the option.
 
         Returns:
             A list of strips.
@@ -784,8 +798,10 @@ class OptionList(ScrollView, can_focus=True):
                 )
 
         last_divider = self.options and self.options[-1]._divider
-        self.virtual_size = Size(width, len(lines) - (1 if last_divider else 0))
-        self._scroll_update(self.virtual_size)
+        virtual_size = Size(width, len(lines) - (1 if last_divider else 0))
+        if virtual_size != self.virtual_size:
+            self.virtual_size = virtual_size
+            self._scroll_update(virtual_size)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""
