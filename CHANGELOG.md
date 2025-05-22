@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `VERTICAL_BREAKPOINTS` doesn't work https://github.com/Textualize/textual/pull/5785
 - Fixed `Button` allowing text selection https://github.com/Textualize/textual/pull/5770
 
+### Added
+
+- Exposed `CollapsibleTitle` https://github.com/Textualize/textual/pull/5810
+
 ## [3.2.0] - 2025-05-02
 
 ### Fixed
