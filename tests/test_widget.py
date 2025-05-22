@@ -646,26 +646,36 @@ async def test_of_type() -> None:
         labels = list(app.query(Label))
         assert labels[0].first_of_type
         assert not labels[0].last_of_type
+        assert labels[0].first_child
+        assert not labels[0].last_child
         assert labels[0].is_odd
         assert not labels[0].is_even
 
         assert not labels[1].first_of_type
         assert not labels[1].last_of_type
+        assert not labels[1].first_child
+        assert not labels[1].last_child
         assert not labels[1].is_odd
         assert labels[1].is_even
 
         assert not labels[2].first_of_type
         assert not labels[2].last_of_type
+        assert not labels[2].first_child
+        assert not labels[2].last_child
         assert labels[2].is_odd
         assert not labels[2].is_even
 
         assert not labels[3].first_of_type
         assert not labels[3].last_of_type
+        assert not labels[3].first_child
+        assert not labels[3].last_child
         assert not labels[3].is_odd
         assert labels[3].is_even
 
         assert not labels[4].first_of_type
         assert labels[4].last_of_type
+        assert not labels[4].first_child
+        assert labels[4].last_child
         assert labels[4].is_odd
         assert not labels[4].is_even
 

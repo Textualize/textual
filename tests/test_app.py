@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 
 import pytest
@@ -43,6 +44,7 @@ async def test_hover_update_styles():
             "enabled",
             "first-of-type",
             "last-of-type",
+            "last-child",
             "even",
         }
 
@@ -59,6 +61,7 @@ async def test_hover_update_styles():
             "hover",
             "first-of-type",
             "last-of-type",
+            "last-child",
             "even",
         }
         assert button.styles.background != initial_background
@@ -340,3 +343,27 @@ async def test_click_chain_time_outwith_threshold():
             # Each click is outwith the time threshold, so a click chain is never created.
             await raw_click(pilot, "#one")
             assert click_count == i
+
+
+def test_app_loop() -> None:
+    """Test that App.run accepts a loop argument."""
+
+    class MyApp(App[int]):
+        def on_mount(self) -> None:
+            self.exit(42)
+
+    app = MyApp()
+    result = app.run(loop=asyncio.new_event_loop())
+    assert result == 42
+
+
+async def test_app_run_async() -> None:
+    """Check run_async runs without issues."""
+
+    class MyApp(App[int]):
+        def on_mount(self) -> None:
+            self.exit(42)
+
+    app = MyApp()
+    result = await app.run_async()
+    assert result == 42

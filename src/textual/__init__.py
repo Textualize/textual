@@ -85,8 +85,12 @@ class Logger:
         try:
             app = active_app.get()
         except LookupError:
-            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
-            print(*print_args)
+            if constants.DEBUG:
+                print_args = (
+                    *args,
+                    *[f"{key}={value!r}" for key, value in kwargs.items()],
+                )
+                print(*print_args)
             return
         if app.devtools is None or not app.devtools.is_connected:
             return
@@ -108,8 +112,12 @@ class Logger:
             )
         except LoggerError:
             # If there is not active app, try printing
-            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
-            print(*print_args)
+            if constants.DEBUG:
+                print_args = (
+                    *args,
+                    *[f"{key}={value!r}" for key, value in kwargs.items()],
+                )
+                print(*print_args)
 
     def verbosity(self, verbose: bool) -> Logger:
         """Get a new logger with selective verbosity.

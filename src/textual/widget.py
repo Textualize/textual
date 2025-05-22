@@ -389,6 +389,8 @@ class Widget(DOMNode):
         "nocolor": lambda widget: widget.app.no_color,
         "first-of-type": lambda widget: widget.first_of_type,
         "last-of-type": lambda widget: widget.last_of_type,
+        "first-child": lambda widget: widget.first_child,
+        "last-child": lambda widget: widget.last_child,
         "odd": lambda widget: widget.is_odd,
         "even": lambda widget: widget.is_even,
     }  # type: ignore[assignment]
@@ -500,6 +502,10 @@ class Widget(DOMNode):
         """Used to cache :first-of-type pseudoclass state."""
         self._last_of_type: tuple[int, bool] = (-1, False)
         """Used to cache :last-of-type pseudoclass state."""
+        self._first_child: tuple[int, bool] = (-1, False)
+        """Used to cache :first-child pseudoclass state."""
+        self._last_child: tuple[int, bool] = (-1, False)
+        """Used to cache :last-child pseudoclass state."""
         self._odd: tuple[int, bool] = (-1, False)
         """Used to cache :odd pseudoclass state."""
         self._last_scroll_time = monotonic()
@@ -850,6 +856,34 @@ class Widget(DOMNode):
             if isinstance(node, widget_type):
                 self._last_of_type = (parent._nodes._updates, node is self)
                 return self._last_of_type[1]
+        return False
+
+    @property
+    def first_child(self) -> bool:
+        """Is this the first widget in its siblings?"""
+        parent = self.parent
+        if parent is None:
+            return True
+        # This pseudo class only changes when the parent's nodes._updates changes
+        if parent._nodes._updates == self._first_child[0]:
+            return self._first_child[1]
+        for node in parent._nodes:
+            self._first_child = (parent._nodes._updates, node is self)
+            return self._first_child[1]
+        return False
+
+    @property
+    def last_child(self) -> bool:
+        """Is this the last widget in its siblings?"""
+        parent = self.parent
+        if parent is None:
+            return True
+        # This pseudo class only changes when the parent's nodes._updates changes
+        if parent._nodes._updates == self._last_child[0]:
+            return self._last_child[1]
+        for node in reversed(parent._nodes):
+            self._last_child = (parent._nodes._updates, node is self)
+            return self._last_child[1]
         return False
 
     @property
@@ -1304,7 +1338,7 @@ class Widget(DOMNode):
             """Update order related CSS"""
             if before is not None or after is not None:
                 # If the new children aren't at the end.
-                # we need to update both odd/even and first-of-type/last-of-type
+                # we need to update both odd/even, first-of-type/last-of-type and first-child/last-child
                 for child in children:
                     if child._has_order_style or child._has_odd_or_even:
                         child._update_styles()

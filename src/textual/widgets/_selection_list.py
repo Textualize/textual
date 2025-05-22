@@ -220,6 +220,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        compact: bool = False,
     ):
         """Initialise the selection list.
 
@@ -229,7 +230,9 @@ class SelectionList(Generic[SelectionType], OptionList):
             id: The ID of the selection list in the DOM.
             classes: The CSS classes of the selection list.
             disabled: Whether the selection list is disabled or not.
+            compact: Enable a compact style?
         """
+
         self._selected: dict[SelectionType, None] = {}
         """Tracking of which values are selected."""
         self._send_messages = False
@@ -240,6 +243,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         }
         """Keeps track of which value relates to which option."""
         super().__init__(*options, name=name, id=id, classes=classes, disabled=disabled)
+        self.compact = compact
 
     @property
     def selected(self) -> list[SelectionType]:
