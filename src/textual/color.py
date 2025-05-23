@@ -301,7 +301,7 @@ class Color(NamedTuple):
     def hex(self) -> str:
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
-        For example, `"#46b3de"` for an RGB color, or `"#3342457f"` for a color with alpha.
+        For example, `"#46B3DE"` for an RGB color, or `"#3342457F"` for a color with alpha.
         """
         r, g, b, a, ansi, _ = self.clamped
         if ansi is not None:
@@ -316,7 +316,7 @@ class Color(NamedTuple):
     def hex6(self) -> str:
         """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
 
-        For example, `"#46b3de"`.
+        For example, `"#46B3DE"`.
         """
         r, g, b, _a, _, _ = self.clamped
         return f"#{r:02X}{g:02X}{b:02X}"
