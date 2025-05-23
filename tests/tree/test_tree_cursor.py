@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Tree
@@ -39,6 +41,7 @@ class TreeApp(App[None]):
         self.messages.append((event.__class__.__name__, event.node.id))
 
 
+@pytest.mark.anyio
 async def test_move_cursor() -> None:
     """Test moving the cursor to a node (updating the highlighted node)."""
     async with TreeApp().run_test() as pilot:
@@ -56,6 +59,7 @@ async def test_move_cursor() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_move_cursor_reset() -> None:
     async with TreeApp().run_test() as pilot:
         app = pilot.app
@@ -71,6 +75,7 @@ async def test_move_cursor_reset() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_select_node() -> None:
     async with TreeApp().run_test() as pilot:
         app = pilot.app
@@ -85,6 +90,7 @@ async def test_select_node() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_select_node_reset() -> None:
     async with TreeApp().run_test() as pilot:
         app = pilot.app

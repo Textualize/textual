@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Input
 
@@ -21,6 +23,7 @@ class InputTester(App[None]):
             yield Input(value, id=input_id)
 
 
+@pytest.mark.anyio
 async def test_delete_left_from_home() -> None:
     """Deleting left from home should do nothing."""
     async with InputTester().run_test() as pilot:
@@ -31,6 +34,7 @@ async def test_delete_left_from_home() -> None:
             assert input.value == TEST_INPUTS[input.id]
 
 
+@pytest.mark.anyio
 async def test_delete_left_from_end() -> None:
     """Deleting left from end should remove the last character (if there is one)."""
     async with InputTester().run_test() as pilot:
@@ -41,6 +45,7 @@ async def test_delete_left_from_end() -> None:
             assert input.value == TEST_INPUTS[input.id][:-1]
 
 
+@pytest.mark.anyio
 async def test_delete_left_word_from_home() -> None:
     """Deleting word left from home should do nothing."""
     async with InputTester().run_test() as pilot:
@@ -51,6 +56,7 @@ async def test_delete_left_word_from_home() -> None:
             assert input.value == TEST_INPUTS[input.id]
 
 
+@pytest.mark.anyio
 async def test_delete_left_word_from_inside_first_word() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
@@ -60,6 +66,7 @@ async def test_delete_left_word_from_inside_first_word() -> None:
             assert input.value == TEST_INPUTS[input.id][1:]
 
 
+@pytest.mark.anyio
 async def test_delete_left_word_from_end() -> None:
     """Deleting word left from end should remove the expected text."""
     async with InputTester().run_test() as pilot:
@@ -75,6 +82,7 @@ async def test_delete_left_word_from_end() -> None:
             assert input.value == expected[input.id]
 
 
+@pytest.mark.anyio
 async def test_password_delete_left_word_from_end() -> None:
     """Deleting word left from end of a password input should delete everything."""
     async with InputTester().run_test() as pilot:
@@ -85,6 +93,7 @@ async def test_password_delete_left_word_from_end() -> None:
             assert input.value == ""
 
 
+@pytest.mark.anyio
 async def test_delete_left_all_from_home() -> None:
     """Deleting all left from home should do nothing."""
     async with InputTester().run_test() as pilot:
@@ -95,6 +104,7 @@ async def test_delete_left_all_from_home() -> None:
             assert input.value == TEST_INPUTS[input.id]
 
 
+@pytest.mark.anyio
 async def test_delete_left_all_from_end() -> None:
     """Deleting all left from end should empty the input value."""
     async with InputTester().run_test() as pilot:
@@ -105,6 +115,7 @@ async def test_delete_left_all_from_end() -> None:
             assert input.value == ""
 
 
+@pytest.mark.anyio
 async def test_delete_right_from_home() -> None:
     """Deleting right from home should delete one character (if there is any to delete)."""
     async with InputTester().run_test() as pilot:
@@ -115,6 +126,7 @@ async def test_delete_right_from_home() -> None:
             assert input.value == TEST_INPUTS[input.id][1:]
 
 
+@pytest.mark.anyio
 async def test_delete_right_from_end() -> None:
     """Deleting right from end should not change the input's value."""
     async with InputTester().run_test() as pilot:
@@ -124,6 +136,7 @@ async def test_delete_right_from_end() -> None:
             assert input.value == TEST_INPUTS[input.id]
 
 
+@pytest.mark.anyio
 async def test_delete_right_word_from_home() -> None:
     """Deleting word right from home should delete one word (if there is one)."""
     async with InputTester().run_test() as pilot:
@@ -140,6 +153,7 @@ async def test_delete_right_word_from_home() -> None:
             assert input.value == expected[input.id]
 
 
+@pytest.mark.anyio
 async def test_password_delete_right_word_from_home() -> None:
     """Deleting word right from home of a password input should delete everything."""
     async with InputTester().run_test() as pilot:
@@ -151,6 +165,7 @@ async def test_password_delete_right_word_from_home() -> None:
             assert input.value == ""
 
 
+@pytest.mark.anyio
 async def test_delete_right_word_from_end() -> None:
     """Deleting word right from end should not change the input's value."""
     async with InputTester().run_test() as pilot:
@@ -161,6 +176,7 @@ async def test_delete_right_word_from_end() -> None:
             assert input.value == TEST_INPUTS[input.id]
 
 
+@pytest.mark.anyio
 async def test_delete_right_all_from_home() -> None:
     """Deleting all right home should remove everything in the input."""
     async with InputTester().run_test() as pilot:
@@ -171,6 +187,7 @@ async def test_delete_right_all_from_home() -> None:
             assert input.value == ""
 
 
+@pytest.mark.anyio
 async def test_delete_right_all_from_end() -> None:
     """Deleting all right from end should not change the input's value."""
     async with InputTester().run_test() as pilot:

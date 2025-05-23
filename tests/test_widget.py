@@ -28,6 +28,7 @@ from textual.widgets import (
 )
 
 
+@pytest.mark.anyio
 async def test_widget_construct():
     """Regression test for https://github.com/Textualize/textual/issues/5042"""
 
@@ -136,6 +137,7 @@ async def hierarchy_app():
     yield app
 
 
+@pytest.mark.anyio
 async def test_get_child_by_id_gets_first_child(hierarchy_app):
     async with hierarchy_app.run_test():
         parent = hierarchy_app.parent
@@ -145,6 +147,7 @@ async def test_get_child_by_id_gets_first_child(hierarchy_app):
         assert parent.get_child_by_id(id="child2").id == "child2"
 
 
+@pytest.mark.anyio
 async def test_get_child_by_id_no_matching_child(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -152,6 +155,7 @@ async def test_get_child_by_id_no_matching_child(hierarchy_app):
             parent.get_child_by_id(id="doesnt-exist")
 
 
+@pytest.mark.anyio
 async def test_get_child_by_id_only_immediate_descendents(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -159,6 +163,7 @@ async def test_get_child_by_id_only_immediate_descendents(hierarchy_app):
             parent.get_child_by_id(id="grandchild1")
 
 
+@pytest.mark.anyio
 async def test_get_child_by_type():
     class GetChildApp(App):
         def compose(self) -> ComposeResult:
@@ -177,6 +182,7 @@ async def test_get_child_by_type():
             app.get_child_by_type(Label)
 
 
+@pytest.mark.anyio
 async def test_get_widget_by_id_no_matching_child(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -184,6 +190,7 @@ async def test_get_widget_by_id_no_matching_child(hierarchy_app):
             parent.get_widget_by_id(id="i-dont-exist")
 
 
+@pytest.mark.anyio
 async def test_get_widget_by_id_non_immediate_descendants(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -191,6 +198,7 @@ async def test_get_widget_by_id_non_immediate_descendants(hierarchy_app):
         assert result.id == "grandchild1"
 
 
+@pytest.mark.anyio
 async def test_get_widget_by_id_immediate_descendants(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -198,6 +206,7 @@ async def test_get_widget_by_id_immediate_descendants(hierarchy_app):
         assert result.id == "child1"
 
 
+@pytest.mark.anyio
 async def test_get_widget_by_id_doesnt_return_self(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -205,6 +214,7 @@ async def test_get_widget_by_id_doesnt_return_self(hierarchy_app):
             parent.get_widget_by_id("parent")
 
 
+@pytest.mark.anyio
 async def test_get_widgets_app_delegated(hierarchy_app):
     # Check that get_child_by_id finds the parent, which is a child of the default Screen
     async with hierarchy_app.run_test() as pilot:
@@ -217,6 +227,7 @@ async def test_get_widgets_app_delegated(hierarchy_app):
         assert grandchild.id == "grandchild1"
 
 
+@pytest.mark.anyio
 async def test_widget_mount_ids_must_be_unique_mounting_all_in_one_go(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -227,6 +238,7 @@ async def test_widget_mount_ids_must_be_unique_mounting_all_in_one_go(hierarchy_
             parent.mount(widget1, widget2)
 
 
+@pytest.mark.anyio
 async def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(hierarchy_app):
     async with hierarchy_app.run_test() as pilot:
         parent = pilot.app.parent
@@ -273,6 +285,7 @@ def test_get_pseudo_class_state_focus():
 
 
 # Regression test for https://github.com/Textualize/textual/issues/1634
+@pytest.mark.anyio
 async def test_remove():
     class RemoveMeLabel(Label):
         async def on_mount(self) -> None:
@@ -298,6 +311,7 @@ async def test_remove():
 
 
 # Regression test for https://github.com/Textualize/textual/issues/2079
+@pytest.mark.anyio
 async def test_remove_unmounted():
     mounted = False
 
@@ -323,6 +337,7 @@ def test_render_str() -> None:
     assert widget.render_str(content) is content
 
 
+@pytest.mark.anyio
 async def test_compose_order() -> None:
     from textual.containers import Horizontal
     from textual.screen import Screen
@@ -379,6 +394,7 @@ def test__allow_scroll_default():
     assert not Widget()._allow_scroll
 
 
+@pytest.mark.anyio
 async def test__allow_scroll():
     from textual.containers import ScrollableContainer
 
@@ -394,6 +410,7 @@ async def test__allow_scroll():
         assert app.query_one(ScrollableContainer)._allow_scroll
 
 
+@pytest.mark.anyio
 async def test_offset_getter_setter():
     class OffsetApp(App):
         def compose(self):
@@ -414,6 +431,7 @@ def test_get_set_tooltip():
     assert widget.tooltip == "This is a tooltip."
 
 
+@pytest.mark.anyio
 async def test_loading():
     """Test setting the loading reactive."""
 
@@ -444,6 +462,7 @@ async def test_loading():
         assert label._cover_widget is None
 
 
+@pytest.mark.anyio
 async def test_loading_button():
     """Test loading indicator renders buttons unclickable."""
 
@@ -483,6 +502,7 @@ async def test_loading_button():
         assert counter == 2
 
 
+@pytest.mark.anyio
 async def test_is_mounted_property():
     class TestWidgetIsMountedApp(App):
         pass
@@ -494,6 +514,7 @@ async def test_is_mounted_property():
         assert widget.is_mounted is True
 
 
+@pytest.mark.anyio
 async def test_mount_error_not_widget():
     class NotWidgetApp(App):
         def compose(self) -> ComposeResult:
@@ -505,6 +526,7 @@ async def test_mount_error_not_widget():
             pass
 
 
+@pytest.mark.anyio
 async def test_mount_error_bad_widget():
     class DaftWidget(Widget):
         def __init__(self):
@@ -521,6 +543,7 @@ async def test_mount_error_bad_widget():
             pass
 
 
+@pytest.mark.anyio
 async def test_render_returns_text():
     """Test that render processes console markup when returning a string."""
 
@@ -535,6 +558,7 @@ async def test_render_returns_text():
     assert render_result.plain == "Hello World!"
 
 
+@pytest.mark.anyio
 async def test_sort_children() -> None:
     """Test the sort_children method."""
 
@@ -571,6 +595,7 @@ async def test_sort_children() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_sort_children_no_key() -> None:
     """Test sorting with no key."""
 
@@ -628,13 +653,13 @@ def test_lazy_loading() -> None:
         from textual.widgets import Foo  # nopycln: import
 
     from textual import widgets
-    from textual.widgets import Label
 
     assert not hasattr(widgets, "foo")
     assert not hasattr(widgets, "bar")
     assert hasattr(widgets, "Label")
 
 
+@pytest.mark.anyio
 async def test_of_type() -> None:
     class MyApp(App):
         def compose(self) -> ComposeResult:
@@ -680,6 +705,7 @@ async def test_of_type() -> None:
         assert not labels[4].is_even
 
 
+@pytest.mark.anyio
 async def test_click_line_api_border():
     """Regression test for https://github.com/Textualize/textual/issues/5634"""
 

@@ -58,6 +58,7 @@ class InputApp(App[None]):
         (TEXT_MIXED, 60, 10),
     ),
 )
+@pytest.mark.anyio
 async def test_mouse_clicks_within(text, click_at, should_land):
     """Mouse clicks should result in the cursor going to the right place."""
     async with InputApp(text).run_test() as pilot:
@@ -68,6 +69,7 @@ async def test_mouse_clicks_within(text, click_at, should_land):
         assert pilot.app.query_one(Input).cursor_position == should_land
 
 
+@pytest.mark.anyio
 async def test_mouse_click_outwith_moves_cursor_to_nearest_cell():
     """Mouse clicks in the padding or border area should move the cursor as this makes
     dragging and selecting text easier."""

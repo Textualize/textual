@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import pytest
+
 from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.screen import Screen
 
 
+@pytest.mark.anyio
 async def test_unmount() -> None:
     """Test unmount events are received in reverse DOM order."""
     unmount_ids: list[str] = []
@@ -49,6 +52,5 @@ async def test_unmount() -> None:
         "UnmountWidget#top-True-0",
         "MyScreen#main",
     ]
-
 
     assert unmount_ids == expected

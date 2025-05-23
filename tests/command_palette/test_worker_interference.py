@@ -2,6 +2,8 @@
 
 from asyncio import sleep
 
+import pytest
+
 from textual import work
 from textual.app import App
 from textual.command import Hit, Hits, Provider
@@ -20,6 +22,7 @@ class CommandPaletteNoWorkerApp(App[None]):
     COMMANDS = {SimpleSource}
 
 
+@pytest.mark.anyio
 async def test_no_command_palette_worker_droppings() -> None:
     """The command palette should not leave any workers behind.."""
     async with CommandPaletteNoWorkerApp().run_test() as pilot:
@@ -41,6 +44,7 @@ class CommandPaletteWithWorkerApp(App[None]):
             await sleep(1)
 
 
+@pytest.mark.anyio
 async def test_innocent_worker_is_untouched() -> None:
     """Using the command palette should not halt other workers."""
     async with CommandPaletteWithWorkerApp().run_test() as pilot:

@@ -11,6 +11,8 @@ background relating to this.
 
 from __future__ import annotations
 
+import pytest
+
 from textual.actions import SkipAction
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -36,6 +38,7 @@ class NoBindings(App[None]):
     """An app with zero bindings."""
 
 
+@pytest.mark.anyio
 async def test_just_app_no_bindings() -> None:
     """An app with no bindings should have no bindings, other than the app's hard-coded ones."""
     async with NoBindings().run_test() as pilot:
@@ -62,6 +65,7 @@ class AlphaBinding(App[None]):
     BINDINGS = [Binding("a", "a", "a", priority=True)]
 
 
+@pytest.mark.anyio
 async def test_just_app_alpha_binding() -> None:
     """An app with a single binding should have just the one binding."""
     async with AlphaBinding().run_test() as pilot:
@@ -86,6 +90,7 @@ class LowAlphaBinding(App[None]):
     BINDINGS = [Binding("a", "a", "a", priority=False)]
 
 
+@pytest.mark.anyio
 async def test_just_app_low_priority_alpha_binding() -> None:
     """An app with a single low-priority binding should have just the one binding."""
     async with LowAlphaBinding().run_test() as pilot:
@@ -119,6 +124,7 @@ class AppWithScreenThatHasABinding(App[None]):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_app_screen_with_bindings() -> None:
     """Test a screen with a single key binding defined."""
     async with AppWithScreenThatHasABinding().run_test() as pilot:
@@ -148,6 +154,7 @@ class AppWithScreenThatHasALowBinding(App[None]):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_app_screen_with_low_bindings() -> None:
     """Test a screen with a single low-priority key binding defined."""
     async with AppWithScreenThatHasALowBinding().run_test() as pilot:
@@ -221,6 +228,7 @@ class AppWithMovementKeysBound(AppKeyRecorder):
     BINDINGS = AppKeyRecorder.make_bindings()
 
 
+@pytest.mark.anyio
 async def test_pressing_alpha_on_app() -> None:
     """Test that pressing the alpha key, when it's bound on the app, results in an action fire."""
     async with AppWithMovementKeysBound().run_test() as pilot:
@@ -229,6 +237,7 @@ async def test_pressing_alpha_on_app() -> None:
         assert pilot.app.pressed_keys == [*AppKeyRecorder.ALPHAS]
 
 
+@pytest.mark.anyio
 async def test_pressing_movement_keys_app() -> None:
     """Test that pressing the movement keys, when they're bound on the app, results in an action fire."""
     async with AppWithMovementKeysBound().run_test() as pilot:
@@ -267,6 +276,7 @@ class AppWithWidgetWithBindings(AppKeyRecorder):
         self.query_one(FocusableWidgetWithBindings).focus()
 
 
+@pytest.mark.anyio
 async def test_focused_child_widget_with_movement_bindings() -> None:
     """A focused child widget with movement bindings should handle its own actions."""
     async with AppWithWidgetWithBindings().run_test() as pilot:
@@ -314,6 +324,7 @@ class AppWithScreenWithBindingsWidgetNoBindings(AppKeyRecorder):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     """A focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
@@ -357,6 +368,7 @@ class AppWithScreenWithBindingsWrappedWidgetNoBindings(AppKeyRecorder):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_contained_focused_child_widget_with_movement_bindings_on_screen() -> (
     None
 ):
@@ -398,6 +410,7 @@ class AppWithWidgetWithBindingsNoInherit(AppKeyRecorder):
         self.query_one(WidgetWithBindingsNoInherit).focus()
 
 
+@pytest.mark.anyio
 async def test_focused_child_widget_with_movement_bindings_no_inherit() -> None:
     """A focused child widget with movement bindings and inherit_bindings=False should handle its own actions."""
     async with AppWithWidgetWithBindingsNoInherit().run_test() as pilot:
@@ -450,6 +463,7 @@ class AppWithScreenWithBindingsWidgetNoBindingsNoInherit(AppKeyRecorder):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_focused_child_widget_no_inherit_with_movement_bindings_on_screen() -> (
     None
 ):
@@ -507,6 +521,7 @@ class AppWithScreenWithBindingsWidgetEmptyBindingsNoInherit(AppKeyRecorder):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_focused_child_widget_no_inherit_empty_bindings_with_movement_bindings_on_screen() -> (
     None
 ):
@@ -590,6 +605,7 @@ class PriorityOverlapApp(AppKeyRecorder):
         self.push_screen("main")
 
 
+@pytest.mark.anyio
 async def test_overlapping_priority_bindings() -> None:
     """Test an app stack with overlapping bindings."""
     async with PriorityOverlapApp().run_test() as pilot:
@@ -605,6 +621,7 @@ async def test_overlapping_priority_bindings() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_skip_action() -> None:
     """Test that a binding may be skipped by an action raising SkipAction"""
 

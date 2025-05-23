@@ -93,6 +93,7 @@ syntax = [
 ]
 
 [tool.poetry.group.dev.dependencies]
+anyio = "^4.5.2" # can be upgraded to 4.9 when 3.8 support is dropped
 black = "24.4.2"
 griffe = "0.32.3"
 httpx = "^0.23.1"
@@ -107,7 +108,6 @@ mypy = "^1.0.0"
 pre-commit = "^2.13.0"
 pytest = "^8.3.1"
 pytest-xdist = "^3.6.1"
-pytest-asyncio = "*"
 pytest-cov = "^5.0.0"
 textual-dev = "^1.7.0"
 types-setuptools = "^67.2.0.1"
@@ -115,13 +115,11 @@ isort = "^5.13.2"
 pytest-textual-snapshot = "^1.0.0"
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
-asyncio_default_fixture_loop_scope = "function"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]

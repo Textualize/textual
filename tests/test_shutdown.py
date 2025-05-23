@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.containers import Horizontal
 from textual.widgets import Footer, Tree
@@ -9,6 +11,7 @@ class TreeApp(App[None]):
         yield Footer()
 
 
+@pytest.mark.anyio
 async def test_shutdown():
     # regression test for https://github.com/Textualize/textual/issues/4634
     # Testing that an app with the footer doesn't deadlock

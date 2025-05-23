@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Select
 
@@ -8,6 +10,7 @@ I will face my fear.
 I will permit it to pass over me and through me.""".splitlines()
 
 
+@pytest.mark.anyio
 async def test_select_remove():
     # Regression test for https://github.com/Textualize/textual/issues/4782
     class SelectApp(App):

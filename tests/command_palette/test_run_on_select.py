@@ -1,5 +1,7 @@
 from functools import partial
 
+import pytest
+
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.widgets import Input
@@ -29,6 +31,7 @@ class CommandPaletteRunOnSelectApp(App[None]):
         self.selection: int | None = None
 
 
+@pytest.mark.anyio
 async def test_with_run_on_select_on() -> None:
     """With run on select on, the callable should be instantly run."""
     async with CommandPaletteRunOnSelectApp().run_test() as pilot:
@@ -49,6 +52,7 @@ class CommandPaletteDoNotRunOnSelectApp(CommandPaletteRunOnSelectApp):
         super().__init__()
 
 
+@pytest.mark.anyio
 async def test_with_run_on_select_off() -> None:
     """With run on select off, the callable should not be instantly run."""
     async with CommandPaletteDoNotRunOnSelectApp().run_test() as pilot:

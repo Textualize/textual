@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Grid
 from textual.screen import ModalScreen
@@ -83,6 +85,7 @@ Button {
         self.push_screen(QuitScreen(), check_quit)
 
 
+@pytest.mark.anyio
 async def test_modal_pop_screen():
     # https://github.com/Textualize/textual/issues/4656
 
