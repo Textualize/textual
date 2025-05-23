@@ -2,6 +2,7 @@
 from ._button import Button as Button
 from ._checkbox import Checkbox as Checkbox
 from ._collapsible import Collapsible as Collapsible
+from ._collapsible import CollapsibleTitle as CollapsibleTitle
 from ._content_switcher import ContentSwitcher as ContentSwitcher
 from ._data_table import DataTable as DataTable
 from ._digits import Digits as Digits
