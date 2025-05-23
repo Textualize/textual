@@ -14,6 +14,7 @@ class InputReader:
         Args:
             timeout: Seconds to block for input.
         """
+        assert sys.__stdin__ is not None
         self._fileno = sys.__stdin__.fileno()
         self.timeout = timeout
         self._selector = selectors.DefaultSelector()

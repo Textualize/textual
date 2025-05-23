@@ -3343,7 +3343,7 @@ class App(Generic[ReturnType], DOMNode):
             # Now that the widget is in the NodeList of its parent, sort out
             # the rest of the admin.
             self._registry.add(child)
-            child._attach(parent)
+            child._attach(parent)  # type: ignore[arg-type]
             child._post_register(self)
             child._start_messages()
 
