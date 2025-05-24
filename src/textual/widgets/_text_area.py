@@ -6,12 +6,11 @@ from collections import defaultdict
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, ClassVar, Iterable, Literal, Optional, Sequence, Tuple
 
 from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
-from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER, get_language

@@ -34,14 +34,13 @@ import re
 from colorsys import hls_to_rgb, rgb_to_hls
 from functools import lru_cache
 from operator import itemgetter
-from typing import Callable, NamedTuple
+from typing import Callable, Final, NamedTuple
 
 import rich.repr
 from rich.color import Color as RichColor
 from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
 from rich.terminal_theme import TerminalTheme
-from typing_extensions import Final
 
 from textual._color_constants import ANSI_COLORS, COLOR_NAME_TO_RGB
 from textual.css.scalar import percentage_string_to_float

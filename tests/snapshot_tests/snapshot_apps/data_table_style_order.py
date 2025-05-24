@@ -1,4 +1,4 @@
-from typing_extensions import Literal
+from typing import Literal
 
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Label
