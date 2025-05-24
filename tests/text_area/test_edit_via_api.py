@@ -115,9 +115,7 @@ async def test_insert_character_near_cursor_maintain_selection_offset(
     ],
 )
 async def test_insert_newline_around_cursor_maintain_selection_offset(
-    cursor_location,
-    insert_location,
-    cursor_destination
+    cursor_location, insert_location, cursor_destination
 ):
     app = TextAreaApp()
     async with app.run_test():
@@ -187,6 +185,7 @@ async def test_insert_text_non_cursor_location_dont_maintain_offset():
         assert result == EditResult(
             end_location=(4, 5),
             replaced_text="",
+            alt_dirty_line=(4, range(0, 5)),
         )
         assert text_area.text == TEXT + "Hello"
 
@@ -222,6 +221,7 @@ async def test_insert_multiline_text_maintain_offset():
         assert result == EditResult(
             end_location=(3, 6),
             replaced_text="",
+            dirty_lines=range(2, 6),
         )
 
         # The insert happens at the cursor (default location)
@@ -252,6 +252,7 @@ Fear is the little-death that brings total obliteration.
         assert result == EditResult(
             end_location=(3, 0),
             replaced_text=expected_replaced_text,
+            dirty_lines=range(1, 4),
         )
 
         expected_content = """\
@@ -316,6 +317,7 @@ async def test_delete_within_line():
         assert result == EditResult(
             end_location=(0, 6),
             replaced_text=" not",
+            alt_dirty_line=(0, range(7, 16)),
         )
 
         expected_text = """\
@@ -368,6 +370,7 @@ Fear is the little-death that brings total obliteration.
         assert result == EditResult(
             end_location=(1, 0),
             replaced_text=expected_replaced_text,
+            dirty_lines=range(1, 3),
         )
         assert (
             text_area.text
@@ -447,7 +450,11 @@ async def test_insert_text_multiline_selection_top(select_from, select_to):
             end=(0, 2),
         )
 
-        assert result == EditResult(end_location=(0, 5), replaced_text="AB")
+        assert result == EditResult(
+            end_location=(0, 5),
+            replaced_text="AB",
+            alt_dirty_line=(0, range(0, 8)),
+        )
 
         # The edit range has grown from width 2 to width 5, so the
         # top line of the selection was adjusted (column+=3) such that the
@@ -494,7 +501,11 @@ async def test_insert_text_multiline_selection_bottom(select_from, select_to):
             start=(2, 0),
             end=(2, 3),
         )
-        assert result == EditResult(end_location=(2, 1), replaced_text="KLM")
+        assert result == EditResult(
+            end_location=(2, 1),
+            replaced_text="KLM",
+            alt_dirty_line=(2, range(0, 5)),
+        )
 
         # The 'NO' from the selection is still available on the
         # bottom selection line, however the 'KLM' is replaced
@@ -521,6 +532,7 @@ async def test_delete_fully_within_selection():
         assert result == EditResult(
             replaced_text="45",
             end_location=(0, 4),
+            alt_dirty_line=(0, range(4, 10)),
         )
         # We deleted 45, but the other characters are still available
         assert text_area.selected_text == "236"
@@ -540,6 +552,7 @@ async def test_replace_fully_within_selection():
         assert result == EditResult(
             replaced_text="234",
             end_location=(0, 4),
+            alt_dirty_line=(0, range(2, 10)),
         )
         assert text_area.selected_text == "XX56"
 
