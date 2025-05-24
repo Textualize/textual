@@ -52,6 +52,17 @@ def test_hsl():
     assert red.hsl.css == "hsl(356,81.8%,43.1%)"
 
 
+def test_hsv():
+    red = Color(200, 20, 32)
+    print(red.hsv)
+    assert red.hsv == pytest.approx(
+        (0.9888888888888889, 0.8999999999999999, 0.7843137254901961)
+    )
+    assert Color.from_hsv(
+        0.9888888888888889, 0.8999999999999999, 0.7843137254901961
+    ).normalized == pytest.approx(red.normalized, rel=1e-5)
+
+
 def test_color_brightness():
     assert Color(255, 255, 255).brightness == 1
     assert Color(0, 0, 0).brightness == 0

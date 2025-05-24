@@ -31,7 +31,7 @@ output = table
 from __future__ import annotations
 
 import re
-from colorsys import hls_to_rgb, rgb_to_hls
+from colorsys import hls_to_rgb, hsv_to_rgb, rgb_to_hls, rgb_to_hsv
 from functools import lru_cache
 from operator import itemgetter
 from typing import Callable, NamedTuple
@@ -82,7 +82,7 @@ class HSV(NamedTuple):
     s: float
     """Saturation in range 0 to 1."""
     v: float
-    """Value un range 0 to 1."""
+    """Value in range 0 to 1."""
 
 
 class Lab(NamedTuple):
@@ -212,6 +212,21 @@ class Color(NamedTuple):
         r, g, b = hls_to_rgb(h, l, s)
         return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
 
+    @classmethod
+    def from_hsv(cls, h: float, s: float, v: float) -> Color:
+        """Create a color from HSV components.
+
+        Args:
+            h: Hue.
+            s: Saturation.
+            v: Value.
+
+        Returns:
+            A new color.
+        """
+        r, g, b = hsv_to_rgb(h, s, v)
+        return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
+
     @property
     def inverse(self) -> Color:
         """The inverse of this color.
@@ -285,6 +300,19 @@ class Color(NamedTuple):
         r, g, b = self.normalized
         h, l, s = rgb_to_hls(r, g, b)
         return HSL(h, s, l)
+
+    @property
+    def hsv(self) -> HSV:
+        """This color in HSV format.
+
+        HSV color is an alternative way of representing a color, which can be used in certain color calculations.
+
+        Returns:
+            Color encoded in HSV format.
+        """
+        r, g, b = self.normalized
+        h, s, v = rgb_to_hsv(r, g, b)
+        return HSV(h, s, v)
 
     @property
     def brightness(self) -> float:
