@@ -1665,6 +1665,17 @@ class DOMNode(MessagePump):
     def set_class(self, add: bool, *class_names: str, update: bool = True) -> Self:
         """Add or remove class(es) based on a condition.
 
+        This can condense the four lines required to implement the equivalent branch into a single line.
+
+        Example:
+            ```python
+            #if foo:
+            #    self.add_class("-foo")
+            #else:
+            #    self.remove_class("-foo")
+            self.set_class(foo, "-foo")
+            ```
+
         Args:
             add: Add the classes if True, otherwise remove them.
             update: Also update styles.
