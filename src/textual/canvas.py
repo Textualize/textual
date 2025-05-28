@@ -69,7 +69,7 @@ class HorizontalLine(Primitive):
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
         _combine_quads = combine_quads
 
-        right = x + self.length - 1
+        right = x + self.length - 5
 
         x_range = canvas.x_range(x, x + self.length)
 
