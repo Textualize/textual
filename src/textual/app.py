@@ -74,6 +74,7 @@ from textual._animator import DEFAULT_EASING, Animatable, Animator, EasingFuncti
 from textual._ansi_sequences import SYNC_END, SYNC_START
 from textual._ansi_theme import ALABASTER, MONOKAI
 from textual._callback import invoke
+from textual._compat import cached_property
 from textual._compose import compose
 from textual._compositor import CompositorUpdate
 from textual._context import active_app, active_message_pump
@@ -648,9 +649,6 @@ class App(Generic[ReturnType], DOMNode):
         """The unhandled exception which is leading to the app shutting down,
         or None if the app is still running with no unhandled exceptions."""
 
-        self._exception_event: asyncio.Event = asyncio.Event()
-        """An event that will be set when the first exception is encountered."""
-
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
         )
@@ -843,6 +841,11 @@ class App(Generic[ReturnType], DOMNode):
                         tooltip="Open the command palette",
                     )
                 )
+
+    @cached_property
+    def _exception_event(self) -> asyncio.Event:
+        """An event that will be set when the first exception is encountered."""
+        return asyncio.Event()
 
     def __init_subclass__(cls, *args, **kwargs) -> None:
         for variable_name, screen_collection in (
