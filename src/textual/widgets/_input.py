@@ -536,6 +536,10 @@ class Input(ScrollView):
         if self._initial_value:
             self.cursor_position = len(self.value)
             self._initial_value = False
+        else:
+            # Force a re-validation of the selection to ensure it accounts for
+            # the length of the new value
+            self.selection = self.selection
 
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
