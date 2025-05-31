@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `VERTICAL_BREAKPOINTS` doesn't work https://github.com/Textualize/textual/pull/5785
 - Fixed `Button` allowing text selection https://github.com/Textualize/textual/pull/5770
+- Fixed `Input` invalid cursor position after updating the value https://github.com/Textualize/textual/issues/5811
 
 ## [3.2.0] - 2025-05-02
 
