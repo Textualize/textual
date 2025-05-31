@@ -320,7 +320,6 @@ class Worker(Generic[ResultType]):
 
         raise WorkerError("Unsupported attempt to run a thread worker")
 
-
     async def _run_async(self) -> ResultType:
         """Run an async worker.
 

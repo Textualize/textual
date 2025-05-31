@@ -41,9 +41,9 @@ class Signal(Generic[SignalT]):
         """
         self._owner = ref(owner)
         self._name = name
-        self._subscriptions: WeakKeyDictionary[
-            DOMNode, list[SignalCallbackType]
-        ] = WeakKeyDictionary()
+        self._subscriptions: WeakKeyDictionary[DOMNode, list[SignalCallbackType]] = (
+            WeakKeyDictionary()
+        )
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "owner", self.owner
