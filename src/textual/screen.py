@@ -1269,6 +1269,7 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
+            self.call_next(self.app.dom_ready_signal.publish, self.app)
 
     async def _on_update(self, message: messages.Update) -> None:
         message.stop()
