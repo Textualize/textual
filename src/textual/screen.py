@@ -85,13 +85,16 @@ ScreenResultCallbackType = Union[
 ]
 """Type of a screen result callback function."""
 
+
 class _Unset(enum.Enum):
     UNSET = enum.auto()
+
 
 class AwaitScreen(Generic[ScreenResultType]):
     """
     An Awaitable object that resumes with the result of a Screen.
     """
+
     def __init__(self) -> None:
         self._event = asyncio.Event()
         self._result: ScreenResultType | Literal[_Unset.UNSET] = _Unset.UNSET
@@ -1203,7 +1206,9 @@ class Screen(Generic[ScreenResultType], Widget):
             await_screen: An AwaitScreen to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[Optional[ScreenResultType]](requester, callback, await_screen)
+            ResultCallback[Optional[ScreenResultType]](
+                requester, callback, await_screen
+            )
         )
 
     async def _message_loop_exit(self) -> None:
