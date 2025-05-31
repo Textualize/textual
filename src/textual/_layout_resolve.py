@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import Sequence, cast
-
-from typing_extensions import Protocol
+from typing import Protocol, Sequence, cast
 
 
 class EdgeProtocol(Protocol):

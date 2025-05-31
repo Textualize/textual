@@ -63,7 +63,7 @@ from textual.widgets import Tooltip
 from textual.widgets._toast import ToastRack
 
 if TYPE_CHECKING:
-    from typing_extensions import Final
+    from typing import Final
 
     from textual.command import Provider
 
