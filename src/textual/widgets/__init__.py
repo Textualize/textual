@@ -12,7 +12,7 @@ if typing.TYPE_CHECKING:
     from textual.widget import Widget
     from textual.widgets._button import Button
     from textual.widgets._checkbox import Checkbox
-    from textual.widgets._collapsible import Collapsible
+    from textual.widgets._collapsible import Collapsible, CollapsibleTitle
     from textual.widgets._content_switcher import ContentSwitcher
     from textual.widgets._data_table import DataTable
     from textual.widgets._digits import Digits
@@ -54,6 +54,7 @@ __all__ = [
     "Button",
     "Checkbox",
     "Collapsible",
+    "CollapsibleTitle",
     "ContentSwitcher",
     "DataTable",
     "Digits",
