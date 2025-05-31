@@ -505,7 +505,7 @@ def test_option_list_tables(snap_compare):
 
 
 def test_option_list_build(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py")
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py", press=["a"])
 
 
 def test_option_list_replace_prompt_from_single_line_to_single_line(snap_compare):
@@ -4064,7 +4064,7 @@ def test_tint(snap_compare):
         (130, 50),
     ],
 )
-def test_breakpoints(snap_compare, size):
+def test_breakpoints_horizontal(snap_compare, size):
     """Test HORIZONTAL_BREAKPOINTS
 
     You should see four terminals of different sizes with a grid of placeholders.
@@ -4105,6 +4105,55 @@ def test_breakpoints(snap_compare, size):
 
     assert snap_compare(BreakpointApp(), terminal_size=size)
 
+@pytest.mark.parametrize(
+    "size",
+    [
+        (30, 20),
+        (40, 30),
+        (80, 40),
+        (130, 50),
+    ],
+)
+def test_breakpoints_vertical(snap_compare, size):
+    """Test VERTICAL_BREAKPOINTS
+
+    You should see four terminals of different sizes with a grid of placeholders.
+    The first should have a single column, then two columns, then 4, then 6.
+
+    """
+
+    class BreakpointApp(App):
+
+        VERTICAL_BREAKPOINTS = [
+            (0, "-low"),
+            (30, "-middle"),
+            (40, "-high"),
+            (50, "-very-high"),
+        ]
+
+        CSS = """
+        Screen {
+            &.-low {
+                Grid { grid-size: 1; }
+            }
+            &.-middle {
+                Grid { grid-size: 2; }
+            }
+            &.-high {
+                Grid { grid-size: 4; }
+            }
+            &.-very-high {
+                Grid { grid-size: 6; }
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Grid():
+                for n in range(16):
+                    yield Placeholder(f"Placeholder {n+1}")
+
+    assert snap_compare(BreakpointApp(), terminal_size=size)
 
 def test_compact(snap_compare):
     """Test compact styles.

@@ -297,6 +297,7 @@ Unlike the `id` attribute, a widget's classes can be changed after the widget wa
 - [remove_class()][textual.dom.DOMNode.remove_class] Removes class name(s) from a widget.
 - [toggle_class()][textual.dom.DOMNode.toggle_class] Removes a class name if it is present, or adds the name if it's not already present.
 - [has_class()][textual.dom.DOMNode.has_class] Checks if one or more classes are set on a widget.
+- [set_class()][textual.css.query.DOMQuery.set_class] Sets or removes a class dependant on a boolean.
 - [classes][textual.dom.DOMNode.classes] Is a frozen set of the class(es) set on a widget.
 
 

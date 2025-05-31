@@ -31,7 +31,7 @@ output = table
 from __future__ import annotations
 
 import re
-from colorsys import hls_to_rgb, rgb_to_hls
+from colorsys import hls_to_rgb, hsv_to_rgb, rgb_to_hls, rgb_to_hsv
 from functools import lru_cache
 from operator import itemgetter
 from typing import Callable, NamedTuple
@@ -53,7 +53,7 @@ _TRUECOLOR = ColorType.TRUECOLOR
 
 
 class HSL(NamedTuple):
-    """A color in HLS (Hue, Saturation, Lightness) format."""
+    """A color in HSL (Hue, Saturation, Lightness) format."""
 
     h: float
     """Hue in range 0 to 1."""
@@ -82,7 +82,7 @@ class HSV(NamedTuple):
     s: float
     """Saturation in range 0 to 1."""
     v: float
-    """Value un range 0 to 1."""
+    """Value in range 0 to 1."""
 
 
 class Lab(NamedTuple):
@@ -199,17 +199,32 @@ class Color(NamedTuple):
 
     @classmethod
     def from_hsl(cls, h: float, s: float, l: float) -> Color:
-        """Create a color from HLS components.
+        """Create a color from HSL components.
 
         Args:
             h: Hue.
-            l: Lightness.
             s: Saturation.
+            l: Lightness.
 
         Returns:
             A new color.
         """
         r, g, b = hls_to_rgb(h, l, s)
+        return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
+
+    @classmethod
+    def from_hsv(cls, h: float, s: float, v: float) -> Color:
+        """Create a color from HSV components.
+
+        Args:
+            h: Hue.
+            s: Saturation.
+            v: Value.
+
+        Returns:
+            A new color.
+        """
+        r, g, b = hsv_to_rgb(h, s, v)
         return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
 
     @property
@@ -287,6 +302,19 @@ class Color(NamedTuple):
         return HSL(h, s, l)
 
     @property
+    def hsv(self) -> HSV:
+        """This color in HSV format.
+
+        HSV color is an alternative way of representing a color, which can be used in certain color calculations.
+
+        Returns:
+            Color encoded in HSV format.
+        """
+        r, g, b = self.normalized
+        h, s, v = rgb_to_hsv(r, g, b)
+        return HSV(h, s, v)
+
+    @property
     def brightness(self) -> float:
         """The human perceptual brightness.
 
@@ -301,7 +329,7 @@ class Color(NamedTuple):
     def hex(self) -> str:
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
-        For example, `"#46b3de"` for an RGB color, or `"#3342457f"` for a color with alpha.
+        For example, `"#46B3DE"` for an RGB color, or `"#3342457F"` for a color with alpha.
         """
         r, g, b, a, ansi, _ = self.clamped
         if ansi is not None:
@@ -316,7 +344,7 @@ class Color(NamedTuple):
     def hex6(self) -> str:
         """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
 
-        For example, `"#46b3de"`.
+        For example, `"#46B3DE"`.
         """
         r, g, b, _a, _, _ = self.clamped
         return f"#{r:02X}{g:02X}{b:02X}"
