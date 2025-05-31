@@ -11,8 +11,9 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
+import sys
 import threading
-from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
+from asyncio import CancelledError, QueueEmpty, Task, create_task
 from contextlib import contextmanager
 from functools import partial
 from time import perf_counter
@@ -22,15 +23,18 @@ from typing import (
     Awaitable,
     Callable,
     Generator,
+    Generic,
     Iterable,
     Type,
     TypeVar,
     cast,
+    overload,
 )
 from weakref import WeakSet
 
 from textual import Logger, events, log, messages
 from textual._callback import invoke
+from textual._compat import cached_property
 from textual._context import NoActiveAppError, active_app, active_message_pump
 from textual._context import message_hook as message_hook_context_var
 from textual._context import prevent_message_types_stack
@@ -114,7 +118,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
     """Base class which supplies a message pump."""
 
     def __init__(self, parent: MessagePump | None = None) -> None:
-        self._message_queue: Queue[Message | None] = Queue()
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -125,7 +128,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._timers: WeakSet[Timer] = WeakSet()
         self._last_idle: float = time()
         self._max_idle: float | None = None
-        self._mounted_event = asyncio.Event()
         self._is_mounted = False
         """Having this explicit Boolean is an optimization.
 
@@ -142,6 +144,14 @@ class MessagePump(metaclass=_MessagePumpMeta):
         This is a fairly low-level mechanism, and shouldn't replace regular message handling.
         
         """
+
+    @cached_property
+    def _message_queue(self) -> asyncio.Queue[Message | None]:
+        return asyncio.Queue()
+
+    @cached_property
+    def _mounted_event(self) -> asyncio.Event:
+        return asyncio.Event()
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
