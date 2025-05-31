@@ -18,7 +18,7 @@ class MarkupPlayground(App):
             height: 1fr;
             border: tab $foreground 50%;  
             padding: 1;
-            margin: 1 1 0 0;
+            margin: 1 0 0 0;
             &:focus {
                 border: tab $primary;  
             }
@@ -29,7 +29,7 @@ class MarkupPlayground(App):
             height: 1fr;
             border: tab $foreground 50%;  
             padding: 1;
-            margin: 1 1 0 1;
+            margin: 1 0 0 1;
             &:focus {
                 border: tab $primary;  
             }
@@ -51,7 +51,7 @@ class MarkupPlayground(App):
         #spans-container {
             border: tab $success;                
             overflow-y: auto;
-            margin: 0 1;
+            margin: 0 0 0 1;
         }
         #spans {
             padding: 1 1;      
