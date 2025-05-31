@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Exposed `CollapsibleTitle` https://github.com/Textualize/textual/pull/5810
 
+### Added
+
+- Added `Color.hsv` property and `Color.from_hsv` class method https://github.com/Textualize/textual/pull/5803
+
 ## [3.2.0] - 2025-05-02
 
 ### Fixed
