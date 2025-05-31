@@ -11,6 +11,7 @@ class EmptyListViewApp(App[None]):
         yield ListView()
 
 
+@pytest.mark.anyio
 async def test_listview_pop_empty_raises_index_error():
     app = EmptyListViewApp()
     async with app.run_test() as pilot:
@@ -47,6 +48,7 @@ class ListViewApp(App[None]):
             self.highlighted.append(str(message.item.children[0].renderable))
 
 
+@pytest.mark.anyio
 async def test_listview_remove_items() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/4735"""
     app = ListViewApp()
@@ -67,6 +69,7 @@ async def test_listview_remove_items() -> None:
         (4, -2, 4, ["4"]),  # Remove item after the highlighted index
     ],
 )
+@pytest.mark.anyio
 async def test_listview_pop_updates_index_and_highlighting(
     initial_index, pop_index, expected_new_index, expected_highlighted
 ) -> None:
@@ -94,6 +97,7 @@ async def test_listview_pop_updates_index_and_highlighting(
         (4, range(0, 9), None, ["4", None]),  # Remove all items
     ],
 )
+@pytest.mark.anyio
 async def test_listview_remove_items_updates_index_and_highlighting(
     initial_index, remove_indices, expected_new_index, expected_highlighted
 ) -> None:

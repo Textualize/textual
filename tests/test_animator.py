@@ -182,6 +182,7 @@ class MockAnimator(Animator):
         return self._time
 
 
+@pytest.mark.anyio
 async def test_animator():
     target = Mock()
     animator = MockAnimator(target)
@@ -243,6 +244,7 @@ def test_bound_animator():
     assert animator._animations[(id(animate_test), "foo")] == expected
 
 
+@pytest.mark.anyio
 async def test_animator_on_complete_callback_not_fired_before_duration_ends():
     callback = Mock()
     animate_test = AnimateTest()
@@ -256,6 +258,7 @@ async def test_animator_on_complete_callback_not_fired_before_duration_ends():
     assert not callback.called
 
 
+@pytest.mark.anyio
 async def test_animator_on_complete_callback_fired_at_duration():
     callback = Mock()
     animate_test = AnimateTest()

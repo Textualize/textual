@@ -25,6 +25,7 @@ class InputApp(App):
         self.messages.append(event)
 
 
+@pytest.mark.anyio
 async def test_input_changed_message_validation_failure():
     app = InputApp()
     async with app.run_test() as pilot:
@@ -44,6 +45,7 @@ async def test_input_changed_message_validation_failure():
         )
 
 
+@pytest.mark.anyio
 async def test_input_changed_message_validation_success():
     app = InputApp()
     async with app.run_test() as pilot:
@@ -54,6 +56,7 @@ async def test_input_changed_message_validation_success():
         assert app.messages[0].validation_result == ValidationResult.success()
 
 
+@pytest.mark.anyio
 async def test_input_submitted_message_validation_failure():
     app = InputApp()
     async with app.run_test() as pilot:
@@ -73,6 +76,7 @@ async def test_input_submitted_message_validation_failure():
         )
 
 
+@pytest.mark.anyio
 async def test_input_submitted_message_validation_success():
     app = InputApp()
     async with app.run_test() as pilot:
@@ -84,6 +88,7 @@ async def test_input_submitted_message_validation_success():
         assert app.messages[1].validation_result == ValidationResult.success()
 
 
+@pytest.mark.anyio
 async def test_on_blur_triggers_validation():
     app = InputApp()
     async with app.run_test() as pilot:
@@ -107,6 +112,7 @@ async def test_on_blur_triggers_validation():
         ["fried", "garbage"],
     ],
 )
+@pytest.mark.anyio
 async def test_validation_on_changed_should_not_happen(validate_on):
     app = InputApp(validate_on)
     async with app.run_test() as pilot:
@@ -134,6 +140,7 @@ async def test_validation_on_changed_should_not_happen(validate_on):
         {"fried", "garbage"},
     ],
 )
+@pytest.mark.anyio
 async def test_validation_on_submitted_should_not_happen(validate_on):
     app = InputApp(validate_on)
     async with app.run_test() as pilot:
@@ -161,6 +168,7 @@ async def test_validation_on_submitted_should_not_happen(validate_on):
         {"fried", "garbage"},
     ],
 )
+@pytest.mark.anyio
 async def test_validation_on_blur_should_not_happen_unless_specified(validate_on):
     app = InputApp(validate_on)
     async with app.run_test() as pilot:
@@ -177,6 +185,7 @@ async def test_validation_on_blur_should_not_happen_unless_specified(validate_on
         assert not input.has_class("-invalid")
 
 
+@pytest.mark.anyio
 async def test_none_validate_on_means_all_validations_happen():
     app = InputApp(None)
     async with app.run_test() as pilot:
@@ -208,6 +217,7 @@ async def test_none_validate_on_means_all_validations_happen():
         assert input.has_class("-valid")
 
 
+@pytest.mark.anyio
 async def test_valid_empty():
     app = InputApp(None)
     async with app.run_test() as pilot:

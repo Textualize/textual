@@ -24,6 +24,7 @@ class OptionListApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_all_parameters_become_options() -> None:
     """All input parameters to a list should become options."""
     async with OptionListApp().run_test() as pilot:
@@ -33,6 +34,7 @@ async def test_all_parameters_become_options() -> None:
             assert isinstance(option_list.get_option_at_index(n), Option)
 
 
+@pytest.mark.anyio
 async def test_id_capture() -> None:
     """All options given an ID should retain the ID."""
     async with OptionListApp().run_test() as pilot:
@@ -48,6 +50,7 @@ async def test_id_capture() -> None:
         assert without_id == 3
 
 
+@pytest.mark.anyio
 async def test_get_option_by_id() -> None:
     """It should be possible to get an option by ID."""
     async with OptionListApp().run_test() as pilot:
@@ -56,6 +59,7 @@ async def test_get_option_by_id() -> None:
         assert option_list.get_option("4").prompt == "4"
 
 
+@pytest.mark.anyio
 async def test_get_option_with_bad_id() -> None:
     """Asking for an option with a bad ID should give an error."""
     async with OptionListApp().run_test() as pilot:
@@ -63,6 +67,7 @@ async def test_get_option_with_bad_id() -> None:
             _ = pilot.app.query_one(OptionList).get_option("this does not exist")
 
 
+@pytest.mark.anyio
 async def test_get_option_by_index() -> None:
     """It should be possible to get an option by index."""
     async with OptionListApp().run_test() as pilot:
@@ -72,6 +77,7 @@ async def test_get_option_by_index() -> None:
         assert option_list.get_option_at_index(-1).prompt == "4"
 
 
+@pytest.mark.anyio
 async def test_get_option_at_bad_index() -> None:
     """Asking for an option at a bad index should give an error."""
     async with OptionListApp().run_test() as pilot:
@@ -81,6 +87,7 @@ async def test_get_option_at_bad_index() -> None:
             _ = pilot.app.query_one(OptionList).get_option_at_index(-42)
 
 
+@pytest.mark.anyio
 async def test_clear_option_list() -> None:
     """It should be possible to clear the option list of all content."""
     async with OptionListApp().run_test() as pilot:
@@ -90,6 +97,7 @@ async def test_clear_option_list() -> None:
         assert option_list.option_count == 0
 
 
+@pytest.mark.anyio
 async def test_add_later() -> None:
     """It should be possible to add more items to a list."""
     async with OptionListApp().run_test() as pilot:
@@ -111,6 +119,7 @@ async def test_add_later() -> None:
         assert option_list.option_count == 10
 
 
+@pytest.mark.anyio
 async def test_create_with_duplicate_id() -> None:
     """Adding an option with a duplicate ID should be an error."""
     async with OptionListApp().run_test() as pilot:
@@ -121,6 +130,7 @@ async def test_create_with_duplicate_id() -> None:
         assert option_list.option_count == 5
 
 
+@pytest.mark.anyio
 async def test_create_with_duplicate_id_and_subsequent_non_dupes() -> None:
     """Adding an option with a duplicate ID should be an error."""
     async with OptionListApp().run_test() as pilot:
@@ -135,6 +145,7 @@ async def test_create_with_duplicate_id_and_subsequent_non_dupes() -> None:
         assert option_list.option_count == 7
 
 
+@pytest.mark.anyio
 async def test_adding_multiple_duplicates_at_once() -> None:
     """Adding duplicates together than aren't existing duplicates should be an error."""
     async with OptionListApp().run_test() as pilot:
@@ -150,6 +161,7 @@ async def test_adding_multiple_duplicates_at_once() -> None:
         assert option_list.option_count == 5
 
 
+@pytest.mark.anyio
 async def test_options_are_available_soon() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3903."""
 

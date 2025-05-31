@@ -15,6 +15,7 @@ from textual.worker import (
 )
 
 
+@pytest.mark.anyio
 async def test_initialize():
     """Test initial values."""
 
@@ -36,6 +37,7 @@ async def test_initialize():
     assert worker.result is None
 
 
+@pytest.mark.anyio
 async def test_run_success() -> None:
     """Test successful runs."""
 
@@ -103,6 +105,7 @@ async def test_run_success() -> None:
         assert baz_thread_worker.result == "baz"
 
 
+@pytest.mark.anyio
 async def test_run_error() -> None:
     async def run_error() -> str:
         await asyncio.sleep(0.1)
@@ -120,6 +123,7 @@ async def test_run_error() -> None:
             await worker.wait()
 
 
+@pytest.mark.anyio
 async def test_run_cancel() -> None:
     """Test run may be cancelled."""
 
@@ -141,6 +145,7 @@ async def test_run_cancel() -> None:
             await worker.wait()
 
 
+@pytest.mark.anyio
 async def test_run_cancel_immediately() -> None:
     """Edge case for cancelling immediately."""
 
@@ -161,6 +166,7 @@ async def test_run_cancel_immediately() -> None:
             await worker.wait()
 
 
+@pytest.mark.anyio
 async def test_get_worker() -> None:
     """Check get current worker."""
 
@@ -185,6 +191,7 @@ def test_no_active_worker() -> None:
         get_current_worker()
 
 
+@pytest.mark.anyio
 async def test_progress_update():
     async def long_work():
         pass
@@ -201,6 +208,7 @@ async def test_progress_update():
         assert worker.progress == 73
 
 
+@pytest.mark.anyio
 async def test_double_start():
     async def long_work():
         return 0
@@ -213,6 +221,7 @@ async def test_double_start():
         assert await worker.wait() == 0
 
 
+@pytest.mark.anyio
 async def test_self_referential_deadlock():
     async def self_referential_work():
         await get_current_worker().wait()
@@ -226,6 +235,7 @@ async def test_self_referential_deadlock():
         assert exc.type is DeadlockError
 
 
+@pytest.mark.anyio
 async def test_wait_without_start():
     async def work():
         return

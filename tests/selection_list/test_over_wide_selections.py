@@ -1,5 +1,7 @@
 """See https://github.com/Textualize/textual/issues/2900 for the reason behind these tests."""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import SelectionList
 
@@ -17,6 +19,7 @@ class SelectionListApp(App[None]):
         yield SelectionList[int](*[(f"{n} ", n) for n in range(10)])
 
 
+@pytest.mark.anyio
 async def test_over_wide_options() -> None:
     """Options wider than the widget should not be an issue."""
     async with SelectionListApp().run_test() as pilot:

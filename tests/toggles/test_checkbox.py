@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Checkbox
 
@@ -20,6 +22,7 @@ class CheckboxApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_checkbox_initial_state() -> None:
     """The initial states of the check boxes should be as we specified."""
     async with CheckboxApp().run_test() as pilot:
@@ -32,6 +35,7 @@ async def test_checkbox_initial_state() -> None:
         assert pilot.app.events_received == []
 
 
+@pytest.mark.anyio
 async def test_checkbox_toggle() -> None:
     """Test the status of the check boxes after they've been toggled."""
     async with CheckboxApp().run_test() as pilot:

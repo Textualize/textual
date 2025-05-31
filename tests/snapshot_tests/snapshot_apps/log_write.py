@@ -1,6 +1,5 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Log
-from textual.containers import Horizontal
 
 
 class LogApp(App):

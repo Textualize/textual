@@ -37,6 +37,7 @@ class MarkdownFileViewerApp(App[None]):
 
 
 @pytest.mark.parametrize("link", [0, 1])
+@pytest.mark.anyio
 async def test_markdown_file_viewer_anchor_link(tmp_path, link: int) -> None:
     """Test https://github.com/Textualize/textual/issues/3094"""
     async with MarkdownFileViewerApp(Path(tmp_path) / "test.md").run_test() as pilot:
@@ -59,6 +60,7 @@ class MarkdownStringViewerApp(App[None]):
 
 
 @pytest.mark.parametrize("link", [0, 1])
+@pytest.mark.anyio
 async def test_markdown_string_viewer_anchor_link(link: int) -> None:
     """Test https://github.com/Textualize/textual/issues/3094
 
@@ -73,6 +75,7 @@ async def test_markdown_string_viewer_anchor_link(link: int) -> None:
 
 
 @pytest.mark.parametrize("text", ["Hey [[/test]]", "[i]Hey there[/i]"])
+@pytest.mark.anyio
 async def test_headings_that_look_like_they_contain_markup(text: str) -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3689.
 

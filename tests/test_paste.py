@@ -1,8 +1,11 @@
+import pytest
+
 from textual import events
 from textual.app import App
 from textual.widgets import Input
 
 
+@pytest.mark.anyio
 async def test_paste_app():
     paste_events = []
 
@@ -19,6 +22,7 @@ async def test_paste_app():
     assert paste_events[0].text == "Hello"
 
 
+@pytest.mark.anyio
 async def test_empty_paste():
     """Regression test for https://github.com/Textualize/textual/issues/2563."""
 

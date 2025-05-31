@@ -14,6 +14,7 @@ from textual.widget import Widget
 from textual.widgets import Input, Label
 
 
+@pytest.mark.anyio
 async def test_query_errors():
     app = App()
     async with app.run_test():
@@ -238,6 +239,7 @@ def test_invalid_query():
         app.query("#foo").exclude("#2")
 
 
+@pytest.mark.anyio
 async def test_universal_selector_doesnt_select_self():
     class ExampleApp(App):
         def compose(self) -> ComposeResult:
@@ -261,6 +263,7 @@ async def test_universal_selector_doesnt_select_self():
         assert not any(node.id == "root-container" for node in results)
 
 
+@pytest.mark.anyio
 async def test_query_set_styles_invalid_css_raises_error():
     app = App()
     async with app.run_test():
@@ -268,6 +271,7 @@ async def test_query_set_styles_invalid_css_raises_error():
             app.query(Widget).set_styles(css="random-rule: 1fr;")
 
 
+@pytest.mark.anyio
 async def test_query_set_styles_kwds():
     class LabelApp(App):
         def compose(self):
@@ -281,6 +285,7 @@ async def test_query_set_styles_kwds():
         assert app.query_one(Label).styles.color == Color(255, 0, 0)
 
 
+@pytest.mark.anyio
 async def test_query_set_styles_css_and_kwds():
     class LabelApp(App):
         def compose(self):
@@ -298,6 +303,7 @@ async def test_query_set_styles_css_and_kwds():
         assert app.query_one(Label).styles.background == Color(255, 0, 0)
 
 
+@pytest.mark.anyio
 async def test_query_set_styles_css():
     class LabelApp(App):
         def compose(self):
@@ -318,6 +324,7 @@ async def test_query_set_styles_css():
 @pytest.mark.parametrize(
     "args", [(False, False), (True, False), (True, True), (False, True)]
 )
+@pytest.mark.anyio
 async def test_query_refresh(args):
     refreshes = []
 
@@ -336,6 +343,7 @@ async def test_query_refresh(args):
         assert refreshes[-1] == args
 
 
+@pytest.mark.anyio
 async def test_query_focus_blur():
     class FocusApp(App):
         AUTO_FOCUS = None

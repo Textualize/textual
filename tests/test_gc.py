@@ -82,6 +82,7 @@ async def _count_app_nodes() -> None:
 # It looks like PyTest holds on to references to DOMNodes
 # So this will only pass if ran in isolation
 @pytest.mark.xfail
+@pytest.mark.anyio
 async def test_gc():
     """Regression test for https://github.com/Textualize/textual/issues/4959"""
     await _count_app_nodes()

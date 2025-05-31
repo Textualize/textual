@@ -26,6 +26,7 @@ class OptionListApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_default_enabled() -> None:
     """Options created enabled should remain enabled."""
     async with OptionListApp(False).run_test() as pilot:
@@ -34,6 +35,7 @@ async def test_default_enabled() -> None:
             assert option_list.get_option_at_index(option).disabled is False
 
 
+@pytest.mark.anyio
 async def test_default_disabled() -> None:
     """Options created disabled should remain disabled."""
     async with OptionListApp(True).run_test() as pilot:
@@ -42,6 +44,7 @@ async def test_default_disabled() -> None:
             assert option_list.get_option_at_index(option).disabled is True
 
 
+@pytest.mark.anyio
 async def test_enabled_to_disabled_via_index() -> None:
     """It should be possible to change enabled to disabled via index."""
     async with OptionListApp(False).run_test() as pilot:
@@ -52,6 +55,7 @@ async def test_enabled_to_disabled_via_index() -> None:
             assert option_list.get_option_at_index(n).disabled is True
 
 
+@pytest.mark.anyio
 async def test_disabled_to_enabled_via_index() -> None:
     """It should be possible to change disabled to enabled via index."""
     async with OptionListApp(True).run_test() as pilot:
@@ -62,6 +66,7 @@ async def test_disabled_to_enabled_via_index() -> None:
             assert option_list.get_option_at_index(n).disabled is False
 
 
+@pytest.mark.anyio
 async def test_enabled_to_disabled_via_id() -> None:
     """It should be possible to change enabled to disabled via id."""
     async with OptionListApp(False).run_test() as pilot:
@@ -72,6 +77,7 @@ async def test_enabled_to_disabled_via_id() -> None:
             assert option_list.get_option(str(n)).disabled is True
 
 
+@pytest.mark.anyio
 async def test_disabled_to_enabled_via_id() -> None:
     """It should be possible to change disabled to enabled via id."""
     async with OptionListApp(True).run_test() as pilot:
@@ -82,6 +88,7 @@ async def test_disabled_to_enabled_via_id() -> None:
             assert option_list.get_option(str(n)).disabled is False
 
 
+@pytest.mark.anyio
 async def test_disable_invalid_id() -> None:
     """Disabling an option via an ID that does not exist should throw an error."""
     async with OptionListApp(True).run_test() as pilot:
@@ -89,6 +96,7 @@ async def test_disable_invalid_id() -> None:
             pilot.app.query_one(OptionList).disable_option("does-not-exist")
 
 
+@pytest.mark.anyio
 async def test_disable_invalid_index() -> None:
     """Disabling an option via an index that does not exist should throw an error."""
     async with OptionListApp(True).run_test() as pilot:
@@ -96,6 +104,7 @@ async def test_disable_invalid_index() -> None:
             pilot.app.query_one(OptionList).disable_option_at_index(4242)
 
 
+@pytest.mark.anyio
 async def test_enable_invalid_id() -> None:
     """Disabling an option via an ID that does not exist should throw an error."""
     async with OptionListApp(False).run_test() as pilot:
@@ -103,6 +112,7 @@ async def test_enable_invalid_id() -> None:
             pilot.app.query_one(OptionList).enable_option("does-not-exist")
 
 
+@pytest.mark.anyio
 async def test_enable_invalid_index() -> None:
     """Disabling an option via an index that does not exist should throw an error."""
     async with OptionListApp(False).run_test() as pilot:

@@ -2,6 +2,8 @@
 Test that generic animations can be disabled.
 """
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.widgets import Label
@@ -20,6 +22,7 @@ class SingleLabelApp(App[None]):
         yield Label()
 
 
+@pytest.mark.anyio
 async def test_style_animations_via_animate_work_on_full() -> None:
     app = SingleLabelApp()
     app.animation_level = "full"
@@ -42,6 +45,7 @@ async def test_style_animations_via_animate_work_on_full() -> None:
         assert label.styles.background != Color.parse("blue")
 
 
+@pytest.mark.anyio
 async def test_style_animations_via_animate_are_disabled_on_basic() -> None:
     app = SingleLabelApp()
     app.animation_level = "basic"
@@ -63,6 +67,7 @@ async def test_style_animations_via_animate_are_disabled_on_basic() -> None:
         assert label.styles.background == Color.parse("blue")
 
 
+@pytest.mark.anyio
 async def test_style_animations_via_animate_are_disabled_on_none() -> None:
     app = SingleLabelApp()
     app.animation_level = "none"
@@ -102,6 +107,7 @@ class LabelWithTransitionsApp(App[None]):
         yield Label()
 
 
+@pytest.mark.anyio
 async def test_style_animations_via_transition_work_on_full() -> None:
     app = LabelWithTransitionsApp()
     app.animation_level = "full"
@@ -123,6 +129,7 @@ async def test_style_animations_via_transition_work_on_full() -> None:
         assert label.styles.background != Color.parse("blue")
 
 
+@pytest.mark.anyio
 async def test_style_animations_via_transition_are_disabled_on_basic() -> None:
     app = LabelWithTransitionsApp()
     app.animation_level = "basic"
@@ -143,6 +150,7 @@ async def test_style_animations_via_transition_are_disabled_on_basic() -> None:
         assert label.styles.background == Color.parse("blue")
 
 
+@pytest.mark.anyio
 async def test_style_animations_via_transition_are_disabled_on_none() -> None:
     app = LabelWithTransitionsApp()
     app.animation_level = "none"

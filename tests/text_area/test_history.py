@@ -56,6 +56,7 @@ async def text_area(pilot):
     return pilot.app.text_area
 
 
+@pytest.mark.anyio
 async def test_simple_undo_redo():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -69,6 +70,7 @@ async def test_simple_undo_redo():
         assert text_area.text == "123"
 
 
+@pytest.mark.anyio
 async def test_undo_selection_retained():
     # Select a range of text and press backspace.
     app = TextAreaApp()
@@ -91,6 +93,7 @@ async def test_undo_selection_retained():
         assert text_area.selection == Selection.cursor((0, 0))
 
 
+@pytest.mark.anyio
 async def test_undo_checkpoint_created_on_cursor_move():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -133,6 +136,7 @@ async def test_undo_checkpoint_created_on_cursor_move():
         assert text_area.selection == checkpoint_three_selection
 
 
+@pytest.mark.anyio
 async def test_setting_text_property_resets_history():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -148,6 +152,7 @@ async def test_setting_text_property_resets_history():
         assert text_area.text == text
 
 
+@pytest.mark.anyio
 async def test_edits_batched_by_time():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -172,6 +177,7 @@ async def test_edits_batched_by_time():
         assert text_area.text == ""
 
 
+@pytest.mark.anyio
 async def test_undo_checkpoint_character_limit_reached():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -186,6 +192,7 @@ async def test_undo_checkpoint_character_limit_reached():
         assert text_area.text == ""
 
 
+@pytest.mark.anyio
 async def test_redo_with_no_undo_is_noop():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -195,6 +202,7 @@ async def test_redo_with_no_undo_is_noop():
         assert text_area.text == SIMPLE_TEXT
 
 
+@pytest.mark.anyio
 async def test_undo_with_empty_undo_stack_is_noop():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -204,6 +212,7 @@ async def test_undo_with_empty_undo_stack_is_noop():
         assert text_area.text == SIMPLE_TEXT
 
 
+@pytest.mark.anyio
 async def test_redo_stack_cleared_on_edit():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -235,6 +244,7 @@ async def test_redo_stack_cleared_on_edit():
         assert text_area.selection == Selection.cursor((0, 1))
 
 
+@pytest.mark.anyio
 async def test_inserts_not_batched_with_deletes():
     # 3 batches here: __1___  ___________2____________  __3__
 
@@ -259,6 +269,7 @@ async def test_inserts_not_batched_with_deletes():
         assert text_area.text == ""
 
 
+@pytest.mark.anyio
 async def test_paste_is_an_isolated_batch():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -282,6 +293,7 @@ async def test_paste_is_an_isolated_batch():
         assert text_area.text == ""
 
 
+@pytest.mark.anyio
 async def test_focus_creates_checkpoint():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -298,6 +310,7 @@ async def test_focus_creates_checkpoint():
         assert text_area.text == "123"
 
 
+@pytest.mark.anyio
 async def test_undo_redo_deletions_batched():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -347,6 +360,7 @@ async def test_undo_redo_deletions_batched():
         assert text_area.selection == Selection.cursor((0, 0))
 
 
+@pytest.mark.anyio
 async def test_max_checkpoints():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -362,6 +376,7 @@ async def test_max_checkpoints():
         assert len(text_area.history.undo_stack) == MAX_CHECKPOINTS
 
 
+@pytest.mark.anyio
 async def test_redo_stack():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -385,6 +400,7 @@ async def test_redo_stack():
         assert len(text_area.history.redo_stack) == 0
 
 
+@pytest.mark.anyio
 async def test_backward_selection_undo_redo():
     app = TextAreaApp()
     async with app.run_test() as pilot:

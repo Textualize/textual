@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App
 
 
+@pytest.mark.anyio
 async def test_dynamic_disabled():
     """Check we can dynamically disable bindings."""
     actions = []
