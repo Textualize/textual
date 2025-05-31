@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import weakref
+from asyncio import CancelledError, Event, Task, create_task, sleep
+from typing import Callable, NamedTuple
+
 try:
-    from tree_sitter import Language, Node, Parser, Query, Tree
+    from tree_sitter import Language, Parser, Query, Tree
 
     TREE_SITTER = True
 except ImportError:
@@ -9,6 +13,17 @@ except ImportError:
 
 
 from textual.document._document import Document, EditResult, Location, _utf8_encode
+
+
+class SyntaxTreeEdit(NamedTuple):
+    """Details of a tree-sitter syntax tree edit operation."""
+
+    start_byte: int
+    old_end_byte: int
+    new_end_byte: int
+    start_point: int
+    old_end_point: int
+    new_end_point: int
 
 
 class SyntaxAwareDocumentError(Exception):
@@ -44,8 +59,37 @@ class SyntaxAwareDocument(Document):
         self._parser = Parser(self.language)
         """The tree-sitter Parser or None if tree-sitter is unavailable."""
 
-        self._syntax_tree: Tree = self._parser.parse(self._read_callable)  # type: ignore
+        self._syntax_tree: Tree = self._parser.parse(
+            self.text.encode("utf-8")
+        )  # type: ignore
         """The tree-sitter Tree (syntax tree) built from the document."""
+
+        self._syntax_tree_update_callback: Callable[[], None] | None = None
+        self._background_parser = BackgroundSyntaxParser(self)
+        self._pending_syntax_edits: list[SyntaxTreeEdit] = []
+
+    @property
+    def current_syntax_tree(self) -> Tree:
+        """The current syntax tree."""
+        return self._syntax_tree
+
+    def clean_up(self) -> None:
+        """Perform any pre-deletion clean up."""
+        self._background_parser.stop()
+
+    def apply_pending_syntax_edits(self) -> bool:
+        """Apply any pending edits to the syntax tree.
+
+        Returns:
+            True if any edits were applied.
+        """
+        if self._pending_syntax_edits:
+            for edit in self._pending_syntax_edits:
+                self._syntax_tree.edit(**edit._asdict())
+            self._pending_syntax_edits[:] = []
+            return True
+        else:
+            return False
 
     def prepare_query(self, query: str) -> Query | None:
         """Prepare a tree-sitter tree query.
@@ -62,34 +106,25 @@ class SyntaxAwareDocument(Document):
         """
         return self.language.query(query)
 
-    def query_syntax_tree(
+    def set_syntax_tree_update_callback(
         self,
-        query: Query,
-        start_point: tuple[int, int] | None = None,
-        end_point: tuple[int, int] | None = None,
-    ) -> dict[str, list["Node"]]:
-        """Query the tree-sitter syntax tree.
-
-        The default implementation always returns an empty list.
-
-        To support querying in a subclass, this must be implemented.
+        callback: Callable[[], None],
+    ) -> None:
+        """Set a callback function for signalling a rebuild of the syntax tree.
 
         Args:
-            query: The tree-sitter Query to perform.
-            start_point: The (row, column byte) to start the query at.
-            end_point: The (row, column byte) to end the query at.
-
-        Returns:
-            A tuple containing the nodes and text captured by the query.
+            callback: A function that takes no arguments and returns None.
         """
-        captures_kwargs = {}
-        if start_point is not None:
-            captures_kwargs["start_point"] = start_point
-        if end_point is not None:
-            captures_kwargs["end_point"] = end_point
+        self._syntax_tree_update_callback = callback
 
-        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
-        return captures
+    def trigger_syntax_tree_update(self, force_update: bool = False) -> None:
+        """Trigger a new syntax tree update to run in the background.
+
+        Args:
+            force_update: When set, ensure that the syntax tree is regenerated
+                unconditionally.
+        """
+        self._background_parser.trigger_syntax_tree_update(force_update)
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
@@ -117,21 +152,52 @@ class SyntaxAwareDocument(Document):
         end_location = replace_result.end_location
         assert self._syntax_tree is not None
         assert self._parser is not None
-        self._syntax_tree.edit(
-            start_byte=start_byte,
-            old_end_byte=old_end_byte,
-            new_end_byte=start_byte + text_byte_length,
-            start_point=start_point,
-            old_end_point=old_end_point,
-            new_end_point=self._location_to_point(end_location),
+        self._pending_syntax_edits.append(
+            SyntaxTreeEdit(
+                start_byte=start_byte,
+                old_end_byte=old_end_byte,
+                new_end_byte=start_byte + text_byte_length,
+                start_point=start_point,
+                old_end_point=old_end_point,
+                new_end_point=self._location_to_point(end_location),
+            )
         )
-        # Incrementally parse the document.
-        self._syntax_tree = self._parser.parse(
-            self._read_callable,
-            self._syntax_tree,  # type: ignore[arg-type]
-        )
-
         return replace_result
+
+    def reparse(self, timeout_us: int, text: bytes) -> bool:
+        """Reparse the document.
+
+        Args:
+            timeout_us: The parser timeout in microseconds.
+            lines: A list of the lines being parsed.
+
+        Returns:
+            True if parsing succeeded and False if a timeout occurred.
+        """
+        assert timeout_us > 0
+        tree = self._syntax_tree
+        saved_timeout = self._parser.timeout_micros
+        try:
+            self._parser.timeout_micros = timeout_us
+            try:
+                tree = self._parser.parse(text, tree)  # type: ignore[arg-type]
+            except ValueError:
+                # The only known cause is a timeout.
+                return False
+            else:
+                self._syntax_tree = tree
+                if self._syntax_tree_update_callback is not None:
+
+                    def set_new_tree():
+                        self._syntax_tree = tree
+
+                    changed_ranges = self._syntax_tree.changed_ranges(tree)
+                    self._syntax_tree_update_callback(self._syntax_tree)
+                else:
+                    self._syntax_tree = tree
+                return True
+        finally:
+            self._parser.timeout_micros = saved_timeout
 
     def get_line(self, index: int) -> str:
         """Return the string representing the line, not including new line characters.
@@ -188,41 +254,74 @@ class SyntaxAwareDocument(Document):
             bytes_on_left = 0
         return row, bytes_on_left
 
-    def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes:
-        """A callable which informs tree-sitter about the document content.
 
-        This is passed to tree-sitter which will call it frequently to retrieve
-        the bytes from the document.
+class BackgroundSyntaxParser:
+    """A provider of incremental background parsing for syntax highlighting.
+
+    This runs tree-sitter parsing as a parallel, background asyncio task. This
+    prevents occasional, relatively long parsing times from making `TextArea`
+    editing become unresponsive.
+    """
+
+    PARSE_TIME_SLICE = 0.005
+    PARSE_TIMEOUT_MICROSECONDS = int(PARSE_TIME_SLICE * 1_000_000)
+
+    def __init__(self, document: SyntaxAwareDocument):
+        self._document_ref = weakref.ref(document)
+        self._event = Event()
+        self._task: Task = create_task(self._execute_reparsing())
+        self._force_update = False
+
+    def stop(self):
+        """Stop running as a background task."""
+        self._task.cancel()
+
+    def trigger_syntax_tree_update(self, force_update: bool) -> None:
+        """Trigger a new syntax tree update to run in the background.
 
         Args:
-            byte_offset: The number of (utf-8) bytes from the start of the document.
-            point: A tuple (row index, column *byte* offset). Note that this differs
-                from our Location tuple which is (row_index, column codepoint offset).
-
-        Returns:
-            All the utf-8 bytes between the byte_offset/point and the end of the current
-                line _including_ the line separator character(s). Returns None if the
-                offset/point requested by tree-sitter doesn't correspond to a byte.
+            force_update: When set, ensure that the syntax tree is regenerated
+                unconditionally.
         """
-        row, column = point
-        lines = self._lines
-        newline = self.newline
+        if force_update:
+            self._force_update = True
+        self._event.set()
 
-        row_out_of_bounds = row >= len(lines)
-        if row_out_of_bounds:
-            return b""
-        else:
-            row_text = lines[row]
+    async def _execute_reparsing(self) -> None:
+        """Run, as a task, tree-sitter reparse operations on demand."""
+        while True:
+            try:
+                try:
+                    await self._event.wait()
+                except Exception as e:
+                    return
+                self._event.clear()
+                force_update = self._force_update
+                self._force_update = False
+                await self._perform_a_single_reparse(force_update)
+            except CancelledError:
+                return
 
-        encoded_row = _utf8_encode(row_text)
-        encoded_row_length = len(encoded_row)
+    async def _perform_a_single_reparse(self, force_update: bool) -> None:
+        document = self._document_ref()
+        if document is None:
+            return
+        if not (document.apply_pending_syntax_edits() or force_update):
+            return
 
-        if column < encoded_row_length:
-            return encoded_row[column:] + _utf8_encode(newline)
-        elif column == encoded_row_length:
-            return _utf8_encode(newline[0])
-        elif column == encoded_row_length + 1:
-            if newline == "\r\n":
-                return b"\n"
+        # In order to allow the user to continue editing without interruption, we reparse
+        # a snapshot of the TextArea's document.
+        copy_of_text_for_parsing = document.text.encode("utf-8")
 
-        return b""
+        # Use tree-sitter's parser timeout mechanism to break the full reparse
+        # into multiple steps. Most of the time, tree-sitter is so fast that no
+        # looping occurs.
+        parsed_ok = False
+        while not parsed_ok:
+            parsed_ok = document.reparse(
+                self.PARSE_TIMEOUT_MICROSECONDS, text=copy_of_text_for_parsing
+            )
+            if not parsed_ok:
+                # Sleeping for zero seconds allows other tasks, I/O, *etc.* to execute,
+                # keeping the TextArea and other widgets responsive.
+                await sleep(0.0)

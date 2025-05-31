@@ -315,8 +315,8 @@ class App(Generic[ReturnType], DOMNode):
                 scrollbar-background-active: ansi_default;
                 scrollbar-color: ansi_blue;
                 scrollbar-color-active: ansi_bright_blue;
-                scrollbar-color-hover: ansi_bright_blue;    
-                scrollbar-corner-color: ansi_default;           
+                scrollbar-color-hover: ansi_bright_blue;
+                scrollbar-corner-color: ansi_default;
             }
 
             .bindings-table--key {
@@ -337,18 +337,18 @@ class App(Generic[ReturnType], DOMNode):
         }
 
         /* When a widget is maximized */
-        Screen.-maximized-view {                    
+        Screen.-maximized-view {
             layout: vertical !important;
             hatch: right $panel;
             overflow-y: auto !important;
             align: center middle;
             .-maximized {
-                dock: initial !important;                
+                dock: initial !important;
             }
         }
         /* Fade the header title when app is blurred */
-        &:blur HeaderTitle {           
-            text-opacity: 50%;           
+        &:blur HeaderTitle {
+            text-opacity: 50%;
         }
     }
     *:disabled:can-focus {
@@ -400,7 +400,7 @@ class App(Generic[ReturnType], DOMNode):
 
     ALLOW_SELECT: ClassVar[bool] = True
     """A switch to toggle arbitrary text selection for the app.
-    
+
     Note that this doesn't apply to Input and TextArea which have builtin support for selection.
     """
 
@@ -446,7 +446,7 @@ class App(Generic[ReturnType], DOMNode):
     """The default value of [Screen.ALLOW_IN_MAXIMIZED_VIEW][textual.screen.Screen.ALLOW_IN_MAXIMIZED_VIEW]."""
 
     CLICK_CHAIN_TIME_THRESHOLD: ClassVar[float] = 0.5
-    """The maximum number of seconds between clicks to upgrade a single click to a double click, 
+    """The maximum number of seconds between clicks to upgrade a single click to a double click,
     a double click to a triple click, etc."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
@@ -473,7 +473,7 @@ class App(Generic[ReturnType], DOMNode):
 
     ESCAPE_TO_MINIMIZE: ClassVar[bool] = True
     """Use escape key to minimize widgets (potentially overriding bindings).
-    
+
     This is the default value, used if the active screen's `ESCAPE_TO_MINIMIZE` is not changed from `None`.
     """
 
@@ -570,7 +570,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._registered_themes: dict[str, Theme] = {}
         """Themes that have been registered with the App using `App.register_theme`.
-        
+
         This excludes the built-in themes."""
 
         for theme in BUILTIN_THEMES.values():
@@ -769,7 +769,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.theme_changed_signal: Signal[Theme] = Signal(self, "theme-changed")
         """Signal that is published when the App's theme is changed.
-        
+
         Subscribers will receive the new theme object as an argument to the callback.
         """
 
