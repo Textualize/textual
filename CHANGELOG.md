@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Added `App.dom_ready_signal`. This signal is published one time when the App first finishes loading. Its purpose is to provide a simple way for widget libraries to do work only when the DOM is ready, since they cannot use the `Ready` event sent to the App class.
+
 ### Fixed
 
 - Fixed `VERTICAL_BREAKPOINTS` doesn't work https://github.com/Textualize/textual/pull/5785

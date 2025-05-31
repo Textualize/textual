@@ -791,6 +791,16 @@ class App(Generic[ReturnType], DOMNode):
         perform work after the app has resumed.
         """
 
+        self.dom_ready_signal: Signal[App] = Signal(self, "dom-ready")
+        """Signal that is published when the app is finished loading and the
+        DOM is ready. Note that this signal is only sent once when the app first loads.
+
+        This is intended for third-party widget libraries that need to perform 
+        actions requiring a fully loaded DOM (such as querying for widgets) but 
+        cannot override the App class's `on_ready` method. Subscribers must be 
+        DOMNode instances (such as widgets or other DOM components).
+        """
+
         self.set_class(self.current_theme.dark, "-dark-mode")
         self.set_class(not self.current_theme.dark, "-light-mode")
 
