@@ -33,7 +33,6 @@ class WorkerDeclarationError(Exception):
     """An error in the declaration of a worker method."""
 
 
-
 @overload
 def work(
     method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
@@ -46,6 +45,7 @@ def work(
     thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
 
+
 @overload
 def work(
     method: Callable[FactoryParamSpec, ReturnType],
@@ -57,6 +57,7 @@ def work(
     description: str | None = None,
     thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
+
 
 @overload
 def work(
