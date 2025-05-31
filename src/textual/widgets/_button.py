@@ -44,6 +44,8 @@ class Button(Widget, can_focus=True):
 
     """
 
+    ALLOW_SELECT = False
+
     DEFAULT_CSS = """
     Button {
         width: auto;

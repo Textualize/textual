@@ -411,14 +411,13 @@ def _to_content(
 
     content_text = "".join(text)
     text_length = len(content_text)
-    while style_stack:
-        position, tag_body, _ = style_stack.pop()
+    for position, tag_body, _ in style_stack:
         spans.append(Span(position, text_length, tag_body))
 
-    if style:
-        content = Content(content_text, [Span(0, len(content_text), style), *spans])
-    else:
-        content = Content(content_text, spans)
+    content = Content(
+        content_text,
+        [Span(0, len(content_text), style), *spans] if style else spans,
+    )
 
     return content
 

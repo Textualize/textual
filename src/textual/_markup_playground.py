@@ -4,25 +4,21 @@ from textual import containers, events, on
 from textual.app import App, ComposeResult
 from textual.content import Content
 from textual.reactive import reactive
-from textual.widgets import Static, TextArea
+from textual.widgets import Footer, Pretty, Static, TextArea
 
 
 class MarkupPlayground(App):
 
     TITLE = "Markup Playground"
     CSS = """
-    Screen {
-        & > * {
-            margin: 0 1;
-            height: 1fr;
-        }
+    Screen {        
         layout: vertical;
         #editor {            
-            width: 2fr;
+            width: 1fr;
             height: 1fr;
             border: tab $foreground 50%;  
             padding: 1;
-            margin: 1 1 0 0;
+            margin: 1 0 0 0;
             &:focus {
                 border: tab $primary;  
             }
@@ -48,15 +44,34 @@ class MarkupPlayground(App):
             }
             overflow-y: auto;
         }
-        #results {            
-            
+        #results {                        
             padding: 1 1;            
+            width: 1fr;
+        }
+        #spans-container {
+            border: tab $success;                
+            overflow-y: auto;
+            margin: 0 0 0 1;
+        }
+        #spans {
+            padding: 1 1;      
+            width: 1fr;                
+        }
+        HorizontalGroup {
+            height: 1fr;
         }
     }
     """
     AUTO_FOCUS = "#editor"
 
+    BINDINGS = [
+        ("f1", "toggle('show_variables')", "Variables"),
+        ("f2", "toggle('show_spans')", "Spans"),
+    ]
     variables: reactive[dict[str, object]] = reactive({})
+
+    show_variables = reactive(False)
+    show_spans = reactive(False)
 
     def compose(self) -> ComposeResult:
         with containers.HorizontalGroup():
@@ -65,11 +80,21 @@ class MarkupPlayground(App):
         editor.border_title = "Markup"
         variables.border_title = "Variables (JSON)"
 
-        with containers.VerticalScroll(
-            id="results-container", can_focus=False
-        ) as container:
-            yield Static(id="results")
-        container.border_title = "Output"
+        with containers.HorizontalGroup():
+            with containers.VerticalScroll(id="results-container") as container:
+                yield Static(id="results")
+                container.border_title = "Output"
+            with containers.VerticalScroll(id="spans-container") as container:
+                yield Pretty([], id="spans")
+                container.border_title = "Spans"
+
+        yield Footer()
+
+    def watch_show_variables(self, show_variables: bool) -> None:
+        self.query_one("#variables").display = show_variables
+
+    def watch_show_spans(self, show_spans: bool) -> None:
+        self.query_one("#spans-container").display = show_spans
 
     @on(TextArea.Changed, "#editor")
     def on_markup_changed(self, event: TextArea.Changed) -> None:
@@ -78,13 +103,16 @@ class MarkupPlayground(App):
     def update_markup(self) -> None:
         results = self.query_one("#results", Static)
         editor = self.query_one("#editor", TextArea)
+        spans = self.query_one("#spans", Pretty)
         try:
             content = Content.from_markup(editor.text, **self.variables)
             results.update(content)
-        except Exception as error:
+            spans.update(content.spans)
+        except Exception:
             from rich.traceback import Traceback
 
             results.update(Traceback())
+            spans.update([])
 
             self.query_one("#results-container").add_class("-error").scroll_end(
                 animate=False

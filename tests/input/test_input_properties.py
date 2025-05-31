@@ -93,3 +93,16 @@ async def test_input_selection_deleted_programmatically():
         input_widget.selection = Selection(4, 0)
         input_widget.delete_selection()
         assert input_widget.value == "o, world!"
+
+
+async def test_input_selection_is_valid_after_updating_value():
+    """Regression test for https://github.com/Textualize/textual/issues/5811"""
+    app = InputApp()
+    async with app.run_test() as pilot:
+        input_widget = pilot.app.query_one(Input)
+        # Sanity check (by default focusing the input selects all text)
+        assert input_widget.selection == (0, len(input_widget.value))
+
+        input_widget.value = "foo"
+
+        assert input_widget.selection == (0, len(input_widget.value))

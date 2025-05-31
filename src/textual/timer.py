@@ -15,6 +15,7 @@ from rich.repr import Result, rich_repr
 
 from textual import _time, events
 from textual._callback import invoke
+from textual._compat import cached_property
 from textual._context import active_app
 from textual._time import sleep
 from textual._types import MessageTarget
@@ -62,11 +63,16 @@ class Timer:
         self._callback = callback
         self._repeat = repeat
         self._skip = skip
-        self._active = Event()
         self._task: Task | None = None
         self._reset: bool = False
-        if not pause:
-            self._active.set()
+        self._original_pause = pause
+
+    @cached_property
+    def _active(self) -> Event:
+        event = Event()
+        if not self._original_pause:
+            event.set()
+        return event
 
     def __rich_repr__(self) -> Result:
         yield self._interval

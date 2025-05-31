@@ -367,3 +367,20 @@ async def test_app_run_async() -> None:
     app = MyApp()
     result = await app.run_async()
     assert result == 42
+
+
+def test_app_loop_run_after_asyncio_run() -> None:
+    """Test that App.run runs after asyncio.run has run."""
+
+    class MyApp(App[int]):
+        def on_mount(self) -> None:
+            self.exit(42)
+
+    async def amain():
+        pass
+
+    asyncio.run(amain())
+
+    app = MyApp()
+    result = app.run()
+    assert result == 42

@@ -66,7 +66,7 @@ A modern Python API from the developer of [Rich](https://github.com/Textualize/r
 
 ```python
 # Start building!
-from textual import App, ComposeResult
+from textual.app import App, ComposeResult
 from textual.widgets import Label
 
 class MyApp(App):

@@ -572,7 +572,6 @@ class StylesBase:
             yield getattr(self, key)
 
     def items(self) -> Iterable[tuple[str, object]]:
-        get_rule = self.get_rule
         for key in RULE_NAMES:
             yield (key, getattr(self, key))
 
