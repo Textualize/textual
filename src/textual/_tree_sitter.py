@@ -1,8 +1,8 @@
 from __future__ import annotations
+
 from importlib import import_module
 
 from textual import log
-
 
 try:
     from tree_sitter import Language

@@ -7,7 +7,7 @@ DOMNodes can subscribe to a signal, which will invoke a callback when the signal
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, TypeVar, Generic, Union
 from weakref import WeakKeyDictionary, ref
 
 import rich.repr
@@ -41,9 +41,9 @@ class Signal(Generic[SignalT]):
         """
         self._owner = ref(owner)
         self._name = name
-        self._subscriptions: WeakKeyDictionary[
-            MessagePump, list[SignalCallbackType]
-        ] = WeakKeyDictionary()
+        self._subscriptions: WeakKeyDictionary[DOMNode, list[SignalCallbackType]] = (
+            WeakKeyDictionary()
+        )
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "owner", self.owner
@@ -57,7 +57,7 @@ class Signal(Generic[SignalT]):
 
     def subscribe(
         self,
-        node: MessagePump,
+        node: DOMNode,
         callback: SignalCallbackType,
         immediate: bool = False,
     ) -> None:
@@ -95,7 +95,7 @@ class Signal(Generic[SignalT]):
         callbacks = self._subscriptions.setdefault(node, [])
         callbacks.append(signal_callback)
 
-    def unsubscribe(self, node: MessagePump) -> None:
+    def unsubscribe(self, node: DOMNode) -> None:
         """Unsubscribe a node from this signal.
 
         Args:

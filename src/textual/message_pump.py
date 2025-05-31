@@ -1,5 +1,4 @@
 """
-
 A `MessagePump` is a base class for any object which processes messages, which includes Widget, Screen, and App.
 
 !!! tip
@@ -28,6 +27,7 @@ from typing import (
     Type,
     TypeVar,
     cast,
+    Self,
     overload,
 )
 from weakref import WeakSet
@@ -117,7 +117,7 @@ class _MessagePumpMeta(type):
 class MessagePump(metaclass=_MessagePumpMeta):
     """Base class which supplies a message pump."""
 
-    def __init__(self, parent: MessagePump | None = None) -> None:
+    def __init__(self, parent: Self | None = None) -> None:
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -253,7 +253,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         except NoActiveAppError:
             return False
         node: MessagePump | None = self
-        while (node := node._parent) is not None:
+        while node is not None and (node := node._parent) is not None:
             if node.is_dom_root:
                 return True
         return False
@@ -278,7 +278,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
         return self.app._logger
 
-    def _attach(self, parent: MessagePump) -> None:
+    def _attach(self, parent: Self) -> None:
         """Set the parent, and therefore attach this node to the tree.
 
         Args:

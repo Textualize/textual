@@ -17,22 +17,21 @@ if TYPE_CHECKING:
     WalkType = TypeVar("WalkType", bound=DOMNode)
 
 
-if TYPE_CHECKING:
+@overload
+def walk_depth_first(
+    root: DOMNode,
+    *,
+    with_root: bool = True,
+) -> Iterable[DOMNode]: ...
 
-    @overload
-    def walk_depth_first(
-        root: DOMNode,
-        *,
-        with_root: bool = True,
-    ) -> Iterable[DOMNode]: ...
 
-    @overload
-    def walk_depth_first(
-        root: WalkType,
-        filter_type: type[WalkType],
-        *,
-        with_root: bool = True,
-    ) -> Iterable[WalkType]: ...
+@overload
+def walk_depth_first(
+    root: WalkType,
+    filter_type: type[WalkType],
+    *,
+    with_root: bool = True,
+) -> Iterable[WalkType]: ...
 
 
 def walk_depth_first(
@@ -83,22 +82,21 @@ def walk_depth_first(
                     push(iter(children))
 
 
-if TYPE_CHECKING:
+@overload
+def walk_breadth_first(
+    root: DOMNode,
+    *,
+    with_root: bool = True,
+) -> Iterable[DOMNode]: ...
 
-    @overload
-    def walk_breadth_first(
-        root: DOMNode,
-        *,
-        with_root: bool = True,
-    ) -> Iterable[DOMNode]: ...
 
-    @overload
-    def walk_breadth_first(
-        root: WalkType,
-        filter_type: type[WalkType],
-        *,
-        with_root: bool = True,
-    ) -> Iterable[WalkType]: ...
+@overload
+def walk_breadth_first(
+    root: WalkType,
+    filter_type: type[WalkType],
+    *,
+    with_root: bool = True,
+) -> Iterable[WalkType]: ...
 
 
 def walk_breadth_first(
