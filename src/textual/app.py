@@ -74,6 +74,7 @@ from textual._animator import DEFAULT_EASING, Animatable, Animator, EasingFuncti
 from textual._ansi_sequences import SYNC_END, SYNC_START
 from textual._ansi_theme import ALABASTER, MONOKAI
 from textual._callback import invoke
+from textual._compat import cached_property
 from textual._compose import compose
 from textual._compositor import CompositorUpdate
 from textual._context import active_app, active_message_pump
@@ -150,6 +151,9 @@ WINDOWS = sys.platform == "win32"
 # asyncio will warn against resources not being cleared
 if constants.DEBUG:
     warnings.simplefilter("always", ResourceWarning)
+
+# `asyncio.get_event_loop()` is deprecated since Python 3.10:
+_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 ComposeResult = Iterable[Widget]
 RenderResult: TypeAlias = "RenderableType | Visual | SupportsVisual"
@@ -646,9 +650,6 @@ class App(Generic[ReturnType], DOMNode):
         """The unhandled exception which is leading to the app shutting down,
         or None if the app is still running with no unhandled exceptions."""
 
-        self._exception_event: asyncio.Event = asyncio.Event()
-        """An event that will be set when the first exception is encountered."""
-
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
         )
@@ -841,6 +842,11 @@ class App(Generic[ReturnType], DOMNode):
                         tooltip="Open the command palette",
                     )
                 )
+
+    @cached_property
+    def _exception_event(self) -> asyncio.Event:
+        """An event that will be set when the first exception is encountered."""
+        return asyncio.Event()
 
     def __init_subclass__(cls, *args, **kwargs) -> None:
         for variable_name, screen_collection in (
@@ -2141,9 +2147,9 @@ class App(Generic[ReturnType], DOMNode):
             App return value.
         """
 
-        async def run_app() -> None:
+        async def run_app() -> ReturnType | None:
             """Run the app."""
-            await self.run_async(
+            return await self.run_async(
                 headless=headless,
                 inline=inline,
                 inline_no_clear=inline_no_clear,
@@ -2152,9 +2158,24 @@ class App(Generic[ReturnType], DOMNode):
                 auto_pilot=auto_pilot,
             )
 
-        event_loop = asyncio.get_event_loop() if loop is None else loop
-        event_loop.run_until_complete(run_app())
-        return self.return_value
+        if loop is None:
+            if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
+                # N.B. This does work with Python<3.10, but global Locks, Events, etc
+                # eagerly bind the event loop, and result in Future bound to wrong
+                # loop errors.
+                return asyncio.run(run_app())
+            try:
+                global_loop = asyncio.get_event_loop()
+            except RuntimeError:
+                # the global event loop may have been destroyed by someone running
+                # asyncio.run(), or asyncio.set_event_loop(None), in which case
+                # we need to use asyncio.run() also. (We run this outside the
+                # context of an exception handler)
+                pass
+            else:
+                return global_loop.run_until_complete(run_app())
+            return asyncio.run(run_app())
+        return loop.run_until_complete(run_app())
 
     async def _on_css_change(self) -> None:
         """Callback for the file monitor, called when CSS files change."""

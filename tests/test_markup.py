@@ -77,6 +77,13 @@ from textual.markup import MarkupError, to_content
                 ],
             ),
         ),
+        (
+            "[#ff0000]Hello, [#ffffff]world!\nMy work here is done.",
+            Content(
+                "Hello, world!\nMy work here is done.",
+                spans=[Span(0, 35, style="#ff0000"), Span(7, 35, style="#ffffff")],
+            ),
+        ),
     ],
 )
 def test_to_content(markup: str, content: Content):

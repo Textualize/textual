@@ -260,14 +260,11 @@ class XTermParser(Parser[Message]):
                     # Check cursor position report
                     cursor_position_match = _re_cursor_position.match(sequence)
                     if cursor_position_match is not None:
-                        row, column = cursor_position_match.groups()
-                        # Cursor position report conflicts with f3 key
-                        # If it is a keypress, "row" will be 1, so ignore
-                        if int(row) != 1:
-                            x = int(column) - 1
-                            y = int(row) - 1
-                            on_token(events.CursorPosition(x, y))
-                            break
+                        row, column = map(int, cursor_position_match.groups())
+                        x = int(column) - 1
+                        y = int(row) - 1
+                        on_token(events.CursorPosition(x, y))
+                        break
 
                     # Was it a pressed key event that we received?
                     key_events = list(sequence_to_key_events(sequence))
