@@ -136,6 +136,11 @@ from textual.markup import MarkupError, to_content
                 ],
             ),
         ),
+        # Edge cases
+        ("[bold][/bold]", Content("")),
+        ("[bold][/]", Content("")),
+        ("[bold]", Content("")),
+        ("", Content("")),
     ],
 )
 def test_to_content(markup: str, content: Content):
