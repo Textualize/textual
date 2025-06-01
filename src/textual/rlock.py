@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from asyncio import Lock, Task, current_task
 
+from textual._compat import cached_property
+
 
 class RLock:
     """A re-entrant asyncio lock."""
@@ -9,7 +11,10 @@ class RLock:
     def __init__(self) -> None:
         self._owner: Task | None = None
         self._count = 0
-        self._lock = Lock()
+
+    @cached_property
+    def _lock(self) -> Lock:
+        return Lock()
 
     async def acquire(self) -> None:
         """Wait until the lock can be acquired."""
