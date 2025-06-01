@@ -5,6 +5,8 @@ Utilities related to content markup.
 
 from __future__ import annotations
 
+from operator import attrgetter
+
 from textual.css.parse import substitute_references
 from textual.css.tokenizer import UnexpectedEnd
 
@@ -411,8 +413,14 @@ def _to_content(
 
     content_text = "".join(text)
     text_length = len(content_text)
-    for position, tag_body, _ in style_stack:
-        spans.append(Span(position, text_length, tag_body))
+    spans.extend(
+        [
+            Span(position, text_length, tag_body)
+            for position, tag_body, _ in reversed(style_stack)
+        ]
+    )
+    spans.reverse()
+    spans.sort(key=attrgetter("start"))
 
     content = Content(
         content_text,
