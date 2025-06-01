@@ -470,12 +470,12 @@ class Input(ScrollView):
 
     @property
     def cursor_at_start(self) -> bool:
-        """Flag to indicate if the cursor is at the start"""
+        """Flag to indicate if the cursor is at the start."""
         return self.cursor_position == 0
 
     @property
     def cursor_at_end(self) -> bool:
-        """Flag to indicate if the cursor is at the end"""
+        """Flag to indicate if the cursor is at the end."""
         return self.cursor_position == len(self.value)
 
     def check_consume_key(self, key: str, character: str | None) -> bool:
@@ -518,7 +518,7 @@ class Input(ScrollView):
 
     @property
     def cursor_screen_offset(self) -> Offset:
-        """The offset of the cursor of this input in screen-space. (x, y)/(column, row)"""
+        """The offset of the cursor of this input in screen-space. (x, y)/(column, row)."""
         x, y, _width, _height = self.content_region
         scroll_x, _ = self.scroll_offset
         return Offset(x + self._cursor_offset - scroll_x, y)
