@@ -16,7 +16,7 @@ from textual import log
 
 if TYPE_CHECKING:
     from textual.dom import DOMNode
-    from textual.message_pump import MessagePump
+
 SignalT = TypeVar("SignalT")
 
 SignalCallbackType = Union[
@@ -42,7 +42,7 @@ class Signal(Generic[SignalT]):
         self._owner = ref(owner)
         self._name = name
         self._subscriptions: WeakKeyDictionary[
-            MessagePump, list[SignalCallbackType]
+            DOMNode, list[SignalCallbackType[SignalT]]
         ] = WeakKeyDictionary()
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -57,8 +57,8 @@ class Signal(Generic[SignalT]):
 
     def subscribe(
         self,
-        node: MessagePump,
-        callback: SignalCallbackType,
+        node: DOMNode,
+        callback: SignalCallbackType[SignalT],
         immediate: bool = False,
     ) -> None:
         """Subscribe a node to this signal.
@@ -82,20 +82,20 @@ class Signal(Generic[SignalT]):
 
         if immediate:
 
-            def signal_callback(data: object) -> None:
+            def signal_callback(data: SignalT) -> None:
                 """Invoke the callback immediately."""
                 callback(data)
 
         else:
 
-            def signal_callback(data: object) -> None:
+            def signal_callback(data: SignalT) -> None:
                 """Post the callback to the node, to call at the next opertunity."""
                 node.call_next(callback, data)
 
         callbacks = self._subscriptions.setdefault(node, [])
         callbacks.append(signal_callback)
 
-    def unsubscribe(self, node: MessagePump) -> None:
+    def unsubscribe(self, node: DOMNode) -> None:
         """Unsubscribe a node from this signal.
 
         Args:
