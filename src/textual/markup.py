@@ -419,6 +419,7 @@ def _to_content(
             [
                 Span(position, text_length, tag_body)
                 for position, tag_body, _ in reversed(style_stack)
+                if position != text_length
             ]
         )
     spans.reverse()

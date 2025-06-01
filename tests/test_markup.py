@@ -141,6 +141,7 @@ from textual.markup import MarkupError, to_content
         ("[bold][/]", Content("")),
         ("[bold]", Content("")),
         ("", Content("")),
+        ("[red][green][/red]", Content("")),
     ],
 )
 def test_to_content(markup: str, content: Content):
