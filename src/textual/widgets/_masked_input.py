@@ -570,7 +570,7 @@ class MaskedInput(Input, can_focus=True):
                 result.stylize(style, index, index + 1)
 
         if self._cursor_visible and self.has_focus:
-            if self._cursor_at_end:
+            if self.cursor_at_end:
                 result.pad_right(1)
             cursor_style = self.get_component_rich_style("input--cursor")
             cursor = self.cursor_position
