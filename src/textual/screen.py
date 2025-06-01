@@ -146,8 +146,8 @@ class ResultCallback(Generic[ScreenResultType]):
         Note:
             If the requested or the callback are `None` this will be a no-op.
         """
-        if self.future is not None:
-            self.future.set_result(result)
+        if self.await_screen is not None:
+            self.await_screen.set_result(result)
         if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
         self.callback = None
