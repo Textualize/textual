@@ -11,4 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
+      name: setup python 3.11 for pycln
+      with:
+        python-version: 3.11
+    - uses: actions/setup-python@v3
     - uses: pre-commit/action@v3.0.1
