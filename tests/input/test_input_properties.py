@@ -103,6 +103,7 @@ async def test_input_selection_deleted_programmatically():
         assert input_widget.value == "o, world!"
 
 
+@pytest.mark.anyio
 async def test_input_selection_is_valid_after_updating_value():
     """Regression test for https://github.com/Textualize/textual/issues/5811"""
     app = InputApp()
