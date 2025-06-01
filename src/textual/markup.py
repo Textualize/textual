@@ -5,6 +5,8 @@ Utilities related to content markup.
 
 from __future__ import annotations
 
+from operator import itemgetter
+
 from textual.css.parse import substitute_references
 from textual.css.tokenizer import UnexpectedEnd
 
@@ -407,16 +409,25 @@ def _to_content(
                 if not style_stack:
                     raise MarkupError("auto closing tag ('[/]') has nothing to close")
                 open_position, tag_body, _ = style_stack.pop()
-                spans.append(Span(open_position, position, tag_body))
+                if open_position != position:
+                    spans.append(Span(open_position, position, tag_body))
 
     content_text = "".join(text)
     text_length = len(content_text)
-    for position, tag_body, _ in style_stack:
-        spans.append(Span(position, text_length, tag_body))
+    if style_stack and text_length:
+        spans.extend(
+            [
+                Span(position, text_length, tag_body)
+                for position, tag_body, _ in reversed(style_stack)
+                if position != text_length
+            ]
+        )
+    spans.reverse()
+    spans.sort(key=itemgetter(0))  # Zeroth item of Span is 'start' attribute
 
     content = Content(
         content_text,
-        [Span(0, len(content_text), style), *spans] if style else spans,
+        [Span(0, text_length, style), *spans] if (style and text_length) else spans,
     )
 
     return content
