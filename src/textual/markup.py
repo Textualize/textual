@@ -413,18 +413,19 @@ def _to_content(
 
     content_text = "".join(text)
     text_length = len(content_text)
-    spans.extend(
-        [
-            Span(position, text_length, tag_body)
-            for position, tag_body, _ in reversed(style_stack)
-        ]
-    )
+    if style_stack:
+        spans.extend(
+            [
+                Span(position, text_length, tag_body)
+                for position, tag_body, _ in reversed(style_stack)
+            ]
+        )
     spans.reverse()
     spans.sort(key=itemgetter(0))  # Zeroth item of Span is 'start' attribute
 
     content = Content(
         content_text,
-        [Span(0, len(content_text), style), *spans] if style else spans,
+        [Span(0, text_length, style), *spans] if style else spans,
     )
 
     return content
