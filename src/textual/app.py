@@ -2734,7 +2734,7 @@ class App(Generic[ReturnType], DOMNode):
                 raise NoActiveWorker(
                     "push_screen must be run from a worker when `wait_for_dismiss` is True"
                 ) from None
-            return future
+            return await_screen
         else:
             return await_mount
 
