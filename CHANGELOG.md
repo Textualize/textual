@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Added a few features to `python -m textual.markup` playgound https://github.com/Textualize/textual/pull/5823
+- Added a few features to `python -m textual.markup` playground https://github.com/Textualize/textual/pull/5823
 
 ## [3.2.0] - 2025-05-02
 
