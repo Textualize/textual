@@ -15,15 +15,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed running `App.run` after `asyncio.run` https://github.com/Textualize/textual/pull/5799
 - Fixed triggering a deprecation warning in py >= 3.10 https://github.com/Textualize/textual/pull/5799
 - Fixed `Input` invalid cursor position after updating the value https://github.com/Textualize/textual/issues/5811
-- Fixed `DEFAULT_CLASSES` when applied to App
+- Fixed `DEFAULT_CLASSES` when applied to App https://github.com/Textualize/textual/pull/5827
+- Fixed order of implicit content tag closing https://github.com/Textualize/textual/pull/5823
 
 ### Added
 
 - Exposed `CollapsibleTitle` https://github.com/Textualize/textual/pull/5810
-
-### Added
-
 - Added `Color.hsv` property and `Color.from_hsv` class method https://github.com/Textualize/textual/pull/5803
+
+### Changed
+
+- Added a few features to `python -m textual.markup` playgound https://github.com/Textualize/textual/pull/5823
 
 ## [3.2.0] - 2025-05-02
 
