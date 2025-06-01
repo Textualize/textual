@@ -220,7 +220,8 @@ async def test_animator():
     assert animate_test.foo == 200
 
 
-def test_bound_animator():
+@pytest.mark.anyio
+async def test_bound_animator():
     target = Mock()
     animator = MockAnimator(target)
     animate_test = AnimateTest()
@@ -229,6 +230,7 @@ def test_bound_animator():
     bound_animator = animator.bind(animate_test)
 
     # Animate attribute "foo" on animate_test to 100.0 in 10 seconds
+    # note, resumes timer - which needs a running event loop
     bound_animator("foo", 100.0, duration=10)
 
     expected = SimpleAnimation(
@@ -274,12 +276,14 @@ async def test_animator_on_complete_callback_fired_at_duration():
     mock_app.call_later.assert_called_once_with(callback)
 
 
-def test_force_stop_animation():
+@pytest.mark.anyio
+async def test_force_stop_animation():
     callback = Mock()
     animate_test = AnimateTest()
     mock_app = Mock()
     animator = MockAnimator(mock_app)
 
+    # resumed timer - so needs running event loop
     animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
 
     assert animator.is_being_animated(animate_test, "foo")
