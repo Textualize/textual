@@ -469,6 +469,11 @@ class Input(ScrollView):
         return offset
 
     @property
+    def cursor_at_start(self) -> bool:
+        """Flag to indicate if the cursor is at the start"""
+        return self.cursor_position == 0
+
+    @property
     def cursor_at_end(self) -> bool:
         """Flag to indicate if the cursor is at the end"""
         return self.cursor_position == len(self.value)
