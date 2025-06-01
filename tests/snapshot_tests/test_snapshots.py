@@ -2554,6 +2554,7 @@ def test_pseudo_classes(snap_compare):
 
     assert snap_compare(PSApp())
 
+
 def test_child_pseudo_classes(snap_compare):
     """Test pseudo classes added in https://github.com/Textualize/textual/pull/XXXX
 
@@ -4105,6 +4106,7 @@ def test_breakpoints_horizontal(snap_compare, size):
 
     assert snap_compare(BreakpointApp(), terminal_size=size)
 
+
 @pytest.mark.parametrize(
     "size",
     [
@@ -4155,6 +4157,7 @@ def test_breakpoints_vertical(snap_compare, size):
 
     assert snap_compare(BreakpointApp(), terminal_size=size)
 
+
 def test_compact(snap_compare):
     """Test compact styles.
 
@@ -4186,3 +4189,29 @@ def test_compact(snap_compare):
                     yield TextArea("Edit me", compact=True)
 
     assert snap_compare(CompactApp())
+
+
+def test_app_default_classes(snap_compare):
+    """Test that default classes classvar is working.
+
+    You should see a blue screen with a white border, confirming that
+    the classes foo and bar have been added to the app.
+
+    """
+    from textual.app import App
+
+    class DC(App):
+        DEFAULT_CLASSES = "foo bar"
+
+        CSS = """
+        DC {
+            &.foo {
+                Screen { background: blue; }
+            }
+            &.bar {
+                Screen { border: white; }
+            }
+        }
+        """
+
+    assert snap_compare(DC())

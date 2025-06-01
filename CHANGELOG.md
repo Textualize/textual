@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed running `App.run` after `asyncio.run` https://github.com/Textualize/textual/pull/5799
 - Fixed triggering a deprecation warning in py >= 3.10 https://github.com/Textualize/textual/pull/5799
 - Fixed `Input` invalid cursor position after updating the value https://github.com/Textualize/textual/issues/5811
+- Fixed `DEFAULT_CLASSES` when applied to App
 
 ### Added
 
