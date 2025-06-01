@@ -5,7 +5,7 @@ Utilities related to content markup.
 
 from __future__ import annotations
 
-from operator import attrgetter
+from operator import itemgetter
 
 from textual.css.parse import substitute_references
 from textual.css.tokenizer import UnexpectedEnd
@@ -420,7 +420,7 @@ def _to_content(
         ]
     )
     spans.reverse()
-    spans.sort(key=attrgetter("start"))
+    spans.sort(key=itemgetter(0))  # Zeroth item of Span is 'start' attribute
 
     content = Content(
         content_text,
