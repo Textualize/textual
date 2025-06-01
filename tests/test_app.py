@@ -371,6 +371,7 @@ def test_app_loop() -> None:
     assert result == 42
 
 
+@pytest.mark.anyio
 async def test_app_run_async() -> None:
     """Check run_async runs without issues."""
 
