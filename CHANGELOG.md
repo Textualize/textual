@@ -19,10 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Exposed `CollapsibleTitle` https://github.com/Textualize/textual/pull/5810
-
-### Added
-
 - Added `Color.hsv` property and `Color.from_hsv` class method https://github.com/Textualize/textual/pull/5803
+- Added `cursor_at_start` and `cursor_at_end` properties to the `Input` widget https://github.com/Textualize/textual/pull/5830
 
 ## [3.2.0] - 2025-05-02
 
