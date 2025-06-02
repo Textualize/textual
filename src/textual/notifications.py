@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from time import time
-from typing import Iterator
+from typing import Iterator, Literal
 from uuid import uuid4
 
 from rich.repr import Result
-from typing_extensions import Literal, Self, TypeAlias
+from typing_extensions import Self, TypeAlias
 
 from textual.message import Message
 
