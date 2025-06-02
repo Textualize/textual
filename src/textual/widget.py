@@ -957,9 +957,6 @@ class Widget(DOMNode):
 
         Args:
             loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
-
-        Returns:
-            An optional awaitable.
         """
         LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
         if loading:
