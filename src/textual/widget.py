@@ -953,7 +953,8 @@ class Widget(DOMNode):
     def set_loading(self, loading: bool) -> None:
         """Set or reset the loading state of this widget.
 
-        A widget in a loading state will display a LoadingIndicator that obscures the widget.
+        A widget in a loading state will display a `LoadingIndicator` or a custom widget
+        set through overriding the `get_loading_widget` method.
 
         Args:
             loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
