@@ -958,10 +958,9 @@ class Widget(DOMNode):
         Args:
             loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
         """
-        LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
         if loading:
             loading_indicator = self.get_loading_widget()
-            loading_indicator.add_class(LOADING_INDICATOR_CLASS)
+            loading_indicator.add_class("-textual-loading-indicator")
             self._cover(loading_indicator)
         else:
             self._uncover()
