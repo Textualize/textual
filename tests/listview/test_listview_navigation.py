@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Label, ListItem, ListView
 
@@ -24,6 +26,7 @@ class ListViewDisabledItemsApp(App[None]):
             self.highlighted.append(str(message.item.children[0].renderable))
 
 
+@pytest.mark.anyio
 async def test_keyboard_navigation_with_disabled_items() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3881."""
 

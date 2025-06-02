@@ -142,6 +142,7 @@ def test_go_back_to_indeterminate():
         (False, False, False),
     ],
 )
+@pytest.mark.anyio
 async def test_show_sub_widgets(show_bar: bool, show_percentage: bool, show_eta: bool):
     class PBApp(App[None]):
         def compose(self):

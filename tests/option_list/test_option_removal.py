@@ -20,6 +20,7 @@ class OptionListApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_remove_first_option_via_index() -> None:
     """It should be possible to remove the first option of an option list, via index."""
     async with OptionListApp().run_test() as pilot:
@@ -31,6 +32,7 @@ async def test_remove_first_option_via_index() -> None:
         assert option_list.highlighted == 0
 
 
+@pytest.mark.anyio
 async def test_remove_first_option_via_id() -> None:
     """It should be possible to remove the first option of an option list, via ID."""
     async with OptionListApp().run_test() as pilot:
@@ -42,6 +44,7 @@ async def test_remove_first_option_via_id() -> None:
         assert option_list.highlighted == 0
 
 
+@pytest.mark.anyio
 async def test_remove_last_option_via_index() -> None:
     """It should be possible to remove the last option of an option list, via index."""
     async with OptionListApp().run_test() as pilot:
@@ -53,6 +56,7 @@ async def test_remove_last_option_via_index() -> None:
         assert option_list.highlighted == 0
 
 
+@pytest.mark.anyio
 async def test_remove_last_option_via_id() -> None:
     """It should be possible to remove the last option of an option list, via ID."""
     async with OptionListApp().run_test() as pilot:
@@ -64,6 +68,7 @@ async def test_remove_last_option_via_id() -> None:
         assert option_list.highlighted == 0
 
 
+@pytest.mark.anyio
 async def test_remove_all_options_via_index() -> None:
     """It should be possible to remove all options via index."""
     async with OptionListApp().run_test() as pilot:
@@ -76,6 +81,7 @@ async def test_remove_all_options_via_index() -> None:
         assert option_list.highlighted is None
 
 
+@pytest.mark.anyio
 async def test_remove_all_options_via_id() -> None:
     """It should be possible to remove all options via ID."""
     async with OptionListApp().run_test() as pilot:
@@ -88,6 +94,7 @@ async def test_remove_all_options_via_id() -> None:
         assert option_list.highlighted is None
 
 
+@pytest.mark.anyio
 async def test_remove_invalid_id() -> None:
     """Attempting to remove an option ID that doesn't exist should raise an exception."""
     async with OptionListApp().run_test() as pilot:
@@ -95,6 +102,7 @@ async def test_remove_invalid_id() -> None:
             pilot.app.query_one(OptionList).remove_option("does-not-exist")
 
 
+@pytest.mark.anyio
 async def test_remove_invalid_index() -> None:
     """Attempting to remove an option index that doesn't exist should raise an exception."""
     async with OptionListApp().run_test() as pilot:
@@ -102,6 +110,7 @@ async def test_remove_invalid_index() -> None:
             pilot.app.query_one(OptionList).remove_option_at_index(23)
 
 
+@pytest.mark.anyio
 async def test_remove_with_hover_on_last_option():
     """https://github.com/Textualize/textual/issues/3270"""
     async with OptionListApp().run_test() as pilot:

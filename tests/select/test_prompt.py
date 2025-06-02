@@ -1,3 +1,4 @@
+import pytest
 from rich.text import Text
 
 from textual.app import App
@@ -5,6 +6,7 @@ from textual.widgets import Select, Static
 from textual.widgets._select import SelectCurrent, SelectOverlay
 
 
+@pytest.mark.anyio
 async def test_reactive_prompt_change():
     """Regression test for https://github.com/Textualize/textual/issues/2983"""
 
@@ -30,6 +32,7 @@ async def test_reactive_prompt_change():
         assert select_overlay._options[0].prompt == Text("New prompt")
 
 
+@pytest.mark.anyio
 async def test_reactive_prompt_change_when_allow_blank_is_false():
     class SelectApp(App):
         def compose(self):

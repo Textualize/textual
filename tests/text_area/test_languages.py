@@ -10,6 +10,7 @@ class TextAreaApp(App):
         yield TextArea("print('hello')", language="python")
 
 
+@pytest.mark.anyio
 async def test_setting_builtin_language_via_constructor():
     class MyTextAreaApp(App):
         def compose(self) -> ComposeResult:
@@ -25,6 +26,7 @@ async def test_setting_builtin_language_via_constructor():
         assert text_area.language == "markdown"
 
 
+@pytest.mark.anyio
 async def test_setting_builtin_language_via_attribute():
     class MyTextAreaApp(App):
         def compose(self) -> ComposeResult:
@@ -42,6 +44,7 @@ async def test_setting_builtin_language_via_attribute():
         assert text_area.language == "markdown"
 
 
+@pytest.mark.anyio
 async def test_setting_language_to_none():
     app = TextAreaApp()
     async with app.run_test():
@@ -51,6 +54,7 @@ async def test_setting_language_to_none():
 
 
 @pytest.mark.syntax
+@pytest.mark.anyio
 async def test_setting_unknown_language():
     app = TextAreaApp()
     async with app.run_test():
@@ -61,6 +65,7 @@ async def test_setting_unknown_language():
 
 
 @pytest.mark.syntax
+@pytest.mark.anyio
 async def test_register_language():
     app = TextAreaApp()
 
@@ -80,6 +85,7 @@ async def test_register_language():
 
 
 @pytest.mark.syntax
+@pytest.mark.anyio
 async def test_update_highlight_query():
     app = TextAreaApp()
     async with app.run_test():

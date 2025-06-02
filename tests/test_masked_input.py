@@ -28,6 +28,7 @@ class InputApp(App[None]):
         self.messages.append(event)
 
 
+@pytest.mark.anyio
 async def test_missing_required():
     app = InputApp(">9999-99-99")
     async with app.run_test() as pilot:
@@ -47,6 +48,7 @@ async def test_missing_required():
         )
 
 
+@pytest.mark.anyio
 async def test_valid_required():
     app = InputApp(">9999-99-99")
     async with app.run_test() as pilot:
@@ -58,6 +60,7 @@ async def test_valid_required():
         assert app.messages[0].validation_result == ValidationResult.success()
 
 
+@pytest.mark.anyio
 async def test_missing_optional():
     app = InputApp(">9999-99-00")
     async with app.run_test() as pilot:
@@ -69,6 +72,7 @@ async def test_missing_optional():
         assert app.messages[0].validation_result == ValidationResult.success()
 
 
+@pytest.mark.anyio
 async def test_editing():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
@@ -94,6 +98,7 @@ async def test_editing():
         assert input.cursor_position == len(serial)
 
 
+@pytest.mark.anyio
 async def test_key_movement_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
@@ -114,6 +119,7 @@ async def test_key_movement_actions():
         assert input.cursor_position == 6
 
 
+@pytest.mark.anyio
 async def test_key_modification_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
@@ -152,6 +158,7 @@ async def test_key_modification_actions():
         assert input.value == ""
 
 
+@pytest.mark.anyio
 async def test_cursor_word_right_after_last_separator():
     app = InputApp(">NNN-NNN-NNN-NNNNN;_")
     async with app.run_test():
@@ -162,6 +169,7 @@ async def test_cursor_word_right_after_last_separator():
         assert input.cursor_position == 15
 
 
+@pytest.mark.anyio
 async def test_case_conversion_meta_characters():
     app = InputApp("NN<-N!N>N")
     async with app.run_test() as pilot:
@@ -171,6 +179,7 @@ async def test_case_conversion_meta_characters():
         assert input.is_valid
 
 
+@pytest.mark.anyio
 async def test_case_conversion_override():
     app = InputApp(">-<NN")
     async with app.run_test() as pilot:
@@ -180,6 +189,7 @@ async def test_case_conversion_override():
         assert input.is_valid
 
 
+@pytest.mark.anyio
 async def test_case_conversion_cancel():
     app = InputApp("-!N-")
     async with app.run_test() as pilot:
@@ -189,6 +199,7 @@ async def test_case_conversion_cancel():
         assert input.is_valid
 
 
+@pytest.mark.anyio
 async def test_only_separators__raises_ValueError():
     app = InputApp("---")
     with pytest.raises(ValueError):
@@ -196,6 +207,7 @@ async def test_only_separators__raises_ValueError():
             await pilot.press("a")
 
 
+@pytest.mark.anyio
 async def test_custom_separator_escaping():
     app = InputApp("N\\aN\\N\\cN")
     async with app.run_test() as pilot:
@@ -205,6 +217,7 @@ async def test_custom_separator_escaping():
         assert input.is_valid
 
 
+@pytest.mark.anyio
 async def test_digits_not_required():
     app = InputApp("00;_")
     async with app.run_test() as pilot:
@@ -214,6 +227,7 @@ async def test_digits_not_required():
         assert input.is_valid
 
 
+@pytest.mark.anyio
 async def test_digits_required():
     app = InputApp("99;_")
     async with app.run_test() as pilot:

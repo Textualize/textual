@@ -8,6 +8,7 @@ from textual.widgets import Label, Tab, TabbedContent, TabPane, Tabs
 from textual.widgets._tabbed_content import ContentTab
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_switch_via_ui():
     """Check tab navigation via the user interface."""
 
@@ -67,6 +68,7 @@ async def test_tabbed_content_switch_via_ui():
         assert app.query_one("#baz-label").region
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_switch_via_code():
     """Check tab navigation via code."""
 
@@ -109,6 +111,7 @@ async def test_tabbed_content_switch_via_code():
             tabbed_content.active = "X"
 
 
+@pytest.mark.anyio
 async def test_unsetting_tabbed_content_active():
     """Check that setting `TabbedContent.active = ""` unsets active tab."""
 
@@ -137,6 +140,7 @@ async def test_unsetting_tabbed_content_active():
         assert isinstance(messages[0], TabbedContent.Cleared)
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_initial():
     """Checked tabbed content with non-default tab."""
 
@@ -161,6 +165,7 @@ async def test_tabbed_content_initial():
         assert not app.query_one("#baz-label").region
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_messages():
     class TabbedApp(App):
         activation_history: list[Tab] = []
@@ -192,6 +197,7 @@ async def test_tabbed_content_messages():
         ]
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_later_from_empty():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -209,6 +215,7 @@ async def test_tabbed_content_add_later_from_empty():
         assert tabbed_content.active == "test-1"
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_later_from_composed():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -229,6 +236,7 @@ async def test_tabbed_content_add_later_from_composed():
         assert tabbed_content.active == "initial-1"
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_before_id():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -250,6 +258,7 @@ async def test_tabbed_content_add_before_id():
         ]
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_before_pane():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -275,6 +284,7 @@ async def test_tabbed_content_add_before_pane():
         ]
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_before_badly():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -291,6 +301,7 @@ async def test_tabbed_content_add_before_badly():
             )
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_after():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -313,6 +324,7 @@ async def test_tabbed_content_add_after():
         ]
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_after_pane():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -339,6 +351,7 @@ async def test_tabbed_content_add_after_pane():
         ]
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_after_badly():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -355,6 +368,7 @@ async def test_tabbed_content_add_after_badly():
             )
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_add_before_and_after():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -371,6 +385,7 @@ async def test_tabbed_content_add_before_and_after():
             )
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_removal():
     class TabbedApp(App[None]):
         cleared: var[int] = var(0)
@@ -406,6 +421,7 @@ async def test_tabbed_content_removal():
         assert tabbed_content.active == ""
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_reversed_removal():
     class TabbedApp(App[None]):
         cleared: var[int] = var(0)
@@ -441,6 +457,7 @@ async def test_tabbed_content_reversed_removal():
         assert tabbed_content.active == ""
 
 
+@pytest.mark.anyio
 async def test_tabbed_content_clear():
     class TabbedApp(App[None]):
         cleared: var[int] = var(0)
@@ -466,6 +483,7 @@ async def test_tabbed_content_clear():
         assert pilot.app.cleared == 1
 
 
+@pytest.mark.anyio
 async def test_disabling_does_not_deactivate_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -480,6 +498,7 @@ async def test_disabling_does_not_deactivate_tab():
         assert app.query_one(TabbedContent).active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_disabled_tab_cannot_be_clicked():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -496,6 +515,7 @@ async def test_disabled_tab_cannot_be_clicked():
         assert app.query_one(TabbedContent).active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_disabling_via_tabbed_content():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -512,6 +532,7 @@ async def test_disabling_via_tabbed_content():
         assert app.query_one(TabbedContent).active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_disabling_via_tab_pane():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -529,6 +550,7 @@ async def test_disabling_via_tab_pane():
         assert app.query_one(TabbedContent).active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_creating_disabled_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -544,6 +566,7 @@ async def test_creating_disabled_tab():
         assert app.query_one(TabbedContent).active == "tab-1"
 
 
+@pytest.mark.anyio
 async def test_navigation_around_disabled_tabs():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -576,6 +599,7 @@ async def test_navigation_around_disabled_tabs():
         assert tabbed_conent.active == "tab-4"
 
 
+@pytest.mark.anyio
 async def test_reenabling_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -598,6 +622,7 @@ async def test_reenabling_tab():
         assert app.query_one(TabbedContent).active == "tab-2"
 
 
+@pytest.mark.anyio
 async def test_reenabling_via_tabbed_content():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -620,6 +645,7 @@ async def test_reenabling_via_tabbed_content():
         assert app.query_one(TabbedContent).active == "tab-2"
 
 
+@pytest.mark.anyio
 async def test_reenabling_via_tab_pane():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -643,6 +669,7 @@ async def test_reenabling_via_tab_pane():
         assert app.query_one(TabbedContent).active == "tab-2"
 
 
+@pytest.mark.anyio
 async def test_disabling_unknown_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -655,6 +682,7 @@ async def test_disabling_unknown_tab():
             app.query_one(TabbedContent).disable_tab("foo")
 
 
+@pytest.mark.anyio
 async def test_enabling_unknown_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -667,6 +695,7 @@ async def test_enabling_unknown_tab():
             app.query_one(TabbedContent).enable_tab("foo")
 
 
+@pytest.mark.anyio
 async def test_hide_unknown_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -679,6 +708,7 @@ async def test_hide_unknown_tab():
             app.query_one(TabbedContent).hide_tab("foo")
 
 
+@pytest.mark.anyio
 async def test_show_unknown_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -691,6 +721,7 @@ async def test_show_unknown_tab():
             app.query_one(TabbedContent).show_tab("foo")
 
 
+@pytest.mark.anyio
 async def test_hide_show_messages():
     hide_msg = False
     show_msg = False
@@ -718,6 +749,7 @@ async def test_hide_show_messages():
         assert show_msg
 
 
+@pytest.mark.anyio
 async def test_hide_last_tab_means_no_tab_active():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -732,6 +764,7 @@ async def test_hide_last_tab_means_no_tab_active():
         assert not tabbed_content.active
 
 
+@pytest.mark.anyio
 async def test_hiding_tabs_moves_active_to_next_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -751,6 +784,7 @@ async def test_hiding_tabs_moves_active_to_next_tab():
         assert tabbed_content.active == "tab-3"
 
 
+@pytest.mark.anyio
 async def test_showing_tabs_does_not_change_active_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -774,6 +808,7 @@ async def test_showing_tabs_does_not_change_active_tab():
 
 
 @pytest.mark.parametrize("tab_id", ["tab-1", "tab-2"])
+@pytest.mark.anyio
 async def test_showing_first_tab_activates_tab(tab_id: str):
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -795,6 +830,7 @@ async def test_showing_first_tab_activates_tab(tab_id: str):
         assert tabbed_content.active == tab_id
 
 
+@pytest.mark.anyio
 async def test_disabling_nested_tabs():
     """Regression test for https://github.com/Textualize/textual/issues/3145."""
 
@@ -821,6 +857,7 @@ async def test_disabling_nested_tabs():
         await pilot.pause()
 
 
+@pytest.mark.anyio
 async def test_hiding_nested_tabs():
     """Regression test for https://github.com/Textualize/textual/issues/3145."""
 
@@ -847,6 +884,7 @@ async def test_hiding_nested_tabs():
         await pilot.pause()
 
 
+@pytest.mark.anyio
 async def test_tabs_nested_in_tabbed_content_doesnt_crash():
     """Regression test for https://github.com/Textualize/textual/issues/3412"""
 
@@ -861,6 +899,7 @@ async def test_tabs_nested_in_tabbed_content_doesnt_crash():
         await pilot.pause()
 
 
+@pytest.mark.anyio
 async def test_tabs_nested_doesnt_interfere_with_ancestor_tabbed_content():
     """When a Tabs is nested as a descendant in the DOM of a TabbedContent,
     the messages posted from that Tabs should not interfere with the TabbedContent.
@@ -893,6 +932,7 @@ async def test_tabs_nested_doesnt_interfere_with_ancestor_tabbed_content():
         assert tabbed_content.active == "outer1"
 
 
+@pytest.mark.anyio
 async def test_disabling_tab_within_tabbed_content_stays_isolated():
     """Disabling a tab within a tab pane should not affect the TabbedContent."""
 

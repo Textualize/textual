@@ -13,6 +13,7 @@ class SelfOwn(Widget):
         super().__init__(self)
 
 
+@pytest.mark.anyio
 async def test_mount_via_app() -> None:
     """Perform mount tests via the app."""
 
@@ -116,6 +117,7 @@ async def test_mount_via_app() -> None:
             await pilot.app.mount(Static(), before="Static")
 
 
+@pytest.mark.anyio
 async def test_mount_error() -> None:
     """Mounting a widget on an un-mounted widget should raise an error."""
     app = App()

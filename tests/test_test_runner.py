@@ -1,7 +1,10 @@
+import pytest
+
 from textual import events
 from textual.app import App
 
 
+@pytest.mark.anyio
 async def test_run_test() -> None:
     """Test the run_test context manager."""
     keys_pressed: list[str] = []

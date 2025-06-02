@@ -39,7 +39,6 @@ else:
 
     async def no_sleep_coro():
         """Creates a coroutine that does nothing for when no sleep is needed."""
-        pass
 
     def sleep(secs: float) -> Coroutine[None, None, None]:
         """A replacement sleep for Windows.

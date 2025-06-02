@@ -3,9 +3,12 @@ Tests for the loading indicator animation, which is considered a basic animation
 (An animation that also plays on the level BASIC.)
 """
 
+import pytest
+
 from textual.app import App
 
 
+@pytest.mark.anyio
 async def test_loading_indicator_is_not_static_on_full() -> None:
     """The loading indicator doesn't fall back to the static render on FULL."""
     app = App()
@@ -18,6 +21,7 @@ async def test_loading_indicator_is_not_static_on_full() -> None:
         assert str(indicator.render()) != "Loading..."
 
 
+@pytest.mark.anyio
 async def test_loading_indicator_is_not_static_on_basic() -> None:
     """The loading indicator doesn't fall back to the static render on BASIC."""
     app = App()
@@ -30,6 +34,7 @@ async def test_loading_indicator_is_not_static_on_basic() -> None:
         assert str(indicator.render()) != "Loading..."
 
 
+@pytest.mark.anyio
 async def test_loading_indicator_is_static_on_none() -> None:
     """The loading indicator falls back to the static render on NONE."""
     app = App()

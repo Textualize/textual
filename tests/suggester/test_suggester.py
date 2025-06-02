@@ -21,6 +21,7 @@ class LogListNode(DOMNode):
         self.log_list.append((message.suggestion, message.value))
 
 
+@pytest.mark.anyio
 async def test_cache_on():
     log = []
 
@@ -36,6 +37,7 @@ async def test_cache_on():
     assert log == ["hello"]
 
 
+@pytest.mark.anyio
 async def test_cache_off():
     log = []
 
@@ -51,6 +53,7 @@ async def test_cache_off():
     assert log == ["hello", "hello"]
 
 
+@pytest.mark.anyio
 async def test_suggestion_ready_message():
     log = []
     suggester = FillSuggester()
@@ -60,6 +63,7 @@ async def test_suggestion_ready_message():
     assert log == [("helloxxxxx", "hello"), ("worldxxxxx", "world")]
 
 
+@pytest.mark.anyio
 async def test_no_message_if_no_suggestion():
     log = []
     suggester = FillSuggester()
@@ -67,6 +71,7 @@ async def test_no_message_if_no_suggestion():
     assert log == []
 
 
+@pytest.mark.anyio
 async def test_suggestion_ready_message_on_cache_hit():
     log = []
     suggester = FillSuggester(use_cache=True)
@@ -86,6 +91,7 @@ async def test_suggestion_ready_message_on_cache_hit():
         "hELLO",
     ],
 )
+@pytest.mark.anyio
 async def test_case_insensitive_suggestions(value):
     class MySuggester(Suggester):
         async def get_suggestion(self, value: str):
@@ -95,6 +101,7 @@ async def test_case_insensitive_suggestions(value):
     await suggester._get_suggestion(DOMNode(), value)
 
 
+@pytest.mark.anyio
 async def test_case_insensitive_cache_hits():
     count = 0
 
