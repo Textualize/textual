@@ -120,6 +120,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Style.has_transparent_foreground` property https://github.com/Textualize/textual/pull/5657
 
 
+### Fixed
+
+- Fixed TextArea's syntax highlighting. Some highlighting details were not being
+  applied. For example, in CSS, the text 'padding: 10px 0;' was shown in a
+  single colour. Now the 'px' appears in a different colour to the rest of the
+  text.
+
+- Fixed some situations where editing for syntax highlighed TextArea widgets with
+  large documents was very unresponsive.
+
+
 ## [2.1.2] - 2025-02-26
 
 ### Fixed

@@ -1320,6 +1320,22 @@ def test_text_area_read_only_cursor_rendering(snap_compare):
     )
 
 
+@pytest.mark.skip("Paul Ollis: I think pilot.click does not do what is needed.")
+def test_text_area_mouse_cursor_placement(snap_compare):
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.theme = "css"
+        text_area.text = "Hello, world!\nNice to see you."
+        text_area.read_only = True
+        pilot.click(text_area, offset=(1, 4))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, 5),
+    )
+
+
 @pytest.mark.syntax
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
@@ -1340,13 +1356,13 @@ def hello(name):
         text_area = pilot.app.query_one(TextArea)
         text_area.load_text(text)
         text_area.language = "python"
-        text_area.selection = Selection((0, 1), (1, 9))
         text_area.theme = theme_name
 
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_theme,
         terminal_size=(48, text.count("\n") + 4),
+        press=['right', 'shift+down'] + ['shift+right'] * 8,
     )
 
 
@@ -1366,6 +1382,168 @@ def test_text_area_wrapping_and_folding(snap_compare):
 def test_text_area_line_number_start(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area_line_number_start.py", terminal_size=(32, 8)
+    )
+
+
+@pytest.mark.syntax
+@pytest.mark.parametrize(
+    "press",
+    [
+        # Just before horizontal scrolling should occur.
+        ['ctrl+right'] * 2 + ['right'] * 1,
+
+        # Scroll right by a single character.
+        ['ctrl+right'] * 2 + ['right'] * 2,
+
+        # Maximum first line scroll; i.e. cursor at end of first line.
+        ['ctrl+right'] * 5,
+
+        # Maximum scroll; i.e. cursor at end of fifth line.
+        ['down'] * 5 + ['left'] + ['right'],
+
+        # Cursor on the closing parenthesis on the fifth line. The opening
+        # parenthesis is scrolled off the LHSdt. of the TextArea.
+        ['down'] * 4 + ['ctrl+right'] * 12 + ['right'] * 2,
+    ],
+)
+def test_text_area_horizontal_scrolling(snap_compare, press):
+    text = """def a_function_with_a_long_name(long_argument_name):
+    if long_argument_name == 42:
+        print('I think you may have figured it out!')
+    else:
+        print('You need the one who is to come after me!')"""
+
+    def setup(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.show_line_numbers = True
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup,
+        press=press,
+        terminal_size=(42, 10),
+    )
+
+
+@pytest.mark.syntax
+@pytest.mark.parametrize(
+    "press",
+    [
+        # Cursor on the closing parenthesis on the fourth line. Matching
+        # parenthesis just about to scroll off LHS.
+        ['down'] * 3 + ['ctrl+right'] * 6 + ['right'] * 2,
+
+        # Cursor on the closing parenthesis on the fourth line. Matching
+        # parenthesis just scrolled off LHS.
+        ['down'] * 3 + ['ctrl+right'] * 6 + ['right'] * 3 + ["left"],
+
+        # Cursor on the opening parenthesis on the 6th line. The closing
+        # parenthesis is scrolled off the RHS.
+        ['down'] * 5 + ['ctrl+right'] * 1,
+    ],
+)
+def test_text_area_horizontal_scrolling_cursor_matching(snap_compare, press):
+    text = """def a_function_with_a_long_name(long_argument_name):
+    if long_argument_name == 42:
+        print(
+                   'You have figured it out!')  # 42
+    else:
+        print(
+            'You need the one who is to come after me!')"""
+
+    def setup(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.show_line_numbers = True
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup,
+        press=press,
+        terminal_size=(42, 10),
+    )
+
+
+@pytest.mark.syntax
+@pytest.mark.parametrize("soft_wrap", [False, True])
+@pytest.mark.parametrize(
+    "press", [
+        # Move the cursor on to the 'ū' character.
+        ["ctrl+right"] * 1 + ["right"],
+
+        # Move past the 'ち' character then before it and the on to it.
+        ["ctrl+right"] * 2 + ["left"] * 2 + ["right"],
+
+        # Move the cursor on to the opening parenthesis.
+        ["ctrl+right"] * 2,
+
+        # Move the cursor on to the closing parenthesis.
+        ["ctrl+right"] * 10 + ["right"],
+
+        # Move the cursor on to the second 'ち' character.
+        ["ctrl+right"] * 4 + ["left"],
+
+        # Move the cursor on to the character below the second 'ち' character.
+        ["ctrl+right"] * 4 + ["left"] + ["down"],
+    ],
+)
+def test_text_area_unicode_wide_syntax_highlighting(
+    snap_compare, soft_wrap, press,
+):
+    text = """def ūnicode_ち(arg_āāち="hi", arg_b="bye"):   # Trailing comment
+    if unicode_ārg_name == 42:                 # Trailing comment
+        print('I think you māy have figured it out!')
+    else:
+        print('You need the one who is to come after me!')"""
+
+    def setup(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.show_line_numbers = True
+        text_area.soft_wrap = soft_wrap
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup,
+        press=press,
+        terminal_size=(42, 14) if soft_wrap else (80, 10),
+    )
+
+
+@pytest.mark.syntax
+@pytest.mark.skip("SVG rendering does not match terminal rendering")
+@pytest.mark.parametrize(
+    "press", [
+        ["ctrl+right"] * 1 + ["right"],
+        ["ctrl+right"] * 1 + ["right"] * 2,
+        ["ctrl+right"] * 1 + ["right"] * 3,
+        ["ctrl+right"] * 1 + ["right"] + ["left"],
+    ],
+)
+def test_text_area_unicode_zero_width_codepoint_syntax_highlighting(
+        snap_compare, press):
+    # The 'ū' in the function name below is actually formed by a 'u' followed
+    # by 2 u0304 characters, which are zero width, modifying codepoints.
+    text = """def ū̄nicode_func(arg_āāā="hi", arg_b="bye"):   # Trailing comment
+    if unicode_ārg_name == 42:                 # Trailing comment
+        print('I think you māy have figured it out!')
+    else:
+        print('You need the one who is to come after me!')"""
+
+    def setup(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.show_line_numbers = True
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup,
+        press=press,
     )
 
 
@@ -1878,7 +2056,7 @@ def test_maximize_container(snap_compare):
         DEFAULT_CSS = """
         FormContainer {
             width: 50%;
-            border: blue;            
+            border: blue;
         }
         """
 
@@ -2610,7 +2788,7 @@ def test_themes(snap_compare, theme_name):
         Screen {
             align: center middle;
         }
-        
+
         Label {
             background: $panel;
             color: $text;
@@ -2645,7 +2823,7 @@ def test_custom_theme_with_variables(snap_compare):
         Screen {
             align: center middle;
         }
-        
+
         Label {
             background: $custom-background;
             color: $custom-text;
@@ -2820,7 +2998,7 @@ def test_position_absolute(snap_compare):
 
     class AbsoluteApp(App):
         CSS = """
-        Screen {        
+        Screen {
             align: center middle;
 
             .absolute {
@@ -2835,7 +3013,7 @@ def test_position_absolute(snap_compare):
                 offset: 1 1;
             }
             .offset2 {
-                offset: 2 2;                
+                offset: 2 2;
             }
             .offset3 {
                 offset: 3 3;
@@ -2873,7 +3051,7 @@ def test_grid_offset(snap_compare):
             border: solid green;
         }
 
-        #six {   
+        #six {
             offset: 0 10;
             background: blue;
         }
@@ -3127,7 +3305,7 @@ def test_dock_align(snap_compare):
             layout: horizontal;
         }
 
-        MainContainer {    
+        MainContainer {
             width: 100%;
             height: 100%;
             background: red;
@@ -3186,7 +3364,7 @@ def test_auto_parent_with_alignment(snap_compare):
                 height: auto;
                 background: red;
                 border: white;
-            }        
+            }
         }
         """
 
@@ -3272,7 +3450,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
             height: auto;
             background: blue;
         }
-        Label {        
+        Label {
             border: heavy red;
             text-align: left;
         }
@@ -3325,12 +3503,12 @@ def test_collapsible_datatable(snap_compare):
     class MyApp(App):
         CSS = """
         DataTable {
-            max-height: 1fr;            
-            border: red;            
+            max-height: 1fr;
+            border: red;
         }
         Collapsible {
             max-height: 50%;
-            
+
         }
         """
 
@@ -3450,7 +3628,7 @@ def test_overflow(snap_compare):
     class OverflowApp(App):
         CSS = """
         Label {
-            max-width: 100vw;            
+            max-width: 100vw;
         }
         #label1 {
             # Overflow will be cropped
@@ -3545,7 +3723,7 @@ def test_option_list_wrapping(snap_compare):
 
     class OLApp(App):
         CSS = """
-        OptionList { 
+        OptionList {
             width: 40;
             text-wrap: nowrap;
             text-overflow: ellipsis;
@@ -3856,7 +4034,7 @@ def test_select_list_in_collapsible(snap_compare):
     class CustomWidget(Horizontal):
         DEFAULT_CSS = """
         CustomWidget {
-            height: auto;                	
+            height: auto;
         }
         """
 
