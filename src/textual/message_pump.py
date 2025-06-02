@@ -11,7 +11,6 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
-import sys
 import threading
 from asyncio import CancelledError, QueueEmpty, Task, create_task
 from contextlib import contextmanager
@@ -23,12 +22,10 @@ from typing import (
     Awaitable,
     Callable,
     Generator,
-    Generic,
     Iterable,
     Type,
     TypeVar,
     cast,
-    overload,
 )
 from weakref import WeakSet
 
