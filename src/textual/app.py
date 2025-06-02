@@ -566,7 +566,7 @@ class App(Generic[ReturnType], DOMNode):
             CssPathError: When the supplied CSS path(s) are an unexpected type.
         """
         self._start_time = perf_counter()
-        super().__init__()
+        super().__init__(classes=self.DEFAULT_CLASSES)
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self._registered_themes: dict[str, Theme] = {}

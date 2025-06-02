@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## [3.3.0] - 2025-06-01
 
 ### Fixed
 
@@ -15,14 +15,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed running `App.run` after `asyncio.run` https://github.com/Textualize/textual/pull/5799
 - Fixed triggering a deprecation warning in py >= 3.10 https://github.com/Textualize/textual/pull/5799
 - Fixed `Input` invalid cursor position after updating the value https://github.com/Textualize/textual/issues/5811
+- Fixed `DEFAULT_CLASSES` when applied to App https://github.com/Textualize/textual/pull/5827
+- Fixed order of implicit content tag closing https://github.com/Textualize/textual/pull/5823
 
 ### Added
 
 - Exposed `CollapsibleTitle` https://github.com/Textualize/textual/pull/5810
-
-### Added
-
 - Added `Color.hsv` property and `Color.from_hsv` class method https://github.com/Textualize/textual/pull/5803
+- Added `cursor_at_start` and `cursor_at_end` properties to the `Input` widget https://github.com/Textualize/textual/pull/5830
+
+### Changed
+
+- Added a few features to `python -m textual.markup` playground https://github.com/Textualize/textual/pull/5823
 
 ## [3.2.0] - 2025-05-02
 
@@ -2890,6 +2894,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[3.3.0]: https://github.com/Textualize/textual/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/Textualize/textual/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/Textualize/textual/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/Textualize/textual/compare/v3.0.1...v3.1.0
