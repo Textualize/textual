@@ -1,4 +1,4 @@
-[tool.poetry]
+[project]
 name = "textual"
 version = "3.3.0"
 homepage = "https://github.com/Textualize/textual"
@@ -6,10 +6,12 @@ repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
 
 description = "Modern Text User Interface framework"
-authors = ["Will McGugan <will@textualize.io>"]
-license = "MIT"
 readme = "README.md"
-classifiers = [    
+license = { text = "MIT" }
+authors = [
+  { name = "Will McGugan", email = "will@textualize.io" }
+]
+classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
@@ -25,6 +27,67 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
+dependencies = [
+    "markdown-it-py[plugins,linkify]>=2.1.0",
+    "rich>=13.3.3",
+    "typing-extensions>=4.4.0,<5",
+    "platformdirs>=3.6.0,<5",
+]
+requires-python = ">=3.8.1,<4.0.0"
+
+[project.optional-dependencies]
+syntax = [
+    "tree-sitter>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-python>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-markdown>=0.3.0; python_version >= '3.9'",
+    "tree-sitter-json>=0.24.0; python_version >= '3.9'",
+    "tree-sitter-toml>=0.6.0; python_version >= '3.9'",
+    "tree-sitter-yaml>=0.6.0; python_version >= '3.9'",
+    "tree-sitter-html>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-css>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-javascript>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-rust>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-go>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-regex>=0.24.0; python_version >= '3.9'",
+    "tree-sitter-xml>=0.7.0; python_version >= '3.9'",
+    "tree-sitter-sql>=0.3.0,<0.3.8; python_version >= '3.9'",
+    "tree-sitter-java>=0.23.0; python_version >= '3.9'",
+    "tree-sitter-bash>=0.23.0; python_version >= '3.9'",
+]
+dev = [
+    "black==24.4.2",
+    "griffe==0.32.3",
+    "httpx>=0.23.1,<1",
+    "mkdocs>=1.3.0,<2",
+    "mkdocs-exclude>=1.0.2,<2",
+    "mkdocs-git-revision-date-localized-plugin>=1.2.5,<2",
+    "mkdocs-material>=9.0.11,<10",
+    "mkdocs-rss-plugin>=1.5.0,<2",
+    "mkdocstrings[python]>=0.20.0,<1",
+    "mkdocstrings-python>=1.0.0,<2",
+    "mypy>=1.0.0,<2",
+    "pre-commit>=2.13.0,<3",
+    "pytest>=8.3.1,<9",
+    "pytest-xdist>=3.6.1,<4",
+    "pytest-asyncio",
+    "pytest-cov>=5.0.0,<6",
+    "textual-dev>=1.7.0,<2",
+    "types-setuptools>=67.2.0.1,<68",
+    "isort>=5.13.2,<6",
+    "pytest-textual-snapshot>=1.0.0,<2",
+]
+
+[project.urls]
+Homepage = "https://github.com/Textualize/textual"
+Repository = "https://github.com/Textualize/textual"
+Documentation = "https://textual.textualize.io/"
+"Bug Tracker" = "https://github.com/Textualize/textual/issues"
+
+[build-system]
+requires = ["poetry-core>=1.2.0"]  # Keep poetry as the primary build tool
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
 include = [
     "src/textual/py.typed",
     { path = "docs/examples", format = "sdist" },
@@ -37,82 +100,8 @@ include = [
     { path = "docs-offline/**/*", format = "sdist" },
 ]
 
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/Textualize/textual/issues"
-
-[tool.ruff]
+[tool.ruff] # Moved ruff config up to be accessible by both
 target-version = "py38"
-
-[tool.poetry.dependencies]
-python = "^3.8.1"
-markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
-rich = ">=13.3.3"
-#rich = {path="../rich", develop=true}
-typing-extensions = "^4.4.0"
-platformdirs = ">=3.6.0,<5"
-
-# start of [syntax] extras
-# Require tree-sitter >= 0.23.0 and python >= 3.9
-# Windows, MacOS and Linux binary wheels are available for all of the languages below.
-tree-sitter = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-python = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-markdown = { version = ">=0.3.0", optional = true, python = ">=3.9"}
-tree-sitter-json = { version = ">=0.24.0", optional = true, python = ">=3.9" }
-tree-sitter-toml = { version = ">=0.6.0", optional = true, python = ">=3.9" }
-tree-sitter-yaml = { version = ">=0.6.0", optional = true, python = ">=3.9" }
-tree-sitter-html = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-css = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-javascript = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-rust = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-go = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-regex = { version = ">=0.24.0", optional = true, python = ">=3.9" }
-tree-sitter-xml = { version = ">=0.7.0", optional = true, python = ">=3.9" }
-tree-sitter-sql = { version = ">=0.3.0,<0.3.8", optional = true, python = ">=3.9" }
-tree-sitter-java = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-tree-sitter-bash = { version = ">=0.23.0", optional = true, python = ">=3.9" }
-# end of [syntax] extras
-
-[tool.poetry.extras]
-syntax = [
-    "tree-sitter",
-    "tree-sitter-python",
-    "tree-sitter-markdown",
-    "tree-sitter-json",
-    "tree-sitter-toml",
-    "tree-sitter-yaml",
-    "tree-sitter-html",
-    "tree-sitter-css",
-    "tree-sitter-javascript",
-    "tree-sitter-rust",
-    "tree-sitter-go",
-    "tree-sitter-regex",
-    "tree-sitter-xml",
-    "tree-sitter-sql",
-    "tree-sitter-java",
-    "tree-sitter-bash",
-]
-
-[tool.poetry.group.dev.dependencies]
-black = "24.4.2"
-griffe = "0.32.3"
-httpx = "^0.23.1"
-mkdocs = "^1.3.0"
-mkdocs-exclude = "^1.0.2"
-mkdocs-git-revision-date-localized-plugin = "^1.2.5"
-mkdocs-material = "^9.0.11"
-mkdocs-rss-plugin = "^1.5.0"
-mkdocstrings = { extras = ["python"], version = "^0.20.0" }
-mkdocstrings-python = "^1.0.0"
-mypy = "^1.0.0"
-pre-commit = "^2.13.0"
-pytest = "^8.3.1"
-pytest-xdist = "^3.6.1"
-pytest-asyncio = "*"
-pytest-cov = "^5.0.0"
-textual-dev = "^1.7.0"
-types-setuptools = "^67.2.0.1"
-isort = "^5.13.2"
-pytest-textual-snapshot = "^1.0.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -122,7 +111,3 @@ markers = [
     "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
 asyncio_default_fixture_loop_scope = "function"
-
-[build-system]
-requires = ["poetry-core>=1.2.0"]
-build-backend = "poetry.core.masonry.api"
