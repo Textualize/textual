@@ -1021,7 +1021,7 @@ TextArea {
         width, _ = self.scrollable_content_region.size
         cursor_width = 1
         if self.soft_wrap:
-            return width - self.gutter_width - cursor_width
+            return max(0, width - self.gutter_width - cursor_width)
         return 0
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
