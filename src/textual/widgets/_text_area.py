@@ -2110,55 +2110,41 @@ TextArea {
         self,
         text: str,
         location: Location | None = None,
-        *,
-        maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Insert text into the document.
 
         Args:
             text: The text to insert.
             location: The location to insert text, or None to use the cursor location.
-            maintain_selection_offset: If True, the active Selection will be updated
-                such that the same text is selected before and after the selection,
-                if possible. Otherwise, the cursor will jump to the end point of the
-                edit.
 
         Returns:
             An `EditResult` containing information about the edit.
         """
         if location is None:
             location = self.cursor_location
-        return self.edit(Edit(text, location, location, maintain_selection_offset))
+        return self.edit(Edit(text, location, location))
 
     def delete(
         self,
         start: Location,
         end: Location,
-        *,
-        maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Delete the text between two locations in the document.
 
         Args:
             start: The start location.
             end: The end location.
-            maintain_selection_offset: If True, the active Selection will be updated
-                such that the same text is selected before and after the selection,
-                if possible. Otherwise, the cursor will jump to the end point of the
-                edit.
 
         Returns:
             An `EditResult` containing information about the edit.
         """
-        return self.edit(Edit("", start, end, maintain_selection_offset))
+        return self.edit(Edit("", start, end))
 
     def replace(
         self,
         insert: str,
         start: Location,
         end: Location,
-        *,
-        maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Replace text in the document with new text.
 
@@ -2166,15 +2152,11 @@ TextArea {
             insert: The text to insert.
             start: The start location
             end: The end location.
-            maintain_selection_offset: If True, the active Selection will be updated
-                such that the same text is selected before and after the selection,
-                if possible. Otherwise, the cursor will jump to the end point of the
-                edit.
 
         Returns:
             An `EditResult` containing information about the edit.
         """
-        return self.edit(Edit(insert, start, end, maintain_selection_offset))
+        return self.edit(Edit(insert, start, end))
 
     def clear(self) -> EditResult:
         """Delete all text from the document.
@@ -2182,7 +2164,7 @@ TextArea {
         Returns:
             An EditResult relating to the deletion of all content.
         """
-        return self.delete((0, 0), self.document.end, maintain_selection_offset=False)
+        return self.delete((0, 0), self.document.end)
 
     def _delete_via_keyboard(
         self,
@@ -2200,7 +2182,7 @@ TextArea {
         """
         if self.read_only:
             return None
-        return self.delete(start, end, maintain_selection_offset=False)
+        return self.delete(start, end)
 
     def _replace_via_keyboard(
         self,
@@ -2220,7 +2202,7 @@ TextArea {
         """
         if self.read_only:
             return None
-        return self.replace(insert, start, end, maintain_selection_offset=False)
+        return self.replace(insert, start, end)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location.

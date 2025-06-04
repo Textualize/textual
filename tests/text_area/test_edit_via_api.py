@@ -56,7 +56,7 @@ async def test_insert_text_start():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((0, 5))
-        text_area.insert("Hello", location=(0, 0), maintain_selection_offset=False)
+        text_area.insert("Hello", location=(0, 0))
         assert text_area.text == "Hello" + TEXT
         assert text_area.selection == Selection.cursor((0, 5))
 
@@ -181,7 +181,6 @@ async def test_insert_text_non_cursor_location_dont_maintain_offset():
         result = text_area.insert(
             "Hello",
             location=(4, 0),
-            maintain_selection_offset=False,
         )
 
         assert result == EditResult(
@@ -200,7 +199,7 @@ async def test_insert_multiline_text():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((2, 5))
-        text_area.insert("Hello,\nworld!", maintain_selection_offset=False)
+        text_area.insert("Hello,\nworld!")
         expected_content = """\
 I must not fear.
 Fear is the mind-killer.
@@ -331,7 +330,7 @@ async def test_delete_within_line_dont_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.delete((0, 6), (0, 10), maintain_selection_offset=False)
+        text_area.delete((0, 6), (0, 10))
     expected_text = """\
 I must fear.
 Fear is the mind-killer.

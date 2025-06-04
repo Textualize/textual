@@ -22,9 +22,6 @@ class Edit:
     to_location: Location
     """The end location of the insert"""
 
-    maintain_selection_offset: bool
-    """If True, the selection will maintain its offset to the replacement range."""
-
     _original_selection: Selection | None = field(init=False, default=None)
     """The Selection when the edit was originally performed, to be restored on undo."""
 
@@ -92,13 +89,10 @@ class Edit:
             else selection_end_row
         )
 
-        if self.maintain_selection_offset:
-            self._updated_selection = Selection(
-                start=(target_selection_start_row, target_selection_start_column),
-                end=(target_selection_end_row, target_selection_end_column),
-            )
-        else:
-            self._updated_selection = Selection.cursor(edit_result.end_location)
+        self._updated_selection = Selection(
+            start=(target_selection_start_row, target_selection_start_column),
+            end=(target_selection_end_row, target_selection_end_column),
+        )
 
         self._edit_result = edit_result
         return edit_result
