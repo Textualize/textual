@@ -500,6 +500,11 @@ TextArea {
         self._cursor_offset = (0, 0)
         """The virtual offset of the cursor (not screen-space offset)."""
 
+        self.set_reactive(TextArea.soft_wrap, soft_wrap)
+        self.set_reactive(TextArea.read_only, read_only)
+        self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
+        self.set_reactive(TextArea.line_number_start, line_number_start)
+
         self._set_document(text, language)
 
         self.language = language
@@ -509,11 +514,6 @@ TextArea {
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
-
-        self.set_reactive(TextArea.soft_wrap, soft_wrap)
-        self.set_reactive(TextArea.read_only, read_only)
-        self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
-        self.set_reactive(TextArea.line_number_start, line_number_start)
 
         self.tab_behavior = tab_behavior
 
