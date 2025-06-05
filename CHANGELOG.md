@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed issues with initial flicker in `TextArea` rendering https://github.com/Textualize/textual/issues/5841
 
 ## [3.3.0] - 2025-06-01
 
