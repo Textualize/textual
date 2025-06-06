@@ -5,6 +5,7 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from operator import attrgetter, itemgetter
 from typing import (
@@ -1313,6 +1314,13 @@ class Spacing(NamedTuple):
             max(bottom, other_bottom),
             max(left, other_left),
         )
+
+
+if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS") == "1":
+    try:
+        from textual_speedups import Offset, Region, Size, Spacing
+    except ImportError:
+        pass
 
 
 NULL_OFFSET: Final = Offset(0, 0)
