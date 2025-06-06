@@ -419,7 +419,7 @@ class Compositor:
         resized_widgets = {
             widget
             for widget, (region, *_) in changes
-            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
+            if (widget in common_widgets and old_map[widget].region.size != region.size)
         }
         return ReflowResult(
             hidden=hidden_widgets,
