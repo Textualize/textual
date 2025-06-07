@@ -2,30 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from rich.protocol import is_renderable
-
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
-from textual.errors import RenderError
 from textual.visual import Visual, VisualType, visualize
 from textual.widget import Widget
-
-
-def _check_renderable(renderable: object):
-    """Check if a renderable conforms to the Rich Console protocol
-    (https://rich.readthedocs.io/en/latest/protocol.html)
-
-    Args:
-        renderable: A potentially renderable object.
-
-    Raises:
-        RenderError: If the object can not be rendered.
-    """
-    if not is_renderable(renderable) and not hasattr(renderable, "visualize"):
-        raise RenderError(
-            f"unable to render {renderable.__class__.__name__!r} type; must be a str, Text, Rich renderable oor Textual Visual instance"
-        )
 
 
 class Static(Widget, inherit_bindings=False):
