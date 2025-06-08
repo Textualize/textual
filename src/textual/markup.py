@@ -391,10 +391,20 @@ def _to_content(
                 text_append(text_content)
                 position += len(text_content)
             else:
-                opening_tag = "".join(tag_text).strip()
-                style_stack.append(
-                    (position, opening_tag, normalize_markup_tag(opening_tag))
-                )
+                opening_tag = "".join(tag_text)
+
+                if not opening_tag.strip():
+                    blank_tag = f"[{opening_tag}]"
+                    text_append(blank_tag)
+                    position += len(blank_tag)
+                else:
+                    style_stack.append(
+                        (
+                            position,
+                            opening_tag,
+                            normalize_markup_tag(opening_tag.strip()),
+                        )
+                    )
 
         elif token_name == "open_closing_tag":
             tag_text = []

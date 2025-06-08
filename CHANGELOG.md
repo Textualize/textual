@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added experimental opt-in support for https://github.com/willmcgugan/textual-speedups
 
+### Changed
+
+- Content markup is now more lenient; if a 'tag' doesn't contain a valid style it will be included verbatim.
+
 ## [3.3.0] - 2025-06-01
 
 ### Fixed

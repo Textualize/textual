@@ -11,6 +11,10 @@ from textual.markup import MarkupError, to_content
     [
         ("", Content("")),
         ("[", Content("[")),
+        ("[]", Content("[]")),
+        ("[ ", Content("[ ")),
+        ("[  ", Content("[  ")),
+        ("[  ]", Content("[  ]")),
         ("[0", Content("[0")),
         ("[0]", Content("[0]")),
         ("[red", Content("[red")),
