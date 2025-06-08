@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issues with initial flicker in `TextArea` rendering https://github.com/Textualize/textual/issues/5841
+- Fixed issue with workers that have large parameter lists breaking dev tools 
 
 ## Unreleased 
 
