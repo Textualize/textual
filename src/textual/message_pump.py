@@ -11,7 +11,6 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
-import sys
 import threading
 from asyncio import CancelledError, QueueEmpty, Task, create_task
 from contextlib import contextmanager
@@ -23,12 +22,10 @@ from typing import (
     Awaitable,
     Callable,
     Generator,
-    Generic,
     Iterable,
     Type,
     TypeVar,
     cast,
-    overload,
 )
 from weakref import WeakSet
 
@@ -162,6 +159,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
             stack = [set()]
             prevent_message_types_stack.set(stack)
         return stack
+
+    def _thread_init(self):
+        """Initialize threading primitives for the current thread.
+
+        Require for Python3.8 https://github.com/Textualize/textual/issues/5845
+
+        """
+        self._message_queue
+        self._mounted_event
 
     def _get_prevented_messages(self) -> set[type[Message]]:
         """A set of all the prevented message types."""
@@ -506,6 +512,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _start_messages(self) -> None:
         """Start messages task."""
+        self._thread_init()
+
         if self.app._running:
             self._task = create_task(
                 self._process_messages(), name=f"message pump {self}"
