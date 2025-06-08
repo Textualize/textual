@@ -1,3 +1,5 @@
+import threading
+
 import pytest
 
 from textual._dispatch_key import dispatch_key
@@ -169,3 +171,22 @@ async def test_prevent_default():
     async with app.run_test() as pilot:
         await pilot.click(MyButton)
         assert app_button_pressed
+
+
+async def test_thread_safe_post_message():
+    class TextMessage(Message):
+        pass
+
+    class TestApp(App):
+
+        def on_mount(self) -> None:
+            msg = TextMessage()
+            threading.Thread(target=self.post_message, args=(msg,)).start()
+
+        def on_text_message(self, message):
+            self.exit()
+
+    app = TestApp()
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
