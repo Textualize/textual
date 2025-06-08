@@ -18,6 +18,7 @@ from textual.markup import MarkupError, to_content
         ("[0", Content("[0")),
         ("[0]", Content("[0]")),
         ("[red", Content("[red")),
+        ("[red]", Content("")),
         ("foo", Content("foo")),
         ("foo\n", Content("foo\n")),
         ("foo\nbar", Content("foo\nbar")),
