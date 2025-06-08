@@ -865,6 +865,17 @@ class App(Generic[ReturnType], DOMNode):
 
         return super().__init_subclass__(*args, **kwargs)
 
+    def _thread_init(self):
+        """Initialize threading primitives for the current thread.
+
+        https://github.com/Textualize/textual/issues/5845
+
+        """
+        self._message_queue
+        self._mounted_event
+        self._exception_event
+        self._thread_id = threading.get_ident()
+
     def _get_dom_base(self) -> DOMNode:
         """When querying from the app, we want to query the default screen."""
         return self.default_screen
@@ -2094,8 +2105,9 @@ class App(Generic[ReturnType], DOMNode):
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
 
+        self._thread_init()
+
         app._loop = asyncio.get_running_loop()
-        app._thread_id = threading.get_ident()
         with app._context():
             try:
                 await app._process_messages(
@@ -3120,6 +3132,9 @@ class App(Generic[ReturnType], DOMNode):
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
+
+        self._thread_init()
+
         async def app_prelude() -> bool:
             """Work required before running the app.
 
