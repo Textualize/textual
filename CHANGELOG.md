@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Content markup is now more lenient; if a 'tag' doesn't contain a valid style it will be included verbatim.
+- Content markup is now more lenient; if a 'tag' doesn't contain a valid style it will be included verbatim. https://github.com/Textualize/textual/pull/5851
 
 ## [3.3.0] - 2025-06-01
 
