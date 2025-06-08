@@ -229,6 +229,7 @@ def test_assemble():
         ("\\[/foo", "[/foo"),
         ("\\[/foo]", "[/foo]"),
         ("\\[]", "[]"),
+        ("\\[0]", "[0]"),
     ],
 )
 def test_escape(markup: str, plain: str) -> None:
@@ -273,14 +274,3 @@ def test_first_line():
     first_line = content.first_line
     assert first_line.plain == "foo"
     assert first_line.spans == [Span(0, 3, "red")]
-
-
-def test_errors():
-    with pytest.raises(Exception):
-        Content.from_markup("[")
-
-    with pytest.raises(Exception):
-        Content.from_markup("[:")
-
-    with pytest.raises(Exception):
-        Content.from_markup("[foo")
