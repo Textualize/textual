@@ -164,7 +164,9 @@ class Worker(Generic[ResultType]):
         self._work = work
         self.name = name
         self.group = group
-        self.description = description
+        self.description = (
+            description if len(description) <= 1000 else description[:1000] + "..."
+        )
         self.exit_on_error = exit_on_error
         self.cancelled_event: Event = Event()
         """A threading event set when the worker is cancelled."""
