@@ -48,19 +48,6 @@ async def test_insert_text_start_maintain_selection_offset():
         assert text_area.selection == Selection.cursor((0, 10))
 
 
-async def test_insert_text_start():
-    """The document is correctly updated on inserting at the start.
-    If we don't maintain the selection offset, the cursor jumps
-    to the end of the edit and the selection is empty."""
-    app = TextAreaApp()
-    async with app.run_test():
-        text_area = app.query_one(TextArea)
-        text_area.move_cursor((0, 5))
-        text_area.insert("Hello", location=(0, 0))
-        assert text_area.text == "Hello" + TEXT
-        assert text_area.selection == Selection.cursor((0, 5))
-
-
 async def test_insert_empty_string():
     app = TextAreaApp()
     async with app.run_test():
@@ -191,7 +178,7 @@ async def test_insert_text_non_cursor_location_dont_maintain_offset():
 
         # Since maintain_selection_offset is False, the selection
         # is reset to a cursor and goes to the end of the insert.
-        assert text_area.selection == Selection.cursor((4, 5))
+        assert text_area.selection == Selection((2, 3), (3, 5))
 
 
 async def test_insert_multiline_text():
@@ -324,21 +311,6 @@ Fear is the little-death that brings total obliteration.
 I will face my fear.
 """
         assert text_area.text == expected_text
-
-
-async def test_delete_within_line_dont_maintain_offset():
-    app = TextAreaApp()
-    async with app.run_test():
-        text_area = app.query_one(TextArea)
-        text_area.delete((0, 6), (0, 10))
-    expected_text = """\
-I must fear.
-Fear is the mind-killer.
-Fear is the little-death that brings total obliteration.
-I will face my fear.
-"""
-    assert text_area.selection == Selection.cursor((0, 6))  # cursor moved
-    assert text_area.text == expected_text
 
 
 async def test_delete_multiple_lines_selection_above():

@@ -301,8 +301,14 @@ async def test_delete_to_end_of_line(selection, expected_result):
 
         await pilot.press("ctrl+k")
 
-        assert text_area.selection == Selection.cursor(selection.end)
         assert text_area.text == expected_result
+
+        if selection.start < selection.end:
+            # the selection is not behind the current cursor location
+            assert text_area.selection == selection
+        else:
+            # the selection is behind the current cursor location and thus deleted
+            assert text_area.selection == Selection.cursor(selection.end)
 
 
 @pytest.mark.parametrize(
@@ -329,8 +335,19 @@ async def test_delete_to_start_of_line(selection, expected_result):
 
         await pilot.press("ctrl+u")
 
-        assert text_area.selection == Selection.cursor((0, 0))
         assert text_area.text == expected_result
+        if selection.start > selection.end:
+            # the selection is behind the current cursor location and
+            # thus shifted by the length of the edit
+            shift = (0, - selection.end[1])
+            start = selection.start[0] + shift[0], selection.start[1] + shift[1]
+            end = selection.end[0] + shift[0], selection.end[1] + shift[1]
+
+            assert text_area.selection == Selection(start, end)
+        else:
+            # the selection is before the current cursor location and
+            # hence deleted
+            assert text_area.selection == Selection.cursor((0, 0))
 
 
 @pytest.mark.parametrize(
