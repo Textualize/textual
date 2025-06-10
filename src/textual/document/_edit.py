@@ -31,6 +31,43 @@ class Edit:
     _edit_result: EditResult | None = field(init=False, default=None)
     """The result of doing the edit."""
 
+    def _update_location(self, location: Location, delete: Selection, insert: Selection, target: Location) -> Location:
+        """Move a given location with respect to deletion and insertion ranges of an edit.
+
+        Args:
+            location: Location before the edit.
+            delete: Range which is deleted during the edit.
+            insert: Range which is inserted during the edit.
+            target: Returned location when `location` is within the deletion range,
+                typically the start or the end of the insertion range.
+
+        Returns:
+            Location after the edit.
+        """
+        loc_ = location
+        del_ = delete
+        ins_ = insert
+
+        if loc_ < del_:
+            # `loc_` is not affected by the edit and thus does not change
+            pass
+        elif loc_ in del_:
+            # `loc_` is within the deletion range and set to the `target`
+            loc_ = target
+        elif loc_ > del_:
+            # `loc_` is shifted by the difference in length
+            # between delete and insert operations
+            shift = (ins_.end[0] - del_.end[0], ins_.end[1] - del_.end[1])
+
+            # only shift columns when edit happened in the same row `loc_` is also in
+            if del_.end[0] < loc_[0]:
+                shift = (shift[0], 0)
+
+            loc_ = (loc_[0] + shift[0], loc_[1] + shift[1])
+
+        return loc_
+
+
     def do(self, text_area: TextArea, record_selection: bool = True) -> EditResult:
         """Perform the edit operation.
 
@@ -45,7 +82,7 @@ class Edit:
         if record_selection:
             self._original_selection = text_area.selection
 
-        text = self.text
+        edit_result = text_area.document.replace_range(self.top, self.bottom, self.text)
 
         # This code is mostly handling how we adjust TextArea.selection
         # when an edit is made to the document programmatically.
@@ -53,48 +90,39 @@ class Edit:
         # position in the document even if an insert happens before
         # their cursor position.
 
-        edit_bottom_row, edit_bottom_column = self.bottom
+        # use the original selection for proper history undo/redo operations
+        start, end = self._original_selection
 
-        selection_start, selection_end = text_area.selection
-        selection_start_row, selection_start_column = selection_start
-        selection_end_row, selection_end_column = selection_end
+        delete = Selection(self.top, self.bottom)
+        insert = Selection(self.top, edit_result.end_location)
 
-        edit_result = text_area.document.replace_range(self.top, self.bottom, text)
+        if (start in delete) and (end in delete):
+            # the current selection has been deleted, i.e. is within the deletion range;
+            # reset cursor to end of edit, i.e. insert range
+            start, end = insert.end, insert.end
+        else:
+            # reverse target locations if the current selection is reversed
+            if start > end:
+                target_start, target_end = insert.start, insert.end
+            else:
+                target_start, target_end = insert.end, insert.start
 
-        new_edit_to_row, new_edit_to_column = edit_result.end_location
+            ## start
+            # before edit - no-op
+            # within edit - shift to end of edit
+            #  after edit - shift by edit length
 
-        column_offset = new_edit_to_column - edit_bottom_column
-        target_selection_start_column = (
-            selection_start_column + column_offset
-            if edit_bottom_row == selection_start_row
-            and edit_bottom_column <= selection_start_column
-            else selection_start_column
-        )
-        target_selection_end_column = (
-            selection_end_column + column_offset
-            if edit_bottom_row == selection_end_row
-            and edit_bottom_column <= selection_end_column
-            else selection_end_column
-        )
+            ## end
+            # before edit - no-op
+            # within edit - shift to start of edit
+            #  after edit - shift by edit length
 
-        row_offset = new_edit_to_row - edit_bottom_row
-        target_selection_start_row = (
-            selection_start_row + row_offset
-            if edit_bottom_row <= selection_start_row
-            else selection_start_row
-        )
-        target_selection_end_row = (
-            selection_end_row + row_offset
-            if edit_bottom_row <= selection_end_row
-            else selection_end_row
-        )
+            start = self._update_location(start, delete, insert, target_start)
+            end = self._update_location(end, delete, insert, target_end)
 
-        self._updated_selection = Selection(
-            start=(target_selection_start_row, target_selection_start_column),
-            end=(target_selection_end_row, target_selection_end_column),
-        )
-
+        self._updated_selection = Selection(start, end)
         self._edit_result = edit_result
+
         return edit_result
 
     def undo(self, text_area: TextArea) -> EditResult:

@@ -466,3 +466,21 @@ class Selection(NamedTuple):
         """Return True if the selection has 0 width, i.e. it's just a cursor."""
         start, end = self
         return start == end
+
+    def __contains__(self, location: Location) -> bool:
+        start, end = self
+        start, end = sorted((start, end))
+        return start <= location <= end
+
+    def __gt__(self, location: Location) -> bool:
+        return location < max(self.start, self.end)
+
+    def __ge__(self, location: Location) -> bool:
+        return location <= max(self.start, self.end)
+
+    def __lt__(self, location: Location) -> bool:
+        return location > min(self.start, self.end)
+
+    def __le__(self, location: Location) -> bool:
+        return location >= min(self.start, self.end)
+
