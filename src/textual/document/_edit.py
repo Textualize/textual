@@ -31,7 +31,9 @@ class Edit:
     _edit_result: EditResult | None = field(init=False, default=None)
     """The result of doing the edit."""
 
-    def _update_location(self, location: Location, delete: Selection, insert: Selection, target: Location) -> Location:
+    def _update_location(
+        self, location: Location, delete: Selection, insert: Selection, target: Location
+    ) -> Location:
         """Move a given location with respect to deletion and insertion ranges of an edit.
 
         Args:
@@ -66,7 +68,6 @@ class Edit:
             loc_ = (loc_[0] + shift[0], loc_[1] + shift[1])
 
         return loc_
-
 
     def do(self, text_area: TextArea, record_selection: bool = True) -> EditResult:
         """Perform the edit operation.

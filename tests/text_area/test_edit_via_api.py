@@ -102,9 +102,7 @@ async def test_insert_character_near_cursor_maintain_selection_offset(
     ],
 )
 async def test_insert_newline_around_cursor_maintain_selection_offset(
-    cursor_location,
-    insert_location,
-    cursor_destination
+    cursor_location, insert_location, cursor_destination
 ):
     app = TextAreaApp()
     async with app.run_test():

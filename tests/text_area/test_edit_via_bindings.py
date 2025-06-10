@@ -339,7 +339,7 @@ async def test_delete_to_start_of_line(selection, expected_result):
         if selection.start > selection.end:
             # the selection is behind the current cursor location and
             # thus shifted by the length of the edit
-            shift = (0, - selection.end[1])
+            shift = (0, -selection.end[1])
             start = selection.start[0] + shift[0], selection.start[1] + shift[1]
             end = selection.end[0] + shift[0], selection.end[1] + shift[1]
 

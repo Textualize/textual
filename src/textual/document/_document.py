@@ -483,4 +483,3 @@ class Selection(NamedTuple):
 
     def __le__(self, location: Location) -> bool:
         return location >= min(self.start, self.end)
-
