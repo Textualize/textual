@@ -10,6 +10,15 @@ from textual.markup import MarkupError, to_content
     ["markup", "content"],
     [
         ("", Content("")),
+        ("[", Content("[")),
+        ("[]", Content("[]")),
+        ("[ ", Content("[ ")),
+        ("[  ", Content("[  ")),
+        ("[  ]", Content("[  ]")),
+        ("[0", Content("[0")),
+        ("[0]", Content("[0]")),
+        ("[red", Content("[red")),
+        ("[red]", Content("")),
         ("foo", Content("foo")),
         ("foo\n", Content("foo\n")),
         ("foo\nbar", Content("foo\nbar")),
@@ -152,8 +161,6 @@ def test_to_content(markup: str, content: Content):
 
 
 def test_content_parse_fail() -> None:
-    with pytest.raises(MarkupError):
-        to_content("[rgb(1,2,3,4)]foo")
     with pytest.raises(MarkupError):
         to_content("[foo]foo[/bar]")
     with pytest.raises(MarkupError):

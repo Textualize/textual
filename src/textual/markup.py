@@ -48,8 +48,9 @@ expect_markup_tag = (
         variable_ref=VARIABLE_REF,
         whitespace=r"\s+",
     )
-    .expect_eof(False)
+    .expect_eof(True)
     .expect_semicolon(False)
+    .extract_text(True)
 )
 
 expect_markup = Expect(
@@ -374,14 +375,36 @@ def _to_content(
         elif token_name == "open_tag":
             tag_text = []
 
+            eof = False
+            contains_text = False
             for token in iter_tokens:
                 if token.name == "end_tag":
                     break
+                elif token.name == "text":
+                    contains_text = True
+                elif token.name == "eof":
+                    eof = True
                 tag_text.append(token.value)
-            opening_tag = "".join(tag_text).strip()
-            style_stack.append(
-                (position, opening_tag, normalize_markup_tag(opening_tag))
-            )
+            if contains_text or eof:
+                # "tag" was unparsable
+                text_content = f"[{''.join(tag_text)}" + ("" if eof else "]")
+                text_append(text_content)
+                position += len(text_content)
+            else:
+                opening_tag = "".join(tag_text)
+
+                if not opening_tag.strip():
+                    blank_tag = f"[{opening_tag}]"
+                    text_append(blank_tag)
+                    position += len(blank_tag)
+                else:
+                    style_stack.append(
+                        (
+                            position,
+                            opening_tag,
+                            normalize_markup_tag(opening_tag.strip()),
+                        )
+                    )
 
         elif token_name == "open_closing_tag":
             tag_text = []
