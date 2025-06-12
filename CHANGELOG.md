@@ -167,6 +167,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `pointer_x`, `pointer_y`, `pointer_screen_x`, and `pointer_screen_y` attributes to mouse events https://github.com/Textualize/textual/pull/5556
+- Added PEP 621 support to `pyproject.toml` for interoperability with other packaging tools while maintaining Poetry compatibility.
 
 ### Changed
 
