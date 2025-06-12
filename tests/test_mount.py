@@ -5,6 +5,8 @@ Make sure that calls to render only happen after a widget being mounted.
 
 import asyncio
 
+import pytest
+
 from textual.app import App
 from textual.widget import Widget
 
@@ -18,6 +20,7 @@ class W(Widget):
         self.renderable = "1234"
 
 
+@pytest.mark.anyio
 async def test_render_only_after_mount():
     """Regression test for https://github.com/Textualize/textual/issues/2914"""
     app = App()

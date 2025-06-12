@@ -50,7 +50,7 @@ This was also solved with a new rule called "constrain".
 Applying `constrain` to a widget will keep the widget within the bounds of the screen.
 In the case of `Select`, if you expand the options while at the bottom of the screen, then the overlay will be moved up so that you can see all the options.
 
-These new rules are currently undocumented as they are still subject to change, but you can see them in the [Select](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_select.py#L179) source if you are interested.
+These new rules are currently undocumented as they are still subject to change, but you can see them in the [Select](https://github.com/Textualize/textual/blob/v0.24.0/src/textual/widgets/_select.py#L179-L220) source if you are interested.
 
 In a future release these will be finalized and you can confidently use them in your own projects.
 

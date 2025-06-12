@@ -6,6 +6,7 @@ from textual.app import App, SuspendNotSupported
 from textual.drivers.headless_driver import HeadlessDriver
 
 
+@pytest.mark.anyio
 async def test_suspend_not_supported() -> None:
     """Suspending when not supported should raise an error."""
     async with App().run_test() as pilot:
@@ -16,6 +17,7 @@ async def test_suspend_not_supported() -> None:
                 pass
 
 
+@pytest.mark.anyio
 async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
     """Suspending when supported should call the relevant driver methods."""
 

@@ -43,6 +43,7 @@ class TreeClearApp(App[None]):
         node.add_leaf("Xiaojie", VerseMoon())
 
 
+@pytest.mark.anyio
 async def test_tree_simple_clear() -> None:
     """Clearing a tree should keep the old root label and data."""
     async with TreeClearApp().run_test() as pilot:
@@ -54,6 +55,7 @@ async def test_tree_simple_clear() -> None:
         assert isinstance(tree.root.data, VerseStar)
 
 
+@pytest.mark.anyio
 async def test_tree_reset_with_label() -> None:
     """Resetting a tree with a new label should use the new label and set the data to None."""
     async with TreeClearApp().run_test() as pilot:
@@ -65,6 +67,7 @@ async def test_tree_reset_with_label() -> None:
         assert tree.root.data is None
 
 
+@pytest.mark.anyio
 async def test_tree_reset_with_label_and_data() -> None:
     """Resetting a tree with a label and data have that label and data used."""
     async with TreeClearApp().run_test() as pilot:
@@ -76,6 +79,7 @@ async def test_tree_reset_with_label_and_data() -> None:
         assert isinstance(tree.root.data, VersePlanet)
 
 
+@pytest.mark.anyio
 async def test_remove_node():
     async with TreeClearApp().run_test() as pilot:
         tree = pilot.app.query_one(VerseTree)
@@ -84,6 +88,7 @@ async def test_remove_node():
         assert len(tree.root.children) == 1
 
 
+@pytest.mark.anyio
 async def test_remove_node_children():
     async with TreeClearApp().run_test() as pilot:
         tree = pilot.app.query_one(VerseTree)
@@ -94,6 +99,7 @@ async def test_remove_node_children():
         assert len(tree.root.children[0].children) == 0
 
 
+@pytest.mark.anyio
 async def test_tree_remove_children_of_root():
     """Test removing the children of the root."""
     async with TreeClearApp().run_test() as pilot:
@@ -103,6 +109,7 @@ async def test_tree_remove_children_of_root():
         assert len(tree.root.children) == 0
 
 
+@pytest.mark.anyio
 async def test_attempt_to_remove_root():
     """Attempting to remove the root should be an error."""
     async with TreeClearApp().run_test() as pilot:

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import SelectionList
 
@@ -15,12 +17,14 @@ class SelectionListApp(App[None]):
         yield SelectionList[int](*[(str(n), n, self._default_state) for n in range(50)])
 
 
+@pytest.mark.anyio
 async def test_empty_selected() -> None:
     """Selected should be empty when nothing is selected."""
     async with SelectionListApp().run_test() as pilot:
         assert pilot.app.query_one(SelectionList).selected == []
 
 
+@pytest.mark.anyio
 async def test_programatic_select() -> None:
     """Selected should contain a selected value."""
     async with SelectionListApp().run_test() as pilot:
@@ -29,6 +33,7 @@ async def test_programatic_select() -> None:
         assert pilot.app.query_one(SelectionList).selected == [0]
 
 
+@pytest.mark.anyio
 async def test_programatic_select_all() -> None:
     """Selected should contain all selected values."""
     async with SelectionListApp().run_test() as pilot:
@@ -37,6 +42,7 @@ async def test_programatic_select_all() -> None:
         assert pilot.app.query_one(SelectionList).selected == list(range(50))
 
 
+@pytest.mark.anyio
 async def test_programatic_deselect() -> None:
     """Selected should not contain a deselected value."""
     async with SelectionListApp(True).run_test() as pilot:
@@ -45,6 +51,7 @@ async def test_programatic_deselect() -> None:
         assert pilot.app.query_one(SelectionList).selected == list(range(50)[1:])
 
 
+@pytest.mark.anyio
 async def test_programatic_deselect_all() -> None:
     """Selected should not contain anything after deselecting all values."""
     async with SelectionListApp(True).run_test() as pilot:
@@ -53,6 +60,7 @@ async def test_programatic_deselect_all() -> None:
         assert pilot.app.query_one(SelectionList).selected == []
 
 
+@pytest.mark.anyio
 async def test_programatic_toggle() -> None:
     """Selected should reflect a toggle."""
     async with SelectionListApp().run_test() as pilot:
@@ -64,6 +72,7 @@ async def test_programatic_toggle() -> None:
         assert pilot.app.query_one(SelectionList).selected == list(range(50)[:25])
 
 
+@pytest.mark.anyio
 async def test_programatic_toggle_all() -> None:
     """Selected should contain all values after toggling all on."""
     async with SelectionListApp().run_test() as pilot:
@@ -72,6 +81,7 @@ async def test_programatic_toggle_all() -> None:
         assert pilot.app.query_one(SelectionList).selected == list(range(50))
 
 
+@pytest.mark.anyio
 async def test_removal_of_selected_item() -> None:
     """Removing a selected selection should remove its value from the selected set."""
     async with SelectionListApp().run_test() as pilot:

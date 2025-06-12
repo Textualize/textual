@@ -8,6 +8,8 @@ that have been modified by the child class.
 
 from __future__ import annotations
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList, SelectionList
@@ -47,6 +49,7 @@ class SelectionListApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_messages_on_startup() -> None:
     """There should be a highlighted message when a non-empty selection list first starts up."""
     async with SelectionListApp().run_test() as pilot:
@@ -55,6 +58,7 @@ async def test_messages_on_startup() -> None:
         assert pilot.app.messages == [("SelectionHighlighted", 0)]
 
 
+@pytest.mark.anyio
 async def test_new_highlight() -> None:
     """Setting the highlight to a new option should result in a message."""
     async with SelectionListApp().run_test() as pilot:
@@ -65,6 +69,7 @@ async def test_new_highlight() -> None:
         assert pilot.app.messages[1:] == [("SelectionHighlighted", 2)]
 
 
+@pytest.mark.anyio
 async def test_toggle() -> None:
     """Toggling an option should result in messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -79,6 +84,7 @@ async def test_toggle() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_toggle_via_user() -> None:
     """Toggling via the user should result in the correct messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -92,6 +98,7 @@ async def test_toggle_via_user() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_toggle_all() -> None:
     """Toggling all options should result in messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -115,6 +122,7 @@ async def test_toggle_all() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_select() -> None:
     """Selecting all an option should result in a message."""
     async with SelectionListApp().run_test() as pilot:
@@ -128,6 +136,7 @@ async def test_select() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_select_selected() -> None:
     """Selecting an option that is already selected should emit no extra message.."""
     async with SelectionListApp().run_test() as pilot:
@@ -143,6 +152,7 @@ async def test_select_selected() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_select_all() -> None:
     """Selecting all options should result in messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -156,6 +166,7 @@ async def test_select_all() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_select_all_selected() -> None:
     """Selecting all when all are selected should result in no extra messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -171,6 +182,7 @@ async def test_select_all_selected() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_deselect() -> None:
     """Deselecting an option should result in a message."""
     async with SelectionListApp().run_test() as pilot:
@@ -187,6 +199,7 @@ async def test_deselect() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_deselect_deselected() -> None:
     """Deselecting a deselected option should result in no extra messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -197,6 +210,7 @@ async def test_deselect_deselected() -> None:
         assert pilot.app.messages == [("SelectionHighlighted", 0)]
 
 
+@pytest.mark.anyio
 async def test_deselect_all() -> None:
     """Deselecting all deselected options should result in no additional messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -207,6 +221,7 @@ async def test_deselect_all() -> None:
         assert pilot.app.messages == [("SelectionHighlighted", 0)]
 
 
+@pytest.mark.anyio
 async def test_select_then_deselect_all() -> None:
     """Selecting and then deselecting all options should result in messages."""
     async with SelectionListApp().run_test() as pilot:

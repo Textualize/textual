@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
@@ -14,6 +16,7 @@ class OptionListApp(App[None]):
         yield OptionList()
 
 
+@pytest.mark.anyio
 async def test_get_after_add() -> None:
     """It should be possible to get an option by ID after adding."""
     async with OptionListApp().run_test() as pilot:

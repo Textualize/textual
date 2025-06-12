@@ -1,9 +1,12 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widget import Widget
 from textual.widgets import Button, Footer
 
 
+@pytest.mark.anyio
 async def test_footer_bindings() -> None:
     app_binding_count = 0
 

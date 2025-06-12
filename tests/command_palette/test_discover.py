@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App
 from textual.command import CommandPalette, DiscoveryHit, Hit, Hits, Provider
 from textual.widgets import OptionList
@@ -25,6 +27,7 @@ class CommandPaletteApp(App[None]):
         self.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_discovery_visible() -> None:
     """A provider with discovery should cause the command palette to be opened right away."""
     async with CommandPaletteApp().run_test() as pilot:

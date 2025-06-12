@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Input
 
@@ -23,6 +25,7 @@ class InputTester(App[None]):
             yield Input(value, id=input_id)
 
 
+@pytest.mark.anyio
 async def test_input_home() -> None:
     """Going home should always land at position zero."""
     async with InputTester().run_test() as pilot:
@@ -31,6 +34,7 @@ async def test_input_home() -> None:
             assert input.cursor_position == 0
 
 
+@pytest.mark.anyio
 async def test_input_end() -> None:
     """Going end should always land at the last position."""
     async with InputTester().run_test() as pilot:
@@ -39,6 +43,7 @@ async def test_input_end() -> None:
             assert input.cursor_position == len(input.value)
 
 
+@pytest.mark.anyio
 async def test_input_right_from_home() -> None:
     """Going right should always land at the next position, if there is one."""
     async with InputTester().run_test() as pilot:
@@ -48,6 +53,7 @@ async def test_input_right_from_home() -> None:
             assert input.cursor_position == (1 if input.value else 0)
 
 
+@pytest.mark.anyio
 async def test_input_right_from_end() -> None:
     """Going right should always stay put if doing so from the end."""
     async with InputTester().run_test() as pilot:
@@ -57,6 +63,7 @@ async def test_input_right_from_end() -> None:
             assert input.cursor_position == len(input.value)
 
 
+@pytest.mark.anyio
 async def test_input_left_from_home() -> None:
     """Going left from home should stay put."""
     async with InputTester().run_test() as pilot:
@@ -66,6 +73,7 @@ async def test_input_left_from_home() -> None:
             assert input.cursor_position == 0
 
 
+@pytest.mark.anyio
 async def test_input_left_from_end() -> None:
     """Going left from the end should go back one place, where possible."""
     async with InputTester().run_test() as pilot:
@@ -75,6 +83,7 @@ async def test_input_left_from_end() -> None:
             assert input.cursor_position == (len(input.value) - 1 if input.value else 0)
 
 
+@pytest.mark.anyio
 async def test_input_left_word_from_home() -> None:
     """Going left one word from the start should do nothing."""
     async with InputTester().run_test() as pilot:
@@ -84,6 +93,7 @@ async def test_input_left_word_from_home() -> None:
             assert input.cursor_position == 0
 
 
+@pytest.mark.anyio
 async def test_input_left_word_from_end() -> None:
     """Going left one word from the end should land correctly.."""
     async with InputTester().run_test() as pilot:
@@ -100,6 +110,7 @@ async def test_input_left_word_from_end() -> None:
             assert input.cursor_position == expected_at[input.id]
 
 
+@pytest.mark.anyio
 async def test_password_input_left_word_from_end() -> None:
     """Going left one word from the end in a password field should land at home."""
     async with InputTester().run_test() as pilot:
@@ -110,6 +121,7 @@ async def test_password_input_left_word_from_end() -> None:
             assert input.cursor_position == 0
 
 
+@pytest.mark.anyio
 async def test_input_right_word_from_home() -> None:
     """Going right one word from the start should land correctly.."""
     async with InputTester().run_test() as pilot:
@@ -126,6 +138,7 @@ async def test_input_right_word_from_home() -> None:
             assert input.cursor_position == expected_at[input.id]
 
 
+@pytest.mark.anyio
 async def test_password_input_right_word_from_home() -> None:
     """Going right one word from the start of a password input should go to the end."""
     async with InputTester().run_test() as pilot:
@@ -135,6 +148,7 @@ async def test_password_input_right_word_from_home() -> None:
             assert input.cursor_position == len(input.value)
 
 
+@pytest.mark.anyio
 async def test_input_right_word_from_end() -> None:
     """Going right one word from the end should do nothing."""
     async with InputTester().run_test() as pilot:
@@ -144,6 +158,7 @@ async def test_input_right_word_from_end() -> None:
             assert input.cursor_position == len(input.value)
 
 
+@pytest.mark.anyio
 async def test_input_right_word_to_the_end() -> None:
     """Using right-word to get to the end should hop the correct number of times."""
     async with InputTester().run_test() as pilot:
@@ -163,6 +178,7 @@ async def test_input_right_word_to_the_end() -> None:
             assert hops == expected_hops[input.id]
 
 
+@pytest.mark.anyio
 async def test_input_left_word_from_the_end() -> None:
     """Using left-word to get home from the end should hop the correct number of times."""
     async with InputTester().run_test() as pilot:

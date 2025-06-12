@@ -36,6 +36,7 @@ class TextAreaApp(App):
         yield text_area
 
 
+@pytest.mark.anyio
 async def test_single_keypress_printable_character():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -44,6 +45,7 @@ async def test_single_keypress_printable_character():
         assert text_area.text == "x" + TEXT
 
 
+@pytest.mark.anyio
 async def test_single_keypress_enter():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -66,6 +68,7 @@ async def test_single_keypress_enter():
         ("💩💩", 2, 6),
     ],
 )
+@pytest.mark.anyio
 async def test_tab_with_spaces_goes_to_tab_stop(
     content, cursor_column, cursor_destination
 ):
@@ -81,6 +84,7 @@ async def test_tab_with_spaces_goes_to_tab_stop(
         assert text_area.cursor_location[1] == cursor_destination
 
 
+@pytest.mark.anyio
 async def test_delete_left():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -92,6 +96,7 @@ async def test_delete_left():
         assert text_area.selection == Selection.cursor((0, 5))
 
 
+@pytest.mark.anyio
 async def test_delete_left_start():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -102,6 +107,7 @@ async def test_delete_left_start():
         assert text_area.selection == Selection.cursor((0, 0))
 
 
+@pytest.mark.anyio
 async def test_delete_left_end():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -122,6 +128,7 @@ async def test_delete_left_end():
         ("backspace", Selection((3, 4), (1, 2))),
     ],
 )
+@pytest.mark.anyio
 async def test_deletion_with_non_empty_selection(key, selection):
     """When there's a selection, pressing backspace or delete should delete everything
     that is selected and reset the selection to a cursor at the appropriate location."""
@@ -142,6 +149,7 @@ Z"""
         )
 
 
+@pytest.mark.anyio
 async def test_delete_right():
     """Pressing 'delete' deletes the character to the right of the cursor."""
     app = TextAreaApp()
@@ -154,6 +162,7 @@ async def test_delete_right():
         assert text_area.selection == Selection.cursor((0, 13))
 
 
+@pytest.mark.anyio
 async def test_delete_right_end_of_line():
     """Pressing 'delete' at the end of the line merges this line with the line below."""
     app = TextAreaApp()
@@ -177,6 +186,7 @@ async def test_delete_right_end_of_line():
         (Selection((0, 4), (0, 2)), "01456789", "23", (0, 2)),
     ],
 )
+@pytest.mark.anyio
 async def test_cut(selection, expected_result, expected_clipboard, cursor_end_location):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -204,6 +214,7 @@ async def test_cut(selection, expected_result, expected_clipboard, cursor_end_lo
         (Selection((1, 2), (2, 1)), "012\n3478\n9\n"),
     ],
 )
+@pytest.mark.anyio
 async def test_cut_multiline_document(selection, expected_result):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -228,6 +239,7 @@ async def test_cut_multiline_document(selection, expected_result):
         (Selection((0, 4), (0, 2)), ""),
     ],
 )
+@pytest.mark.anyio
 async def test_delete_line(selection, expected_result):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -263,6 +275,7 @@ async def test_delete_line(selection, expected_result):
         (Selection((0, 0), (4, 0)), ""),  # delete all lines
     ],
 )
+@pytest.mark.anyio
 async def test_delete_line_multiline_document(selection, expected_result):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -292,6 +305,7 @@ async def test_delete_line_multiline_document(selection, expected_result):
         (Selection((0, 5), (0, 2)), "01"),
     ],
 )
+@pytest.mark.anyio
 async def test_delete_to_end_of_line(selection, expected_result):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -320,6 +334,7 @@ async def test_delete_to_end_of_line(selection, expected_result):
         (Selection((0, 5), (0, 2)), "23456789"),
     ],
 )
+@pytest.mark.anyio
 async def test_delete_to_start_of_line(selection, expected_result):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -349,6 +364,7 @@ async def test_delete_to_start_of_line(selection, expected_result):
         (Selection((0, 4), (0, 11)), "  01789", Selection.cursor((0, 4))),
     ],
 )
+@pytest.mark.anyio
 async def test_delete_word_left(selection, expected_result, final_selection):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -378,6 +394,7 @@ async def test_delete_word_left(selection, expected_result, final_selection):
         (Selection((0, 4), (0, 11)), "\t0126789", Selection.cursor((0, 4))),
     ],
 )
+@pytest.mark.anyio
 async def test_delete_word_left_with_tabs(selection, expected_result, final_selection):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -391,6 +408,7 @@ async def test_delete_word_left_with_tabs(selection, expected_result, final_sele
         assert text_area.selection == final_selection
 
 
+@pytest.mark.anyio
 async def test_delete_word_left_to_start_of_line():
     """If no word boundary found when we 'delete word left', then
     the deletion happens to the start of the line."""
@@ -406,6 +424,7 @@ async def test_delete_word_left_to_start_of_line():
         assert text_area.selection == Selection.cursor((1, 0))
 
 
+@pytest.mark.anyio
 async def test_delete_word_left_at_line_start():
     """If we're at the start of a line and we 'delete word left', the
     line merges with the line above (if possible)."""
@@ -432,6 +451,7 @@ async def test_delete_word_left_at_line_start():
         (Selection((0, 4), (0, 11)), "  01789", Selection.cursor((0, 4))),
     ],
 )
+@pytest.mark.anyio
 async def test_delete_word_right(selection, expected_result, final_selection):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -445,6 +465,7 @@ async def test_delete_word_right(selection, expected_result, final_selection):
         assert text_area.selection == final_selection
 
 
+@pytest.mark.anyio
 async def test_delete_word_right_delete_to_end_of_line():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -458,6 +479,7 @@ async def test_delete_word_right_delete_to_end_of_line():
         assert text_area.selection == Selection.cursor((0, 3))
 
 
+@pytest.mark.anyio
 async def test_delete_word_right_at_end_of_line():
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -486,6 +508,7 @@ async def test_delete_word_right_at_end_of_line():
         "tab",
     ],
 )
+@pytest.mark.anyio
 async def test_edit_read_only_mode_does_nothing(binding):
     """Try out various key-presses and bindings and ensure they don't alter
     the document when read_only=True."""
@@ -509,6 +532,7 @@ async def test_edit_read_only_mode_does_nothing(binding):
         Selection(start=(3, 0), end=(1, 0)),
     ],
 )
+@pytest.mark.anyio
 async def test_replace_lines_with_fewer_lines(selection):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -534,6 +558,7 @@ Z"""
         Selection(start=(3, 0), end=(1, 0)),
     ],
 )
+@pytest.mark.anyio
 async def test_paste(selection):
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -553,6 +578,7 @@ Z"""
         assert text_area.selection == Selection.cursor((1, 1))
 
 
+@pytest.mark.anyio
 async def test_paste_read_only_does_nothing():
     app = TextAreaApp()
     async with app.run_test() as pilot:

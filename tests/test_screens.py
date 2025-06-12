@@ -20,6 +20,7 @@ skip_py310 = pytest.mark.skipif(
 )
 
 
+@pytest.mark.anyio
 async def test_installed_screens():
     class ScreensApp(App):
         SCREENS = {
@@ -51,6 +52,7 @@ async def test_installed_screens():
             pilot.app.pop_screen()
 
 
+@pytest.mark.anyio
 async def test_screens():
     app = App()
     app._loop = asyncio.get_running_loop()
@@ -142,6 +144,7 @@ async def test_screens():
         await app._shutdown()
 
 
+@pytest.mark.anyio
 async def test_auto_focus_on_screen_if_app_auto_focus_is_none():
     """Setting app.AUTO_FOCUS = `None` means it is not taken into consideration."""
 
@@ -185,6 +188,7 @@ async def test_auto_focus_on_screen_if_app_auto_focus_is_none():
         assert app.focused.id == "two"
 
 
+@pytest.mark.anyio
 async def test_auto_focus_on_screen_if_app_auto_focus_is_disabled():
     """Setting app.AUTO_FOCUS = `None` means it is not taken into consideration."""
 
@@ -228,6 +232,7 @@ async def test_auto_focus_on_screen_if_app_auto_focus_is_disabled():
         assert app.focused.id == "two"
 
 
+@pytest.mark.anyio
 async def test_auto_focus_inheritance():
     """Setting app.AUTO_FOCUS = `None` means it is not taken into consideration."""
 
@@ -259,6 +264,7 @@ async def test_auto_focus_inheritance():
         app.pop_screen()
 
 
+@pytest.mark.anyio
 async def test_auto_focus_skips_non_focusable_widgets():
     class MyScreen(Screen[None]):
         def compose(self):
@@ -275,6 +281,7 @@ async def test_auto_focus_skips_non_focusable_widgets():
         assert isinstance(app.focused, Button)
 
 
+@pytest.mark.anyio
 async def test_dismiss_non_top_screen():
     class MyApp(App[None]):
         async def key_p(self) -> None:
@@ -292,6 +299,7 @@ async def test_dismiss_non_top_screen():
         assert app.screen_stack == stack
 
 
+@pytest.mark.anyio
 async def test_dismiss_action():
     class ConfirmScreen(Screen[bool]):
         BINDINGS = [("y", "dismiss(True)", "Dismiss")]
@@ -311,6 +319,7 @@ async def test_dismiss_action():
         assert app.bingo
 
 
+@pytest.mark.anyio
 async def test_dismiss_action_no_argument():
     class ConfirmScreen(Screen[bool]):
         BINDINGS = [("y", "dismiss", "Dismiss")]
@@ -330,6 +339,7 @@ async def test_dismiss_action_no_argument():
         assert app.bingo is None
 
 
+@pytest.mark.anyio
 async def test_switch_screen_no_op():
     """Regression test for https://github.com/Textualize/textual/issues/2650"""
 
@@ -351,6 +361,7 @@ async def test_switch_screen_no_op():
         assert screen_id == id(app.screen)
 
 
+@pytest.mark.anyio
 async def test_switch_screen_updates_results_callback_stack():
     """Regression test for https://github.com/Textualize/textual/issues/2650"""
 
@@ -382,6 +393,7 @@ async def test_switch_screen_updates_results_callback_stack():
         assert app.screen._result_callbacks[-1].callback is None
 
 
+@pytest.mark.anyio
 async def test_screen_receives_mouse_move_events():
     class MouseMoveRecordingScreen(Screen):
         mouse_events = []
@@ -405,6 +417,7 @@ async def test_screen_receives_mouse_move_events():
     assert mouse_event.x, mouse_event.y == mouse_offset
 
 
+@pytest.mark.anyio
 async def test_mouse_move_event_bubbles_to_screen_from_widget():
     class MouseMoveRecordingScreen(Screen):
         mouse_events = []
@@ -441,6 +454,7 @@ async def test_mouse_move_event_bubbles_to_screen_from_widget():
     )
 
 
+@pytest.mark.anyio
 async def test_push_screen_wait_for_dismiss() -> None:
     """Test push_screen returns result."""
 
@@ -477,6 +491,7 @@ async def test_push_screen_wait_for_dismiss() -> None:
     assert results == [False]
 
 
+@pytest.mark.anyio
 async def test_push_screen_wait_for_dismiss_no_worker() -> None:
     """Test wait_for_dismiss raises NoActiveWorker when not using workers."""
 
@@ -505,6 +520,7 @@ async def test_push_screen_wait_for_dismiss_no_worker() -> None:
             await pilot.press("x", "y")
 
 
+@pytest.mark.anyio
 async def test_default_custom_screen() -> None:
     """Test we can override the default screen."""
 
@@ -522,6 +538,7 @@ async def test_default_custom_screen() -> None:
         assert app.screen is app.screen_stack[0]
 
 
+@pytest.mark.anyio
 async def test_disallow_screen_instances() -> None:
     """Test that screen instances are disallowed."""
 
@@ -551,6 +568,7 @@ async def test_disallow_screen_instances() -> None:
             MODES = {"OK": CustomScreen, 1: 2}  # type: ignore
 
 
+@pytest.mark.anyio
 async def test_worker_cancellation():
     """Regression test for https://github.com/Textualize/textual/issues/4884
 
@@ -610,6 +628,7 @@ async def test_worker_cancellation():
         await pilot.press("enter")
 
 
+@pytest.mark.anyio
 async def test_get_screen_with_expected_type():
     """Test get_screen with expected type works"""
 

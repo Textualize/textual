@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from rich.highlighter import JSONHighlighter
 from rich.text import Text
 
@@ -23,12 +24,14 @@ class InputApp(App[None]):
             yield Input(self.TEST_TEXT)
 
 
+@pytest.mark.anyio
 async def test_internal_value_no_password():
     """The displayed value should be the input value."""
     async with InputApp().run_test() as pilot:
         assert pilot.app.query_one(Input)._value == Text(pilot.app.TEST_TEXT)
 
 
+@pytest.mark.anyio
 async def test_internal_value_password():
     """The displayed value should be a password text."""
     async with InputApp().run_test() as pilot:
@@ -36,6 +39,7 @@ async def test_internal_value_password():
         assert pilot.app.query_one(Input)._value == Text("•" * len(pilot.app.TEST_TEXT))
 
 
+@pytest.mark.anyio
 async def test_internal_value_highlighted():
     async with InputApp().run_test() as pilot:
         pilot.app.query_one(Input).highlighter = JSONHighlighter()
@@ -44,6 +48,7 @@ async def test_internal_value_highlighted():
         assert pilot.app.query_one(Input)._value == JSONHighlighter()(test_text)
 
 
+@pytest.mark.anyio
 async def test_cursor_toggle():
     """Cursor toggling should toggle the cursor."""
     async with InputApp().run_test() as pilot:
@@ -54,6 +59,7 @@ async def test_cursor_toggle():
         assert input_widget._cursor_visible is False
 
 
+@pytest.mark.anyio
 async def test_input_height():
     """Height should be 1 even if set to auto."""
     async with InputApp().run_test() as pilot:
@@ -64,6 +70,7 @@ async def test_input_height():
         assert input_widget.parent.styles.height.value == 1
 
 
+@pytest.mark.anyio
 async def test_input_selected_text():
     async with InputApp().run_test() as pilot:
         input_widget = pilot.app.query_one(Input)
@@ -80,6 +87,7 @@ async def test_input_selected_text():
         assert input_widget.selected_text == ""
 
 
+@pytest.mark.anyio
 async def test_input_selection_deleted_programmatically():
     async with InputApp().run_test() as pilot:
         input_widget = pilot.app.query_one(Input)
@@ -95,6 +103,7 @@ async def test_input_selection_deleted_programmatically():
         assert input_widget.value == "o, world!"
 
 
+@pytest.mark.anyio
 async def test_input_selection_is_valid_after_updating_value():
     """Regression test for https://github.com/Textualize/textual/issues/5811"""
     app = InputApp()

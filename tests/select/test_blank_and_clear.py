@@ -7,6 +7,7 @@ from textual.widgets.select import InvalidSelectValueError
 SELECT_OPTIONS = [(str(n), n) for n in range(3)]
 
 
+@pytest.mark.anyio
 async def test_value_is_blank_by_default():
     class SelectApp(App[None]):
         def compose(self):
@@ -19,6 +20,7 @@ async def test_value_is_blank_by_default():
         assert select.is_blank()
 
 
+@pytest.mark.anyio
 async def test_setting_and_checking_blank():
     class SelectApp(App[None]):
         def compose(self):
@@ -39,6 +41,7 @@ async def test_setting_and_checking_blank():
         assert select.is_blank()
 
 
+@pytest.mark.anyio
 async def test_clear_with_allow_blanks():
     class SelectApp(App[None]):
         def compose(self):
@@ -52,6 +55,7 @@ async def test_clear_with_allow_blanks():
         assert select.is_blank()
 
 
+@pytest.mark.anyio
 async def test_clear_fails_if_allow_blank_is_false():
     class SelectApp(App[None]):
         def compose(self):
@@ -64,6 +68,8 @@ async def test_clear_fails_if_allow_blank_is_false():
         with pytest.raises(InvalidSelectValueError):
             select.clear()
 
+
+@pytest.mark.anyio
 async def test_selection_is_none_with_blank():
     class SelectApp(App[None]):
         def compose(self):

@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import DirectoryTree
 
@@ -9,6 +11,7 @@ class DirectoryTreeApp(App[None]):
         yield tree
 
 
+@pytest.mark.anyio
 async def test_managed_to_set_show_root_before_mounted() -> None:
     """https://github.com/Textualize/textual/issues/2363"""
     async with DirectoryTreeApp().run_test() as pilot:

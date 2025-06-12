@@ -3,6 +3,8 @@ from __future__ import annotations
 import sys
 from typing import Any, Generic, TypeVar, overload
 
+__all__ = ["cached_property"]
+
 if sys.version_info >= (3, 12):
     from functools import cached_property
 else:

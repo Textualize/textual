@@ -36,6 +36,7 @@ class TextAreaApp(App):
         yield text_area
 
 
+@pytest.mark.anyio
 async def test_insert_text_start_maintain_selection_offset():
     """Ensure that we can maintain the offset between the location
     an insert happens and the location of the selection."""
@@ -48,6 +49,7 @@ async def test_insert_text_start_maintain_selection_offset():
         assert text_area.selection == Selection.cursor((0, 10))
 
 
+@pytest.mark.anyio
 async def test_insert_text_start():
     """The document is correctly updated on inserting at the start.
     If we don't maintain the selection offset, the cursor jumps
@@ -61,6 +63,7 @@ async def test_insert_text_start():
         assert text_area.selection == Selection.cursor((0, 5))
 
 
+@pytest.mark.anyio
 async def test_insert_empty_string():
     app = TextAreaApp()
     async with app.run_test():
@@ -72,6 +75,7 @@ async def test_insert_empty_string():
         assert text_area.text == "0123456789"
 
 
+@pytest.mark.anyio
 async def test_replace_empty_string():
     app = TextAreaApp()
     async with app.run_test():
@@ -92,6 +96,7 @@ async def test_replace_empty_string():
         ((0, 3), (0, 5), (0, 3)),  # API insert just after cursor
     ],
 )
+@pytest.mark.anyio
 async def test_insert_character_near_cursor_maintain_selection_offset(
     cursor_location,
     insert_location,
@@ -114,10 +119,9 @@ async def test_insert_character_near_cursor_maintain_selection_offset(
         ((0, 0), (1, 0), (0, 0)),  # API insert after cursor row
     ],
 )
+@pytest.mark.anyio
 async def test_insert_newline_around_cursor_maintain_selection_offset(
-    cursor_location,
-    insert_location,
-    cursor_destination
+    cursor_location, insert_location, cursor_destination
 ):
     app = TextAreaApp()
     async with app.run_test():
@@ -127,6 +131,7 @@ async def test_insert_newline_around_cursor_maintain_selection_offset(
         assert text_area.selection == Selection.cursor(cursor_destination)
 
 
+@pytest.mark.anyio
 async def test_insert_newlines_start():
     app = TextAreaApp()
     async with app.run_test():
@@ -136,6 +141,7 @@ async def test_insert_newlines_start():
         assert text_area.selection == Selection.cursor((3, 0))
 
 
+@pytest.mark.anyio
 async def test_insert_newlines_end():
     app = TextAreaApp()
     async with app.run_test():
@@ -144,6 +150,7 @@ async def test_insert_newlines_end():
         assert text_area.text == TEXT + "\n\n\n"
 
 
+@pytest.mark.anyio
 async def test_insert_windows_newlines():
     app = TextAreaApp()
     async with app.run_test():
@@ -155,6 +162,7 @@ async def test_insert_windows_newlines():
         assert text_area.text == "\n\n\n" + TEXT
 
 
+@pytest.mark.anyio
 async def test_insert_old_mac_newlines():
     app = TextAreaApp()
     async with app.run_test():
@@ -163,6 +171,7 @@ async def test_insert_old_mac_newlines():
         assert text_area.text == "\n\n\n" + TEXT
 
 
+@pytest.mark.anyio
 async def test_insert_text_non_cursor_location():
     app = TextAreaApp()
     async with app.run_test():
@@ -172,6 +181,7 @@ async def test_insert_text_non_cursor_location():
         assert text_area.selection == Selection.cursor((0, 0))
 
 
+@pytest.mark.anyio
 async def test_insert_text_non_cursor_location_dont_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
@@ -195,6 +205,7 @@ async def test_insert_text_non_cursor_location_dont_maintain_offset():
         assert text_area.selection == Selection.cursor((4, 5))
 
 
+@pytest.mark.anyio
 async def test_insert_multiline_text():
     app = TextAreaApp()
     async with app.run_test():
@@ -212,6 +223,7 @@ I will face my fear.
         assert text_area.text == expected_content
 
 
+@pytest.mark.anyio
 async def test_insert_multiline_text_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
@@ -238,6 +250,7 @@ I will face my fear.
         assert text_area.text == expected_content
 
 
+@pytest.mark.anyio
 async def test_replace_multiline_text():
     app = TextAreaApp()
     async with app.run_test():
@@ -264,6 +277,7 @@ I will face my fear.
         assert text_area.text == expected_content
 
 
+@pytest.mark.anyio
 async def test_replace_multiline_text_maintain_selection():
     app = TextAreaApp()
     async with app.run_test():
@@ -298,6 +312,7 @@ world!
         assert text_area.text == expected_content
 
 
+@pytest.mark.anyio
 async def test_delete_within_line():
     app = TextAreaApp()
     async with app.run_test():
@@ -327,6 +342,7 @@ I will face my fear.
         assert text_area.text == expected_text
 
 
+@pytest.mark.anyio
 async def test_delete_within_line_dont_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
@@ -342,6 +358,7 @@ I will face my fear.
     assert text_area.text == expected_text
 
 
+@pytest.mark.anyio
 async def test_delete_multiple_lines_selection_above():
     app = TextAreaApp()
     async with app.run_test():
@@ -378,6 +395,7 @@ I will face my fear.
         )
 
 
+@pytest.mark.anyio
 async def test_delete_empty_document():
     app = TextAreaApp()
     async with app.run_test():
@@ -388,6 +406,7 @@ async def test_delete_empty_document():
         assert text_area.text == ""
 
 
+@pytest.mark.anyio
 async def test_clear():
     app = TextAreaApp()
     async with app.run_test():
@@ -395,6 +414,7 @@ async def test_clear():
         text_area.clear()
 
 
+@pytest.mark.anyio
 async def test_clear_empty_document():
     app = TextAreaApp()
     async with app.run_test():
@@ -410,6 +430,7 @@ async def test_clear_empty_document():
         [(2, 1), (0, 3)],  # Ensuring independence from selection direction.
     ],
 )
+@pytest.mark.anyio
 async def test_insert_text_multiline_selection_top(select_from, select_to):
     """
     An example to attempt to explain what we're testing here...
@@ -467,6 +488,7 @@ async def test_insert_text_multiline_selection_top(select_from, select_to):
         [(2, 5), (0, 3)],  # Ensuring independence from selection direction.
     ],
 )
+@pytest.mark.anyio
 async def test_insert_text_multiline_selection_bottom(select_from, select_to):
     """
     The edited text is within the selected text on the bottom line
@@ -507,6 +529,7 @@ async def test_insert_text_multiline_selection_bottom(select_from, select_to):
         assert text_area.text == "ABCDE\nFGHIJ\n*NO\nPQRST\nUVWXY\nZ\n"
 
 
+@pytest.mark.anyio
 async def test_delete_fully_within_selection():
     """User-facing selection should be best-effort adjusted when a programmatic
     replacement is made to the document."""
@@ -527,6 +550,7 @@ async def test_delete_fully_within_selection():
         assert text_area.text == "01236789"
 
 
+@pytest.mark.anyio
 async def test_replace_fully_within_selection():
     """Adjust the selection when a replacement happens inside it."""
     app = TextAreaApp()
@@ -544,6 +568,7 @@ async def test_replace_fully_within_selection():
         assert text_area.selected_text == "XX56"
 
 
+@pytest.mark.anyio
 async def test_text_setter():
     app = TextAreaApp()
     async with app.run_test():
@@ -553,6 +578,7 @@ async def test_text_setter():
         assert text_area.text == new_text
 
 
+@pytest.mark.anyio
 async def test_edits_on_read_only_mode():
     """API edits should still be permitted on read-only mode."""
     app = TextAreaApp()

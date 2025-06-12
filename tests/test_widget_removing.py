@@ -1,8 +1,11 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Container, Vertical
 from textual.widgets import Button, Label, Static
 
 
+@pytest.mark.anyio
 async def test_remove_single_widget():
     """It should be possible to the only widget on a screen."""
     async with App().run_test() as pilot:
@@ -16,6 +19,7 @@ async def test_remove_single_widget():
         assert len(pilot.app.screen._nodes) == 0
 
 
+@pytest.mark.anyio
 async def test_many_remove_all_widgets():
     """It should be possible to remove all widgets on a multi-widget screen."""
     async with App().run_test() as pilot:
@@ -25,6 +29,7 @@ async def test_many_remove_all_widgets():
         assert len(pilot.app.screen._nodes) == 0
 
 
+@pytest.mark.anyio
 async def test_many_remove_some_widgets():
     """It should be possible to remove some widgets on a multi-widget screen."""
     async with App().run_test() as pilot:
@@ -34,6 +39,7 @@ async def test_many_remove_some_widgets():
         assert len(pilot.app.screen._nodes) == 5
 
 
+@pytest.mark.anyio
 async def test_remove_branch():
     """It should be possible to remove a whole branch in the DOM."""
     async with App().run_test() as pilot:
@@ -47,6 +53,7 @@ async def test_remove_branch():
         assert len(pilot.app.screen.walk_children(with_self=False)) == 7
 
 
+@pytest.mark.anyio
 async def test_remove_overlap():
     """It should be possible to remove an overlapping collection of widgets."""
     async with App().run_test() as pilot:
@@ -60,6 +67,7 @@ async def test_remove_overlap():
         assert len(pilot.app.screen.walk_children(with_self=False)) == 1
 
 
+@pytest.mark.anyio
 async def test_remove_move_focus():
     """Removing a focused widget should settle focus elsewhere."""
     async with App().run_test() as pilot:
@@ -78,6 +86,7 @@ async def test_remove_move_focus():
         assert pilot.app.focused == buttons[9]
 
 
+@pytest.mark.anyio
 async def test_widget_remove_order() -> None:
     """A Widget.remove of a top-level widget should cause bottom-first removal."""
 
@@ -97,6 +106,7 @@ async def test_widget_remove_order() -> None:
         assert removals == ["grandchild", "child", "parent"]
 
 
+@pytest.mark.anyio
 async def test_query_remove_order():
     """A DOMQuery.remove of a top-level widget should cause bottom-first removal."""
 
@@ -125,6 +135,7 @@ class ExampleApp(App):
                 yield Label(str(index))
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_container():
     app = ExampleApp()
     async with app.run_test():
@@ -141,6 +152,7 @@ async def test_widget_remove_children_container():
         assert len(container.children) == 0
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_with_star_selector():
     app = ExampleApp()
     async with app.run_test():
@@ -157,6 +169,7 @@ async def test_widget_remove_children_with_star_selector():
         assert len(container.children) == 0
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_with_string_selector():
     app = ExampleApp()
     async with app.run_test():
@@ -174,6 +187,7 @@ async def test_widget_remove_children_with_string_selector():
         assert len(app.query(Label)) == 5
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_with_type_selector():
     app = ExampleApp()
     async with app.run_test():
@@ -182,6 +196,7 @@ async def test_widget_remove_children_with_type_selector():
         assert len(app.query(Button)) == 0
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_with_selector_does_not_leak():
     app = ExampleApp()
     async with app.run_test():
@@ -198,6 +213,7 @@ async def test_widget_remove_children_with_selector_does_not_leak():
         assert len(container.children) == 0
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_no_children():
     app = ExampleApp()
     async with app.run_test():
@@ -213,6 +229,7 @@ async def test_widget_remove_children_no_children():
         )  # No widgets have been removed, since Button has no children.
 
 
+@pytest.mark.anyio
 async def test_widget_remove_children_no_children_match_selector():
     app = ExampleApp()
     async with app.run_test():

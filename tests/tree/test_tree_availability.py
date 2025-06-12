@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Tree
@@ -53,6 +55,7 @@ class TreeApp(App[None]):
         self.record(event)
 
 
+@pytest.mark.anyio
 async def test_creating_disabled_tree():
     """Mounting a disabled `Tree` should result in the base `Widget`
     having a `disabled` property equal to `True`"""
@@ -69,6 +72,7 @@ async def test_creating_disabled_tree():
         assert tree.cursor_line == 0
 
 
+@pytest.mark.anyio
 async def test_creating_enabled_tree():
     """Mounting an enabled `Tree` should result in the base `Widget`
     having a `disabled` property equal to `False`"""
@@ -85,6 +89,7 @@ async def test_creating_enabled_tree():
         assert tree.cursor_line == 1
 
 
+@pytest.mark.anyio
 async def test_disabled_tree_node_selected_message() -> None:
     """Clicking the root node disclosure triangle on a disabled tree
     should result in no messages being emitted."""
@@ -106,6 +111,7 @@ async def test_disabled_tree_node_selected_message() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_enabled_tree_node_selected_message() -> None:
     """Clicking the root node disclosure triangle on an enabled tree
     should result in an `NodeExpanded` message being emitted."""

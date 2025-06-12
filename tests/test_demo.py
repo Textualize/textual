@@ -1,6 +1,9 @@
+import pytest
+
 from textual.demo.demo_app import DemoApp
 
 
+@pytest.mark.anyio
 async def test_demo():
     """Test the demo runs."""
     # Test he demo can at least run.

@@ -1,8 +1,11 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Static
 
 
+@pytest.mark.anyio
 async def test_compositor_scroll_placements():
     """Regression test for https://github.com/Textualize/textual/issues/5249
     The Static should remain visible.

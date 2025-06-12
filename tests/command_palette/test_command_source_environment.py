@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.command import Hit, Hits, Provider
 from textual.screen import Screen
@@ -28,6 +30,7 @@ class CommandPaletteApp(App[None]):
         self.action_command_palette()
 
 
+@pytest.mark.anyio
 async def test_command_source_environment() -> None:
     """The command source should see the app and default screen."""
     async with CommandPaletteApp().run_test() as pilot:

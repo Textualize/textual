@@ -90,7 +90,6 @@ class Suggester(ABC):
         Returns:
             A valid suggestion or `None`.
         """
-        pass
 
 
 class SuggestFromList(Suggester):

@@ -5,6 +5,7 @@ from textual.signal import Signal, SignalError
 from textual.widgets import Label
 
 
+@pytest.mark.anyio
 async def test_signal():
     """Test signal subscribe"""
     called = 0
@@ -75,6 +76,7 @@ def test_repr():
     assert isinstance(repr(test_signal), str)
 
 
+@pytest.mark.anyio
 async def test_signal_parameters():
     str_result: str | None = None
     int_result: int | None = None

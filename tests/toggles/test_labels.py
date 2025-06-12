@@ -1,5 +1,7 @@
 """Test that setting a toggle button's label has the desired effect."""
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.content import Content
 from textual.widgets import Checkbox, RadioButton, RadioSet
@@ -12,6 +14,7 @@ class LabelChangeApp(App[None]):
         yield RadioSet("Before")
 
 
+@pytest.mark.anyio
 async def test_change_labels() -> None:
     """It should be possible to change the labels of toggle buttons."""
     async with LabelChangeApp().run_test() as pilot:

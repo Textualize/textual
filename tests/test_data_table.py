@@ -63,6 +63,7 @@ class DataTableApp(App):
         self.record_data_table_event(message)
 
 
+@pytest.mark.anyio
 async def test_datatable_message_emission():
     app = DataTableApp()
     expected_messages = []
@@ -168,6 +169,7 @@ async def test_datatable_message_emission():
         assert app.message_names == expected_messages
 
 
+@pytest.mark.anyio
 async def test_empty_table_interactions():
     app = DataTableApp()
     async with app.run_test() as pilot:
@@ -178,6 +180,7 @@ async def test_empty_table_interactions():
 
 
 @pytest.mark.parametrize("show_header", [True, False])
+@pytest.mark.anyio
 async def test_cursor_movement_with_home_pagedown_etc(show_header):
     app = DataTableApp()
 
@@ -203,6 +206,7 @@ async def test_cursor_movement_with_home_pagedown_etc(show_header):
         assert table.cursor_coordinate == Coordinate(0, 1)
 
 
+@pytest.mark.anyio
 async def test_add_rows():
     app = DataTableApp()
     async with app.run_test():
@@ -217,6 +221,7 @@ async def test_add_rows():
         assert all(key in table._data for key in row_keys)
 
 
+@pytest.mark.anyio
 async def test_add_rows_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():
@@ -247,6 +252,7 @@ async def test_add_rows_user_defined_keys():
         assert table.rows["algernon"] == first_row
 
 
+@pytest.mark.anyio
 async def test_add_row_duplicate_key():
     app = DataTableApp()
     async with app.run_test():
@@ -257,6 +263,7 @@ async def test_add_row_duplicate_key():
             table.add_row("2", key="1")  # Duplicate row key
 
 
+@pytest.mark.anyio
 async def test_add_row_too_many_values():
     app = DataTableApp()
     async with app.run_test():
@@ -267,6 +274,7 @@ async def test_add_row_too_many_values():
             table.add_row("1", "2")
 
 
+@pytest.mark.anyio
 async def test_add_column_duplicate_key():
     app = DataTableApp()
     async with app.run_test():
@@ -276,6 +284,7 @@ async def test_add_column_duplicate_key():
             table.add_column("B", key="A")  # Duplicate column key
 
 
+@pytest.mark.anyio
 async def test_add_column_with_width():
     app = DataTableApp()
     async with app.run_test():
@@ -290,6 +299,7 @@ async def test_add_column_with_width():
         )
 
 
+@pytest.mark.anyio
 async def test_add_columns():
     app = DataTableApp()
     async with app.run_test():
@@ -299,6 +309,7 @@ async def test_add_columns():
         assert len(table.columns) == 3
 
 
+@pytest.mark.anyio
 async def test_add_columns_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():
@@ -308,6 +319,7 @@ async def test_add_columns_user_defined_keys():
         assert key == key
 
 
+@pytest.mark.anyio
 async def test_remove_row():
     app = DataTableApp()
     async with app.run_test():
@@ -321,6 +333,7 @@ async def test_remove_row():
         assert len(table.rows) == 2
 
 
+@pytest.mark.anyio
 async def test_remove_row_and_update():
     """Regression test for https://github.com/Textualize/textual/issues/3470 -
     Crash when attempting to remove and update the same cell."""
@@ -334,6 +347,7 @@ async def test_remove_row_and_update():
         await pilot.pause()
 
 
+@pytest.mark.anyio
 async def test_remove_column():
     app = DataTableApp()
     async with app.run_test():
@@ -348,6 +362,7 @@ async def test_remove_column():
         assert table.get_row_at(2) == ["2/1"]
 
 
+@pytest.mark.anyio
 async def test_remove_column_and_update():
     """Regression test for https://github.com/Textualize/textual/issues/3470 -
     Crash when attempting to remove and update the same cell."""
@@ -361,6 +376,7 @@ async def test_remove_column_and_update():
         await pilot.pause()
 
 
+@pytest.mark.anyio
 async def test_clear():
     app = DataTableApp()
     async with app.run_test():
@@ -393,6 +409,7 @@ async def test_clear():
         assert len(table.columns) == 0
 
 
+@pytest.mark.anyio
 async def test_column_labels() -> None:
     app = DataTableApp()
     async with app.run_test():
@@ -403,6 +420,7 @@ async def test_column_labels() -> None:
         assert actual_labels == expected_labels
 
 
+@pytest.mark.anyio
 async def test_initial_column_widths() -> None:
     app = DataTableApp()
     async with app.run_test():
@@ -422,6 +440,7 @@ async def test_initial_column_widths() -> None:
         assert table.columns[bar].content_width == 6
 
 
+@pytest.mark.anyio
 async def test_get_cell_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
@@ -431,6 +450,7 @@ async def test_get_cell_returns_value_at_cell():
         assert table.get_cell("R1", "C1") == "TargetValue"
 
 
+@pytest.mark.anyio
 async def test_get_cell_invalid_row_key():
     app = DataTableApp()
     async with app.run_test():
@@ -441,6 +461,7 @@ async def test_get_cell_invalid_row_key():
             table.get_cell("INVALID_ROW", "C1")
 
 
+@pytest.mark.anyio
 async def test_get_cell_invalid_column_key():
     app = DataTableApp()
     async with app.run_test():
@@ -451,6 +472,7 @@ async def test_get_cell_invalid_column_key():
             table.get_cell("R1", "INVALID_COLUMN")
 
 
+@pytest.mark.anyio
 async def test_get_cell_coordinate_returns_coordinate():
     app = DataTableApp()
     async with app.run_test():
@@ -469,6 +491,7 @@ async def test_get_cell_coordinate_returns_coordinate():
         assert table.get_cell_coordinate("R3", "C2") == Coordinate(2, 1)
 
 
+@pytest.mark.anyio
 async def test_get_cell_coordinate_invalid_row_key():
     app = DataTableApp()
     async with app.run_test():
@@ -480,6 +503,7 @@ async def test_get_cell_coordinate_invalid_row_key():
             coordinate = table.get_cell_coordinate("INVALID_ROW", "C1")
 
 
+@pytest.mark.anyio
 async def test_get_cell_coordinate_invalid_column_key():
     app = DataTableApp()
     async with app.run_test():
@@ -491,6 +515,7 @@ async def test_get_cell_coordinate_invalid_column_key():
             coordinate = table.get_cell_coordinate("R1", "INVALID_COLUMN")
 
 
+@pytest.mark.anyio
 async def test_get_cell_at_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
@@ -500,6 +525,7 @@ async def test_get_cell_at_returns_value_at_cell():
         assert table.get_cell_at(Coordinate(0, 0)) == "0/0"
 
 
+@pytest.mark.anyio
 async def test_get_cell_at_exception():
     app = DataTableApp()
     async with app.run_test():
@@ -510,6 +536,7 @@ async def test_get_cell_at_exception():
             table.get_cell_at(Coordinate(9999, 0))
 
 
+@pytest.mark.anyio
 async def test_get_row():
     app = DataTableApp()
     async with app.run_test():
@@ -526,6 +553,7 @@ async def test_get_row():
         assert table.get_row(second_row) == [3, 2, 1]
 
 
+@pytest.mark.anyio
 async def test_get_row_invalid_row_key():
     app = DataTableApp()
     async with app.run_test():
@@ -534,6 +562,7 @@ async def test_get_row_invalid_row_key():
             table.get_row("INVALID")
 
 
+@pytest.mark.anyio
 async def test_get_row_at():
     app = DataTableApp()
     async with app.run_test():
@@ -553,6 +582,7 @@ async def test_get_row_at():
 
 
 @pytest.mark.parametrize("index", (-1, 2))
+@pytest.mark.anyio
 async def test_get_row_at_invalid_index(index):
     app = DataTableApp()
     async with app.run_test():
@@ -564,6 +594,7 @@ async def test_get_row_at_invalid_index(index):
             table.get_row_at(index)
 
 
+@pytest.mark.anyio
 async def test_get_row_index_returns_index():
     app = DataTableApp()
     async with app.run_test():
@@ -579,6 +610,7 @@ async def test_get_row_index_returns_index():
         assert table.get_row_index("R3") == 2
 
 
+@pytest.mark.anyio
 async def test_get_row_index_invalid_row_key():
     app = DataTableApp()
     async with app.run_test():
@@ -590,6 +622,7 @@ async def test_get_row_index_invalid_row_key():
             index = table.get_row_index("InvalidRow")
 
 
+@pytest.mark.anyio
 async def test_get_column():
     app = DataTableApp()
     async with app.run_test():
@@ -604,6 +637,7 @@ async def test_get_column():
             next(cells)
 
 
+@pytest.mark.anyio
 async def test_get_column_invalid_key():
     app = DataTableApp()
     async with app.run_test():
@@ -612,6 +646,7 @@ async def test_get_column_invalid_key():
             list(table.get_column("INVALID"))
 
 
+@pytest.mark.anyio
 async def test_get_column_at():
     app = DataTableApp()
     async with app.run_test():
@@ -627,6 +662,7 @@ async def test_get_column_at():
 
 
 @pytest.mark.parametrize("index", [-1, 5])
+@pytest.mark.anyio
 async def test_get_column_at_invalid_index(index):
     app = DataTableApp()
     async with app.run_test():
@@ -635,6 +671,7 @@ async def test_get_column_at_invalid_index(index):
             list(table.get_column_at(index))
 
 
+@pytest.mark.anyio
 async def test_get_column_index_returns_index():
     app = DataTableApp()
     async with app.run_test():
@@ -650,6 +687,7 @@ async def test_get_column_index_returns_index():
         assert table.get_column_index("C3") == 2
 
 
+@pytest.mark.anyio
 async def test_get_column_index_invalid_column_key():
     app = DataTableApp()
     async with app.run_test():
@@ -663,6 +701,7 @@ async def test_get_column_index_invalid_column_key():
             index = table.get_column_index("InvalidCol")
 
 
+@pytest.mark.anyio
 async def test_update_cell_cell_exists():
     app = DataTableApp()
     async with app.run_test():
@@ -673,6 +712,7 @@ async def test_update_cell_cell_exists():
         assert table.get_cell("1", "A") == "NEW_VALUE"
 
 
+@pytest.mark.anyio
 async def test_update_cell_cell_doesnt_exist():
     app = DataTableApp()
     async with app.run_test():
@@ -683,6 +723,7 @@ async def test_update_cell_cell_doesnt_exist():
             table.update_cell("INVALID", "CELL", "Value")
 
 
+@pytest.mark.anyio
 async def test_update_cell_invalid_column_key():
     """Regression test for https://github.com/Textualize/textual/issues/3335"""
     app = DataTableApp()
@@ -694,6 +735,7 @@ async def test_update_cell_invalid_column_key():
             table.update_cell("R1", "INVALID_COLUMN", "New Value")
 
 
+@pytest.mark.anyio
 async def test_update_cell_at_coordinate_exists():
     app = DataTableApp()
     async with app.run_test():
@@ -705,6 +747,7 @@ async def test_update_cell_at_coordinate_exists():
         assert table.get_cell(row_0, column_1) == "newvalue"
 
 
+@pytest.mark.anyio
 async def test_update_cell_at_coordinate_doesnt_exist():
     app = DataTableApp()
     async with app.run_test():
@@ -728,6 +771,7 @@ async def test_update_cell_at_coordinate_doesnt_exist():
         ("12345", "123456789", 9),
     ],
 )
+@pytest.mark.anyio
 async def test_update_cell_at_column_width(label, new_value, new_content_width):
     # Initial cell values are length 3. Let's update cell content and ensure
     # that the width of the column is correct given the new cell content widths
@@ -748,6 +792,7 @@ async def test_update_cell_at_column_width(label, new_value, new_content_width):
         )
 
 
+@pytest.mark.anyio
 async def test_coordinate_to_cell_key():
     app = DataTableApp()
     async with app.run_test():
@@ -759,6 +804,7 @@ async def test_coordinate_to_cell_key():
         assert cell_key == CellKey(row_key, column_key)
 
 
+@pytest.mark.anyio
 async def test_coordinate_to_cell_key_invalid_coordinate():
     app = DataTableApp()
     async with app.run_test():
@@ -767,6 +813,7 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
             table.coordinate_to_cell_key(Coordinate(9999, 9999))
 
 
+@pytest.mark.anyio
 async def test_datatable_click_cell_cursor():
     """When the cell cursor is used, and we click, we emit a CellHighlighted
     *and* a CellSelected message for the cell that was clicked.
@@ -796,6 +843,7 @@ async def test_datatable_click_cell_cursor():
         assert cell_selected_event.coordinate == Coordinate(1, 0)
 
 
+@pytest.mark.anyio
 async def test_click_row_cursor():
     """When the row cursor is used, and we click, we emit a RowHighlighted
     *and* a RowSelected message for the row that was clicked."""
@@ -819,6 +867,7 @@ async def test_click_row_cursor():
         assert row_highlighted.cursor_row == 1
 
 
+@pytest.mark.anyio
 async def test_click_column_cursor():
     """When the column cursor is used, and we click, we emit a ColumnHighlighted
     *and* a ColumnSelected message for the column that was clicked."""
@@ -844,6 +893,7 @@ async def test_click_column_cursor():
         assert column_highlighted.cursor_column == 0
 
 
+@pytest.mark.anyio
 async def test_hover_coordinate():
     """Ensure that the hover_coordinate reactive is updated as expected."""
     app = DataTableApp()
@@ -858,6 +908,7 @@ async def test_hover_coordinate():
         assert table.hover_coordinate == Coordinate(1, 0)
 
 
+@pytest.mark.anyio
 async def test_hover_mouse_leave():
     """When the mouse cursor leaves the DataTable, there should be no hover highlighting."""
     app = DataTableApp()
@@ -875,6 +926,7 @@ async def test_hover_mouse_leave():
         assert not table._show_hover_cursor
 
 
+@pytest.mark.anyio
 async def test_header_selected():
     """Ensure that a HeaderSelected event gets posted when we click
     on the header in the DataTable."""
@@ -898,6 +950,7 @@ async def test_header_selected():
         assert app.message_names.count("HeaderSelected") == 1
 
 
+@pytest.mark.anyio
 async def test_row_label_selected():
     """Ensure that the DataTable sends a RowLabelSelected event when
     the user clicks on a row label."""
@@ -919,6 +972,7 @@ async def test_row_label_selected():
         assert app.message_names.count("RowLabelSelected") == 1
 
 
+@pytest.mark.anyio
 async def test_sort_coordinate_and_key_access():
     """Ensure that, after sorting, that coordinates and cell keys
     can still be used to retrieve the correct cell."""
@@ -952,6 +1006,7 @@ async def test_sort_coordinate_and_key_access():
         assert table.ordered_rows[2].key == row_three
 
 
+@pytest.mark.anyio
 async def test_sort_reverse_coordinate_and_key_access():
     """Ensure that, after sorting, that coordinates and cell keys
     can still be used to retrieve the correct cell."""
@@ -985,6 +1040,7 @@ async def test_sort_reverse_coordinate_and_key_access():
         assert table.ordered_rows[2].key == row_one
 
 
+@pytest.mark.anyio
 async def test_cell_cursor_highlight_events():
     app = DataTableApp()
     async with app.run_test() as pilot:
@@ -1021,6 +1077,7 @@ async def test_cell_cursor_highlight_events():
         assert latest_message.cell_key == CellKey(row_two_key, column_two_key)
 
 
+@pytest.mark.anyio
 async def test_row_cursor_highlight_events():
     app = DataTableApp()
     async with app.run_test() as pilot:
@@ -1057,6 +1114,7 @@ async def test_row_cursor_highlight_events():
         assert latest_message.cursor_row == 0
 
 
+@pytest.mark.anyio
 async def test_column_cursor_highlight_events():
     app = DataTableApp()
     async with app.run_test() as pilot:
@@ -1095,6 +1153,7 @@ async def test_column_cursor_highlight_events():
         assert latest_message.cursor_column == 0
 
 
+@pytest.mark.anyio
 async def test_reuse_row_key_after_clear():
     """Regression test for https://github.com/Textualize/textual/issues/1806"""
     app = DataTableApp()
@@ -1110,6 +1169,7 @@ async def test_reuse_row_key_after_clear():
         assert table.get_row("ROW2") == [7, 8]
 
 
+@pytest.mark.anyio
 async def test_reuse_column_key_after_clear():
     """Regression test for https://github.com/Textualize/textual/issues/1806"""
     app = DataTableApp()
@@ -1160,6 +1220,7 @@ def test_key_string_lookup():
     assert dictionary[RowKey("hello")] == "world"
 
 
+@pytest.mark.anyio
 async def test_scrolling_cursor_into_view():
     """Regression test for https://github.com/Textualize/textual/issues/2459"""
 
@@ -1182,6 +1243,7 @@ async def test_scrolling_cursor_into_view():
         assert table.scroll_y > 100
 
 
+@pytest.mark.anyio
 async def test_move_cursor():
     app = DataTableApp()
 
@@ -1198,6 +1260,7 @@ async def test_move_cursor():
         assert table.cursor_coordinate == Coordinate(3, 3)
 
 
+@pytest.mark.anyio
 async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
     """When there isn't a table cell under the mouse cursor, there should be no
     hover highlighting.
@@ -1220,6 +1283,7 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
         assert not table._show_hover_cursor
 
 
+@pytest.mark.anyio
 async def test_sort_by_all_columns_no_key():
     """Test sorting a `DataTable` by all columns."""
 
@@ -1245,6 +1309,7 @@ async def test_sort_by_all_columns_no_key():
         assert table.get_row_at(2) == [1, 1, 9]
 
 
+@pytest.mark.anyio
 async def test_sort_by_multiple_columns_no_key():
     """Test sorting a `DataTable` by multiple columns."""
 
@@ -1277,6 +1342,7 @@ async def test_sort_by_multiple_columns_no_key():
         assert table.get_row_at(2) == [2, 9, 5]
 
 
+@pytest.mark.anyio
 async def test_sort_by_function_sum():
     """Test sorting a `DataTable` using a custom sort function."""
 
@@ -1324,6 +1390,7 @@ async def test_sort_by_function_sum():
         ("1\n2\n3\n4\n5\n6\n7", 7),
     ],
 )
+@pytest.mark.anyio
 async def test_add_row_auto_height(cell: RenderableType, height: int):
     app = DataTableApp()
     async with app.run_test() as pilot:
@@ -1335,6 +1402,7 @@ async def test_add_row_auto_height(cell: RenderableType, height: int):
         assert row.height == height
 
 
+@pytest.mark.anyio
 async def test_add_row_expands_column_widths():
     """Regression test for https://github.com/Textualize/textual/issues/1026."""
     app = DataTableApp()
@@ -1365,6 +1433,7 @@ async def test_add_row_expands_column_widths():
         )
 
 
+@pytest.mark.anyio
 async def test_cell_padding_updates_virtual_size():
     app = DataTableApp()
 
@@ -1386,6 +1455,7 @@ async def test_cell_padding_updates_virtual_size():
         assert width + 13 * 2 * 3 == table.virtual_size.width
 
 
+@pytest.mark.anyio
 async def test_cell_padding_cannot_be_negative():
     app = DataTableApp()
     async with app.run_test():
@@ -1396,6 +1466,7 @@ async def test_cell_padding_cannot_be_negative():
         assert table.cell_padding == 0
 
 
+@pytest.mark.anyio
 async def test_move_cursor_respects_animate_parameter():
     """Regression test for https://github.com/Textualize/textual/issues/3840
 
@@ -1434,6 +1505,7 @@ async def test_move_cursor_respects_animate_parameter():
     assert scrolls == [True, False]
 
 
+@pytest.mark.anyio
 async def test_clicking_border_link_doesnt_crash():
     """Regression test for https://github.com/Textualize/textual/issues/4410"""
 

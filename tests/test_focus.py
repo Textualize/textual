@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Container, ScrollableContainer
 from textual.widget import Widget
@@ -31,6 +33,7 @@ class FocusTestApp(App):
         yield ChildrenFocusableOnly(Focusable(id="child", classes="c"))
 
 
+@pytest.mark.anyio
 async def test_focus_chain():
     app = App()
     async with app.run_test():
@@ -52,6 +55,7 @@ async def test_focus_chain():
         assert focus_chain == ["foo", "container1", "Paul", "baz", "child"]
 
 
+@pytest.mark.anyio
 async def test_allow_focus():
     """Test allow_focus and allow_focus_children are called and the result used."""
     focusable_allow_focus_called = False
@@ -91,6 +95,7 @@ async def test_allow_focus():
         assert non_focusable_allow_focus_called
 
 
+@pytest.mark.anyio
 async def test_focus_next_and_previous():
     app = FocusTestApp()
     async with app.run_test():
@@ -108,6 +113,7 @@ async def test_focus_next_and_previous():
         assert screen.focus_previous().id == "foo"
 
 
+@pytest.mark.anyio
 async def test_focus_next_wrap_around():
     """Ensure focusing the next widget wraps around the focus chain."""
     app = FocusTestApp()
@@ -120,6 +126,7 @@ async def test_focus_next_wrap_around():
         assert screen.focus_next().id == "foo"
 
 
+@pytest.mark.anyio
 async def test_focus_previous_wrap_around():
     """Ensure focusing the previous widget wraps around the focus chain."""
     app = FocusTestApp()
@@ -132,6 +139,7 @@ async def test_focus_previous_wrap_around():
         assert screen.focus_previous().id == "child"
 
 
+@pytest.mark.anyio
 async def test_wrap_around_selector():
     """Ensure moving focus in both directions wraps around the focus chain."""
     app = FocusTestApp()
@@ -145,6 +153,7 @@ async def test_wrap_around_selector():
         assert screen.focus_next("#foo").id == "foo"
 
 
+@pytest.mark.anyio
 async def test_no_focus_empty_selector():
     """Ensure focus is cleared when selector matches nothing."""
     app = FocusTestApp()
@@ -165,6 +174,7 @@ async def test_no_focus_empty_selector():
         assert screen.focused is None
 
 
+@pytest.mark.anyio
 async def test_focus_next_and_previous_with_type_selector():
     """Move focus with a selector that matches the currently focused node."""
     app = FocusTestApp()
@@ -183,6 +193,7 @@ async def test_focus_next_and_previous_with_type_selector():
         assert screen.focus_previous(Focusable).id == "foo"
 
 
+@pytest.mark.anyio
 async def test_focus_next_and_previous_with_str_selector():
     """Move focus with a selector that matches the currently focused node."""
     app = FocusTestApp()
@@ -200,6 +211,7 @@ async def test_focus_next_and_previous_with_str_selector():
         assert screen.focus_previous(".a").id == "foo"
 
 
+@pytest.mark.anyio
 async def test_focus_next_and_previous_with_type_selector_without_self():
     """Test moving the focus with a selector that does not match the currently focused node."""
     app = App()
@@ -244,6 +256,7 @@ async def test_focus_next_and_previous_with_type_selector_without_self():
         assert screen.focus_previous(Input).id == "w5"
 
 
+@pytest.mark.anyio
 async def test_focus_next_and_previous_with_str_selector_without_self():
     """Test moving the focus with a selector that does not match the currently focused node."""
     app = FocusTestApp()
@@ -262,6 +275,7 @@ async def test_focus_next_and_previous_with_str_selector_without_self():
         assert screen.focus_previous(".b").id == "baz"
 
 
+@pytest.mark.anyio
 async def test_focus_does_not_move_to_invisible_widgets():
     """Make sure invisible widgets don't get focused by accident.
 
@@ -283,6 +297,7 @@ async def test_focus_does_not_move_to_invisible_widgets():
         assert app.screen.focus_next().id == "three"
 
 
+@pytest.mark.anyio
 async def test_focus_moves_to_visible_widgets_inside_invisible_containers():
     """Regression test for https://github.com/Textualize/textual/issues/3053."""
 
@@ -303,6 +318,7 @@ async def test_focus_moves_to_visible_widgets_inside_invisible_containers():
         assert app.screen.focus_next().id == "three"
 
 
+@pytest.mark.anyio
 async def test_focus_chain_handles_inherited_visibility():
     """Regression test for https://github.com/Textualize/textual/issues/3053
 
@@ -368,6 +384,7 @@ async def test_focus_chain_handles_inherited_visibility():
         ]
 
 
+@pytest.mark.anyio
 async def test_mouse_down_gives_focus():
     class MyApp(App):
         AUTO_FOCUS = None
@@ -384,6 +401,7 @@ async def test_mouse_down_gives_focus():
         assert isinstance(app.focused, Button)
 
 
+@pytest.mark.anyio
 async def test_mouse_up_does_not_give_focus():
     class MyApp(App):
         AUTO_FOCUS = None
@@ -400,6 +418,7 @@ async def test_mouse_up_does_not_give_focus():
         assert app.focused is None
 
 
+@pytest.mark.anyio
 async def test_focus_pseudo_class():
     """Test focus and blue pseudo classes"""
 
@@ -428,6 +447,7 @@ async def test_focus_pseudo_class():
         assert "focus" in classes
 
 
+@pytest.mark.anyio
 async def test_get_focusable_widget_at() -> None:
     """Check that clicking a non-focusable widget will focus any (focusable) ancestors."""
 
@@ -467,6 +487,7 @@ async def test_get_focusable_widget_at() -> None:
         assert app.screen.focused is None
 
 
+@pytest.mark.anyio
 async def test_allow_focus_override():
     """Test that allow_focus() method override can_focus."""
 

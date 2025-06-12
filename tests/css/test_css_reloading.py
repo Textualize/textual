@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Label
@@ -30,6 +32,7 @@ class MyApp(App[None]):
         self.push_screen(TopScreen())
 
 
+@pytest.mark.anyio
 async def test_css_reloading_applies_to_non_top_screen(monkeypatch) -> None:  # type: ignore
     """Regression test for https://github.com/Textualize/textual/issues/3931"""
 
@@ -64,6 +67,7 @@ Label {
         assert first_label.styles.height.value == 1
 
 
+@pytest.mark.anyio
 async def test_css_reloading_file_not_found(monkeypatch, tmp_path):
     """Regression test for https://github.com/Textualize/textual/issues/3996
 

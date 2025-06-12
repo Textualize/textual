@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from textual.file_monitor import FileMonitor
 
 
@@ -15,6 +17,7 @@ def test_file_never_found():
     file_monitor.check()  # Ensuring no exceptions are raised.
 
 
+@pytest.mark.anyio
 async def test_file_deletion(tmp_path):
     """In some environments, a file can become temporarily unavailable during saving.
 

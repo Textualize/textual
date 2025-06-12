@@ -132,7 +132,6 @@ from textual.worker import NoActiveWorker, get_current_worker
 from textual.worker_manager import WorkerManager
 
 if TYPE_CHECKING:
-    from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
     from textual._types import MessageTarget
@@ -3800,7 +3799,6 @@ class App(Generic[ReturnType], DOMNode):
             clashed_bindings: The bindings that are clashing.
             node: The node that has the clashing bindings.
         """
-        pass
 
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded

@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.lazy import Lazy, Reveal
@@ -13,6 +15,7 @@ class LazyApp(App):
                 yield Label(id="bar")
 
 
+@pytest.mark.anyio
 async def test_lazy():
     app = LazyApp()
     async with app.run_test() as pilot:
@@ -34,6 +37,7 @@ class RevealApp(App):
             yield Label(id="baz")
 
 
+@pytest.mark.anyio
 async def test_lazy_reveal():
     app = RevealApp()
     async with app.run_test() as pilot:

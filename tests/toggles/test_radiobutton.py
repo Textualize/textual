@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import RadioButton
 
@@ -24,6 +26,7 @@ class RadioButtonApp(App[None]):
         )
 
 
+@pytest.mark.anyio
 async def test_radio_button_initial_state() -> None:
     """The initial states of the radio buttons should be as we specified."""
     async with RadioButtonApp().run_test() as pilot:
@@ -40,6 +43,7 @@ async def test_radio_button_initial_state() -> None:
         assert pilot.app.events_received == []
 
 
+@pytest.mark.anyio
 async def test_radio_button_toggle() -> None:
     """Test the status of the radio buttons after they've been toggled."""
     async with RadioButtonApp().run_test() as pilot:

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.containers import Vertical
 from textual.widgets import Button, Tree
@@ -52,6 +54,7 @@ class TreeApp(App[None]):
         self.record(event)
 
 
+@pytest.mark.anyio
 async def test_tree_node_selected_message() -> None:
     """Selecting a node should result in a selected message being emitted."""
     async with TreeApp().run_test() as pilot:
@@ -64,6 +67,7 @@ async def test_tree_node_selected_message() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_tree_node_selected_message_no_auto() -> None:
     """Selecting a node should result in only a selected message being emitted."""
     async with TreeApp().run_test() as pilot:
@@ -76,6 +80,7 @@ async def test_tree_node_selected_message_no_auto() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_tree_node_expanded_message() -> None:
     """Expanding a node should result in an expanded message being emitted."""
     async with TreeApp().run_test() as pilot:
@@ -107,6 +112,7 @@ async def tree_node_all_expanded_by_code_message() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_tree_node_collapsed_message() -> None:
     """Collapsing a node should result in a collapsed message being emitted."""
     async with TreeApp().run_test() as pilot:
@@ -163,6 +169,7 @@ async def tree_node_all_toggled_by_code_message() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_tree_node_highlighted_message() -> None:
     """Highlighting a node should result in a highlighted message being emitted."""
     async with TreeApp().run_test() as pilot:
@@ -234,6 +241,7 @@ class TreeViaCodeApp(App[None]):
         self.record(event)
 
 
+@pytest.mark.anyio
 async def test_expand_node_from_code() -> None:
     """Expanding a node from code should result in the appropriate message."""
     async with TreeViaCodeApp(False).run_test() as pilot:
@@ -244,6 +252,7 @@ async def test_expand_node_from_code() -> None:
         ]
 
 
+@pytest.mark.anyio
 async def test_collapse_node_from_code() -> None:
     """Collapsing a node from code should result in the appropriate message."""
     async with TreeViaCodeApp(True).run_test() as pilot:

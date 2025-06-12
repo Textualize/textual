@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Collapsible, Label
@@ -16,6 +18,7 @@ def get_contents(collapsible: Collapsible) -> Collapsible.Contents:
     return collapsible.get_child_by_type(Collapsible.Contents)
 
 
+@pytest.mark.anyio
 async def test_collapsible():
     """It should be possible to access title and collapsed."""
     collapsible = Collapsible(title="Pilot", collapsed=True)
@@ -23,6 +26,7 @@ async def test_collapsible():
     assert collapsible.collapsed
 
 
+@pytest.mark.anyio
 async def test_compose_default_collapsible():
     """Test default settings of Collapsible with 1 widget in contents."""
 
@@ -36,6 +40,7 @@ async def test_compose_default_collapsible():
         assert len(get_contents(collapsible).children) == 1
 
 
+@pytest.mark.anyio
 async def test_compose_empty_collapsible():
     """It should be possible to create an empty Collapsible."""
 
@@ -48,6 +53,7 @@ async def test_compose_empty_collapsible():
         assert len(get_contents(collapsible).children) == 0
 
 
+@pytest.mark.anyio
 async def test_compose_nested_collapsible():
     """Children Collapsibles are independent from parents Collapsibles."""
 
@@ -63,6 +69,7 @@ async def test_compose_nested_collapsible():
         assert not inner.collapsed
 
 
+@pytest.mark.anyio
 async def test_compose_expanded_collapsible():
     """It should be possible to create a Collapsible with expanded contents."""
 
@@ -76,6 +83,7 @@ async def test_compose_expanded_collapsible():
         assert not get_contents(collapsible).has_class(COLLAPSED_CLASS)
 
 
+@pytest.mark.anyio
 async def test_collapsible_collapsed_contents_display_false():
     """Test default settings of Collapsible with 1 widget in contents."""
 
@@ -88,6 +96,7 @@ async def test_collapsible_collapsed_contents_display_false():
         assert not get_contents(collapsible).display
 
 
+@pytest.mark.anyio
 async def test_collapsible_expanded_contents_display_true():
     """Test default settings of Collapsible with 1 widget in contents."""
 
@@ -100,6 +109,7 @@ async def test_collapsible_expanded_contents_display_true():
         assert get_contents(collapsible).display
 
 
+@pytest.mark.anyio
 async def test_toggle_title():
     """Clicking title should update ``collapsed``."""
 
@@ -118,6 +128,7 @@ async def test_toggle_title():
         assert not collapsible.collapsed
 
 
+@pytest.mark.anyio
 async def test_toggle_message():
     """Toggling should post a message."""
 
@@ -147,6 +158,7 @@ async def test_toggle_message():
         assert len(hits) == 2
 
 
+@pytest.mark.anyio
 async def test_expand_message():
     """Clicking to expand should post a message."""
 
@@ -169,6 +181,7 @@ async def test_expand_message():
         assert len(hits) == 1
 
 
+@pytest.mark.anyio
 async def test_expand_via_watcher_message():
     """Setting `collapsed` to `False` should post a message."""
 
@@ -191,6 +204,7 @@ async def test_expand_via_watcher_message():
         assert len(hits) == 1
 
 
+@pytest.mark.anyio
 async def test_collapse_message():
     """Clicking on collapsed should post a message."""
 
@@ -213,6 +227,7 @@ async def test_collapse_message():
         assert len(hits) == 1
 
 
+@pytest.mark.anyio
 async def test_collapse_via_watcher_message():
     """Setting `collapsed` to `True` should post a message."""
 
@@ -235,6 +250,7 @@ async def test_collapse_via_watcher_message():
         assert len(hits) == 1
 
 
+@pytest.mark.anyio
 async def test_collapsible_title_reactive_change():
     class CollapsibleApp(App[None]):
         def compose(self) -> ComposeResult:

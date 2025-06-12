@@ -3,6 +3,8 @@ Tests for the switch toggle animation, which is considered a basic animation.
 (An animation that also plays on the level BASIC.)
 """
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Switch
 
@@ -12,6 +14,7 @@ class SwitchApp(App[None]):
         yield Switch()
 
 
+@pytest.mark.anyio
 async def test_switch_animates_on_full() -> None:
     app = SwitchApp()
     app.animation_level = "full"
@@ -31,6 +34,7 @@ async def test_switch_animates_on_full() -> None:
         assert app.animator.is_being_animated(switch, "_slider_position")
 
 
+@pytest.mark.anyio
 async def test_switch_animates_on_basic() -> None:
     app = SwitchApp()
     app.animation_level = "basic"
@@ -50,6 +54,7 @@ async def test_switch_animates_on_basic() -> None:
         assert app.animator.is_being_animated(switch, "_slider_position")
 
 
+@pytest.mark.anyio
 async def test_switch_does_not_animate_on_none() -> None:
     app = SwitchApp()
     app.animation_level = "none"

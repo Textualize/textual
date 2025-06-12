@@ -1,5 +1,7 @@
 import asyncio
 
+import pytest
+
 from textual._context import active_message_pump
 from textual.app import App
 from textual.message_pump import MessagePump
@@ -14,6 +16,7 @@ class CallLaterApp(App[None]):
         self.display_count += 1
 
 
+@pytest.mark.anyio
 async def test_call_later() -> None:
     """Check that call later makes a call."""
     app = CallLaterApp()
@@ -24,6 +27,7 @@ async def test_call_later() -> None:
         await asyncio.wait_for(called_event.wait(), 1)
 
 
+@pytest.mark.anyio
 async def test_call_after_refresh() -> None:
     """Check that call later makes a call after a refresh."""
     app = CallLaterApp()

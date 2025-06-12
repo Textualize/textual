@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widget import Widget
@@ -22,6 +24,7 @@ class NotifyApp(App[None]):
         self.push_screen(NotifyScreen())
 
 
+@pytest.mark.anyio
 async def test_all_levels_of_notification() -> None:
     """All levels within the DOM should be able to notify."""
     async with NotifyApp().run_test() as pilot:

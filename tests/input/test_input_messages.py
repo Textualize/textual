@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.events import Paste
@@ -25,18 +27,21 @@ class InputApp(App[None]):
         self.messages.append(event.__class__.__name__)
 
 
+@pytest.mark.anyio
 async def test_no_startup_messages():
     """An input with no initial value should have no initial messages."""
     async with InputApp().run_test() as pilot:
         assert pilot.app.messages == []
 
 
+@pytest.mark.anyio
 async def test_startup_messages_with_initial_value():
     """An input with an initial value should send a changed event."""
     async with InputApp("Hello, World!").run_test() as pilot:
         assert pilot.app.messages == ["Changed"]
 
 
+@pytest.mark.anyio
 async def test_typing_from_empty_causes_changed():
     """An input with no initial value should send messages when entering text."""
     input_text = "Hello, World!"
@@ -45,6 +50,7 @@ async def test_typing_from_empty_causes_changed():
         assert pilot.app.messages == ["Changed"] * len(input_text)
 
 
+@pytest.mark.anyio
 async def test_typing_from_pre_populated_causes_changed():
     """An input with initial value should send messages when entering text after an initial message."""
     input_text = "Hello, World!"
@@ -53,6 +59,7 @@ async def test_typing_from_pre_populated_causes_changed():
         assert pilot.app.messages == ["Changed"] + (["Changed"] * len(input_text))
 
 
+@pytest.mark.anyio
 async def test_submit_empty_input():
     """Pressing enter on an empty input should send a submitted event."""
     async with InputApp().run_test() as pilot:
@@ -60,6 +67,7 @@ async def test_submit_empty_input():
         assert pilot.app.messages == ["Submitted"]
 
 
+@pytest.mark.anyio
 async def test_submit_pre_populated_input():
     """Pressing enter on a pre-populated input should send a changed then submitted event."""
     async with InputApp("The owls are not what they seem").run_test() as pilot:
@@ -67,6 +75,7 @@ async def test_submit_pre_populated_input():
         assert pilot.app.messages == ["Changed", "Submitted"]
 
 
+@pytest.mark.anyio
 async def test_paste_event_impact():
     """A paste event should result in a changed event."""
     async with InputApp().run_test() as pilot:

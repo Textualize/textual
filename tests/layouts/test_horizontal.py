@@ -22,6 +22,7 @@ async def app():
     yield app
 
 
+@pytest.mark.anyio
 async def test_horizontal_get_content_width(app):
     async with app.run_test():
         size = app.screen.size

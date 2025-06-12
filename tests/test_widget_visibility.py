@@ -1,7 +1,10 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Label
 
 
+@pytest.mark.anyio
 async def test_hide() -> None:
     """Check that setting visibility produces Hide messages."""
     # https://github.com/Textualize/textual/issues/3460

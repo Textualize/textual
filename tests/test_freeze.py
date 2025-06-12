@@ -18,6 +18,7 @@ class MyApp(App):
         self.push_screen("myscreen")
 
 
+@pytest.mark.anyio
 async def test_freeze():
     """Regression test for https://github.com/Textualize/textual/issues/1608"""
     app = MyApp()
