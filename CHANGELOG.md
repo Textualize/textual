@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issues with initial flicker in `TextArea` rendering https://github.com/Textualize/textual/issues/5841vcomm
 - Fixed issue with workers that have large parameter lists breaking dev tools https://github.com/Textualize/textual/pull/5850
 - Fixed post_message failing on 3.8 https://github.com/Textualize/textual/pull/5848
+- Fixed log not working from threads https://github.com/Textualize/textual/pull/5863
 
 ### Added
 

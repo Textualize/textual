@@ -682,7 +682,7 @@ class App(Generic[ReturnType], DOMNode):
         will be ignored.
         """
 
-        self._logger = Logger(self._log)
+        self._logger = Logger(self._log, app=self)
 
         self._css_has_errors = False
 
@@ -841,6 +841,11 @@ class App(Generic[ReturnType], DOMNode):
                         tooltip="Open the command palette",
                     )
                 )
+
+    @property
+    def _is_devtools_connected(self) -> bool:
+        """Is the app connected to the devtools?"""
+        return self.devtools is not None and self.devtools.is_connected
 
     @cached_property
     def _exception_event(self) -> asyncio.Event:
