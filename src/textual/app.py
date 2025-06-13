@@ -682,7 +682,7 @@ class App(Generic[ReturnType], DOMNode):
         will be ignored.
         """
 
-        self._logger = Logger(self._log)
+        self._logger = Logger(self._log, app=self)
 
         self._css_has_errors = False
 
