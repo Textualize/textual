@@ -105,7 +105,7 @@ class Logger:
                     )
                     print(*print_args)
                 return
-        if app.devtools is None or not app.devtools.is_connected:
+        if not app._is_devtools_connected:
             return
 
         current_frame = inspect.currentframe()
@@ -198,4 +198,10 @@ Example:
     from textual import log
     log(locals())
     ```
+
+!!! note
+    This logger will only work if there is an active app in the current thread.
+    Use `app.log` to write logs from a thread without an active app.
+
+
 """

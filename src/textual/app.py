@@ -842,6 +842,11 @@ class App(Generic[ReturnType], DOMNode):
                     )
                 )
 
+    @property
+    def _is_devtools_connected(self) -> bool:
+        """Is the app connected to the devtools?"""
+        return self.devtools is not None and self.devtools.is_connected
+
     @cached_property
     def _exception_event(self) -> asyncio.Event:
         """An event that will be set when the first exception is encountered."""
