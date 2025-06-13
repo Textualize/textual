@@ -29,6 +29,7 @@ from typing import (
     AsyncIterator,
     Callable,
     ClassVar,
+    Final,
     Iterable,
     NamedTuple,
 )
@@ -36,7 +37,7 @@ from typing import (
 import rich.repr
 from rich.align import Align
 from rich.text import Text
-from typing_extensions import Final, TypeAlias
+from typing_extensions import TypeAlias
 
 from textual import on, work
 from textual.binding import Binding, BindingType
