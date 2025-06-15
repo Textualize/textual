@@ -1707,6 +1707,8 @@ class DOMNode(MessagePump):
 
         Should be called whenever CSS classes / pseudo classes change.
         """
+        if not self.is_attached:
+            return
         try:
             self.app.update_styles(self)
         except NoActiveAppError:
@@ -1727,7 +1729,7 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        if update and self.is_attached:
+        if update:
             self._update_styles()
         return self
 
@@ -1746,7 +1748,7 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        if update and self.is_attached:
+        if update:
             self._update_styles()
         return self
 
