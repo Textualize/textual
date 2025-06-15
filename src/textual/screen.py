@@ -1349,6 +1349,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
+        if not self.is_attached:
+            return
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.add_class(self.app.SUSPENDED_SCREEN_CLASS)
         self.app._set_mouse_over(None)
