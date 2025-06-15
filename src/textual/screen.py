@@ -1325,6 +1325,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Screen has resumed."""
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
+
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
@@ -1340,10 +1341,11 @@ class Screen(Generic[ScreenResultType], Widget):
                         self.set_focus(widget)
                         break
 
-        self._compositor_refresh()
-        self.app.stylesheet.update(self)
-        self._refresh_layout(size)
-        self.refresh()
+        if self.is_attached:
+            self._compositor_refresh()
+            self.app.stylesheet.update(self)
+            self._refresh_layout(size)
+            self.refresh()
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
