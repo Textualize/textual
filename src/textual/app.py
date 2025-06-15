@@ -791,8 +791,8 @@ class App(Generic[ReturnType], DOMNode):
         perform work after the app has resumed.
         """
 
-        self.set_class(self.current_theme.dark, "-dark-mode")
-        self.set_class(not self.current_theme.dark, "-light-mode")
+        self.set_class(self.current_theme.dark, "-dark-mode", update=False)
+        self.set_class(not self.current_theme.dark, "-light-mode", update=False)
 
         self.animation_level: AnimationLevel = constants.TEXTUAL_ANIMATIONS
         """Determines what type of animations the app will display.

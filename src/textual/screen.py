@@ -1318,14 +1318,16 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size) -> None:
         """Called by App when the screen is resized."""
-        if self.stack_updates:
+        if self.stack_updates and self.is_attached:
             self._refresh_layout(size)
 
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
+
         self.stack_updates += 1
+
         self.app._refresh_notifications()
         size = self.app.size
 
@@ -1340,10 +1342,11 @@ class Screen(Generic[ScreenResultType], Widget):
                         self.set_focus(widget)
                         break
 
-        self._compositor_refresh()
-        self.app.stylesheet.update(self)
-        self._refresh_layout(size)
-        self.refresh()
+        if self.is_attached:
+            self._compositor_refresh()
+            self.app.stylesheet.update(self)
+            self._refresh_layout(size)
+            self.refresh()
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
