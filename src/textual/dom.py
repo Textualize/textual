@@ -1727,7 +1727,7 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        if update:
+        if update and self.is_attached:
             self._update_styles()
         return self
 
@@ -1746,7 +1746,7 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        if update:
+        if update and self.is_attached:
             self._update_styles()
         return self
 
