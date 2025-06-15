@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import Tuple
-
-from typing_extensions import Literal
+from typing import Literal, Tuple
 
 from textual.color import Color
 
