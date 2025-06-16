@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Optimized startup
+- Optimized startup https://github.com/Textualize/textual/pull/5869
+- New blank visual which makes background faster to render (note this will break snapshots tests this version) https://github.com/Textualize/textual/pull/5869
 
 ## [3.4.0] - 2025-06-14
 
