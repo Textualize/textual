@@ -32,9 +32,9 @@
         font-family: arial;
     }
 
-    .terminal-r1 { fill: #e0e0e0 }
-.terminal-r2 { fill: #c5c8c6 }
-.terminal-r3 { fill: #ffa62b;font-weight: bold }
+    .terminal-r1 { fill: #c5c8c6 }
+.terminal-r2 { fill: #ffa62b;font-weight: bold }
+.terminal-r3 { fill: #e0e0e0 }
 .terminal-r4 { fill: #495259 }
     </style>
 
@@ -123,30 +123,30 @@
     <g transform="translate(9, 41)" clip-path="url(#terminal-clip-terminal)">
     <rect fill="#121212" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="123.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="0" y="562.7" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="48.8" y="562.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="158.6" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="195.2" y="562.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="305" y="562.7" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="366" y="562.7" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="451.4" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="488" y="562.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="597.8" y="562.7" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="829.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="841.8" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="866.2" y="562.7" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#242f38" x="963.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
     <g class="terminal-matrix">
-    <text class="terminal-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-line-0)">
-</text><text class="terminal-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-line-1)">
-</text><text class="terminal-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-line-2)">
-</text><text class="terminal-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-line-3)">
-</text><text class="terminal-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-line-4)">
-</text><text class="terminal-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-line-5)">
-</text><text class="terminal-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-line-6)">
-</text><text class="terminal-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-line-7)">
-</text><text class="terminal-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-line-8)">
-</text><text class="terminal-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-line-9)">
-</text><text class="terminal-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-line-10)">
-</text><text class="terminal-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-line-11)">
-</text><text class="terminal-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-line-12)">
-</text><text class="terminal-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-line-13)">
-</text><text class="terminal-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-line-14)">
-</text><text class="terminal-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-line-15)">
-</text><text class="terminal-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-line-16)">
-</text><text class="terminal-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-line-17)">
-</text><text class="terminal-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-line-18)">
-</text><text class="terminal-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-line-19)">
-</text><text class="terminal-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-line-20)">
-</text><text class="terminal-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-line-21)">
-</text><text class="terminal-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-line-22)">
-</text><text class="terminal-r3" x="0" y="581.2" textLength="48.8" clip-path="url(#terminal-line-23)">&#160;^q&#160;</text><text class="terminal-r1" x="48.8" y="581.2" textLength="109.8" clip-path="url(#terminal-line-23)">Quit&#160;app&#160;</text><text class="terminal-r3" x="158.6" y="581.2" textLength="36.6" clip-path="url(#terminal-line-23)">&#160;?&#160;</text><text class="terminal-r1" x="195.2" y="581.2" textLength="109.8" clip-path="url(#terminal-line-23)">Question&#160;</text><text class="terminal-r3" x="305" y="581.2" textLength="61" clip-path="url(#terminal-line-23)">&#160;esc&#160;</text><text class="terminal-r1" x="366" y="581.2" textLength="85.4" clip-path="url(#terminal-line-23)">Escape&#160;</text><text class="terminal-r3" x="451.4" y="581.2" textLength="36.6" clip-path="url(#terminal-line-23)">&#160;a&#160;</text><text class="terminal-r1" x="488" y="581.2" textLength="109.8" clip-path="url(#terminal-line-23)">Letter&#160;A&#160;</text><text class="terminal-r4" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-line-23)">▏</text><text class="terminal-r3" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-line-23)">^p</text><text class="terminal-r1" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-line-23)">&#160;palette</text>
+    <text class="terminal-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-line-0)">
+</text><text class="terminal-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-line-1)">
+</text><text class="terminal-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-line-2)">
+</text><text class="terminal-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-line-3)">
+</text><text class="terminal-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-line-4)">
+</text><text class="terminal-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-line-5)">
+</text><text class="terminal-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-line-6)">
+</text><text class="terminal-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-line-7)">
+</text><text class="terminal-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-line-8)">
+</text><text class="terminal-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-line-9)">
+</text><text class="terminal-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-line-10)">
+</text><text class="terminal-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-line-11)">
+</text><text class="terminal-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-line-12)">
+</text><text class="terminal-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-line-13)">
+</text><text class="terminal-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-line-14)">
+</text><text class="terminal-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-line-15)">
+</text><text class="terminal-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-line-16)">
+</text><text class="terminal-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-line-17)">
+</text><text class="terminal-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-line-18)">
+</text><text class="terminal-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-line-19)">
+</text><text class="terminal-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-line-20)">
+</text><text class="terminal-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-line-21)">
+</text><text class="terminal-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-line-22)">
+</text><text class="terminal-r2" x="0" y="581.2" textLength="48.8" clip-path="url(#terminal-line-23)">&#160;^q&#160;</text><text class="terminal-r3" x="48.8" y="581.2" textLength="109.8" clip-path="url(#terminal-line-23)">Quit&#160;app&#160;</text><text class="terminal-r2" x="158.6" y="581.2" textLength="36.6" clip-path="url(#terminal-line-23)">&#160;?&#160;</text><text class="terminal-r3" x="195.2" y="581.2" textLength="109.8" clip-path="url(#terminal-line-23)">Question&#160;</text><text class="terminal-r2" x="305" y="581.2" textLength="61" clip-path="url(#terminal-line-23)">&#160;esc&#160;</text><text class="terminal-r3" x="366" y="581.2" textLength="85.4" clip-path="url(#terminal-line-23)">Escape&#160;</text><text class="terminal-r2" x="451.4" y="581.2" textLength="36.6" clip-path="url(#terminal-line-23)">&#160;a&#160;</text><text class="terminal-r3" x="488" y="581.2" textLength="109.8" clip-path="url(#terminal-line-23)">Letter&#160;A&#160;</text><text class="terminal-r4" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-line-23)">▏</text><text class="terminal-r2" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-line-23)">^p</text><text class="terminal-r3" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-line-23)">&#160;palette</text>
     </g>
     </g>
 </svg>

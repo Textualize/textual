@@ -35,8 +35,8 @@
     .terminal-r1 { fill: #121212 }
 .terminal-r2 { fill: #0178d4 }
 .terminal-r3 { fill: #c5c8c6 }
-.terminal-r4 { fill: #e0e0e0 }
-.terminal-r5 { fill: #ffa62b;font-weight: bold }
+.terminal-r4 { fill: #ffa62b;font-weight: bold }
+.terminal-r5 { fill: #e0e0e0 }
 .terminal-r6 { fill: #495259 }
     </style>
 
@@ -148,7 +148,7 @@
 </text><text class="terminal-r3" x="976" y="508" textLength="12.2" clip-path="url(#terminal-line-20)">
 </text><text class="terminal-r3" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-line-21)">
 </text><text class="terminal-r3" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-line-22)">
-</text><text class="terminal-r5" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-line-23)">&#160;x&#160;</text><text class="terminal-r4" x="36.6" y="581.2" textLength="170.8" clip-path="url(#terminal-line-23)">Clear&#160;options&#160;</text><text class="terminal-r6" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-line-23)">▏</text><text class="terminal-r5" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-line-23)">^p</text><text class="terminal-r4" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-line-23)">&#160;palette</text>
+</text><text class="terminal-r4" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-line-23)">&#160;x&#160;</text><text class="terminal-r5" x="36.6" y="581.2" textLength="170.8" clip-path="url(#terminal-line-23)">Clear&#160;options&#160;</text><text class="terminal-r6" x="829.6" y="581.2" textLength="12.2" clip-path="url(#terminal-line-23)">▏</text><text class="terminal-r4" x="841.8" y="581.2" textLength="24.4" clip-path="url(#terminal-line-23)">^p</text><text class="terminal-r5" x="866.2" y="581.2" textLength="97.6" clip-path="url(#terminal-line-23)">&#160;palette</text>
     </g>
     </g>
 </svg>
