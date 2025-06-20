@@ -52,7 +52,7 @@ docs-online-nav:
 
 .PHONY: docs-serve
 docs-serve: clean-screenshot-cache docs-online-nav
-	$(run) mkdocs serve --config-file mkdocs-nav-online.yml
+	TEXTUAL_THEME=dracula $(run) mkdocs serve --config-file mkdocs-nav-online.yml
 	rm -f mkdocs-nav-online.yml
 
 .PHONY: docs-serve-offline
@@ -76,7 +76,7 @@ clean-offline-docs:
 
 .PHONY: docs-deploy
 docs-deploy: clean-screenshot-cache docs-online-nav
-	$(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
+	TEXTUAL_THEME=dracula $(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
 	rm -f mkdocs-nav-online.yml
 
 .PHONY: build

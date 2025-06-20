@@ -352,7 +352,7 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $success-darken-2;
+        border-left: outer $primary 50%;
         margin: 1 0;
         padding: 0 1;
     }
@@ -478,7 +478,7 @@ class MarkdownTableContent(Widget):
     def render(self) -> Table:
         table = Table(
             expand=True,
-            box=box.SIMPLE_HEAVY,
+            box=box.SIMPLE_HEAD,
             style=self.rich_style,
             header_style=self.get_component_rich_style("markdown-table--header"),
             border_style=self.get_component_rich_style("markdown-table--lines"),
@@ -504,7 +504,10 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        background: $surface;
+        background: black 10%;
+        &:light {
+            background: white 30%;
+        }
     }
     """
 
@@ -555,7 +558,7 @@ class MarkdownBullet(Widget):
     DEFAULT_CSS = """
     MarkdownBullet {
         width: auto;
-        color: $success;
+        color: $text;
         text-style: bold;
         &:light {
             color: $secondary;
@@ -613,6 +616,11 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
+        background: black 10%;
+
+        &:light {
+            background: white 30%;
+        }
     }
 
     MarkdownFence > * {
@@ -630,14 +638,19 @@ class MarkdownFence(MarkdownBlock):
             else self._markdown.code_light_theme
         )
 
+    def notify_style_update(self) -> None:
+        self.call_later(self._retheme)
+
     def _block(self) -> Syntax:
+        _, background_color = self.background_colors
         return Syntax(
             self.code,
             lexer=self.lexer,
             word_wrap=False,
-            indent_guides=True,
+            indent_guides=self._markdown.code_indent_guides,
             padding=(1, 2),
             theme=self.theme,
+            background_color=background_color.css,
         )
 
     def _on_mount(self, _: Mount) -> None:
@@ -721,6 +734,9 @@ class Markdown(Widget):
 
     code_light_theme: reactive[str] = reactive("material-light")
     """The theme to use for code blocks when the App theme is light."""
+
+    code_indent_guides: reactive[bool] = reactive(True)
+    """Should code fences display indent guides?"""
 
     def __init__(
         self,
@@ -1157,6 +1173,9 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
     """
 
     show_table_of_contents = reactive(True)
+    """Show the table of contents?"""
+    code_indent_guides: reactive[bool] = reactive(True)
+    """Should code fences display indent guides?"""
     top_block = reactive("")
 
     navigator: var[Navigator] = var(Navigator)
@@ -1241,7 +1260,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
             parser_factory=self._parser_factory, open_links=self._open_links
         )
         markdown.can_focus = True
-        yield markdown
+        yield markdown.data_bind(MarkdownViewer.code_indent_guides)
         yield MarkdownTableOfContents(markdown)
 
     def _on_markdown_table_of_contents_updated(
