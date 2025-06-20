@@ -352,7 +352,7 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $success-darken-2;
+        border-left: outer $primary 50%;
         margin: 1 0;
         padding: 0 1;
     }
@@ -555,7 +555,7 @@ class MarkdownBullet(Widget):
     DEFAULT_CSS = """
     MarkdownBullet {
         width: auto;
-        color: $success;
+        color: $text;
         text-style: bold;
         &:light {
             color: $secondary;
@@ -613,6 +613,7 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
+        background: $background 80%;
     }
 
     MarkdownFence > * {
@@ -630,7 +631,11 @@ class MarkdownFence(MarkdownBlock):
             else self._markdown.code_light_theme
         )
 
+    def notify_style_update(self) -> None:
+        self.call_later(self._retheme)
+
     def _block(self) -> Syntax:
+        _, background_color = self.background_colors
         return Syntax(
             self.code,
             lexer=self.lexer,
@@ -638,6 +643,7 @@ class MarkdownFence(MarkdownBlock):
             indent_guides=self._markdown.code_indent_guides,
             padding=(1, 2),
             theme=self.theme,
+            background_color=background_color.css,
         )
 
     def _on_mount(self, _: Mount) -> None:
