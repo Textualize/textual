@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Optimized startup https://github.com/Textualize/textual/pull/5869
 - New blank visual which makes background faster to render (note this will break snapshots tests this version) https://github.com/Textualize/textual/pull/5869
-- Exposed `code_indent_guides` boolean on Markdown widget
-- Changed code fence background to use CSS background rather than its code theme
+- Exposed `code_indent_guides` boolean on Markdown widget https://github.com/Textualize/textual/pull/5874
+- Changed code fence background to use CSS background rather than its code theme https://github.com/Textualize/textual/pull/5874
 
 ## [3.4.0] - 2025-06-14
 

@@ -504,7 +504,10 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        background: $background 80%;
+        background: black 10%;
+        &:light {
+            background: white 30%;
+        }
     }
     """
 
@@ -613,7 +616,11 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
-        background: $background 80%;
+        background: black 10%;
+
+        &:light {
+            background: white 30%;
+        }
     }
 
     MarkdownFence > * {
