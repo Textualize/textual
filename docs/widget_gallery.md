@@ -162,7 +162,7 @@ Display and interact with a Markdown document (adds a table of contents and brow
 [MarkdownViewer reference](./widgets/markdown_viewer.md){ .md-button .md-button--primary }
 
 
-```{.textual path="docs/examples/widgets/markdown_viewer.py" columns="100" lines="42"}
+```{.textual path="docs/examples/widgets/markdown_viewer.py" columns="140" lines="50" press="tab,down"}
 ```
 
 ## Markdown
@@ -172,7 +172,7 @@ Display a markdown document.
 [Markdown reference](./widgets/markdown.md){ .md-button .md-button--primary }
 
 
-```{.textual path="docs/examples/widgets/markdown.py"}
+```{.textual path="docs/examples/widgets/markdown.py" columns="140" lines="51"}
 ```
 
 ## MaskedInput

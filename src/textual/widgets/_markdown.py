@@ -478,7 +478,7 @@ class MarkdownTableContent(Widget):
     def render(self) -> Table:
         table = Table(
             expand=True,
-            box=box.SIMPLE_HEAVY,
+            box=box.SIMPLE_HEAD,
             style=self.rich_style,
             header_style=self.get_component_rich_style("markdown-table--header"),
             border_style=self.get_component_rich_style("markdown-table--lines"),
@@ -504,7 +504,7 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        background: $surface;
+        background: $background 80%;
     }
     """
 
@@ -635,7 +635,7 @@ class MarkdownFence(MarkdownBlock):
             self.code,
             lexer=self.lexer,
             word_wrap=False,
-            indent_guides=True,
+            indent_guides=self._markdown.code_indent_guides,
             padding=(1, 2),
             theme=self.theme,
         )
@@ -721,6 +721,9 @@ class Markdown(Widget):
 
     code_light_theme: reactive[str] = reactive("material-light")
     """The theme to use for code blocks when the App theme is light."""
+
+    code_indent_guides: reactive[bool] = reactive(True)
+    """Should code fences display indent guides?"""
 
     def __init__(
         self,
@@ -1157,6 +1160,9 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
     """
 
     show_table_of_contents = reactive(True)
+    """Show the table of contents?"""
+    code_indent_guides: reactive[bool] = reactive(True)
+    """Should code fences display indent guides?"""
     top_block = reactive("")
 
     navigator: var[Navigator] = var(Navigator)
@@ -1241,7 +1247,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
             parser_factory=self._parser_factory, open_links=self._open_links
         )
         markdown.can_focus = True
-        yield markdown
+        yield markdown.data_bind(MarkdownViewer.code_indent_guides)
         yield MarkdownTableOfContents(markdown)
 
     def _on_markdown_table_of_contents_updated(
