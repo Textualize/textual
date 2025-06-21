@@ -14,6 +14,7 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Don't forget to [star](https://github.com/Textualize/textual) the repository!
-
-            Follow [@textualizeio](https://twitter.com/textualizeio) for Textual updates.
+            I hope I solved your issue. Consider [sponsoring me](https://github.com/sponsors/willmcgugan) to help maintain and develop Textual.
+            
+            - Will McGugan
+            
