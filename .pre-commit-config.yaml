@@ -24,11 +24,11 @@ repos:
         language_version: '3.11'
         args: ['--profile', 'black', '--filter-files']
   - repo: https://github.com/psf/black
-    rev: '24.1.1'
+    rev: '25.1.0'
     hooks:
       - id: black
   - repo: https://github.com/hadialqattan/pycln  # removes unused imports
-    rev: v2.3.0
+    rev: v2.5.0
     hooks:
       - id: pycln
         language_version: '3.11'
