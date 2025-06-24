@@ -984,6 +984,7 @@ class ColorProperty:
                     continue
                 try:
                     parsed_color = Color.parse(token)
+                    _r, _g, _b, alpha, _, _ = parsed_color
                 except ColorParseError as error:
                     raise StyleValueError(
                         f"Invalid color value '{token}'",
