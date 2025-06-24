@@ -207,7 +207,6 @@ async def test_none_validate_on_means_all_validations_happen():
         await pilot.pause()
         assert input.has_class("-valid")
 
-
 async def test_valid_empty():
     app = InputApp(None)
     async with app.run_test() as pilot:
@@ -222,3 +221,22 @@ async def test_valid_empty():
 
         assert input.has_class("-valid")
         assert not input.has_class("-invalid")
+
+
+class InvalidEmptyApp(App):
+
+    def compose(self) -> ComposeResult:
+        yield Input(valid_empty=False, value="x")
+
+async def test_invalid_empty():
+    app = InvalidEmptyApp()
+    with app.run_test() as pilot:
+        input = app.query_one(Input)
+
+        assert input.has_class('-valid')
+        assert not input.has_class('-invalid')
+
+        await pilot.press('backspace')
+        assert input.has_class('-invalid')
+        assert not input.has_class('-valid')
+
