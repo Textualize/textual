@@ -984,7 +984,6 @@ class ColorProperty:
                     continue
                 try:
                     parsed_color = Color.parse(token)
-                    _r, _g, _b, alpha, _, _ = parsed_color
                 except ColorParseError as error:
                     raise StyleValueError(
                         f"Invalid color value '{token}'",
@@ -992,7 +991,7 @@ class ColorProperty:
                             self.name, context="inline", error=error, value=token
                         ),
                     )
-            parsed_color = parsed_color.with_alpha(alpha)
+            parsed_color = parsed_color.multiply_alpha(alpha)
 
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh(children=True)
