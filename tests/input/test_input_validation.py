@@ -211,15 +211,15 @@ async def test_none_validate_on_means_all_validations_happen():
 async def test_valid_empty():
     app = InputApp(None)
     async with app.run_test() as pilot:
-        input = app.query_one(Input)
+        input = app.query_one(Input)  # valid_empty=False
 
         await pilot.press("1", "backspace")
-        assert input.value == ''
+        assert input.value == ''  # Empty value: invalid
 
         assert not input.has_class("-valid")
         assert input.has_class("-invalid")
 
         input.valid_empty = True
 
-        assert input.has_class("-valid")
+        assert input.has_class("-valid")  # Empty value: now acceptble
         assert not input.has_class("-invalid")
