@@ -24,10 +24,10 @@ class ContainerApp(App):
     """
 
     def compose(self) -> ComposeResult:
-        yield Box("Box 1")
-        with Center(classes="with-border"):
+        yield Box("Box 1")  # (1)!
+        with Center(classes="with-border"):  # (2)!
             yield Box("Box 2")
-        with Right(classes="with-border"):
+        with Right(classes="with-border"):  # (3)!
             yield Box("Box 3")
 
 

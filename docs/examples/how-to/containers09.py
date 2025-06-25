@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import HorizontalGroup, Middle
+from textual.containers import Middle
 from textual.widgets import Placeholder
 
 
@@ -24,11 +24,10 @@ class ContainerApp(App):
     """
 
     def compose(self) -> ComposeResult:
-        with HorizontalGroup():
-            yield Box("Box 1")
-            with Middle(classes="with-border"):
-                yield Box("Box 2")
-            yield Box("Box 3")
+        with Middle(classes="with-border"):  # (1)!
+            yield Box("Box 1.")
+            yield Box("Box 2.")
+            yield Box("Box 3.")
 
 
 if __name__ == "__main__":
