@@ -214,6 +214,7 @@ async def test_valid_empty():
         input = app.query_one(Input)
 
         await pilot.press("1", "backspace")
+        assert input.value == ''
 
         assert not input.has_class("-valid")
         assert input.has_class("-invalid")

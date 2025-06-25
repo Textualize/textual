@@ -149,7 +149,7 @@ class Input(ScrollView):
     | ctrl+k | Delete everything to the right of the cursor. |
     | ctrl+x | Cut selected text. |
     | ctrl+c | Copy selected text. |
-    | ctrl+v | Paste text from the clipboard. | 
+    | ctrl+v | Paste text from the clipboard. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -187,9 +187,9 @@ class Input(ScrollView):
         }
 
         &:focus {
-            border: tall $border;            
+            border: tall $border;
             background-tint: $foreground 5%;
-            
+
         }
         &>.input--cursor {
             background: $input-cursor-background;
@@ -207,12 +207,12 @@ class Input(ScrollView):
         }
         &.-invalid:focus {
             border: tall $error;
-        }    
+        }
 
         &:ansi {
             background: ansi_default;
             color: ansi_default;
-            &>.input--cursor {     
+            &>.input--cursor {
                 text-style: reverse;
             }
             &>.input--placeholder, &>.input--suggestion {
@@ -224,8 +224,8 @@ class Input(ScrollView):
             }
             &.-invalid:focus {
                 border: tall ansi_red;
-            }  
-            
+            }
+
         }
     }
 
@@ -571,13 +571,14 @@ class Input(ScrollView):
             self.set_class(not valid, "-invalid")
             self.set_class(valid, "-valid")
 
-        # If no validators are supplied, and therefore no validation occurs, we return None.
-        if not self.validators:
+        # Empty inputs are always OK if valid_empty is set.
+        if self.valid_empty and not value:
             self._valid = True
             set_classes()
             return None
 
-        if self.valid_empty and not value:
+        # If no validators are supplied, and therefore no validation occurs, we return None.
+        if not self.validators:
             self._valid = True
             set_classes()
             return None
