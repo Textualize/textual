@@ -230,6 +230,18 @@ class Middle(Widget, inherit_bindings=False):
     """
 
 
+class CenterMiddle(Widget, inherit_bindings=False):
+    """A container which aligns its children on both axis."""
+
+    DEFAULT_CSS = """
+    CenterMiddle {
+        align: center middle;
+        width: 1fr;
+        height: 1fr;
+    }
+    """
+
+
 class Grid(Widget, inherit_bindings=False):
     """A container with grid layout."""
 
