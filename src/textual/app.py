@@ -2736,6 +2736,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             future = loop.create_future()
 
+        self.app.capture_mouse(None)
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
@@ -2804,6 +2805,7 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"Screen {screen} is already current.")
             return AwaitComplete.nothing()
 
+        self.app.capture_mouse(None)
         top_screen = self._screen_stack.pop()
 
         top_screen._pop_result_callback()

@@ -4341,7 +4341,8 @@ class Widget(DOMNode):
 
         Mouse events will only be sent when the mouse is over the widget.
         """
-        self.app.capture_mouse(None)
+        if self.app.mouse_captured is self:
+            self.app.capture_mouse(None)
 
     def text_select_all(self) -> None:
         """Select the entire widget."""
