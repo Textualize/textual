@@ -2680,6 +2680,7 @@ class App(Generic[ReturnType], DOMNode):
         if not self.is_screen_installed(screen) and all(
             screen not in stack for stack in self._screen_stacks.values()
         ):
+            self.capture_mouse(None)
             await screen.remove()
             self.log.system(f"{screen} REMOVED")
         return screen
@@ -2896,7 +2897,6 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't pop screen; there must be at least one screen on the stack"
             )
 
-        self.capture_mouse(None)
         previous_screen = screen_stack.pop()
         previous_screen._pop_result_callback()
         self.screen.post_message(events.ScreenResume())
