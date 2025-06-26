@@ -769,11 +769,18 @@ class Input(ScrollView):
         self._selecting = True
         self.capture_mouse()
 
-    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+    def _end_selecting(self) -> None:
+        """End selecting if it is currently active."""
         if self._selecting:
             self._selecting = False
             self.release_mouse()
             self._restart_blink()
+
+    async def _on_mouse_release(self, _event: events.MouseRelease) -> None:
+        self._end_selecting()
+
+    async def _on_mouse_up(self, _event: events.MouseUp) -> None:
+        self._end_selecting()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         if self._selecting:
