@@ -237,6 +237,7 @@ nav:
       - "how-to/package-with-hatch.md"
       - "how-to/render-and-compose.md"
       - "how-to/style-inline-apps.md"
+      - "how-to/work-with-containers.md"
   - "FAQ.md"
   - "roadmap.md"
   - "Blog":
