@@ -2896,6 +2896,7 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't pop screen; there must be at least one screen on the stack"
             )
 
+        self.capture_mouse(None)
         previous_screen = screen_stack.pop()
         previous_screen._pop_result_callback()
         self.screen.post_message(events.ScreenResume())
