@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with the "transparent" CSS value not being transparent when set using python
+- Fixed issue with the "transparent" CSS value not being transparent when set using python https://github.com/Textualize/textual/pull/5890
+- Fixed issue with pushing screens when Input has mouse captured https://github.com/Textualize/textual/pull/5900
 
 ## [3.5.0] - 2025-06-20
 
