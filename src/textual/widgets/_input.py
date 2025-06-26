@@ -769,7 +769,8 @@ class Input(ScrollView):
         self._selecting = True
         self.capture_mouse()
 
-    def _end_selecting(self):
+    def _end_selecting(self) -> None:
+        """End selecting if it is currently active."""
         if self._selecting:
             self._selecting = False
             self.release_mouse()
