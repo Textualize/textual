@@ -1,6 +1,13 @@
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, List, Literal, Union
-
-from typing_extensions import Protocol
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    List,
+    Literal,
+    Protocol,
+    Union,
+)
 
 if TYPE_CHECKING:
     from rich.segment import Segment
