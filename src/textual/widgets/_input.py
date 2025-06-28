@@ -149,7 +149,7 @@ class Input(ScrollView):
     | ctrl+k | Delete everything to the right of the cursor. |
     | ctrl+x | Cut selected text. |
     | ctrl+c | Copy selected text. |
-    | ctrl+v | Paste text from the clipboard. | 
+    | ctrl+v | Paste text from the clipboard. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -187,9 +187,9 @@ class Input(ScrollView):
         }
 
         &:focus {
-            border: tall $border;            
+            border: tall $border;
             background-tint: $foreground 5%;
-            
+
         }
         &>.input--cursor {
             background: $input-cursor-background;
@@ -207,12 +207,12 @@ class Input(ScrollView):
         }
         &.-invalid:focus {
             border: tall $error;
-        }    
+        }
 
         &:ansi {
             background: ansi_default;
             color: ansi_default;
-            &>.input--cursor {     
+            &>.input--cursor {
                 text-style: reverse;
             }
             &>.input--placeholder, &>.input--suggestion {
@@ -224,8 +224,8 @@ class Input(ScrollView):
             }
             &.-invalid:focus {
                 border: tall ansi_red;
-            }  
-            
+            }
+
         }
     }
 
@@ -553,13 +553,13 @@ class Input(ScrollView):
     def validate(self, value: str) -> ValidationResult | None:
         """Run all the validators associated with this Input on the supplied value.
 
-        Runs all validators, combines the result into one. If any of the validators
-        failed, the combined result will be a failure. If no validators are present,
-        None will be returned. This also sets the `-invalid` CSS class on the Input
-        if the validation fails, and sets the `-valid` CSS class on the Input if
-        the validation succeeds.
+        Runs all validators, combines the result into one. If any of the
+        validators failed, the combined result will be a failure. If no
+        validators are present, or the value is empty, None will be returned.
+        After validation the result is reflected in the DOM, and the
+        Input will either have the `-valid` or `-invalid` CSS class.
 
-        Returns:
+         Returns:
             A ValidationResult indicating whether *all* validators succeeded or not.
                 That is, if *any* validator fails, the result will be an unsuccessful
                 validation.
@@ -571,13 +571,14 @@ class Input(ScrollView):
             self.set_class(not valid, "-invalid")
             self.set_class(valid, "-valid")
 
-        # If no validators are supplied, and therefore no validation occurs, we return None.
-        if not self.validators:
-            self._valid = True
+        # Empty values never run the validators.
+        if not value:
+            self._valid = self.valid_empty
             set_classes()
             return None
 
-        if self.valid_empty and not value:
+        # If no validators are supplied, and therefore no validation occurs, we return None.
+        if not self.validators:
             self._valid = True
             set_classes()
             return None

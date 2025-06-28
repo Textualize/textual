@@ -114,7 +114,7 @@ as seen for `Palindrome` in the example above.
 
 #### Validate Empty
 
-If you set `valid_empty=True` then empty values will bypass any validators, and empty values will be considered valid.
+Empty values _always_ bypass validation, and are considered valid only when `valid_empty=True`.
 
 ## Reactive Attributes
 
