@@ -3532,7 +3532,7 @@ def test_focus_within_transparent(snap_compare):
         """
 
         def compose(self) -> ComposeResult:
-            yield Input(placeholder="This is here to escape to")
+            yield Input(placeholder="This is here to escape to", valid_empty=True)
             with Panel():
                 yield OptionList(*["This is an option" for _ in range(30)])
                 yield Input(placeholder="Escape out via here for the bug")
