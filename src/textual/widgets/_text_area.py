@@ -374,6 +374,9 @@ TextArea {
     compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
     """Enable compact display?"""
 
+    highlight_cursor_line: reactive[bool] = reactive(True)
+    """Highlight the line under the cursor?"""
+
     _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
@@ -427,6 +430,7 @@ TextArea {
         disabled: bool = False,
         tooltip: RenderableType | None = None,
         compact: bool = False,
+        highlight_cursor_line: bool = True,
     ) -> None:
         """Construct a new `TextArea`.
 
@@ -446,6 +450,7 @@ TextArea {
             disabled: True if the widget is disabled.
             tooltip: Optional tooltip.
             compact: Enable compact style (without borders).
+            highlight_cursor_line: Highlight the line under the cursor.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -504,6 +509,7 @@ TextArea {
         self.set_reactive(TextArea.read_only, read_only)
         self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
         self.set_reactive(TextArea.line_number_start, line_number_start)
+        self.set_reactive(TextArea.highlight_cursor_line, highlight_cursor_line)
 
         self._set_document(text, language)
 
@@ -541,6 +547,7 @@ TextArea {
         disabled: bool = False,
         tooltip: RenderableType | None = None,
         compact: bool = False,
+        highlight_cursor_line: bool = True,
     ) -> TextArea:
         """Construct a new `TextArea` with sensible defaults for editing code.
 
@@ -561,6 +568,7 @@ TextArea {
             disabled: True if the widget is disabled.
             tooltip: Optional tooltip
             compact: Enable compact style (without borders).
+            highlight_cursor_line: Highlight the line under the cursor.
         """
         return cls(
             text,
@@ -578,6 +586,7 @@ TextArea {
             disabled=disabled,
             tooltip=tooltip,
             compact=compact,
+            highlight_cursor_line=highlight_cursor_line,
         )
 
     @staticmethod
@@ -1149,7 +1158,11 @@ TextArea {
         selection_bottom_row, selection_bottom_column = selection_bottom
 
         cursor_line_style = theme.cursor_line_style if theme else None
-        if cursor_line_style and cursor_row == line_index:
+        if (
+            cursor_line_style
+            and cursor_row == line_index
+            and self.highlight_cursor_line
+        ):
             line.stylize(cursor_line_style)
 
         # Selection styling
@@ -1241,7 +1254,7 @@ TextArea {
         # Build the gutter text for this line
         gutter_width = self.gutter_width
         if self.show_line_numbers:
-            if cursor_row == line_index:
+            if cursor_row == line_index and self.highlight_cursor_line:
                 gutter_style = theme.cursor_line_gutter_style
             else:
                 gutter_style = theme.gutter_style
@@ -1306,7 +1319,7 @@ TextArea {
             text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
 
         # Stylize the line the cursor is currently on.
-        if cursor_row == line_index:
+        if cursor_row == line_index and self.highlight_cursor_line:
             line_style = cursor_line_style
         else:
             line_style = theme.base_style if theme else None
