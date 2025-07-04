@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Widget.release_mouse will now only release the mouse, if it was captured by self https://github.com/Textualize/textual/pull/5900
 
+## Added
+
+- Added `TextArea.highlight_cursor_line` toggle
+
 ## [3.5.0] - 2025-06-20
 
 ### Changed
