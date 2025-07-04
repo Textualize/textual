@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Added
 
-- Added `TextArea.highlight_cursor_line` toggle
+- Added `TextArea.highlight_cursor_line` toggle https://github.com/Textualize/textual/pull/5924
 
 ## [3.5.0] - 2025-06-20
 
