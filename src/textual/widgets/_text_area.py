@@ -1691,7 +1691,7 @@ TextArea {
         # Capture the mouse so that if the cursor moves outside the
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
-        self._pause_blink(visible=True)
+        self._pause_blink(visible=False)
         self.history.checkpoint()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:

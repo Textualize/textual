@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Widget.release_mouse will now only release the mouse, if it was captured by self https://github.com/Textualize/textual/pull/5900
 - Some optimizations to TextArea, which may be noticeable during scrolling (note: may break snapshots with a TextArea) https://github.com/Textualize/textual/pull/5925
+- Selecting in the TextArea now hides the cursor until you release the mouse https://github.com/Textualize/textual/pull/5925
 
 ## Added
 
