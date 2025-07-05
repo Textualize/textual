@@ -845,11 +845,6 @@ TextArea {
                 if background:
                     self.styles.background = Color.from_rich_color(background)
 
-        def apply_theme() -> None:
-            self._theme.apply_css(self)
-
-        self.call_later(apply_theme)
-
     @property
     def available_themes(self) -> set[str]:
         """A list of the names of the themes available to the `TextArea`.
@@ -1120,6 +1115,12 @@ TextArea {
         """
         line_string = self.document.get_line(line_index)
         return Text(line_string, end="", no_wrap=True)
+
+    def render_lines(self, crop: Region) -> list[Strip]:
+        theme = self._theme
+        if theme:
+            theme.apply_css(self)
+        return super().render_lines(crop)
 
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
