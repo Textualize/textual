@@ -1313,7 +1313,6 @@ TextArea {
         text_strip = Strip(line.render(self.app.console), cell_length=line.cell_len)
         if not self.soft_wrap:
             text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
-        strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index and self.highlight_cursor_line:
@@ -1321,7 +1320,8 @@ TextArea {
         else:
             line_style = theme.base_style if theme else None
 
-        strip = strip.extend_cell_length(target_width, line_style)
+        text_strip = text_strip.extend_cell_length(target_width, line_style)
+        strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
 
         return strip.apply_style(
             theme.base_style
