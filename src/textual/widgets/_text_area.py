@@ -1307,10 +1307,10 @@ TextArea {
             else max(virtual_width, self.region.size.width)
         )
         target_width = base_width - self.gutter_width
-        console = self.app.console
+        # console = self.app.console
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
-        text_strip = Strip(line.render(console), cell_length=line.cell_len)
+        text_strip = Strip(line.render(self.app.console), cell_length=line.cell_len)
         if not self.soft_wrap:
             text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
         strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
