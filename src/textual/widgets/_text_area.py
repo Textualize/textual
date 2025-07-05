@@ -845,7 +845,10 @@ TextArea {
                 if background:
                     self.styles.background = Color.from_rich_color(background)
 
-        theme_object.apply_css(self)
+        def apply_theme() -> None:
+            self._theme.apply_css(self)
+
+        self.call_later(apply_theme)
 
     @property
     def available_themes(self) -> set[str]:
@@ -1045,6 +1048,7 @@ TextArea {
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
         self.wrapped_document.wrap(self.wrap_width, tab_width=self.indent_width)
+        self._line_cache.clear()
         self._refresh_size()
 
     @property
@@ -1115,7 +1119,7 @@ TextArea {
             A `rich.Text` object containing the requested line.
         """
         line_string = self.document.get_line(line_index)
-        return Text(line_string, end="")
+        return Text(line_string, end="", no_wrap=True)
 
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
@@ -1138,11 +1142,20 @@ TextArea {
                 if selection.contains_line(absolute_y)
                 else selection.end[0] == absolute_y
             ),
-            self._cursor_visible,
-            self.cursor_blink,
+            (
+                selection.end
+                if (
+                    self._cursor_visible
+                    and self.cursor_blink
+                    and absolute_y == selection.end[0]
+                )
+                else None
+            ),
             self.theme,
             self._matching_bracket_location,
             self.match_cursor_bracket,
+            self.soft_wrap,
+            self.show_line_numbers,
         )
         if (cached_line := self._line_cache.get(cache_key)) is not None:
             return cached_line
@@ -1214,7 +1227,8 @@ TextArea {
             if selection_style:
                 if line_character_count == 0 and line_index != cursor_row:
                     # A simple highlight to show empty lines are included in the selection
-                    line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
+                    line.plain = "▌"
+                    line.stylize(Style(color=selection_style.bgcolor))
                 else:
                     if line_index == selection_top_row == selection_bottom_row:
                         # Selection within a single line
@@ -1346,10 +1360,7 @@ TextArea {
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         console = self.app.console
-        text_strip = Strip(
-            console.render(line, options=console.options.update_width(line.cell_len)),
-            cell_length=line.cell_len,
-        )
+        text_strip = Strip(line.render(console), cell_length=line.cell_len)
         if not self.soft_wrap:
             text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
 
