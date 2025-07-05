@@ -466,3 +466,8 @@ class Selection(NamedTuple):
         """Return True if the selection has 0 width, i.e. it's just a cursor."""
         start, end = self
         return start == end
+
+    def contains_line(self, y: int) -> bool:
+        """Check if the given line is within the selection."""
+        top, bottom = sorted((self.start[0], self.end[0]))
+        return y >= top and y <= bottom
