@@ -1308,11 +1308,12 @@ TextArea {
         )
         target_width = base_width - self.gutter_width
         console = self.app.console
-        text_segments = [*line.render(console)]
-        strip = Strip(gutter + text_segments, cell_length=line.cell_len + gutter_width)
+
         # Crop the line to show only the visible part (some may be scrolled out of view)
+        text_strip = Strip(line.render(console), cell_length=line.cell_len)
         if not self.soft_wrap:
-            strip = strip.crop(scroll_x, scroll_x + virtual_width)
+            text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
+        strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index and self.highlight_cursor_line:
