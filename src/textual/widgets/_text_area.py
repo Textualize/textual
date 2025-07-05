@@ -1157,6 +1157,7 @@ TextArea {
             self.match_cursor_bracket,
             self.soft_wrap,
             self.show_line_numbers,
+            self.read_only,
         )
         if (cached_line := self._line_cache.get(cache_key)) is not None:
             return cached_line
@@ -1278,6 +1279,7 @@ TextArea {
                 self.has_focus
                 and not self.cursor_blink
                 or (self.cursor_blink and self._cursor_visible)
+                and not self.read_only
             )
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
