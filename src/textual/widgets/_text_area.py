@@ -16,6 +16,7 @@ from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER, get_language
+from textual.cache import LRUCache
 from textual.color import Color
 from textual.document._document import (
     Document,
@@ -512,6 +513,8 @@ TextArea {
         self.set_reactive(TextArea.line_number_start, line_number_start)
         self.set_reactive(TextArea.highlight_cursor_line, highlight_cursor_line)
 
+        self._line_cache: LRUCache[tuple, Strip] = LRUCache(1024)
+
         self._set_document(text, language)
 
         self.language = language
@@ -611,6 +614,9 @@ TextArea {
 
         return highlight_query
 
+    def notify_style_update(self) -> None:
+        self._line_cache.clear()
+
     def check_consume_key(self, key: str, character: str | None = None) -> bool:
         """Check if the widget may consume the given key.
 
@@ -634,6 +640,7 @@ TextArea {
 
     def _build_highlight_map(self) -> None:
         """Query the tree for ranges to highlights, and update the internal highlights mapping."""
+        self._line_cache.clear()
         highlights = self._highlights
         highlights.clear()
         if not self._highlight_query:
@@ -837,6 +844,8 @@ TextArea {
                     self.styles.color = Color.from_rich_color(color)
                 if background:
                     self.styles.background = Color.from_rich_color(background)
+
+        theme_object.apply_css(self)
 
     @property
     def available_themes(self) -> set[str]:
@@ -1108,13 +1117,40 @@ TextArea {
         line_string = self.document.get_line(line_index)
         return Text(line_string, end="")
 
-    def render_lines(self, crop: Region) -> list[Strip]:
-        theme = self._theme
-        if theme:
-            theme.apply_css(self)
-        return super().render_lines(crop)
-
     def render_line(self, y: int) -> Strip:
+        """Render a single line of the TextArea. Called by Textual.
+
+        Args:
+            y: Y Coordinate of line relative to the widget region.
+
+        Returns:
+            A rendered line.
+        """
+        scroll_x, scroll_y = self.scroll_offset
+        absolute_y = scroll_y + y
+        selection = self.selection
+        cache_key = (
+            self.size,
+            scroll_x,
+            absolute_y,
+            (
+                selection
+                if selection.contains_line(absolute_y)
+                else selection.end[0] == absolute_y
+            ),
+            self._cursor_visible,
+            self.cursor_blink,
+            self.theme,
+            self._matching_bracket_location,
+            self.match_cursor_bracket,
+        )
+        if (cached_line := self._line_cache.get(cache_key)) is not None:
+            return cached_line
+        line = self._render_line(y)
+        self._line_cache[cache_key] = line
+        return line
+
+    def _render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
         Args:
@@ -1310,7 +1346,10 @@ TextArea {
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         console = self.app.console
-        text_strip = Strip(console.render(line), cell_length=line.cell_len)
+        text_strip = Strip(
+            console.render(line, options=console.options.update_width(line.cell_len)),
+            cell_length=line.cell_len,
+        )
         if not self.soft_wrap:
             text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
 
