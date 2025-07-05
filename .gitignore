@@ -128,3 +128,7 @@ sandbox/
 
 # Used by mkdocs-material social plugin
 .cache
+
+# Wing Pro configuration files
+*.wp[ru]
+
