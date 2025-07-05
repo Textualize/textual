@@ -1307,7 +1307,6 @@ TextArea {
             else max(virtual_width, self.region.size.width)
         )
         target_width = base_width - self.gutter_width
-        # console = self.app.console
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         text_strip = Strip(line.render(self.app.console), cell_length=line.cell_len)
