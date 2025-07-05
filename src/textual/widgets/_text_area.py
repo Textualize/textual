@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
 
 from rich.console import RenderableType
+from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Literal
@@ -1107,6 +1108,12 @@ TextArea {
         line_string = self.document.get_line(line_index)
         return Text(line_string, end="")
 
+    def render_lines(self, crop: Region) -> list[Strip]:
+        theme = self._theme
+        if theme:
+            theme.apply_css(self)
+        return super().render_lines(crop)
+
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
@@ -1117,8 +1124,6 @@ TextArea {
             A rendered line.
         """
         theme = self._theme
-        if theme:
-            theme.apply_css(self)
 
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
@@ -1263,13 +1268,11 @@ TextArea {
             gutter_content = (
                 str(line_index + self.line_number_start) if section_offset == 0 else ""
             )
-            gutter = Text(
-                f"{gutter_content:>{gutter_width_no_margin}}  ",
-                style=gutter_style or "",
-                end="",
-            )
+            gutter = [
+                Segment(f"{gutter_content:>{gutter_width_no_margin}}  ", gutter_style)
+            ]
         else:
-            gutter = Text("", end="")
+            gutter = []
 
         # TODO: Lets not apply the division each time through render_line.
         #  We should cache sections with the edit counts.
@@ -1305,18 +1308,11 @@ TextArea {
         )
         target_width = base_width - self.gutter_width
         console = self.app.console
-        gutter_segments = console.render(gutter)
-
-        text_segments = list(
-            console.render(line, console.options.update_width(target_width))
-        )
-
-        gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
-        text_strip = Strip(text_segments)
-
+        text_segments = [*line.render(console)]
+        strip = Strip(gutter + text_segments, cell_length=line.cell_len + gutter_width)
         # Crop the line to show only the visible part (some may be scrolled out of view)
         if not self.soft_wrap:
-            text_strip = text_strip.crop(scroll_x, scroll_x + virtual_width)
+            strip = strip.crop(scroll_x, scroll_x + virtual_width)
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index and self.highlight_cursor_line:
@@ -1324,8 +1320,7 @@ TextArea {
         else:
             line_style = theme.base_style if theme else None
 
-        text_strip = text_strip.extend_cell_length(target_width, line_style)
-        strip = Strip.join([gutter_strip, text_strip]).simplify()
+        strip = strip.extend_cell_length(target_width, line_style)
 
         return strip.apply_style(
             theme.base_style
