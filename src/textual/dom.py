@@ -1322,7 +1322,7 @@ class DOMNode(MessagePump):
             filter_type: type[WalkType],
             *,
             with_self: bool = False,
-            method: WalkMethod = "depth",
+            method: WalkMethod = "breadth",
             reverse: bool = False,
         ) -> list[WalkType]: ...
 
@@ -1331,7 +1331,7 @@ class DOMNode(MessagePump):
             self,
             *,
             with_self: bool = False,
-            method: WalkMethod = "depth",
+            method: WalkMethod = "breadth",
             reverse: bool = False,
         ) -> list[DOMNode]: ...
 
@@ -1484,7 +1484,7 @@ class DOMNode(MessagePump):
         else:
             cache_key = None
 
-        for node in walk_depth_first(base_node, with_root=False):
+        for node in walk_breadth_first(base_node, with_root=False):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
@@ -1555,7 +1555,7 @@ class DOMNode(MessagePump):
         else:
             cache_key = None
 
-        children = walk_depth_first(base_node, with_root=False)
+        children = walk_breadth_first(base_node, with_root=False)
         iter_children = iter(children)
         for node in iter_children:
             if not match(selector_set, node):

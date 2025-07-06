@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added textual.getters 
 
+### Changed
+
+- Potential breaking change: Changed default query search to breadth first
+
 ## [3.6.0] - 2025-07-06
 
 ### Fixed
