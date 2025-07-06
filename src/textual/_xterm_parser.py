@@ -18,7 +18,7 @@ from textual.message import Message
 # to be unsuccessful?
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 32
 
-_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
+_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-?\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
@@ -50,7 +50,7 @@ IS_ITERM = (
 
 
 class XTermParser(Parser[Message]):
-    _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
+    _re_sgr_mouse = re.compile(r"\x1b\[<(-?\d+);(-?\d+);(-?\d+)([Mm])")
 
     def __init__(self, debug: bool = False) -> None:
         self.last_x = 0.0
@@ -78,6 +78,9 @@ class XTermParser(Parser[Message]):
             buttons = int(_buttons)
             x = float(int(_x) - 1)
             y = float(int(_y) - 1)
+            if x < 0 or y < 0:
+                # TODO: Workaround for Ghostty erroneous negative coordinate bug
+                return None
             if (
                 self.mouse_pixels
                 and self.terminal_pixel_size is not None

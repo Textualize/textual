@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed issue with the "transparent" CSS value not being transparent when set using python https://github.com/Textualize/textual/pull/5890
 - Fixed issue with pushing screens when Input has mouse captured https://github.com/Textualize/textual/pull/5900
+- Implemented workaround for Ghostty bug which produces negative mouse coordinates https://github.com/Textualize/textual/pull/5926
 
 ## Changed
 
