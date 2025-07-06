@@ -78,6 +78,9 @@ class XTermParser(Parser[Message]):
             buttons = int(_buttons)
             x = float(int(_x) - 1)
             y = float(int(_y) - 1)
+            if x < 0 or y < 0:
+                # TODO: Workaround for Ghostty erroneous negative coordinate bug
+                return None
             if (
                 self.mouse_pixels
                 and self.terminal_pixel_size is not None
