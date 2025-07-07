@@ -4281,3 +4281,39 @@ def test_textarea_line_highlight(snap_compare):
             self.query_one(TextArea).move_cursor((0, 2))
 
     assert snap_compare(TextAreaLine())
+
+
+def test_read_only_textarea(snap_compare):
+    """A read only textarea.
+
+    Should have a cursor by default. You should see the cursor on the second line (line 2)
+
+    """
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(
+                "\n".join(f"line {n + 1}" for n in range(100)), read_only=True
+            )
+
+    assert snap_compare(TextAreaApp(), press=["down"])
+
+
+def test_read_only_textarea_no_cursor(snap_compare):
+    """A read only textarea with a hidden cursor.
+
+    You should see a text area with no visible cursor.
+    The user has pressed down, which will move the view down one line (*not* the cursor as there isn't a cursor here).
+    Line 2 should be at the top of the view.
+
+    """
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(
+                "\n".join(f"line {n + 1}" for n in range(100)),
+                read_only=True,
+                show_cursor=False,
+            )
+
+    assert snap_compare(TextAreaApp(), press=["down"])

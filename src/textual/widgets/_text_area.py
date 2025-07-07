@@ -1598,7 +1598,11 @@ TextArea {
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
+
         self._restart_blink()
+
+        if self.read_only:
+            return
 
         key = event.key
         insert_values = {
@@ -1616,9 +1620,6 @@ TextArea {
                 insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
 
         if event.is_printable or key in insert_values:
-            if self.read_only:
-                self.app.bell()
-                return
             event.stop()
             event.prevent_default()
             insert = insert_values.get(key, event.character)
@@ -2076,7 +2077,7 @@ TextArea {
     def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
         if not self._has_cursor:
-            self.scroll_x = self.max_scroll_x
+            self.scroll_end()
             return
         location = self.get_cursor_line_end_location()
         self.move_cursor(location, select=select)
@@ -2092,7 +2093,7 @@ TextArea {
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
         if not self._has_cursor:
-            self.scroll_x = 0
+            self.scroll_home()
             return
         target = self.get_cursor_line_start_location(smart_home=True)
         self.move_cursor(target, select=select)
@@ -2355,6 +2356,9 @@ TextArea {
 
         If there's a selection, then the selected range is deleted."""
 
+        if self.read_only:
+            return
+
         selection = self.selection
         start, end = selection
 
@@ -2367,6 +2371,8 @@ TextArea {
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
 
         If there's a selection, then the selected range is deleted."""
+        if self.read_only:
+            return
 
         selection = self.selection
         start, end = selection
@@ -2378,6 +2384,8 @@ TextArea {
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
+        if self.read_only:
+            return
         self._delete_cursor_line()
 
     def _delete_cursor_line(self) -> EditResult | None:
