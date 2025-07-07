@@ -5,9 +5,9 @@ This module contains constants, which may be set in environment variables.
 from __future__ import annotations
 
 import os
-from typing import get_args
+from typing import Final, get_args
 
-from typing_extensions import Final, TypeGuard
+from typing_extensions import TypeGuard
 
 from textual._types import AnimationLevel
 

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import Mapping, Tuple
-
-from typing_extensions import Final
+from typing import Final, Mapping, Tuple
 
 from textual.keys import Keys
 

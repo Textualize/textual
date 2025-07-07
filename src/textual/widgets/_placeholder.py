@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from itertools import cycle
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, Iterator, Literal
 from weakref import WeakKeyDictionary
 
-from typing_extensions import Literal, Self
+from typing_extensions import Self
 
 from textual import events
 

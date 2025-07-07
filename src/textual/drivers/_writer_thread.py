@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import threading
 from queue import Queue
-from typing import IO
-
-from typing_extensions import Final
+from typing import IO, Final
 
 MAX_QUEUED_WRITES: Final[int] = 30
 

@@ -68,7 +68,7 @@ if TYPE_CHECKING:
     # Unused & ignored imports are needed for the docs to link to these objects:
     from textual.css.query import WrongType  # type: ignore  # noqa: F401
 
-from typing_extensions import Literal
+from typing import Literal
 
 _re_identifier = re.compile(IDENTIFIER)
 
