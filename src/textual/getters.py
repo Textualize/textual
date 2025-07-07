@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Descriptors to define properties on your widget, screen, or App.
 
