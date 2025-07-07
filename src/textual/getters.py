@@ -38,6 +38,9 @@ class query_one(Generic[QueryType]):
                 # self.query_one("#output", RichLog).write("Screen started")
         ```
 
+    Args:
+        selector: A TCSS selector, e.g. "#mywidget". Or a widget type, i.e. `Input`.
+        expect_type: The type of the expected widget, e.g. `Input`, if the first argument is a selector.
 
     """
 
@@ -46,6 +49,11 @@ class query_one(Generic[QueryType]):
 
     @overload
     def __init__(self, selector: str) -> None:
+        """
+
+        Args:
+            selector: A TCSS selector, e.g. "#mywidget"
+        """
         self.selector = selector
         self.expect_type = Widget
 
@@ -103,7 +111,7 @@ class child_by_id(Generic[QueryType]):
     """Create a child_by_id property, which returns the child with the given ID.
 
     This is similar using [query_one][textual.getters.query_one] with an id selector, except that
-    only the immediate children are considered. It is also more efficient, as it doesn't need to search the DOM.
+    only the immediate children are considered. It is also more efficient as it doesn't need to search the DOM.
 
 
     Example:
@@ -122,6 +130,9 @@ class child_by_id(Generic[QueryType]):
                 self.output_log.write("Screen started")
         ```
 
+    Args:
+        child_id: The `id` of the widget to get (not a selector).
+        expect_type: The type of the expected widget, e.g. `Input`.
 
     """
 
