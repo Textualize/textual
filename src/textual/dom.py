@@ -1322,7 +1322,7 @@ class DOMNode(MessagePump):
             filter_type: type[WalkType],
             *,
             with_self: bool = False,
-            method: WalkMethod = "breadth",
+            method: WalkMethod = "depth",
             reverse: bool = False,
         ) -> list[WalkType]: ...
 
@@ -1331,7 +1331,7 @@ class DOMNode(MessagePump):
             self,
             *,
             with_self: bool = False,
-            method: WalkMethod = "breadth",
+            method: WalkMethod = "depth",
             reverse: bool = False,
         ) -> list[DOMNode]: ...
 
