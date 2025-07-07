@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with Keylines not scrolling
+- Fixed issue with Keylines not scrolling https://github.com/Textualize/textual/pull/5936
 
 ## [3.6.0] - 2025-07-06
 
