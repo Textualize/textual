@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added textual.getters 
+- Added textual.getters https://github.com/Textualize/textual/pull/5930
 
 ### Changed
 
-- Potential breaking change: Changed default `query_one` and `query_exactly_one` search to breadth first
+- Potential breaking change: Changed default `query_one` and `query_exactly_one` search to breadth first https://github.com/Textualize/textual/pull/5930
 
 ## [3.6.0] - 2025-07-06
 
