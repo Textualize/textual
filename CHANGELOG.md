@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added textual.getters https://github.com/Textualize/textual/pull/5930
+- Added a `show_cursor` boolean to TextArea https://github.com/Textualize/textual/pull/5934
 
 ### Changed
 
 - Potential breaking change: Changed default `query_one` and `query_exactly_one` search to breadth first https://github.com/Textualize/textual/pull/5930
+- Cursor is now visible by default when in read only mode (restoring pre 3.6.0 behavior) https://github.com/Textualize/textual/pull/5934
 
 ## [3.6.0] - 2025-07-06
 
