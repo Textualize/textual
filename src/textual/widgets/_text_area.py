@@ -172,7 +172,7 @@ TextArea {
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
         }
-    }
+    }    
 }
 """
 
@@ -373,6 +373,15 @@ TextArea {
     The document can still be edited programmatically via the API.
     """
 
+    show_cursor: Reactive[bool] = reactive(True)
+    """Show the cursor in read only mode?
+
+    If `True`, the cursor will be visible when `read_only==True`.
+    If `False`, the cursor will be hidden when `read_only==True`, and the TextArea will
+    scroll like other containers.
+
+    """
+
     compact: reactive[bool] = reactive(False, toggle_class="-textual-compact")
     """Enable compact display?"""
 
@@ -423,6 +432,7 @@ TextArea {
         soft_wrap: bool = True,
         tab_behavior: Literal["focus", "indent"] = "focus",
         read_only: bool = False,
+        show_cursor: bool = True,
         show_line_numbers: bool = False,
         line_number_start: int = 1,
         max_checkpoints: int = 50,
@@ -443,6 +453,7 @@ TextArea {
             soft_wrap: Enable soft wrapping.
             tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             read_only: Enable read-only mode. This prevents edits using the keyboard.
+            show_cursor: Show the cursor in read only mode (no effect otherwise).
             show_line_numbers: Show line numbers on the left edge.
             line_number_start: What line number to start on.
             max_checkpoints: The maximum number of undo history checkpoints to retain.
@@ -509,6 +520,7 @@ TextArea {
 
         self.set_reactive(TextArea.soft_wrap, soft_wrap)
         self.set_reactive(TextArea.read_only, read_only)
+        self.set_reactive(TextArea.show_cursor, show_cursor)
         self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
         self.set_reactive(TextArea.line_number_start, line_number_start)
         self.set_reactive(TextArea.highlight_cursor_line, highlight_cursor_line)
@@ -542,6 +554,7 @@ TextArea {
         soft_wrap: bool = False,
         tab_behavior: Literal["focus", "indent"] = "indent",
         read_only: bool = False,
+        show_cursor: bool = True,
         show_line_numbers: bool = True,
         line_number_start: int = 1,
         max_checkpoints: int = 50,
@@ -564,6 +577,8 @@ TextArea {
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
             tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            read_only: Enable read-only mode. This prevents edits using the keyboard.
+            show_cursor: Show the cursor in read only mode (no effect otherwise).
             show_line_numbers: Show line numbers on the left edge.
             line_number_start: What line number to start on.
             name: The name of the `TextArea` widget.
@@ -581,6 +596,7 @@ TextArea {
             soft_wrap=soft_wrap,
             tab_behavior=tab_behavior,
             read_only=read_only,
+            show_cursor=show_cursor,
             show_line_numbers=show_line_numbers,
             line_number_start=line_number_start,
             max_checkpoints=max_checkpoints,
@@ -1101,6 +1117,24 @@ TextArea {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
+    @property
+    def _draw_cursor(self) -> bool:
+        """Draw the cursor?"""
+        if self.read_only:
+            # If we are in read only mode, we don't want the cursor to blink
+            return self.show_cursor and self.has_focus
+        draw_cursor = (
+            self.has_focus
+            and not self.cursor_blink
+            or (self.cursor_blink and self._cursor_visible)
+        )
+        return draw_cursor
+
+    @property
+    def _has_cursor(self) -> bool:
+        """Is there a usable cursor?"""
+        return not (self.read_only and not self.show_cursor)
+
     def get_line(self, line_index: int) -> Text:
         """Retrieve the line at the given line index.
 
@@ -1158,6 +1192,7 @@ TextArea {
             self.soft_wrap,
             self.show_line_numbers,
             self.read_only,
+            self.show_cursor,
         )
         if (cached_line := self._line_cache.get(cache_key)) is not None:
             return cached_line
@@ -1213,12 +1248,13 @@ TextArea {
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
-        cursor_line_style = theme.cursor_line_style if theme else None
-        if (
-            cursor_line_style
-            and cursor_row == line_index
-            and self.highlight_cursor_line
-        ):
+        highlight_cursor_line = self.highlight_cursor_line and self._has_cursor
+        cursor_line_style = (
+            theme.cursor_line_style if (theme and highlight_cursor_line) else None
+        )
+        has_cursor = self._has_cursor
+
+        if has_cursor and cursor_line_style and cursor_row == line_index:
             line.stylize(cursor_line_style)
 
         # Selection styling
@@ -1271,16 +1307,14 @@ TextArea {
         matching_bracket = self._matching_bracket_location
         match_cursor_bracket = self.match_cursor_bracket
         draw_matched_brackets = (
-            match_cursor_bracket and matching_bracket is not None and start == end
+            has_cursor
+            and match_cursor_bracket
+            and matching_bracket is not None
+            and start == end
         )
 
         if cursor_row == line_index:
-            draw_cursor = (
-                self.has_focus
-                and not self.cursor_blink
-                or (self.cursor_blink and self._cursor_visible)
-                and not self.read_only
-            )
+            draw_cursor = self._draw_cursor
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
                 if matching_bracket_style:
@@ -1312,7 +1346,7 @@ TextArea {
         # Build the gutter text for this line
         gutter_width = self.gutter_width
         if self.show_line_numbers:
-            if cursor_row == line_index and self.highlight_cursor_line:
+            if cursor_row == line_index and highlight_cursor_line:
                 gutter_style = theme.cursor_line_gutter_style
             else:
                 gutter_style = theme.gutter_style
@@ -1564,7 +1598,9 @@ TextArea {
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
+
         self._restart_blink()
+
         if self.read_only:
             return
 
@@ -1775,6 +1811,8 @@ TextArea {
         Returns:
             The offset that was scrolled to bring the cursor into view.
         """
+        if not self._has_cursor:
+            return Offset(0, 0)
         self._recompute_cursor_offset()
 
         x, y = self._cursor_offset
@@ -1804,6 +1842,8 @@ TextArea {
                 so that we jump back to the same width the next time we move to a row
                 that is wide enough.
         """
+        if not self._has_cursor:
+            return
         if select:
             start, _end = self.selection
             self.selection = Selection(start, location)
@@ -1948,6 +1988,9 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
+        if not self._has_cursor:
+            self.scroll_left()
+            return
         target = (
             self.get_cursor_left_location()
             if select or self.selection.is_empty
@@ -1973,6 +2016,9 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
+        if not self._has_cursor:
+            self.scroll_right()
+            return
         target = (
             self.get_cursor_right_location()
             if select or self.selection.is_empty
@@ -1994,6 +2040,9 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
+        if not self._has_cursor:
+            self.scroll_down()
+            return
         target = self.get_cursor_down_location()
         self.move_cursor(target, record_width=False, select=select)
 
@@ -2011,6 +2060,9 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
+        if not self._has_cursor:
+            self.scroll_up()
+            return
         target = self.get_cursor_up_location()
         self.move_cursor(target, record_width=False, select=select)
 
@@ -2024,6 +2076,9 @@ TextArea {
 
     def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
+        if not self._has_cursor:
+            self.scroll_end()
+            return
         location = self.get_cursor_line_end_location()
         self.move_cursor(location, select=select)
 
@@ -2037,6 +2092,9 @@ TextArea {
 
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
+        if not self._has_cursor:
+            self.scroll_home()
+            return
         target = self.get_cursor_line_start_location(smart_home=True)
         self.move_cursor(target, select=select)
 
@@ -2061,6 +2119,8 @@ TextArea {
         Args:
             select: Whether to select while moving the cursor.
         """
+        if not self.show_cursor:
+            return
         if self.cursor_at_start_of_text:
             return
         target = self.get_cursor_word_left_location()
@@ -2086,7 +2146,8 @@ TextArea {
 
     def action_cursor_word_right(self, select: bool = False) -> None:
         """Move the cursor right by a single word, skipping leading whitespace."""
-
+        if not self.show_cursor:
+            return
         if self.cursor_at_end_of_text:
             return
 
@@ -2121,6 +2182,9 @@ TextArea {
 
     def action_cursor_page_up(self) -> None:
         """Move the cursor and scroll up one page."""
+        if not self.show_cursor:
+            self.scroll_page_up()
+            return
         height = self.content_size.height
         _, cursor_location = self.selection
         target = self.navigator.get_location_at_y_offset(
@@ -2132,6 +2196,9 @@ TextArea {
 
     def action_cursor_page_down(self) -> None:
         """Move the cursor and scroll down one page."""
+        if not self.show_cursor:
+            self.scroll_page_down()
+            return
         height = self.content_size.height
         _, cursor_location = self.selection
         target = self.navigator.get_location_at_y_offset(
@@ -2289,6 +2356,9 @@ TextArea {
 
         If there's a selection, then the selected range is deleted."""
 
+        if self.read_only:
+            return
+
         selection = self.selection
         start, end = selection
 
@@ -2301,6 +2371,8 @@ TextArea {
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
 
         If there's a selection, then the selected range is deleted."""
+        if self.read_only:
+            return
 
         selection = self.selection
         start, end = selection
@@ -2312,6 +2384,8 @@ TextArea {
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
+        if self.read_only:
+            return
         self._delete_cursor_line()
 
     def _delete_cursor_line(self) -> EditResult | None:
