@@ -4317,3 +4317,33 @@ def test_read_only_textarea_no_cursor(snap_compare):
             )
 
     assert snap_compare(TextAreaApp(), press=["down"])
+
+
+def test_snapshot_scroll(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5918
+
+    You should see a column of Verticals with keylines scrolled down 3 lines.
+    """
+
+    class ScrollKeylineApp(App):
+
+        CSS = """\
+    #my-container {
+        keyline: heavy blue;
+        Vertical {
+            margin: 1;
+            width: 1fr;
+        height: 3;
+        }
+    }
+    """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll(id="my-container"):
+                for i in range(10):
+                    yield Vertical(Input(valid_empty=False, id=f"test-{i}", value="x"))
+
+        def on_mount(self) -> None:
+            self.query_one("#my-container").scroll_to(0, 3)
+
+    assert snap_compare(ScrollKeylineApp())

@@ -4284,6 +4284,10 @@ class Widget(DOMNode):
             else:
                 if self._scroll_required:
                     self._scroll_required = False
+                    if self.styles.keyline[0] != "none":
+                        # TODO: Feels like a hack
+                        # Perhaps there should be an explicit mechanism for backgrounds to refresh when scrolled?
+                        self._set_dirty()
                     screen.post_message(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
