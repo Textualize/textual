@@ -113,7 +113,7 @@ class child_by_id(Generic[QueryType]):
         class MyScreen(screen):
 
             # Note this is at the class level
-            output_log = getters.child_by_id("#output", RichLog)
+            output_log = getters.child_by_id("output", RichLog)
 
             def compose(self) -> ComposeResult:
                 yield RichLog(id="output")
