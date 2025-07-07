@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Potential breaking change: Changed default query search to breadth first
+- Potential breaking change: Changed default `query_one` and `query_exactly_one` search to breadth first
 
 ## [3.6.0] - 2025-07-06
 
