@@ -376,8 +376,8 @@ TextArea {
     show_cursor: Reactive[bool] = reactive(True)
     """Show the cursor in read only mode?
 
-    If `False`, the cursor will be visible when `read_only==True`.
-    If `True`, the cursor will not be visible when `read_only==True`, and the TextArea may be
+    If `True`, the cursor will be visible when `read_only==True`.
+    If `False`, the cursor will be hidden when `read_only==True`, and the TextArea will
     scroll like other containers.
 
     """
