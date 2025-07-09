@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed broken text selection with soft_wrap=False
+- Fixed broken text selection with soft_wrap=False https://github.com/Textualize/textual/pull/5940
 
 ## [3.7.0] - 2025-07-07
 
