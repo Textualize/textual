@@ -90,7 +90,7 @@ class Logger:
                 )
                 output = f"{output} {key_values}" if output else key_values
 
-            with open(constants.LOG_FILE, "a") as log_file:
+            with open(constants.LOG_FILE, "a", encoding="utf-8") as log_file:
                 print(output, file=log_file)
 
         app = self.app
