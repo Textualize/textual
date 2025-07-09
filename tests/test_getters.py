@@ -7,7 +7,7 @@ from textual.widget import Widget
 from textual.widgets import Input, Label
 
 
-async def get_getters() -> None:
+async def test_getters() -> None:
     """Check the getter descriptors work, and return expected errors."""
 
     class QueryApp(App):
