@@ -4347,3 +4347,28 @@ def test_snapshot_scroll(snap_compare):
             self.query_one("#my-container").scroll_to(0, 3)
 
     assert snap_compare(ScrollKeylineApp())
+
+
+def test_textarea_select(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5939
+
+    You should see three lines selected, starting from the third character with the curser ending at the fifth character.
+
+    """
+
+    class TextApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea("Hello, World! " * 100)
+
+    snap_compare(
+        TextApp(),
+        press=(
+            "right",
+            "right",
+            "shift+down",
+            "shift+down",
+            "shift+down",
+            "shift+right",
+            "shift+right",
+        ),
+    )

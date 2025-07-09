@@ -1174,7 +1174,7 @@ TextArea {
             absolute_y,
             (
                 selection
-                if selection.contains_line(absolute_y)
+                if selection.contains_line(absolute_y) or self.soft_wrap
                 else selection.end[0] == absolute_y
             ),
             (
