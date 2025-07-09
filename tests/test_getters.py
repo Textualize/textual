@@ -20,8 +20,8 @@ async def test_getters() -> None:
 
         def compose(self) -> ComposeResult:
             with containers.Vertical():
-                yield Label(id="label1", classes=".red")
-            yield Label(id="label2", classes=".green")
+                yield Label(id="label1", classes="red")
+            yield Label(id="label2", classes="green")
 
     app = QueryApp()
     async with app.run_test():
