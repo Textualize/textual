@@ -252,6 +252,14 @@ class ANSIToTruecolor(LineFilter):
             )
         # Convert dim style to RGB
         if style.dim and color is not None:
+            if color.triplet is None:
+                color = RichColor.from_rgb(
+                    *color.get_truecolor(terminal_theme, foreground=True)
+                )
+            if background.triplet is None:
+                background = RichColor.from_rgb(
+                    *background.get_truecolor(terminal_theme, foreground=False)
+                )
             color = dim_color(background, color)
             style += NO_DIM
 
