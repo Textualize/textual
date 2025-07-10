@@ -45,7 +45,7 @@ RE_ID_SELECTOR = re.compile(r"\#" + IDENTIFIER)
 
 @lru_cache(maxsize=128)
 def is_id_selector(selector: str) -> bool:
-    """Is the selector an single ID selector, i.e. "#foo"?
+    """Is the selector a single ID selector, i.e. "#foo"?
 
     Args:
         selector: A CSS selector.

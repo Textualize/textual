@@ -1289,8 +1289,10 @@ Widget:blu {
         ("#foo .bar", False),
         ("#foo>.bar", False),
         ("#foo.bar", False),
+        (".foo #foo", False),
+        ("#foo #bar", False),
     ],
 )
-def test_is_id_selector(selector: str, expected: bool):
-    """Test is_id_selector is working as expected"""
+def test_is_id_selector(selector: str, expected: bool) -> None:
+    """Test is_id_selector is working as expected."""
     assert is_id_selector(selector) is expected
