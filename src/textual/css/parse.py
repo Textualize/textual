@@ -43,6 +43,7 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
 RE_IDENTIFIER = re.compile(r"\#" + IDENTIFIER)
 
 
+@lru_cache(maxsize=128)
 def is_id_selector(selector: str) -> bool:
     """Is the selector an ID selector, i.e. "#foo"?
 
