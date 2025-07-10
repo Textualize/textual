@@ -11,7 +11,6 @@ async def test_getters() -> None:
     """Check the getter descriptors work, and return expected errors."""
 
     class QueryApp(App):
-
         label1 = getters.query_one("#label1", Label)
         label2 = getters.child_by_id("label2", Label)
         label1_broken = getters.query_one("#label1", Input)
