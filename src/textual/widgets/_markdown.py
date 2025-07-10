@@ -18,8 +18,8 @@ from typing_extensions import TypeAlias
 
 from textual._slug import TrackedSlugs
 from textual.app import ComposeResult
-from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.css.query import NoMatches
 from textual.events import Mount
 from textual.message import Message
 from textual.reactive import reactive, var
@@ -665,7 +665,10 @@ class MarkdownFence(MarkdownBlock):
             if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
-        self.get_child_by_type(Static).update(self._block())
+        try:
+            self.get_child_by_type(Static).update(self._block())
+        except NoMatches:
+            pass
 
     def compose(self) -> ComposeResult:
         yield Static(
@@ -764,6 +767,7 @@ class Markdown(Widget):
         self._parser_factory = parser_factory
         self._table_of_contents: TableOfContentsType | None = None
         self._open_links = open_links
+        self._pending_markdown = ""
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -988,7 +992,6 @@ class Markdown(Widget):
                 if stack:
                     stack[-1]._blocks.append(block)
                 else:
-                    block.add_class("-final")
                     yield block
             elif token_type == "inline":
                 stack[-1].build_from_token(token)
@@ -997,7 +1000,6 @@ class Markdown(Widget):
                 if stack:
                     stack[-1]._blocks.append(fence)
                 else:
-                    fence.add_class("-final")
                     yield fence
             else:
                 external = self.unhandled_token(token)
@@ -1005,10 +1007,15 @@ class Markdown(Widget):
                     if stack:
                         stack[-1]._blocks.append(external)
                     else:
-                        external.add_class("-final")
                         yield external
 
-    def update(self, markdown: str) -> AwaitComplete:
+    async def _on_idle(self) -> None:
+        if self._pending_markdown:
+            pending_markdown = self._pending_markdown
+            self._pending_markdown = ""
+            await self._append(pending_markdown)
+
+    def update(self, markdown: str) -> None:
         """Update the document with new Markdown.
 
         Args:
@@ -1074,9 +1081,11 @@ class Markdown(Widget):
                 ).set_sender(self)
             )
 
-        return AwaitComplete(await_update())
+        self.call_next(await_update)
 
-    def append(self, markdown: str) -> AwaitComplete:
+        # return AwaitComplete(await_update())
+
+    async def append(self, markdown: str) -> None:
         """Append to markdown.
 
         Args:
@@ -1090,28 +1099,23 @@ class Markdown(Widget):
 
         table_of_contents: TableOfContentsType = []
 
-        async def await_append() -> None:
-            self._markdown = updated_markdown = self.source + markdown
-            existing_blocks = list(self.children)
+        self._markdown = updated_markdown = self.source + markdown
+        existing_blocks = list(self.children)
 
-            tokens = await asyncio.get_running_loop().run_in_executor(
-                None, parser.parse, updated_markdown
-            )
-            new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+        tokens = await asyncio.get_running_loop().run_in_executor(
+            None, parser.parse, updated_markdown
+        )
+        new_blocks = list(self._parse_markdown(tokens, table_of_contents))
 
-            last_final_index = 0
-            for index, block in enumerate(reversed(existing_blocks)):
-                if block.has_class("-final"):
-                    last_final_index = len(existing_blocks) - index - 1
-                    break
+        last_index = len(existing_blocks) - 1
 
-            async with self.lock:
-                with self.app.batch_update():
-                    for block in existing_blocks[last_final_index:]:
-                        await block.remove()
-                    append_blocks = new_blocks[last_final_index:]
-                    if append_blocks:
-                        await self.mount_all(append_blocks)
+        async with self.lock:
+            with self.app.batch_update():
+                for block in existing_blocks[last_index:]:
+                    await block.remove()
+                append_blocks = new_blocks[last_index:]
+                if append_blocks:
+                    await self.mount_all(append_blocks)
 
             self._table_of_contents = table_of_contents
             self.post_message(
@@ -1119,8 +1123,6 @@ class Markdown(Widget):
                     self, self._table_of_contents
                 ).set_sender(self)
             )
-
-        return AwaitComplete(await_append())
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):

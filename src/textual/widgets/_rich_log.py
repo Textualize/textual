@@ -212,7 +212,6 @@ class RichLog(ScrollView, can_focus=True):
             )
             return self
 
-        is_vertical_scroll_end = self.is_vertical_scroll_end
         renderable = self._make_renderable(content)
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 

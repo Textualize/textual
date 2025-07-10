@@ -605,6 +605,15 @@ class Compositor:
                     # Get the region that will be updated
                     sub_clip = clip.intersection(child_region)
 
+                    if widget._anchored:
+
+                        scroll_y = widget.scroll_y
+                        widget.scroll_y = (
+                            arrange_result.spatial_map.total_region.bottom
+                            - region.height
+                        )
+                        # widget.watch_scroll_y(scroll_y, widget.scroll_y)
+
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
                             sub_clip - child_region.offset + widget.scroll_offset
