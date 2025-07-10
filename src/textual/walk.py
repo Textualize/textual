@@ -144,7 +144,7 @@ def walk_breadth_search_id(
 ) -> DOMNode | None:
     """Special case to walk breadth first searching for a node with a given id.
 
-    This is more efficient that [walk_breadth_first][textual.walk.walk_breadth_first] for this special case, as it can use an index.
+    This is more efficient than [walk_breadth_first][textual.walk.walk_breadth_first] for this special case, as it can use an index.
 
     Args:
         root: The root node (starting point).

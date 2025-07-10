@@ -40,7 +40,7 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "nested": (SelectorType.NESTED, (0, 0, 0)),
 }
 
-RE_ID_SELECTOR = re.compile(r"\#" + IDENTIFIER)
+RE_ID_SELECTOR = re.compile("#" + IDENTIFIER)
 
 
 @lru_cache(maxsize=128)
