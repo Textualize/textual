@@ -1482,9 +1482,7 @@ class DOMNode(MessagePump):
                     )
                 base_node._query_one_cache[cache_key] = node
                 return node
-            raise NoMatches(
-                f"No nodes match {query_selector!r} on {base_node!r} {list(base_node._nodes)}"
-            )
+            raise NoMatches(f"No nodes match {query_selector!r} on {base_node!r}")
 
         try:
             selector_set = parse_selectors(query_selector)
