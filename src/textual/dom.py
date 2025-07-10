@@ -1492,7 +1492,7 @@ class DOMNode(MessagePump):
                 base_node._query_one_cache[cache_key] = node
             return node
 
-        raise NoMatches(f"No nodes match {selector!r} on {self!r}")
+        raise NoMatches(f"No nodes match {selector!r} on {base_node!r}")
 
     if TYPE_CHECKING:
 
@@ -1572,7 +1572,7 @@ class DOMNode(MessagePump):
                 base_node._query_one_cache[cache_key] = node
             return node
 
-        raise NoMatches(f"No nodes match {selector!r} on {self!r}")
+        raise NoMatches(f"No nodes match {selector!r} on {base_node!r}")
 
     if TYPE_CHECKING:
 

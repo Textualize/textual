@@ -1005,7 +1005,7 @@ class Widget(DOMNode):
             return child
         if not isinstance(child, expect_type):
             raise WrongType(
-                f"Child with id={id!r} is the wrong type; expected type {expect_type}, found {child}"
+                f"Child with id={id!r} is the wrong type; expected type {expect_type.__name__!r}, found {child}"
             )
         return child
 
@@ -1041,7 +1041,7 @@ class Widget(DOMNode):
         widget = self.query_one(f"#{id}")
         if expect_type is not None and not isinstance(widget, expect_type):
             raise WrongType(
-                f"Descendant with id={id!r} is the wrong type; expected {expect_type}, found {widget}"
+                f"Descendant with id={id!r} is the wrong type; expected type {expect_type.__name__!r}, found {widget}"
             )
         return widget
 
