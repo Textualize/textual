@@ -40,12 +40,12 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "nested": (SelectorType.NESTED, (0, 0, 0)),
 }
 
-RE_IDENTIFIER = re.compile(r"\#" + IDENTIFIER)
+RE_ID_SELECTOR = re.compile(r"\#" + IDENTIFIER)
 
 
 @lru_cache(maxsize=128)
 def is_id_selector(selector: str) -> bool:
-    """Is the selector an ID selector, i.e. "#foo"?
+    """Is the selector an single ID selector, i.e. "#foo"?
 
     Args:
         selector: A CSS selector.
@@ -53,7 +53,7 @@ def is_id_selector(selector: str) -> bool:
     Returns:
         `True` if the selector is a simple ID selector, otherwise `False`.
     """
-    return RE_IDENTIFIER.fullmatch(selector) is not None
+    return RE_ID_SELECTOR.fullmatch(selector) is not None
 
 
 def _add_specificity(
