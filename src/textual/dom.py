@@ -1486,7 +1486,7 @@ class DOMNode(MessagePump):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
                 raise WrongType(
-                    f"Node matching {query_selector!r} is not of expected type {expect_type.__name__!r}; found {node}"
+                    f"Node matching {query_selector!r} is the wrong type; expected type {expect_type.__name__!r}; found {node}"
                 )
             if cache_key is not None:
                 base_node._query_one_cache[cache_key] = node
@@ -1560,13 +1560,11 @@ class DOMNode(MessagePump):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
-                continue
+                raise WrongType(
+                    f"Node matching {query_selector!r} is the wrong type; expect type {expect_type.__name__!r}; found {node}"
+                )
             for later_node in iter_children:
                 if match(selector_set, later_node):
-                    if expect_type is not None and not isinstance(node, expect_type):
-                        raise WrongType(
-                            f"Node matching {query_selector!r} is not of expected type {expect_type.__name__!r}; found {node}"
-                        )
                     raise TooManyMatches(
                         "Call to query_one resulted in more than one matched node"
                     )
