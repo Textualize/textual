@@ -180,9 +180,8 @@ class child_by_id(Generic[QueryType]):
         if child is None:
             raise NoMatches(f"No child found with id={self.child_id!r}")
         if not isinstance(child, self.expect_type):
-            if not isinstance(child, self.expect_type):
-                raise WrongType(
-                    f"Child with id={id!r} is wrong type; expected {self.expect_type}, got"
-                    f" {type(child)}"
-                )
+            raise WrongType(
+                f"Child with id={id!r} is wrong type; expected {self.expect_type}, got"
+                f" {type(child)}"
+            )
         return child
