@@ -176,7 +176,7 @@ class child_by_id(Generic[QueryType]):
         """Get the widget matching the selector and/or type."""
         if obj is None:
             return self
-        child = obj._nodes._get_by_id(self.child_id)
+        child = obj._get_dom_base()._nodes._get_by_id(self.child_id)
         if child is None:
             raise NoMatches(f"No child found with id={self.child_id!r}")
         if not isinstance(child, self.expect_type):

@@ -998,7 +998,7 @@ class Widget(DOMNode):
             NoMatches: if no children could be found for this ID
             WrongType: if the wrong type was found.
         """
-        child = self._nodes._get_by_id(id)
+        child = self._get_dom_base()._nodes._get_by_id(id)
         if child is None:
             raise NoMatches(f"No child found with id={id!r}")
         if expect_type is None:
