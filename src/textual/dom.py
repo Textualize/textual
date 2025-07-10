@@ -1561,7 +1561,7 @@ class DOMNode(MessagePump):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
                 raise WrongType(
-                    f"Node matching {query_selector!r} is the wrong type; expect type {expect_type.__name__!r}; found {node}"
+                    f"Node matching {query_selector!r} is the wrong type; expected type {expect_type.__name__!r}; found {node}"
                 )
             for later_node in iter_children:
                 if match(selector_set, later_node):
