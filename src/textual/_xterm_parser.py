@@ -18,7 +18,7 @@ from textual.message import Message
 # to be unsuccessful?
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 32
 
-_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-?\d;]+[mM]|M...)\Z")
+_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
@@ -50,7 +50,7 @@ IS_ITERM = (
 
 
 class XTermParser(Parser[Message]):
-    _re_sgr_mouse = re.compile(r"\x1b\[<(-?\d+);(-?\d+);(-?\d+)([Mm])")
+    _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(-?\d+);(-?\d+)([Mm])")
 
     def __init__(self, debug: bool = False) -> None:
         self.last_x = 0.0
