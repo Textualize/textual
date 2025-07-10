@@ -176,13 +176,11 @@ class child_by_id(Generic[QueryType]):
         """Get the widget matching the selector and/or type."""
         if obj is None:
             return self
-        child = obj._nodes._get_by_id(self.child_id)
+        child = obj._get_dom_base()._nodes._get_by_id(self.child_id)
         if child is None:
-            raise NoMatches(f"No child found with id={id!r}")
+            raise NoMatches(f"No child found with id={self.child_id!r}")
         if not isinstance(child, self.expect_type):
-            if not isinstance(child, self.expect_type):
-                raise WrongType(
-                    f"Child with id={id!r} is wrong type; expected {self.expect_type}, got"
-                    f" {type(child)}"
-                )
+            raise WrongType(
+                f"Child with id={self.child_id!r} is the wrong type; expected type {self.expect_type.__name__!r}, found {child}"
+            )
         return child

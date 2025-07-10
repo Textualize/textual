@@ -41,7 +41,7 @@ from textual.css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from textual.css.errors import DeclarationError, StyleValueError
 from textual.css.match import match
 from textual.css.parse import parse_declarations, parse_selectors
-from textual.css.query import InvalidQueryFormat, NoMatches, TooManyMatches
+from textual.css.query import InvalidQueryFormat, NoMatches, TooManyMatches, WrongType
 from textual.css.styles import RenderStyles, Styles
 from textual.css.tokenize import IDENTIFIER
 from textual.css.tokenizer import TokenError
@@ -64,9 +64,6 @@ if TYPE_CHECKING:
     from textual.screen import Screen
     from textual.widget import Widget
     from textual.worker import Worker, WorkType, ResultType
-
-    # Unused & ignored imports are needed for the docs to link to these objects:
-    from textual.css.query import WrongType  # type: ignore  # noqa: F401
 
 from typing_extensions import Literal
 
@@ -1488,12 +1485,14 @@ class DOMNode(MessagePump):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
-                continue
+                raise WrongType(
+                    f"Node matching {query_selector!r} is the wrong type; expected type {expect_type.__name__!r}, found {node}"
+                )
             if cache_key is not None:
                 base_node._query_one_cache[cache_key] = node
             return node
 
-        raise NoMatches(f"No nodes match {selector!r} on {self!r}")
+        raise NoMatches(f"No nodes match {selector!r} on {base_node!r}")
 
     if TYPE_CHECKING:
 
@@ -1561,11 +1560,11 @@ class DOMNode(MessagePump):
             if not match(selector_set, node):
                 continue
             if expect_type is not None and not isinstance(node, expect_type):
-                continue
+                raise WrongType(
+                    f"Node matching {query_selector!r} is the wrong type; expected type {expect_type.__name__!r}, found {node}"
+                )
             for later_node in iter_children:
                 if match(selector_set, later_node):
-                    if expect_type is not None and not isinstance(node, expect_type):
-                        continue
                     raise TooManyMatches(
                         "Call to query_one resulted in more than one matched node"
                     )
@@ -1573,7 +1572,7 @@ class DOMNode(MessagePump):
                 base_node._query_one_cache[cache_key] = node
             return node
 
-        raise NoMatches(f"No nodes match {selector!r} on {self!r}")
+        raise NoMatches(f"No nodes match {selector!r} on {base_node!r}")
 
     if TYPE_CHECKING:
 

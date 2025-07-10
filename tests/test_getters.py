@@ -7,7 +7,7 @@ from textual.widget import Widget
 from textual.widgets import Input, Label
 
 
-async def get_getters() -> None:
+async def test_getters() -> None:
     """Check the getter descriptors work, and return expected errors."""
 
     class QueryApp(App):
@@ -20,8 +20,8 @@ async def get_getters() -> None:
 
         def compose(self) -> ComposeResult:
             with containers.Vertical():
-                yield Label(id="label1", classes=".red")
-            yield Label(id="label2", classes=".green")
+                yield Label(id="label1", classes="red")
+            yield Label(id="label2", classes="green")
 
     app = QueryApp()
     async with app.run_test():
