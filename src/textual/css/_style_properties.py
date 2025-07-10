@@ -1219,7 +1219,7 @@ class HatchProperty:
                     character = HATCHES[character]
                 except KeyError:
                     raise ValueError(
-                        f"Expected a character or hatch value here; found {character!r}"
+                        f"Expected a character or hatch value here, found {character!r}"
                     ) from None
             if cell_len(character) != 1:
                 raise ValueError("Hatch character must have a cell length of 1")
