@@ -10,17 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception.
-
+- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception. https://github.com/Textualize/textual/pull/5950
 
 ### Changed
 
-- Breaking change: `Widget.anchor` now has different semantics. It should be applied to a container and anchors to the bottom of the scroll position.
+- Breaking change: `Widget.anchor` now has different semantics. It should be applied to a container and anchors to the bottom of the scroll position. https://github.com/Textualize/textual/pull/5950
 
 ### Added
 
-- Added `Markdown.append`
-- Added `Widget.release_anchor`
+- Added `Markdown.append` https://github.com/Textualize/textual/pull/5950
+- Added `Widget.release_anchor` https://github.com/Textualize/textual/pull/5950
 
 ## [3.7.1] - 2025-07-09
 
