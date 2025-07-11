@@ -18,6 +18,7 @@ from typing_extensions import TypeAlias
 
 from textual._slug import TrackedSlugs
 from textual.app import ComposeResult
+from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.css.query import NoMatches
 from textual.events import Mount
@@ -325,7 +326,6 @@ class MarkdownH6(MarkdownHeader):
 class MarkdownHorizontalRule(MarkdownBlock):
     """A horizontal rule."""
 
-    _final = True
     DEFAULT_CSS = """
     MarkdownHorizontalRule {
         border-bottom: heavy $secondary;
@@ -767,7 +767,6 @@ class Markdown(Widget):
         self._parser_factory = parser_factory
         self._table_of_contents: TableOfContentsType | None = None
         self._open_links = open_links
-        self._pending_markdown = ""
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -1009,13 +1008,7 @@ class Markdown(Widget):
                     else:
                         yield external
 
-    async def _on_idle(self) -> None:
-        if self._pending_markdown:
-            pending_markdown = self._pending_markdown
-            self._pending_markdown = ""
-            await self._append(pending_markdown)
-
-    def update(self, markdown: str) -> None:
+    def update(self, markdown: str) -> AwaitComplete:
         """Update the document with new Markdown.
 
         Args:
@@ -1081,9 +1074,7 @@ class Markdown(Widget):
                 ).set_sender(self)
             )
 
-        self.call_next(await_update)
-
-        # return AwaitComplete(await_update())
+        return AwaitComplete(await_update())
 
     async def append(self, markdown: str) -> None:
         """Append to markdown.

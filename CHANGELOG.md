@@ -6,11 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [3.7.2] - Unreleased
+## Unreleased
 
 ### Fixed
 
 - Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception.
+
+
+### Changed
+
+- Breaking change: `Widget.anchor` now has different semantics. It should be applied to a container and anchors to the bottom of the scroll position.
+
+### Added
+
+- Added `Markdown.append`
+- Added `Widget.release_anchor`
 
 ## [3.7.1] - 2025-07-09
 
