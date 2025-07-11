@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception. https://github.com/Textualize/textual/pull/5950
+- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception.
 
 ### Changed
 
