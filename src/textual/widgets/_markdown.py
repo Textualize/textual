@@ -930,7 +930,8 @@ class Markdown(Widget):
         """Create a stream of MarkdownBlock widgets from markdown.
 
         Args:
-            tokens: List of tokens
+            tokens: List of tokens.
+            table_of_contents: List to store table of contents.
 
         Yields:
             Widgets for mounting.
