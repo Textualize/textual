@@ -11,14 +11,18 @@ Have you checked closed issues? (https://github.com/Textualize/textual/issues?q=
 
 Have you checked against the most recent version of Textual? (https://pypi.org/search/?q=textual)
 
-## Feature requests
+## Consider discussions!
 
-Please post feature requests to Ideas. (https://github.com/Textualize/textual/discussions/categories/ideas)
+Issues are for actionable items only.
+If Textual crashes or behaves differently from the docs, then submit an issue.
+If you want to know how to do something, or you have a suggestion for a new feature, then open a discussion (https://github.com/Textualize/textual/discussions/).
 
+For realtime help, join our discord server (https://discord.gg/Enf6Z3qhVr)
 
 ## The bug
 
-Please give a brief but clear explanation of the issue. If you can, include a complete working example that demonstrates the bug. **Check it can run without modifications.**
+Please give a brief but clear explanation of the issue.
+If you can, include a complete working example that demonstrates the bug. **Check it can run without modifications.**
 
 It will be helpful if you run the following command and paste the results:
 
