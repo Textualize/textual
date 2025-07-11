@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Textual support
+    url: https://github.com/Textualize/textual/discussions
+    about: Discussions for help and feature requests
+  - name: Discord server
+    url : https://discord.gg/Enf6Z3qhVr
+    about: Join our Discord server for realtime help
