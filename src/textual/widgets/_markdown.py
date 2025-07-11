@@ -1076,11 +1076,14 @@ class Markdown(Widget):
 
         return AwaitComplete(await_update())
 
-    async def append(self, markdown: str) -> None:
+    def append(self, markdown: str) -> AwaitComplete:
         """Append to markdown.
 
         Args:
             markdown: A fragment of markdown to be appended.
+
+        Returns:
+            An optionally awaitable object. Await this to ensure that the markdown has been append by the next line.
         """
         parser = (
             MarkdownIt("gfm-like")
@@ -1093,27 +1096,32 @@ class Markdown(Widget):
         self._markdown = updated_markdown = self.source + markdown
         existing_blocks = list(self.children)
 
-        tokens = await asyncio.get_running_loop().run_in_executor(
-            None, parser.parse, updated_markdown
-        )
-        new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+        async def await_append() -> None:
+            """Append new markdown widgets."""
 
-        last_index = len(existing_blocks) - 1
-
-        async with self.lock:
-            with self.app.batch_update():
-                for block in existing_blocks[last_index:]:
-                    await block.remove()
-                append_blocks = new_blocks[last_index:]
-                if append_blocks:
-                    await self.mount_all(append_blocks)
-
-            self._table_of_contents = table_of_contents
-            self.post_message(
-                Markdown.TableOfContentsUpdated(
-                    self, self._table_of_contents
-                ).set_sender(self)
+            tokens = await asyncio.get_running_loop().run_in_executor(
+                None, parser.parse, updated_markdown
             )
+            new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+
+            last_index = len(existing_blocks) - 1
+
+            async with self.lock:
+                with self.app.batch_update():
+                    for block in existing_blocks[last_index:]:
+                        await block.remove()
+                    append_blocks = new_blocks[last_index:]
+                    if append_blocks:
+                        await self.mount_all(append_blocks)
+
+                self._table_of_contents = table_of_contents
+                self.post_message(
+                    Markdown.TableOfContentsUpdated(
+                        self, self._table_of_contents
+                    ).set_sender(self)
+                )
+
+        return AwaitComplete(await_append())
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
