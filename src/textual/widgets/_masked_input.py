@@ -462,7 +462,7 @@ class MaskedInput(Input, can_focus=True):
         disabled: bool = False,
         tooltip: RenderableType | None = None,
     ) -> None:
-        """Initialise the `Input` widget.
+        """Initialise the `MaskedInput` widget.
 
         Args:
             template: Template string.
