@@ -615,7 +615,6 @@ class Compositor:
                             )
                         )
                         widget.set_reactive(Widget.scroll_y, new_scroll_y)
-                        # widget._reactive_scroll_y = new_scroll_y
                         widget.watch_scroll_y(scroll_y, new_scroll_y)
 
                     if visible_only:

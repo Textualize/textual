@@ -2529,9 +2529,6 @@ class Widget(DOMNode):
             if on_complete is not None:
                 self.call_next(on_complete)
 
-        # if y is not None and maybe_scroll_y and y >= self.max_scroll_y:
-        #     self._user_scroll_interrupt = False
-
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
