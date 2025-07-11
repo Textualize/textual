@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added 
+
+- Added `compact` parameter to `MaskedInput` https://github.com/Textualize/textual/pull/5952
+
 ### Fixed
 
 - Fixed issue with the "transparent" CSS value not being transparent when set using python https://github.com/Textualize/textual/pull/5890
