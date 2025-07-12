@@ -202,15 +202,18 @@ class MarkdownBlock(Static):
                     # )
                 elif child.type == "em_open":
                     style_stack.append(
-                        style_stack[-1] + self._markdown.get_visual_style("em")
+                        style_stack[-1]
+                        + self._markdown.get_visual_style("em", partial=True)
                     )
                 elif child.type == "strong_open":
                     style_stack.append(
-                        style_stack[-1] + self._markdown.get_visual_style("strong")
+                        style_stack[-1]
+                        + self._markdown.get_visual_style("strong", partial=True)
                     )
                 elif child.type == "s_open":
                     style_stack.append(
-                        style_stack[-1] + self._markdown.get_visual_style("s")
+                        style_stack[-1]
+                        + self._markdown.get_visual_style("s", partial=True)
                     )
                 elif child.type == "link_open":
                     href = child.attrs.get("href", "")
@@ -472,6 +475,7 @@ class MarkdownTableContent(Widget):
     DEFAULT_CSS = """
     MarkdownTableContent {
         width: 1fr;
+        
         height: auto;
         layout: grid;        
         grid-columns: auto;   
@@ -479,6 +483,7 @@ class MarkdownTableContent(Widget):
         grid-gutter: 1 1; 
         
         height: auto;
+        
         # & > .cell {
         #     padding: 1 2;
         # }
@@ -486,7 +491,7 @@ class MarkdownTableContent(Widget):
             margin: 0 0;
             height: auto;
             padding: 0 2;
-     
+            text-overflow: ellipsis;
             
         }
         & > .header {
@@ -494,12 +499,9 @@ class MarkdownTableContent(Widget):
             margin: 0 0;
             padding: 0 2;
             color: $primary;
-            
-
-
-            
+            text-overflow: ellipsis;            
         }
-        keyline: thin $foreground 20%;
+        keyline: thin $foreground 20%;        
         
     }
     MarkdownTableContent > .markdown-table--header {
@@ -515,21 +517,21 @@ class MarkdownTableContent(Widget):
         self.rows = rows
         """The row contents."""
         super().__init__()
-        # self.shrink = True
+        self.shrink = True
 
     def compose(self) -> ComposeResult:
         for header in self.headers:
-            yield Static(header, classes="header", shrink=False, expand=False)
+            yield Static(header, classes="header").with_tooltip(header)
         for row in self.rows:
             for cell in row:
-                yield Static(cell, classes="cell", expand=False)
+                yield Static(cell, classes="cell").with_tooltip(cell)
 
     def on_mount(self) -> None:
 
         assert isinstance(self.layout, GridLayout)
         self.layout.stretch_height = True
         # self.layout.regular = True
-        self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
+        self.styles.grid_columns = ("1fr",) * (len(self.headers) - 1) + ("1fr",)
         self.styles.grid_size_columns = len(self.headers)
         # self.styles.grid_columns = ("1fr",)
 
@@ -752,12 +754,14 @@ NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
+        width:auto;
         height: auto;
         padding: 0 2 1 2;
         layout: vertical;
         color: $foreground;
         background: $surface;
         overflow-y: auto;
+        
 
         &:focus {
             background-tint: $foreground 5%;

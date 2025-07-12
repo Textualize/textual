@@ -756,7 +756,7 @@ class Widget(DOMNode):
         except NoScreen:
             pass
 
-    def with_tooltip(self, tooltip: RenderableType | None) -> Self:
+    def with_tooltip(self, tooltip: Visual | RenderableType | None) -> Self:
         """Chainable method to set a tooltip.
 
         Example:
