@@ -222,3 +222,24 @@ async def test_valid_empty():
 
         assert input.has_class("-valid")
         assert not input.has_class("-invalid")
+
+
+async def test_invalid_empty():
+
+    class InvalidEmptyApp(App):
+
+        def compose(self) -> ComposeResult:
+            yield Input(valid_empty=False, id="test-in", value="x")
+
+    app = InvalidEmptyApp()
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+
+        assert input.has_class('-valid')
+        assert not input.has_class('-invalid')
+
+        await pilot.press('backspace')
+
+        assert input.has_class('-invalid')
+        assert not input.has_class('-valid')
+
