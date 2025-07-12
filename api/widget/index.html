@@ -7451,9 +7451,9 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.widget.Widget.anchor(animate)" class="md-nav__link">
+  <a href="#textual.widget.Widget.anchor(anchor)" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;animate
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;anchor
     </span>
   </a>
   
@@ -7704,15 +7704,6 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widget.Widget.clear_anchor" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;clear_anchor
-    </span>
-  </a>
   
 </li>
         
@@ -8424,6 +8415,15 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.release_anchor" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;release_anchor
+    </span>
+  </a>
   
 </li>
         
@@ -12012,9 +12012,9 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.widget.Widget.anchor(animate)" class="md-nav__link">
+  <a href="#textual.widget.Widget.anchor(anchor)" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;animate
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;anchor
     </span>
   </a>
   
@@ -12265,15 +12265,6 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widget.Widget.clear_anchor" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;clear_anchor
-    </span>
-  </a>
   
 </li>
         
@@ -12985,6 +12976,15 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.release_anchor" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;release_anchor
+    </span>
+  </a>
   
 </li>
         
@@ -16282,6 +16282,7 @@ cache-key.</p>
     <div class="doc doc-contents ">
 
         <p>Is this widget anchored?</p>
+<p>See <a class="autorefs autorefs-internal" title="            anchor" href="#textual.widget.Widget.anchor">anchor()</a> for an explanation of anchoring.</p>
     </div>
 
 </div>
@@ -18345,17 +18346,14 @@ This method may be overridden if additional logic is required.</p>
 
 
 <a href="#textual.widget.Widget.anchor" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">anchor</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="animate (textual.widget.Widget.anchor(animate))" href="#textual.widget.Widget.anchor(animate)">animate</a></span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">anchor</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="anchor (textual.widget.Widget.anchor(anchor))" href="#textual.widget.Widget.anchor(anchor)">anchor</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Anchor the widget, which scrolls it into view (like <a class="autorefs autorefs-internal" title="            scroll_visible" href="#textual.widget.Widget.scroll_visible">scroll_visible</a>),
-but also keeps it in view if the widget's size changes, or the size of its container changes.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Anchored widgets will be un-anchored if the users scrolls the container.</p>
-</div>
+        <p>Anchor a scrollable widget.</p>
+<p>An anchored widget will stay scrolled the bottom when new content is added, until
+the user moves the scroll position.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -18371,18 +18369,18 @@ but also keeps it in view if the widget's size changes, or the size of its conta
       <tbody>
           <tr class="doc-section-item">
             <td>
-<h4 id="textual.widget.Widget.anchor(animate)" class="doc doc-heading doc-heading-parameter">                  <code>animate</code>
-<a href="#textual.widget.Widget.anchor(animate)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+<h4 id="textual.widget.Widget.anchor(anchor)" class="doc doc-heading doc-heading-parameter">                  <code>anchor</code>
+<a href="#textual.widget.Widget.anchor(anchor)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>True</code> if the scroll should animate, or <code>False</code> if it shouldn't.</p>
+                <p>Anchor the widget if <code>True</code>, clear the anchor if <code>False</code>.</p>
               </div>
             </td>
             <td>
-                  <code>False</code>
+                  <code>True</code>
             </td>
           </tr>
       </tbody>
@@ -19007,25 +19005,6 @@ There are other reasons why a widget may not be visible.</p>
           </tr>
       </tbody>
     </table>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="textual.widget.Widget.clear_anchor" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">clear_anchor</span>
-
-
-<a href="#textual.widget.Widget.clear_anchor" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">clear_anchor</span><span class="p">()</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Stop anchoring this widget (a no-op if this widget is not anchored).</p>
 
     </div>
 
@@ -21112,6 +21091,26 @@ do this automatically.</p>
           </tr>
       </tbody>
     </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.widget.Widget.release_anchor" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">release_anchor</span>
+
+
+<a href="#textual.widget.Widget.release_anchor" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">release_anchor</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Release the <a class="autorefs autorefs-internal" title="            Widget" href="#textual.widget.Widget">anchor</a>.</p>
+<p>If a widget is anchored, releasing the anchor will allow the user to scroll as normal.</p>
 
     </div>
 
