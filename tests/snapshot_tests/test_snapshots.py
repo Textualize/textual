@@ -39,6 +39,7 @@ from textual.widgets import (
     ListItem,
     ListView,
     Log,
+    Markdown,
     OptionList,
     Placeholder,
     ProgressBar,
@@ -4360,7 +4361,7 @@ def test_textarea_select(snap_compare):
         def compose(self) -> ComposeResult:
             yield TextArea("Hello, World! " * 100)
 
-    snap_compare(
+    assert snap_compare(
         TextApp(),
         press=(
             "right",
@@ -4372,3 +4373,28 @@ def test_textarea_select(snap_compare):
             "shift+right",
         ),
     )
+
+
+def test_markdown_append(snap_compare):
+    """Test Markdown.append method.
+
+    You should see a view of markdown, ending with a quote that says "There can be only one"
+
+    """
+
+    MD = [
+        "# Title\n",
+        "\n",
+        "1. List item 1\n" "2. List item 2\n" "\n" "> There can be only one\n",
+    ]
+
+    class MDApp(App):
+        def compose(self) -> ComposeResult:
+            yield Markdown()
+
+        async def on_mount(self) -> None:
+            markdown = self.query_one(Markdown)
+            for line in MD:
+                await markdown.append(line)
+
+    assert snap_compare(MDApp())
