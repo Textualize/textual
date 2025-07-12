@@ -241,12 +241,12 @@ class ANSIToTruecolor(LineFilter):
         """
         terminal_theme = self._terminal_theme
         color = style.color
-        if color is not None and color.is_system_defined:
+        if color is not None and color.triplet is None:
             color = RichColor.from_rgb(
                 *color.get_truecolor(terminal_theme, foreground=True)
             )
         bgcolor = style.bgcolor
-        if bgcolor is not None and bgcolor.is_system_defined:
+        if bgcolor is not None and bgcolor.triplet is None:
             bgcolor = RichColor.from_rgb(
                 *bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
