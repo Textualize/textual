@@ -107,7 +107,7 @@ URL](https://example.com)\
         markdown = pilot.app.query_one(Markdown)
         paragraph = markdown.children[0]
         assert isinstance(paragraph, MD.MarkdownParagraph)
-        assert paragraph._text.plain == "My site has this URL"
+        assert paragraph._content.plain == "My site has this URL"
         expected_spans = [
             Span(8, 11, Style(meta={"@click": "link('https://example.com')"})),
             Span(11, 12, Style(meta={"@click": "link('https://example.com')"})),
@@ -116,7 +116,7 @@ URL](https://example.com)\
             Span(17, 20, Style(meta={"@click": "link('https://example.com')"})),
         ]
 
-    assert paragraph._text.spans == expected_spans
+    assert paragraph._content.spans == expected_spans
 
 
 async def test_load_non_existing_file() -> None:

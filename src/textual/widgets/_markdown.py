@@ -10,20 +10,24 @@ from urllib.parse import unquote
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
 from rich import box
-from rich.style import Style
+
+# from rich.style import Style
 from rich.syntax import Syntax
 from rich.table import Table
-from rich.text import Text
+
+# from rich.text import Text
 from typing_extensions import TypeAlias
 
 from textual._slug import TrackedSlugs
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Mount
 from textual.message import Message
 from textual.reactive import reactive, var
+from textual.style import Style
 from textual.widget import Widget
 from textual.widgets import Static, Tree
 
@@ -117,7 +121,7 @@ class MarkdownBlock(Static):
     def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
-        self._text = Text()
+        self._content = Content()
         self._token: Token | None = None
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
@@ -130,9 +134,9 @@ class MarkdownBlock(Static):
         yield from self._blocks
         self._blocks.clear()
 
-    def set_content(self, text: Text) -> None:
-        self._text = text
-        self.update(text)
+    def set_content(self, content: Content) -> None:
+        self._content = content
+        self.update(content)
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
@@ -164,44 +168,56 @@ class MarkdownBlock(Static):
 
         self._token = token
         style_stack: list[Style] = [Style()]
-        content = Text()
+        # content = Content()
+
+        pending_content: list[Content] = []
+        new_line = Content("\n")
+
         if token.children:
             for child in token.children:
                 if child.type == "text":
-                    content.append(
+                    pending_content.append(
                         # Ensure repeating spaces and/or tabs get squashed
                         # down to a single space.
-                        re.sub(r"\s+", " ", child.content),
-                        style_stack[-1],
+                        Content.styled(
+                            re.sub(r"\s+", " ", child.content), style_stack[-1]
+                        )
                     )
                 if child.type == "hardbreak":
-                    content.append("\n")
+                    pending_content.append(new_line)
                 if child.type == "softbreak":
-                    content.append(" ", style_stack[-1])
+                    pending_content.append(Content.styled(" ", style_stack[-1]))
                 elif child.type == "code_inline":
-                    content.append(
-                        child.content,
-                        style_stack[-1]
-                        + self._markdown.get_component_rich_style(
-                            "code_inline", partial=True
-                        ),
+                    pending_content.append(
+                        Content.styled(
+                            child.content,
+                            style_stack[-1]
+                            + self._markdown.get_visual_style(
+                                "code_inline", partial=True
+                            ),
+                        )
                     )
+                    # content.append(
+                    #     child.content,
+                    #     style_stack[-1]
+                    #     + self._markdown.get_component_rich_style(
+                    #         "code_inline", partial=True
+                    #     ),
+                    # )
                 elif child.type == "em_open":
                     style_stack.append(
                         style_stack[-1]
-                        + self._markdown.get_component_rich_style("em", partial=True)
+                        + self._markdown.get_visual_style("em", partial=True)
                     )
                 elif child.type == "strong_open":
                     style_stack.append(
                         style_stack[-1]
-                        + self._markdown.get_component_rich_style(
-                            "strong", partial=True
-                        )
+                        + self._markdown.get_visual_style("strong", partial=True)
                     )
                 elif child.type == "s_open":
                     style_stack.append(
                         style_stack[-1]
-                        + self._markdown.get_component_rich_style("s", partial=True)
+                        + self._markdown.get_visual_style("s", partial=True)
                     )
                 elif child.type == "link_open":
                     href = child.attrs.get("href", "")
@@ -218,18 +234,23 @@ class MarkdownBlock(Static):
                         style_stack[-1] + Style.from_meta({"@click": action})
                     )
 
-                    content.append("🖼  ", style_stack[-1])
+                    pending_content.append(Content.styled("🖼  ", style_stack[-1]))
                     if alt:
-                        content.append(f"({alt})", style_stack[-1])
+                        pending_content.append(
+                            Content.styled(f"({alt})", style_stack[-1])
+                        )
                     if child.children is not None:
                         for grandchild in child.children:
-                            content.append(grandchild.content, style_stack[-1])
+                            pending_content.append(
+                                Content.styled(grandchild.content, style_stack[-1])
+                            )
 
                     style_stack.pop()
 
                 elif child.type.endswith("_close"):
                     style_stack.pop()
 
+        content = Content("").join(pending_content)
         self.set_content(content)
 
 
@@ -523,11 +544,11 @@ class MarkdownTable(MarkdownBlock):
         rows: list[list[Text]] = []
         for block in flatten(self):
             if isinstance(block, MarkdownTH):
-                headers.append(block._text)
+                headers.append(block._content)
             elif isinstance(block, MarkdownTR):
                 rows.append([])
             elif isinstance(block, MarkdownTD):
-                rows[-1].append(block._text)
+                rows[-1].append(block._content)
 
         yield MarkdownTableContent(headers, rows)
         self._blocks.clear()
@@ -573,8 +594,8 @@ class MarkdownBullet(Widget):
     def get_selection(self, _selection) -> tuple[str, str] | None:
         return self.symbol, " "
 
-    def render(self) -> Text:
-        return Text(self.symbol)
+    def render(self) -> Content:
+        return Content(self.symbol)
 
 
 class MarkdownListItem(MarkdownBlock):
@@ -986,7 +1007,7 @@ class Markdown(Widget):
             elif token_type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
-                    heading = block._text.plain
+                    heading = block._content.plain
                     level = int(token.tag[1:])
                     table_of_contents.append((level, heading, block.id))
                 if stack:
