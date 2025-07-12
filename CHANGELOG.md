@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception.
+- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception. https://github.com/Textualize/textual/pull/5945
 - Fixed logging to a file on Windows https://github.com/Textualize/textual/issues/5941
 - Fixed eight bit colors crashing when applying dim style https://github.com/Textualize/textual/pull/5957
 
