@@ -254,14 +254,14 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if self.allow_horizontal_scroll:
-            self._clear_anchor()
+            self.release_anchor()
             if self._scroll_right_for_pointer(animate=True):
                 event.stop()
                 event.prevent_default()
 
     def _on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         if self.allow_horizontal_scroll:
-            self._clear_anchor()
+            self.release_anchor()
             if self._scroll_left_for_pointer(animate=True):
                 event.stop()
                 event.prevent_default()

@@ -242,7 +242,7 @@ class DOMQuery(Generic[QueryType]):
             if expect_type is not None:
                 if not isinstance(first, expect_type):
                     raise WrongType(
-                        f"Query value is wrong type; expected {expect_type}, got {type(first)}"
+                        f"Query value is the wrong type; expected type {expect_type.__name__!r}, found {first}"
                     )
             return first
         else:
@@ -324,7 +324,7 @@ class DOMQuery(Generic[QueryType]):
         last = self.nodes[-1]
         if expect_type is not None and not isinstance(last, expect_type):
             raise WrongType(
-                f"Query value is wrong type; expected {expect_type}, got {type(last)}"
+                f"Query value is the wrong type; expected type {expect_type.__name__!r}, found {last}"
             )
         return last
 

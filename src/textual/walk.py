@@ -137,3 +137,33 @@ def walk_breadth_first(
         if isinstance(node, check_type):
             yield node
         extend(node._nodes)
+
+
+def walk_breadth_search_id(
+    root: DOMNode, node_id: str, *, with_root: bool = True
+) -> DOMNode | None:
+    """Special case to walk breadth first searching for a node with a given id.
+
+    This is more efficient than [walk_breadth_first][textual.walk.walk_breadth_first] for this special case, as it can use an index.
+
+    Args:
+        root: The root node (starting point).
+        node_id: Node id to search for.
+        with_root: Consider the root node? If the root has the node id, then return it.
+
+    Returns:
+        A DOMNode if a node was found, otherwise `None`.
+    """
+
+    if with_root and root.id == node_id:
+        return root
+
+    queue: deque[DOMNode] = deque()
+    queue.append(root)
+
+    while queue:
+        node = queue.popleft()
+        if (found_node := node._nodes._get_by_id(node_id)) is not None:
+            return found_node
+        queue.extend(node._nodes)
+    return None

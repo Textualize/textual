@@ -36,12 +36,12 @@ from textual._loop import loop_last
 from textual.geometry import NULL_SPACING, Offset, Region, Size, Spacing
 from textual.map_geometry import MapGeometry
 from textual.strip import Strip, StripRenderable
+from textual.widget import Widget
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
     from textual.screen import Screen
-    from textual.widget import Widget
 
 
 class ReflowResult(NamedTuple):
@@ -604,6 +604,18 @@ class Compositor:
 
                     # Get the region that will be updated
                     sub_clip = clip.intersection(child_region)
+
+                    if widget._anchored and not widget._anchor_released:
+                        scroll_y = widget.scroll_y
+                        new_scroll_y = (
+                            arrange_result.spatial_map.total_region.bottom
+                            - (
+                                widget.container_size.height
+                                - widget.scrollbar_size_horizontal
+                            )
+                        )
+                        widget.set_reactive(Widget.scroll_y, new_scroll_y)
+                        widget.watch_scroll_y(scroll_y, new_scroll_y)
 
                     if visible_only:
                         placements = arrange_result.get_visible_placements(

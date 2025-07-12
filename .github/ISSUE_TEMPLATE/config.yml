@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Get help or request a feature
+    url: https://github.com/Textualize/textual/discussions
+    about: Discussions are best for getting feedback
+  - name: Chat to Textual devs
+    url : https://discord.gg/Enf6Z3qhVr
+    about: Join our Discord server for realtime assistance
