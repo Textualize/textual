@@ -8,14 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Added 
-
-- Added `compact` parameter to `MaskedInput` https://github.com/Textualize/textual/pull/5952
-
 ### Fixed
 
 - Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception.
 - Fixed logging to a file on Windows https://github.com/Textualize/textual/issues/5941
+- Fixed eight bit colors crashing when applying dim style https://github.com/Textualize/textual/pull/5957
 
 ### Changed
 
@@ -25,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `Markdown.append` https://github.com/Textualize/textual/pull/5950
 - Added `Widget.release_anchor` https://github.com/Textualize/textual/pull/5950
+- Added `compact` parameter to `MaskedInput` https://github.com/Textualize/textual/pull/5952
 
 ## [3.7.1] - 2025-07-09
 
