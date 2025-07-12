@@ -14,8 +14,7 @@ from rich import box
 # from rich.style import Style
 from rich.syntax import Syntax
 from rich.table import Table
-
-# from rich.text import Text
+from rich.text import Text
 from typing_extensions import TypeAlias
 
 from textual._slug import TrackedSlugs
@@ -544,11 +543,11 @@ class MarkdownTable(MarkdownBlock):
         rows: list[list[Text]] = []
         for block in flatten(self):
             if isinstance(block, MarkdownTH):
-                headers.append(block._content)
+                headers.append(Text(block._content.plain))
             elif isinstance(block, MarkdownTR):
                 rows.append([])
             elif isinstance(block, MarkdownTD):
-                rows[-1].append(block._content)
+                rows[-1].append(Text(block._content.plain))
 
         yield MarkdownTableContent(headers, rows)
         self._blocks.clear()
