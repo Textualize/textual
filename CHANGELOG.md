@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception.
+- Fixed logging to a file on Windows https://github.com/Textualize/textual/issues/5941
 
 ### Changed
 
