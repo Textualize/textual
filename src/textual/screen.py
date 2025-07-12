@@ -1663,12 +1663,15 @@ class Screen(Generic[ScreenResultType], Widget):
         if end_region.y <= start_region.bottom or self._box_select:
             select_regions.append(Region.union(start_region, end_region))
         else:
-            container_region = Region.from_union(
-                [
-                    start_widget.select_container.content_region,
-                    end_widget.select_container.content_region,
-                ]
-            )
+            try:
+                container_region = Region.from_union(
+                    [
+                        start_widget.select_container.content_region,
+                        end_widget.select_container.content_region,
+                    ]
+                )
+            except NoMatches:
+                return
 
             start_region = Region.from_corners(
                 start_region.x,

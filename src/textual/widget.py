@@ -1756,7 +1756,6 @@ class Widget(DOMNode):
         return round(clamp(value, 0, self.max_scroll_x))
 
     def validate_scroll_y(self, value: float) -> float:
-        # return value
         return clamp(value, 0, self.max_scroll_y)
 
     def validate_scroll_target_y(self, value: float) -> float:
