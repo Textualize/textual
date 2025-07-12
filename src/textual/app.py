@@ -1237,7 +1237,7 @@ class App(Generic[ReturnType], DOMNode):
         yield SystemCommand(
             "Save screenshot",
             "Save an SVG 'screenshot' of the current screen",
-            self.deliver_screenshot,
+            lambda: self.set_timer(0.1, self.deliver_screenshot),
         )
 
     def get_default_screen(self) -> Screen:
