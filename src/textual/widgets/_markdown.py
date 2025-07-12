@@ -9,11 +9,9 @@ from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
-from rich import box
 
 # from rich.style import Style
 from rich.syntax import Syntax
-from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
@@ -24,6 +22,7 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Mount
+from textual.layouts.grid import GridLayout
 from textual.message import Message
 from textual.reactive import reactive, var
 from textual.style import Style
@@ -191,9 +190,7 @@ class MarkdownBlock(Static):
                         Content.styled(
                             child.content,
                             style_stack[-1]
-                            + self._markdown.get_visual_style(
-                                "code_inline", partial=True
-                            ),
+                            + self._markdown.get_visual_style("code_inline"),
                         )
                     )
                     # content.append(
@@ -205,18 +202,15 @@ class MarkdownBlock(Static):
                     # )
                 elif child.type == "em_open":
                     style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("em", partial=True)
+                        style_stack[-1] + self._markdown.get_visual_style("em")
                     )
                 elif child.type == "strong_open":
                     style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("strong", partial=True)
+                        style_stack[-1] + self._markdown.get_visual_style("strong")
                     )
                 elif child.type == "s_open":
                     style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("s", partial=True)
+                        style_stack[-1] + self._markdown.get_visual_style("s")
                     )
                 elif child.type == "link_open":
                     href = child.attrs.get("href", "")
@@ -477,9 +471,36 @@ class MarkdownTableContent(Widget):
 
     DEFAULT_CSS = """
     MarkdownTableContent {
-        width: 100%;
+        width: 1fr;
         height: auto;
+        layout: grid;        
+        grid-columns: auto;   
+        grid-rows: auto;    
+        grid-gutter: 1 1; 
+        
+        height: auto;
+        # & > .cell {
+        #     padding: 1 2;
+        # }
+        & > .cell {
+            margin: 0 0;
+            height: auto;
+            padding: 0 2;
+     
+            
+        }
+        & > .header {
+            height: auto;
+            margin: 0 0;
+            padding: 0 2;
+            color: $primary;
+            
 
+
+            
+        }
+        keyline: thin $foreground 20%;
+        
     }
     MarkdownTableContent > .markdown-table--header {
         text-style: bold;
@@ -488,30 +509,46 @@ class MarkdownTableContent(Widget):
 
     COMPONENT_CLASSES = {"markdown-table--header", "markdown-table--lines"}
 
-    def __init__(self, headers: list[Text], rows: list[list[Text]]):
+    def __init__(self, headers: list[Content], rows: list[list[Content]]):
         self.headers = headers
         """List of header text."""
         self.rows = rows
         """The row contents."""
         super().__init__()
-        self.shrink = True
+        # self.shrink = True
 
-    def render(self) -> Table:
-        table = Table(
-            expand=True,
-            box=box.SIMPLE_HEAD,
-            style=self.rich_style,
-            header_style=self.get_component_rich_style("markdown-table--header"),
-            border_style=self.get_component_rich_style("markdown-table--lines"),
-            collapse_padding=True,
-            padding=0,
-        )
+    def compose(self) -> ComposeResult:
         for header in self.headers:
-            table.add_column(header)
+            yield Static(header, classes="header", shrink=False, expand=False)
         for row in self.rows:
-            if row:
-                table.add_row(*row)
-        return table
+            for cell in row:
+                yield Static(cell, classes="cell", expand=False)
+
+    def on_mount(self) -> None:
+
+        assert isinstance(self.layout, GridLayout)
+        self.layout.stretch_height = True
+        # self.layout.regular = True
+        self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
+        self.styles.grid_size_columns = len(self.headers)
+        # self.styles.grid_columns = ("1fr",)
+
+    # def render(self) -> Table:
+    #     table = Table(
+    #         expand=True,
+    #         box=box.SIMPLE_HEAD,
+    #         style=self.rich_style,
+    #         header_style=self.get_component_rich_style("markdown-table--header"),
+    #         border_style=self.get_component_rich_style("markdown-table--lines"),
+    #         collapse_padding=True,
+    #         padding=0,
+    #     )
+    #     for header in self.headers:
+    #         table.add_column(header)
+    #     for row in self.rows:
+    #         if row:
+    #             table.add_row(*row)
+    #     return table
 
     async def action_link(self, href: str) -> None:
         """Pass a link action on to the MarkdownTable parent."""
@@ -524,11 +561,13 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 100%;
-        background: black 10%;
+        width: 1fr;        
+        # background: black 10%;
         &:light {
             background: white 30%;
         }
+        
+        # margin: 1 2;
     }
     """
 
@@ -539,15 +578,15 @@ class MarkdownTable(MarkdownBlock):
                     yield from flatten(block)
                 yield block
 
-        headers: list[Text] = []
-        rows: list[list[Text]] = []
+        headers: list[Content] = []
+        rows: list[list[Content]] = []
         for block in flatten(self):
             if isinstance(block, MarkdownTH):
-                headers.append(Text(block._content.plain))
+                headers.append(block._content)
             elif isinstance(block, MarkdownTR):
                 rows.append([])
             elif isinstance(block, MarkdownTD):
-                rows[-1].append(Text(block._content.plain))
+                rows[-1].append(block._content)
 
         yield MarkdownTableContent(headers, rows)
         self._blocks.clear()
@@ -725,7 +764,7 @@ class Markdown(Widget):
         }
     }
     .em {
-        text-style: italic;
+        text-style: italic;        
     }
     .strong {
         text-style: bold;
@@ -734,7 +773,8 @@ class Markdown(Widget):
         text-style: strike;
     }
     .code_inline {
-        text-style: bold dim;
+        background: $warning-muted 30%;
+        color: $warning;
     }
     """
 

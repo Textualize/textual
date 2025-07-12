@@ -20,7 +20,7 @@ class GridLayout(Layout):
     def __init__(self) -> None:
         self.min_column_width: int | None = None
         self.stretch_height: bool = False
-        self.regular = False
+        self.regular: bool = False
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
