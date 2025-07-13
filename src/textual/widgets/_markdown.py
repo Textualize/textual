@@ -426,7 +426,7 @@ class MarkdownOrderedList(MarkdownList):
 
     MarkdownOrderedList Vertical {
         height: auto;
-        width: 1fr;        
+        width: 1fr;
     }
     """
 
