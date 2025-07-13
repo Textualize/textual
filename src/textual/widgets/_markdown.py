@@ -110,6 +110,7 @@ class MarkdownBlock(Static):
 
     DEFAULT_CSS = """
     MarkdownBlock {
+        width: 1fr;
         height: auto;
     }
     """
@@ -134,7 +135,7 @@ class MarkdownBlock(Static):
         self._content = content
         self.update(content)
 
-    async def update_from_block(self, block: MarkdownBlock) -> None:
+    async def _update_from_block(self, block: MarkdownBlock) -> None:
         await self.remove()
         await self._markdown.mount(block)
 
@@ -168,7 +169,6 @@ class MarkdownBlock(Static):
 
         self._token = token
         style_stack: list[Style] = [Style()]
-        # content = Content()
 
         pending_content: list[Content] = []
         new_line = Content("\n")
@@ -195,13 +195,6 @@ class MarkdownBlock(Static):
                             + self._markdown.get_visual_style("code_inline"),
                         )
                     )
-                    # content.append(
-                    #     child.content,
-                    #     style_stack[-1]
-                    #     + self._markdown.get_component_rich_style(
-                    #         "code_inline", partial=True
-                    #     ),
-                    # )
                 elif child.type == "em_open":
                     style_stack.append(
                         style_stack[-1]
@@ -486,9 +479,7 @@ class MarkdownTableContent(Widget):
         
         height: auto;
         
-        # & > .cell {
-        #     padding: 1 2;
-        # }
+        
         & > .cell {
             margin: 0 0;
             height: auto;
@@ -549,24 +540,6 @@ class MarkdownTableContent(Widget):
         # self.layout.regular = True
         self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
         self.styles.grid_size_columns = len(self.headers)
-        # self.styles.grid_columns = ("1fr",)
-
-    # def render(self) -> Table:
-    #     table = Table(
-    #         expand=True,
-    #         box=box.SIMPLE_HEAD,
-    #         style=self.rich_style,
-    #         header_style=self.get_component_rich_style("markdown-table--header"),
-    #         border_style=self.get_component_rich_style("markdown-table--lines"),
-    #         collapse_padding=True,
-    #         padding=0,
-    #     )
-    #     for header in self.headers:
-    #         table.add_column(header)
-    #     for row in self.rows:
-    #         if row:
-    #             table.add_row(*row)
-    #     return table
 
     async def action_link(self, href: str) -> None:
         """Pass a link action on to the MarkdownTable parent."""
@@ -579,13 +552,10 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 1fr;        
-        # background: black 10%;
+        width: 1fr;            
         &:light {
             background: white 30%;
-        }
-        
-        # margin: 1 2;
+        }        
     }
     """
 
@@ -598,11 +568,15 @@ class MarkdownTable(MarkdownBlock):
         headers, rows = self._get_headers_and_rows()
         self._headers = headers
         self._rows = rows
-
         yield MarkdownTableContent(headers, rows)
-        # self._blocks.clear()
 
     def _get_headers_and_rows(self) -> tuple[list[Content], list[list[Content]]]:
+        """Get list of headers, and list of rows.
+
+        Returns:
+            A tuple containing a list of headers, and a list of rows.
+        """
+
         def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
             for block in block._blocks:
                 if block._blocks:
@@ -622,7 +596,12 @@ class MarkdownTable(MarkdownBlock):
             rows.pop()
         return headers, rows
 
-    async def update_from_block(self, block: MarkdownBlock) -> None:
+    async def _update_from_block(self, block: MarkdownBlock) -> None:
+        """Special case to update a Markdown table.
+
+        Args:
+            block: Existing markdown block.
+        """
         assert isinstance(block, MarkdownTable)
         try:
             table_content = self.query_one(MarkdownTableContent)
@@ -631,12 +610,12 @@ class MarkdownTable(MarkdownBlock):
         else:
             if table_content.rows:
                 current_rows = self._rows
-                new_headers, new_rows = block._get_headers_and_rows()
+                _new_headers, new_rows = block._get_headers_and_rows()
                 updated_rows = new_rows[len(current_rows) - 1 :]
                 self._rows = new_rows
                 await table_content._update_rows(updated_rows)
                 return
-        await super().update_from_block(block)
+        await super()._update_from_block(block)
 
 
 class MarkdownTBody(MarkdownBlock):
@@ -1224,7 +1203,7 @@ class Markdown(Widget):
                     #     await block.remove()
                     if existing_blocks and new_blocks:
                         last_block = existing_blocks[-1]
-                        await last_block.update_from_block(new_blocks[last_index])
+                        await last_block._update_from_block(new_blocks[last_index])
                         last_index += 1
                     append_blocks = new_blocks[last_index:]
                     if append_blocks:
