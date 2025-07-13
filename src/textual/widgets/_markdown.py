@@ -9,8 +9,6 @@ from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
-
-# from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 from typing_extensions import TypeAlias
@@ -119,7 +117,7 @@ class MarkdownBlock(Static):
     def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
-        self._content = Content()
+        self._content: Content = Content()
         self._token: Token | None = None
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
@@ -135,6 +133,10 @@ class MarkdownBlock(Static):
     def set_content(self, content: Content) -> None:
         self._content = content
         self.update(content)
+
+    async def update_from_block(self, block: MarkdownBlock) -> None:
+        await self.remove()
+        await self._markdown.mount(block)
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
@@ -512,26 +514,40 @@ class MarkdownTableContent(Widget):
     COMPONENT_CLASSES = {"markdown-table--header", "markdown-table--lines"}
 
     def __init__(self, headers: list[Content], rows: list[list[Content]]):
-        self.headers = headers
+        self.headers = headers.copy()
         """List of header text."""
-        self.rows = rows
+        self.rows = rows.copy()
         """The row contents."""
         super().__init__()
         self.shrink = True
+        self.last_row = 0
 
     def compose(self) -> ComposeResult:
         for header in self.headers:
             yield Static(header, classes="header").with_tooltip(header)
-        for row in self.rows:
+        for row_index, row in enumerate(self.rows, 1):
             for cell in row:
-                yield Static(cell, classes="cell").with_tooltip(cell)
+                yield Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+            self.last_row = row_index
+
+    async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
+
+        await self.query_children(f".cell.row{self.last_row}").remove()
+        new_cells: list[Static] = []
+        for row_index, row in enumerate(updated_rows, self.last_row):
+            for cell in row:
+                new_cells.append(
+                    Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+                )
+        self.last_row = row_index
+        await self.mount_all(new_cells)
 
     def on_mount(self) -> None:
 
         assert isinstance(self.layout, GridLayout)
         self.layout.stretch_height = True
         # self.layout.regular = True
-        self.styles.grid_columns = ("1fr",) * (len(self.headers) - 1) + ("1fr",)
+        self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
         self.styles.grid_size_columns = len(self.headers)
         # self.styles.grid_columns = ("1fr",)
 
@@ -573,7 +589,20 @@ class MarkdownTable(MarkdownBlock):
     }
     """
 
+    def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
+        super().__init__(markdown, *args, **kwargs)
+        self._headers: list[Content] = []
+        self._rows: list[list[Content]] = []
+
     def compose(self) -> ComposeResult:
+        headers, rows = self._get_headers_and_rows()
+        self._headers = headers
+        self._rows = rows
+
+        yield MarkdownTableContent(headers, rows)
+        # self._blocks.clear()
+
+    def _get_headers_and_rows(self) -> tuple[list[Content], list[list[Content]]]:
         def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
             for block in block._blocks:
                 if block._blocks:
@@ -589,9 +618,25 @@ class MarkdownTable(MarkdownBlock):
                 rows.append([])
             elif isinstance(block, MarkdownTD):
                 rows[-1].append(block._content)
+        if rows and not rows[-1]:
+            rows.pop()
+        return headers, rows
 
-        yield MarkdownTableContent(headers, rows)
-        self._blocks.clear()
+    async def update_from_block(self, block: MarkdownBlock) -> None:
+        assert isinstance(block, MarkdownTable)
+        try:
+            table_content = self.query_one(MarkdownTableContent)
+        except NoMatches:
+            pass
+        else:
+            if table_content.rows:
+                current_rows = self._rows
+                new_headers, new_rows = block._get_headers_and_rows()
+                updated_rows = new_rows[len(current_rows) - 1 :]
+                self._rows = new_rows
+                await table_content._update_rows(updated_rows)
+                return
+        await super().update_from_block(block)
 
 
 class MarkdownTBody(MarkdownBlock):
@@ -1159,7 +1204,9 @@ class Markdown(Widget):
         table_of_contents: TableOfContentsType = []
 
         self._markdown = updated_markdown = self.source + markdown
-        existing_blocks = list(self.children)
+        existing_blocks = [
+            child for child in self.children if isinstance(child, MarkdownBlock)
+        ]
 
         async def await_append() -> None:
             """Append new markdown widgets."""
@@ -1173,8 +1220,12 @@ class Markdown(Widget):
 
             async with self.lock:
                 with self.app.batch_update():
-                    for block in existing_blocks[last_index:]:
-                        await block.remove()
+                    # for block in existing_blocks[last_index:]:
+                    #     await block.remove()
+                    if existing_blocks and new_blocks:
+                        last_block = existing_blocks[-1]
+                        await last_block.update_from_block(new_blocks[last_index])
+                        last_index += 1
                     append_blocks = new_blocks[last_index:]
                     if append_blocks:
                         await self.mount_all(append_blocks)

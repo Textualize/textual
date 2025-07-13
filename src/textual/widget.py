@@ -3652,6 +3652,8 @@ class Widget(DOMNode):
             yield "id", self.id, None
             if self.name:
                 yield "name", self.name
+            if self.classes:
+                yield "classes", " ".join(self.classes)
         except AttributeError:
             pass
 
