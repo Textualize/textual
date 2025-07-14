@@ -240,7 +240,9 @@ class GridLayout(Layout):
                     ) is not None:
                         widget = cell_info[0]
                         column_minimums[column_index] = max(
-                            visualize(widget, widget.render()).get_minimal_width({})
+                            visualize(widget, widget.render()).get_minimal_width(
+                                widget.styles
+                            )
                             + widget.styles.gutter.width,
                             column_minimums[column_index],
                         )

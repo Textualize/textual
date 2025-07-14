@@ -444,12 +444,14 @@ class Content(Visual):
 
     def get_minimal_width(self, rules: RulesMap) -> int:
         """Minimal width is the largest single word."""
-
+        if not self.plain.strip():
+            return 0
         if self._minimal_width_cache is None:
             self._minimal_width_cache = width = max(
                 cell_len(word)
                 for line in self.plain.splitlines()
                 for word in line.split()
+                if word.strip()
             )
         else:
             width = self._minimal_width_cache

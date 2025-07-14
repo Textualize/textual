@@ -93,7 +93,7 @@ def resolve(
                         width - remove_space,
                     )
                     resolved_fractions[index] = updated_width
-                    used_space = sum(resolved_fractions[index + 1 :])
+                    used_space -= updated_width
 
                 used_space = sum(resolved_fractions, start=Fraction(0))
                 excess_space = used_space - total_space

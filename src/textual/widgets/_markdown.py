@@ -1233,12 +1233,14 @@ class Markdown(Widget):
 
             async with self.lock:
                 with self.app.batch_update():
-                    # for block in existing_blocks[last_index:]:
-                    #     await block.remove()
                     if existing_blocks and new_blocks:
                         last_block = existing_blocks[-1]
-                        await last_block._update_from_block(new_blocks[last_index])
-                        last_index += 1
+                        try:
+                            await last_block._update_from_block(new_blocks[last_index])
+                        except IndexError:
+                            pass
+                        else:
+                            last_index += 1
                     append_blocks = new_blocks[last_index:]
                     if append_blocks:
                         await self.mount_all(append_blocks)
