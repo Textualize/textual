@@ -190,6 +190,7 @@ class MarkdownBlock(Static):
             else:
                 pending_content.append((text, style))
 
+        get_visual_style = self._markdown.get_visual_style
         if token.children:
             for child in token.children:
                 child_type = child.type
@@ -202,23 +203,19 @@ class MarkdownBlock(Static):
                 elif child_type == "code_inline":
                     add_content(
                         child.content,
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("code_inline"),
+                        style_stack[-1] + get_visual_style("code_inline"),
                     )
                 elif child_type == "em_open":
                     style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("em", partial=True)
+                        style_stack[-1] + get_visual_style("em", partial=True)
                     )
                 elif child_type == "strong_open":
                     style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("strong", partial=True)
+                        style_stack[-1] + get_visual_style("strong", partial=True)
                     )
                 elif child_type == "s_open":
                     style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_visual_style("s", partial=True)
+                        style_stack[-1] + get_visual_style("s", partial=True)
                     )
                 elif child_type == "link_open":
                     href = child.attrs.get("href", "")
