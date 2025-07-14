@@ -134,6 +134,7 @@ If you set `valid_empty=True` then empty values will bypass any validators, and 
 
 - [Input.Changed][textual.widgets.Input.Changed]
 - [Input.Submitted][textual.widgets.Input.Submitted]
+- [Input.Blurred][textual.widgets.Input.Blurred]
 
 ## Bindings
 
