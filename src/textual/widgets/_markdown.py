@@ -470,38 +470,28 @@ class MarkdownTableContent(Widget):
 
     DEFAULT_CSS = """
     MarkdownTableContent {
-        width: 1fr;
-        
+        width: 1fr;        
         height: auto;
         layout: grid;        
         grid-columns: auto;   
         grid-rows: auto;    
         grid-gutter: 1 1; 
-        
-        height: auto;
-        
-        
+                
         & > .cell {
             margin: 0 0;
             height: auto;
-            padding: 0 2;
+            padding: 0 1;
             text-overflow: ellipsis;
             
         }
         & > .header {
             height: auto;
             margin: 0 0;
-            padding: 0 2;
+            padding: 0 1;
             color: $primary;
             text-overflow: ellipsis;            
         }
-        keyline: thin $foreground 20%;        
-        # &>.full-width {
-        #     margin-top: 2;
-        #     column-span: 10;
-        #     height: auto;
-        # }
-        
+        keyline: thin $foreground 20%;                
     }
     MarkdownTableContent > .markdown-table--header {
         text-style: bold;
@@ -524,6 +514,7 @@ class MarkdownTableContent(Widget):
         layout.expand = True
         layout.shrink = True
         layout.auto_minimum = True
+        layout.stretch_height = True
 
     def compose(self) -> ComposeResult:
         for header in self.headers:
@@ -533,26 +524,8 @@ class MarkdownTableContent(Widget):
                 yield Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
             self.last_row = row_index
 
-        # table = Table(
-        #     expand=True,
-        #     box=box.SQUARE,
-        #     style=self.rich_style,
-        #     # header_style=self.get_component_rich_style("markdown-table--header"),
-        #     # border_style=self.get_component_rich_style("markdown-table--lines"),
-        #     show_lines=True,
-        #     # collapse_padding=True,
-        #     # padding=(1, 2),
-        # )
-        # for header in self.headers:
-        #     table.add_column(header.plain)
-        # for row in self.rows:
-        #     if row:
-        #         table.add_row(*[cell.plain for cell in row])
-
-        # yield Static(table, expand=True, shrink=True, classes="full-width")
-
     async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
-
+        self.styles.grid_size_columns = len(self.headers)
         await self.query_children(f".cell.row{self.last_row}").remove()
         new_cells: list[Static] = []
         for row_index, row in enumerate(updated_rows, self.last_row):
@@ -564,11 +537,6 @@ class MarkdownTableContent(Widget):
         await self.mount_all(new_cells)
 
     def on_mount(self) -> None:
-
-        assert isinstance(self.layout, GridLayout)
-        self.layout.stretch_height = True
-        # self.layout.regular = True
-        # self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
         self.styles.grid_size_columns = len(self.headers)
 
     async def action_link(self, href: str) -> None:

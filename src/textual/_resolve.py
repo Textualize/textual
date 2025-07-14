@@ -69,22 +69,17 @@ def resolve(
     fraction_gutter = Fraction(gutter)
 
     if expand or shrink:
-
         total_space = total - total_gutter
+        used_space = sum(resolved_fractions)
         if expand:
-            total_space = total - total_gutter
-            used_space = sum(resolved_fractions)
             remaining_space = total_space - used_space
             if remaining_space > 0:
                 resolved_fractions = [
                     width + Fraction(width, used_space) * remaining_space
                     for width in resolved_fractions
                 ]
-                assert sum(resolved_fractions) == total_space
         if shrink:
-            used_space = sum(resolved_fractions, start=Fraction(0))
             excess_space = used_space - total_space
-
             if minimums is not None and excess_space > 0:
                 for index, width in enumerate(resolved_fractions):
                     remove_space = Fraction(width, used_space) * excess_space
@@ -94,8 +89,7 @@ def resolve(
                     )
                     resolved_fractions[index] = updated_width
                     used_space -= updated_width
-
-                used_space = sum(resolved_fractions, start=Fraction(0))
+                used_space = sum(resolved_fractions)
                 excess_space = used_space - total_space
 
             if excess_space > 0:
