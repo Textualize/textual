@@ -29,7 +29,11 @@ The following example displays Markdown from a string.
 
 ## Reactive Attributes
 
-This widget has no reactive attributes.
+| Name                | Type   | Default            | Description                                             |
+|---------------------|--------|--------------------|---------------------------------------------------------|
+| `code_dark_theme`   | `str`  | `"material"`       | The theme to use for code blocks when the App theme is dark. |
+| `code_light_theme`  | `str`  | `"material-light"` | The theme to use for code blocks when the App theme is light. |
+| `code_indent_guides`| `bool` | `True`             | Should code fences display indent guides?              |
 
 ## Messages
 
