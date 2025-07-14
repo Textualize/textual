@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import re
 from functools import partial
+from itertools import starmap
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
 from urllib.parse import unquote
@@ -169,80 +170,81 @@ class MarkdownBlock(Static):
         """
 
         self._token = token
+        null_style = Style.null()
         style_stack: list[Style] = [Style()]
+        pending_content: list[tuple[str, Style]] = []
 
-        pending_content: list[Content] = []
-        new_line = Content("\n")
+        def add_content(text: str, style: Style) -> None:
+            """Add text and style to output content.
+
+            Args:
+                text: String of content.
+                style: Style of string.
+            """
+            if pending_content:
+                top_text, top_style = pending_content[-1]
+                if top_style == style:
+                    pending_content[-1] = (top_text + text, style)
+                else:
+                    pending_content.append((text, style))
+            else:
+                pending_content.append((text, style))
 
         if token.children:
             for child in token.children:
-                if child.type == "text":
-                    pending_content.append(
-                        # Ensure repeating spaces and/or tabs get squashed
-                        # down to a single space.
-                        Content.styled(
-                            re.sub(r"\s+", " ", child.content), style_stack[-1]
-                        )
+                child_type = child.type
+                if child_type == "text":
+                    add_content(re.sub(r"\s+", " ", child.content), style_stack[-1])
+                if child_type == "hardbreak":
+                    add_content("\n", null_style)
+                if child_type == "softbreak":
+                    add_content(" ", style_stack[-1])
+                elif child_type == "code_inline":
+                    add_content(
+                        child.content,
+                        style_stack[-1]
+                        + self._markdown.get_visual_style("code_inline"),
                     )
-                if child.type == "hardbreak":
-                    pending_content.append(new_line)
-                if child.type == "softbreak":
-                    pending_content.append(Content.styled(" ", style_stack[-1]))
-                elif child.type == "code_inline":
-                    pending_content.append(
-                        Content.styled(
-                            child.content,
-                            style_stack[-1]
-                            + self._markdown.get_visual_style("code_inline"),
-                        )
-                    )
-                elif child.type == "em_open":
+                elif child_type == "em_open":
                     style_stack.append(
                         style_stack[-1]
                         + self._markdown.get_visual_style("em", partial=True)
                     )
-                elif child.type == "strong_open":
+                elif child_type == "strong_open":
                     style_stack.append(
                         style_stack[-1]
                         + self._markdown.get_visual_style("strong", partial=True)
                     )
-                elif child.type == "s_open":
+                elif child_type == "s_open":
                     style_stack.append(
                         style_stack[-1]
                         + self._markdown.get_visual_style("s", partial=True)
                     )
-                elif child.type == "link_open":
+                elif child_type == "link_open":
                     href = child.attrs.get("href", "")
                     action = f"link({href!r})"
                     style_stack.append(
                         style_stack[-1] + Style.from_meta({"@click": action})
                     )
-                elif child.type == "image":
+                elif child_type == "image":
                     href = child.attrs.get("src", "")
                     alt = child.attrs.get("alt", "")
-
                     action = f"link({href!r})"
                     style_stack.append(
                         style_stack[-1] + Style.from_meta({"@click": action})
                     )
-
-                    pending_content.append(Content.styled("🖼  ", style_stack[-1]))
+                    add_content("🖼  ", style_stack[-1])
                     if alt:
-                        pending_content.append(
-                            Content.styled(f"({alt})", style_stack[-1])
-                        )
+                        add_content(f"({alt})", style_stack[-1])
                     if child.children is not None:
                         for grandchild in child.children:
-                            pending_content.append(
-                                Content.styled(grandchild.content, style_stack[-1])
-                            )
-
+                            add_content(grandchild.content, style_stack[-1])
                     style_stack.pop()
 
-                elif child.type.endswith("_close"):
+                elif child_type.endswith("_close"):
                     style_stack.pop()
 
-        content = Content("").join(pending_content)
+        content = Content("").join(starmap(Content.styled, pending_content))
         self.set_content(content)
 
 
@@ -511,9 +513,9 @@ class MarkdownTableContent(Widget):
 
     def pre_layout(self, layout: Layout) -> None:
         assert isinstance(layout, GridLayout)
+        layout.auto_minimum = True
         layout.expand = True
         layout.shrink = True
-        layout.auto_minimum = True
         layout.stretch_height = True
 
     def compose(self) -> ComposeResult:
@@ -550,7 +552,8 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 1fr;            
+        width: 1fr;      
+        margin-bottom: 1;      
         &:light {
             background: white 30%;
         }        
@@ -1189,33 +1192,36 @@ class Markdown(Widget):
         table_of_contents: TableOfContentsType = []
 
         self._markdown = updated_markdown = self.source + markdown
-        existing_blocks = [
-            child for child in self.children if isinstance(child, MarkdownBlock)
-        ]
 
         async def await_append() -> None:
             """Append new markdown widgets."""
-
             tokens = await asyncio.get_running_loop().run_in_executor(
                 None, parser.parse, updated_markdown
             )
+            existing_blocks = [
+                child for child in self.children if isinstance(child, MarkdownBlock)
+            ]
             new_blocks = list(self._parse_markdown(tokens, table_of_contents))
-
             last_index = len(existing_blocks) - 1
 
             async with self.lock:
                 with self.app.batch_update():
                     if existing_blocks and new_blocks:
-                        last_block = existing_blocks[-1]
+                        last_block = existing_blocks[last_index]
                         try:
                             await last_block._update_from_block(new_blocks[last_index])
                         except IndexError:
                             pass
                         else:
                             last_index += 1
+
                     append_blocks = new_blocks[last_index:]
                     if append_blocks:
-                        await self.mount_all(append_blocks)
+                        self.log(append=append_blocks, children=self.children)
+                        try:
+                            await self.mount_all(append_blocks)
+                        except Exception as error:
+                            self.log(error)
 
                 self._table_of_contents = table_of_contents
                 self.post_message(
