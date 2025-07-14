@@ -492,6 +492,7 @@ class MarkdownTableContent(Widget):
             padding: 0 1;
             color: $primary;
             text-overflow: ellipsis;            
+            content-align: left bottom;            
         }
         keyline: thin $foreground 20%;                
     }
