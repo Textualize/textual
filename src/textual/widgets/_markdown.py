@@ -816,9 +816,16 @@ class Markdown(Widget):
         background: $surface;
         overflow-y: auto;
         
-
         &:focus {
             background-tint: $foreground 5%;
+        }
+        &:dark .code_inline {
+            background: $warning-muted 30%;
+            color: $warning;        
+        }
+        &:light .code_inline {
+            background: $error-muted 30%;
+            color: $error;
         }
     }
     .em {
@@ -830,10 +837,7 @@ class Markdown(Widget):
     .s {
         text-style: strike;
     }
-    .code_inline {
-        background: $warning-muted 30%;
-        color: $warning;
-    }
+    
     """
 
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
