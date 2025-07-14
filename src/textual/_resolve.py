@@ -79,20 +79,20 @@ def resolve(
                     for width in resolved_fractions
                 ]
         if shrink:
+            one = Fraction(1)
             excess_space = used_space - total_space
             if minimums is not None and excess_space > 0:
-                minimum_fractions = list(map(Fraction, minimums))
-                remaining_space = excess_space
-                for index, width in enumerate(resolved_fractions):
-                    remove_space = min(
-                        used_space, Fraction(width, used_space) * excess_space
-                    )
-                    updated_width = max(minimum_fractions[index], width - remove_space)
+                for index, (minimum_width, width) in enumerate(
+                    zip(map(Fraction, minimums), resolved_fractions)
+                ):
+                    remove_space = max(Fraction(width, used_space), one) * excess_space
+                    updated_width = max(minimum_width, width - remove_space)
                     resolved_fractions[index] = updated_width
-                    used_space -= updated_width
-                    if used_space <= 0:
+                    used_space = used_space - width + updated_width
+                    excess_space = used_space - total_space
+                    if excess_space <= 0:
                         break
-                    excess_space = sum(resolved_fractions) - total_space
+
                 used_space = sum(resolved_fractions)
                 excess_space = used_space - total_space
 
