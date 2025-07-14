@@ -191,55 +191,57 @@ class MarkdownBlock(Static):
                 pending_content.append((text, style))
 
         get_visual_style = self._markdown.get_visual_style
-        if token.children:
-            for child in token.children:
-                child_type = child.type
-                if child_type == "text":
-                    add_content(re.sub(r"\s+", " ", child.content), style_stack[-1])
-                if child_type == "hardbreak":
-                    add_content("\n", null_style)
-                if child_type == "softbreak":
-                    add_content(" ", style_stack[-1])
-                elif child_type == "code_inline":
-                    add_content(
-                        child.content,
-                        style_stack[-1] + get_visual_style("code_inline"),
-                    )
-                elif child_type == "em_open":
-                    style_stack.append(
-                        style_stack[-1] + get_visual_style("em", partial=True)
-                    )
-                elif child_type == "strong_open":
-                    style_stack.append(
-                        style_stack[-1] + get_visual_style("strong", partial=True)
-                    )
-                elif child_type == "s_open":
-                    style_stack.append(
-                        style_stack[-1] + get_visual_style("s", partial=True)
-                    )
-                elif child_type == "link_open":
-                    href = child.attrs.get("href", "")
-                    action = f"link({href!r})"
-                    style_stack.append(
-                        style_stack[-1] + Style.from_meta({"@click": action})
-                    )
-                elif child_type == "image":
-                    href = child.attrs.get("src", "")
-                    alt = child.attrs.get("alt", "")
-                    action = f"link({href!r})"
-                    style_stack.append(
-                        style_stack[-1] + Style.from_meta({"@click": action})
-                    )
-                    add_content("🖼  ", style_stack[-1])
-                    if alt:
-                        add_content(f"({alt})", style_stack[-1])
-                    if child.children is not None:
-                        for grandchild in child.children:
-                            add_content(grandchild.content, style_stack[-1])
-                    style_stack.pop()
+        if token.children is None:
+            self.set_content(Content(""))
+            return
+        for child in token.children:
+            child_type = child.type
+            if child_type == "text":
+                add_content(re.sub(r"\s+", " ", child.content), style_stack[-1])
+            if child_type == "hardbreak":
+                add_content("\n", null_style)
+            if child_type == "softbreak":
+                add_content(" ", style_stack[-1])
+            elif child_type == "code_inline":
+                add_content(
+                    child.content,
+                    style_stack[-1] + get_visual_style("code_inline"),
+                )
+            elif child_type == "em_open":
+                style_stack.append(
+                    style_stack[-1] + get_visual_style("em", partial=True)
+                )
+            elif child_type == "strong_open":
+                style_stack.append(
+                    style_stack[-1] + get_visual_style("strong", partial=True)
+                )
+            elif child_type == "s_open":
+                style_stack.append(
+                    style_stack[-1] + get_visual_style("s", partial=True)
+                )
+            elif child_type == "link_open":
+                href = child.attrs.get("href", "")
+                action = f"link({href!r})"
+                style_stack.append(
+                    style_stack[-1] + Style.from_meta({"@click": action})
+                )
+            elif child_type == "image":
+                href = child.attrs.get("src", "")
+                alt = child.attrs.get("alt", "")
+                action = f"link({href!r})"
+                style_stack.append(
+                    style_stack[-1] + Style.from_meta({"@click": action})
+                )
+                add_content("🖼  ", style_stack[-1])
+                if alt:
+                    add_content(f"({alt})", style_stack[-1])
+                if child.children is not None:
+                    for grandchild in child.children:
+                        add_content(grandchild.content, style_stack[-1])
+                style_stack.pop()
 
-                elif child_type.endswith("_close"):
-                    style_stack.pop()
+            elif child_type.endswith("_close"):
+                style_stack.pop()
 
         content = Content("").join(starmap(Content.styled, pending_content))
         self.set_content(content)
