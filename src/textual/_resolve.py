@@ -21,7 +21,10 @@ def resolve(
     gutter: int,
     size: Size,
     viewport: Size,
-    min_size: int | None = None,
+    *,
+    expand: bool = False,
+    shrink: bool = False,
+    minimums: list[int] | None = None,
 ) -> list[tuple[int, int]]:
     """Resolve a list of dimensions.
 
@@ -49,8 +52,8 @@ def resolve(
         sum([scalar.value for scalar, fraction in resolved if fraction is None])
     )
 
+    total_gutter = gutter * (len(dimensions) - 1)
     if total_fraction:
-        total_gutter = gutter * (len(dimensions) - 1)
         consumed = sum([fraction for _, fraction in resolved if fraction is not None])
         remaining = max(Fraction(0), Fraction(total - total_gutter) - consumed)
         fraction_unit = Fraction(remaining, total_fraction)
@@ -63,12 +66,44 @@ def resolve(
             "list[Fraction]", [fraction for _, fraction in resolved]
         )
 
-    if min_size is not None:
-        resolved_fractions = [
-            max(Fraction(min_size), fraction) for fraction in resolved_fractions
-        ]
-
     fraction_gutter = Fraction(gutter)
+
+    if expand or shrink:
+
+        total_space = total - total_gutter
+        if expand:
+            total_space = total - total_gutter
+            used_space = sum(resolved_fractions)
+            remaining_space = total_space - used_space
+            if remaining_space > 0:
+                resolved_fractions = [
+                    width + Fraction(width, used_space) * remaining_space
+                    for width in resolved_fractions
+                ]
+                assert sum(resolved_fractions) == total_space
+        if shrink:
+            used_space = sum(resolved_fractions, start=Fraction(0))
+            excess_space = used_space - total_space
+
+            if minimums is not None and excess_space > 0:
+                for index, width in enumerate(resolved_fractions):
+                    remove_space = Fraction(width, used_space) * excess_space
+                    updated_width = max(
+                        Fraction(minimums[index]),
+                        width - remove_space,
+                    )
+                    resolved_fractions[index] = updated_width
+                    used_space = sum(resolved_fractions[index + 1 :])
+
+                used_space = sum(resolved_fractions, start=Fraction(0))
+                excess_space = used_space - total_space
+
+            if excess_space > 0:
+                resolved_fractions = [
+                    width - Fraction(width, used_space) * excess_space
+                    for width in resolved_fractions
+                ]
+
     offsets = [0] + [
         fraction.__floor__()
         for fraction in accumulate(

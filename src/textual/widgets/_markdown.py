@@ -20,6 +20,7 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Mount
+from textual.layout import Layout
 from textual.layouts.grid import GridLayout
 from textual.message import Message
 from textual.reactive import reactive, var
@@ -495,6 +496,11 @@ class MarkdownTableContent(Widget):
             text-overflow: ellipsis;            
         }
         keyline: thin $foreground 20%;        
+        # &>.full-width {
+        #     margin-top: 2;
+        #     column-span: 10;
+        #     height: auto;
+        # }
         
     }
     MarkdownTableContent > .markdown-table--header {
@@ -513,6 +519,12 @@ class MarkdownTableContent(Widget):
         self.shrink = True
         self.last_row = 0
 
+    def pre_layout(self, layout: Layout) -> None:
+        assert isinstance(layout, GridLayout)
+        layout.expand = True
+        layout.shrink = True
+        layout.auto_minimum = True
+
     def compose(self) -> ComposeResult:
         for header in self.headers:
             yield Static(header, classes="header").with_tooltip(header)
@@ -520,6 +532,24 @@ class MarkdownTableContent(Widget):
             for cell in row:
                 yield Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
             self.last_row = row_index
+
+        # table = Table(
+        #     expand=True,
+        #     box=box.SQUARE,
+        #     style=self.rich_style,
+        #     # header_style=self.get_component_rich_style("markdown-table--header"),
+        #     # border_style=self.get_component_rich_style("markdown-table--lines"),
+        #     show_lines=True,
+        #     # collapse_padding=True,
+        #     # padding=(1, 2),
+        # )
+        # for header in self.headers:
+        #     table.add_column(header.plain)
+        # for row in self.rows:
+        #     if row:
+        #         table.add_row(*[cell.plain for cell in row])
+
+        # yield Static(table, expand=True, shrink=True, classes="full-width")
 
     async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
 
@@ -538,7 +568,7 @@ class MarkdownTableContent(Widget):
         assert isinstance(self.layout, GridLayout)
         self.layout.stretch_height = True
         # self.layout.regular = True
-        self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
+        # self.styles.grid_columns = ("auto",) * (len(self.headers) - 1) + ("1fr",)
         self.styles.grid_size_columns = len(self.headers)
 
     async def action_link(self, href: str) -> None:
@@ -919,6 +949,10 @@ class Markdown(Widget):
     def source(self) -> str:
         """The markdown source."""
         return self._markdown or ""
+
+    def notify_style_update(self) -> None:
+        self.update(self.source)
+        super().notify_style_update()
 
     async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
