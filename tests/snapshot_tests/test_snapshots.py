@@ -676,7 +676,7 @@ def test_collapsible_expanded(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "collapsible.py",
         press=["e", "wait:1000"],
-        run_before=run_before,
+        terminal_size=(80, 50),
     )
 
 
