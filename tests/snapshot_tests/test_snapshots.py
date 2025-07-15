@@ -482,7 +482,7 @@ def test_content_switcher_example_switch(snap_compare):
 
 
 def test_tabbed_content(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py", press=["wait:500"])
 
 
 def test_tabbed_content_with_modified_tabs(snap_compare):
@@ -648,7 +648,7 @@ def test_sparkline_component_classes_colors(snap_compare):
 
 
 def test_collapsible_render(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["wait:100"])
 
 
 def test_collapsible_collapsed(snap_compare):
