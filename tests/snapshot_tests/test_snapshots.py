@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -4396,5 +4397,6 @@ def test_markdown_append(snap_compare):
             markdown = self.query_one(Markdown)
             for line in MD:
                 await markdown.append(line)
+            await asyncio.sleep(0.1)
 
     assert snap_compare(MDApp())
