@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added get_minimal_width to Visual protocol
+- Added `expand` and `shrink` attributes to GridLayout
+
+### Changed
+
+- Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection
 
 ## [4.0.0] - 2025-07-12
 
