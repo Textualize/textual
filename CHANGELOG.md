@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added get_minimal_width to Visual protocol
-- Added `expand` and `shrink` attributes to GridLayout
+- Added get_minimal_width to Visual protocol https://github.com/Textualize/textual/pull/5962
+- Added `expand` and `shrink` attributes to GridLayout https://github.com/Textualize/textual/pull/5962
 
 ### Changed
 
-- Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection
+- Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
 
 ## [4.0.0] - 2025-07-12
 
