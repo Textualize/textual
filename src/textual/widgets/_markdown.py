@@ -793,8 +793,7 @@ NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
 class Markdown(Widget):
     DEFAULT_CSS = """
-    Markdown {
-        width:1fr;
+    Markdown {        
         height: auto;
         padding: 0 2 1 2;
         layout: vertical;
