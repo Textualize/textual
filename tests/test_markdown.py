@@ -90,6 +90,7 @@ async def test_markdown_nodes(
             yield from markdown_nodes(node)
 
     async with MarkdownApp(document).run_test() as pilot:
+        await pilot.pause()
         assert [
             node.__class__ for node in markdown_nodes(pilot.app.query_one(Markdown))
         ] == expected_nodes
