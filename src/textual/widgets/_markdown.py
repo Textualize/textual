@@ -870,9 +870,10 @@ class Markdown(Widget):
             open_links: Open links automatically. If you set this to `False`, you can handle the [`LinkClicked`][textual.widgets.markdown.Markdown.LinkClicked] events.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self._markdown = markdown
+        self._initial_markdown: str | None = markdown
+        self._markdown = ""
         self._parser_factory = parser_factory
-        self._table_of_contents: TableOfContentsType | None = None
+        self._table_of_contents: TableOfContentsType = []
         self._open_links = open_links
 
     class TableOfContentsUpdated(Message):
@@ -944,8 +945,16 @@ class Markdown(Widget):
         super().notify_style_update()
 
     async def _on_mount(self, _: Mount) -> None:
-        if self._markdown is not None:
-            await self.update(self._markdown)
+        initial_markdown = self._initial_markdown
+        self._initial_markdown = None
+        await self.update(initial_markdown or "")
+
+        if initial_markdown is None:
+            self.post_message(
+                Markdown.TableOfContentsUpdated(
+                    self, self._table_of_contents
+                ).set_sender(self)
+            )
 
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
         if self._open_links:
