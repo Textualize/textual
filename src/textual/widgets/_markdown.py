@@ -794,12 +794,12 @@ NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
-        width:auto;
+        width:1fr;
         height: auto;
         padding: 0 2 1 2;
         layout: vertical;
         color: $foreground;
-        background: $surface;
+        # background: $surface;
         overflow-y: auto;
         
         &:focus {
