@@ -4411,5 +4411,6 @@ def test_markdown_append(snap_compare):
             markdown = self.query_one(Markdown)
             for line in MD:
                 await markdown.append(line)
+                await asyncio.sleep(0.01)
 
-    assert snap_compare(MDApp(), press=["1"])
+    assert snap_compare(MDApp(), press=["1", "wait:500"])
