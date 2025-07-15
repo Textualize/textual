@@ -482,8 +482,13 @@ def test_content_switcher_example_switch(snap_compare):
 
 
 def test_tabbed_content(snap_compare):
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
     assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "tabbed_content.py", press=["wait:1000", "1"]
+        WIDGET_EXAMPLES_DIR / "tabbed_content.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
     )
 
 
@@ -650,8 +655,13 @@ def test_sparkline_component_classes_colors(snap_compare):
 
 
 def test_collapsible_render(snap_compare):
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
     assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "collapsible.py", press=["wait:1000", "1"]
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
     )
 
 
