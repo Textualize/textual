@@ -152,7 +152,7 @@ class NodeList(Sequence["Widget"]):
         """
         if widget_id in self._nodes_by_id:
             raise DuplicateIds(
-                f"Tried to insert a widget with ID {widget_id!r}, but a widget {self._nodes_by_id[widget_id]!r} already exist; "
+                f"Tried to insert a widget with ID {widget_id!r}, but a widget already exists with that ID ({self._nodes_by_id[widget_id]!r}); "
                 "ensure all child widgets have a unique ID."
             )
 
