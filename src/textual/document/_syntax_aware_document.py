@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 try:
-    from tree_sitter import Language, Node, Parser, Query, Tree
+    from tree_sitter import Language, Node, Parser, Query, QueryCursor, Tree
 
     TREE_SITTER = True
 except ImportError:
@@ -88,7 +88,8 @@ class SyntaxAwareDocument(Document):
         if end_point is not None:
             captures_kwargs["end_point"] = end_point
 
-        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
+        cursor = QueryCursor(query)
+        captures = cursor.captures(self._syntax_tree.root_node, **captures_kwargs)
         return captures
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
