@@ -466,6 +466,17 @@ class MarkdownOrderedList(MarkdownList):
         self._blocks.clear()
 
 
+class MarkdownTableCellContents(Static):
+    """Widget for table cells.
+
+    A shim over a Static which responds to links.
+    """
+
+    async def action_link(self, href: str) -> None:
+        """Pass a link action on to the MarkdownTable parent."""
+        self.post_message(Markdown.LinkClicked(self.query_ancestor(Markdown), href))
+
+
 class MarkdownTableContent(Widget):
     """Renders a Markdown table."""
 
@@ -520,10 +531,14 @@ class MarkdownTableContent(Widget):
 
     def compose(self) -> ComposeResult:
         for header in self.headers:
-            yield Static(header, classes="header").with_tooltip(header)
+            yield MarkdownTableCellContents(header, classes="header").with_tooltip(
+                header
+            )
         for row_index, row in enumerate(self.rows, 1):
             for cell in row:
-                yield Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+                yield MarkdownTableCellContents(
+                    cell, classes=f"row{row_index} cell"
+                ).with_tooltip(cell.plain)
             self.last_row = row_index
 
     async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
@@ -1123,7 +1138,6 @@ class Markdown(Widget):
 
         table_of_contents: TableOfContentsType = []
         markdown_block = self.query("MarkdownBlock")
-
         self._markdown = markdown
 
         async def await_update() -> None:
@@ -1164,13 +1178,13 @@ class Markdown(Widget):
                 if not removed:
                     await markdown_block.remove()
 
-            self._table_of_contents = table_of_contents
-
-            self.post_message(
-                Markdown.TableOfContentsUpdated(
-                    self, self._table_of_contents
-                ).set_sender(self)
-            )
+            if table_of_contents != self._table_of_contents:
+                self._table_of_contents = table_of_contents
+                self.post_message(
+                    Markdown.TableOfContentsUpdated(
+                        self, self._table_of_contents
+                    ).set_sender(self)
+                )
 
         return AwaitComplete(await_update())
 
