@@ -670,7 +670,7 @@ def test_collapsible_collapsed(snap_compare):
 
 
 def test_collapsible_expanded(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e", "wait:500"])
 
 
 def test_collapsible_nested(snap_compare):
