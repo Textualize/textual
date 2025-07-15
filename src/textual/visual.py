@@ -154,6 +154,20 @@ class Visual(ABC):
 
         """
 
+    def get_minimal_width(self, rules: RulesMap) -> int:
+        """Get a minimal width (the smallest width before data loss occurs).
+
+        Args:
+            rules: A mapping of style rules, such as the Widgets `styles` object.
+            container_width: The width of the container, used by Rich Renderables.
+                May be ignored for Textual Visuals.
+
+        Returns:
+            A width in cells.
+
+        """
+        return 1
+
     @abstractmethod
     def get_height(self, rules: RulesMap, width: int) -> int:
         """Get the height of the Visual if rendered at the given width.

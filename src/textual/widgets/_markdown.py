@@ -3,16 +3,14 @@ from __future__ import annotations
 import asyncio
 import re
 from functools import partial
+from itertools import starmap
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
 from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
-from rich import box
-from rich.style import Style
 from rich.syntax import Syntax
-from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
@@ -20,10 +18,14 @@ from textual._slug import TrackedSlugs
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Mount
+from textual.layout import Layout
+from textual.layouts.grid import GridLayout
 from textual.message import Message
 from textual.reactive import reactive, var
+from textual.style import Style
 from textual.widget import Widget
 from textual.widgets import Static, Tree
 
@@ -110,6 +112,7 @@ class MarkdownBlock(Static):
 
     DEFAULT_CSS = """
     MarkdownBlock {
+        width: 1fr;
         height: auto;
     }
     """
@@ -117,7 +120,7 @@ class MarkdownBlock(Static):
     def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
-        self._text = Text()
+        self._content: Content = Content()
         self._token: Token | None = None
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
@@ -130,9 +133,13 @@ class MarkdownBlock(Static):
         yield from self._blocks
         self._blocks.clear()
 
-    def set_content(self, text: Text) -> None:
-        self._text = text
-        self.update(text)
+    def set_content(self, content: Content) -> None:
+        self._content = content
+        self.update(content)
+
+    async def _update_from_block(self, block: MarkdownBlock) -> None:
+        await self.remove()
+        await self._markdown.mount(block)
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
@@ -163,73 +170,80 @@ class MarkdownBlock(Static):
         """
 
         self._token = token
+        null_style = Style.null()
         style_stack: list[Style] = [Style()]
-        content = Text()
-        if token.children:
-            for child in token.children:
-                if child.type == "text":
-                    content.append(
-                        # Ensure repeating spaces and/or tabs get squashed
-                        # down to a single space.
-                        re.sub(r"\s+", " ", child.content),
-                        style_stack[-1],
-                    )
-                if child.type == "hardbreak":
-                    content.append("\n")
-                if child.type == "softbreak":
-                    content.append(" ", style_stack[-1])
-                elif child.type == "code_inline":
-                    content.append(
-                        child.content,
-                        style_stack[-1]
-                        + self._markdown.get_component_rich_style(
-                            "code_inline", partial=True
-                        ),
-                    )
-                elif child.type == "em_open":
-                    style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_component_rich_style("em", partial=True)
-                    )
-                elif child.type == "strong_open":
-                    style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_component_rich_style(
-                            "strong", partial=True
-                        )
-                    )
-                elif child.type == "s_open":
-                    style_stack.append(
-                        style_stack[-1]
-                        + self._markdown.get_component_rich_style("s", partial=True)
-                    )
-                elif child.type == "link_open":
-                    href = child.attrs.get("href", "")
-                    action = f"link({href!r})"
-                    style_stack.append(
-                        style_stack[-1] + Style.from_meta({"@click": action})
-                    )
-                elif child.type == "image":
-                    href = child.attrs.get("src", "")
-                    alt = child.attrs.get("alt", "")
+        pending_content: list[tuple[str, Style]] = []
 
-                    action = f"link({href!r})"
-                    style_stack.append(
-                        style_stack[-1] + Style.from_meta({"@click": action})
-                    )
+        def add_content(text: str, style: Style) -> None:
+            """Add text and style to output content.
 
-                    content.append("🖼  ", style_stack[-1])
-                    if alt:
-                        content.append(f"({alt})", style_stack[-1])
-                    if child.children is not None:
-                        for grandchild in child.children:
-                            content.append(grandchild.content, style_stack[-1])
+            Args:
+                text: String of content.
+                style: Style of string.
+            """
+            if pending_content:
+                top_text, top_style = pending_content[-1]
+                if top_style == style:
+                    pending_content[-1] = (top_text + text, style)
+                else:
+                    pending_content.append((text, style))
+            else:
+                pending_content.append((text, style))
 
-                    style_stack.pop()
+        get_visual_style = self._markdown.get_visual_style
+        if token.children is None:
+            self.set_content(Content(""))
+            return
+        for child in token.children:
+            child_type = child.type
+            if child_type == "text":
+                add_content(re.sub(r"\s+", " ", child.content), style_stack[-1])
+            if child_type == "hardbreak":
+                add_content("\n", null_style)
+            if child_type == "softbreak":
+                add_content(" ", style_stack[-1])
+            elif child_type == "code_inline":
+                add_content(
+                    child.content,
+                    style_stack[-1] + get_visual_style("code_inline"),
+                )
+            elif child_type == "em_open":
+                style_stack.append(
+                    style_stack[-1] + get_visual_style("em", partial=True)
+                )
+            elif child_type == "strong_open":
+                style_stack.append(
+                    style_stack[-1] + get_visual_style("strong", partial=True)
+                )
+            elif child_type == "s_open":
+                style_stack.append(
+                    style_stack[-1] + get_visual_style("s", partial=True)
+                )
+            elif child_type == "link_open":
+                href = child.attrs.get("href", "")
+                action = f"link({href!r})"
+                style_stack.append(
+                    style_stack[-1] + Style.from_meta({"@click": action})
+                )
+            elif child_type == "image":
+                href = child.attrs.get("src", "")
+                alt = child.attrs.get("alt", "")
+                action = f"link({href!r})"
+                style_stack.append(
+                    style_stack[-1] + Style.from_meta({"@click": action})
+                )
+                add_content("🖼  ", style_stack[-1])
+                if alt:
+                    add_content(f"({alt})", style_stack[-1])
+                if child.children is not None:
+                    for grandchild in child.children:
+                        add_content(grandchild.content, style_stack[-1])
+                style_stack.pop()
 
-                elif child.type.endswith("_close"):
-                    style_stack.pop()
+            elif child_type.endswith("_close"):
+                style_stack.pop()
 
+        content = Content("").join(starmap(Content.styled, pending_content))
         self.set_content(content)
 
 
@@ -452,14 +466,45 @@ class MarkdownOrderedList(MarkdownList):
         self._blocks.clear()
 
 
+class MarkdownTableCellContents(Static):
+    """Widget for table cells.
+
+    A shim over a Static which responds to links.
+    """
+
+    async def action_link(self, href: str) -> None:
+        """Pass a link action on to the MarkdownTable parent."""
+        self.post_message(Markdown.LinkClicked(self.query_ancestor(Markdown), href))
+
+
 class MarkdownTableContent(Widget):
     """Renders a Markdown table."""
 
     DEFAULT_CSS = """
     MarkdownTableContent {
-        width: 100%;
+        width: 1fr;        
         height: auto;
-
+        layout: grid;        
+        grid-columns: auto;   
+        grid-rows: auto;    
+        grid-gutter: 1 1; 
+                
+        & > .cell {
+            margin: 0 0;
+            height: auto;
+            padding: 0 1;
+            text-overflow: ellipsis;
+            
+        }
+        & > .header {
+            height: auto;
+            margin: 0 0;
+            padding: 0 1;
+            color: $primary;
+            text-overflow: ellipsis;            
+            content-align: left bottom;            
+        }
+        keyline: thin $foreground 20%;                
     }
     MarkdownTableContent > .markdown-table--header {
         text-style: bold;
@@ -468,30 +513,48 @@ class MarkdownTableContent(Widget):
 
     COMPONENT_CLASSES = {"markdown-table--header", "markdown-table--lines"}
 
-    def __init__(self, headers: list[Text], rows: list[list[Text]]):
-        self.headers = headers
+    def __init__(self, headers: list[Content], rows: list[list[Content]]):
+        self.headers = headers.copy()
         """List of header text."""
-        self.rows = rows
+        self.rows = rows.copy()
         """The row contents."""
         super().__init__()
         self.shrink = True
+        self.last_row = 0
 
-    def render(self) -> Table:
-        table = Table(
-            expand=True,
-            box=box.SIMPLE_HEAD,
-            style=self.rich_style,
-            header_style=self.get_component_rich_style("markdown-table--header"),
-            border_style=self.get_component_rich_style("markdown-table--lines"),
-            collapse_padding=True,
-            padding=0,
-        )
+    def pre_layout(self, layout: Layout) -> None:
+        assert isinstance(layout, GridLayout)
+        layout.auto_minimum = True
+        layout.expand = True
+        layout.shrink = True
+        layout.stretch_height = True
+
+    def compose(self) -> ComposeResult:
         for header in self.headers:
-            table.add_column(header)
-        for row in self.rows:
-            if row:
-                table.add_row(*row)
-        return table
+            yield MarkdownTableCellContents(header, classes="header").with_tooltip(
+                header
+            )
+        for row_index, row in enumerate(self.rows, 1):
+            for cell in row:
+                yield MarkdownTableCellContents(
+                    cell, classes=f"row{row_index} cell"
+                ).with_tooltip(cell.plain)
+            self.last_row = row_index
+
+    async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
+        self.styles.grid_size_columns = len(self.headers)
+        await self.query_children(f".cell.row{self.last_row}").remove()
+        new_cells: list[Static] = []
+        for row_index, row in enumerate(updated_rows, self.last_row):
+            for cell in row:
+                new_cells.append(
+                    Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+                )
+        self.last_row = row_index
+        await self.mount_all(new_cells)
+
+    def on_mount(self) -> None:
+        self.styles.grid_size_columns = len(self.headers)
 
     async def action_link(self, href: str) -> None:
         """Pass a link action on to the MarkdownTable parent."""
@@ -504,33 +567,71 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 100%;
-        background: black 10%;
+        width: 1fr;      
+        margin-bottom: 1;      
         &:light {
             background: white 30%;
-        }
+        }        
     }
     """
 
+    def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
+        super().__init__(markdown, *args, **kwargs)
+        self._headers: list[Content] = []
+        self._rows: list[list[Content]] = []
+
     def compose(self) -> ComposeResult:
+        headers, rows = self._get_headers_and_rows()
+        self._headers = headers
+        self._rows = rows
+        yield MarkdownTableContent(headers, rows)
+
+    def _get_headers_and_rows(self) -> tuple[list[Content], list[list[Content]]]:
+        """Get list of headers, and list of rows.
+
+        Returns:
+            A tuple containing a list of headers, and a list of rows.
+        """
+
         def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
             for block in block._blocks:
                 if block._blocks:
                     yield from flatten(block)
                 yield block
 
-        headers: list[Text] = []
-        rows: list[list[Text]] = []
+        headers: list[Content] = []
+        rows: list[list[Content]] = []
         for block in flatten(self):
             if isinstance(block, MarkdownTH):
-                headers.append(block._text)
+                headers.append(block._content)
             elif isinstance(block, MarkdownTR):
                 rows.append([])
             elif isinstance(block, MarkdownTD):
-                rows[-1].append(block._text)
+                rows[-1].append(block._content)
+        if rows and not rows[-1]:
+            rows.pop()
+        return headers, rows
 
-        yield MarkdownTableContent(headers, rows)
-        self._blocks.clear()
+    async def _update_from_block(self, block: MarkdownBlock) -> None:
+        """Special case to update a Markdown table.
+
+        Args:
+            block: Existing markdown block.
+        """
+        assert isinstance(block, MarkdownTable)
+        try:
+            table_content = self.query_one(MarkdownTableContent)
+        except NoMatches:
+            pass
+        else:
+            if table_content.rows:
+                current_rows = self._rows
+                _new_headers, new_rows = block._get_headers_and_rows()
+                updated_rows = new_rows[len(current_rows) - 1 :]
+                self._rows = new_rows
+                await table_content._update_rows(updated_rows)
+                return
+        await super()._update_from_block(block)
 
 
 class MarkdownTBody(MarkdownBlock):
@@ -573,8 +674,8 @@ class MarkdownBullet(Widget):
     def get_selection(self, _selection) -> tuple[str, str] | None:
         return self.symbol, " "
 
-    def render(self) -> Text:
-        return Text(self.symbol)
+    def render(self) -> Content:
+        return Content(self.symbol)
 
 
 class MarkdownListItem(MarkdownBlock):
@@ -692,20 +793,28 @@ NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
 class Markdown(Widget):
     DEFAULT_CSS = """
-    Markdown {
+    Markdown {        
         height: auto;
         padding: 0 2 1 2;
         layout: vertical;
         color: $foreground;
-        background: $surface;
+        # background: $surface;
         overflow-y: auto;
-
+        
         &:focus {
             background-tint: $foreground 5%;
         }
+        &:dark .code_inline {
+            background: $warning-muted 30%;
+            color: $warning;        
+        }
+        &:light .code_inline {
+            background: $error-muted 30%;
+            color: $error;
+        }
     }
     .em {
-        text-style: italic;
+        text-style: italic;        
     }
     .strong {
         text-style: bold;
@@ -713,9 +822,7 @@ class Markdown(Widget):
     .s {
         text-style: strike;
     }
-    .code_inline {
-        text-style: bold dim;
-    }
+    
     """
 
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
@@ -763,9 +870,10 @@ class Markdown(Widget):
             open_links: Open links automatically. If you set this to `False`, you can handle the [`LinkClicked`][textual.widgets.markdown.Markdown.LinkClicked] events.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self._markdown = markdown
+        self._initial_markdown: str | None = markdown
+        self._markdown = ""
         self._parser_factory = parser_factory
-        self._table_of_contents: TableOfContentsType | None = None
+        self._table_of_contents: TableOfContentsType = []
         self._open_links = open_links
 
     class TableOfContentsUpdated(Message):
@@ -832,9 +940,21 @@ class Markdown(Widget):
         """The markdown source."""
         return self._markdown or ""
 
+    def notify_style_update(self) -> None:
+        self.update(self.source)
+        super().notify_style_update()
+
     async def _on_mount(self, _: Mount) -> None:
-        if self._markdown is not None:
-            await self.update(self._markdown)
+        initial_markdown = self._initial_markdown
+        self._initial_markdown = None
+        await self.update(initial_markdown or "")
+
+        if initial_markdown is None:
+            self.post_message(
+                Markdown.TableOfContentsUpdated(
+                    self, self._table_of_contents
+                ).set_sender(self)
+            )
 
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
         if self._open_links:
@@ -986,7 +1106,7 @@ class Markdown(Widget):
             elif token_type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
-                    heading = block._text.plain
+                    heading = block._content.plain
                     level = int(token.tag[1:])
                     table_of_contents.append((level, heading, block.id))
                 if stack:
@@ -1026,7 +1146,6 @@ class Markdown(Widget):
 
         table_of_contents: TableOfContentsType = []
         markdown_block = self.query("MarkdownBlock")
-
         self._markdown = markdown
 
         async def await_update() -> None:
@@ -1067,13 +1186,13 @@ class Markdown(Widget):
                 if not removed:
                     await markdown_block.remove()
 
-            self._table_of_contents = table_of_contents
-
-            self.post_message(
-                Markdown.TableOfContentsUpdated(
-                    self, self._table_of_contents
-                ).set_sender(self)
-            )
+            if table_of_contents != self._table_of_contents:
+                self._table_of_contents = table_of_contents
+                self.post_message(
+                    Markdown.TableOfContentsUpdated(
+                        self, self._table_of_contents
+                    ).set_sender(self)
+                )
 
         return AwaitComplete(await_update())
 
@@ -1095,25 +1214,36 @@ class Markdown(Widget):
         table_of_contents: TableOfContentsType = []
 
         self._markdown = updated_markdown = self.source + markdown
-        existing_blocks = list(self.children)
 
         async def await_append() -> None:
             """Append new markdown widgets."""
-
             tokens = await asyncio.get_running_loop().run_in_executor(
                 None, parser.parse, updated_markdown
             )
+            existing_blocks = [
+                child for child in self.children if isinstance(child, MarkdownBlock)
+            ]
             new_blocks = list(self._parse_markdown(tokens, table_of_contents))
-
             last_index = len(existing_blocks) - 1
 
             async with self.lock:
                 with self.app.batch_update():
-                    for block in existing_blocks[last_index:]:
-                        await block.remove()
+                    if existing_blocks and new_blocks:
+                        last_block = existing_blocks[last_index]
+                        try:
+                            await last_block._update_from_block(new_blocks[last_index])
+                        except IndexError:
+                            pass
+                        else:
+                            last_index += 1
+
                     append_blocks = new_blocks[last_index:]
                     if append_blocks:
-                        await self.mount_all(append_blocks)
+                        self.log(append=append_blocks, children=self.children)
+                        try:
+                            await self.mount_all(append_blocks)
+                        except Exception as error:
+                            self.log(error)
 
                 self._table_of_contents = table_of_contents
                 self.post_message(
@@ -1282,8 +1412,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
         return self.query_one(MarkdownTableOfContents)
 
     async def _on_mount(self, _: Mount) -> None:
-        if self._markdown is not None:
-            await self.document.update(self._markdown)
+        await self.document.update(self._markdown or "")
 
     async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""

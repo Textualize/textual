@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -481,7 +482,14 @@ def test_content_switcher_example_switch(snap_compare):
 
 
 def test_tabbed_content(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "tabbed_content.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
+    )
 
 
 def test_tabbed_content_with_modified_tabs(snap_compare):
@@ -647,7 +655,14 @@ def test_sparkline_component_classes_colors(snap_compare):
 
 
 def test_collapsible_render(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py")
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
+    )
 
 
 def test_collapsible_collapsed(snap_compare):
@@ -655,7 +670,14 @@ def test_collapsible_collapsed(snap_compare):
 
 
 def test_collapsible_expanded(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["e", "wait:1000"],
+        terminal_size=(80, 50),
+    )
 
 
 def test_collapsible_nested(snap_compare):
@@ -4396,5 +4418,6 @@ def test_markdown_append(snap_compare):
             markdown = self.query_one(Markdown)
             for line in MD:
                 await markdown.append(line)
+                await asyncio.sleep(0.01)
 
-    assert snap_compare(MDApp())
+    assert snap_compare(MDApp(), press=["1", "wait:500"])
