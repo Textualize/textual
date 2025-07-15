@@ -21,6 +21,7 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Mount
+from textual.highlight import highlight
 from textual.layout import Layout
 from textual.layouts.grid import GridLayout
 from textual.message import Message
@@ -712,8 +713,9 @@ class MarkdownFence(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownFence {
+        padding: 1 2;
         margin: 1 0;
-        overflow: auto;
+        overflow: hidden;
         width: 100%;
         height: auto;
         max-height: 20;
@@ -745,6 +747,7 @@ class MarkdownFence(MarkdownBlock):
 
     def _block(self) -> Syntax:
         _, background_color = self.background_colors
+        return highlight(self.code, "python")
         return Syntax(
             self.code,
             lexer=self.lexer,
@@ -799,7 +802,7 @@ class Markdown(Widget):
         layout: vertical;
         color: $foreground;
         # background: $surface;
-        overflow-y: auto;
+        overflow-y: hidden;
         
         &:focus {
             background-tint: $foreground 5%;
