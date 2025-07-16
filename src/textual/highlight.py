@@ -49,6 +49,46 @@ class HighlightTheme:
     }
 
 
+def guess_language(code: str, path: str) -> str:
+    """Guess the language based on the code and path.
+
+    Args:
+        code: The code to guess from.
+        path: A path to the code.
+
+    Returns:
+        The language, suitable for use with Pygments.
+    """
+
+    if path is not None and os.path.splitext(path)[-1] == ".tcss":
+        return "scss"
+
+    lexer: Lexer | None = None
+    lexer_name = "default"
+    if code:
+        try:
+            lexer = guess_lexer_for_filename(path, code)
+        except ClassNotFound:
+            pass
+
+    if not lexer:
+        try:
+            _, ext = os.path.splitext(path)
+            if ext:
+                extension = ext.lstrip(".").lower()
+                lexer = get_lexer_by_name(extension)
+        except ClassNotFound:
+            pass
+
+    if lexer:
+        if lexer.aliases:
+            lexer_name = lexer.aliases[0]
+        else:
+            lexer_name = lexer.name
+
+    return lexer_name
+
+
 def highlight(
     code: str,
     *,
@@ -71,35 +111,9 @@ def highlight(
     if language is None and path is None:
         raise RuntimeError("One of 'language' or 'path' must be supplied.")
 
-    if language is None and path is not None:
-        if os.path.splitext(path)[-1] == ".tcss":
-            language = "scss"
-
-    if language is None and path is not None:
-        lexer: Lexer | None = None
-        lexer_name = "default"
-        if code:
-            try:
-                lexer = guess_lexer_for_filename(path, code)
-            except ClassNotFound:
-                pass
-
-        if not lexer:
-            try:
-                _, ext = os.path.splitext(path)
-                if ext:
-                    extension = ext.lstrip(".").lower()
-                    lexer = get_lexer_by_name(extension)
-            except ClassNotFound:
-                pass
-
-        if lexer:
-            if lexer.aliases:
-                lexer_name = lexer.aliases[0]
-            else:
-                lexer_name = lexer.name
-
-        language = lexer_name
+    if language is None:
+        assert path is not None
+        language = guess_language(code, path)
 
     assert language is not None
     code = "\n".join(code.splitlines())
