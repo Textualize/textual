@@ -61,6 +61,7 @@ def guess_language(code: str, path: str) -> str:
     """
 
     if path is not None and os.path.splitext(path)[-1] == ".tcss":
+        # A special case for TCSS files which aren't known outside of Textual
         return "scss"
 
     lexer: Lexer | None = None
@@ -108,11 +109,9 @@ def highlight(
     Returns:
         A Content instance which may be used in a widget.
     """
-    if language is None and path is None:
-        raise RuntimeError("One of 'language' or 'path' must be supplied.")
-
     if language is None:
-        assert path is not None
+        if path is None:
+            raise RuntimeError("One of 'language' or 'path' must be supplied.")
         language = guess_language(code, path)
 
     assert language is not None
