@@ -1001,6 +1001,8 @@ class Markdown(Widget):
 
         example:
         ```python
+        # self.get_chunk is a hypothetical method that retrieves a
+        # markdown fragment from the network
         @work
         async def stream_markdown(self) -> None:
             markdown_widget = self.query_one(Markdown)
@@ -1009,7 +1011,7 @@ class Markdown(Widget):
 
             stream = Markdown.get_stream(markdown_widget)
             try:
-                while (chunk:= await get_chunk()) is not None:
+                while (chunk:= await self.get_chunk()) is not None:
                     await stream.write(chunk)
             finally:
                 await stream.stop()
@@ -1020,7 +1022,7 @@ class Markdown(Widget):
             markdown: A [Markdown][textual.widgets.Markdown] widget instance.
 
         Returns:
-            The background updater object.
+            The Markdown stream object.
         """
         updater = MarkdownStream(markdown)
         updater.start()
