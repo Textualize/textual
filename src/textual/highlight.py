@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from pygments.lexers import get_lexer_by_name
+import os
+
+from pygments.lexer import Lexer
+from pygments.lexers import get_lexer_by_name, guess_lexer_for_filename
 from pygments.token import Token
 from pygments.util import ClassNotFound
 
@@ -16,6 +19,8 @@ class HighlightTheme:
         Token.Comment: "$text 60%",
         Token.Error: "$error on $error-muted",
         Token.Generic.Error: "$error on $error-muted",
+        Token.Generic.Heading: "$primary underline",
+        Token.Generic.Subheading: "$primary",
         Token.Keyword: "$accent",
         Token.Keyword.Constant: "bold $success 80%",
         Token.Keyword.Namespace: "$error",
@@ -45,8 +50,9 @@ class HighlightTheme:
 
 def highlight(
     code: str,
-    language: str = "text",
     *,
+    language: str | None = None,
+    path: str | None = None,
     theme: type[HighlightTheme] = HighlightTheme,
     tab_size: int = 8,
 ) -> Content:
@@ -61,6 +67,40 @@ def highlight(
     Returns:
         A Content instance which may be used in a widget.
     """
+    if language is None and path is None:
+        raise RuntimeError("One of 'language' or 'path' must be supplied.")
+
+    if language is None and path is not None:
+        if os.path.splitext(path)[-1] == ".tcss":
+            language = "scss"
+
+    if language is None and path is not None:
+        lexer: Lexer | None = None
+        lexer_name = "default"
+        if code:
+            try:
+                lexer = guess_lexer_for_filename(path, code)
+            except ClassNotFound:
+                pass
+
+        if not lexer:
+            try:
+                _, ext = os.path.splitext(path)
+                if ext:
+                    extension = ext.lstrip(".").lower()
+                    lexer = get_lexer_by_name(extension)
+            except ClassNotFound:
+                pass
+
+        if lexer:
+            if lexer.aliases:
+                lexer_name = lexer.aliases[0]
+            else:
+                lexer_name = lexer.name
+
+        language = lexer_name
+
+    assert language is not None
     code = "\n".join(code.splitlines())
     try:
         lexer = get_lexer_by_name(
