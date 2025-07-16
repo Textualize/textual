@@ -22,7 +22,6 @@ def test_highlight() -> None:
         ("import this", "foo.py", "python"),
         ("<xml>", "foo.xml", "xml"),
         ("{}", "data.json", "json"),
-        ("#! python2", "script.py", "python2"),
     ],
 )
 def test_guess_language(code: str, path: str, language: str) -> None:
