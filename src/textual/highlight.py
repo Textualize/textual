@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Tuple
 
 from pygments.lexer import Lexer
 from pygments.lexers import get_lexer_by_name, guess_lexer_for_filename
@@ -9,7 +10,7 @@ from pygments.util import ClassNotFound
 
 from textual.content import Content, Span
 
-TokenType = tuple[str, ...]
+TokenType = Tuple[str, ...]
 
 
 class HighlightTheme:
