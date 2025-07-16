@@ -807,7 +807,7 @@ class MarkdownFence(MarkdownBlock):
             if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
-        code_content = highlight(self.code, lexer)
+        code_content = highlight(self.code, language=lexer)
         self.set_content(code_content)
 
 
