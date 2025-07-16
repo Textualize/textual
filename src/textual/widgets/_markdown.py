@@ -44,38 +44,49 @@ class BackgroundUpdater:
     """
 
     def __init__(self, markdown_widget: Markdown) -> None:
+        """
+        Args:
+            markdown_widget: Markdown widget to update.
+        """
         self.markdown_widget = markdown_widget
         self._task: asyncio.Task | None = None
         self._new_markup = asyncio.Event()
-        self._lock = asyncio.Lock()
         self._pending: list[str] = []
 
     def start(self) -> None:
+        """Start the updater running in the background."""
         self._task = asyncio.create_task(self._run())
 
     async def stop(self) -> None:
+        """Stop the updater and await its finish."""
         if self._task is not None:
             self._task.cancel()
             await self._task
             self._task = None
 
     async def append(self, markdown_fragment: str) -> None:
+        """Append or enqueue a markdown fragment.
+
+        Args:
+            markdown_fragment: A string to append at the end of the document.
+        """
         if not markdown_fragment:
+            # Nothing to do for empty strings.
             return
-        async with self._lock:
-            self._pending.append(markdown_fragment)
-            self._new_markup.set()
+        # Append the new fragment, and set an event to tell the _run loop to wake up
+        self._pending.append(markdown_fragment)
+        self._new_markup.set()
 
     async def _run(self) -> None:
+        """Run a task to append markdown fragments when available."""
         try:
             while await self._new_markup.wait():
                 new_markdown = "".join(self._pending)
-                self._new_markup.clear()
                 self._pending.clear()
+                self._new_markup.clear()
                 await asyncio.shield(self.markdown_widget.append(new_markdown))
-
         except asyncio.CancelledError:
-
+            # Task has been cancelled, add any outstanding markdown
             new_markdown = "".join(self._pending)
             if new_markdown:
                 await self.markdown_widget.append(new_markdown)
