@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `expand` and `shrink` attributes to GridLayout https://github.com/Textualize/textual/pull/5962
 - Added `Markdown.get_stream` https://github.com/Textualize/textual/pull/5966
 - Added `textual.highlight` module for syntax highlighting https://github.com/Textualize/textual/pull/5966
+- Added `MessagePump.wait_for_refresh` method https://github.com/Textualize/textual/pull/5966
 
 ### Changed
 
