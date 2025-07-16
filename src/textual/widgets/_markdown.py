@@ -36,6 +36,51 @@ The triples encode the level, the label, and the optional block id of each headi
 """
 
 
+class BackgroundUpdater:
+    """Update markdown document in the background.
+
+    This will accumulate markdown fragments if they can't be rendered fast enough.
+
+    """
+
+    def __init__(self, markdown_widget: Markdown) -> None:
+        self.markdown_widget = markdown_widget
+        self._task: asyncio.Task | None = None
+        self._new_markup = asyncio.Event()
+        self._lock = asyncio.Lock()
+        self._pending: list[str] = []
+
+    def start(self) -> None:
+        self._task = asyncio.create_task(self._run())
+
+    async def stop(self) -> None:
+        if self._task is not None:
+            self._task.cancel()
+            await self._task
+            self._task = None
+
+    async def append(self, markdown_fragment: str) -> None:
+        if not markdown_fragment:
+            return
+        async with self._lock:
+            self._pending.append(markdown_fragment)
+            self._new_markup.set()
+
+    async def _run(self) -> None:
+        try:
+            while await self._new_markup.wait():
+                new_markdown = "".join(self._pending)
+                self._new_markup.clear()
+                self._pending.clear()
+                await asyncio.shield(self.markdown_widget.append(new_markdown))
+
+        except asyncio.CancelledError:
+
+            new_markdown = "".join(self._pending)
+            if new_markdown:
+                await self.markdown_widget.append(new_markdown)
+
+
 class Navigator:
     """Manages a stack of paths like a browser."""
 
@@ -921,6 +966,20 @@ class Markdown(Widget):
                 ).set_sender(self)
             )
 
+    @classmethod
+    def get_background_updater(cls, markdown: Markdown) -> BackgroundUpdater:
+        """Get an object to stream Markdown in the background.
+
+        Args:
+            markdown: A [Markdown][textual.widgets.Markdown] widget instance.
+
+        Returns:
+            The background updater object.
+        """
+        updater = BackgroundUpdater(markdown)
+        updater.start()
+        return updater
+
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
         if self._open_links:
             self.app.open_url(event.href)
@@ -1182,16 +1241,14 @@ class Markdown(Widget):
 
         async def await_append() -> None:
             """Append new markdown widgets."""
-            tokens = await asyncio.get_running_loop().run_in_executor(
-                None, parser.parse, updated_markdown
-            )
-            existing_blocks = [
-                child for child in self.children if isinstance(child, MarkdownBlock)
-            ]
-            new_blocks = list(self._parse_markdown(tokens, table_of_contents))
-            last_index = len(existing_blocks) - 1
-
             async with self.lock:
+                tokens = parser.parse(updated_markdown)
+                existing_blocks = [
+                    child for child in self.children if isinstance(child, MarkdownBlock)
+                ]
+                new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+                last_index = len(existing_blocks) - 1
+
                 with self.app.batch_update():
                     if existing_blocks and new_blocks:
                         last_block = existing_blocks[last_index]

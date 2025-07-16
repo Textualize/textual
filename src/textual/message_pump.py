@@ -450,6 +450,20 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
         return self.post_message(message)
 
+    async def wait_for_refresh(self) -> None:
+        """Wait for the next refresh.
+
+        This method should only be called from a task other than the one running this widget.
+        If called from the same task, it will return immediately to avoid blocking the event loop.
+
+        """
+
+        if self._task is None or asyncio.current_task() is not self._task:
+            return
+        refreshed_event = asyncio.Event()
+        self.call_after_refresh(refreshed_event.set)
+        await refreshed_event.wait()
+
     def call_later(self, callback: Callback, *args: Any, **kwargs: Any) -> bool:
         """Schedule a callback to run after all messages are processed in this object.
         Positional and keywords arguments are passed to the callable.
