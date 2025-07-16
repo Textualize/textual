@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added get_minimal_width to Visual protocol https://github.com/Textualize/textual/pull/5962
 - Added `expand` and `shrink` attributes to GridLayout https://github.com/Textualize/textual/pull/5962
-- Added `Markdown.get_streamer`
+- Added `Markdown.get_stream`
 
 ### Changed
 
