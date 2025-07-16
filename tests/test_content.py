@@ -274,3 +274,12 @@ def test_first_line():
     first_line = content.first_line
     assert first_line.plain == "foo"
     assert first_line.spans == [Span(0, 3, "red")]
+
+
+def test_split_and_tabs():
+    spans = [
+        Span(0, 49, style="$text"),
+    ]
+
+    content = Content("--- hello.py\t2024-01-15 10:30:00.000000000 -0800", spans=spans)
+    content.render_strips({}, 80, None, Style())

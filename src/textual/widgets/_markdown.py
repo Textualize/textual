@@ -10,7 +10,6 @@ from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
-from rich.syntax import Syntax
 from rich.text import Text
 from typing_extensions import TypeAlias
 
@@ -619,19 +618,19 @@ class MarkdownTable(MarkdownBlock):
         Args:
             block: Existing markdown block.
         """
-        assert isinstance(block, MarkdownTable)
-        try:
-            table_content = self.query_one(MarkdownTableContent)
-        except NoMatches:
-            pass
-        else:
-            if table_content.rows:
-                current_rows = self._rows
-                _new_headers, new_rows = block._get_headers_and_rows()
-                updated_rows = new_rows[len(current_rows) - 1 :]
-                self._rows = new_rows
-                await table_content._update_rows(updated_rows)
-                return
+        if isinstance(block, MarkdownTable):
+            try:
+                table_content = self.query_one(MarkdownTableContent)
+            except NoMatches:
+                pass
+            else:
+                if table_content.rows:
+                    current_rows = self._rows
+                    _new_headers, new_rows = block._get_headers_and_rows()
+                    updated_rows = new_rows[len(current_rows) - 1 :]
+                    self._rows = new_rows
+                    await table_content._update_rows(updated_rows)
+                    return
         await super()._update_from_block(block)
 
 
@@ -716,12 +715,12 @@ class MarkdownFence(MarkdownBlock):
         padding: 1 2;
         margin: 1 0;
         overflow: hidden;
-        width: 100%;
-        height: auto;
-        max-height: 20;
+        width: 1fr;
+        height: auto;        
         color: rgb(210,210,210);
         background: black 10%;
-
+        text-wrap: nowrap;
+        text-overflow: clip;        
         &:light {
             background: white 30%;
         }
@@ -741,45 +740,8 @@ class MarkdownFence(MarkdownBlock):
             if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
-
-    def notify_style_update(self) -> None:
-        self.call_later(self._retheme)
-
-    def _block(self) -> Syntax:
-        _, background_color = self.background_colors
-        return highlight(self.code, "python")
-        return Syntax(
-            self.code,
-            lexer=self.lexer,
-            word_wrap=False,
-            indent_guides=self._markdown.code_indent_guides,
-            padding=(1, 2),
-            theme=self.theme,
-            background_color=background_color.css,
-        )
-
-    def _on_mount(self, _: Mount) -> None:
-        """Watch app theme switching."""
-        self.watch(self.app, "theme", self._retheme)
-
-    def _retheme(self) -> None:
-        """Rerender when the theme changes."""
-        self.theme = (
-            self._markdown.code_dark_theme
-            if self.app.current_theme.dark
-            else self._markdown.code_light_theme
-        )
-        try:
-            self.get_child_by_type(Static).update(self._block())
-        except NoMatches:
-            pass
-
-    def compose(self) -> ComposeResult:
-        yield Static(
-            self._block(),
-            expand=True,
-            shrink=False,
-        )
+        code_content = highlight(self.code, "python")
+        self.set_content(code_content)
 
 
 HEADINGS = {

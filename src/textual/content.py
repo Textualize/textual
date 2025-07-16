@@ -1226,6 +1226,9 @@ class Content(Visual):
         _Span = Span
 
         for span_start, span_end, style in self._spans:
+            if span_start >= text_length:
+                continue
+            span_end = min(text_length, span_end)
             lower_bound = 0
             upper_bound = line_count
             start_line_no = (lower_bound + upper_bound) // 2

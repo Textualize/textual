@@ -442,7 +442,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey black 50%;
+        border-bottom: hkey black;
         border-left: none;
         border-right: none;
         height: auto;
