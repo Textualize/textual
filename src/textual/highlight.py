@@ -141,9 +141,8 @@ def highlight(
             if style := styles.get(token_type):
                 spans.append(Span(token_start, token_end, style))
                 break
-            else:
-                if (token_type := token_type.parent) is None:
-                    break
+            if (token_type := token_type.parent) is None:
+                break
         token_start = token_end
 
     highlighted_code = Content(code, spans=spans).stylize_before("$text")
