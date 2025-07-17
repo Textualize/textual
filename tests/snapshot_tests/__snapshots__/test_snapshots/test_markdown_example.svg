@@ -38,7 +38,7 @@
 .terminal-r4 { fill: #e0e0e0;font-weight: bold }
 .terminal-r5 { fill: #e0e0e0 }
 .terminal-r6 { fill: #e0e0e0;font-style: italic; }
-.terminal-r7 { fill: #fea62b }
+.terminal-r7 { fill: #ffc473 }
 .terminal-r8 { fill: #000000 }
 .terminal-r9 { fill: #094573 }
 .terminal-r10 { fill: #0e4977 }

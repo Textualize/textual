@@ -40,11 +40,11 @@
 .terminal-r6 { fill: #e0e0e0;font-weight: bold }
 .terminal-r7 { fill: #e0e0e0;text-decoration: line-through; }
 .terminal-r8 { fill: #9f9f9f }
-.terminal-r9 { fill: #fea62b }
+.terminal-r9 { fill: #ffc473 }
 .terminal-r10 { fill: #ffffff }
-.terminal-r11 { fill: #fea62b;font-weight: bold }
-.terminal-r12 { fill: #419c5d;font-style: italic; }
-.terminal-r13 { fill: #0178d4 }
+.terminal-r11 { fill: #ffc473;font-weight: bold }
+.terminal-r12 { fill: #71ac84;font-style: italic; }
+.terminal-r13 { fill: #57a5e2 }
     </style>
 
     <defs>
