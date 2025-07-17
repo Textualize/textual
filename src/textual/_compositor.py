@@ -606,7 +606,6 @@ class Compositor:
                     sub_clip = clip.intersection(child_region)
 
                     if widget._anchored and not widget._anchor_released:
-                        scroll_y = widget.scroll_y
                         new_scroll_y = (
                             arrange_result.spatial_map.total_region.bottom
                             - (
@@ -615,7 +614,7 @@ class Compositor:
                             )
                         )
                         widget.set_reactive(Widget.scroll_y, new_scroll_y)
-                        widget.watch_scroll_y(scroll_y, new_scroll_y)
+                        widget.vertical_scrollbar._reactive_position = new_scroll_y
 
                     if visible_only:
                         placements = arrange_result.get_visible_placements(

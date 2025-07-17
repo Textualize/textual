@@ -75,6 +75,7 @@ tree-sitter-sql = { version = ">=0.3.0,<0.3.8", optional = true, python = ">=3.9
 tree-sitter-java = { version = ">=0.23.0", optional = true, python = ">=3.9" }
 tree-sitter-bash = { version = ">=0.23.0", optional = true, python = ">=3.9" }
 # end of [syntax] extras
+pygments = "^2.19.2"
 
 [tool.poetry.extras]
 syntax = [

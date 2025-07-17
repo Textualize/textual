@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added get_minimal_width to Visual protocol https://github.com/Textualize/textual/pull/5962
 - Added `expand` and `shrink` attributes to GridLayout https://github.com/Textualize/textual/pull/5962
+- Added `Markdown.get_stream` https://github.com/Textualize/textual/pull/5966
+- Added `textual.highlight` module for syntax highlighting https://github.com/Textualize/textual/pull/5966
+- Added `MessagePump.wait_for_refresh` method https://github.com/Textualize/textual/pull/5966
 
 ### Changed
 
 - Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
+- Change look of command palette, to drop accented borders https://github.com/Textualize/textual/pull/5966
 
 ## [4.0.0] - 2025-07-12
 

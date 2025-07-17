@@ -442,7 +442,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey $border;
+        border-bottom: hkey black;
         border-left: none;
         border-right: none;
         height: auto;
@@ -586,7 +586,7 @@ class CommandPalette(SystemModalScreen[None]):
     CommandPalette #--input {
         height: auto;
         visibility: visible;
-        border: hkey $border;
+        border: hkey black 50%;
     }
 
     CommandPalette #--input.--list-visible {

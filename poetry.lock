@@ -2733,4 +2733,4 @@ syntax = ["tree-sitter", "tree-sitter-bash", "tree-sitter-css", "tree-sitter-go"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "cc964bc293ed05c78495be592724f02fb2d7e0bee40fa78f6dc1cd428fb3a69b"
+content-hash = "707e4f4e938db1e7200aef6ede0c3466502902e0b1141158b96c9ae34698bfb2"
