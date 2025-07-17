@@ -13,7 +13,7 @@ from markdown_it.token import Token
 from rich.text import Text
 from typing_extensions import TypeAlias
 
-from textual._slug import TrackedSlugs
+from textual._slug import TrackedSlugs, slug
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
@@ -907,6 +907,7 @@ class Markdown(Widget):
         self._parser_factory = parser_factory
         self._table_of_contents: TableOfContentsType = []
         self._open_links = open_links
+        self._last_parsed_line = 0
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -1117,7 +1118,9 @@ class Markdown(Widget):
         return None
 
     def _parse_markdown(
-        self, tokens: Iterable[Token], table_of_contents: TableOfContentsType
+        self,
+        tokens: Iterable[Token],
+        table_of_contents: TableOfContentsType,
     ) -> Iterable[MarkdownBlock]:
         """Create a stream of MarkdownBlock widgets from markdown.
 
@@ -1131,13 +1134,11 @@ class Markdown(Widget):
 
         stack: list[MarkdownBlock] = []
         stack_append = stack.append
-        block_id: int = 0
 
         for token in tokens:
             token_type = token.type
             if token_type == "heading_open":
-                block_id += 1
-                stack_append(HEADINGS[token.tag](self, id=f"block{block_id}"))
+                stack_append(HEADINGS[token.tag](self))
             elif token_type == "hr":
                 yield MarkdownHorizontalRule(self)
             elif token_type == "paragraph_open":
@@ -1180,6 +1181,7 @@ class Markdown(Widget):
                 if token.type == "heading_close":
                     heading = block._content.plain
                     level = int(token.tag[1:])
+                    block.id = f"{slug(heading)}-{len(table_of_contents) + 1}"
                     table_of_contents.append((level, heading, block.id))
                 if stack:
                     stack[-1]._blocks.append(block)
@@ -1224,12 +1226,13 @@ class Markdown(Widget):
             """Update in batches."""
             BATCH_SIZE = 200
             batch: list[MarkdownBlock] = []
-            tokens = await asyncio.get_running_loop().run_in_executor(
-                None, parser.parse, markdown
-            )
 
             # Lock so that you can't update with more than one document simultaneously
             async with self.lock:
+                tokens = await asyncio.get_running_loop().run_in_executor(
+                    None, parser.parse, markdown
+                )
+
                 # Remove existing blocks for the first batch only
                 removed: bool = False
 
@@ -1284,34 +1287,36 @@ class Markdown(Widget):
         )
 
         table_of_contents: TableOfContentsType = []
-
-        self._markdown = updated_markdown = self.source + markdown
+        self._markdown = self.source + markdown
+        updated_source = "\n".join(
+            self._markdown.splitlines()[self._last_parsed_line :]
+        )
 
         async def await_append() -> None:
             """Append new markdown widgets."""
             async with self.lock:
-                tokens = parser.parse(updated_markdown)
+                tokens = parser.parse(updated_source)
                 existing_blocks = [
                     child for child in self.children if isinstance(child, MarkdownBlock)
                 ]
+                for token in reversed(tokens):
+                    if token.map is not None and token.level == 0:
+                        self._last_parsed_line += token.map[0]
+                        break
                 new_blocks = list(self._parse_markdown(tokens, table_of_contents))
-                last_index = len(existing_blocks) - 1
-
                 with self.app.batch_update():
                     if existing_blocks and new_blocks:
-                        last_block = existing_blocks[last_index]
+                        last_block = existing_blocks[-1]
                         try:
-                            await last_block._update_from_block(new_blocks[last_index])
+                            await last_block._update_from_block(new_blocks[0])
                         except IndexError:
                             pass
                         else:
-                            last_index += 1
+                            new_blocks = new_blocks[1:]
 
-                    append_blocks = new_blocks[last_index:]
-                    if append_blocks:
-                        self.log(append=append_blocks, children=self.children)
+                    if new_blocks:
                         try:
-                            await self.mount_all(append_blocks)
+                            await self.mount_all(new_blocks)
                         except Exception as error:
                             self.log(error)
 
