@@ -409,7 +409,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownHorizontalRule {
-        border-bottom: heavy $secondary;
+        border-bottom: solid $secondary;
         height: 1;
         padding-top: 1;
         margin-bottom: 1;
@@ -1315,10 +1315,7 @@ class Markdown(Widget):
                             new_blocks = new_blocks[1:]
 
                     if new_blocks:
-                        try:
-                            await self.mount_all(new_blocks)
-                        except Exception as error:
-                            self.log(error)
+                        await self.mount_all(new_blocks)
 
                 self._table_of_contents = table_of_contents
                 self.post_message(
