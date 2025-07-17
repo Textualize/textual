@@ -802,11 +802,6 @@ class MarkdownFence(MarkdownBlock):
         super().__init__(markdown)
         self.code = code
         self.lexer = lexer
-        self.theme = (
-            self._markdown.code_dark_theme
-            if self.app.current_theme.dark
-            else self._markdown.code_light_theme
-        )
         code_content = highlight(self.code, language=lexer)
         self.set_content(code_content)
 
@@ -871,15 +866,6 @@ class Markdown(Widget):
     """
 
     BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
-
-    code_dark_theme: reactive[str] = reactive("material")
-    """The theme to use for code blocks when the App theme is dark."""
-
-    code_light_theme: reactive[str] = reactive("material-light")
-    """The theme to use for code blocks when the App theme is light."""
-
-    code_indent_guides: reactive[bool] = reactive(True)
-    """Should code fences display indent guides?"""
 
     def __init__(
         self,
@@ -1032,18 +1018,6 @@ class Markdown(Widget):
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
         if self._open_links:
             self.app.open_url(event.href)
-
-    def _watch_code_dark_theme(self) -> None:
-        """React to the dark theme being changed."""
-        if self.app.current_theme.dark:
-            for block in self.query(MarkdownFence):
-                block._retheme()
-
-    def _watch_code_light_theme(self) -> None:
-        """React to the light theme being changed."""
-        if not self.app.current_theme.dark:
-            for block in self.query(MarkdownFence):
-                block._retheme()
 
     @staticmethod
     def sanitize_location(location: str) -> tuple[Path, str]:
@@ -1436,8 +1410,6 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
 
     show_table_of_contents = reactive(True)
     """Show the table of contents?"""
-    code_indent_guides: reactive[bool] = reactive(True)
-    """Should code fences display indent guides?"""
     top_block = reactive("")
 
     navigator: var[Navigator] = var(Navigator)
@@ -1521,7 +1493,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
             parser_factory=self._parser_factory, open_links=self._open_links
         )
         markdown.can_focus = True
-        yield markdown.data_bind(MarkdownViewer.code_indent_guides)
+        yield markdown
         yield MarkdownTableOfContents(markdown)
 
     def _on_markdown_table_of_contents_updated(
