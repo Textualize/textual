@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-- Breaking change: Removed `Markdown.code_dark_theme`, `Markdown.code_light_theme`, `Markdown.code_indent_guides` which are no longer needed with the new code fence.
+- Breaking change: Removed `Markdown.code_dark_theme`, `Markdown.code_light_theme`, `Markdown.code_indent_guides` which are no longer needed with the new code fence. https://github.com/Textualize/textual/pull/5967
 
 ## [4.0.0] - 2025-07-12
 
