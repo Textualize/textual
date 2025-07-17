@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
 - Change look of command palette, to drop accented borders https://github.com/Textualize/textual/pull/5966
 
+### Removed
+
+- Breaking change: Removed `Markdown.code_dark_theme`, `Markdown.code_light_theme`, `Markdown.code_indent_guides` which are no longer needed with the new code fence.
+
 ## [4.0.0] - 2025-07-12
 
 ### Fixed
