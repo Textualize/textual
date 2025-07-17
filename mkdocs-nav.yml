@@ -203,6 +203,7 @@ nav:
       - "api/fuzzy_matcher.md"
       - "api/geometry.md"
       - "api/getters.md"
+      - "api/highlight.md"
       - "api/layout.md"
       - "api/lazy.md"
       - "api/logger.md"

@@ -10,17 +10,17 @@ from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
-from rich.syntax import Syntax
 from rich.text import Text
 from typing_extensions import TypeAlias
 
-from textual._slug import TrackedSlugs
+from textual._slug import TrackedSlugs, slug
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.content import Content
 from textual.css.query import NoMatches
 from textual.events import Mount
+from textual.highlight import highlight
 from textual.layout import Layout
 from textual.layouts.grid import GridLayout
 from textual.message import Message
@@ -34,6 +34,73 @@ TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 
 The triples encode the level, the label, and the optional block id of each heading.
 """
+
+
+class MarkdownStream:
+    """An object to manager streaming markdown.
+
+    This will accumulate markdown fragments if they can't be rendered fast enough.
+
+    This object is typically created by the [Markdown.get_stream][textual.widgets.Markdown.get_stream] method.
+
+    """
+
+    def __init__(self, markdown_widget: Markdown) -> None:
+        """
+        Args:
+            markdown_widget: Markdown widget to update.
+        """
+        self.markdown_widget = markdown_widget
+        self._task: asyncio.Task | None = None
+        self._new_markup = asyncio.Event()
+        self._pending: list[str] = []
+        self._stopped = False
+
+    def start(self) -> None:
+        """Start the updater running in the background.
+
+        No need to call this, if the object was created by [Markdown.get_stream][textual.widgets.Markdown.get_stream].
+
+        """
+        if self._task is None:
+            self._task = asyncio.create_task(self._run())
+
+    async def stop(self) -> None:
+        """Stop the stream and await its finish."""
+        if self._task is not None:
+            self._task.cancel()
+            await self._task
+            self._task = None
+            self._stopped = True
+
+    async def write(self, markdown_fragment: str) -> None:
+        """Append or enqueue a markdown fragment.
+
+        Args:
+            markdown_fragment: A string to append at the end of the document.
+        """
+        if self._stopped:
+            raise RuntimeError("Can't write to the stream after it has stopped.")
+        if not markdown_fragment:
+            # Nothing to do for empty strings.
+            return
+        # Append the new fragment, and set an event to tell the _run loop to wake up
+        self._pending.append(markdown_fragment)
+        self._new_markup.set()
+
+    async def _run(self) -> None:
+        """Run a task to append markdown fragments when available."""
+        try:
+            while await self._new_markup.wait():
+                new_markdown = "".join(self._pending)
+                self._pending.clear()
+                self._new_markup.clear()
+                await asyncio.shield(self.markdown_widget.append(new_markdown))
+        except asyncio.CancelledError:
+            # Task has been cancelled, add any outstanding markdown
+            new_markdown = "".join(self._pending)
+            if new_markdown:
+                await self.markdown_widget.append(new_markdown)
 
 
 class Navigator:
@@ -342,7 +409,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownHorizontalRule {
-        border-bottom: heavy $secondary;
+        border-bottom: solid $secondary;
         height: 1;
         padding-top: 1;
         margin-bottom: 1;
@@ -618,19 +685,19 @@ class MarkdownTable(MarkdownBlock):
         Args:
             block: Existing markdown block.
         """
-        assert isinstance(block, MarkdownTable)
-        try:
-            table_content = self.query_one(MarkdownTableContent)
-        except NoMatches:
-            pass
-        else:
-            if table_content.rows:
-                current_rows = self._rows
-                _new_headers, new_rows = block._get_headers_and_rows()
-                updated_rows = new_rows[len(current_rows) - 1 :]
-                self._rows = new_rows
-                await table_content._update_rows(updated_rows)
-                return
+        if isinstance(block, MarkdownTable):
+            try:
+                table_content = self.query_one(MarkdownTableContent)
+            except NoMatches:
+                pass
+            else:
+                if table_content.rows:
+                    current_rows = self._rows
+                    _new_headers, new_rows = block._get_headers_and_rows()
+                    updated_rows = new_rows[len(current_rows) - 1 :]
+                    self._rows = new_rows
+                    await table_content._update_rows(updated_rows)
+                    return
         await super()._update_from_block(block)
 
 
@@ -712,14 +779,15 @@ class MarkdownFence(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownFence {
+        padding: 1 2;
         margin: 1 0;
-        overflow: auto;
-        width: 100%;
-        height: auto;
-        max-height: 20;
+        overflow: hidden;
+        width: 1fr;
+        height: auto;        
         color: rgb(210,210,210);
         background: black 10%;
-
+        text-wrap: nowrap;
+        text-overflow: clip;        
         &:light {
             background: white 30%;
         }
@@ -739,44 +807,8 @@ class MarkdownFence(MarkdownBlock):
             if self.app.current_theme.dark
             else self._markdown.code_light_theme
         )
-
-    def notify_style_update(self) -> None:
-        self.call_later(self._retheme)
-
-    def _block(self) -> Syntax:
-        _, background_color = self.background_colors
-        return Syntax(
-            self.code,
-            lexer=self.lexer,
-            word_wrap=False,
-            indent_guides=self._markdown.code_indent_guides,
-            padding=(1, 2),
-            theme=self.theme,
-            background_color=background_color.css,
-        )
-
-    def _on_mount(self, _: Mount) -> None:
-        """Watch app theme switching."""
-        self.watch(self.app, "theme", self._retheme)
-
-    def _retheme(self) -> None:
-        """Rerender when the theme changes."""
-        self.theme = (
-            self._markdown.code_dark_theme
-            if self.app.current_theme.dark
-            else self._markdown.code_light_theme
-        )
-        try:
-            self.get_child_by_type(Static).update(self._block())
-        except NoMatches:
-            pass
-
-    def compose(self) -> ComposeResult:
-        yield Static(
-            self._block(),
-            expand=True,
-            shrink=False,
-        )
+        code_content = highlight(self.code, language=lexer)
+        self.set_content(code_content)
 
 
 HEADINGS = {
@@ -799,7 +831,7 @@ class Markdown(Widget):
         layout: vertical;
         color: $foreground;
         # background: $surface;
-        overflow-y: auto;
+        overflow-y: hidden;
         
         &:focus {
             background-tint: $foreground 5%;
@@ -875,6 +907,7 @@ class Markdown(Widget):
         self._parser_factory = parser_factory
         self._table_of_contents: TableOfContentsType = []
         self._open_links = open_links
+        self._last_parsed_line = 0
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -955,6 +988,46 @@ class Markdown(Widget):
                     self, self._table_of_contents
                 ).set_sender(self)
             )
+
+    @classmethod
+    def get_stream(cls, markdown: Markdown) -> MarkdownStream:
+        """Get a [MarkdownStream][textual.widgets._markdown.MarkdownStream] instance stream Markdown in the background.
+
+        If you append to the Markdown document many times a second, it is possible the widget won't
+        be able to update as fast as you write (occurs around 20 appends per second). It will still
+        work, but the user will have to wait for the UI to catch up after the document has be retrieved.
+
+        Using a [MarkdownStream][textual.widgets._markdown.MarkdownStream] will combine several updates in to one
+        as necessary to keep up with the incoming data.
+
+        example:
+        ```python
+        # self.get_chunk is a hypothetical method that retrieves a
+        # markdown fragment from the network
+        @work
+        async def stream_markdown(self) -> None:
+            markdown_widget = self.query_one(Markdown)
+            container = self.query_one(VerticalScroll)
+            container.anchor()
+
+            stream = Markdown.get_stream(markdown_widget)
+            try:
+                while (chunk:= await self.get_chunk()) is not None:
+                    await stream.write(chunk)
+            finally:
+                await stream.stop()
+        ```
+
+
+        Args:
+            markdown: A [Markdown][textual.widgets.Markdown] widget instance.
+
+        Returns:
+            The Markdown stream object.
+        """
+        updater = MarkdownStream(markdown)
+        updater.start()
+        return updater
 
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
         if self._open_links:
@@ -1045,7 +1118,9 @@ class Markdown(Widget):
         return None
 
     def _parse_markdown(
-        self, tokens: Iterable[Token], table_of_contents: TableOfContentsType
+        self,
+        tokens: Iterable[Token],
+        table_of_contents: TableOfContentsType,
     ) -> Iterable[MarkdownBlock]:
         """Create a stream of MarkdownBlock widgets from markdown.
 
@@ -1059,13 +1134,11 @@ class Markdown(Widget):
 
         stack: list[MarkdownBlock] = []
         stack_append = stack.append
-        block_id: int = 0
 
         for token in tokens:
             token_type = token.type
             if token_type == "heading_open":
-                block_id += 1
-                stack_append(HEADINGS[token.tag](self, id=f"block{block_id}"))
+                stack_append(HEADINGS[token.tag](self))
             elif token_type == "hr":
                 yield MarkdownHorizontalRule(self)
             elif token_type == "paragraph_open":
@@ -1108,6 +1181,7 @@ class Markdown(Widget):
                 if token.type == "heading_close":
                     heading = block._content.plain
                     level = int(token.tag[1:])
+                    block.id = f"{slug(heading)}-{len(table_of_contents) + 1}"
                     table_of_contents.append((level, heading, block.id))
                 if stack:
                     stack[-1]._blocks.append(block)
@@ -1152,12 +1226,13 @@ class Markdown(Widget):
             """Update in batches."""
             BATCH_SIZE = 200
             batch: list[MarkdownBlock] = []
-            tokens = await asyncio.get_running_loop().run_in_executor(
-                None, parser.parse, markdown
-            )
 
             # Lock so that you can't update with more than one document simultaneously
             async with self.lock:
+                tokens = await asyncio.get_running_loop().run_in_executor(
+                    None, parser.parse, markdown
+                )
+
                 # Remove existing blocks for the first batch only
                 removed: bool = False
 
@@ -1212,38 +1287,35 @@ class Markdown(Widget):
         )
 
         table_of_contents: TableOfContentsType = []
-
-        self._markdown = updated_markdown = self.source + markdown
+        self._markdown = self.source + markdown
+        updated_source = "\n".join(
+            self._markdown.splitlines()[self._last_parsed_line :]
+        )
 
         async def await_append() -> None:
             """Append new markdown widgets."""
-            tokens = await asyncio.get_running_loop().run_in_executor(
-                None, parser.parse, updated_markdown
-            )
-            existing_blocks = [
-                child for child in self.children if isinstance(child, MarkdownBlock)
-            ]
-            new_blocks = list(self._parse_markdown(tokens, table_of_contents))
-            last_index = len(existing_blocks) - 1
-
             async with self.lock:
+                tokens = parser.parse(updated_source)
+                existing_blocks = [
+                    child for child in self.children if isinstance(child, MarkdownBlock)
+                ]
+                for token in reversed(tokens):
+                    if token.map is not None and token.level == 0:
+                        self._last_parsed_line += token.map[0]
+                        break
+                new_blocks = list(self._parse_markdown(tokens, table_of_contents))
                 with self.app.batch_update():
                     if existing_blocks and new_blocks:
-                        last_block = existing_blocks[last_index]
+                        last_block = existing_blocks[-1]
                         try:
-                            await last_block._update_from_block(new_blocks[last_index])
+                            await last_block._update_from_block(new_blocks[0])
                         except IndexError:
                             pass
                         else:
-                            last_index += 1
+                            new_blocks = new_blocks[1:]
 
-                    append_blocks = new_blocks[last_index:]
-                    if append_blocks:
-                        self.log(append=append_blocks, children=self.children)
-                        try:
-                            await self.mount_all(append_blocks)
-                        except Exception as error:
-                            self.log(error)
+                    if new_blocks:
+                        await self.mount_all(new_blocks)
 
                 self._table_of_contents = table_of_contents
                 self.post_message(
