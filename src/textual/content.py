@@ -27,7 +27,6 @@ from typing_extensions import Final, TypeAlias
 from textual._cells import cell_len
 from textual._context import active_app
 from textual._loop import loop_last
-from textual._profile import timer
 from textual.cache import FIFOCache
 from textual.color import Color
 from textual.css.types import TextAlign, TextOverflow
@@ -1312,7 +1311,6 @@ class Content(Visual):
 
         return new_lines
 
-    @timer("split")
     def split(
         self,
         separator: str = "\n",
