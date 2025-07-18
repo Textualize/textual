@@ -147,7 +147,6 @@ class Content(Visual):
         self._split_cache: FIFOCache[tuple[str, bool, bool], list[Content]] | None = (
             None
         )
-        self._line_length_cache: FIFOCache[Sequence[int], list[int]] | None = None
 
     def __str__(self) -> str:
         return self._text
@@ -1203,6 +1202,14 @@ class Content(Visual):
         return segments
 
     def _divide_spans(self, offsets: tuple[int, ...]) -> list[tuple[Span, int, int]]:
+        """Divide content from a list of offset to cut.
+
+        Args:
+            offsets: A tuple of indices in to the text.
+
+        Returns:
+            A list of tuples containing Spans and their line offsets.
+        """
         if self._divide_cache is None:
             self._divide_cache = FIFOCache(4)
         if (cached_result := self._divide_cache.get(offsets)) is not None:
@@ -1270,26 +1277,8 @@ class Content(Visual):
         text = self.plain
         divide_offsets = tuple([0, *offsets, len(text)])
         line_ranges = list(zip(divide_offsets, divide_offsets[1:]))
-
-        if self._line_length_cache is None:
-            self._line_length_cache = FIFOCache(4)
-
         line_text = [text[start:end] for start, end in line_ranges]
-
-        if (
-            cache_line_lengths := self._line_length_cache.get(divide_offsets)
-        ) is not None:
-            line_lengths = cache_line_lengths
-        else:
-
-            line_lengths = self._line_length_cache[divide_offsets] = [
-                cell_len(line) for line in line_text
-            ]
-
-        new_lines = [
-            Content(line, None, line_length)
-            for line, line_length in zip(line_text, line_lengths)
-        ]
+        new_lines = [Content(line, None) for line in line_text]
 
         if not self._spans:
             return new_lines
