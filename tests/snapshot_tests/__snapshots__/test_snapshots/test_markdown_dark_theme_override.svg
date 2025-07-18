@@ -34,10 +34,10 @@
 
     .terminal-r1 { fill: #c5c8c6 }
 .terminal-r2 { fill: #0178d4;font-weight: bold }
-.terminal-r3 { fill: #fea62b }
+.terminal-r3 { fill: #ffc473 }
 .terminal-r4 { fill: #ffffff }
-.terminal-r5 { fill: #fea62b;text-decoration: underline; }
-.terminal-r6 { fill: #47ad67 }
+.terminal-r5 { fill: #ffc473;text-decoration: underline; }
+.terminal-r6 { fill: #7dc092 }
     </style>
 
     <defs>

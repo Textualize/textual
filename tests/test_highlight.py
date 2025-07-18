@@ -11,8 +11,8 @@ def test_highlight() -> None:
     print(import_this.spans)
     assert import_this.spans == [
         Span(0, 11, style="$text"),
-        Span(0, 6, style="$error"),
-        Span(7, 11, style="$primary"),
+        Span(0, 6, style="$text-error"),
+        Span(7, 11, style="$text-primary"),
     ]
 
 

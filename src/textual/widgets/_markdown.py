@@ -833,11 +833,11 @@ class Markdown(Widget):
         }
         &:dark .code_inline {
             background: $warning-muted 30%;
-            color: $warning;        
+            color: $text-warning;
         }
         &:light .code_inline {
             background: $error-muted 30%;
-            color: $error;
+            color: $text-error;
         }
     }
     .em {

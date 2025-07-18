@@ -37,12 +37,12 @@
 .terminal-r3 { fill: #3b3b3b }
 .terminal-r4 { fill: #0178d4 }
 .terminal-r5 { fill: #e0e0e0 }
-.terminal-r6 { fill: #fea62b }
+.terminal-r6 { fill: #ffc473 }
 .terminal-r7 { fill: #e0e0e0;font-weight: bold }
 .terminal-r8 { fill: #e0e0e0;font-style: italic; }
 .terminal-r9 { fill: #e0e0e0;text-decoration: line-through; }
 .terminal-r10 { fill: #ffffff }
-.terminal-r11 { fill: #47ad67 }
+.terminal-r11 { fill: #7dc092 }
     </style>
 
     <defs>
