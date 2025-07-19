@@ -513,6 +513,7 @@ class Screen(Generic[ScreenResultType], Widget):
             ),
             size,
             self.screen.size,
+            False,
         )
 
         return arrangement

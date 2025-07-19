@@ -31,7 +31,7 @@ class GridLayout(Layout):
         """If self.shrink is `True`, auto-detect and limit the width."""
 
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
         parent.pre_layout(self)
         styles = parent.styles
@@ -309,6 +309,7 @@ class GridLayout(Layout):
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
                 constrain_width=True,
+                greedy=greedy,
             )
 
             if self.stretch_height and len(children) > 1:
