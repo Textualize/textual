@@ -327,8 +327,6 @@ class Widget(DOMNode):
     """Rich renderable may expand beyond optimal size."""
     shrink: Reactive[bool] = Reactive(True)
     """Rich renderable may shrink below optimal size."""
-    greedy: Reactive[bool] = Reactive(True)
-    """Fraction widths will consume as much space as possible."""
     auto_links: Reactive[bool] = Reactive(True)
     """Widget will highlight links automatically."""
     disabled: Reactive[bool] = Reactive(False)
@@ -1558,9 +1556,6 @@ class Widget(DOMNode):
             The size and margin for this widget.
         """
         styles = self.styles
-        # _content_width, _content_height = container
-        # content_width = Fraction(_content_width)
-        # content_height = Fraction(_content_height)
         is_border_box = styles.box_sizing == "border-box"
         gutter = styles.gutter  # Padding plus border
         margin = styles.margin
@@ -2198,7 +2193,7 @@ class Widget(DOMNode):
         if not self.is_container:
             return False
         for child in self.children:
-            if not child.greedy:
+            if child.styles.expand == "optimal":
                 continue
             styles = child.styles
             if styles.display == "none":

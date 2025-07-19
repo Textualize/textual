@@ -43,6 +43,7 @@ from textual.css.constants import (
     VALID_BOX_SIZING,
     VALID_CONSTRAIN,
     VALID_DISPLAY,
+    VALID_EXPAND,
     VALID_OVERFLOW,
     VALID_OVERLAY,
     VALID_POSITION,
@@ -61,6 +62,7 @@ from textual.css.types import (
     BoxSizing,
     Constrain,
     Display,
+    Expand,
     Overflow,
     Overlay,
     ScrollbarGutter,
@@ -203,6 +205,7 @@ class RulesMap(TypedDict, total=False):
 
     text_wrap: TextWrap
     text_overflow: TextOverflow
+    expand: Expand
 
     line_pad: int
 
@@ -492,6 +495,7 @@ class StylesBase:
     text_overflow: StringEnumProperty[TextOverflow] = StringEnumProperty(
         VALID_TEXT_OVERFLOW, "fold"
     )
+    expand: StringEnumProperty[Expand] = StringEnumProperty(VALID_EXPAND, "greedy")
     line_pad = IntegerProperty(default=0, layout=True)
     """Padding added to left and right of lines."""
 
@@ -1288,6 +1292,8 @@ class Styles(StylesBase):
             append_declaration("text-wrap", self.text_wrap)
         if "text_overflow" in rules:
             append_declaration("text-overflow", self.text_overflow)
+        if "expand" in rules:
+            append_declaration("expand", self.expand)
         if "line_pad" in rules:
             append_declaration("line-pad", str(self.line_pad))
         lines.sort()
