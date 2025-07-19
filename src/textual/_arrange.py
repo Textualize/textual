@@ -118,10 +118,8 @@ def arrange(
                 )
 
             WidgetPlacement.apply_absolute(layout_placements)
-
             placements.extend(layout_placements)
 
-        widget.log(placements)
     return DockArrangeResult(placements, set(display_widgets), scroll_spacing)
 
 
