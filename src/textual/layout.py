@@ -210,7 +210,11 @@ class Layout(ABC):
 
     @abstractmethod
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self,
+        parent: Widget,
+        children: list[Widget],
+        size: Size,
+        greedy: bool = True,
     ) -> ArrangeResult:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
@@ -237,7 +241,8 @@ class Layout(ABC):
             width = 0
         else:
             arrangement = widget._arrange(
-                Size(0 if widget.shrink else container.width, 0)
+                Size(0 if widget.shrink else container.width, 0),
+                optimal=True,
             )
             width = arrangement.total_region.right
         return width

@@ -18,7 +18,7 @@ class VerticalLayout(Layout):
     name = "vertical"
 
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
         parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
@@ -57,6 +57,7 @@ class VerticalLayout(Layout):
             parent.app.size,
             resolve_margin,
             resolve_dimension="height",
+            greedy=greedy,
         )
 
         margins = [
