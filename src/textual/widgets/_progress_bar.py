@@ -72,11 +72,13 @@ class Bar(Widget, can_focus=False):
         disabled: bool = False,
         clock: Clock | None = None,
         gradient: Gradient | None = None,
+        bar_renderable: BarRenderable = BarRenderable,
     ):
         """Create a bar for a [`ProgressBar`][textual.widgets.ProgressBar]."""
         self._clock = (clock or Clock()).clone()
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.set_reactive(Bar.gradient, gradient)
+        self.bar_renderable = bar_renderable
 
     def _validate_percentage(self, percentage: float | None) -> float | None:
         """Avoid updating the bar, if the percentage increase is too small to render."""
@@ -104,7 +106,7 @@ class Bar(Widget, can_focus=False):
                 if self.percentage < 1
                 else self.get_component_rich_style("bar--complete")
             )
-            return BarRenderable(
+            return self.bar_renderable(
                 highlight_range=(0, self.size.width * self.percentage),
                 highlight_style=Style.from_color(bar_style.color),
                 background_style=Style.from_color(bar_style.bgcolor),
@@ -133,7 +135,7 @@ class Bar(Widget, can_focus=False):
             end = start + highlighted_bar_width
 
         bar_style = self.get_component_rich_style("bar--indeterminate")
-        return BarRenderable(
+        return self.bar_renderable(
             highlight_range=(max(0, start), min(end, width)),
             highlight_style=Style.from_color(bar_style.color),
             background_style=Style.from_color(bar_style.bgcolor),
@@ -239,6 +241,7 @@ class ProgressBar(Widget, can_focus=False):
         disabled: bool = False,
         clock: Clock | None = None,
         gradient: Gradient | None = None,
+        bar_renderable: BarRenderable = BarRenderable,
     ):
         """Create a Progress Bar widget.
 
@@ -265,6 +268,7 @@ class ProgressBar(Widget, can_focus=False):
             disabled: Whether the widget is disabled or not.
             clock: An optional clock object (leave as default unless testing).
             gradient: An optional Gradient object (will replace CSS styles in the bar).
+            bar_renderable: A custom Bar object that is rendered as the bar.
         """
         self._clock = clock or Clock()
         self._eta = ETA()
@@ -274,6 +278,7 @@ class ProgressBar(Widget, can_focus=False):
         self.show_percentage = show_percentage
         self.show_eta = show_eta
         self.set_reactive(ProgressBar.gradient, gradient)
+        self.bar_renderable = bar_renderable
 
     def on_mount(self) -> None:
         self.update()
@@ -283,7 +288,7 @@ class ProgressBar(Widget, can_focus=False):
     def compose(self) -> ComposeResult:
         if self.show_bar:
             yield (
-                Bar(id="bar", clock=self._clock)
+                Bar(id="bar", clock=self._clock, bar_renderable=self.bar_renderable)
                 .data_bind(ProgressBar.percentage)
                 .data_bind(ProgressBar.gradient)
             )
