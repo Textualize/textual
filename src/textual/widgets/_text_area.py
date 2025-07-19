@@ -860,6 +860,14 @@ TextArea {
                     self.styles.color = Color.from_rich_color(color)
                 if background:
                     self.styles.background = Color.from_rich_color(background)
+            else:
+                # When the theme doesn't define a base style (e.g. the `css` theme),
+                # the TextArea background/color should fallback to its CSS colors.
+                #
+                # Since these styles may have already been changed by another theme,
+                # we need to reset the background/color styles to the default values.
+                self.styles.color = None
+                self.styles.background = None
 
     @property
     def available_themes(self) -> set[str]:
