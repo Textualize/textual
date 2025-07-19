@@ -697,7 +697,6 @@ class Stylesheet:
 
             for key in modified_rule_keys:
                 setattr(base_styles, key, get_rule(key))
-
         node.notify_style_update()
 
     def update(self, root: DOMNode, animate: bool = False) -> None:

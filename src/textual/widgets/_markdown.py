@@ -944,6 +944,7 @@ class Markdown(Widget):
         self._table_of_contents: TableOfContentsType = []
         self._open_links = open_links
         self._last_parsed_line = 0
+        self._theme = ""
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -1021,7 +1022,8 @@ class Markdown(Widget):
         return self.BLOCKS[block_name]
 
     def notify_style_update(self) -> None:
-        self.update(self.source)
+        if self.app.theme != self._theme or self.app.debug:
+            self.update(self.source)
         super().notify_style_update()
 
     async def _on_mount(self, _: Mount) -> None:
@@ -1254,6 +1256,7 @@ class Markdown(Widget):
         Returns:
             An optionally awaitable object. Await this to ensure that all children have been mounted.
         """
+        self._theme = self.app.theme
         parser = (
             MarkdownIt("gfm-like")
             if self._parser_factory is None
