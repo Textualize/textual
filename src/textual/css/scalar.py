@@ -283,8 +283,6 @@ class Scalar(NamedTuple):
 
         if unit == Unit.PERCENT:
             unit = percent_unit
-        # elif unit == Unit.AUTO:
-        #     unit = Unit.FRACTION
         try:
             dimension = RESOLVE_MAP[unit](
                 value, size, viewport, fraction_unit or _FRACTION_ONE
