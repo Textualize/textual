@@ -87,6 +87,7 @@ VALID_KEYLINE: Final = {"none", "thin", "heavy", "double"}
 VALID_HATCH: Final = {"left", "right", "cross", "vertical", "horizontal"}
 VALID_TEXT_WRAP: Final = {"wrap", "nowrap"}
 VALID_TEXT_OVERFLOW: Final = {"clip", "fold", "ellipsis"}
+VALID_EXPAND: Final = {"greedy", "optimal"}
 
 HATCHES: Final = {
     "left": "╲",

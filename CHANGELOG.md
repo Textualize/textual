@@ -14,11 +14,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Markdown.get_stream` https://github.com/Textualize/textual/pull/5966
 - Added `textual.highlight` module for syntax highlighting https://github.com/Textualize/textual/pull/5966
 - Added `MessagePump.wait_for_refresh` method https://github.com/Textualize/textual/pull/5966
+- Added `Widget.container_scroll_offset` https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added `Markdown.source` attribute to MarkdownBlocks https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added extension mechanism to Markdown https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
 
 ### Changed
 
 - Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
 - Change look of command palette, to drop accented borders https://github.com/Textualize/textual/pull/5966
+- Some style tweaks to Markdown https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+
 
 ### Removed
 
