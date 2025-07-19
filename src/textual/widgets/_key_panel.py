@@ -132,7 +132,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         align: center top;
 
         &> BindingsTable > .bindings-table--key {
-            color: $accent;
+            color: $text-accent;
             text-style: bold;
             padding: 0 1;
         }
@@ -145,8 +145,9 @@ class KeyPanel(VerticalScroll, can_focus=False):
             color: transparent;
         }
 
-        &> BindingsTable > .bindings-table--header {
-            text-style: dim italic;
+        &> BindingsTable > .bindings-table--header {        
+            color: $text-primary;
+            text-style: underline;
         }
 
         #bindings-table {
