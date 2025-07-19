@@ -4421,3 +4421,29 @@ def test_markdown_append(snap_compare):
                 await asyncio.sleep(0.01)
 
     assert snap_compare(MDApp(), press=["1", "wait:500"])
+
+
+def test_text_area_css_theme_updates_background(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5964"""
+
+    class TextAreaThemeApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(
+                "This TextArea theme is always `css`.",
+                theme="css",
+                show_cursor=False,
+                id="text-area-control",
+            )
+            yield TextArea(
+                "This TextArea theme changes from `github_light` to `css`.\n"
+                "The colors should match the TextArea above.",
+                theme="github_light",
+                show_cursor=False,
+                id="text-area-variable",
+            )
+
+        def on_mount(self) -> None:
+            text_area = self.query_one("#text-area-variable", TextArea)
+            text_area.theme = "css"
+
+    assert snap_compare(TextAreaThemeApp())
