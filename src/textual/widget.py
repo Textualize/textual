@@ -2171,6 +2171,14 @@ class Widget(DOMNode):
         return Offset(round(self.scroll_x), round(self.scroll_y))
 
     @property
+    def container_scroll_offset(self) -> Offset:
+        """The scroll offset the nearest container ancestor."""
+        for node in self.ancestors:
+            if isinstance(node, Widget) and node.is_scrollable:
+                return node.scroll_offset
+        return Offset()
+
+    @property
     def _console(self) -> Console:
         """Get the current console.
 
