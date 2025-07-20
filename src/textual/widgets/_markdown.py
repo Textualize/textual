@@ -186,16 +186,26 @@ class MarkdownBlock(Static):
     }
     """
 
-    def __init__(self, markdown: Markdown, token: Token, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        markdown: Markdown,
+        token: Token,
+        source_range: tuple[int, int] | None = None,
+        *args,
+        **kwargs,
+    ) -> None:
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
         self._content: Content = Content()
         self._token: Token = token
         self._blocks: list[MarkdownBlock] = []
-        self.source_range: tuple[int, int] | None = (
-            (token.map[0], token.map[1]) if token.map is not None else None
+        self.source_range: tuple[int, int] = source_range or (
+            (token.map[0], token.map[1]) if token.map is not None else (0, 0)
         )
-        super().__init__(*args, **kwargs)
+
+        super().__init__(
+            *args, name=token.type, classes=f"level-{token.level}", **kwargs
+        )
 
     @property
     def select_container(self) -> Widget:
@@ -207,7 +217,7 @@ class MarkdownBlock(Static):
         if self.source_range is None:
             return None
         start, end = self.source_range
-        return "\n".join(self._markdown.source.splitlines()[start:end])
+        return "".join(self._markdown.source.splitlines(keepends=True)[start:end])
 
     def compose(self) -> ComposeResult:
         yield from self._blocks
@@ -218,10 +228,6 @@ class MarkdownBlock(Static):
         self.update(content)
 
     async def _update_from_block(self, block: MarkdownBlock) -> None:
-        self._token = token = block._token
-        self.source_range: tuple[int, int] | None = (
-            (token.map[0], token.map[1]) if token.map is not None else None
-        )
         await self.remove()
         await self._markdown.mount(block)
 
@@ -254,7 +260,6 @@ class MarkdownBlock(Static):
             token: The token from which this block is built.
         """
 
-        self._token = token
         null_style = Style.null()
         style_stack: list[Style] = [Style()]
         pending_content: list[tuple[str, Style]] = []
@@ -1333,8 +1338,8 @@ class Markdown(Widget):
 
         table_of_contents: TableOfContentsType = []
         self._markdown = self.source + markdown
-        updated_source = "\n".join(
-            self._markdown.splitlines()[self._last_parsed_line :]
+        updated_source = "".join(
+            self._markdown.splitlines(keepends=True)[self._last_parsed_line :]
         )
 
         async def await_append() -> None:
@@ -1344,14 +1349,24 @@ class Markdown(Widget):
                 existing_blocks = [
                     child for child in self.children if isinstance(child, MarkdownBlock)
                 ]
+                start_line = self._last_parsed_line
                 for token in reversed(tokens):
                     if token.map is not None and token.level == 0:
                         self._last_parsed_line += token.map[0]
                         break
+
                 new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+                for block in new_blocks:
+                    start, end = block.source_range
+                    block.source_range = (
+                        start + start_line,
+                        end + start_line,
+                    )
+
                 with self.app.batch_update():
                     if existing_blocks and new_blocks:
                         last_block = existing_blocks[-1]
+                        last_block.source_range = new_blocks[0].source_range
                         try:
                             await last_block._update_from_block(new_blocks[0])
                         except IndexError:
