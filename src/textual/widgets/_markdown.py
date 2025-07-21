@@ -730,9 +730,6 @@ class MarkdownTable(MarkdownBlock):
             rows.pop()
         return headers, rows
 
-    # def notify_style_update(self) -> None:
-    #     self.call_after_refresh(self.rebuild)
-
     def rebuild(self) -> None:
         self._rebuild()
 

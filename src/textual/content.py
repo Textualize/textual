@@ -126,7 +126,6 @@ class Content(Visual):
         text: str = "",
         spans: list[Span] | None = None,
         cell_length: int | None = None,
-        get_style: Callable[[str], Style | None] | None = None,
     ) -> None:
         """
         Initialize a Content object.
@@ -139,7 +138,6 @@ class Content(Visual):
         self._text: str = _strip_control_codes(text)
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
-        self._get_style = get_style
         self._optimal_width_cache: int | None = None
         self._minimal_width_cache: int | None = None
         self._height_cache: tuple[tuple[int, str, bool] | None, int] = (None, 0)
@@ -1134,10 +1132,7 @@ class Content(Visual):
                 try:
                     visual_style = Style.parse(style)
                 except Exception:
-                    if self._get_style is not None:
-                        visual_style = self._get_style(style) or Style.null()
-                    else:
-                        visual_style = Style.null()
+                    visual_style = Style.null()
                 return visual_style
 
             get_style = _get_style
