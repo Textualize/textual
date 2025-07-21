@@ -86,6 +86,8 @@ The following example will display a blank screen initially, but if you bring up
   5. Highlights matching letters in the search.
   6. Adds our custom command provider and the default command provider.
 
+The above example uses [`self.app`][textual.command.Provider.app] to call `open_file`, a method we've defined on our app class. You normally won’t need to access the app class directly, since passing data through messages or other patterns keeps components more loosely coupled. However, when you need to call methods defined on the app class—such as `open_file` in our case—or work with shared app-wide state, [`self.app`][textual.message_pump.MessagePump.app] is the normal way to reach the running app instance. It's accessible from any widget, screen, or command provider.
+
 There are four methods you can override in a command provider: [`startup`][textual.command.Provider.startup], [`search`][textual.command.Provider.search], [`discover`][textual.command.Provider.discover] and [`shutdown`][textual.command.Provider.shutdown].
 All of these methods should be coroutines (`async def`). Only `search` is required, the other methods are optional.
 Let's explore those methods in detail.
