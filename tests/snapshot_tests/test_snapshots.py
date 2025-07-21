@@ -4428,19 +4428,23 @@ def test_text_area_css_theme_updates_background(snap_compare):
 
     class TextAreaThemeApp(App):
         def compose(self) -> ComposeResult:
-            yield TextArea(
+            text_area_control =  TextArea(
                 "This TextArea theme is always `css`.",
                 theme="css",
-                show_cursor=False,
                 id="text-area-control",
             )
-            yield TextArea(
+            text_area_control.cursor_blink = False
+
+            text_area_variable =  TextArea(
                 "This TextArea theme changes from `github_light` to `css`.\n"
                 "The colors should match the TextArea above.",
                 theme="github_light",
-                show_cursor=False,
                 id="text-area-variable",
             )
+            text_area_variable.cursor_blink = False
+
+            yield text_area_control
+            yield text_area_variable
 
         def on_mount(self) -> None:
             text_area = self.query_one("#text-area-variable", TextArea)
