@@ -199,6 +199,7 @@ class MarkdownBlock(Static):
         self._content: Content = Content()
         self._token: Token = token
         self._blocks: list[MarkdownBlock] = []
+        self._inline_token: Token | None = None
         self.source_range: tuple[int, int] = source_range or (
             (token.map[0], token.map[1]) if token.map is not None else (0, 0)
         )
@@ -236,28 +237,35 @@ class MarkdownBlock(Static):
         self.post_message(Markdown.LinkClicked(self._markdown, href))
 
     # def notify_style_update(self) -> None:
-    #     """If CSS was reloaded, try to rebuild this block from its token."""
+    #     # self.refresh(layout=True)
+
+    #     # """If CSS was reloaded, try to rebuild this block from its token."""
     #     super().notify_style_update()
     #     self.rebuild()
 
-    # def rebuild(self) -> None:
-    #     """Rebuild the content of the block if we have a source token."""
-    #     return
-    #     if self._token is not None:
-    #         self.build_from_token(self._token)
+    def rebuild(self) -> None:
+        """Rebuild the content of the block if we have a source token."""
+        if self._inline_token is not None:
+            self.build_from_token(self._inline_token)
 
     def build_from_token(self, token: Token) -> None:
-        """Build the block content from its source token.
-
-        This method allows the block to be rebuilt on demand, which is useful
-        when the styles assigned to the
-        [Markdown.COMPONENT_CLASSES][textual.widgets.Markdown.COMPONENT_CLASSES]
-        change.
-
-        See https://github.com/Textualize/textual/issues/3464 for more information.
+        """Build inline block content from its source token.
 
         Args:
             token: The token from which this block is built.
+        """
+        self._inline_token = token
+        content = self._token_to_content(token)
+        self.set_content(content)
+
+    def _token_to_content(self, token: Token) -> Content:
+        """Convert an inline token to Textual Content.
+
+        Args:
+            token: A markdown token.
+
+        Returns:
+            Content instance.
         """
 
         null_style = Style.null()
@@ -274,16 +282,17 @@ class MarkdownBlock(Static):
             if pending_content:
                 top_text, top_style = pending_content[-1]
                 if top_style == style:
+                    # Combine contiguous styles
                     pending_content[-1] = (top_text + text, style)
                 else:
                     pending_content.append((text, style))
             else:
                 pending_content.append((text, style))
 
-        get_visual_style = self._markdown.get_visual_style
         if token.children is None:
-            self.set_content(Content(""))
-            return
+            return Content("")
+        get_visual_style = self._markdown.get_visual_style
+
         for child in token.children:
             child_type = child.type
             if child_type == "text":
@@ -334,7 +343,7 @@ class MarkdownBlock(Static):
                 style_stack.pop()
 
         content = Content("").join(starmap(Content.styled, pending_content))
-        self.set_content(content)
+        return content
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -449,6 +458,14 @@ class MarkdownParagraph(MarkdownBlock):
          margin: 0 0 1 0;
     }
     """
+
+    async def _update_from_block(self, block: MarkdownBlock):
+        if isinstance(block, MarkdownParagraph):
+            self.set_content(block._content)
+            self._token = block._token
+            self._inline_token = block._inline_token
+        else:
+            await super()._update_from_block(block)
 
 
 class MarkdownBlockQuote(MarkdownBlock):
@@ -631,6 +648,17 @@ class MarkdownTableContent(Widget):
                 ).with_tooltip(cell.plain)
             self.last_row = row_index
 
+    def _update_content(self, headers: list[Content], rows: list[list[Content]]):
+        """Update cell contents."""
+        self.headers = headers
+        self.rows = rows
+        cells: list[Content] = [
+            *self.headers,
+            *[cell for row in self.rows for cell in row],
+        ]
+        for child, updated_cell in zip(self.query(MarkdownTableCellContents), cells):
+            child.update(updated_cell, layout=False)
+
     async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
         self.styles.grid_size_columns = len(self.headers)
         await self.query_children(f".cell.row{self.last_row}").remove()
@@ -701,6 +729,34 @@ class MarkdownTable(MarkdownBlock):
         if rows and not rows[-1]:
             rows.pop()
         return headers, rows
+
+    # def notify_style_update(self) -> None:
+    #     self.call_after_refresh(self.rebuild)
+
+    def rebuild(self) -> None:
+        self._rebuild()
+
+    def _rebuild(self) -> None:
+        try:
+            table_content = self.query_one(MarkdownTableContent)
+        except NoMatches:
+            return
+
+        def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
+            for block in block._blocks:
+                if block._blocks:
+                    yield from flatten(block)
+                yield block
+
+        for block in flatten(self):
+            if block._inline_token is not None:
+                self.log(block._inline_token)
+                block.rebuild()
+
+        headers, rows = self._get_headers_and_rows()
+        self._headers = headers
+        self._rows = rows
+        table_content._update_content(headers, rows)
 
     async def _update_from_block(self, block: MarkdownBlock) -> None:
         """Special case to update a Markdown table.
@@ -832,6 +888,12 @@ class MarkdownFence(MarkdownBlock):
     def highlight(cls, code: str, language: str) -> Content:
         return highlight(code, language=language)
 
+    async def _update_from_block(self, block: MarkdownBlock):
+        if isinstance(block, MarkdownFence):
+            self.set_content(block._highlighted_code)
+        else:
+            await super()._update_from_block(block)
+
     def on_mount(self):
         self.set_content(self._highlighted_code)
 
@@ -853,31 +915,32 @@ class Markdown(Widget):
         height: auto;        
         padding: 0 2 0 2;
         layout: vertical;
-        color: $foreground;
-        # background: $surface;
+        color: $foreground;       
         overflow-y: hidden;
         
-        &:focus {
-            background-tint: $foreground 5%;
+        # &:focus {
+        #     background-tint: $foreground 5%;
+        # }
+        &:dark > .code_inline {
+            background: $warning 10%;
+            color: $text-warning 95%;
         }
-        &:dark .code_inline {
-            background: $warning-muted 30%;
-            color: $text-warning;
+        &:light > .code_inline {
+            background: $error 5%;
+            color: $text-error 95%;
         }
-        &:light .code_inline {
-            background: $error-muted 30%;
-            color: $text-error;
+        & > .em {
+            text-style: italic;        
         }
+        & > .strong {
+            text-style: bold;
+        }
+        & > .s {
+            text-style: strike;
+        }
+    
     }
-    .em {
-        text-style: italic;        
-    }
-    .strong {
-        text-style: bold;
-    }
-    .s {
-        text-style: strike;
-    }
+    
     
     """
 
@@ -1027,9 +1090,17 @@ class Markdown(Widget):
         return self.BLOCKS[block_name]
 
     def notify_style_update(self) -> None:
-        if self.app.theme != self._theme or self.app.debug:
-            self.update(self.source)
         super().notify_style_update()
+
+        if self.app.theme == self._theme:
+            return
+        self._theme = self.app.theme
+
+        def rebuild_all() -> None:
+            for child in self.query_children(MarkdownBlock):
+                child.rebuild()
+
+        self.call_after_refresh(rebuild_all)
 
     async def _on_mount(self, _: Mount) -> None:
         initial_markdown = self._initial_markdown
@@ -1251,6 +1322,15 @@ class Markdown(Widget):
                         stack[-1]._blocks.append(external)
                     else:
                         yield external
+
+    def _build_from_source(self, markdown: str) -> list[MarkdownBlock]:
+        parser = (
+            MarkdownIt("gfm-like")
+            if self._parser_factory is None
+            else self._parser_factory()
+        )
+        tokens = parser.parse(markdown)
+        return list(self._parse_markdown(tokens, []))
 
     def update(self, markdown: str) -> AwaitComplete:
         """Update the document with new Markdown.
