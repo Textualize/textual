@@ -1164,6 +1164,19 @@ class Widget(DOMNode):
 
         return visual_style
 
+    def _get_style(self, style: str) -> VisualStyle | None:
+        """A get_style method for use in Content.
+
+        Args:
+            style: A style prefixed with a dot.
+
+        Returns:
+            A visual style if one is fund, otherwise `None`.
+        """
+        if style.startswith("."):
+            return self.get_visual_style(style[1:])
+        return None
+
     @overload
     def render_str(self, text_content: str) -> Content: ...
 
