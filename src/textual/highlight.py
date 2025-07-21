@@ -136,7 +136,6 @@ def highlight(
     styles = theme.STYLES
 
     for token_type, token in lexer.get_tokens(code):
-        # print(token_type, token)
         token_end = token_start + len(token)
         while True:
             if style := styles.get(token_type):
