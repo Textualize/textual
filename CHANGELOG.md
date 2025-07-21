@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `index` to `ListView.Selected` event https://github.com/Textualize/textual/pull/5973
 - Added `layout` switch to Static.update https://github.com/Textualize/textual/pull/5973
 
+### Fixed
+
+- Fixed `TextArea` issue with the `css` theme, where the background color was stuck from the previous theme https://github.com/Textualize/textual/issues/5964
+
 ### Changed
 
 - Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
