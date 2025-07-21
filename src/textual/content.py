@@ -27,6 +27,7 @@ from typing_extensions import Final, TypeAlias
 from textual._cells import cell_len
 from textual._context import active_app
 from textual._loop import loop_last
+from textual.cache import FIFOCache
 from textual.color import Color
 from textual.css.types import TextAlign, TextOverflow
 from textual.selection import Selection
@@ -140,6 +141,12 @@ class Content(Visual):
         self._optimal_width_cache: int | None = None
         self._minimal_width_cache: int | None = None
         self._height_cache: tuple[tuple[int, str, bool] | None, int] = (None, 0)
+        self._divide_cache: (
+            FIFOCache[Sequence[int], list[tuple[Span, int, int]]] | None
+        ) = None
+        self._split_cache: FIFOCache[tuple[str, bool, bool], list[Content]] | None = (
+            None
+        )
 
     def __str__(self) -> str:
         return self._text
@@ -328,7 +335,9 @@ class Content(Visual):
         if not text:
             return Content("")
         span_length = cell_len(text) if cell_length is None else cell_length
-        new_content = cls(text, [Span(0, span_length, style)], span_length)
+        new_content = cls(
+            text, [Span(0, span_length, style)] if style else None, span_length
+        )
         return new_content
 
     @classmethod
@@ -815,6 +824,7 @@ class Content(Visual):
             extend_spans(
                 _Span(offset + start, offset + end, style)
                 for start, end, style in content._spans
+                if style
             )
             offset += len(content._text)
             if total_cell_length is not None:
@@ -1115,7 +1125,7 @@ class Content(Visual):
         get_style: Callable[[str | Style], Style]
         if parse_style is None:
 
-            def get_style(style: str | Style) -> Style:
+            def _get_style(style: str | Style) -> Style:
                 """The default get_style method."""
                 if isinstance(style, Style):
                     return style
@@ -1124,6 +1134,8 @@ class Content(Visual):
                 except Exception:
                     visual_style = Style.null()
                 return visual_style
+
+            get_style = _get_style
 
         else:
             get_style = parse_style
@@ -1194,38 +1206,26 @@ class Content(Visual):
         ]
         return segments
 
-    def divide(self, offsets: Sequence[int]) -> list[Content]:
-        """Divide the content at the given offsets.
-
-        This will cut the content in to pieces, and return those pieces. Note that the number of pieces
-        return will be one greater than the number of cuts.
+    def _divide_spans(self, offsets: tuple[int, ...]) -> list[tuple[Span, int, int]]:
+        """Divide content from a list of offset to cut.
 
         Args:
-            offsets: Sequence of offsets (in characters) of where to apply the cuts.
+            offsets: A tuple of indices in to the text.
 
         Returns:
-            List of Content instances which combined would be equal to the whole.
+            A list of tuples containing Spans and their line offsets.
         """
-        if not offsets:
-            return [self]
+        if self._divide_cache is None:
+            self._divide_cache = FIFOCache(4)
+        if (cached_result := self._divide_cache.get(offsets)) is not None:
+            return cached_result
 
-        offsets = sorted(offsets)
-
-        text = self.plain
-        text_length = len(text)
-        divide_offsets = [0, *offsets, text_length]
-        line_ranges = list(zip(divide_offsets, divide_offsets[1:]))
-
-        new_lines = [Content(text[start:end]) for start, end in line_ranges]
-
-        if not self._spans:
-            return new_lines
-
-        _line_appends = [line._spans.append for line in new_lines]
+        line_ranges = list(zip(offsets, offsets[1:]))
+        text_length = len(self.plain)
         line_count = len(line_ranges)
-        _Span = Span
-
-        for span_start, span_end, style in self._spans:
+        span_ranges: list[tuple[Span, int, int]] = []
+        for span in self._spans:
+            span_start, span_end, _style = span
             if span_start >= text_length:
                 continue
             span_end = min(text_length, span_end)
@@ -1259,7 +1259,44 @@ class Content(Visual):
                         break
                     end_line_no = (lower_bound + upper_bound) // 2
 
-            for line_no in range(start_line_no, end_line_no + 1):
+            span_ranges.append((span, start_line_no, end_line_no + 1))
+        self._divide_cache[offsets] = span_ranges
+        return span_ranges
+
+    def divide(self, offsets: Sequence[int]) -> list[Content]:
+        """Divide the content at the given offsets.
+
+        This will cut the content in to pieces, and return those pieces. Note that the number of pieces
+        return will be one greater than the number of cuts.
+
+        Args:
+            offsets: Sequence of offsets (in characters) of where to apply the cuts.
+
+        Returns:
+            List of Content instances which combined would be equal to the whole.
+        """
+        if not offsets:
+            return [self]
+
+        offsets = sorted(offsets)
+        text = self.plain
+        divide_offsets = tuple([0, *offsets, len(text)])
+        line_ranges = list(zip(divide_offsets, divide_offsets[1:]))
+        line_text = [text[start:end] for start, end in line_ranges]
+        new_lines = [Content(line, None) for line in line_text]
+
+        if not self._spans:
+            return new_lines
+
+        _line_appends = [line._spans.append for line in new_lines]
+        _Span = Span
+
+        for (
+            (span_start, span_end, style),
+            start_line,
+            end_line,
+        ) in self._divide_spans(divide_offsets):
+            for line_no in range(start_line, end_line):
                 line_start, line_end = line_ranges[line_no]
                 new_start = max(0, span_start - line_start)
                 new_end = min(span_end - line_start, line_end - line_start)
@@ -1286,10 +1323,15 @@ class Content(Visual):
             List[Content]: A list of Content, one per line of the original.
         """
         assert separator, "separator must not be empty"
-
         text = self.plain
         if separator not in text:
             return [self]
+
+        cache_key = (separator, include_separator, allow_blank)
+        if self._split_cache is None:
+            self._split_cache = FIFOCache(4)
+        if (cached_result := self._split_cache.get(cache_key)) is not None:
+            return cached_result.copy()
 
         if include_separator:
             lines = self.divide(
@@ -1310,6 +1352,7 @@ class Content(Visual):
         if not allow_blank and text.endswith(separator):
             lines.pop()
 
+        self._split_cache[cache_key] = lines
         return lines
 
     def rstrip(self, chars: str | None = None) -> Content:

@@ -1691,7 +1691,6 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
-
         def text_selection_started(screen: Screen) -> None:
             """Signal callback to unselect when arbitrary text selection starts."""
             self.selection = Selection(self.cursor_location, self.cursor_location)
@@ -1770,6 +1769,7 @@ TextArea {
             return
         if result := self._replace_via_keyboard(event.text, *self.selection):
             self.move_cursor(result.end_location)
+            self.focus()
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.

@@ -14,11 +14,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Markdown.get_stream` https://github.com/Textualize/textual/pull/5966
 - Added `textual.highlight` module for syntax highlighting https://github.com/Textualize/textual/pull/5966
 - Added `MessagePump.wait_for_refresh` method https://github.com/Textualize/textual/pull/5966
+- Added `Widget.container_scroll_offset` https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added `Markdown.source` attribute to MarkdownBlocks https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added extension mechanism to Markdown https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added `index` to `ListView.Selected` event https://github.com/Textualize/textual/pull/5973
+- Added `layout` switch to Static.update https://github.com/Textualize/textual/pull/5973
 
 ### Changed
 
 - Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
 - Change look of command palette, to drop accented borders https://github.com/Textualize/textual/pull/5966
+- Some style tweaks to Markdown https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+
+
+### Removed
+
+- Breaking change: Removed `Markdown.code_dark_theme`, `Markdown.code_light_theme`, `Markdown.code_indent_guides` which are no longer needed with the new code fence. https://github.com/Textualize/textual/pull/5967
+- Removed focus style from Markdown, as it can be a little expensive https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
 
 ## [4.0.0] - 2025-07-12
 

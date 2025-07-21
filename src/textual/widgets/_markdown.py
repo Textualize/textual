@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import re
+from contextlib import suppress
 from functools import partial
 from itertools import starmap
 from pathlib import Path, PurePath
@@ -28,6 +29,7 @@ from textual.reactive import reactive, var
 from textual.style import Style
 from textual.widget import Widget
 from textual.widgets import Static, Tree
+from textual.widgets._label import Label
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 """Information about the table of contents of a markdown document.
@@ -184,17 +186,39 @@ class MarkdownBlock(Static):
     }
     """
 
-    def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        markdown: Markdown,
+        token: Token,
+        source_range: tuple[int, int] | None = None,
+        *args,
+        **kwargs,
+    ) -> None:
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
         self._content: Content = Content()
-        self._token: Token | None = None
+        self._token: Token = token
         self._blocks: list[MarkdownBlock] = []
-        super().__init__(*args, **kwargs)
+        self._inline_token: Token | None = None
+        self.source_range: tuple[int, int] = source_range or (
+            (token.map[0], token.map[1]) if token.map is not None else (0, 0)
+        )
+
+        super().__init__(
+            *args, name=token.type, classes=f"level-{token.level}", **kwargs
+        )
 
     @property
     def select_container(self) -> Widget:
         return self.query_ancestor(Markdown)
+
+    @property
+    def source(self) -> str | None:
+        """The source of this block if known, otherwise `None`."""
+        if self.source_range is None:
+            return None
+        start, end = self.source_range
+        return "".join(self._markdown.source.splitlines(keepends=True)[start:end])
 
     def compose(self) -> ComposeResult:
         yield from self._blocks
@@ -212,31 +236,31 @@ class MarkdownBlock(Static):
         """Called on link click."""
         self.post_message(Markdown.LinkClicked(self._markdown, href))
 
-    def notify_style_update(self) -> None:
-        """If CSS was reloaded, try to rebuild this block from its token."""
-        super().notify_style_update()
-        self.rebuild()
-
     def rebuild(self) -> None:
         """Rebuild the content of the block if we have a source token."""
-        if self._token is not None:
-            self.build_from_token(self._token)
+        if self._inline_token is not None:
+            self.build_from_token(self._inline_token)
 
     def build_from_token(self, token: Token) -> None:
-        """Build the block content from its source token.
-
-        This method allows the block to be rebuilt on demand, which is useful
-        when the styles assigned to the
-        [Markdown.COMPONENT_CLASSES][textual.widgets.Markdown.COMPONENT_CLASSES]
-        change.
-
-        See https://github.com/Textualize/textual/issues/3464 for more information.
+        """Build inline block content from its source token.
 
         Args:
             token: The token from which this block is built.
         """
+        self._inline_token = token
+        content = self._token_to_content(token)
+        self.set_content(content)
 
-        self._token = token
+    def _token_to_content(self, token: Token) -> Content:
+        """Convert an inline token to Textual Content.
+
+        Args:
+            token: A markdown token.
+
+        Returns:
+            Content instance.
+        """
+
         null_style = Style.null()
         style_stack: list[Style] = [Style()]
         pending_content: list[tuple[str, Style]] = []
@@ -251,16 +275,17 @@ class MarkdownBlock(Static):
             if pending_content:
                 top_text, top_style = pending_content[-1]
                 if top_style == style:
+                    # Combine contiguous styles
                     pending_content[-1] = (top_text + text, style)
                 else:
                     pending_content.append((text, style))
             else:
                 pending_content.append((text, style))
 
-        get_visual_style = self._markdown.get_visual_style
         if token.children is None:
-            self.set_content(Content(""))
-            return
+            return Content("")
+        get_visual_style = self._markdown.get_visual_style
+
         for child in token.children:
             child_type = child.type
             if child_type == "text":
@@ -311,7 +336,7 @@ class MarkdownBlock(Static):
                 style_stack.pop()
 
         content = Content("").join(starmap(Content.styled, pending_content))
-        self.set_content(content)
+        return content
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -427,6 +452,14 @@ class MarkdownParagraph(MarkdownBlock):
     }
     """
 
+    async def _update_from_block(self, block: MarkdownBlock):
+        if isinstance(block, MarkdownParagraph):
+            self.set_content(block._content)
+            self._token = block._token
+            self._inline_token = block._inline_token
+        else:
+            await super()._update_from_block(block)
+
 
 class MarkdownBlockQuote(MarkdownBlock):
     """A block quote Markdown block."""
@@ -434,12 +467,12 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $primary 50%;
+        border-left: outer $text-primary 50%;
         margin: 1 0;
         padding: 0 1;
     }
     MarkdownBlockQuote:light {
-        border-left: outer $secondary;
+        border-left: outer $text-secondary;
     }
     MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
@@ -608,6 +641,17 @@ class MarkdownTableContent(Widget):
                 ).with_tooltip(cell.plain)
             self.last_row = row_index
 
+    def _update_content(self, headers: list[Content], rows: list[list[Content]]):
+        """Update cell contents."""
+        self.headers = headers
+        self.rows = rows
+        cells: list[Content] = [
+            *self.headers,
+            *[cell for row in self.rows for cell in row],
+        ]
+        for child, updated_cell in zip(self.query(MarkdownTableCellContents), cells):
+            child.update(updated_cell, layout=False)
+
     async def _update_rows(self, updated_rows: list[list[Content]]) -> None:
         self.styles.grid_size_columns = len(self.headers)
         await self.query_children(f".cell.row{self.last_row}").remove()
@@ -642,8 +686,8 @@ class MarkdownTable(MarkdownBlock):
     }
     """
 
-    def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
-        super().__init__(markdown, *args, **kwargs)
+    def __init__(self, markdown: Markdown, token: Token, *args, **kwargs) -> None:
+        super().__init__(markdown, token, *args, **kwargs)
         self._headers: list[Content] = []
         self._rows: list[list[Content]] = []
 
@@ -678,6 +722,30 @@ class MarkdownTable(MarkdownBlock):
         if rows and not rows[-1]:
             rows.pop()
         return headers, rows
+
+    def rebuild(self) -> None:
+        self._rebuild()
+
+    def _rebuild(self) -> None:
+        try:
+            table_content = self.query_one(MarkdownTableContent)
+        except NoMatches:
+            return
+
+        def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
+            for block in block._blocks:
+                if block._blocks:
+                    yield from flatten(block)
+                yield block
+
+        for block in flatten(self):
+            if block._inline_token is not None:
+                block.rebuild()
+
+        headers, rows = self._get_headers_and_rows()
+        self._headers = headers
+        self._rows = rows
+        table_content._update_content(headers, rows)
 
     async def _update_from_block(self, block: MarkdownBlock) -> None:
         """Special case to update a Markdown table.
@@ -727,10 +795,9 @@ class MarkdownBullet(Widget):
     DEFAULT_CSS = """
     MarkdownBullet {
         width: auto;
-        color: $text;
-        text-style: bold;
+        color: $text-primary;        
         &:light {
-            color: $secondary;
+            color: $text-secondary;
         }
     }
     """
@@ -761,9 +828,9 @@ class MarkdownListItem(MarkdownBlock):
     }
     """
 
-    def __init__(self, markdown: Markdown, bullet: str) -> None:
+    def __init__(self, markdown: Markdown, token: Token, bullet: str) -> None:
         self.bullet = bullet
-        super().__init__(markdown)
+        super().__init__(markdown, token)
 
 
 class MarkdownOrderedListItem(MarkdownListItem):
@@ -779,46 +846,54 @@ class MarkdownFence(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownFence {
-        padding: 1 2;
+        padding: 0;
         margin: 1 0;
-        overflow: hidden;
+        overflow: scroll hidden;
+        scrollbar-size-horizontal: 0;
+        scrollbar-size-vertical: 0;
         width: 1fr;
-        height: auto;        
+        height: auto;      
         color: rgb(210,210,210);
         background: black 10%;
-        text-wrap: nowrap;
-        text-overflow: clip;        
         &:light {
             background: white 30%;
-        }
-    }
-
-    MarkdownFence > * {
-        width: auto;
+        }        
+        & > Label {
+            padding: 1 2;
+        }        
     }
     """
 
-    def __init__(self, markdown: Markdown, code: str, lexer: str) -> None:
-        super().__init__(markdown)
+    def __init__(self, markdown: Markdown, token: Token, code: str) -> None:
+        super().__init__(markdown, token)
         self.code = code
-        self.lexer = lexer
-        self.theme = (
-            self._markdown.code_dark_theme
-            if self.app.current_theme.dark
-            else self._markdown.code_light_theme
-        )
-        code_content = highlight(self.code, language=lexer)
-        self.set_content(code_content)
+        self.lexer = token.info
+        self._highlighted_code = self.highlight(self.code, self.lexer)
 
+    def allow_horizontal_scroll(self) -> bool:
+        return True
 
-HEADINGS = {
-    "h1": MarkdownH1,
-    "h2": MarkdownH2,
-    "h3": MarkdownH3,
-    "h4": MarkdownH4,
-    "h5": MarkdownH5,
-    "h6": MarkdownH6,
-}
+    @classmethod
+    def highlight(cls, code: str, language: str) -> Content:
+        return highlight(code, language=language)
+
+    async def _update_from_block(self, block: MarkdownBlock):
+        if isinstance(block, MarkdownFence):
+            self.set_content(block._highlighted_code)
+        else:
+            await super()._update_from_block(block)
+
+    def on_mount(self):
+        self.set_content(self._highlighted_code)
+
+    def set_content(self, content: Content) -> None:
+        self._content = content
+        with suppress(NoMatches):
+            self.query_one("#code-content", Label).update(content)
+
+    def compose(self) -> ComposeResult:
+        yield Label(self._highlighted_code, id="code-content")
+
 
 NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
@@ -826,34 +901,32 @@ NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {        
-        height: auto;
-        padding: 0 2 1 2;
+        height: auto;        
+        padding: 0 2 0 2;
         layout: vertical;
-        color: $foreground;
-        # background: $surface;
+        color: $foreground;       
         overflow-y: hidden;
-        
-        &:focus {
-            background-tint: $foreground 5%;
+      
+        &:dark > .code_inline {
+            background: $warning 10%;
+            color: $text-warning 95%;
         }
-        &:dark .code_inline {
-            background: $warning-muted 30%;
-            color: $text-warning;
+        &:light > .code_inline {
+            background: $error 5%;
+            color: $text-error 95%;
         }
-        &:light .code_inline {
-            background: $error-muted 30%;
-            color: $text-error;
+        & > .em {
+            text-style: italic;        
         }
+        & > .strong {
+            text-style: bold;
+        }
+        & > .s {
+            text-style: strike;
+        }
+    
     }
-    .em {
-        text-style: italic;        
-    }
-    .strong {
-        text-style: bold;
-    }
-    .s {
-        text-style: strike;
-    }
+    
     
     """
 
@@ -870,16 +943,33 @@ class Markdown(Widget):
     | `strong` | Target text that is styled inline with strong. |
     """
 
-    BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
+    BULLETS = ["• ", "▪ ", "‣ ", "⭑ ", "◦ "]
+    """Unicode bullets used for unordered lists."""
 
-    code_dark_theme: reactive[str] = reactive("material")
-    """The theme to use for code blocks when the App theme is dark."""
-
-    code_light_theme: reactive[str] = reactive("material-light")
-    """The theme to use for code blocks when the App theme is light."""
-
-    code_indent_guides: reactive[bool] = reactive(True)
-    """Should code fences display indent guides?"""
+    BLOCKS: dict[str, type[MarkdownBlock]] = {
+        "h1": MarkdownH1,
+        "h2": MarkdownH2,
+        "h3": MarkdownH3,
+        "h4": MarkdownH4,
+        "h5": MarkdownH5,
+        "h6": MarkdownH6,
+        "hr": MarkdownHorizontalRule,
+        "paragraph_open": MarkdownParagraph,
+        "blockquote_open": MarkdownBlockQuote,
+        "bullet_list_open": MarkdownBulletList,
+        "ordered_list_open": MarkdownOrderedList,
+        "list_item_ordered_open": MarkdownOrderedListItem,
+        "list_item_unordered_open": MarkdownUnorderedListItem,
+        "table_open": MarkdownTable,
+        "tbody_open": MarkdownTBody,
+        "thead_open": MarkdownTHead,
+        "tr_open": MarkdownTR,
+        "th_open": MarkdownTH,
+        "td_open": MarkdownTD,
+        "fence": MarkdownFence,
+        "code_block": MarkdownFence,
+    }
+    """Mapping of block names on to a widget class."""
 
     def __init__(
         self,
@@ -908,6 +998,7 @@ class Markdown(Widget):
         self._table_of_contents: TableOfContentsType = []
         self._open_links = open_links
         self._last_parsed_line = 0
+        self._theme = ""
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -973,9 +1064,29 @@ class Markdown(Widget):
         """The markdown source."""
         return self._markdown or ""
 
+    def get_block_class(self, block_name: str) -> type[MarkdownBlock]:
+        """Get the block widget class.
+
+        Args:
+            block_name: Name of the block.
+
+        Returns:
+            A MarkdownBlock class
+        """
+        return self.BLOCKS[block_name]
+
     def notify_style_update(self) -> None:
-        self.update(self.source)
         super().notify_style_update()
+
+        if self.app.theme == self._theme:
+            return
+        self._theme = self.app.theme
+
+        def rebuild_all() -> None:
+            for child in self.query_children(MarkdownBlock):
+                child.rebuild()
+
+        self.call_after_refresh(rebuild_all)
 
     async def _on_mount(self, _: Mount) -> None:
         initial_markdown = self._initial_markdown
@@ -1032,18 +1143,6 @@ class Markdown(Widget):
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
         if self._open_links:
             self.app.open_url(event.href)
-
-    def _watch_code_dark_theme(self) -> None:
-        """React to the dark theme being changed."""
-        if self.app.current_theme.dark:
-            for block in self.query(MarkdownFence):
-                block._retheme()
-
-    def _watch_code_light_theme(self) -> None:
-        """React to the light theme being changed."""
-        if not self.app.current_theme.dark:
-            for block in self.query(MarkdownFence):
-                block._retheme()
 
     @staticmethod
     def sanitize_location(location: str) -> tuple[Path, str]:
@@ -1135,23 +1234,29 @@ class Markdown(Widget):
         stack: list[MarkdownBlock] = []
         stack_append = stack.append
 
+        get_block_class = self.get_block_class
+
         for token in tokens:
             token_type = token.type
             if token_type == "heading_open":
-                stack_append(HEADINGS[token.tag](self))
+                stack_append(get_block_class(token.tag)(self, token))
             elif token_type == "hr":
-                yield MarkdownHorizontalRule(self)
+                yield get_block_class("hr")(self, token)
             elif token_type == "paragraph_open":
-                stack_append(MarkdownParagraph(self))
+                stack_append(get_block_class("paragraph_open")(self, token))
             elif token_type == "blockquote_open":
-                stack_append(MarkdownBlockQuote(self))
+                stack_append(get_block_class("blockquote_open")(self, token))
             elif token_type == "bullet_list_open":
-                stack_append(MarkdownBulletList(self))
+                stack_append(get_block_class("bullet_list_open")(self, token))
             elif token_type == "ordered_list_open":
-                stack_append(MarkdownOrderedList(self))
+                stack_append(get_block_class("ordered_list_open")(self, token))
             elif token_type == "list_item_open":
                 if token.info:
-                    stack_append(MarkdownOrderedListItem(self, token.info))
+                    stack_append(
+                        get_block_class("list_item_ordered_open")(
+                            self, token, token.info
+                        )
+                    )
                 else:
                     item_count = sum(
                         1
@@ -1159,23 +1264,24 @@ class Markdown(Widget):
                         if isinstance(block, MarkdownUnorderedListItem)
                     )
                     stack_append(
-                        MarkdownUnorderedListItem(
+                        get_block_class("list_item_unordered_open")(
                             self,
+                            token,
                             self.BULLETS[item_count % len(self.BULLETS)],
                         )
                     )
             elif token_type == "table_open":
-                stack_append(MarkdownTable(self))
+                stack_append(get_block_class("table_open")(self, token))
             elif token_type == "tbody_open":
-                stack_append(MarkdownTBody(self))
+                stack_append(get_block_class("tbody_open")(self, token))
             elif token_type == "thead_open":
-                stack_append(MarkdownTHead(self))
+                stack_append(get_block_class("thead_open")(self, token))
             elif token_type == "tr_open":
-                stack_append(MarkdownTR(self))
+                stack_append(get_block_class("tr_open")(self, token))
             elif token_type == "th_open":
-                stack_append(MarkdownTH(self))
+                stack_append(get_block_class("th_open")(self, token))
             elif token_type == "td_open":
-                stack_append(MarkdownTD(self))
+                stack_append(get_block_class("td_open")(self, token))
             elif token_type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
@@ -1190,7 +1296,7 @@ class Markdown(Widget):
             elif token_type == "inline":
                 stack[-1].build_from_token(token)
             elif token_type in ("fence", "code_block"):
-                fence = MarkdownFence(self, token.content.rstrip(), token.info)
+                fence = get_block_class(token_type)(self, token, token.content.rstrip())
                 if stack:
                     stack[-1]._blocks.append(fence)
                 else:
@@ -1203,6 +1309,15 @@ class Markdown(Widget):
                     else:
                         yield external
 
+    def _build_from_source(self, markdown: str) -> list[MarkdownBlock]:
+        parser = (
+            MarkdownIt("gfm-like")
+            if self._parser_factory is None
+            else self._parser_factory()
+        )
+        tokens = parser.parse(markdown)
+        return list(self._parse_markdown(tokens, []))
+
     def update(self, markdown: str) -> AwaitComplete:
         """Update the document with new Markdown.
 
@@ -1212,6 +1327,7 @@ class Markdown(Widget):
         Returns:
             An optionally awaitable object. Await this to ensure that all children have been mounted.
         """
+        self._theme = self.app.theme
         parser = (
             MarkdownIt("gfm-like")
             if self._parser_factory is None
@@ -1288,8 +1404,8 @@ class Markdown(Widget):
 
         table_of_contents: TableOfContentsType = []
         self._markdown = self.source + markdown
-        updated_source = "\n".join(
-            self._markdown.splitlines()[self._last_parsed_line :]
+        updated_source = "".join(
+            self._markdown.splitlines(keepends=True)[self._last_parsed_line :]
         )
 
         async def await_append() -> None:
@@ -1299,14 +1415,24 @@ class Markdown(Widget):
                 existing_blocks = [
                     child for child in self.children if isinstance(child, MarkdownBlock)
                 ]
+                start_line = self._last_parsed_line
                 for token in reversed(tokens):
                     if token.map is not None and token.level == 0:
                         self._last_parsed_line += token.map[0]
                         break
+
                 new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+                for block in new_blocks:
+                    start, end = block.source_range
+                    block.source_range = (
+                        start + start_line,
+                        end + start_line,
+                    )
+
                 with self.app.batch_update():
                     if existing_blocks and new_blocks:
                         last_block = existing_blocks[-1]
+                        last_block.source_range = new_blocks[0].source_range
                         try:
                             await last_block._update_from_block(new_blocks[0])
                         except IndexError:
@@ -1436,8 +1562,6 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
 
     show_table_of_contents = reactive(True)
     """Show the table of contents?"""
-    code_indent_guides: reactive[bool] = reactive(True)
-    """Should code fences display indent guides?"""
     top_block = reactive("")
 
     navigator: var[Navigator] = var(Navigator)
@@ -1521,7 +1645,7 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
             parser_factory=self._parser_factory, open_links=self._open_links
         )
         markdown.can_focus = True
-        yield markdown.data_bind(MarkdownViewer.code_indent_guides)
+        yield markdown
         yield MarkdownTableOfContents(markdown)
 
     def _on_markdown_table_of_contents_updated(

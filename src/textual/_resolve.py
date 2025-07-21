@@ -222,6 +222,7 @@ def resolve_box_models(
     viewport_size: Size,
     margin: Size,
     resolve_dimension: Literal["width", "height"] = "width",
+    greedy: bool = True,
 ) -> list[BoxModel]:
     """Resolve box models for a list of dimensions
 
@@ -263,6 +264,7 @@ def resolve_box_models(
                     if (_height := fraction_height - margin_height) < 0
                     else _height
                 ),
+                greedy=greedy,
             )
         )
         for (_dimension, widget, (margin_width, margin_height)) in zip(
@@ -334,10 +336,7 @@ def resolve_box_models(
     box_models = [
         box_model
         or widget._get_box_model(
-            size,
-            viewport_size,
-            width_fraction,
-            height_fraction,
+            size, viewport_size, width_fraction, height_fraction, greedy=greedy
         )
         for widget, box_model in zip(widgets, box_models)
     ]
