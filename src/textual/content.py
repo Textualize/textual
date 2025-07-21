@@ -335,7 +335,9 @@ class Content(Visual):
         if not text:
             return Content("")
         span_length = cell_len(text) if cell_length is None else cell_length
-        new_content = cls(text, [Span(0, span_length, style)], span_length)
+        new_content = cls(
+            text, [Span(0, span_length, style)] if style else None, span_length
+        )
         return new_content
 
     @classmethod
@@ -822,6 +824,7 @@ class Content(Visual):
             extend_spans(
                 _Span(offset + start, offset + end, style)
                 for start, end, style in content._spans
+                if style
             )
             offset += len(content._text)
             if total_cell_length is not None:
@@ -1122,7 +1125,7 @@ class Content(Visual):
         get_style: Callable[[str | Style], Style]
         if parse_style is None:
 
-            def get_style(style: str | Style) -> Style:
+            def _get_style(style: str | Style) -> Style:
                 """The default get_style method."""
                 if isinstance(style, Style):
                     return style
@@ -1131,6 +1134,8 @@ class Content(Visual):
                 except Exception:
                     visual_style = Style.null()
                 return visual_style
+
+            get_style = _get_style
 
         else:
             get_style = parse_style

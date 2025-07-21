@@ -1375,7 +1375,7 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
         self._invalidate_css()
-        self.call_next(self.refresh_css)
+        self.call_next(partial(self.refresh_css, animate=False))
         self.call_next(self.theme_changed_signal.publish, theme)
 
     def _invalidate_css(self) -> None:
