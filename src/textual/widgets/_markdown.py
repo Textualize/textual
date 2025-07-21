@@ -236,13 +236,6 @@ class MarkdownBlock(Static):
         """Called on link click."""
         self.post_message(Markdown.LinkClicked(self._markdown, href))
 
-    # def notify_style_update(self) -> None:
-    #     # self.refresh(layout=True)
-
-    #     # """If CSS was reloaded, try to rebuild this block from its token."""
-    #     super().notify_style_update()
-    #     self.rebuild()
-
     def rebuild(self) -> None:
         """Rebuild the content of the block if we have a source token."""
         if self._inline_token is not None:
@@ -913,10 +906,7 @@ class Markdown(Widget):
         layout: vertical;
         color: $foreground;       
         overflow-y: hidden;
-        
-        # &:focus {
-        #     background-tint: $foreground 5%;
-        # }
+      
         &:dark > .code_inline {
             background: $warning 10%;
             color: $text-warning 95%;
