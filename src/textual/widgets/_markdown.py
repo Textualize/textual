@@ -750,7 +750,6 @@ class MarkdownTable(MarkdownBlock):
 
         for block in flatten(self):
             if block._inline_token is not None:
-                self.log(block._inline_token)
                 block.rebuild()
 
         headers, rows = self._get_headers_and_rows()
