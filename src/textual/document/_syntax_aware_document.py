@@ -10,6 +10,8 @@ except ImportError:
 
 from textual.document._document import Document, EditResult, Location, _utf8_encode
 
+_UINT32_MAX = 0xFFFFFFFF
+
 
 class SyntaxAwareDocumentError(Exception):
     """General error raised when SyntaxAwareDocument is used incorrectly."""
@@ -82,14 +84,17 @@ class SyntaxAwareDocument(Document):
         Returns:
             A tuple containing the nodes and text captured by the query.
         """
-        captures_kwargs = {}
-        if start_point is not None:
-            captures_kwargs["start_point"] = start_point
-        if end_point is not None:
-            captures_kwargs["end_point"] = end_point
-
         cursor = QueryCursor(query)
-        captures = cursor.captures(self._syntax_tree.root_node, **captures_kwargs)
+
+        if start_point is not None or end_point is not None:
+            if start_point is None:
+                start_point = (0, 0)
+            if end_point is None:
+                end_point = (_UINT32_MAX, _UINT32_MAX)
+
+            cursor.set_point_range(start_point, end_point)
+
+        captures = cursor.captures(self._syntax_tree.root_node)
         return captures
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
