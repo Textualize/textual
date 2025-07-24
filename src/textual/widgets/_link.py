@@ -13,9 +13,9 @@ class Link(Static, can_focus=True):
         width: auto;
         height: auto;
         min-height: 1;
-        color: $accent;
+        color: $text-accent;
         text-style: underline;
-        &:hover { color: $accent-lighten-1; }
+        &:hover { color: $accent; }
         &:focus { text-style: bold reverse; }
     }
     """
