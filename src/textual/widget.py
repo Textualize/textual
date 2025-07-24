@@ -1170,7 +1170,7 @@ class Widget(DOMNode):
 
         return visual_style
 
-    def _get_style(self, style: str) -> VisualStyle:
+    def _get_style(self, style: VisualStyle | str) -> VisualStyle:
         """A get_style method for use in Content.
 
         Args:
@@ -1179,7 +1179,8 @@ class Widget(DOMNode):
         Returns:
             A visual style if one is fund, otherwise `None`.
         """
-
+        if isinstance(style, VisualStyle):
+            return style
         if style.startswith("."):
             for node in self.ancestors_with_self:
                 if not isinstance(node, Widget):

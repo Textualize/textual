@@ -252,13 +252,6 @@ class MarkdownBlock(Static):
         """Called on link click."""
         self.post_message(Markdown.LinkClicked(self._markdown, href))
 
-    # def rebuild(self) -> None:
-    #     """Rebuild the content of the block if we have a source token."""
-    #     if self._inline_token is not None:
-    #         self.build_from_token(self._inline_token)
-    #     # for block in self.query_children(MarkdownBlock):
-    #     #     block.rebuild()
-
     def build_from_token(self, token: Token) -> None:
         """Build inline block content from its source token.
 
@@ -1069,19 +1062,6 @@ class Markdown(Widget):
             A MarkdownBlock class
         """
         return self.BLOCKS[block_name]
-
-    # def notify_style_update(self) -> None:
-    #     super().notify_style_update()
-
-    #     if self.app.theme == self._theme:
-    #         return
-    #     self._theme = self.app.theme
-
-    #     def rebuild_all() -> None:
-    #         for child in self.query_children(MarkdownBlock):
-    #             child.rebuild()
-
-    #     self.call_after_refresh(rebuild_all)
 
     async def _on_mount(self, _: Mount) -> None:
         initial_markdown = self._initial_markdown
