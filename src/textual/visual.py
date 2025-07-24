@@ -34,6 +34,7 @@ def is_visual(obj: object) -> bool:
 
 @dataclass(frozen=True)
 class RenderOptions:
+    """Additional options passed to `Visual.render_strips`."""
 
     get_style: Callable[[str | Style], Style]
     """Callable to get a style."""

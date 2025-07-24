@@ -719,30 +719,6 @@ class MarkdownTable(MarkdownBlock):
             rows.pop()
         return headers, rows
 
-    # def rebuild(self) -> None:
-    #     self._rebuild()
-
-    # def _rebuild(self) -> None:
-    #     try:
-    #         table_content = self.query_one(MarkdownTableContent)
-    #     except NoMatches:
-    #         return
-
-    #     def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
-    #         for block in block._blocks:
-    #             if block._blocks:
-    #                 yield from flatten(block)
-    #             yield block
-
-    #     for block in flatten(self):
-    #         if block._inline_token is not None:
-    #             block.rebuild()
-
-    #     headers, rows = self._get_headers_and_rows()
-    #     self._headers = headers
-    #     self._rows = rows
-    #     table_content._update_content(headers, rows)
-
     async def _update_from_block(self, block: MarkdownBlock) -> None:
         """Special case to update a Markdown table.
 
