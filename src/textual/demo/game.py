@@ -539,17 +539,20 @@ class GameScreen(PageScreen):
 
     DEFAULT_CSS = """
     GameScreen{       
-        align: center middle;
-        layers: instructions game;     
+        #container {
+            align: center middle;
+            layers: instructions game;     
+        }
     }
     """
 
     BINDINGS = [("n", "new_game", "New Game")]
 
     def compose(self) -> ComposeResult:
-        yield GameInstructions()
-        yield Game("\n" * 100, "", dimensions=(4, 4), tile_size=(16, 8))
-        yield Footer()
+        with containers.Vertical(id="container"):
+            yield GameInstructions()
+            yield Game("\n" * 100, "", dimensions=(4, 4), tile_size=(16, 8))
+            yield Footer()
 
     def action_shuffle(self) -> None:
         self.query_one(Game).shuffle()
