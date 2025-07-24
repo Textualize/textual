@@ -1316,7 +1316,7 @@ class Spacing(NamedTuple):
         )
 
 
-if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS") == "1":
+if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":
     try:
         from textual_speedups import Offset, Region, Size, Spacing
     except ImportError:
