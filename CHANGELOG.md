@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Content markup can now accept component classes when preceded by a dot, e.g. "Hello [.my_custo_style]World[/]!" https://github.com/Textualize/textual/pull/5981
 - Breaking change: `Visual.render_strips` has a new signature. If you aren't explicitly building Visuals then this won't effect you. https://github.com/Textualize/textual/pull/5981
 - Breaking change: The component classes on Markdown have been moved to MarkdownBlock. This won't affect you unless you have customize the Markdown CSS https://github.com/Textualize/textual/pull/5981
+- The textual-speedups library will now be imported automatically if it is installed. Set `TEXTUAL_SPEEDUPS=0` to disable.
 
 ### Removed
 
