@@ -272,21 +272,32 @@ class MarkdownBlock(Static):
             Content instance.
         """
 
+        if token.children is None:
+            return Content("")
+
         tokens: list[str] = []
         spans: list[Span] = []
         style_stack: list[tuple[Style | str, int]] = []
         position: int = 0
 
         def add_content(text: str) -> None:
+            """Add text to the tokens list, and advance the position.
+
+            Args:
+                text: Text to add.
+
+            """
             nonlocal position
             tokens.append(text)
             position += len(text)
 
         def add_style(style: Style | str) -> None:
-            style_stack.append((style, position))
+            """Add a style to the stack.
 
-        if token.children is None:
-            return Content("")
+            Args:
+                style: A style as Style instance or string.
+            """
+            style_stack.append((style, position))
 
         position = 0
 
