@@ -1140,9 +1140,15 @@ class Widget(DOMNode):
                     text_background = background + styles.background.tint(
                         styles.background_tint
                     )
-                    background += (
-                        styles.background.tint(styles.background_tint)
-                    ).multiply_alpha(opacity)
+                    if partial:
+                        background_tint = styles.background.tint(styles.background_tint)
+                        background = background.blend(
+                            background_tint, 1 - background_tint.a
+                        ).multiply_alpha(opacity)
+                    else:
+                        background += (
+                            styles.background.tint(styles.background_tint)
+                        ).multiply_alpha(opacity)
                 else:
                     text_background = background
                 if has_rule("color"):
@@ -1164,7 +1170,7 @@ class Widget(DOMNode):
 
         return visual_style
 
-    def _get_style(self, style: str) -> VisualStyle | None:
+    def _get_style(self, style: str) -> VisualStyle:
         """A get_style method for use in Content.
 
         Args:
@@ -1174,8 +1180,18 @@ class Widget(DOMNode):
             A visual style if one is fund, otherwise `None`.
         """
         if style.startswith("."):
-            return self.get_visual_style(style[1:])
-        return None
+            for node in self.ancestors_with_self:
+                if not isinstance(node, Widget):
+                    break
+                try:
+                    visual_style = node.get_visual_style(style[1:], partial=True)
+                    break
+                except KeyError:
+                    continue
+            else:
+                raise KeyError(f"No matching component class found for '{style}'")
+            return visual_style
+        return VisualStyle.parse(style)
 
     @overload
     def render_str(self, text_content: str) -> Content: ...

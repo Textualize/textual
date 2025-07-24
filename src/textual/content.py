@@ -502,6 +502,7 @@ class Content(Visual):
         selection: Selection | None = None,
         selection_style: Style | None = None,
         post_style: Style | None = None,
+        get_style: Callable[[str | Style], Style] = Style.parse,
     ) -> list[_FormattedLine]:
         """Wraps the text and applies formatting.
 
@@ -543,15 +544,17 @@ class Content(Visual):
                 if overflow == "fold":
                     cuts = list(range(0, line.cell_length, width))[1:]
                     new_lines = [
-                        _FormattedLine(line, width, y=y, align=align)
+                        _FormattedLine(get_style, line, width, y=y, align=align)
                         for line in line.divide(cuts)
                     ]
                 else:
                     line = line.truncate(width, ellipsis=overflow == "ellipsis")
-                    content_line = _FormattedLine(line, width, y=y, align=align)
+                    content_line = _FormattedLine(
+                        get_style, line, width, y=y, align=align
+                    )
                     new_lines = [content_line]
             else:
-                content_line = _FormattedLine(line, width, y=y, align=align)
+                content_line = _FormattedLine(get_style, line, width, y=y, align=align)
                 offsets = divide_line(
                     line.plain, width - line_pad * 2, fold=overflow == "fold"
                 )
@@ -568,6 +571,7 @@ class Content(Visual):
 
                 new_lines = [
                     _FormattedLine(
+                        get_style,
                         content.rstrip_end(width).pad(line_pad, line_pad),
                         width,
                         offset,
@@ -584,6 +588,7 @@ class Content(Visual):
 
     def render_strips(
         self,
+        get_style: Callable[[str | Style], Style],
         rules: RulesMap,
         width: int,
         height: int | None,
@@ -621,6 +626,7 @@ class Content(Visual):
             selection=selection,
             selection_style=selection_style,
             post_style=post_style,
+            get_style=get_style,
         )
 
         if height is not None:
@@ -1478,6 +1484,7 @@ class _FormattedLine:
 
     def __init__(
         self,
+        get_style: Callable[[str | Style], Style],
         content: Content,
         width: int,
         x: int = 0,
@@ -1486,6 +1493,7 @@ class _FormattedLine:
         line_end: bool = False,
         link_style: Style | None = None,
     ) -> None:
+        self.get_style = get_style
         self.content = content
         self.width = width
         self.x = x
@@ -1506,6 +1514,7 @@ class _FormattedLine:
         content = self.content
         x = self.x
         y = self.y
+        get_style = self.get_style
 
         if align in ("start", "left") or (align == "justify" and self.line_end):
             pass
@@ -1534,7 +1543,9 @@ class _FormattedLine:
             add_segment = segments.append
             x = self.x
             for index, word in enumerate(words):
-                for text, text_style in word.render(style, end=""):
+                for text, text_style in word.render(
+                    style, end="", parse_style=get_style
+                ):
                     add_segment(
                         _Segment(
                             text, (style + text_style).rich_style_with_offset(x, y)
@@ -1552,7 +1563,7 @@ class _FormattedLine:
             else []
         )
         add_segment = segments.append
-        for text, text_style in content.render(style, end=""):
+        for text, text_style in content.render(style, end="", parse_style=get_style):
             add_segment(
                 _Segment(text, (style + text_style).rich_style_with_offset(x, y))
             )

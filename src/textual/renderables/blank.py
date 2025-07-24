@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from rich.style import Style as RichStyle
 
 from textual.color import Color
@@ -27,6 +29,7 @@ class Blank(Visual):
 
     def render_strips(
         self,
+        get_style: Callable[[str | Style], Style],
         rules: RulesMap,
         width: int,
         height: int | None,

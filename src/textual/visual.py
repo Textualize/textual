@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from itertools import islice
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Callable, Protocol
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType
@@ -113,6 +113,7 @@ class Visual(ABC):
     @abstractmethod
     def render_strips(
         self,
+        get_style: Callable[[str | Style], Style],
         rules: RulesMap,
         width: int,
         height: int | None,
@@ -131,6 +132,7 @@ class Visual(ABC):
             selection: Selection information, if applicable, otherwise `None`.
             selection_style: Selection style if `selection` is not `None`.
             post_style: Optional style to apply post render.
+            get_style: Callable to get a style.
 
         Returns:
             An list of Strips.
@@ -216,6 +218,7 @@ class Visual(ABC):
             selection_style = None
 
         strips = visual.render_strips(
+            widget._get_style,
             widget.styles,
             width,
             height,
@@ -304,6 +307,7 @@ class RichVisual(Visual):
 
     def render_strips(
         self,
+        get_style: Callable[[str | Style], Style],
         rules: RulesMap,
         width: int,
         height: int | None,
@@ -366,6 +370,7 @@ class Padding(Visual):
 
     def render_strips(
         self,
+        get_style: Callable[[str | Style], Style],
         rules: RulesMap,
         width: int,
         height: int | None,
@@ -381,6 +386,7 @@ class Padding(Visual):
             return []
 
         strips = self._visual.render_strips(
+            get_style,
             rules,
             render_width,
             None if height is None else height - padding.height,
