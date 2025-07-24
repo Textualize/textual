@@ -88,6 +88,7 @@ class MarkdownStream:
         # Append the new fragment, and set an event to tell the _run loop to wake up
         self._pending.append(markdown_fragment)
         self._new_markup.set()
+        await asyncio.sleep(0)
 
     async def _run(self) -> None:
         """Run a task to append markdown fragments when available."""
@@ -99,9 +100,11 @@ class MarkdownStream:
                 await asyncio.shield(self.markdown_widget.append(new_markdown))
         except asyncio.CancelledError:
             # Task has been cancelled, add any outstanding markdown
-            new_markdown = "".join(self._pending)
-            if new_markdown:
-                await self.markdown_widget.append(new_markdown)
+            pass
+
+        new_markdown = "".join(self._pending)
+        if new_markdown:
+            await self.markdown_widget.append(new_markdown)
 
 
 class Navigator:
