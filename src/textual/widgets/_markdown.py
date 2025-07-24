@@ -88,6 +88,7 @@ class MarkdownStream:
         # Append the new fragment, and set an event to tell the _run loop to wake up
         self._pending.append(markdown_fragment)
         self._new_markup.set()
+        # Allow the task to wake up and actually display the new markdown
         await asyncio.sleep(0)
 
     async def _run(self) -> None:
