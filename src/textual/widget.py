@@ -1179,6 +1179,7 @@ class Widget(DOMNode):
         Returns:
             A visual style if one is fund, otherwise `None`.
         """
+
         if style.startswith("."):
             for node in self.ancestors_with_self:
                 if not isinstance(node, Widget):
@@ -1191,7 +1192,11 @@ class Widget(DOMNode):
             else:
                 raise KeyError(f"No matching component class found for '{style}'")
             return visual_style
-        return VisualStyle.parse(style)
+        try:
+            visual_style = VisualStyle.parse(style)
+        except Exception:
+            visual_style = VisualStyle.null()
+        return visual_style
 
     @overload
     def render_str(self, text_content: str) -> Content: ...
