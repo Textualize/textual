@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from itertools import islice
 from typing import TYPE_CHECKING, Callable, Protocol
 
@@ -29,6 +30,21 @@ if TYPE_CHECKING:
 def is_visual(obj: object) -> bool:
     """Check if the given object is a Visual or supports the Visual protocol."""
     return isinstance(obj, Visual) or hasattr(obj, "textualize")
+
+
+@dataclass(frozen=True)
+class RenderOptions:
+
+    get_style: Callable[[str | Style], Style]
+    """Callable to get a style."""
+    rules: RulesMap
+    """Mapping of style rules."""
+    selection: Selection | None = None
+    """Text selection information."""
+    selection_style: Style | None = None
+    """Style of text selection."""
+    post_style: Style | None = None
+    """Optional style to apply post render."""
 
 
 # Note: not runtime checkable currently, as I've found that to be slow
@@ -112,27 +128,15 @@ class Visual(ABC):
 
     @abstractmethod
     def render_strips(
-        self,
-        get_style: Callable[[str | Style], Style],
-        rules: RulesMap,
-        width: int,
-        height: int | None,
-        style: Style,
-        selection: Selection | None = None,
-        selection_style: Style | None = None,
-        post_style: Style | None = None,
+        self, width: int, height: int | None, style: Style, options: RenderOptions
     ) -> list[Strip]:
         """Render the Visual into an iterable of strips.
 
         Args:
-            rules: A mapping of style rules, such as the Widgets `styles` object.
             width: Width of desired render.
             height: Height of desired render or `None` for any height.
             style: The base style to render on top of.
-            selection: Selection information, if applicable, otherwise `None`.
-            selection_style: Selection style if `selection` is not `None`.
-            post_style: Optional style to apply post render.
-            get_style: Callable to get a style.
+            options: Additional render options.
 
         Returns:
             An list of Strips.
@@ -218,13 +222,15 @@ class Visual(ABC):
             selection_style = None
 
         strips = visual.render_strips(
-            widget._get_style,
-            widget.styles,
             width,
             height,
             style,
-            selection,
-            selection_style,
+            RenderOptions(
+                widget._get_style,
+                widget.styles,
+                selection,
+                selection_style,
+            ),
         )
         strips = [strip._apply_link_style(widget.link_style) for strip in strips]
 
@@ -306,25 +312,28 @@ class RichVisual(Visual):
         return height
 
     def render_strips(
-        self,
-        get_style: Callable[[str | Style], Style],
-        rules: RulesMap,
-        width: int,
-        height: int | None,
-        style: Style,
-        selection: Selection | None = None,
-        selection_style: Style | None = None,
-        post_style: Style | None = None,
+        self, width: int, height: int | None, style: Style, options: RenderOptions
     ) -> list[Strip]:
+        """Render the Visual into an iterable of strips. Part of the Visual protocol.
+
+        Args:
+            width: Width of desired render.
+            height: Height of desired render or `None` for any height.
+            style: The base style to render on top of.
+            options: Additional render options.
+
+        Returns:
+            An list of Strips.
+        """
         console = active_app.get().console
-        options = console.options.update(
+        console_options = console.options.update(
             highlight=False,
             width=width,
             height=height,
         )
         rich_style = style.rich_style
         renderable = self._widget.post_render(self._renderable, rich_style)
-        segments = console.render(renderable, options.update_width(width))
+        segments = console.render(renderable, console_options.update_width(width))
         strips = [
             Strip(line)
             for line in islice(
@@ -369,16 +378,19 @@ class Padding(Visual):
         )
 
     def render_strips(
-        self,
-        get_style: Callable[[str | Style], Style],
-        rules: RulesMap,
-        width: int,
-        height: int | None,
-        style: Style,
-        selection: Selection | None = None,
-        selection_style: Style | None = None,
-        post_style: Style | None = None,
+        self, width: int, height: int | None, style: Style, options: RenderOptions
     ) -> list[Strip]:
+        """Render the Visual into an iterable of strips. Part of the Visual protocol.
+
+        Args:
+            width: Width of desired render.
+            height: Height of desired render or `None` for any height.
+            style: The base style to render on top of.
+            options: Additional render options.
+
+        Returns:
+            An list of Strips.
+        """
         padding = self._spacing
         top, right, bottom, left = self._spacing
         render_width = width - (left + right)
@@ -386,13 +398,10 @@ class Padding(Visual):
             return []
 
         strips = self._visual.render_strips(
-            get_style,
-            rules,
             render_width,
             None if height is None else height - padding.height,
             style,
-            selection,
-            selection_style,
+            options,
         )
 
         if padding:

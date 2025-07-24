@@ -33,7 +33,7 @@ from textual.css.types import TextAlign, TextOverflow
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.style import Style
-from textual.visual import RulesMap, Visual
+from textual.visual import RenderOptions, RulesMap, Visual
 
 __all__ = ["ContentType", "Content", "Span"]
 
@@ -587,26 +587,15 @@ class Content(Visual):
         return output_lines
 
     def render_strips(
-        self,
-        get_style: Callable[[str | Style], Style],
-        rules: RulesMap,
-        width: int,
-        height: int | None,
-        style: Style,
-        selection: Selection | None = None,
-        selection_style: Style | None = None,
-        post_style: Style | None = None,
+        self, width: int, height: int | None, style: Style, options: RenderOptions
     ) -> list[Strip]:
-        """Render the visual into an iterable of strips. Part of the Visual protocol.
+        """Render the Visual into an iterable of strips. Part of the Visual protocol.
 
         Args:
-            rules: A mapping of style rules, such as the Widgets `styles` object.
             width: Width of desired render.
             height: Height of desired render or `None` for any height.
             style: The base style to render on top of.
-            selection: Selection information, if applicable, otherwise `None`.
-            selection_style: Selection style if `selection` is not `None`.
-            post_style: Style | None = None,
+            options: Additional render options.
 
         Returns:
             An list of Strips.
@@ -615,7 +604,7 @@ class Content(Visual):
         if not width:
             return []
 
-        get_rule = rules.get
+        get_rule = options.rules.get
         lines = self._wrap_and_format(
             width,
             align=get_rule("text_align", "left"),
@@ -623,10 +612,10 @@ class Content(Visual):
             no_wrap=get_rule("text_wrap", "wrap") == "nowrap",
             line_pad=get_rule("line_pad", 0),
             tab_size=8,
-            selection=selection,
-            selection_style=selection_style,
-            post_style=post_style,
-            get_style=get_style,
+            selection=options.selection,
+            selection_style=options.selection_style,
+            post_style=options.post_style,
+            get_style=options.get_style,
         )
 
         if height is not None:
