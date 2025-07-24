@@ -4302,9 +4302,9 @@ class App(Generic[ReturnType], DOMNode):
         from textual.widgets import HelpPanel
 
         try:
-            self.query_one(HelpPanel)
+            self.screen.query_one(HelpPanel)
         except NoMatches:
-            self.mount(HelpPanel())
+            self.screen.mount(HelpPanel())
 
     def action_notify(
         self, message: str, title: str = "", severity: str = "information"
