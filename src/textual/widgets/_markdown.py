@@ -4,7 +4,6 @@ import asyncio
 import re
 from contextlib import suppress
 from functools import partial
-from itertools import starmap
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
 from urllib.parse import unquote
@@ -18,7 +17,7 @@ from textual._slug import TrackedSlugs, slug
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
-from textual.content import Content
+from textual.content import Content, Span
 from textual.css.query import NoMatches
 from textual.events import Mount
 from textual.highlight import highlight
@@ -179,6 +178,19 @@ class Navigator:
 class MarkdownBlock(Static):
     """The base class for a Markdown Element."""
 
+    COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
+    """
+    These component classes target standard inline markdown styles.
+    Changing these will potentially break the standard markdown formatting.
+
+    | Class | Description |
+    | :- | :- |
+    | `code_inline` | Target text that is styled as inline code. |
+    | `em` | Target text that is emphasized inline. |
+    | `s` | Target text that is styled inline with strikethrough. |
+    | `strong` | Target text that is styled inline with strong. |
+    """
+
     DEFAULT_CSS = """
     MarkdownBlock {
         width: 1fr;
@@ -220,6 +232,10 @@ class MarkdownBlock(Static):
         start, end = self.source_range
         return "".join(self._markdown.source.splitlines(keepends=True)[start:end])
 
+    def _copy_context(self, block: MarkdownBlock) -> None:
+        """Copy the context from another block."""
+        self._token = block._token
+
     def compose(self) -> ComposeResult:
         yield from self._blocks
         self._blocks.clear()
@@ -235,11 +251,6 @@ class MarkdownBlock(Static):
     async def action_link(self, href: str) -> None:
         """Called on link click."""
         self.post_message(Markdown.LinkClicked(self._markdown, href))
-
-    def rebuild(self) -> None:
-        """Rebuild the content of the block if we have a source token."""
-        if self._inline_token is not None:
-            self.build_from_token(self._inline_token)
 
     def build_from_token(self, token: Token) -> None:
         """Build inline block content from its source token.
@@ -261,81 +272,78 @@ class MarkdownBlock(Static):
             Content instance.
         """
 
-        null_style = Style.null()
-        style_stack: list[Style] = [Style()]
-        pending_content: list[tuple[str, Style]] = []
-
-        def add_content(text: str, style: Style) -> None:
-            """Add text and style to output content.
-
-            Args:
-                text: String of content.
-                style: Style of string.
-            """
-            if pending_content:
-                top_text, top_style = pending_content[-1]
-                if top_style == style:
-                    # Combine contiguous styles
-                    pending_content[-1] = (top_text + text, style)
-                else:
-                    pending_content.append((text, style))
-            else:
-                pending_content.append((text, style))
-
         if token.children is None:
             return Content("")
-        get_visual_style = self._markdown.get_visual_style
+
+        tokens: list[str] = []
+        spans: list[Span] = []
+        style_stack: list[tuple[Style | str, int]] = []
+        position: int = 0
+
+        def add_content(text: str) -> None:
+            """Add text to the tokens list, and advance the position.
+
+            Args:
+                text: Text to add.
+
+            """
+            nonlocal position
+            tokens.append(text)
+            position += len(text)
+
+        def add_style(style: Style | str) -> None:
+            """Add a style to the stack.
+
+            Args:
+                style: A style as Style instance or string.
+            """
+            style_stack.append((style, position))
+
+        position = 0
+
+        def close_tag() -> None:
+            style, start = style_stack.pop()
+            spans.append(Span(start, position, style))
 
         for child in token.children:
             child_type = child.type
             if child_type == "text":
-                add_content(re.sub(r"\s+", " ", child.content), style_stack[-1])
+                add_content(re.sub(r"\s+", " ", child.content))
             if child_type == "hardbreak":
-                add_content("\n", null_style)
+                add_content("\n")
             if child_type == "softbreak":
-                add_content(" ", style_stack[-1])
+                add_content(" ")
             elif child_type == "code_inline":
-                add_content(
-                    child.content,
-                    style_stack[-1] + get_visual_style("code_inline"),
-                )
+                add_style(".code_inline")
+                add_content(child.content)
+                close_tag()
             elif child_type == "em_open":
-                style_stack.append(
-                    style_stack[-1] + get_visual_style("em", partial=True)
-                )
+                add_style(".em")
             elif child_type == "strong_open":
-                style_stack.append(
-                    style_stack[-1] + get_visual_style("strong", partial=True)
-                )
+                add_style(".strong")
             elif child_type == "s_open":
-                style_stack.append(
-                    style_stack[-1] + get_visual_style("s", partial=True)
-                )
+                add_style(".s")
             elif child_type == "link_open":
                 href = child.attrs.get("href", "")
                 action = f"link({href!r})"
-                style_stack.append(
-                    style_stack[-1] + Style.from_meta({"@click": action})
-                )
+                add_style(Style.from_meta({"@click": action}))
             elif child_type == "image":
                 href = child.attrs.get("src", "")
                 alt = child.attrs.get("alt", "")
                 action = f"link({href!r})"
-                style_stack.append(
-                    style_stack[-1] + Style.from_meta({"@click": action})
-                )
-                add_content("🖼  ", style_stack[-1])
+                add_style(Style.from_meta({"@click": action}))
+                add_content("🖼  ")
                 if alt:
-                    add_content(f"({alt})", style_stack[-1])
+                    add_content(f"({alt})")
                 if child.children is not None:
                     for grandchild in child.children:
-                        add_content(grandchild.content, style_stack[-1])
-                style_stack.pop()
+                        add_content(grandchild.content)
+                close_tag()
 
             elif child_type.endswith("_close"):
-                style_stack.pop()
+                close_tag()
 
-        content = Content("").join(starmap(Content.styled, pending_content))
+        content = Content("".join(tokens), spans=spans)
         return content
 
 
@@ -455,8 +463,7 @@ class MarkdownParagraph(MarkdownBlock):
     async def _update_from_block(self, block: MarkdownBlock):
         if isinstance(block, MarkdownParagraph):
             self.set_content(block._content)
-            self._token = block._token
-            self._inline_token = block._inline_token
+            self._copy_context(block)
         else:
             await super()._update_from_block(block)
 
@@ -563,7 +570,7 @@ class MarkdownOrderedList(MarkdownList):
                 bullet.symbol = f"{number}{suffix}".rjust(symbol_size + 1)
                 yield Horizontal(bullet, Vertical(*block._blocks))
 
-        self._blocks.clear()
+        # self._blocks.clear()
 
 
 class MarkdownTableCellContents(Static):
@@ -723,30 +730,6 @@ class MarkdownTable(MarkdownBlock):
             rows.pop()
         return headers, rows
 
-    def rebuild(self) -> None:
-        self._rebuild()
-
-    def _rebuild(self) -> None:
-        try:
-            table_content = self.query_one(MarkdownTableContent)
-        except NoMatches:
-            return
-
-        def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
-            for block in block._blocks:
-                if block._blocks:
-                    yield from flatten(block)
-                yield block
-
-        for block in flatten(self):
-            if block._inline_token is not None:
-                block.rebuild()
-
-        headers, rows = self._get_headers_and_rows()
-        self._headers = headers
-        self._rows = rows
-        table_content._update_content(headers, rows)
-
     async def _update_from_block(self, block: MarkdownBlock) -> None:
         """Special case to update a Markdown table.
 
@@ -877,14 +860,17 @@ class MarkdownFence(MarkdownBlock):
     def highlight(cls, code: str, language: str) -> Content:
         return highlight(code, language=language)
 
+    def _copy_context(self, block: MarkdownBlock) -> None:
+        if isinstance(block, MarkdownFence):
+            self.lexer = block.lexer
+            self._token = block._token
+
     async def _update_from_block(self, block: MarkdownBlock):
         if isinstance(block, MarkdownFence):
             self.set_content(block._highlighted_code)
+            self._copy_context(block)
         else:
             await super()._update_from_block(block)
-
-    def on_mount(self):
-        self.set_content(self._highlighted_code)
 
     def set_content(self, content: Content) -> None:
         self._content = content
@@ -906,41 +892,30 @@ class Markdown(Widget):
         layout: vertical;
         color: $foreground;       
         overflow-y: hidden;
-      
-        &:dark > .code_inline {
-            background: $warning 10%;
-            color: $text-warning 95%;
-        }
-        &:light > .code_inline {
-            background: $error 5%;
-            color: $text-error 95%;
-        }
-        & > .em {
-            text-style: italic;        
-        }
-        & > .strong {
-            text-style: bold;
-        }
-        & > .s {
-            text-style: strike;
+              
+        MarkdownBlock {
+            &:dark > .code_inline {                
+                background: $warning 10%;
+                color: $text-warning 95%;
+            }
+            &:light > .code_inline {
+                background: $error 5%;
+                color: $text-error 95%;
+            }
+            & > .em {
+                text-style: italic;                        
+            }
+            & > .strong {
+                text-style: bold;
+            }
+            & > .s {
+                text-style: strike;
+            }
         }
     
     }
     
     
-    """
-
-    COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
-    """
-    These component classes target standard inline markdown styles.
-    Changing these will potentially break the standard markdown formatting.
-
-    | Class | Description |
-    | :- | :- |
-    | `code_inline` | Target text that is styled as inline code. |
-    | `em` | Target text that is emphasized inline. |
-    | `s` | Target text that is styled inline with strikethrough. |
-    | `strong` | Target text that is styled inline with strong. |
     """
 
     BULLETS = ["• ", "▪ ", "‣ ", "⭑ ", "◦ "]
@@ -1074,19 +1049,6 @@ class Markdown(Widget):
             A MarkdownBlock class
         """
         return self.BLOCKS[block_name]
-
-    def notify_style_update(self) -> None:
-        super().notify_style_update()
-
-        if self.app.theme == self._theme:
-            return
-        self._theme = self.app.theme
-
-        def rebuild_all() -> None:
-            for child in self.query_children(MarkdownBlock):
-                child.rebuild()
-
-        self.call_after_refresh(rebuild_all)
 
     async def _on_mount(self, _: Mount) -> None:
         initial_markdown = self._initial_markdown

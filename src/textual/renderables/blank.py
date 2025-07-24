@@ -5,9 +5,8 @@ from rich.style import Style as RichStyle
 from textual.color import Color
 from textual.content import Style
 from textual.css.styles import RulesMap
-from textual.selection import Selection
 from textual.strip import Strip
-from textual.visual import Visual
+from textual.visual import RenderOptions, Visual
 
 
 class Blank(Visual):
@@ -26,14 +25,18 @@ class Blank(Visual):
         return 1
 
     def render_strips(
-        self,
-        rules: RulesMap,
-        width: int,
-        height: int | None,
-        style: Style,
-        selection: Selection | None = None,
-        selection_style: Style | None = None,
-        post_style: Style | None = None,
+        self, width: int, height: int | None, style: Style, options: RenderOptions
     ) -> list[Strip]:
+        """Render the Visual into an iterable of strips. Part of the Visual protocol.
+
+        Args:
+            width: Width of desired render.
+            height: Height of desired render or `None` for any height.
+            style: The base style to render on top of.
+            options: Additional render options.
+
+        Returns:
+            An list of Strips.
+        """
         line_count = 1 if height is None else height
         return [Strip.blank(width, self._rich_style)] * line_count

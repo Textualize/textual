@@ -5,6 +5,8 @@ from rich.text import Text
 
 from textual.content import Content, Span
 from textual.style import Style
+from textual.visual import RenderOptions
+from textual.widget import Widget
 
 
 def test_blank():
@@ -282,4 +284,5 @@ def test_split_and_tabs():
     ]
 
     content = Content("--- hello.py\t2024-01-15 10:30:00.000000000 -0800", spans=spans)
-    content.render_strips({}, 80, None, Style())
+    widget = Widget()
+    content.render_strips(0, None, Style(), RenderOptions(widget._get_style, {}))
