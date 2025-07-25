@@ -90,14 +90,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with pushing screens when Input has mouse captured https://github.com/Textualize/textual/pull/5900
 - Implemented workaround for Ghostty bug which produces negative mouse coordinates https://github.com/Textualize/textual/pull/5926
 
-## Changed
+### Changed
 
 - Widget.release_mouse will now only release the mouse, if it was captured by self https://github.com/Textualize/textual/pull/5900
 - Some optimizations to TextArea, which may be noticeable during scrolling (note: may break snapshots with a TextArea) https://github.com/Textualize/textual/pull/5925
 - Selecting in the TextArea now hides the cursor until you release the mouse https://github.com/Textualize/textual/pull/5925
 - Read only TextAreas will no longer display a cursor https://github.com/Textualize/textual/pull/5925
 
-## Added
+### Added
 
 - Added `TextArea.highlight_cursor_line` toggle https://github.com/Textualize/textual/pull/5924
 
@@ -255,7 +255,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed IndexError in OptionList https://github.com/Textualize/textual/pull/5574
 - Fixed issue with clear_panes breaking tabbed content https://github.com/Textualize/textual/pull/5573
 
-## Changed
+### Changed
 
 - The user can now interrupt a scroll to end by grabbing the scrollbar or scrolling in any other way. Press ++end++ or scroll to the end to restore default behavior. This is more intuitive that it may sound.
 
@@ -382,7 +382,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 
 ## [0.89.0] - 2024-12-05
 
-## Added
+### Added
 
 - Added "tab" border style https://github.com/Textualize/textual/pull/5335
 - Added support for XML syntax highlighting https://github.com/Textualize/textual/pull/5320
@@ -395,12 +395,12 @@ the selection if there is one, otherwise it will cut the current line https://gi
 - Added `Input.selected_text` property for getting the currently selected text https://github.com/Textualize/textual/pull/5340
 - `Input` can now be scrolled independently of cursor position (hold shift and scroll with the mouse wheel in supported environments) https://github.com/Textualize/textual/pull/5340
 
-## Changed
+### Changed
 
 - Breaking change: Removed `Input` reactive attributes `view_position`, `cursor_position` (now exists as a property which proxies to the `Input.selection` reactive attribute), https://github.com/Textualize/textual/pull/5340
 - `Input.restrict` now checked on all edit operations (rather than just on `insert`) https://github.com/Textualize/textual/pull/5340
 
-## Fixed
+### Fixed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
 - Upgraded tree-sitter to 0.23+ (`syntax` extras) https://github.com/Textualize/textual/pull/5320
@@ -438,7 +438,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 
 ## [0.87.1] - 2024-11-24
 
-## Fixed
+### Fixed
 
 - Fixed offset not being applied to grid layout https://github.com/Textualize/textual/pull/5281
 - Fixed Select overlay set to auto width https://github.com/Textualize/textual/pull/5282
