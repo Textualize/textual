@@ -1068,7 +1068,7 @@ class Markdown(Widget):
 
     @classmethod
     def get_stream(cls, markdown: Markdown) -> MarkdownStream:
-        """Get a [MarkdownStream][textual.widgets.markdown.MarkdownStream] instance stream Markdown in the background.
+        """Get a [MarkdownStream][textual.widgets.markdown.MarkdownStream] instance to stream Markdown in the background.
 
         If you append to the Markdown document many times a second, it is possible the widget won't
         be able to update as fast as you write (occurs around 20 appends per second). It will still
