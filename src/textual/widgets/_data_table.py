@@ -2121,17 +2121,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             if is_header_cell:
                 row_height = self.header_height
-                options = self.app.console.options.update_dimensions(width, row_height)
+                options = self.app.console_options.update_dimensions(width, row_height)
             else:
                 # If an auto-height row hasn't had its height calculated, we don't fix
                 # the value for `height` so that we can measure the height of the cell.
                 row = self.rows[row_key]
                 if row.auto_height and row.height == 0:
                     row_height = 0
-                    options = self.app.console.options.update_width(width)
+                    options = self.app.console_options.update_width(width)
                 else:
                     row_height = row.height
-                    options = self.app.console.options.update_dimensions(
+                    options = self.app.console_options.update_dimensions(
                         width, row_height
                     )
 

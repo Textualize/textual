@@ -53,7 +53,7 @@ from weakref import WeakKeyDictionary, WeakSet
 import rich
 import rich.repr
 from platformdirs import user_downloads_path
-from rich.console import Console, RenderableType
+from rich.console import Console, ConsoleDimensions, ConsoleOptions, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
@@ -1128,6 +1128,25 @@ class App(Generic[ReturnType], DOMNode):
     def current_mode(self) -> str:
         """The name of the currently active mode."""
         return self._current_mode
+
+    @property
+    def console_options(self) -> ConsoleOptions:
+        """Get options for the Rich console.
+
+        Returns:
+            Console options (same object returned from `console.options`).
+        """
+        size = ConsoleDimensions(*self.size)
+        console = self.console
+        return ConsoleOptions(
+            max_height=size.height,
+            size=size,
+            legacy_windows=console.legacy_windows,
+            min_width=1,
+            max_width=size.width,
+            encoding=console.encoding,
+            is_terminal=console.is_terminal,
+        )
 
     def exit(
         self,
