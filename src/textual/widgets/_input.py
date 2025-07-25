@@ -601,6 +601,7 @@ class Input(ScrollView):
             return Strip.blank(self.size.width)
 
         console = self.app.console
+        console_options = self.app.console_options
         max_content_width = self.scrollable_content_region.width
 
         if not self.value:
@@ -617,7 +618,7 @@ class Input(ScrollView):
 
             strip = Strip(
                 console.render(
-                    placeholder, console.options.update_width(max_content_width + 1)
+                    placeholder, console_options.update_width(max_content_width + 1)
                 )
             )
         else:
@@ -650,7 +651,7 @@ class Input(ScrollView):
                     result.stylize(cursor_style, cursor, cursor + 1)
 
             segments = list(
-                console.render(result, console.options.update_width(self.content_width))
+                console.render(result, console_options.update_width(self.content_width))
             )
 
             strip = Strip(segments)

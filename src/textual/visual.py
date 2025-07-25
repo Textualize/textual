@@ -293,7 +293,8 @@ class RichVisual(Visual):
         return width
 
     def get_height(self, rules: RulesMap, width: int) -> int:
-        console = active_app.get().console
+        app = active_app.get()
+        console = app.console
         renderable = self._renderable
         if isinstance(renderable, Text):
             height = len(
@@ -305,7 +306,8 @@ class RichVisual(Visual):
                 )
             )
         else:
-            options = console.options.update_width(width).update(highlight=False)
+            console_options = app.console_options
+            options = console_options.update_width(width).update(highlight=False)
             segments = console.render(renderable, options)
             # Cheaper than counting the lines returned from render_lines!
             height = sum([text.count("\n") for text, _, _ in segments])
@@ -326,8 +328,9 @@ class RichVisual(Visual):
         Returns:
             An list of Strips.
         """
-        console = active_app.get().console
-        console_options = console.options.update(
+        app = active_app.get()
+        console = app.console
+        console_options = app.console_options.update(
             highlight=False,
             width=width,
             height=height,
