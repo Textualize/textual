@@ -1278,7 +1278,9 @@ class Markdown(Widget):
             elif token_type == "inline":
                 stack[-1].build_from_token(token)
             elif token_type in ("fence", "code_block"):
-                fence = get_block_class(token_type)(self, token, token.content.rstrip())
+                fence_class = get_block_class(token_type)
+                assert issubclass(fence_class, MarkdownFence)
+                fence = fence_class(self, token, token.content.rstrip())
                 if stack:
                     stack[-1]._blocks.append(fence)
                 else:
@@ -1292,6 +1294,14 @@ class Markdown(Widget):
                         yield external
 
     def _build_from_source(self, markdown: str) -> list[MarkdownBlock]:
+        """Build blocks from markdown source.
+
+        Args:
+            markdown: A Markdown document, or partial document.
+
+        Returns:
+            A list of MarkdownBlock instances.
+        """
         parser = (
             MarkdownIt("gfm-like")
             if self._parser_factory is None
