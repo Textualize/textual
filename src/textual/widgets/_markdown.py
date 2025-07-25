@@ -1319,7 +1319,6 @@ class Markdown(Widget):
 
         markdown_block = self.query("MarkdownBlock")
         self._markdown = markdown
-        self._last_parsed_line = len(markdown.splitlines()) - 1
         self._table_of_contents = None
 
         async def await_update() -> None:
@@ -1361,6 +1360,8 @@ class Markdown(Widget):
                 if not removed:
                     await markdown_block.remove()
 
+            lines = markdown.splitlines()
+            self._last_parsed_line = len(lines) - (1 if lines and lines[-1] else 0)
             self.post_message(
                 Markdown.TableOfContentsUpdated(
                     self, self.table_of_contents
