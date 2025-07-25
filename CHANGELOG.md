@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.1] - 2025-07-25
+
+### Fixed
+
+- Fixed appending to Markdown widgets that were constructed with an existing document https://github.com/Textualize/textual/pull/5990
+
 ## [5.0.0] - 2025-07-25
 
 ### Added
@@ -3015,6 +3021,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[5.0.1]: https://github.com/Textualize/textual/compare/v5.0.0...v5.0.1
 [5.0.0]: https://github.com/Textualize/textual/compare/v4.1.0...v5.0.0
 [4.0.0]: https://github.com/Textualize/textual/compare/v3.7.1...v4.0.0
 [3.7.1]: https://github.com/Textualize/textual/compare/v3.7.0...v3.7.1

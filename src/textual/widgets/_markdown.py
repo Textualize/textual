@@ -354,6 +354,8 @@ class MarkdownBlock(Static):
 class MarkdownHeader(MarkdownBlock):
     """Base class for a Markdown header."""
 
+    LEVEL = 0
+
     DEFAULT_CSS = """
     MarkdownHeader {
         color: $text;
@@ -365,6 +367,8 @@ class MarkdownHeader(MarkdownBlock):
 
 class MarkdownH1(MarkdownHeader):
     """An H1 Markdown header."""
+
+    LEVEL = 1
 
     DEFAULT_CSS = """
     MarkdownH1 {
@@ -379,6 +383,8 @@ class MarkdownH1(MarkdownHeader):
 class MarkdownH2(MarkdownHeader):
     """An H2 Markdown header."""
 
+    LEVEL = 2
+
     DEFAULT_CSS = """
     MarkdownH2 {
         color: $markdown-h2-color;
@@ -390,6 +396,8 @@ class MarkdownH2(MarkdownHeader):
 
 class MarkdownH3(MarkdownHeader):
     """An H3 Markdown header."""
+
+    LEVEL = 3
 
     DEFAULT_CSS = """
     MarkdownH3 {
@@ -405,6 +413,8 @@ class MarkdownH3(MarkdownHeader):
 class MarkdownH4(MarkdownHeader):
     """An H4 Markdown header."""
 
+    LEVEL = 4
+
     DEFAULT_CSS = """
     MarkdownH4 {
         color: $markdown-h4-color;
@@ -418,6 +428,8 @@ class MarkdownH4(MarkdownHeader):
 class MarkdownH5(MarkdownHeader):
     """An H5 Markdown header."""
 
+    LEVEL = 5
+
     DEFAULT_CSS = """
     MarkdownH5 {
         color: $markdown-h5-color;
@@ -430,6 +442,8 @@ class MarkdownH5(MarkdownHeader):
 
 class MarkdownH6(MarkdownHeader):
     """An H6 Markdown header."""
+
+    LEVEL = 6
 
     DEFAULT_CSS = """
     MarkdownH6 {
@@ -574,7 +588,7 @@ class MarkdownOrderedList(MarkdownList):
                 bullet.symbol = f"{number}{suffix}".rjust(symbol_size + 1)
                 yield Horizontal(bullet, Vertical(*block._blocks))
 
-        # self._blocks.clear()
+        self._blocks.clear()
 
 
 class MarkdownTableCellContents(Static):
@@ -974,10 +988,20 @@ class Markdown(Widget):
         self._initial_markdown: str | None = markdown
         self._markdown = ""
         self._parser_factory = parser_factory
-        self._table_of_contents: TableOfContentsType = []
+        self._table_of_contents: TableOfContentsType | None = None
         self._open_links = open_links
         self._last_parsed_line = 0
         self._theme = ""
+
+    @property
+    def table_of_contents(self) -> TableOfContentsType:
+        """The document's table of contents."""
+        if self._table_of_contents is None:
+            self._table_of_contents = [
+                (header.LEVEL, header._content.plain, header.id)
+                for header in self.query_children(MarkdownHeader)
+            ]
+        return self._table_of_contents
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -1182,16 +1206,11 @@ class Markdown(Widget):
         """
         return None
 
-    def _parse_markdown(
-        self,
-        tokens: Iterable[Token],
-        table_of_contents: TableOfContentsType,
-    ) -> Iterable[MarkdownBlock]:
+    def _parse_markdown(self, tokens: Iterable[Token]) -> Iterable[MarkdownBlock]:
         """Create a stream of MarkdownBlock widgets from markdown.
 
         Args:
             tokens: List of tokens.
-            table_of_contents: List to store table of contents.
 
         Yields:
             Widgets for mounting.
@@ -1251,10 +1270,7 @@ class Markdown(Widget):
             elif token_type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
-                    heading = block._content.plain
-                    level = int(token.tag[1:])
-                    block.id = f"{slug(heading)}-{len(table_of_contents) + 1}"
-                    table_of_contents.append((level, heading, block.id))
+                    block.id = f"heading-{slug(block._content.plain)}-{id(block)}"
                 if stack:
                     stack[-1]._blocks.append(block)
                 else:
@@ -1262,7 +1278,9 @@ class Markdown(Widget):
             elif token_type == "inline":
                 stack[-1].build_from_token(token)
             elif token_type in ("fence", "code_block"):
-                fence = get_block_class(token_type)(self, token, token.content.rstrip())
+                fence_class = get_block_class(token_type)
+                assert issubclass(fence_class, MarkdownFence)
+                fence = fence_class(self, token, token.content.rstrip())
                 if stack:
                     stack[-1]._blocks.append(fence)
                 else:
@@ -1276,13 +1294,21 @@ class Markdown(Widget):
                         yield external
 
     def _build_from_source(self, markdown: str) -> list[MarkdownBlock]:
+        """Build blocks from markdown source.
+
+        Args:
+            markdown: A Markdown document, or partial document.
+
+        Returns:
+            A list of MarkdownBlock instances.
+        """
         parser = (
             MarkdownIt("gfm-like")
             if self._parser_factory is None
             else self._parser_factory()
         )
         tokens = parser.parse(markdown)
-        return list(self._parse_markdown(tokens, []))
+        return list(self._parse_markdown(tokens))
 
     def update(self, markdown: str) -> AwaitComplete:
         """Update the document with new Markdown.
@@ -1300,9 +1326,9 @@ class Markdown(Widget):
             else self._parser_factory()
         )
 
-        table_of_contents: TableOfContentsType = []
         markdown_block = self.query("MarkdownBlock")
         self._markdown = markdown
+        self._table_of_contents = None
 
         async def await_update() -> None:
             """Update in batches."""
@@ -1333,7 +1359,7 @@ class Markdown(Widget):
                             await self.mount_all(batch)
                         removed = True
 
-                for block in self._parse_markdown(tokens, table_of_contents):
+                for block in self._parse_markdown(tokens):
                     batch.append(block)
                     if len(batch) == BATCH_SIZE:
                         await mount_batch(batch)
@@ -1343,13 +1369,13 @@ class Markdown(Widget):
                 if not removed:
                     await markdown_block.remove()
 
-            if table_of_contents != self._table_of_contents:
-                self._table_of_contents = table_of_contents
-                self.post_message(
-                    Markdown.TableOfContentsUpdated(
-                        self, self._table_of_contents
-                    ).set_sender(self)
-                )
+            lines = markdown.splitlines()
+            self._last_parsed_line = len(lines) - (1 if lines and lines[-1] else 0)
+            self.post_message(
+                Markdown.TableOfContentsUpdated(
+                    self, self.table_of_contents
+                ).set_sender(self)
+            )
 
         return AwaitComplete(await_update())
 
@@ -1368,7 +1394,6 @@ class Markdown(Widget):
             else self._parser_factory()
         )
 
-        table_of_contents: TableOfContentsType = []
         self._markdown = self.source + markdown
         updated_source = "".join(
             self._markdown.splitlines(keepends=True)[self._last_parsed_line :]
@@ -1387,7 +1412,7 @@ class Markdown(Widget):
                         self._last_parsed_line += token.map[0]
                         break
 
-                new_blocks = list(self._parse_markdown(tokens, table_of_contents))
+                new_blocks = list(self._parse_markdown(tokens))
                 for block in new_blocks:
                     start, end = block.source_range
                     block.source_range = (
@@ -1409,12 +1434,13 @@ class Markdown(Widget):
                     if new_blocks:
                         await self.mount_all(new_blocks)
 
-                self._table_of_contents = table_of_contents
-                self.post_message(
-                    Markdown.TableOfContentsUpdated(
-                        self, self._table_of_contents
-                    ).set_sender(self)
-                )
+                if any(isinstance(block, MarkdownHeader) for block in new_blocks):
+                    self._table_of_contents = None
+                    self.post_message(
+                        Markdown.TableOfContentsUpdated(
+                            self, self.table_of_contents
+                        ).set_sender(self)
+                    )
 
         return AwaitComplete(await_append())
 
