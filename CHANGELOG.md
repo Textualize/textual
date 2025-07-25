@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `TextArea` issue with the `css` theme, where the background color was stuck from the previous theme https://github.com/Textualize/textual/issues/5964
+- Fixed `TextArea` runtime crash caused by tree-sitter breaking change https://github.com/Textualize/textual/issues/5976
 
 ### Changed
 
@@ -33,6 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `Visual.render_strips` has a new signature. If you aren't explicitly building Visuals then this won't effect you. https://github.com/Textualize/textual/pull/5981
 - Breaking change: The component classes on Markdown have been moved to MarkdownBlock. This won't affect you unless you have customize the Markdown CSS https://github.com/Textualize/textual/pull/5981
 - The textual-speedups library will now be imported automatically if it is installed. Set `TEXTUAL_SPEEDUPS=0` to disable.
+- Breaking change: Updated tree-sitter dependency for `syntax` extras now requires Python 3.10+ https://github.com/Textualize/textual/pull/5977
+- Some `TextArea` syntax highlighting changes due to tree-sitter updates https://github.com/Textualize/textual/pull/5977
 
 ### Removed
 
