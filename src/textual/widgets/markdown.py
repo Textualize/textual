@@ -1,13 +1,15 @@
 from textual.widgets._markdown import (
     Markdown,
     MarkdownBlock,
+    MarkdownStream,
     MarkdownTableOfContents,
     TableOfContentsType,
 )
 
 __all__ = [
-    "MarkdownTableOfContents",
     "Markdown",
     "MarkdownBlock",
+    "MarkdownStream",
+    "MarkdownTableOfContents",
     "TableOfContentsType",
 ]
