@@ -271,7 +271,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
         def bindings_changed(screen: Screen) -> None:
             """Update bindings after a short delay to avoid flicker."""
-            self.set_timer(1 / 20, lambda: self.bindings_changed(screen))
+            self.call_after_refresh(self.bindings_changed, screen)
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
