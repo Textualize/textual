@@ -216,7 +216,6 @@ class MarkdownBlock(Static):
         self._token: Token = token
         self._blocks: list[MarkdownBlock] = []
         self._inline_token: Token | None = None
-        self._bock_id = 1
         self.source_range: tuple[int, int] = source_range or (
             (token.map[0], token.map[1]) if token.map is not None else (0, 0)
         )
