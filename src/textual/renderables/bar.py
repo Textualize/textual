@@ -18,6 +18,10 @@ class Bar:
         gradient: Optional gradient object.
     """
 
+    HALF_BAR_LEFT: str = "╺"
+    BAR: str = "━"
+    HALF_BAR_RIGHT: str = "╸"
+
     def __init__(
         self,
         highlight_range: tuple[float, float] = (0, 0),
@@ -40,10 +44,6 @@ class Bar:
         highlight_style = console.get_style(self.highlight_style)
         background_style = console.get_style(self.background_style)
 
-        half_bar_right = "╸"
-        half_bar_left = "╺"
-        bar = "━"
-
         width = self.width or options.max_width
         start, end = self.highlight_range
 
@@ -53,7 +53,7 @@ class Bar:
         output_bar = Text("", end="")
 
         if start == end == 0 or end < 0 or start > end:
-            output_bar.append(Text(bar * width, style=background_style, end=""))
+            output_bar.append(Text(self.BAR * width, style=background_style, end=""))
             yield output_bar
             return
 
@@ -67,10 +67,10 @@ class Bar:
 
         # Initial non-highlighted portion of bar
         output_bar.append(
-            Text(bar * (int(start - 0.5)), style=background_style, end="")
+            Text(self.BAR * (int(start - 0.5)), style=background_style, end="")
         )
         if not half_start and start > 0:
-            output_bar.append(Text(half_bar_right, style=background_style, end=""))
+            output_bar.append(Text(self.HALF_BAR_RIGHT, style=background_style, end=""))
 
         highlight_bar = Text("", end="")
         # The highlighted portion
@@ -78,13 +78,19 @@ class Bar:
         if half_start:
             highlight_bar.append(
                 Text(
-                    half_bar_left + bar * (bar_width - 1), style=highlight_style, end=""
+                    self.HALF_BAR_LEFT + self.BAR * (bar_width - 1),
+                    style=highlight_style,
+                    end="",
                 )
             )
         else:
-            highlight_bar.append(Text(bar * bar_width, style=highlight_style, end=""))
+            highlight_bar.append(
+                Text(self.BAR * bar_width, style=highlight_style, end="")
+            )
         if half_end:
-            highlight_bar.append(Text(half_bar_right, style=highlight_style, end=""))
+            highlight_bar.append(
+                Text(self.HALF_BAR_RIGHT, style=highlight_style, end="")
+            )
 
         if self.gradient is not None:
             _apply_gradient(highlight_bar, self.gradient, width)
@@ -92,9 +98,9 @@ class Bar:
 
         # The non-highlighted tail
         if not half_end and end - width != 0:
-            output_bar.append(Text(half_bar_left, style=background_style, end=""))
+            output_bar.append(Text(self.HALF_BAR_LEFT, style=background_style, end=""))
         output_bar.append(
-            Text(bar * (int(width) - int(end) - 1), style=background_style, end="")
+            Text(self.BAR * (int(width) - int(end) - 1), style=background_style, end="")
         )
 
         # Fire actions when certain ranges are clicked (e.g. for tabs)
