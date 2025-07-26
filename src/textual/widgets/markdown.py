@@ -1,6 +1,7 @@
 from textual.widgets._markdown import (
     Markdown,
     MarkdownBlock,
+    MarkdownFence,
     MarkdownStream,
     MarkdownTableOfContents,
     TableOfContentsType,
@@ -9,6 +10,7 @@ from textual.widgets._markdown import (
 __all__ = [
     "Markdown",
     "MarkdownBlock",
+    "MarkdownFence",
     "MarkdownStream",
     "MarkdownTableOfContents",
     "TableOfContentsType",
