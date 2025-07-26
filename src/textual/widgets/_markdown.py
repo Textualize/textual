@@ -999,7 +999,8 @@ class Markdown(Widget):
         if self._table_of_contents is None:
             self._table_of_contents = [
                 (header.LEVEL, header._content.plain, header.id)
-                for header in self.query_children(MarkdownHeader)
+                for header in self.children
+                if isinstance(header, MarkdownHeader)
             ]
         return self._table_of_contents
 
@@ -1413,6 +1414,9 @@ class Markdown(Widget):
                         break
 
                 new_blocks = list(self._parse_markdown(tokens))
+                any_headers = any(
+                    isinstance(block, MarkdownHeader) for block in new_blocks
+                )
                 for block in new_blocks:
                     start, end = block.source_range
                     block.source_range = (
@@ -1434,7 +1438,7 @@ class Markdown(Widget):
                     if new_blocks:
                         await self.mount_all(new_blocks)
 
-                if any(isinstance(block, MarkdownHeader) for block in new_blocks):
+                if any_headers:
                     self._table_of_contents = None
                     self.post_message(
                         Markdown.TableOfContentsUpdated(
