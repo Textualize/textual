@@ -180,6 +180,8 @@ From the quit screen you can click either Quit to exit the app immediately, or C
 Note the `request_quit` action in the app which pushes a new instance of `QuitScreen`.
 This makes the quit screen active. If you click Cancel, the quit screen calls [pop_screen][textual.app.App.pop_screen] to return the default screen. This also removes and deletes the `QuitScreen` object.
 
+This example also shows [`self.app`][textual.message_pump.MessagePump.app], which gives you access to the running app instance from within a screen. You won’t often need to reach into the app directly, since it's usually preferable for widgets or screens to communicate through messages. But when you do need to call app-level methods—such as [`pop_screen()`][textual.app.App.pop_screen] in this example—[`self.app`][textual.message_pump.MessagePump.app] is the normal way to do it. You can access it on any widget or screen that is mounted in the app.
+
 There are two flaws with this modal screen, which we can fix in the same way.
 
 The first flaw is that the app adds a new quit screen every time you press ++q++, even when the quit screen is still visible.
