@@ -36,7 +36,7 @@ To enable syntax highlighting, you'll need to install the `syntax` extra depende
     poetry add "textual[syntax]"
     ```
 
-This will install `tree-sitter` and `tree-sitter-languages`.
+This will install `tree-sitter` and various language packages.
 These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not available.
 After installing, you can set the [`language`][textual.widgets._text_area.TextArea.language] reactive attribute on the `TextArea` to enable highlighting.
 
@@ -440,45 +440,46 @@ To register a language, we require two things:
 1. A tree-sitter `Language` object which contains the grammar for the language.
 2. A highlight query which is used for [syntax highlighting](#syntax-highlighting).
 
-##### Example - adding Java support
+##### Example - adding Ruby support
 
-The easiest way to obtain a `Language` object is using the [`py-tree-sitter-languages`](https://github.com/grantjenks/py-tree-sitter-languages) package. Here's how we can use this package to obtain a reference to a `Language` object representing Java:
+You can obtain a `Language` object by installing the corresponding tree-sitter package.
+Search PyPI for `tree-sitter-` followed by the language name, and install the package using pip:
 
-```python
-from tree_sitter_languages import get_language
-java_language = get_language("java")
+```
+pip install tree-sitter-ruby
 ```
 
-The exact version of the parser used when you call `get_language` can be checked via
-the [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) in
-the version of `py-tree-sitter-languages` you're using. This file contains links to the GitHub
-repos and commit hashes of the tree-sitter parsers. In these repos you can often find pre-made highlight queries at `queries/highlights.scm`,
+With the package installed, you can import the module and use it to create a `Language` object:
+
+```python
+import tree_sitter_ruby
+from tree_sitter import Language
+
+ruby_language = Language(tree_sitter_ruby.language())
+```
+
+The syntax highlighting also requires a highlight query for the language.
+Normally, the repository for the tree-sitter language will include pre-made highlight queries at `queries/highlights.scm`,
 and a file showing all the available node types which can be used in highlight queries at `src/node-types.json`.
 
-Since we're adding support for Java, lets grab the Java highlight query from the repo by following these steps:
-
-1. Open [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) from the `py-tree-sitter-languages` repo.
-2. Find the link corresponding to `tree-sitter-java` and go to the repo on GitHub (you may also need to go to the specific commit referenced in `repos.txt`).
-3. Go to [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-java/blob/ac14b4b1884102839455d32543ab6d53ae089ab7/queries/highlights.scm) to see the example highlight query for Java.
+Since we're adding support for Ruby, you can find a pre-made highlight query in the `tree-sitter-ruby` repository on GitHub,
+in the [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-ruby/blob/v0.23.1/queries/highlights.scm) file.
 
 Be sure to check the license in the repo to ensure it can be freely copied.
 
 !!! warning
 
-    It's important to use a highlight query which is compatible with the parser in use, so
-    pay attention to the commit hash when visiting the repo via `repos.txt`.
+    It's important to use a highlight query which is compatible with the parser in use.
+    Ensure the highlight query file is from the same version of your installed package.
 
-We now have our `Language` and our highlight query, so we can register Java as a language.
+We now have our `Language` and our highlight query, so we can register Ruby as a language.
 
 ```python
 --8<-- "docs/examples/widgets/text_area_custom_language.py"
 ```
 
-Running our app, we can see that the Java code is highlighted.
+Running our app, we can see that the Ruby code is highlighted.
 We can freely edit the text, and the syntax highlighting will update immediately.
-
-```{.textual path="docs/examples/widgets/text_area_custom_language.py" columns="52" lines="8"}
-```
 
 Recall that we map names (like `@heading`) from the tree-sitter highlight query to Rich style objects inside the `TextAreaTheme.syntax_styles` dictionary.
 If you notice some highlights are missing after registering a language, the issue may be:
@@ -548,7 +549,7 @@ Styles from the `theme` attribute take priority.
 - [`EditHistory`][textual.widgets.text_area.EditHistory] - manages the undo stack
 - The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
-- `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
+- `tree-sitter-language-pack` [repository](https://github.com/Goldziher/tree-sitter-language-pack) (provides binary wheels for a large variety of tree-sitter languages).
 
 ## Additional notes
 
