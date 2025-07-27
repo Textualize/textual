@@ -100,9 +100,12 @@ class XTermParser(Parser[Message]):
             event_class: type[events.MouseEvent]
 
             if buttons & 64:
-                event_class = (
-                    events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
-                )
+                event_class = [
+                    events.MouseScrollUp,
+                    events.MouseScrollDown,
+                    events.MouseScrollLeft,
+                    events.MouseScrollRight,
+                ][buttons & 3]
                 button = 0
             else:
                 button = (buttons + 1) & 3
