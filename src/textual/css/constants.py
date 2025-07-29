@@ -80,6 +80,7 @@ VALID_PSEUDO_CLASSES: Final = {
     "last-child",
     "odd",
     "even",
+    "empty",
 }
 VALID_OVERLAY: Final = {"none", "screen"}
 VALID_CONSTRAIN: Final = {"inflect", "inside", "none"}

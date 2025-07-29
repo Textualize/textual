@@ -3,15 +3,18 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from textual.app import App
+    from textual.app import App, ComposeResult
     from textual.widget import Widget
 
 
-def compose(node: App | Widget) -> list[Widget]:
+def compose(
+    node: App | Widget, compose_result: ComposeResult | None = None
+) -> list[Widget]:
     """Compose child widgets.
 
     Args:
         node: The parent node.
+        compose_result: A compose result, or `None` to call `node.compose()`.
 
     Returns:
         A list of widgets.
@@ -25,7 +28,9 @@ def compose(node: App | Widget) -> list[Widget]:
     composed: list[Widget] = []
     app._compose_stacks.append(compose_stack)
     app._composed.append(composed)
-    iter_compose = iter(node.compose())
+    iter_compose = iter(
+        compose_result if compose_result is not None else node.compose()
+    )
     is_generator = hasattr(iter_compose, "throw")
     try:
         while True:

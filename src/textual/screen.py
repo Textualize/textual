@@ -898,6 +898,20 @@ class Screen(Generic[ScreenResultType], Widget):
         """Action to remove focus (if set)."""
         self.set_focus(None)
 
+    async def action_focus(self, selector: str) -> None:
+        """An [action](/guide/actions) to focus the given widget.
+
+        Args:
+            selector: Selector of widget to focus (first match).
+        """
+        try:
+            node = self.query(selector).first()
+        except NoMatches:
+            pass
+        else:
+            if isinstance(node, Widget):
+                self.set_focus(node)
+
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
     ) -> None:

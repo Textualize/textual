@@ -464,6 +464,7 @@ class Stylesheet:
         "odd",
         "even",
         "focus-within",
+        "empty",
     }
 
     def apply(
@@ -505,7 +506,7 @@ class Stylesheet:
         node._has_hover_style = "hover" in all_pseudo_classes
         node._has_focus_within = "focus-within" in all_pseudo_classes
         node._has_order_style = not all_pseudo_classes.isdisjoint(
-            {"first-of-type", "last-of-type", "first-child", "last-child"}
+            {"first-of-type", "last-of-type", "first-child", "last-child", "empty"}
         )
         node._has_odd_or_even = (
             "odd" in all_pseudo_classes or "even" in all_pseudo_classes

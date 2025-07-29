@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 import weakref
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence, overload
 
 import rich.repr
 
@@ -185,6 +185,20 @@ class NodeList(Sequence["Widget"]):
 
     def __reversed__(self) -> Iterator[Widget]:
         return reversed(self._nodes)
+
+    @property
+    def displayed(self) -> Iterable[Widget]:
+        """Just the nodes where `display==True`."""
+        for node in self._nodes:
+            if node.display:
+                yield node
+
+    @property
+    def displayed_reverse(self) -> Iterable[Widget]:
+        """Just the nodes where `display==True`, in reverse order."""
+        for node in reversed(self._nodes):
+            if node.display:
+                yield node
 
     if TYPE_CHECKING:
 
