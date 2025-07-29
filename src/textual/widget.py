@@ -1185,6 +1185,7 @@ class Widget(DOMNode):
         if style.startswith("."):
             for node in self.ancestors_with_self:
                 if not isinstance(node, Widget):
+                    visual_style = None
                     break
                 try:
                     visual_style = node.get_visual_style(style[1:], partial=True)
