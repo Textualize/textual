@@ -1709,6 +1709,9 @@ TextArea {
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
+        if not self.screen.is_active:
+            return
+
         self._cursor_visible = not self._cursor_visible
         _, cursor_y = self._cursor_offset
         self.refresh_lines(cursor_y)
