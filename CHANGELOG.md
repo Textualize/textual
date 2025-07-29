@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unrleeased
+
+### Added
+
+- Added `empty` pseudo class, which applies when a widget has no displayed children https://github.com/Textualize/textual/pull/5999
+- Added `Screen.action_focus` https://github.com/Textualize/textual/pull/5999
+
+### Changed
+
+- `last-child`, `last-of-type`, `first-child`, and `first-of-type` apply to displayed children only https://github.com/Textualize/textual/pull/5999
+- `textual.compose` is now public https://github.com/Textualize/textual/pull/5999
+
 ## [5.0.1] - 2025-07-25
+
 
 ### Fixed
 

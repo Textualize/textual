@@ -49,7 +49,6 @@ if TYPE_CHECKING:
 from textual import constants, errors, events, messages
 from textual._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from textual._arrange import DockArrangeResult, arrange
-from textual._compose import compose
 from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
@@ -62,6 +61,7 @@ from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
 from textual.color import Color
+from textual.compose import compose
 from textual.content import Content, ContentType
 from textual.css.match import match
 from textual.css.parse import parse_selectors
@@ -1394,6 +1394,7 @@ class Widget(DOMNode):
         return await_mount
 
     def _refresh_styles(self) -> None:
+        """Request refresh of styles on idle."""
         self._refresh_styles_required = True
         self.check_idle()
 

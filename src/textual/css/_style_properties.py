@@ -866,11 +866,6 @@ class StringEnumProperty(Generic[EnumType]):
                     parent=self._refresh_parent,
                 )
 
-                # if obj.node and (
-                #     obj.node._has_order_style or obj.node._has_odd_or_even
-                # ):
-                #     obj.node.call_later(obj.node._update_styles)
-
 
 class OverflowProperty(StringEnumProperty):
     """Descriptor for overflow styles that forces widgets to refresh scrollbars."""
