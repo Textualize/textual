@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `empty` pseudo class, which applies when a widget has no displayed children https://github.com/Textualize/textual/pull/5999
 - Added `Screen.action_focus` https://github.com/Textualize/textual/pull/5999
+- Added support for left and right mouse scroll for terminals and input devices which support it https://github.com/Textualize/textual/pull/5995
 
 ### Changed
 
