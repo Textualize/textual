@@ -1,25 +1,3 @@
-"""
-
-The compose method allows you to mount widgets using the same syntax as the [compose][textual.widget.Widget.compose] method.
-
-```python
-
-    def on_key(self, event:events.Key) -> None:
-
-        def add_key(key:str) -> ComposeResult:
-            with containers.HorizontalGroup():
-                yield Label("You pressed:")
-                yield Label(key)
-
-        self.mount_all(
-            compose(self, add_key(event.key)),
-        )
-
-```
-
-
-"""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -34,7 +12,21 @@ __all__ = ["compose"]
 def compose(
     node: App | Widget, compose_result: ComposeResult | None = None
 ) -> list[Widget]:
-    """Compose child widgets.
+    """Compose child widgets from a generator in the same way as [compose][textual.widget.Widget.compose].
+
+    Example:
+        ```python
+            def on_key(self, event:events.Key) -> None:
+
+                def add_key(key:str) -> ComposeResult:
+                    with containers.HorizontalGroup():
+                        yield Label("You pressed:")
+                        yield Label(key)
+
+                self.mount_all(
+                    compose(self, add_key(event.key)),
+                )
+        ```
 
     Args:
         node: The parent node.

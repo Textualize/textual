@@ -2,4 +2,4 @@
 title: "textual.compose"
 ---
 
-::: textual.compose
+::: textual.compose.compose
