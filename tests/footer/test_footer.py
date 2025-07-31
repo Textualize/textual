@@ -54,6 +54,8 @@ async def test_footer_bindings() -> None:
         assert app_binding_count == 0
         await app.wait_for_refresh()
         await pilot.click("Footer", offset=(1, 0))
+        await app.wait_for_refresh()
         assert app_binding_count == 1
         await pilot.click("Footer")
+        await app.wait_for_refresh()
         assert app_binding_count == 2

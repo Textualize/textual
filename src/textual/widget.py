@@ -4592,14 +4592,12 @@ class Widget(DOMNode):
 
     def _on_mouse_scroll_right(self, event: events.MouseScrollRight) -> None:
         if self.allow_horizontal_scroll:
-            self.release_anchor()
-            if self._scroll_right_for_pointer(animate=False):
+            if self._scroll_right_for_pointer():
                 event.stop()
 
     def _on_mouse_scroll_left(self, event: events.MouseScrollLeft) -> None:
         if self.allow_horizontal_scroll:
-            self.release_anchor()
-            if self._scroll_left_for_pointer(animate=False):
+            if self._scroll_left_for_pointer():
                 event.stop()
 
     def _on_scroll_to(self, message: ScrollTo) -> None:
