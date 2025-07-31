@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.1.1] - 2025-07-21
+
+### Fixed
+
+- Fixed overly large distrubution, not code changes
+
 ## [5.1.0] - 2025-07-31
 
 ### Added
@@ -3035,6 +3041,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[5.1.1]: https://github.com/Textualize/textual/compare/v5.1.0...v5.1.1
 [5.1.0]: https://github.com/Textualize/textual/compare/v5.0.1...v5.1.0
 [5.0.1]: https://github.com/Textualize/textual/compare/v5.0.0...v5.0.1
 [5.0.0]: https://github.com/Textualize/textual/compare/v4.1.0...v5.0.0
