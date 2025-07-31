@@ -113,7 +113,12 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Leave)
-_MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
+_MOUSE_EVENTS_ALLOW_IF_DISABLED = (
+    events.MouseScrollDown,
+    events.MouseScrollUp,
+    events.MouseScrollRight,
+    events.MouseScrollLeft,
+)
 
 
 @rich.repr.auto
@@ -4574,6 +4579,18 @@ class Widget(DOMNode):
             if self.allow_vertical_scroll:
                 if self._scroll_up_for_pointer(animate=False):
                     event.stop()
+
+    def _on_mouse_scroll_right(self, event: events.MouseScrollRight) -> None:
+        if self.allow_horizontal_scroll:
+            self.release_anchor()
+            if self._scroll_right_for_pointer(animate=False):
+                event.stop()
+
+    def _on_mouse_scroll_left(self, event: events.MouseScrollLeft) -> None:
+        if self.allow_horizontal_scroll:
+            self.release_anchor()
+            if self._scroll_left_for_pointer(animate=False):
+                event.stop()
 
     def _on_scroll_to(self, message: ScrollTo) -> None:
         if self._allow_scroll:

@@ -262,6 +262,8 @@ If you want your app to respond to a mouse click you should prefer the Click eve
 
 Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseScrollDown](../events/mouse_scroll_down.md) and [MouseScrollUp](../events/mouse_scroll_up.md) if you want build your own scrolling functionality.
 
+For terminals that support horizontal mouse wheel, Textual sends [MouseScrollLeft](../events/mouse_scroll_left.md) and [MouseScrollRight](../events/mouse_scroll_right.md), and scrollable containers handle them automatically.
+
 !!! information
 
     Terminal emulators will typically convert trackpad gestures into scroll events.
