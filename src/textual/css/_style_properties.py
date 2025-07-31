@@ -852,12 +852,11 @@ class StringEnumProperty(Generic[EnumType]):
                     ),
                 )
             if obj.set_rule(self.name, value):
-                if self._display:
-                    if obj.node is not None:
-                        node = obj.node
-                        if node.parent:
-                            node._nodes.updated()
-                            node.parent._refresh_styles()
+                if self._display and obj.node is not None:
+                    node = obj.node
+                    if node.parent:
+                        node._nodes.updated()
+                        node.parent._refresh_styles()
 
                 self._before_refresh(obj, value)
                 obj.refresh(
