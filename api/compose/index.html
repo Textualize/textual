@@ -132,7 +132,7 @@ window.onload = async (event) => {
     <div data-md-component="skip">
       
         
-        <a href="#textual.compose" class="md-skip">
+        <a href="#textual.compose.compose" class="md-skip">
           Skip to content
         </a>
       
@@ -5716,9 +5716,27 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#textual.compose" class="md-nav__link">
+  <a href="#textual.compose.compose" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;compose
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;compose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(node)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;node
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(compose_result)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;compose_result
     </span>
   </a>
   
@@ -7254,9 +7272,27 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#textual.compose" class="md-nav__link">
+  <a href="#textual.compose.compose" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;compose
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;compose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(node)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;node
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(compose_result)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;compose_result
     </span>
   </a>
   
@@ -7283,15 +7319,19 @@ window.onload = async (event) => {
 
   <h1>textual.compose</h1>
 
-<div class="doc doc-object doc-module">
+<div class="doc doc-object doc-function">
 
 
 
-<a id="textual.compose"></a>
+<a id="textual.compose.compose"></a>
     <div class="doc doc-contents first">
 
-        <p>The compose method allows you to mount widgets using the same syntax as the <a class="autorefs autorefs-internal" title="            compose" href="../widget/#textual.widget.Widget.compose">compose</a> method.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span><span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <p>Compose child widgets from a generator in the same way as <a class="autorefs autorefs-internal" title="            compose" href="../widget/#textual.widget.Widget.compose">compose</a>.</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span><span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">add_key</span><span class="p">(</span><span class="n">key</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            <span class="k">with</span> <span class="n">containers</span><span class="o">.</span><span class="n">HorizontalGroup</span><span class="p">():</span>
@@ -7302,27 +7342,76 @@ window.onload = async (event) => {
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>            <span class="n">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_key</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)),</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="p">)</span>
 </code></pre></div>
+</details>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.compose.compose(node)" class="doc doc-heading doc-heading-parameter">                  <code>node</code>
+<a href="#textual.compose.compose(node)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            App (textual.app.App)" href="../app/#textual.app.App">App</a> | <a class="autorefs autorefs-internal" title="            Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The parent node.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.compose.compose(compose_result)" class="doc doc-heading doc-heading-parameter">                  <code>compose_result</code>
+<a href="#textual.compose.compose(compose_result)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><span title="textual.app.ComposeResult">ComposeResult</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A compose result, or <code>None</code> to call <code>node.compose()</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="            Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of widgets.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
     </div>
 
