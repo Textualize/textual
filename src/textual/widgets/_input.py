@@ -98,7 +98,10 @@ class Input(ScrollView):
             show=False,
         ),
         Binding(
-            "ctrl+right", "cursor_right_word", "Move cursor right a word", show=False
+            "ctrl+right",
+            "cursor_right_word",
+            "Move cursor right a word",
+            show=False,
         ),
         Binding(
             "ctrl+shift+right",
