@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed overly large distrubution, not code changes
+- Fixed overly large distribution, no code changes https://github.com/Textualize/textual/pull/6010
 
 ## [5.1.0] - 2025-07-31
 
