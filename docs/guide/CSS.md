@@ -342,6 +342,7 @@ Here are some other pseudo classes:
 - `:blur` Matches widgets which *do not* have input focus.
 - `:dark` Matches widgets in dark themes (where `App.theme.dark == True`).
 - `:disabled` Matches widgets which are in a disabled state.
+- `:empty` Matches widgets which have no displayed children.
 - `:enabled` Matches widgets which are in an enabled state.
 - `:even` Matches a widget at an evenly numbered position within its siblings.
 - `:first-child` Matches a widget that is the first amongst its siblings.
