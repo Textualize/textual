@@ -5408,6 +5408,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5651,6 +5653,29 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     textual.containers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compose/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    textual.compose
     
   </span>
   
@@ -6650,6 +6675,30 @@ window.onload = async (event) => {
   <a href="#textual.screen.Screen.action_dismiss(result)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;result
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.action_focus" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_focus
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" action_focus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.action_focus(selector)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;selector
     </span>
   </a>
   
@@ -8559,6 +8608,30 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.action_focus" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_focus
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" action_focus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.action_focus(selector)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;selector
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.action_maximize" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;action_maximize
@@ -10340,6 +10413,60 @@ To set focus, do not update this value directly. Use <a class="autorefs autorefs
             </td>
             <td>
                   <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.screen.Screen.action_focus" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">action_focus</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.action_focus" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">action_focus</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="selector (textual.screen.Screen.action_focus(selector))" href="#textual.screen.Screen.action_focus(selector)">selector</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>An <a href="/guide/actions">action</a> to focus the given widget.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.screen.Screen.action_focus(selector)" class="doc doc-heading doc-heading-parameter">                  <code>selector</code>
+<a href="#textual.screen.Screen.action_focus(selector)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Selector of widget to focus (first match).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
             </td>
           </tr>
       </tbody>
