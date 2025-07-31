@@ -107,6 +107,7 @@ class Input(ScrollView):
             show=False,
         ),
         Binding("backspace", "delete_left", "Delete character left", show=False),
+        Binding("ctrl+shift+a", "select_all", "Select all", show=False),
         Binding("home,ctrl+a", "home", "Go to start", show=False),
         Binding("end,ctrl+e", "end", "Go to end", show=False),
         Binding("shift+home", "home(True)", "Select line start", show=False),
@@ -137,6 +138,7 @@ class Input(ScrollView):
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
     | ctrl+shift+right | Move cursor right a word and select. |
+    | ctrl+shift+a | Select all text in the input. |
     | home,ctrl+a | Go to the beginning of the input. |
     | end,ctrl+e | Go to the end of the input. |
     | shift+home | Select up to the input start. |
@@ -869,6 +871,15 @@ class Input(ScrollView):
                     self.cursor_position += 1
                 else:
                     self.cursor_position = max(start, end)
+
+    def select_all(self) -> None:
+        """Select all of the text in the Input."""
+        self.selection = Selection(0, len(self.value))
+        self._suggestion = ""
+
+    def action_select_all(self) -> None:
+        """Select all of the text in the Input."""
+        self.select_all()
 
     def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input.
