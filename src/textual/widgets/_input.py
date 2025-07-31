@@ -692,7 +692,10 @@ class Input(ScrollView):
 
     def _toggle_cursor(self) -> None:
         """Toggle visibility of cursor."""
-        self._cursor_visible = not self._cursor_visible
+        if self.screen.is_active:
+            self._cursor_visible = not self._cursor_visible
+        else:
+            self._cursor_visible = True
 
     def _on_mount(self, event: Mount) -> None:
         def text_selection_started(screen: Screen) -> None:

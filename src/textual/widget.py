@@ -49,7 +49,6 @@ if TYPE_CHECKING:
 from textual import constants, errors, events, messages
 from textual._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from textual._arrange import DockArrangeResult, arrange
-from textual._compose import compose
 from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
@@ -62,6 +61,7 @@ from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
 from textual.cache import FIFOCache
 from textual.color import Color
+from textual.compose import compose
 from textual.content import Content, ContentType
 from textual.css.match import match
 from textual.css.parse import parse_selectors
@@ -398,6 +398,7 @@ class Widget(DOMNode):
         "last-child": lambda widget: widget.last_child,
         "odd": lambda widget: widget.is_odd,
         "even": lambda widget: widget.is_even,
+        "empty": lambda widget: widget.is_empty,
     }  # type: ignore[assignment]
 
     def __init__(
@@ -427,6 +428,7 @@ class Widget(DOMNode):
         self._repaint_required = False
         self._scroll_required = False
         self._recompose_required = False
+        self._refresh_styles_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         Widget._sort_order += 1
@@ -848,7 +850,7 @@ class Widget(DOMNode):
         if parent._nodes._updates == self._first_of_type[0]:
             return self._first_of_type[1]
         widget_type = type(self)
-        for node in parent._nodes:
+        for node in parent._nodes.displayed:
             if isinstance(node, widget_type):
                 self._first_of_type = (parent._nodes._updates, node is self)
                 return self._first_of_type[1]
@@ -864,7 +866,7 @@ class Widget(DOMNode):
         if parent._nodes._updates == self._last_of_type[0]:
             return self._last_of_type[1]
         widget_type = type(self)
-        for node in reversed(parent._nodes):
+        for node in parent._nodes.displayed_reverse:
             if isinstance(node, widget_type):
                 self._last_of_type = (parent._nodes._updates, node is self)
                 return self._last_of_type[1]
@@ -879,7 +881,7 @@ class Widget(DOMNode):
         # This pseudo class only changes when the parent's nodes._updates changes
         if parent._nodes._updates == self._first_child[0]:
             return self._first_child[1]
-        for node in parent._nodes:
+        for node in parent._nodes.displayed:
             self._first_child = (parent._nodes._updates, node is self)
             return self._first_child[1]
         return False
@@ -893,7 +895,7 @@ class Widget(DOMNode):
         # This pseudo class only changes when the parent's nodes._updates changes
         if parent._nodes._updates == self._last_child[0]:
             return self._last_child[1]
-        for node in reversed(parent._nodes):
+        for node in parent._nodes.displayed_reverse:
             self._last_child = (parent._nodes._updates, node is self)
             return self._last_child[1]
         return False
@@ -1395,6 +1397,11 @@ class Widget(DOMNode):
         self.call_next(await_mount)
 
         return await_mount
+
+    def _refresh_styles(self) -> None:
+        """Request refresh of styles on idle."""
+        self._refresh_styles_required = True
+        self.check_idle()
 
     def mount_all(
         self,
@@ -4350,6 +4357,9 @@ class Widget(DOMNode):
             except NoScreen:
                 pass
             else:
+                if self._refresh_styles_required:
+                    self._refresh_styles_required = False
+                    self.call_later(self._update_styles)
                 if self._scroll_required:
                     self._scroll_required = False
                     if self.styles.keyline[0] != "none":

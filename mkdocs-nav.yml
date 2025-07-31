@@ -194,6 +194,7 @@ nav:
       - "api/command.md"
       - "api/constants.md"
       - "api/containers.md"
+      - "api/compose.md"
       - "api/content.md"
       - "api/coordinate.md"
       - "api/dom_node.md"

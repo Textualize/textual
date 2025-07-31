@@ -253,7 +253,7 @@ class StylesBase:
 
     node: DOMNode | None = None
 
-    display = StringEnumProperty(VALID_DISPLAY, "block", layout=True)
+    display = StringEnumProperty(VALID_DISPLAY, "block", layout=True, display=True)
     """Set the display of the widget, defining how it's rendered.
 
     Valid values are "block" or "none".
