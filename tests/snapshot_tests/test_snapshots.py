@@ -4472,3 +4472,33 @@ def test_text_area_css_theme_updates_background(snap_compare):
             text_area.theme = "css"
 
     assert snap_compare(TextAreaThemeApp())
+
+
+def test_empty(snap_compare):
+    """Test empty: pseudo class
+
+    You should see three styled containers.
+    The top and bottom should be empty and have a red border.
+    The middle should container text, and will have a green border.
+
+    """
+
+    class EmptyApp(App):
+        CSS = """
+        .container {
+            border:green;
+        }
+        .container:empty {
+            border: red;            
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup(classes="container"):
+                pass
+            with VerticalGroup(classes="container"):
+                yield Label("FOO")
+            with VerticalGroup(classes="container"):
+                pass
+
+    assert snap_compare(EmptyApp())
