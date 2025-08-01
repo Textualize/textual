@@ -4502,3 +4502,39 @@ def test_empty(snap_compare):
                 pass
 
     assert snap_compare(EmptyApp())
+
+
+def test_stream_layout(snap_compare):
+    """Test stream layout.
+
+    You should see 3 blue labels.
+    The topmost should be a single line.
+    The middle should be two lines.
+    The last should be three lines.
+    There will be a one character margin between them.
+
+    """
+
+    class StreamApp(App):
+        CSS = """
+        VerticalScroll {            
+            layout: stream;
+            Label {
+                background: blue;
+                margin: 1;
+            }
+            #many-lines {
+                max-height: 3;
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll():
+                yield Label("Hello")
+                yield Label("foo\nbar")
+                yield Label(
+                    "\n".join(["Only 3 lines should be visible"] * 100), id="many-lines"
+                )
+
+    assert snap_compare(StreamApp())
