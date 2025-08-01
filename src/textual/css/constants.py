@@ -28,7 +28,7 @@ VALID_BORDER: Final = {
     "wide",
 }
 VALID_EDGE: Final = {"top", "right", "bottom", "left", "none"}
-VALID_LAYOUT: Final = {"vertical", "horizontal", "grid"}
+VALID_LAYOUT: Final = {"vertical", "horizontal", "grid", "stream"}
 
 VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}

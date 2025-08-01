@@ -3,12 +3,14 @@ from __future__ import annotations
 from textual.layout import Layout
 from textual.layouts.grid import GridLayout
 from textual.layouts.horizontal import HorizontalLayout
+from textual.layouts.stream import StreamLayout
 from textual.layouts.vertical import VerticalLayout
 
 LAYOUT_MAP: dict[str, type[Layout]] = {
     "horizontal": HorizontalLayout,
     "grid": GridLayout,
     "vertical": VerticalLayout,
+    "stream": StreamLayout,
 }
 
 
