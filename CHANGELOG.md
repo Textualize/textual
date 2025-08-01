@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added a 'stream' layout, which is a lot like vertical but with fewer supported rules (which is why it is faster)
+
 ## [5.1.1] - 2025-07-21
 
 ### Fixed

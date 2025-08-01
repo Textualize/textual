@@ -4505,11 +4505,19 @@ def test_empty(snap_compare):
 
 
 def test_stream_layout(snap_compare):
-    """Test stream layout."""
+    """Test stream layout.
+
+    You should see 3 blue labels.
+    The topmost should be a single line.
+    The middle should be two lines.
+    The last should be three lines.
+    There will be a one character margin between them.
+
+    """
 
     class StreamApp(App):
         CSS = """
-        VerticalScroll {
+        VerticalScroll {            
             layout: stream;
             Label {
                 background: blue;

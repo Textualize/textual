@@ -33,8 +33,8 @@ class StreamLayout(Layout):
         placements: list[WidgetPlacement] = []
         width = size.width
         first_child_styles = children[0].styles
-        y = first_child_styles.margin.top
-        previous_margin = 0
+        y = 0
+        previous_margin = first_child_styles.margin.top
         null_offset = NULL_OFFSET
 
         for widget in children:
