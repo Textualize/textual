@@ -11,17 +11,26 @@ if TYPE_CHECKING:
 
 
 class StreamLayout(Layout):
+    """A cut down version of the vertical layout.
+
+    Faster, but with fewer supported "features".
+
+    """
+
     name = "stream"
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
         parent.pre_layout(self)
-        viewport = parent.app.size
-
-        placements: list[WidgetPlacement] = []
         if not children:
             return []
+        viewport = parent.app.size
+
+        _Region = Region
+        _WidgetPlacement = WidgetPlacement
+
+        placements: list[WidgetPlacement] = []
         width = size.width
         first_child_styles = children[0].styles
         y = first_child_styles.margin.top
@@ -29,28 +38,28 @@ class StreamLayout(Layout):
         null_offset = NULL_OFFSET
 
         for widget in children:
-            styles = widget.styles
-            overlay = styles.overlay == "screen"
-            absolute = styles.has_rule("position") and styles.position == "absolute"
+            styles = widget.styles.base
             margin = styles.margin
+            gutter_width, gutter_height = styles.gutter.totals
             top, right, bottom, left = margin
-            margin_width = left + right
             y += max(top, previous_margin)
             previous_margin = bottom
-            height = widget.get_content_height(size, viewport, width - margin_width)
-            height += styles.gutter.height
+            height = (
+                widget.get_content_height(size, viewport, width - gutter_width)
+                + gutter_height
+            )
             if (max_height := styles.max_height) is not None and max_height.is_cells:
                 height = min(height, int(max_height.value))
             placements.append(
-                WidgetPlacement(
-                    Region(left, y, width - margin_width, height),
+                _WidgetPlacement(
+                    _Region(left, y, width - (left + right), height),
                     null_offset,
                     margin,
                     widget,
                     0,
                     False,
-                    overlay,
-                    absolute,
+                    False,
+                    False,
                 )
             )
             y += height
