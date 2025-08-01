@@ -50,6 +50,34 @@ WHITESPACE_RE: Final[Pattern] = compile(r"\s")
 """A regular expression for finding all the whitespace and turning it into `REPLACEMENT`."""
 
 
+SLUG_ALLOWED = compile(r"[a-zA-Z0-9_\-]")
+def slugify_hex(s: str, *, max_len: int | None = None) -> str:  # py312+
+    """
+    Convert *s* to only contain A-Z a-z 0-9 _ -.
+
+    • Allowed chars are kept verbatim.
+    • Every other byte (after UTF-8 encoding) becomes '_' + two upper-case hex digits.
+      e.g. space (0x20) → '_20', '❤' (0xE2 0x9D 0xA4) → '_E2_9D_A4'.
+
+    If *max_len* is set and the result would exceed it,
+    the tail is replaced by '-' + 8-char SHA-256 digest to keep it unique.
+    """
+    out_parts: list[str] = []
+    for b in s.encode():
+        ch = chr(b)
+        if SLUG_ALLOWED.fullmatch(ch):
+            out_parts.append(ch)
+        else:
+            out_parts.append(f"_{b:02X}")
+    slug = "".join(out_parts)
+
+    if max_len is not None and len(slug) > max_len:
+        digest = hashlib.sha256(s.encode()).hexdigest()[:8]
+        slug = f"{slug[:max_len - 9]}-{digest}"
+
+    return slug
+
+
 def slug(text: str) -> str:
     """Create a Markdown-friendly slug from the given text.
 
@@ -68,7 +96,8 @@ def slug(text: str) -> str:
         (WHITESPACE_RE, WHITESPACE_REPLACEMENT),
     ):
         result = rule.sub(replacement, result)
-    return quote(result)
+    hexed_slug = slugify_hex(result)
+    return hexed_slug
 
 
 class TrackedSlugs:
