@@ -13,7 +13,18 @@ if TYPE_CHECKING:
 class StreamLayout(Layout):
     """A cut down version of the vertical layout.
 
-    Faster, but with fewer supported "features".
+    The stream layout is faster, but has a few limitations compared to the vertical layout.
+
+    - All widgets are the full width (as if their widget is `1fr`).
+    - All widgets have an effective height of `auto`.
+    - `max-height` is supported, but only if it is a units value, all other extrema rules are ignored.
+    - No absolute positioning.
+    - No overlay: screen.
+    - Layers are ignored.
+
+    The primary use of `layout: stream` is for a long list of widgets in a scrolling container, such as
+    what you might expect from a LLM chat-bot. The speed improvement will only be significant with a lot of
+    child widgets, so stick to vertical layouts unless you see any slowdown.
 
     """
 

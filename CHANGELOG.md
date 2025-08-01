@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added a 'stream' layout, which is a lot like vertical but with fewer supported rules (which is why it is faster)
+- Added a 'stream' layout, which is a lot like vertical but with fewer supported rules (which is why it is faster), will remain undocumented for now. https://github.com/Textualize/textual/pull/6013
 
 ## [5.1.1] - 2025-07-21
 
