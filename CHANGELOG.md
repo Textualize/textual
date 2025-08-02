@@ -116,6 +116,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.6.0] - 2025-07-06
 
+### Added
+
+- Added support to allow support for manual keys in add_columns as well. Was discussed in: https://github.com/Textualize/textual/discussions/5922
+
 ### Fixed
 
 - Fixed issue with the "transparent" CSS value not being transparent when set using python https://github.com/Textualize/textual/pull/5890
