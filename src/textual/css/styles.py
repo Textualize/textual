@@ -883,7 +883,7 @@ class Styles(StylesBase):
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
         return Styles(
-            _node=self.node,
+            _node_ref=self.node,
             _rules=self.get_rules(),
             important=self.important,
         )
