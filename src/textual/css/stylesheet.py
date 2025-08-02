@@ -621,6 +621,7 @@ class Stylesheet:
             for component in sorted(component_classes):
                 virtual_node = DOMNode(classes=component)
                 virtual_node._attach(node)
+                node._virtual_nodes.append(virtual_node)  # keep alive
                 self.apply(virtual_node, animate=False)
                 if (
                     not refresh_node
