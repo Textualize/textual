@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import weakref
 from collections import defaultdict
 from itertools import chain
 from operator import itemgetter
@@ -621,7 +622,6 @@ class Stylesheet:
             for component in sorted(component_classes):
                 virtual_node = DOMNode(classes=component)
                 virtual_node._attach(node)
-                node._virtual_nodes.append(virtual_node)  # keep alive
                 self.apply(virtual_node, animate=False)
                 if (
                     not refresh_node
@@ -630,6 +630,12 @@ class Stylesheet:
                     # If the styles have changed we want to refresh the node
                     refresh_node = True
                 node._component_styles[component] = virtual_node.styles
+                node._component_styles_nodes.append(virtual_node)
+                weakref.finalize(
+                    virtual_node.styles,
+                    node._component_styles_nodes.remove,
+                    virtual_node,
+                )
             if refresh_node:
                 node.refresh()
 

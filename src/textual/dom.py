@@ -201,7 +201,6 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *_classes)
         self._classes.update(_classes)
 
-        self._virtual_nodes: List[DOMNode] = []
         self._nodes: NodeList = NodeList(self)
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
@@ -210,6 +209,10 @@ class DOMNode(MessagePump):
         )
         # A mapping of class names to Styles set in COMPONENT_CLASSES
         self._component_styles: dict[str, RenderStyles] = {}
+        # Hold strong references to the virtual nodes created for the RenderStyles objects
+        # in COMPONENT_CLASSES.  A virtual node is removed when the corresponding RenderStyles
+        # object is garbage collected, via weakref.finalize().
+        self._component_styles_nodes: list[DOMNode] = []
 
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
