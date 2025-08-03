@@ -207,12 +207,9 @@ class DOMNode(MessagePump):
         self.styles: RenderStyles = RenderStyles(
             self, self._css_styles, self._inline_styles
         )
-        # A mapping of class names to Styles set in COMPONENT_CLASSES
-        self._component_styles: dict[str, RenderStyles] = {}
-        # Hold strong references to the virtual nodes created for the RenderStyles objects
-        # in COMPONENT_CLASSES.  A virtual node is removed when the corresponding RenderStyles
-        # object is garbage collected, via weakref.finalize().
-        self._component_styles_nodes: list[DOMNode] = []
+        # A mapping of class names to virtual nodes whose 'styles' attribute
+        # corresponds to Styles set in COMPONENT_CLASSES
+        self._component_styles_nodes: dict[str, DOMNode] = {}
 
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
@@ -583,9 +580,9 @@ class DOMNode(MessagePump):
         styles = RenderStyles(self, Styles(), Styles())
 
         for name in names:
-            if name not in self._component_styles:
+            if name not in self._component_styles_nodes:
                 raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
-            component_styles = self._component_styles[name]
+            component_styles = self._component_styles_nodes[name].styles
             styles.node = component_styles.node
             styles.base.merge(component_styles.base)
             styles.inline.merge(component_styles.inline)

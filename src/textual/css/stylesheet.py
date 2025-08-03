@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import weakref
 from collections import defaultdict
 from itertools import chain
 from operator import itemgetter
@@ -617,25 +616,20 @@ class Stylesheet:
         if component_classes:
             # Create virtual nodes that exist to extract styles
             refresh_node = False
-            old_component_styles = node._component_styles.copy()
-            node._component_styles.clear()
+            old_component_styles_nodes = node._component_styles_nodes.copy()
+            node._component_styles_nodes.clear()
             for component in sorted(component_classes):
                 virtual_node = DOMNode(classes=component)
                 virtual_node._attach(node)
                 self.apply(virtual_node, animate=False)
-                if (
-                    not refresh_node
-                    and old_component_styles.get(component) != virtual_node.styles
+                if not refresh_node and (
+                    component not in old_component_styles_nodes
+                    or old_component_styles_nodes[component].styles
+                    != virtual_node.styles
                 ):
                     # If the styles have changed we want to refresh the node
                     refresh_node = True
-                node._component_styles[component] = virtual_node.styles
-                node._component_styles_nodes.append(virtual_node)
-                weakref.finalize(
-                    virtual_node.styles,
-                    node._component_styles_nodes.remove,
-                    virtual_node,
-                )
+                node._component_styles_nodes[component] = virtual_node
             if refresh_node:
                 node.refresh()
 
