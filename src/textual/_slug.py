@@ -37,7 +37,7 @@ NONLINGUAL: Final[str] = (
     r"\U0001F300-\U0001F5FF"
     r"\U0001F600-\U0001F64F"
     r"\U0001F680-\U0001F6FF"
-    r"\U0001f926-\U0001f937"
+    r"\U0001F900-\U0001f9FF"
     r"\u200D"
     r"\u2640-\u2642"
 )
