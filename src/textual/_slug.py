@@ -128,13 +128,9 @@ def slug_for_tcss_id(text: str) -> str:
     Returns:
         A slugified version of text suitable for use as a TCSS id.
     """
-
+    is_valid = VALID_ID_CHARACTERS.__contains__
     slug = "".join(
-        (
-            character
-            if character in VALID_ID_CHARACTERS
-            else ord(character).__format__("x")
-        )
+        (character if is_valid(character) else "{:x}".format(ord(character)))
         for character in text.casefold().replace(" ", "-")
     )
     if not slug:

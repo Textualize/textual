@@ -1231,6 +1231,7 @@ class Content(Visual):
         return segments
 
     def __rich__(self):
+        """Allow Content to be rendered with rich.print."""
         from rich.segment import Segments
 
         return Segments(self.render_segments(Style(), "\n"))

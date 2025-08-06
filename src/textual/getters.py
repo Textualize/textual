@@ -5,36 +5,11 @@ Descriptors to define properties on your widget, screen, or App.
 
 from __future__ import annotations
 
-from typing import Generic, TypeVar, overload
+from typing import Generic, overload
 
 from textual.css.query import NoMatches, QueryType, WrongType
 from textual.dom import DOMNode
 from textual.widget import Widget
-
-AppType = TypeVar("AppType", bound="App")
-
-
-class app(Generic[AppType]):
-    """A typed getter for the app.
-
-    Example:
-        ```python
-        class MyWidget(Widget):
-            app = getters.app(MyApp)
-        ```
-
-
-    Args:
-        Generic (_type_): _description_
-    """
-
-    def __init__(self, app_type: type[AppType]) -> None:
-        self._app_type = app_type
-
-    def __get__(self, obj: DOMNode, obj_type: type[DOMNode]) -> AppType:
-        app = obj.app
-        assert isinstance(app, self._app_type)
-        return app
 
 
 class query_one(Generic[QueryType]):
@@ -79,23 +54,17 @@ class query_one(Generic[QueryType]):
         Args:
             selector: A TCSS selector, e.g. "#mywidget"
         """
-        self.selector = selector
-        self.expect_type = Widget
 
     @overload
-    def __init__(self, selector: type[QueryType]) -> None:
-        self.selector = selector.__name__
-        self.expect_type = selector
+    def __init__(self, selector: type[QueryType]) -> None: ...
 
     @overload
-    def __init__(self, selector: str, expect_type: type[QueryType]) -> None:
-        self.selector = selector
-        self.expect_type = expect_type
+    def __init__(self, selector: str, expect_type: type[QueryType]) -> None: ...
 
     @overload
-    def __init__(self, selector: type[QueryType], expect_type: type[QueryType]) -> None:
-        self.selector = selector.__name__
-        self.expect_type = expect_type
+    def __init__(
+        self, selector: type[QueryType], expect_type: type[QueryType]
+    ) -> None: ...
 
     def __init__(
         self,
@@ -165,14 +134,10 @@ class child_by_id(Generic[QueryType]):
     expect_type: type[Widget]
 
     @overload
-    def __init__(self, child_id: str) -> None:
-        self.child_id = child_id
-        self.expect_type = Widget
+    def __init__(self, child_id: str) -> None: ...
 
     @overload
-    def __init__(self, child_id: str, expect_type: type[QueryType]) -> None:
-        self.child_id = child_id
-        self.expect_type = expect_type
+    def __init__(self, child_id: str, expect_type: type[QueryType]) -> None: ...
 
     def __init__(
         self,
