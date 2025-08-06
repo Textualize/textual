@@ -396,12 +396,14 @@ class Content(Visual):
         return cls("".join(text), spans)
 
     def simplify(self) -> Content:
-        """Simplify spans in place.
+        """Simplify spans by joining contiguous spans together.
 
-        This joins contiguous spans together which can produce faster renders.
+        This can produce faster renders but typically only worth it if you have appended a
+        large number of Content instances together.
 
-        Note that this is only typically worth it if you have appended a large number of Content instances together,
-        and it only needs to be done once.
+        Note that this this modifies the Content instance in-place, which might appear
+        to violate the immutability constraints, but it will not change the rendered output,
+        nor its hash.
 
         Returns:
             Self.
