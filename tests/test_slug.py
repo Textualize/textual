@@ -25,6 +25,8 @@ from textual._slug import TrackedSlugs, slug
         ("test🙂test", "testtest"),
         ("test🤷test", "testtest"),
         ("test🤷🏻‍♀️test", "testtest"),
+        ("test🤖test", "testtest"),
+        ("test🧠test", "testtest"),
     ],
 )
 def test_simple_slug(text: str, expected: str) -> None:
