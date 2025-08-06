@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `Content.simplify`
-- Added `textual.reactive.Initialize`
+- Added `Content.simplify` https://github.com/Textualize/textual/pull/6023
+- Added `textual.reactive.Initialize` https://github.com/Textualize/textual/pull/6023
 
 ## [5.2.0] - 2025-08-01
 
