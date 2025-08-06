@@ -56,7 +56,7 @@ class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
 
 
-class Initialize(Generic[ReactableType, ReactiveType]):
+class Initialize(Generic[ReactiveType]):
     """Initialize a reactive by calling a method parent object.
 
     Example:
