@@ -286,3 +286,11 @@ def test_split_and_tabs():
     content = Content("--- hello.py\t2024-01-15 10:30:00.000000000 -0800", spans=spans)
     widget = Widget()
     content.render_strips(0, None, Style(), RenderOptions(widget._get_style, {}))
+
+
+def test_simplify():
+    """Test simplify joins spans."""
+    content = Content.from_markup("[bold]Foo[/][bold]Bar[/]")
+    assert content.spans == [Span(0, 3, "bold"), Span(3, 6, "bold")]
+    content.simplify()
+    assert content.spans == [Span(0, 6, "bold")]
