@@ -1,6 +1,6 @@
 import pytest
 
-from textual._slug import TrackedSlugs, slug
+from textual._slug import TrackedSlugs, slug_for_tcss_id
 
 
 @pytest.mark.xdist_group("group1")
@@ -31,7 +31,7 @@ from textual._slug import TrackedSlugs, slug
 )
 def test_simple_slug(text: str, expected: str) -> None:
     """The simple slug function should produce the expected slug."""
-    assert slug(text) == expected
+    assert slug_for_tcss_id(text) == expected
 
 
 @pytest.fixture(scope="module")

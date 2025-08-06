@@ -5,11 +5,36 @@ Descriptors to define properties on your widget, screen, or App.
 
 from __future__ import annotations
 
-from typing import Generic, overload
+from typing import Generic, TypeVar, overload
 
 from textual.css.query import NoMatches, QueryType, WrongType
 from textual.dom import DOMNode
 from textual.widget import Widget
+
+AppType = TypeVar("AppType", bound="App")
+
+
+class app(Generic[AppType]):
+    """A typed getter for the app.
+
+    Example:
+        ```python
+        class MyWidget(Widget):
+            app = getters.app(MyApp)
+        ```
+
+
+    Args:
+        Generic (_type_): _description_
+    """
+
+    def __init__(self, app_type: type[AppType]) -> None:
+        self._app_type = app_type
+
+    def __get__(self, obj: DOMNode, obj_type: type[DOMNode]) -> AppType:
+        app = obj.app
+        assert isinstance(app, self._app_type)
+        return app
 
 
 class query_one(Generic[QueryType]):
