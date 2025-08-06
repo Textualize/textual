@@ -192,9 +192,8 @@ class Input(ScrollView):
         }
 
         &:focus {
-            border: tall $border;            
+            border: tall $border;
             background-tint: $foreground 5%;
-            
         }
         &>.input--cursor {
             background: $input-cursor-background;
@@ -212,12 +211,12 @@ class Input(ScrollView):
         }
         &.-invalid:focus {
             border: tall $error;
-        }    
+        }
 
         &:ansi {
             background: ansi_default;
             color: ansi_default;
-            &>.input--cursor {     
+            &>.input--cursor {
                 text-style: reverse;
             }
             &>.input--placeholder, &>.input--suggestion {
@@ -229,8 +228,7 @@ class Input(ScrollView):
             }
             &.-invalid:focus {
                 border: tall ansi_red;
-            }  
-            
+            }
         }
     }
 
