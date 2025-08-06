@@ -54,23 +54,17 @@ class query_one(Generic[QueryType]):
         Args:
             selector: A TCSS selector, e.g. "#mywidget"
         """
-        self.selector = selector
-        self.expect_type = Widget
 
     @overload
-    def __init__(self, selector: type[QueryType]) -> None:
-        self.selector = selector.__name__
-        self.expect_type = selector
+    def __init__(self, selector: type[QueryType]) -> None: ...
 
     @overload
-    def __init__(self, selector: str, expect_type: type[QueryType]) -> None:
-        self.selector = selector
-        self.expect_type = expect_type
+    def __init__(self, selector: str, expect_type: type[QueryType]) -> None: ...
 
     @overload
-    def __init__(self, selector: type[QueryType], expect_type: type[QueryType]) -> None:
-        self.selector = selector.__name__
-        self.expect_type = expect_type
+    def __init__(
+        self, selector: type[QueryType], expect_type: type[QueryType]
+    ) -> None: ...
 
     def __init__(
         self,
@@ -140,14 +134,10 @@ class child_by_id(Generic[QueryType]):
     expect_type: type[Widget]
 
     @overload
-    def __init__(self, child_id: str) -> None:
-        self.child_id = child_id
-        self.expect_type = Widget
+    def __init__(self, child_id: str) -> None: ...
 
     @overload
-    def __init__(self, child_id: str, expect_type: type[QueryType]) -> None:
-        self.child_id = child_id
-        self.expect_type = expect_type
+    def __init__(self, child_id: str, expect_type: type[QueryType]) -> None: ...
 
     def __init__(
         self,

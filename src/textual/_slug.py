@@ -114,3 +114,27 @@ class TrackedSlugs:
         if used:
             slugged = f"{slugged}-{used}"
         return slugged
+
+
+VALID_ID_CHARACTERS = frozenset("abcdefghijklmnopqrstuvwxyz0123456789-")
+
+
+def slug_for_tcss_id(text: str) -> str:
+    """Produce a slug usable as a TCSS id from the given text.
+
+    Args:
+        text: Text.
+
+    Returns:
+        A slugified version of text suitable for use as a TCSS id.
+    """
+    is_valid = VALID_ID_CHARACTERS.__contains__
+    slug = "".join(
+        (character if is_valid(character) else "{:x}".format(ord(character)))
+        for character in text.casefold().replace(" ", "-")
+    )
+    if not slug:
+        return "_"
+    if slug[0].isdecimal():
+        return f"_{slug}"
+    return slug

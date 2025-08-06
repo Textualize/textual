@@ -30,7 +30,10 @@ def count_parameters(func: Callable) -> int:
         param_count = _count_parameters(func) - 1
     else:
         param_count = _count_parameters(func)
-    func._param_count = param_count
+    try:
+        func._param_count = param_count
+    except TypeError:
+        pass
     return param_count
 
 

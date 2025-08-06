@@ -196,6 +196,7 @@ class Visual(ABC):
         height: int | None,
         style: Style,
         *,
+        apply_selection: bool = True,
         pad: bool = False,
         post_style: Style | None = None,
     ) -> list[Strip]:
@@ -207,6 +208,7 @@ class Visual(ABC):
             width: Desired width (in cells).
             height: Desired height (in lines) or `None` for no limit.
             style: A (Visual) Style instance.
+            apply_selection: Automatically apply selection styles?
             pad: Pad to desired width?
             post_style: Optional Style to apply to strips after rendering.
 
@@ -229,7 +231,7 @@ class Visual(ABC):
             RenderOptions(
                 widget._get_style,
                 widget.styles,
-                selection,
+                selection if apply_selection else None,
                 selection_style,
             ),
         )

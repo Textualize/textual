@@ -395,6 +395,36 @@ class Content(Visual):
             text_append(end)
         return cls("".join(text), spans)
 
+    def simplify(self) -> Content:
+        """Simplify spans by joining contiguous spans together.
+
+        This can produce faster renders but typically only worth it if you have appended a
+        large number of Content instances together.
+
+        Note that this this modifies the Content instance in-place, which might appear
+        to violate the immutability constraints, but it will not change the rendered output,
+        nor its hash.
+
+        Returns:
+            Self.
+        """
+        spans = self.spans
+        if not spans:
+            return self
+        last_span = Span(0, 0, Style())
+        new_spans: list[Span] = []
+        changed: bool = False
+        for span in self._spans:
+            if span.start == last_span.end and span.style == last_span.style:
+                last_span = new_spans[-1] = Span(last_span.start, span.end, span.style)
+                changed = True
+            else:
+                new_spans.append(span)
+                last_span = span
+        if changed:
+            self._spans[:] = new_spans
+        return self
+
     def __eq__(self, other: object) -> bool:
         """Compares text only, so that markup doesn't effect sorting."""
         if isinstance(other, str):
@@ -528,7 +558,6 @@ class Content(Visual):
                 return None
 
         for y, line in enumerate(self.split(allow_blank=True)):
-
             if post_style is not None:
                 line = line.stylize(post_style)
 
@@ -1201,6 +1230,12 @@ class Content(Visual):
         ]
         return segments
 
+    def __rich__(self):
+        """Allow Content to be rendered with rich.print."""
+        from rich.segment import Segments
+
+        return Segments(self.render_segments(Style(), "\n"))
+
     def _divide_spans(self, offsets: tuple[int, ...]) -> list[tuple[Span, int, int]]:
         """Divide content from a list of offset to cut.
 
@@ -1568,7 +1603,6 @@ class _FormattedLine:
     def _apply_link_style(
         self, link_style: RichStyle, segments: list[Segment]
     ) -> list[Segment]:
-
         _Segment = Segment
         segments = [
             _Segment(

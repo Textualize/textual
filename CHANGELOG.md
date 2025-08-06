@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# Unreleased
+
+### Added
+
+- Added `Content.simplify` https://github.com/Textualize/textual/pull/6023
+- Added `textual.reactive.Initialize` https://github.com/Textualize/textual/pull/6023
+
 ## [5.2.0] - 2025-08-01
 
 ### Added

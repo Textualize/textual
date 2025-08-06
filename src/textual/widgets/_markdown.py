@@ -13,7 +13,7 @@ from markdown_it.token import Token
 from rich.text import Text
 from typing_extensions import TypeAlias
 
-from textual._slug import TrackedSlugs, slug
+from textual._slug import TrackedSlugs, slug_for_tcss_id
 from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.containers import Horizontal, Vertical, VerticalScroll
@@ -1267,7 +1267,9 @@ class Markdown(Widget):
             elif token_type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
-                    block.id = f"heading-{slug(block._content.plain)}-{id(block)}"
+                    block.id = (
+                        f"heading-{slug_for_tcss_id(block._content.plain)}-{id(block)}"
+                    )
                 if stack:
                     stack[-1]._blocks.append(block)
                 else:
