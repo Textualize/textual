@@ -128,16 +128,17 @@ def slug_for_tcss_id(text: str) -> str:
     Returns:
         A slugified version of text suitable for use as a TCSS id.
     """
+
     slug = "".join(
         (
             character
             if character in VALID_ID_CHARACTERS
             else ord(character).__format__("x")
         )
-        for character in text
+        for character in text.casefold().replace(" ", "-")
     )
     if not slug:
-        return "-"
+        return "_"
     if slug[0].isdecimal():
-        return f"-{slug}"
+        return f"_{slug}"
     return slug
