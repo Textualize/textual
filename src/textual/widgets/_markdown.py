@@ -565,7 +565,7 @@ class MarkdownOrderedList(MarkdownList):
 
     MarkdownOrderedList Vertical {
         height: auto;
-        width: 1fr;        
+        width: 1fr;
     }
     """
 
@@ -607,29 +607,28 @@ class MarkdownTableContent(Widget):
 
     DEFAULT_CSS = """
     MarkdownTableContent {
-        width: 1fr;        
+        width: 1fr;
         height: auto;
-        layout: grid;        
-        grid-columns: auto;   
-        grid-rows: auto;    
-        grid-gutter: 1 1; 
-                
+        layout: grid;
+        grid-columns: auto;
+        grid-rows: auto;
+        grid-gutter: 1 1;
+
         & > .cell {
             margin: 0 0;
             height: auto;
             padding: 0 1;
             text-overflow: ellipsis;
-            
         }
         & > .header {
             height: auto;
             margin: 0 0;
             padding: 0 1;
             color: $primary;
-            text-overflow: ellipsis;            
-            content-align: left bottom;            
+            text-overflow: ellipsis;
+            content-align: left bottom;
         }
-        keyline: thin $foreground 20%;                
+        keyline: thin $foreground 20%;
     }
     MarkdownTableContent > .markdown-table--header {
         text-style: bold;
@@ -703,11 +702,11 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 1fr;      
-        margin-bottom: 1;      
+        width: 1fr;
+        margin-bottom: 1;
         &:light {
             background: white 30%;
-        }        
+        }
     }
     """
 
@@ -796,7 +795,7 @@ class MarkdownBullet(Widget):
     DEFAULT_CSS = """
     MarkdownBullet {
         width: auto;
-        color: $text-primary;        
+        color: $text-primary;
         &:light {
             color: $text-secondary;
         }
@@ -853,15 +852,15 @@ class MarkdownFence(MarkdownBlock):
         scrollbar-size-horizontal: 0;
         scrollbar-size-vertical: 0;
         width: 1fr;
-        height: auto;      
+        height: auto;
         color: rgb(210,210,210);
         background: black 10%;
         &:light {
             background: white 30%;
-        }        
+        }
         & > Label {
             padding: 1 2;
-        }        
+        }
     }
     """
 
@@ -904,15 +903,15 @@ NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
 class Markdown(Widget):
     DEFAULT_CSS = """
-    Markdown {        
-        height: auto;        
+    Markdown {
+        height: auto;
         padding: 0 2 0 2;
         layout: vertical;
-        color: $foreground;       
+        color: $foreground;
         overflow-y: hidden;
-              
+
         MarkdownBlock {
-            &:dark > .code_inline {                
+            &:dark > .code_inline {
                 background: $warning 10%;
                 color: $text-warning 95%;
             }
@@ -921,7 +920,7 @@ class Markdown(Widget):
                 color: $text-error 95%;
             }
             & > .em {
-                text-style: italic;                        
+                text-style: italic;
             }
             & > .strong {
                 text-style: bold;
@@ -930,10 +929,7 @@ class Markdown(Widget):
                 text-style: strike;
             }
         }
-    
     }
-    
-    
     """
 
     BULLETS = ["• ", "▪ ", "‣ ", "⭑ ", "◦ "]
