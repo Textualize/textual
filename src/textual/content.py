@@ -401,7 +401,7 @@ class Content(Visual):
         This can produce faster renders but typically only worth it if you have appended a
         large number of Content instances together.
 
-        Note that this this modifies the Content instance in-place, which might appear
+        Note that this modifies the Content instance in-place, which might appear
         to violate the immutability constraints, but it will not change the rendered output,
         nor its hash.
 
