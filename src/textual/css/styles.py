@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Literal, cast
+from weakref import ReferenceType, ref
 
 import rich.repr
 from rich.style import Style
@@ -858,25 +858,35 @@ class StylesBase:
 
 
 @rich.repr.auto
-@dataclass
 class Styles(StylesBase):
-    node: DOMNode | None = None
-    _rules: RulesMap = field(default_factory=RulesMap)
-    _updates: int = 0
+    def __init__(
+        self, node: DOMNode | None = None, rules: RulesMap | None = None
+    ) -> None:
+        self._node_ref: ReferenceType[DOMNode] | None = (
+            ref(node) if node is not None else None
+        )
+        self._rules: RulesMap = rules if rules is not None else RulesMap()
+        self._updates: int = 0
+        self.important: set[str] = set()
+        self.get_rule: Callable[[str, object], object] = self._rules.get
+        self.has_rule: Callable[[str], bool] = self._rules.__contains__
 
-    important: set[str] = field(default_factory=set)
+    @property
+    def node(self) -> DOMNode | None:
+        """Get the associated node. If there is no associated node or the associated
+        node has been garbage collected, return None."""
+        return self._node_ref() if self._node_ref is not None else None
 
-    def __post_init__(self) -> None:
-        self.get_rule: Callable[[str, object], object] = self._rules.get  # type: ignore[assignment]
-        self.has_rule: Callable[[str], bool] = self._rules.__contains__  # type: ignore[assignment]
+    @node.setter
+    def node(self, node: DOMNode | None) -> None:
+        """Set the associated node. A weak reference to the node is stored."""
+        self._node_ref = ref(node) if node is not None else None
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
-        return Styles(
-            node=self.node,
-            _rules=self.get_rules(),
-            important=self.important,
-        )
+        other = Styles(self.node, self.get_rules())
+        other.important = self.important
+        return other
 
     def clear_rule(self, rule_name: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
@@ -1308,8 +1318,12 @@ class Styles(StylesBase):
 class RenderStyles(StylesBase):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
 
-    def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
-        self.node = node
+    def __init__(
+        self, node: DOMNode | None, base: Styles, inline_styles: Styles
+    ) -> None:
+        self._node_ref: ReferenceType[DOMNode] | None = (
+            ref(node) if node is not None else None
+        )
         self._base_styles = base
         self._inline_styles = inline_styles
         self._animate: BoundAnimator | None = None
@@ -1333,6 +1347,17 @@ class RenderStyles(StylesBase):
             An opaque integer.
         """
         return self._updates + self._base_styles._updates + self._inline_styles._updates
+
+    @property
+    def node(self) -> DOMNode | None:
+        """Get the associated node. If there is no associated node or the associated
+        node has been garbage collected, return None."""
+        return self._node_ref() if self._node_ref is not None else None
+
+    @node.setter
+    def node(self, node: DOMNode | None) -> None:
+        """Set the associated node. A weak reference to the node is stored."""
+        self._node_ref = ref(node) if node is not None else None
 
     @property
     def base(self) -> Styles:

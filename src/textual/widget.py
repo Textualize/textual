@@ -4338,7 +4338,7 @@ class Widget(DOMNode):
         self._arrangement_cache.clear()
         self._nodes._clear()
         self._render_cache = _RenderCache(NULL_SIZE, [])
-        self._component_styles.clear()
+        self._component_styles_nodes.clear()
         self._query_one_cache.clear()
 
     async def _on_idle(self, event: events.Idle) -> None:
