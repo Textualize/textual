@@ -6673,6 +6673,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.content.Content.simplify" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;simplify
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.content.Content.split" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;split
@@ -9363,6 +9372,15 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.simplify" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;simplify
+    </span>
+  </a>
   
 </li>
         
@@ -12210,6 +12228,53 @@ Self is the separator (which maybe empty) placed between each string or Content.
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.content.Content.simplify" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">simplify</span>
+
+
+<a href="#textual.content.Content.simplify" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">simplify</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Simplify spans by joining contiguous spans together.</p>
+<p>This can produce faster renders but typically only worth it if you have appended a
+large number of Content instances together.</p>
+<p>Note that this modifies the Content instance in-place, which might appear
+to violate the immutability constraints, but it will not change the rendered output,
+nor its hash.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            Content (textual.content.Content)" href="#textual.content.Content">Content</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Self.</p>
+              </div>
             </td>
           </tr>
       </tbody>

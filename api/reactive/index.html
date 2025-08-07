@@ -6231,6 +6231,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.reactive.Initialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Initialize
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.reactive.Reactive" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Reactive
@@ -7593,6 +7602,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.reactive.Initialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Initialize
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.reactive.Reactive" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Reactive
@@ -7972,6 +7990,64 @@ window.onload = async (event) => {
 
 
 
+<h2 id="textual.reactive.Initialize" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Initialize</span>
+
+
+<a href="#textual.reactive.Initialize" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Initialize</span><span class="p">(</span><span class="n"><span title="textual.reactive.Initialize(callback)">callback</span></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code></p>
+
+
+
+        <p>Initialize a reactive by calling a method parent object.</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>    <span class="k">class</span><span class="w"> </span><span class="nc">InitializeApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="k">def</span><span class="w"> </span><span class="nf">get_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;baz&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="c1"># The `names` property will call `get_names` to get its default when first referenced.</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">names</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="n">Initialize</span><span class="p">(</span><span class="n">get_names</span><span class="p">))</span>
+</code></pre></div>
+</details>
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
 <h2 id="textual.reactive.Reactive" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Reactive</span>
 
@@ -8016,7 +8092,7 @@ window.onload = async (event) => {
 <h3 id="textual.reactive.Reactive(default)" class="doc doc-heading doc-heading-parameter">                  <code>default</code>
 <a href="#textual.reactive.Reactive(default)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
+                  <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>] | <a class="autorefs autorefs-internal" title="            Initialize (textual.reactive.Initialize)" href="#textual.reactive.Initialize">Initialize</a>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8312,7 +8388,7 @@ window.onload = async (event) => {
 <h3 id="textual.reactive.reactive(default)" class="doc doc-heading doc-heading-parameter">                  <code>default</code>
 <a href="#textual.reactive.reactive(default)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
+                  <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>] | <a class="autorefs autorefs-internal" title="            Initialize (textual.reactive.Initialize)" href="#textual.reactive.Initialize">Initialize</a>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8507,7 +8583,7 @@ window.onload = async (event) => {
 <h3 id="textual.reactive.var(default)" class="doc doc-heading doc-heading-parameter">                  <code>default</code>
 <a href="#textual.reactive.var(default)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
+                  <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>] | <a class="autorefs autorefs-internal" title="            Initialize (textual.reactive.Initialize)" href="#textual.reactive.Initialize">Initialize</a>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
