@@ -65,10 +65,10 @@ class Button(Widget, can_focus=True):
             border: none !important;
         }
 
-        &:disabled {            
+        &:disabled {
             text-opacity: 0.6;
         }
-        
+
         &:focus {
             text-style: $button-focus-text-style;
             background-tint: $foreground 5%;
