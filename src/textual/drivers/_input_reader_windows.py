@@ -1,6 +1,7 @@
 import os
 import sys
-from threading import Event
+from queue import Empty, Queue
+from threading import Event, Thread
 from typing import Iterator
 
 
@@ -16,18 +17,34 @@ class InputReader:
         self._fileno = sys.__stdin__.fileno()
         self.timeout = timeout
         self._exit_event = Event()
+        self._queue = Queue()
+        self._worker_thread = Thread(
+            target=self._run_worker_thread, name="input-reader-worker"
+        )
+        self._worker_thread.start()
 
     def close(self) -> None:
         """Close the reader (will exit the iterator)."""
         self._exit_event.set()
 
-    def __iter__(self) -> Iterator[bytes]:
-        """Read input, yield bytes."""
+    def _run_worker_thread(self) -> None:
         while not self._exit_event.is_set():
             try:
                 data = os.read(self._fileno, 1024) or None
             except Exception:
-                break
+                data = None
+            self._queue.put(data)
             if not data:
                 break
-            yield data
+
+    def __iter__(self) -> Iterator[bytes]:
+        """Read input, yield bytes."""
+        while not self._exit_event.is_set():
+            try:
+                data = self._queue.get(timeout=self.timeout)
+            except Empty:
+                yield b""
+            else:
+                if not data:
+                    return
+                yield data
