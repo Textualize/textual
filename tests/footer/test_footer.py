@@ -50,12 +50,17 @@ async def test_footer_bindings() -> None:
 
     app = PriorityBindingApp()
     async with app.run_test() as pilot:
-        await pilot.pause()
         assert app_binding_count == 0
+        # Pause to ensure the footer is fully composed to avoid flakiness in CI
+        await pilot.pause(0.4)
         await app.wait_for_refresh()
-        await pilot.click("Footer", offset=(1, 0))
+
+        footer_key_clicked = await pilot.click("FooterKey")
+        assert footer_key_clicked is True  # Sanity check
         await pilot.pause()
         assert app_binding_count == 1
-        await pilot.click("Footer")
+
+        footer_key_clicked = await pilot.click("FooterKey")
+        assert footer_key_clicked is True  # Sanity check
         await pilot.pause()
         assert app_binding_count == 2
