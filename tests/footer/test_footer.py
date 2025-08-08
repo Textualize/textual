@@ -50,7 +50,7 @@ async def test_footer_bindings() -> None:
 
     app = PriorityBindingApp()
     async with app.run_test() as pilot:
-        await pilot.pause()
+        await pilot.pause(0.4)
         assert app_binding_count == 0
         await app.wait_for_refresh()
         # await pilot.click("Footer", offset=(1, 0))
