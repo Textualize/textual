@@ -1,0 +1,15 @@
+STARS = {
+    "Posting": "9.5k",
+    "Memray": "14.2k",
+    "Toolong": "3.5k",
+    "Dolphie": 857,
+    "Harlequin": "4.8k",
+    "Elia": "2.2k",
+    "Trogon": "2.6k",
+    "TFTUI - The Terraform textual UI": "1.1k",
+    "RecoverPy": "1.5k",
+    "Frogmouth": "2.8k",
+    "oterm": "2.0k",
+    "logmerger": 194,
+    "doit": "2.6k",
+}
