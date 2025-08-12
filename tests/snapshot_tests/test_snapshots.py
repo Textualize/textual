@@ -4538,3 +4538,35 @@ def test_stream_layout(snap_compare):
                 )
 
     assert snap_compare(StreamApp())
+
+
+def test_pretty_auto(snap_compare):
+    """Test that pretty works with auto dimensions.
+
+    You should see 'Hello World' including strings, 3 times in a purple box, top left.
+
+    """
+    from textual.widgets import Pretty
+
+    class Demo(App):
+        CSS = """
+        Vertical {
+            background: blue 30%;
+            height: auto;
+            width: auto;
+        }
+
+        Pretty {
+            width: auto;            
+            height: auto;
+            background: red 30%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical():
+                yield Pretty("hello world")
+                yield Pretty("hello world")
+                yield Pretty("hello world")
+
+    assert snap_compare(Demo())
