@@ -334,10 +334,7 @@ class Content(Visual):
         """
         if not text:
             return Content("")
-        span_length = cell_len(text) if cell_length is None else cell_length
-        new_content = cls(
-            text, [Span(0, span_length, style)] if style else None, span_length
-        )
+        new_content = cls(text, [Span(0, len(text), style)] if style else None)
         return new_content
 
     @classmethod
@@ -844,6 +841,8 @@ class Content(Visual):
         total_cell_length: int | None = self._cell_length
 
         for content in iter_content():
+            if not content:
+                continue
             extend_text(content._text)
             extend_spans(
                 _Span(offset + start, offset + end, style)
@@ -1437,6 +1436,9 @@ class Content(Visual):
         if "\t" not in self.plain:
             return self
 
+        if not self._spans:
+            return Content(self.plain.expandtabs(tab_size))
+
         new_text: list[Content] = []
         append = new_text.append
 
@@ -1449,7 +1451,7 @@ class Content(Visual):
                 for part in parts:
                     if part.plain.endswith("\t"):
                         part = Content(
-                            part._text[-1][:-1] + " ", part._spans, part._cell_length
+                            part._text[:-1] + " ", part._spans, part._cell_length
                         )
                         cell_position += part.cell_length
                         tab_remainder = cell_position % tab_size
