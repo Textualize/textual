@@ -38,4 +38,12 @@ class Pretty(Static):
             classes: The CSS classes of the pretty.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.update(PrettyRenderable(object))
+        self.update(object)
+
+    def update(self, object: Any) -> None:
+        """Update the content of the pretty widget.
+
+        Args:
+            object: The object to pretty-print.
+        """
+        super().update(PrettyRenderable(object))
