@@ -783,6 +783,7 @@ class StringEnumProperty(Generic[EnumType]):
         default: The default value (or a factory thereof) of the property.
         layout: Whether to refresh the node layout on value change.
         refresh_children: Whether to refresh the node children on value change.
+        display: Does this property change display?
     """
 
     def __init__(
@@ -792,12 +793,14 @@ class StringEnumProperty(Generic[EnumType]):
         layout: bool = False,
         refresh_children: bool = False,
         refresh_parent: bool = False,
+        display: bool = False,
     ) -> None:
         self._valid_values = valid_values
         self._default = default
         self._layout = layout
         self._refresh_children = refresh_children
         self._refresh_parent = refresh_parent
+        self._display = display
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -849,6 +852,12 @@ class StringEnumProperty(Generic[EnumType]):
                     ),
                 )
             if obj.set_rule(self.name, value):
+                if self._display and obj.node is not None:
+                    node = obj.node
+                    if node.parent:
+                        node._nodes.updated()
+                        node.parent._refresh_styles()
+
                 self._before_refresh(obj, value)
                 obj.refresh(
                     layout=self._layout,

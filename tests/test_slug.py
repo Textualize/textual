@@ -1,6 +1,7 @@
 import pytest
 
-from textual._slug import TrackedSlugs, slug
+from textual._slug import TrackedSlugs, slug, slug_for_tcss_id
+from textual.dom import check_identifiers
 
 
 @pytest.mark.xdist_group("group1")
@@ -25,6 +26,8 @@ from textual._slug import TrackedSlugs, slug
         ("test🙂test", "testtest"),
         ("test🤷test", "testtest"),
         ("test🤷🏻‍♀️test", "testtest"),
+        ("test🤖test", "testtest"),
+        ("test🧠test", "testtest"),
     ],
 )
 def test_simple_slug(text: str, expected: str) -> None:
@@ -62,3 +65,24 @@ def tracker() -> TrackedSlugs:
 def test_tracked_slugs(tracker: TrackedSlugs, text: str, expected: str) -> None:
     """The tracked slugging class should produce the expected slugs."""
     assert tracker.slug(text) == expected
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("", "_"),
+        (" ", "-"),
+        ("5", "_5"),
+        ("a", "a"),
+        ("hello world", "hello-world"),
+        ("🙂", "_1f642"),
+        ("🙂🙂", "_1f6421f642"),
+        ("Foo🙂", "foo1f642"),
+        ("ß", "ss"),
+    ],
+)
+def test_slug_for_tcss_id(text: str, expected: str) -> None:
+    """Test the slug_for_tcss_id"""
+    slug = slug_for_tcss_id(text)
+    assert slug == expected
+    check_identifiers(slug)

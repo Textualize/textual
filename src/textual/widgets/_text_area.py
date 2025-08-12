@@ -860,6 +860,14 @@ TextArea {
                     self.styles.color = Color.from_rich_color(color)
                 if background:
                     self.styles.background = Color.from_rich_color(background)
+            else:
+                # When the theme doesn't define a base style (e.g. the `css` theme),
+                # the TextArea background/color should fallback to its CSS colors.
+                #
+                # Since these styles may have already been changed by another theme,
+                # we need to reset the background/color styles to the default values.
+                self.styles.color = None
+                self.styles.background = None
 
     @property
     def available_themes(self) -> set[str]:
@@ -1683,7 +1691,6 @@ TextArea {
         return gutter_width
 
     def _on_mount(self, event: events.Mount) -> None:
-
         def text_selection_started(screen: Screen) -> None:
             """Signal callback to unselect when arbitrary text selection starts."""
             self.selection = Selection(self.cursor_location, self.cursor_location)
@@ -1702,6 +1709,9 @@ TextArea {
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
+        if not self.screen.is_active:
+            return
+
         self._cursor_visible = not self._cursor_visible
         _, cursor_y = self._cursor_offset
         self.refresh_lines(cursor_y)
@@ -1762,6 +1772,7 @@ TextArea {
             return
         if result := self._replace_via_keyboard(event.text, *self.selection):
             self.move_cursor(result.end_location)
+            self.focus()
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.

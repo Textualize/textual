@@ -76,13 +76,14 @@ class Static(Widget, inherit_bindings=False):
         """
         return self.visual
 
-    def update(self, content: VisualType = "") -> None:
+    def update(self, content: VisualType = "", *, layout: bool = True) -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
             content: New content.
+            layout: Also perform a layout operation (set to `False` if you are certain the size won't change.)
         """
 
         self._content = content
         self._visual = visualize(self, content, markup=self._render_markup)
-        self.refresh(layout=True)
+        self.refresh(layout=layout)

@@ -268,7 +268,12 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
     def on_mount(self) -> None:
         self.call_next(self.bindings_changed, self.screen)
-        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
+
+        def bindings_changed(screen: Screen) -> None:
+            """Update bindings after a short delay to avoid flicker."""
+            self.call_after_refresh(self.bindings_changed, screen)
+
+        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)

@@ -408,6 +408,11 @@ class DOMNode(MessagePump):
         """
         return self._nodes
 
+    @property
+    def is_empty(self) -> bool:
+        """Are there no displayed children?"""
+        return not any(child.display for child in self._nodes)
+
     def sort_children(
         self,
         *,

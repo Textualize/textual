@@ -34,7 +34,7 @@
 
     .terminal-r1 { fill: #e0e0e0 }
 .terminal-r2 { fill: #c5c8c6 }
-.terminal-r3 { fill: #0178d4 }
+.terminal-r3 { fill: #0a0f13 }
 .terminal-r4 { fill: #00ff00 }
 .terminal-r5 { fill: #000000 }
 .terminal-r6 { fill: #121212 }
@@ -140,7 +140,7 @@
 </text><text class="terminal-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-line-7)">
 </text><text class="terminal-r8" x="24.4" y="215.2" textLength="73.2" clip-path="url(#terminal-line-8)">Hello&#160;</text><text class="terminal-r9" x="97.6" y="215.2" textLength="61" clip-path="url(#terminal-line-8)">World</text><text class="terminal-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-line-8)">
 </text><text class="terminal-r10" x="24.4" y="239.6" textLength="61" clip-path="url(#terminal-line-9)">Help&#160;</text><text class="terminal-r11" x="85.4" y="239.6" textLength="48.8" clip-path="url(#terminal-line-9)">text</text><text class="terminal-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-line-9)">
-</text><text class="terminal-r3" x="0" y="264" textLength="976" clip-path="url(#terminal-line-10)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-line-10)">
+</text><text class="terminal-r5" x="0" y="264" textLength="976" clip-path="url(#terminal-line-10)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-line-10)">
 </text><text class="terminal-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-line-11)">
 </text><text class="terminal-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-line-12)">
 </text><text class="terminal-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-line-13)">

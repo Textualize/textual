@@ -172,7 +172,7 @@ Display a markdown document.
 [Markdown reference](./widgets/markdown.md){ .md-button .md-button--primary }
 
 
-```{.textual path="docs/examples/widgets/markdown.py" columns="120" lines="51"}
+```{.textual path="docs/examples/widgets/markdown.py" columns="120" lines="53"}
 ```
 
 ## MaskedInput

@@ -85,7 +85,7 @@ MyApp().run()
 
 ## Built on Rich
 
-With over 1.6 *billion* downloads, Rich is the most popular terminal library out there.
+With over 3.1 *billion* downloads, Rich is the most popular terminal library out there.
 Textual builds on Rich to add interactivity, and is fully-compatible with Rich renderables.
 
 ## Re-usable widgets

@@ -46,6 +46,7 @@ async def test_hover_update_styles():
             "last-of-type",
             "last-child",
             "even",
+            "empty",
         }
 
         # Take note of the initial background colour
@@ -63,6 +64,7 @@ async def test_hover_update_styles():
             "last-of-type",
             "last-child",
             "even",
+            "empty",
         }
         assert button.styles.background != initial_background
 

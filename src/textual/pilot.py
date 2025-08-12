@@ -287,7 +287,7 @@ class Pilot(Generic[ReturnType]):
             True if no selector was specified or if the clicks landed on the selected
                 widget, False otherwise.
         """
-        await self.click(widget, offset, shift, meta, control, times=2)
+        return await self.click(widget, offset, shift, meta, control, times=2)
 
     async def triple_click(
         self,
@@ -332,7 +332,7 @@ class Pilot(Generic[ReturnType]):
             True if no selector was specified or if the clicks landed on the selected
                 widget, False otherwise.
         """
-        await self.click(widget, offset, shift, meta, control, times=3)
+        return await self.click(widget, offset, shift, meta, control, times=3)
 
     async def hover(
         self,

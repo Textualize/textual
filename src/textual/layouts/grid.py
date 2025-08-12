@@ -7,6 +7,7 @@ from textual._resolve import resolve
 from textual.css.scalar import Scalar
 from textual.geometry import NULL_OFFSET, Region, Size, Spacing
 from textual.layout import ArrangeResult, Layout, WidgetPlacement
+from textual.visual import visualize
 
 if TYPE_CHECKING:
     from textual.widget import Widget
@@ -20,10 +21,17 @@ class GridLayout(Layout):
     def __init__(self) -> None:
         self.min_column_width: int | None = None
         self.stretch_height: bool = False
-        self.regular = False
+        """Stretch the height of cells to be equal in each row."""
+        self.regular: bool = False
+        self.expand: bool = False
+        """Expand the grid to fit the container if it is smaller."""
+        self.shrink: bool = False
+        """Shrink the grid to fit the container if it is larger."""
+        self.auto_minimum: bool = False
+        """If self.shrink is `True`, auto-detect and limit the width."""
 
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
         parent.pre_layout(self)
         styles = parent.styles
@@ -222,12 +230,32 @@ class GridLayout(Layout):
                         )
                 column_scalars[column] = Scalar.from_number(width)
 
+        column_minimums: list[int] | None = None
+        if self.auto_minimum and self.shrink:
+            column_minimums = [1] * table_size_columns
+            for column_index in range(table_size_columns):
+                for row_index in range(len(row_scalars)):
+                    if (
+                        cell_info := cell_map.get((column_index, row_index))
+                    ) is not None:
+                        widget = cell_info[0]
+                        column_minimums[column_index] = max(
+                            visualize(widget, widget.render()).get_minimal_width(
+                                widget.styles
+                            )
+                            + widget.styles.gutter.width,
+                            column_minimums[column_index],
+                        )
+
         columns = resolve(
             column_scalars,
             size.width,
             gutter_vertical,
             size,
             viewport,
+            expand=self.expand,
+            shrink=self.shrink,
+            minimums=column_minimums,
         )
 
         # Handle any auto rows
@@ -281,6 +309,7 @@ class GridLayout(Layout):
                 Fraction(cell_size.width),
                 Fraction(cell_size.height),
                 constrain_width=True,
+                greedy=greedy,
             )
 
             if self.stretch_height and len(children) > 1:

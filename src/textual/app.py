@@ -53,7 +53,7 @@ from weakref import WeakKeyDictionary, WeakSet
 import rich
 import rich.repr
 from platformdirs import user_downloads_path
-from rich.console import Console, RenderableType
+from rich.console import Console, ConsoleDimensions, ConsoleOptions, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
@@ -75,7 +75,6 @@ from textual._ansi_sequences import SYNC_END, SYNC_START
 from textual._ansi_theme import ALABASTER, MONOKAI
 from textual._callback import invoke
 from textual._compat import cached_property
-from textual._compose import compose
 from textual._compositor import CompositorUpdate
 from textual._context import active_app, active_message_pump
 from textual._context import message_hook as message_hook_context_var
@@ -94,6 +93,7 @@ from textual.await_complete import AwaitComplete
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingsMap, BindingType, Keymap
 from textual.command import CommandListItem, CommandPalette, Provider, SimpleProvider
+from textual.compose import compose
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
 from textual.css.stylesheet import RulesMap, Stylesheet
@@ -1129,6 +1129,25 @@ class App(Generic[ReturnType], DOMNode):
         """The name of the currently active mode."""
         return self._current_mode
 
+    @property
+    def console_options(self) -> ConsoleOptions:
+        """Get options for the Rich console.
+
+        Returns:
+            Console options (same object returned from `console.options`).
+        """
+        size = ConsoleDimensions(*self.size)
+        console = self.console
+        return ConsoleOptions(
+            max_height=size.height,
+            size=size,
+            legacy_windows=console.legacy_windows,
+            min_width=1,
+            max_width=size.width,
+            encoding=console.encoding,
+            is_terminal=console.is_terminal,
+        )
+
     def exit(
         self,
         result: ReturnType | None = None,
@@ -1375,7 +1394,7 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(not dark, "-light-mode", update=False)
         self._refresh_truecolor_filter(self.ansi_theme)
         self._invalidate_css()
-        self.call_next(self.refresh_css)
+        self.call_next(partial(self.refresh_css, animate=False))
         self.call_next(self.theme_changed_signal.publish, theme)
 
     def _invalidate_css(self) -> None:
@@ -3985,7 +4004,6 @@ class App(Generic[ReturnType], DOMNode):
         action_target, action_name, params = self._parse_action(
             action, self if default_namespace is None else default_namespace
         )
-
         if action_target.check_action(action_name, params):
             return await self._dispatch_action(action_target, action_name, params)
         else:
@@ -4303,9 +4321,9 @@ class App(Generic[ReturnType], DOMNode):
         from textual.widgets import HelpPanel
 
         try:
-            self.query_one(HelpPanel)
+            self.screen.query_one(HelpPanel)
         except NoMatches:
-            self.mount(HelpPanel())
+            self.screen.mount(HelpPanel())
 
     def action_notify(
         self, message: str, title: str = "", severity: str = "information"

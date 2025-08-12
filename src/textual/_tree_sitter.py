@@ -1,8 +1,8 @@
 from __future__ import annotations
+
 from importlib import import_module
 
 from textual import log
-
 
 try:
     from tree_sitter import Language
@@ -24,9 +24,9 @@ try:
                 if language_name == "xml":
                     # xml uses language_xml() instead of language()
                     # it's the only outlier amongst the languages in the `textual[syntax]` extra
-                    language = Language(module.language_xml(), name=language_name)
+                    language = Language(module.language_xml())
                 else:
-                    language = Language(module.language(), name=language_name)
+                    language = Language(module.language())
             except (OSError, AttributeError):
                 log.warning(f"Could not load language {language_name!r}.")
                 return None

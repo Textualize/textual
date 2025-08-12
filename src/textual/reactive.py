@@ -56,6 +56,29 @@ class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
 
 
+class Initialize(Generic[ReactiveType]):
+    """Initialize a reactive by calling a method parent object.
+
+    Example:
+        ```python
+            class InitializeApp(App):
+
+                def get_names(self) -> list[str]:
+                    return ["foo", "bar", "baz"]
+
+                # The `names` property will call `get_names` to get its default when first referenced.
+                names = reactive(Initialize(get_names))
+        ```
+
+    """
+
+    def __init__(self, callback: Callable[[ReactableType], ReactiveType]) -> None:
+        self.callback = callback
+
+    def __call__(self, obj: ReactableType) -> ReactiveType:
+        return self.callback(obj)
+
+
 async def await_watcher(obj: Reactable, awaitable: Awaitable[object]) -> None:
     """Coroutine to await an awaitable returned from a watcher"""
     _rich_traceback_omit = True
@@ -118,7 +141,7 @@ class Reactive(Generic[ReactiveType]):
 
     def __init__(
         self,
-        default: ReactiveType | Callable[[], ReactiveType],
+        default: ReactiveType | Callable[[], ReactiveType] | Initialize[ReactiveType],
         *,
         layout: bool = False,
         repaint: bool = True,
@@ -190,7 +213,11 @@ class Reactive(Generic[ReactiveType]):
         else:
             default_or_callable = self._default
             default = (
-                default_or_callable()
+                (
+                    default_or_callable(obj)
+                    if isinstance(default_or_callable, Initialize)
+                    else default_or_callable()
+                )
                 if callable(default_or_callable)
                 else default_or_callable
             )
@@ -421,7 +448,7 @@ class reactive(Reactive[ReactiveType]):
 
     def __init__(
         self,
-        default: ReactiveType | Callable[[], ReactiveType],
+        default: ReactiveType | Callable[[], ReactiveType] | Initialize[ReactiveType],
         *,
         layout: bool = False,
         repaint: bool = True,
@@ -456,7 +483,7 @@ class var(Reactive[ReactiveType]):
 
     def __init__(
         self,
-        default: ReactiveType | Callable[[], ReactiveType],
+        default: ReactiveType | Callable[[], ReactiveType] | Initialize[ReactiveType],
         init: bool = True,
         always_update: bool = False,
         bindings: bool = False,

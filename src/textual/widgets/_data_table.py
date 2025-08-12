@@ -749,6 +749,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         we need to re-render it. """
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""
+        self._row_renderable_cache: LRUCache[tuple[int, int], RowRenderables] = (
+            LRUCache(1000)
+        )
+        """Caches row renderables - key is (update_count, row_index)"""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
         """Cache for lines within rows."""
         self._offset_cache: LRUCache[int, list[tuple[RowKey, int]]] = LRUCache(1)
@@ -1086,6 +1090,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
         self._cell_render_cache.clear()
+        self._row_renderable_cache.clear()
         self._line_cache.clear()
         self._styles_cache.clear()
         self._offset_cache.clear()
@@ -1109,6 +1114,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         super().notify_style_update()
         self._row_render_cache.clear()
         self._cell_render_cache.clear()
+        self._row_renderable_cache.clear()
         self._line_cache.clear()
         self._styles_cache.clear()
         self._get_styles_to_render_cell.cache_clear()
@@ -1990,6 +1996,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             A RowRenderables containing the optional label and the rendered cells.
         """
+        update_count = self._update_count
+        cache_key = (update_count, row_index)
+        if cache_key in self._row_renderable_cache:
+            row_renderables = self._row_renderable_cache[cache_key]
+        else:
+            row_renderables = self._compute_row_renderables(row_index)
+            self._row_renderable_cache[cache_key] = row_renderables
+        return row_renderables
+
+    def _compute_row_renderables(self, row_index: int) -> RowRenderables:
+        """Actual computation for _get_row_renderables"""
         ordered_columns = self.ordered_columns
         if row_index == -1:
             header_row: list[RenderableType] = [
@@ -2104,17 +2121,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             if is_header_cell:
                 row_height = self.header_height
-                options = self.app.console.options.update_dimensions(width, row_height)
+                options = self.app.console_options.update_dimensions(width, row_height)
             else:
                 # If an auto-height row hasn't had its height calculated, we don't fix
                 # the value for `height` so that we can measure the height of the cell.
                 row = self.rows[row_key]
                 if row.auto_height and row.height == 0:
                     row_height = 0
-                    options = self.app.console.options.update_width(width)
+                    options = self.app.console_options.update_width(width)
                 else:
                     row_height = row.height
-                    options = self.app.console.options.update_dimensions(
+                    options = self.app.console_options.update_dimensions(
                         width, row_height
                     )
 

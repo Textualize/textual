@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from functools import partial
 from itertools import groupby
 from operator import itemgetter
 from typing import TYPE_CHECKING
@@ -132,7 +133,7 @@ class KeyPanel(VerticalScroll, can_focus=False):
         align: center top;
 
         &> BindingsTable > .bindings-table--key {
-            color: $accent;
+            color: $text-accent;
             text-style: bold;
             padding: 0 1;
         }
@@ -145,8 +146,9 @@ class KeyPanel(VerticalScroll, can_focus=False):
             color: transparent;
         }
 
-        &> BindingsTable > .bindings-table--header {
-            text-style: dim italic;
+        &> BindingsTable > .bindings-table--header {        
+            color: $text-primary;
+            text-style: underline;
         }
 
         #bindings-table {
@@ -163,13 +165,18 @@ class KeyPanel(VerticalScroll, can_focus=False):
 
     async def on_mount(self) -> None:
         async def bindings_changed(screen: Screen) -> None:
+            """Update bindings."""
             if not screen.app.app_focus:
                 return
             if self.is_attached and screen is self.screen:
                 self.refresh(recompose=True)
 
+        def _bindings_changed(screen: Screen) -> None:
+            """Update bindings after a short delay."""
+            screen.set_timer(1 / 20, partial(bindings_changed, screen))
+
         self.set_class(self.app.ansi_color, "-ansi-scrollbar")
-        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+        self.screen.bindings_updated_signal.subscribe(self, _bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)

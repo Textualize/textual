@@ -20,7 +20,7 @@ class HorizontalLayout(Layout):
     name = "horizontal"
 
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
         parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
@@ -57,6 +57,7 @@ class HorizontalLayout(Layout):
             viewport,
             resolve_margin,
             resolve_dimension="width",
+            greedy=greedy,
         )
 
         margins = [

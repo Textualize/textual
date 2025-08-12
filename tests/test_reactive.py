@@ -7,11 +7,27 @@ import pytest
 from textual.app import App, ComposeResult
 from textual.message import Message
 from textual.message_pump import MessagePump
-from textual.reactive import Reactive, TooManyComputesError, reactive, var
+from textual.reactive import Initialize, Reactive, TooManyComputesError, reactive, var
 from textual.widget import Widget
 
 OLD_VALUE = 5_000
 NEW_VALUE = 1_000_000
+
+
+async def test_initialize():
+    """Test that the default accepts an Initialize instance."""
+
+    class InitializeApp(App):
+
+        def get_names(self) -> list[str]:
+            return ["foo", "bar", "baz"]
+
+        names = reactive(Initialize(get_names))
+
+    app = InitializeApp()
+
+    async with app.run_test():
+        assert app.names == ["foo", "bar", "baz"]
 
 
 async def test_watch():

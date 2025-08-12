@@ -32,7 +32,11 @@ def _build_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
 
 
 def arrange(
-    widget: Widget, children: Sequence[Widget], size: Size, viewport: Size
+    widget: Widget,
+    children: Sequence[Widget],
+    size: Size,
+    viewport: Size,
+    optimal: bool = False,
 ) -> DockArrangeResult:
     """Arrange widgets by applying docks and calling layouts
 
@@ -56,7 +60,6 @@ def arrange(
 
     # Widgets which will be displayed
     display_widgets = [child for child in children if get_display(child) != "none"]
-
     # Widgets organized into layers
     layers = _build_layers(display_widgets)
 
@@ -80,7 +83,7 @@ def arrange(
         # Arrange docked widgets
         if dock_widgets:
             _dock_placements, dock_spacing = _arrange_dock_widgets(
-                dock_widgets, dock_region, viewport
+                dock_widgets, dock_region, viewport, greedy=not optimal
             )
             placements.extend(_dock_placements)
             dock_region = dock_region.shrink(dock_spacing)
@@ -92,7 +95,7 @@ def arrange(
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
             layout_placements = widget.layout.arrange(
-                widget, layout_widgets, dock_region.size
+                widget, layout_widgets, dock_region.size, greedy=not optimal
             )
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             placement_offset = dock_region.offset
@@ -115,14 +118,13 @@ def arrange(
                 )
 
             WidgetPlacement.apply_absolute(layout_placements)
-
             placements.extend(layout_placements)
 
     return DockArrangeResult(placements, set(display_widgets), scroll_spacing)
 
 
 def _arrange_dock_widgets(
-    dock_widgets: Sequence[Widget], region: Region, viewport: Size
+    dock_widgets: Sequence[Widget], region: Region, viewport: Size, greedy: bool = True
 ) -> tuple[list[WidgetPlacement], Spacing]:
     """Arrange widgets which are *docked*.
 
@@ -150,7 +152,7 @@ def _arrange_dock_widgets(
         edge = dock_widget.styles.dock
 
         box_model = dock_widget._get_box_model(
-            size, viewport, Fraction(size.width), Fraction(size.height)
+            size, viewport, Fraction(size.width), Fraction(size.height), greedy=greedy
         )
         widget_width_fraction, widget_height_fraction, margin = box_model
         widget_width = int(widget_width_fraction) + margin.width

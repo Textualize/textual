@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -481,7 +482,14 @@ def test_content_switcher_example_switch(snap_compare):
 
 
 def test_tabbed_content(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "tabbed_content.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
+    )
 
 
 def test_tabbed_content_with_modified_tabs(snap_compare):
@@ -647,7 +655,14 @@ def test_sparkline_component_classes_colors(snap_compare):
 
 
 def test_collapsible_render(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py")
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
+    )
 
 
 def test_collapsible_collapsed(snap_compare):
@@ -655,7 +670,14 @@ def test_collapsible_collapsed(snap_compare):
 
 
 def test_collapsible_expanded(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["e", "wait:1000"],
+        terminal_size=(80, 50),
+    )
 
 
 def test_collapsible_nested(snap_compare):
@@ -4396,5 +4418,123 @@ def test_markdown_append(snap_compare):
             markdown = self.query_one(Markdown)
             for line in MD:
                 await markdown.append(line)
+                await asyncio.sleep(0.01)
 
-    assert snap_compare(MDApp())
+    assert snap_compare(MDApp(), press=["1", "wait:500"])
+
+
+def test_append_with_initial_document(snap_compare):
+    """Test appending to an an existing document works.
+
+    You should a header, followed by Hello World on the next line.
+    "Hello" will be in bold, and "World" in italics.
+    """
+
+    TEXT = """\
+### Header
+**Hello**"""
+
+    class MyApp(App):
+        def compose(self):
+            yield Markdown(TEXT)
+
+        async def on_mount(self) -> None:
+            await self.query_one(Markdown).append(" *World*")
+
+    assert snap_compare(MyApp())
+
+
+def test_text_area_css_theme_updates_background(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5964"""
+
+    class TextAreaThemeApp(App):
+        def compose(self) -> ComposeResult:
+            text_area_control = TextArea(
+                "This TextArea theme is always `css`.",
+                theme="css",
+                id="text-area-control",
+            )
+            text_area_control.cursor_blink = False
+
+            text_area_variable = TextArea(
+                "This TextArea theme changes from `github_light` to `css`.\n"
+                "The colors should match the TextArea above.",
+                theme="github_light",
+                id="text-area-variable",
+            )
+            text_area_variable.cursor_blink = False
+
+            yield text_area_control
+            yield text_area_variable
+
+        def on_mount(self) -> None:
+            text_area = self.query_one("#text-area-variable", TextArea)
+            text_area.theme = "css"
+
+    assert snap_compare(TextAreaThemeApp())
+
+
+def test_empty(snap_compare):
+    """Test empty: pseudo class
+
+    You should see three styled containers.
+    The top and bottom should be empty and have a red border.
+    The middle should container text, and will have a green border.
+
+    """
+
+    class EmptyApp(App):
+        CSS = """
+        .container {
+            border:green;
+        }
+        .container:empty {
+            border: red;            
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup(classes="container"):
+                pass
+            with VerticalGroup(classes="container"):
+                yield Label("FOO")
+            with VerticalGroup(classes="container"):
+                pass
+
+    assert snap_compare(EmptyApp())
+
+
+def test_stream_layout(snap_compare):
+    """Test stream layout.
+
+    You should see 3 blue labels.
+    The topmost should be a single line.
+    The middle should be two lines.
+    The last should be three lines.
+    There will be a one character margin between them.
+
+    """
+
+    class StreamApp(App):
+        CSS = """
+        VerticalScroll {            
+            layout: stream;
+            Label {
+                background: blue;
+                margin: 1;
+            }
+            #many-lines {
+                max-height: 3;
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll():
+                yield Label("Hello")
+                yield Label("foo\nbar")
+                yield Label(
+                    "\n".join(["Only 3 lines should be visible"] * 100), id="many-lines"
+                )
+
+    assert snap_compare(StreamApp())
