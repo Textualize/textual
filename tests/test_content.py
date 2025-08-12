@@ -294,3 +294,47 @@ def test_simplify():
     assert content.spans == [Span(0, 3, "bold"), Span(3, 6, "bold")]
     content.simplify()
     assert content.spans == [Span(0, 6, "bold")]
+
+
+@pytest.mark.parametrize(
+    ["input", "tab_width", "expected"],
+    [
+        (Content(""), 8, Content("")),
+        (Content("H"), 8, Content("H")),
+        (Content("Hello"), 8, Content("Hello")),
+        (Content("\t"), 8, Content(" " * 8)),
+        (Content("A\t"), 8, Content("A" + " " * 7)),
+        (Content("ABCD\t"), 8, Content("ABCD" + " " * 4)),
+        (Content("ABCDEFG\t"), 8, Content("ABCDEFG ")),
+        (Content("ABCDEFGH\t"), 8, Content("ABCDEFGH" + " " * 8)),
+        (Content("Hel\tlo!"), 4, Content("Hel lo!")),
+        (Content("\t\t"), 4, Content(" " * 8)),
+        (Content("FO\t\t"), 4, Content("FO      ")),
+        (Content("FO\tOB\t"), 4, Content("FO  OB  ")),
+        (
+            Content("FOO", spans=[Span(0, 3, "red")]),
+            4,
+            Content("FOO", spans=[Span(0, 3, "red")]),
+        ),
+        (
+            Content("FOO\tBAR", spans=[Span(0, 3, "red")]),
+            8,
+            Content("FOO     BAR", spans=[Span(0, 3, "red")]),
+        ),
+        (
+            Content("FOO\tBAR", spans=[Span(0, 3, "red"), Span(4, 8, "blue")]),
+            8,
+            Content("FOO     BAR", spans=[Span(0, 3, "red"), Span(8, 11, "blue")]),
+        ),
+        (
+            Content("foo\tbar\nbaz", spans=[Span(0, 11, "red")]),
+            8,
+            Content("foo     bar\nbaz", spans=[Span(0, 15, "red")]),
+        ),
+    ],
+)
+def test_expand_tabs(input: Content, tab_width: int, expected: Content):
+    output = input.expand_tabs(tab_width).simplify()
+    print(repr(output))
+    assert output.plain == expected.plain
+    assert output._spans == expected._spans
