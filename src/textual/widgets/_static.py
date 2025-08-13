@@ -29,8 +29,6 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    _renderable: VisualType
-
     def __init__(
         self,
         content: VisualType = "",
