@@ -66,7 +66,7 @@ class Static(Widget, inherit_bindings=False):
 
     @property
     def content(self) -> VisualType:
-        """The content set in the constructor."""
+        """The original content set in the constructor."""
         return self._content
 
     @content.setter
