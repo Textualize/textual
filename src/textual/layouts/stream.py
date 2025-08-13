@@ -21,6 +21,7 @@ class StreamLayout(Layout):
     - No absolute positioning.
     - No overlay: screen.
     - Layers are ignored.
+    - Non TCSS styles are ignored.
 
     The primary use of `layout: stream` is for a long list of widgets in a scrolling container, such as
     what you might expect from a LLM chat-bot. The speed improvement will only be significant with a lot of
@@ -49,18 +50,22 @@ class StreamLayout(Layout):
         null_offset = NULL_OFFSET
 
         for widget in children:
-            styles = widget.styles.base
+            styles = widget.styles._base_styles
             margin = styles.margin
             gutter_width, gutter_height = styles.gutter.totals
             top, right, bottom, left = margin
-            y += max(top, previous_margin)
+            y += top if top > previous_margin else previous_margin
             previous_margin = bottom
             height = (
                 widget.get_content_height(size, viewport, width - gutter_width)
                 + gutter_height
             )
             if (max_height := styles.max_height) is not None and max_height.is_cells:
-                height = min(height, int(max_height.value))
+                height = (
+                    height
+                    if height < (max_height_value := int(max_height.value))
+                    else max_height_value
+                )
             placements.append(
                 _WidgetPlacement(
                     _Region(left, y, width - (left + right), height),
