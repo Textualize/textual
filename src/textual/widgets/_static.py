@@ -85,11 +85,11 @@ class Static(Widget, inherit_bindings=False):
         return self.visual
 
     def update(self, content: VisualType = "", *, layout: bool = True) -> None:
-        """Update the widget's content area with new text or Rich renderable.
+        """Update the widget's content area with a string, a Visual (such as [Content][textual.content.Content]), or a [Rich renderable](https://rich.readthedocs.io/en/latest/protocol.html).
 
         Args:
             content: New content.
-            layout: Also perform a layout operation (set to `False` if you are certain the size won't change.)
+            layout: Also perform a layout operation (set to `False` if you are certain the size won't change).
         """
 
         self._content = content
