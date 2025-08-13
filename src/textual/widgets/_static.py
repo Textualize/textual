@@ -53,6 +53,13 @@ class Static(Widget, inherit_bindings=False):
 
     @property
     def visual(self) -> Visual:
+        """The visual to be displayed.
+
+        Note that the visual is what is ultimately rendered in the widget, but may not be the
+        same object set with the `update` method  or `content` property. For instance, if you
+        update with a string, then the visual will be a [Content][textual.content.Content] instance.
+
+        """
         if self._visual is None:
             self._visual = visualize(self, self._content, markup=self._render_markup)
         return self._visual
@@ -64,6 +71,7 @@ class Static(Widget, inherit_bindings=False):
 
     @content.setter
     def content(self, content: VisualType) -> None:
+        self._content = content
         self._visual = visualize(self, content, markup=self._render_markup)
         self.clear_cached_dimensions()
         self.refresh(layout=True)
