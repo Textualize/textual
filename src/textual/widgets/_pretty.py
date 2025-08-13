@@ -40,10 +40,10 @@ class Pretty(Widget):
         """
         super().__init__(name=name, id=id, classes=classes)
         self.shrink = False
-        self._renderable = PrettyRenderable(object)
+        self._pretty_renderable = PrettyRenderable(object)
 
     def render(self) -> RenderResult:
-        return self._renderable
+        return self._pretty_renderable
 
     def update(self, object: object) -> None:
         """Update the content of the pretty widget.
@@ -51,6 +51,6 @@ class Pretty(Widget):
         Args:
             object: The object to pretty-print.
         """
-        self._renderable = PrettyRenderable(object)
+        self._pretty_renderable = PrettyRenderable(object)
         self.clear_cached_dimensions()
         self.refresh(layout=True)
