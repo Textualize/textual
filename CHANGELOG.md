@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `bar_renderable` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
 
+
+### Changed
+
+- Breaking change: The `renderable` property on the `Static` widget has been changed to `content`. https://github.com/Textualize/textual/pull/6041
+
 # [5.3.0] - 2025-08-07
 
 ### Added

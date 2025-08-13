@@ -82,25 +82,25 @@ async def test_mode_setup(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
         assert isinstance(app.screen, BaseScreen)
-        assert str(app.screen.query_one(Label).renderable) == "one"
+        assert str(app.screen.query_one(Label).content) == "one"
 
 
 async def test_switch_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
         await pilot.press("2")
-        assert str(app.screen.query_one(Label).renderable) == "two"
+        assert str(app.screen.query_one(Label).content) == "two"
         await pilot.press("1")
-        assert str(app.screen.query_one(Label).renderable) == "one"
+        assert str(app.screen.query_one(Label).content) == "one"
 
 
 async def test_switch_same_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
         await pilot.press("1")
-        assert str(app.screen.query_one(Label).renderable) == "one"
+        assert str(app.screen.query_one(Label).content) == "one"
         await pilot.press("1")
-        assert str(app.screen.query_one(Label).renderable) == "one"
+        assert str(app.screen.query_one(Label).content) == "one"
 
 
 async def test_switch_unknown_mode(ModesApp: Type[App]):
@@ -115,7 +115,7 @@ async def test_remove_mode(ModesApp: Type[App]):
     async with app.run_test() as pilot:
         await app.switch_mode("two")
         await pilot.pause()
-        assert str(app.screen.query_one(Label).renderable) == "two"
+        assert str(app.screen.query_one(Label).content) == "two"
         app.remove_mode("one")
         assert "one" not in app._modes
 
@@ -133,7 +133,7 @@ async def test_add_mode(ModesApp: Type[App]):
         app.add_mode("three", lambda: BaseScreen("three"))
         await app.switch_mode("three")
         await pilot.pause()
-        assert str(app.screen.query_one(Label).renderable) == "three"
+        assert str(app.screen.query_one(Label).content) == "three"
 
 
 async def test_add_mode_duplicated(ModesApp: Type[App]):
@@ -152,7 +152,7 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
         # Build the stack up.
         for _ in range(N):
             await pilot.press("p")
-            fruits.append(str(app.screen.query_one(Label).renderable))
+            fruits.append(str(app.screen.query_one(Label).content))
 
         assert len(app.screen_stack) == N + 1
 
@@ -164,7 +164,7 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
         # Check the stack.
         assert len(app.screen_stack) == N + 1
         for _ in range(N):
-            assert str(app.screen.query_one(Label).renderable) == fruits.pop()
+            assert str(app.screen.query_one(Label).content) == fruits.pop()
             await pilot.press("o")
 
 
