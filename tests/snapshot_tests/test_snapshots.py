@@ -4570,3 +4570,21 @@ def test_pretty_auto(snap_compare):
                 yield Pretty("hello world")
 
     assert snap_compare(Demo())
+
+
+def test_static_content_property(snap_compare):
+    """Test that the Static.content property.
+
+    You should see the text "FOO BAR"
+
+    """
+
+    class StaticApp(App):
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello, World")
+
+        def on_mount(self) -> None:
+            self.query_one(Static).content = "FOO BAR"
+
+    assert snap_compare(StaticApp())

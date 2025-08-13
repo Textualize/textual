@@ -12,11 +12,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix type hint for SelectType: only hashable types are allowed. https://github.com/Textualize/textual/pull/6034
 - Fixed `Content.expand_tabs` https://github.com/Textualize/textual/pull/6038
 - Fixed return value for `Pilot.double_click` and `Pilot.triple_click` https://github.com/Textualize/textual/pull/6035
-- Fixed sizing issue with `Pretty` widget https://github.com/Textualize/textual/pull/6040
+- Fixed sizing issue with `Pretty` widget https://github.com/Textualize/textual/pull/6040 https://github.com/Textualize/textual/pull/6041
 
 ### Added
 
 - Added `bar_renderable` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
+
+
+### Changed
+
+- Breaking change: The `renderable` property on the `Static` widget has been changed to `content`. https://github.com/Textualize/textual/pull/6041
 
 # [5.3.0] - 2025-08-07
 

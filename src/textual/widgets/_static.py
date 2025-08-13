@@ -58,15 +58,15 @@ class Static(Widget, inherit_bindings=False):
         return self._visual
 
     @property
-    def renderable(self) -> VisualType:
-        return self._content or ""
+    def content(self) -> VisualType:
+        """The content set in the constructor."""
+        return self._content
 
-    # TODO: Should probably be renamed to `content`.
-    @renderable.setter
-    def renderable(self, renderable: VisualType) -> None:
-        self._renderable = renderable
-        self._visual = None
+    @content.setter
+    def content(self, content: VisualType) -> None:
+        self._visual = visualize(self, content, markup=self._render_markup)
         self.clear_cached_dimensions()
+        self.refresh(layout=True)
 
     def render(self) -> RenderResult:
         """Get a rich renderable for the widget's content.
