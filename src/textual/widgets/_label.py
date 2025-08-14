@@ -48,8 +48,7 @@ class Label(Static):
 
     def __init__(
         self,
-        # TODO: Should probably be renamed to `content`.
-        renderable: VisualType = "",
+        content: VisualType = "",
         *,
         variant: LabelVariant | None = None,
         expand: bool = False,
@@ -61,7 +60,7 @@ class Label(Static):
         disabled: bool = False,
     ) -> None:
         super().__init__(
-            renderable,
+            content,
             expand=expand,
             shrink=shrink,
             markup=markup,
