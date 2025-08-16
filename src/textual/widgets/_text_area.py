@@ -588,6 +588,7 @@ TextArea {
         tooltip: RenderableType | None = None,
         compact: bool = False,
         highlight_cursor_line: bool = True,
+        placeholder: str | Content = "",
     ) -> TextArea:
         """Construct a new `TextArea` with sensible defaults for editing code.
 
@@ -630,6 +631,7 @@ TextArea {
             tooltip=tooltip,
             compact=compact,
             highlight_cursor_line=highlight_cursor_line,
+            placeholder=placeholder,
         )
 
     @staticmethod
