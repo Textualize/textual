@@ -2768,6 +2768,7 @@ class App(Generic[ReturnType], DOMNode):
 
         next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
+        next_screen._update_auto_focus()
         self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
