@@ -721,7 +721,7 @@ class Widget(DOMNode):
         """
         self._anchored = anchor
         if anchor:
-            self.scroll_end()
+            self.scroll_end(immediate=True, animate=False)
 
     def release_anchor(self) -> None:
         """Release the [anchor][textual.widget.Widget].

@@ -8,18 +8,8 @@ from textual.binding import Binding
 from textual.containers import Center, Horizontal, ItemGrid, Vertical, VerticalScroll
 from textual.demo.page import PageScreen
 from textual.widgets import Footer, Label, Link, Markdown, Static
-
-
-@dataclass
-class ProjectInfo:
-    """Dataclass for storing project information."""
-
-    title: str
-    author: str
-    url: str
-    description: str
-    stars: str
-
+from textual.demo._project_stars import STARS
+from textual.demo._project_data import PROJECTS, ProjectInfo
 
 PROJECTS_MD = """\
 # Projects
@@ -30,101 +20,6 @@ And many more still in development.
 See below for a small selection!
 """
 
-PROJECTS = [
-    ProjectInfo(
-        "Posting",
-        "Darren Burns",
-        "https://posting.sh/",
-        """Posting is an HTTP client, not unlike Postman and Insomnia. As a TUI application, it can be used over SSH and enables efficient keyboard-centric workflows. """,
-        "6.0k",
-    ),
-    ProjectInfo(
-        "Memray",
-        "Bloomberg",
-        "https://github.com/bloomberg/memray",
-        """Memray is a memory profiler for Python. It can track memory allocations in Python code, in native extension modules, and in the Python interpreter itself.""",
-        "13.3k",
-    ),
-    ProjectInfo(
-        "Toolong",
-        "Will McGugan",
-        "https://github.com/Textualize/toolong",
-        """A terminal application to view, tail, merge, and search log files (plus JSONL).""",
-        "3.2k",
-    ),
-    ProjectInfo(
-        "Dolphie",
-        "Charles Thompson",
-        "https://github.com/charles-001/dolphie",
-        "Your single pane of glass for real-time analytics into MySQL/MariaDB & ProxySQL",
-        "649",
-    ),
-    ProjectInfo(
-        "Harlequin",
-        "Ted Conbeer",
-        "https://harlequin.sh/",
-        """Portable, powerful, colorful. An easy, fast, and beautiful database client for the terminal.""",
-        "3.7k",
-    ),
-    ProjectInfo(
-        "Elia",
-        "Darren Burns",
-        "https://github.com/darrenburns/elia",
-        """A snappy, keyboard-centric terminal user interface for interacting with large language models.
-Chat with Claude 3, ChatGPT, and local models like Llama 3, Phi 3, Mistral and Gemma.""",
-        "1.8k",
-    ),
-    ProjectInfo(
-        "Trogon",
-        "Textualize",
-        "https://github.com/Textualize/trogon",
-        "Auto-generate friendly terminal user interfaces for command line apps.",
-        "2.5k",
-    ),
-    ProjectInfo(
-        "TFTUI - The Terraform textual UI",
-        "Ido Avraham",
-        "https://github.com/idoavrah/terraform-tui",
-        "TFTUI is a powerful textual UI that empowers users to effortlessly view and interact with their Terraform state.",
-        "1k",
-    ),
-    ProjectInfo(
-        "RecoverPy",
-        "Pablo Lecolinet",
-        "https://github.com/PabloLec/RecoverPy",
-        """RecoverPy is a powerful tool that leverages your system capabilities to recover lost files.""",
-        "1.3k",
-    ),
-    ProjectInfo(
-        "Frogmouth",
-        "Dave Pearson",
-        "https://github.com/Textualize/frogmouth",
-        """Frogmouth is a Markdown viewer / browser for your terminal, built with Textual.""",
-        "2.5k",
-    ),
-    ProjectInfo(
-        "oterm",
-        "Yiorgis Gozadinos",
-        "https://github.com/ggozad/oterm",
-        "The text-based terminal client for Ollama.",
-        "1k",
-    ),
-    ProjectInfo(
-        "logmerger",
-        "Paul McGuire",
-        "https://github.com/ptmcg/logmerger",
-        "logmerger is a TUI for viewing a merged display of multiple log files, merged by timestamp.",
-        "162",
-    ),
-    ProjectInfo(
-        "doit",
-        "Murli Tawari",
-        "https://github.com/kraanzu/dooit",
-        "A todo manager that you didn't ask for, but needed!",
-        "2.1k",
-    ),
-]
-
 
 class Project(Vertical, can_focus=True, can_focus_children=False):
     """Display project information and open repo links."""
@@ -133,16 +28,16 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
     DEFAULT_CSS = """
     Project {
         width: 1fr;
-        height: auto;      
+        height: auto;
         padding: 0 1;
         border: tall transparent;
         box-sizing: border-box;
-        &:focus { 
+        &:focus {
             border: tall $text-primary;
             background: $primary 20%;
             &.link {
                 color: red !important;
-            }        
+            }
         }
         #title { text-style: bold; width: 1fr; }
         #author { text-style: italic; }
@@ -179,7 +74,7 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         info = self.project_info
         with Horizontal(classes="header"):
             yield Label(info.title, id="title")
-            yield Label(f"★ {info.stars}", classes="stars")
+            yield Label(f"★ {STARS[info.title]}", classes="stars")
         yield Label(info.author, id="author")
         yield Link(info.url, tooltip="Click to open project repository")
         yield Static(info.description, classes="description")
@@ -197,18 +92,18 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
 class ProjectsScreen(PageScreen):
     AUTO_FOCUS = None
     CSS = """
-    ProjectsScreen {        
-        align-horizontal: center;                      
+    ProjectsScreen {
+        align-horizontal: center;
         ItemGrid {
             margin: 2 4;
             padding: 1 2;
             background: $boost;
             width: 1fr;
-            height: auto;            
+            height: auto;
             grid-gutter: 1 1;
-            grid-rows: auto;           
-            keyline:thin $foreground 30%;        
-        }              
+            grid-rows: auto;
+            keyline:thin $foreground 30%;
+        }
         Markdown { margin: 0; padding: 0 2; max-width: 100; background: transparent; }
     }
     """

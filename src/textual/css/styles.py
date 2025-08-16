@@ -284,7 +284,7 @@ class StylesBase:
     layout = LayoutProperty()
     """Set the layout of the widget, defining how it's children are laid out.
     
-    Valid values are "grid", "horizontal", and "vertical" or None to clear any layout
+    Valid values are "grid", "stream", "horizontal", or "vertical" or None to clear any layout
     that was set at runtime.
 
     Raises:

@@ -19,6 +19,8 @@ class HighlightTheme:
     STYLES: dict[TokenType, str] = {
         Token.Comment: "$text 60%",
         Token.Error: "$text-error on $error-muted",
+        Token.Generic.Strong: "bold",
+        Token.Generic.Emph: "italic",
         Token.Generic.Error: "$text-error on $error-muted",
         Token.Generic.Heading: "$text-primary underline",
         Token.Generic.Subheading: "$text-primary",

@@ -334,10 +334,7 @@ class Content(Visual):
         """
         if not text:
             return Content("")
-        span_length = cell_len(text) if cell_length is None else cell_length
-        new_content = cls(
-            text, [Span(0, span_length, style)] if style else None, span_length
-        )
+        new_content = cls(text, [Span(0, len(text), style)] if style else None)
         return new_content
 
     @classmethod
@@ -394,6 +391,36 @@ class Content(Visual):
         if end:
             text_append(end)
         return cls("".join(text), spans)
+
+    def simplify(self) -> Content:
+        """Simplify spans by joining contiguous spans together.
+
+        This can produce faster renders but typically only worth it if you have appended a
+        large number of Content instances together.
+
+        Note that this modifies the Content instance in-place, which might appear
+        to violate the immutability constraints, but it will not change the rendered output,
+        nor its hash.
+
+        Returns:
+            Self.
+        """
+        spans = self.spans
+        if not spans:
+            return self
+        last_span = Span(0, 0, Style())
+        new_spans: list[Span] = []
+        changed: bool = False
+        for span in self._spans:
+            if span.start == last_span.end and span.style == last_span.style:
+                last_span = new_spans[-1] = Span(last_span.start, span.end, span.style)
+                changed = True
+            else:
+                new_spans.append(span)
+                last_span = span
+        if changed:
+            self._spans[:] = new_spans
+        return self
 
     def __eq__(self, other: object) -> bool:
         """Compares text only, so that markup doesn't effect sorting."""
@@ -528,7 +555,6 @@ class Content(Visual):
                 return None
 
         for y, line in enumerate(self.split(allow_blank=True)):
-
             if post_style is not None:
                 line = line.stylize(post_style)
 
@@ -815,6 +841,8 @@ class Content(Visual):
         total_cell_length: int | None = self._cell_length
 
         for content in iter_content():
+            if not content:
+                continue
             extend_text(content._text)
             extend_spans(
                 _Span(offset + start, offset + end, style)
@@ -1201,6 +1229,12 @@ class Content(Visual):
         ]
         return segments
 
+    def __rich__(self):
+        """Allow Content to be rendered with rich.print."""
+        from rich.segment import Segments
+
+        return Segments(self.render_segments(Style(), "\n"))
+
     def _divide_spans(self, offsets: tuple[int, ...]) -> list[tuple[Span, int, int]]:
         """Divide content from a list of offset to cut.
 
@@ -1402,6 +1436,9 @@ class Content(Visual):
         if "\t" not in self.plain:
             return self
 
+        if not self._spans:
+            return Content(self.plain.expandtabs(tab_size))
+
         new_text: list[Content] = []
         append = new_text.append
 
@@ -1414,7 +1451,7 @@ class Content(Visual):
                 for part in parts:
                     if part.plain.endswith("\t"):
                         part = Content(
-                            part._text[-1][:-1] + " ", part._spans, part._cell_length
+                            part._text[:-1] + " ", part._spans, part._cell_length
                         )
                         cell_position += part.cell_length
                         tab_remainder = cell_position % tab_size
@@ -1568,7 +1605,6 @@ class _FormattedLine:
     def _apply_link_style(
         self, link_style: RichStyle, segments: list[Segment]
     ) -> list[Segment]:
-
         _Segment = Segment
         segments = [
             _Segment(

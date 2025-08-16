@@ -4502,3 +4502,89 @@ def test_empty(snap_compare):
                 pass
 
     assert snap_compare(EmptyApp())
+
+
+def test_stream_layout(snap_compare):
+    """Test stream layout.
+
+    You should see 3 blue labels.
+    The topmost should be a single line.
+    The middle should be two lines.
+    The last should be three lines.
+    There will be a one character margin between them.
+
+    """
+
+    class StreamApp(App):
+        CSS = """
+        VerticalScroll {            
+            layout: stream;
+            Label {
+                background: blue;
+                margin: 1;
+            }
+            #many-lines {
+                max-height: 3;
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll():
+                yield Label("Hello")
+                yield Label("foo\nbar")
+                yield Label(
+                    "\n".join(["Only 3 lines should be visible"] * 100), id="many-lines"
+                )
+
+    assert snap_compare(StreamApp())
+
+
+def test_pretty_auto(snap_compare):
+    """Test that pretty works with auto dimensions.
+
+    You should see 'Hello World' including strings, 3 times in a purple box, top left.
+
+    """
+    from textual.widgets import Pretty
+
+    class Demo(App):
+        CSS = """
+        Vertical {
+            background: blue 30%;
+            height: auto;
+            width: auto;
+        }
+
+        Pretty {
+            width: auto;            
+            height: auto;
+            background: red 30%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical():
+                yield Pretty("hello world")
+                yield Pretty("hello world")
+                yield Pretty("hello world")
+
+    assert snap_compare(Demo())
+
+
+def test_static_content_property(snap_compare):
+    """Test that the Static.content property.
+
+    You should see the text "FOO BAR"
+
+    """
+
+    class StaticApp(App):
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello, World")
+
+        def on_mount(self) -> None:
+            self.query_one(Static).content = "FOO BAR"
+
+    assert snap_compare(StaticApp())

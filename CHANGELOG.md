@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# [Unreleased]
+
+### Fixed
+
+- Fix type hint for SelectType: only hashable types are allowed. https://github.com/Textualize/textual/pull/6034
+- Fixed `Content.expand_tabs` https://github.com/Textualize/textual/pull/6038
+- Fixed return value for `Pilot.double_click` and `Pilot.triple_click` https://github.com/Textualize/textual/pull/6035
+- Fixed sizing issue with `Pretty` widget https://github.com/Textualize/textual/pull/6040 https://github.com/Textualize/textual/pull/6041
+
+### Added
+
+- Added `bar_renderable` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
+
+
+### Changed
+
+- Breaking change: The `renderable` property on the `Static` widget has been changed to `content`. https://github.com/Textualize/textual/pull/6041
+
+# [5.3.0] - 2025-08-07
+
+### Added
+
+- Added `Content.simplify` https://github.com/Textualize/textual/pull/6023
+- Added `textual.reactive.Initialize` https://github.com/Textualize/textual/pull/6023
+
+### Fixed
+
+- Fixed issue with IDs in markdown https://github.com/Textualize/textual/pull/6019 https://github.com/Textualize/textual/pull/6023
+
+## [5.2.0] - 2025-08-01
+
+### Added
+
+- Added a 'stream' layout, which is a lot like vertical but with fewer supported rules (which is why it is faster), will remain undocumented for now. https://github.com/Textualize/textual/pull/6013
+
 ## [5.1.1] - 2025-07-21
 
 ### Fixed
@@ -3041,6 +3076,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[5.3.0]: https://github.com/Textualize/textual/compare/v5.2.0...v5.3.0
+[5.2.0]: https://github.com/Textualize/textual/compare/v5.1.1...v5.2.0
 [5.1.1]: https://github.com/Textualize/textual/compare/v5.1.0...v5.1.1
 [5.1.0]: https://github.com/Textualize/textual/compare/v5.0.1...v5.1.0
 [5.0.1]: https://github.com/Textualize/textual/compare/v5.0.0...v5.0.1

@@ -41,7 +41,7 @@ _get_hash_attributes = attrgetter(
 )
 
 
-@rich.repr.auto(angular=True)
+@rich.repr.auto()
 @dataclass(frozen=True)
 class Style:
     """Represents a style in the Visual interface (color and other attributes).
