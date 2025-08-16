@@ -1199,7 +1199,7 @@ TextArea {
         Returns:
             A rendered line.
         """
-        if y == 0 and not self.text:
+        if y == 0 and not self.text and self.placeholder:
             style = self.get_visual_style("text-area--placeholder")
             content = (
                 Content(self.placeholder)
