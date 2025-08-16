@@ -1350,7 +1350,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if self.is_attached:
             self._compositor_refresh()
-            # self.app.stylesheet.update(self)
+            self.app.stylesheet.update(self)
             self._refresh_layout(size)
             self.refresh()
 
