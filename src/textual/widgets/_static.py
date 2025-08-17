@@ -46,8 +46,8 @@ class Static(Widget, inherit_bindings=False):
         )
         self.expand = expand
         self.shrink = shrink
-        self._content = content
-        self._visual: Visual | None = None
+        self.__content = content
+        self.__visual: Visual | None = None
 
     @property
     def visual(self) -> Visual:
@@ -58,19 +58,19 @@ class Static(Widget, inherit_bindings=False):
         update with a string, then the visual will be a [Content][textual.content.Content] instance.
 
         """
-        if self._visual is None:
-            self._visual = visualize(self, self._content, markup=self._render_markup)
-        return self._visual
+        if self.__visual is None:
+            self.__visual = visualize(self, self.__content, markup=self._render_markup)
+        return self.__visual
 
     @property
     def content(self) -> VisualType:
         """The original content set in the constructor."""
-        return self._content
+        return self.__content
 
     @content.setter
     def content(self, content: VisualType) -> None:
-        self._content = content
-        self._visual = visualize(self, content, markup=self._render_markup)
+        self.__content = content
+        self.__visual = visualize(self, content, markup=self._render_markup)
         self.clear_cached_dimensions()
         self.refresh(layout=True)
 
@@ -90,6 +90,6 @@ class Static(Widget, inherit_bindings=False):
             layout: Also perform a layout operation (set to `False` if you are certain the size won't change).
         """
 
-        self._content = content
-        self._visual = visualize(self, content, markup=self._render_markup)
+        self.__content = content
+        self.__visual = visualize(self, content, markup=self._render_markup)
         self.refresh(layout=layout)
