@@ -3904,12 +3904,12 @@ class Widget(DOMNode):
 
         return renderable
 
-    def watch_mouse_hover(self, value: bool) -> None:
+    def watch_mouse_hover(self, _mouse_over: bool) -> None:
         """Update from CSS if mouse over state changes."""
         if self._has_hover_style:
             self._update_styles()
 
-    def watch_has_focus(self, value: bool) -> None:
+    def watch_has_focus(self, _has_focus: bool) -> None:
         """Update from CSS if has focus state changes."""
         self._update_styles()
 
