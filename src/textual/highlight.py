@@ -29,6 +29,7 @@ class HighlightTheme:
         Token.Keyword.Namespace: "$text-error",
         Token.Keyword.Type: "bold",
         Token.Literal.Number: "$text-warning",
+        Token.Literal.String.Backtick: "$text 60%",
         Token.Literal.String: "$text-success 90%",
         Token.Literal.String.Doc: "$text-success 80% italic",
         Token.Literal.String.Double: "$text-success 90%",
