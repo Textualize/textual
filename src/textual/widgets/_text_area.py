@@ -1782,12 +1782,14 @@ TextArea {
         """Reset the cursor blink timer."""
         if self.cursor_blink:
             self._cursor_visible = True
-            self.blink_timer.reset()
+            if self.is_mounted:
+                self.blink_timer.reset()
 
     def _pause_blink(self, visible: bool = True) -> None:
         """Pause the cursor blinking but ensure it stays visible."""
         self._cursor_visible = visible
-        self.blink_timer.pause()
+        if self.is_mounted:
+            self.blink_timer.pause()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
         """Update the cursor position, and begin a selection using the mouse."""

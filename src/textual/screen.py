@@ -1354,6 +1354,10 @@ class Screen(Generic[ScreenResultType], Widget):
             self._refresh_layout(size)
             self.refresh()
 
+    async def _compose(self) -> None:
+        await super()._compose()
+        self._update_auto_focus()
+
     def _update_auto_focus(self) -> None:
         """Update auto focus."""
         if self.app.app_focus:
