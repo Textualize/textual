@@ -1346,7 +1346,20 @@ class Screen(Generic[ScreenResultType], Widget):
         self.app._refresh_notifications()
         size = self.app.size
 
-        # Only auto-focus when the app has focus (textual-web only)
+        self._update_auto_focus()
+
+        if self.is_attached:
+            self._compositor_refresh()
+            self.app.stylesheet.update(self)
+            self._refresh_layout(size)
+            self.refresh()
+
+    async def _compose(self) -> None:
+        await super()._compose()
+        self._update_auto_focus()
+
+    def _update_auto_focus(self) -> None:
+        """Update auto focus."""
         if self.app.app_focus:
             auto_focus = (
                 self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
@@ -1354,14 +1367,9 @@ class Screen(Generic[ScreenResultType], Widget):
             if auto_focus and self.focused is None:
                 for widget in self.query(auto_focus):
                     if widget.focusable:
+                        widget.has_focus = True
                         self.set_focus(widget)
                         break
-
-        if self.is_attached:
-            self._compositor_refresh()
-            self.app.stylesheet.update(self)
-            self._refresh_layout(size)
-            self.refresh()
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""

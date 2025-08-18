@@ -36,6 +36,7 @@ from textual._context import NoActiveAppError, active_app, active_message_pump
 from textual._context import message_hook as message_hook_context_var
 from textual._context import prevent_message_types_stack
 from textual._on import OnNoWidget
+from textual._queue import Queue
 from textual._time import time
 from textual.constants import SLOW_THRESHOLD
 from textual.css.match import match
@@ -143,8 +144,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
 
     @cached_property
-    def _message_queue(self) -> asyncio.Queue[Message | None]:
-        return asyncio.Queue()
+    def _message_queue(self) -> Queue[Message | None]:
+        return Queue()
 
     @cached_property
     def _mounted_event(self) -> asyncio.Event:
