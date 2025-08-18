@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `OptionList.set_options` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.suggestion` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048
-- Added `Header.format_title` and `App.format_title` for easier customization of title in the Header
+- Added `Header.format_title` and `App.format_title` for easier customization of title in the Header https://github.com/Textualize/textual/pull/6051
 
 ### Changed
 
