@@ -127,7 +127,11 @@ class Bar(Widget, can_focus=False):
         else:
             speed = 30  # Cells per second.
             # Compute the position of the bar.
-            start = (speed * self._clock.time) % (2 * total_imaginary_width)
+            start = (
+                (speed * self._clock.time) % (2 * total_imaginary_width)
+                if total_imaginary_width != 0.0
+                else 0.0
+            )
             if start > total_imaginary_width:
                 # If the bar is to the right of its width, wrap it back from right to left.
                 start = 2 * total_imaginary_width - start  # = (tiw - (start - tiw))
