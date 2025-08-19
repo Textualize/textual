@@ -977,7 +977,11 @@ class App(Generic[ReturnType], DOMNode):
         title_content = Content(title)
         sub_title_content = Content(sub_title)
         if sub_title_content:
-            return Content.assemble(title_content, " — ", sub_title_content)
+            return Content.assemble(
+                title_content,
+                (" — ", "dim"),
+                sub_title_content.stylize("dim"),
+            )
         else:
             return title_content
 
