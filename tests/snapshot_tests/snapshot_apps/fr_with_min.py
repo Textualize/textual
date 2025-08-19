@@ -25,7 +25,7 @@ class ScreenSplitApp(App[None]):
         background: $panel;
     }
 
-    Static {
+    #scroll1 Static, #scroll2 Static {
         width: 1fr;
         content-align: center middle;
         background: $boost;

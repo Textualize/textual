@@ -4610,3 +4610,19 @@ def test_textarea_placeholder(snap_compare):
             yield TextArea(placeholder="Your text here")
 
     assert snap_compare(TextApp())
+
+
+def test_header_format(snap_compare):
+    """Test title and sub-title are formatted as expected.
+
+    You should see "Title - Sub-title" in the header. Where sub-title is dimmed.
+    """
+
+    class HeaderApp(App):
+        TITLE = "Title"
+        SUB_TITLE = "Sub-title"
+
+        def compose(self) -> ComposeResult:
+            yield Header()
+
+    assert snap_compare(HeaderApp())

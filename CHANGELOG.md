@@ -20,10 +20,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `OptionList.set_options` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.suggestion` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048
+- Added `Header.format_title` and `App.format_title` for easier customization of title in the Header https://github.com/Textualize/textual/pull/6051
 
 ### Changed
 
 - Breaking change: The `renderable` property on the `Static` widget has been changed to `content`. https://github.com/Textualize/textual/pull/6041
+- Breaking change: `HeaderTitle` widget is now a static, with no `text` and `sub_text` reactives https://github.com/Textualize/textual/pull/6051
 - Breaking change: Renamed `Label` constructor argument `renderable` to `content` for consistency https://github.com/Textualize/textual/pull/6045
 
 # [5.3.0] - 2025-08-07
