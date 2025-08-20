@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
 import rich.repr
@@ -14,7 +13,7 @@ from textual._ansi_theme import DEFAULT_TERMINAL_THEME
 from textual._border import get_box, render_border_label, render_row
 from textual._context import active_app
 from textual._opacity import _apply_opacity
-from textual._segment_tools import apply_hatch, line_pad, line_trim
+from textual._segment_tools import apply_hatch, line_pad, line_trim, make_blank
 from textual.color import TRANSPARENT, Color
 from textual.constants import DEBUG
 from textual.content import Content
@@ -32,20 +31,6 @@ if TYPE_CHECKING:
     from textual.widget import Widget
 
 RenderLineCallback: TypeAlias = Callable[[int], Strip]
-
-
-@lru_cache(1024 * 8)
-def make_blank(width, style: RichStyle) -> Segment:
-    """Make a blank segment.
-
-    Args:
-        width: Width of blank.
-        style: Style of blank.
-
-    Returns:
-        A single segment
-    """
-    return Segment(intern(" " * width), style)
 
 
 @rich.repr.auto(angular=True)
@@ -105,6 +90,7 @@ class StylesCache:
 
     def clear(self) -> None:
         """Clear the styles cache (will cause the content to re-render)."""
+
         self._cache.clear()
         self._dirty_lines.clear()
 
@@ -263,6 +249,16 @@ class StylesCache:
 
         return strips
 
+    @lru_cache(1024)
+    def get_inner_outer(
+        cls, base_background: Color, background: Color
+    ) -> tuple[Style, Style]:
+        """Get inner and outer background colors."""
+        return (
+            Style(background=base_background + background),
+            Style(background=base_background),
+        )
+
     def render_line(
         self,
         styles: StylesBase,
@@ -319,9 +315,7 @@ class StylesCache:
         ) = styles.outline
 
         from_color = RichStyle.from_color
-
-        inner = Style(background=(base_background + background))
-        outer = Style(background=base_background)
+        inner, outer = self.get_inner_outer(base_background, background)
 
         def line_post(segments: Iterable[Segment]) -> Iterable[Segment]:
             """Apply effects to segments inside the border."""
@@ -361,7 +355,6 @@ class StylesCache:
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
-
             is_top = y == 0
             border_color = base_background + (
                 border_top_color if is_top else border_bottom_color
@@ -453,12 +446,11 @@ class StylesCache:
                 line = line.adjust_cell_length(content_width)
             else:
                 line = [make_blank(content_width, inner.rich_style)]
+
             if inner:
                 line = Segment.apply_style(line, inner.rich_style)
-            if styles.text_opacity != 1.0:
-                line = TextOpacity.process_segments(
-                    line, styles.text_opacity, ansi_theme
-                )
+            if (text_opacity := styles.text_opacity) != 1.0:
+                line = TextOpacity.process_segments(line, text_opacity, ansi_theme)
             line = line_post(line_pad(line, pad_left, pad_right, inner.rich_style))
 
             if border_left or border_right:

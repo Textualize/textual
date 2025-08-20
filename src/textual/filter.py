@@ -269,9 +269,7 @@ class ANSIToTruecolor(LineFilter):
         """
         _Segment = Segment
         truecolor_style = self.truecolor_style
-
         background_rich_color = background.rich_color
-
         return [
             _Segment(
                 text,
