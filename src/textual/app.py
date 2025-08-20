@@ -844,7 +844,6 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def _enabled_filters(self) -> list[LineFilter]:
-        """Filters which are currently enabled."""
         return [filter for filter in self._filters if filter.enabled]
 
     @property

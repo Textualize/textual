@@ -335,7 +335,6 @@ class StylesCache:
             Returns:
                 New list of segments
             """
-
             try:
                 app = active_app.get()
                 ansi_theme = app.ansi_theme

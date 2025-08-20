@@ -244,8 +244,8 @@ class ANSIToTruecolor(LineFilter):
         changed = False
         if (color := style.color) is not None:
             if color.triplet is None:
-                color = RichColor.from_rgb(
-                    *color.get_truecolor(terminal_theme, foreground=True)
+                color = RichColor.from_triplet(
+                    color.get_truecolor(terminal_theme, foreground=True)
                 )
                 changed = True
             if style.dim:
@@ -254,8 +254,8 @@ class ANSIToTruecolor(LineFilter):
                 changed = True
 
         if (bgcolor := style.bgcolor) is not None and bgcolor.triplet is None:
-            bgcolor = RichColor.from_rgb(
-                *bgcolor.get_truecolor(terminal_theme, foreground=False)
+            bgcolor = RichColor.from_triplet(
+                bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
             changed = True
 
