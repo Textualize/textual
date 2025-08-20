@@ -116,6 +116,7 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
+            widget.app._enabled_filters,
             (
                 None
                 if border_title is None
@@ -135,7 +136,6 @@ class StylesCache:
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
-            filters=widget.app._filters,
             opacity=widget.opacity,
             ansi_theme=widget.app.ansi_theme,
         )
@@ -163,12 +163,12 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
+        filters: Sequence[LineFilter],
         border_title: tuple[Content, Color, Color, Style] | None,
         border_subtitle: tuple[Content, Color, Color, Style] | None,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
-        filters: Sequence[LineFilter] | None = None,
         opacity: float = 1.0,
         ansi_theme: TerminalTheme = DEFAULT_TERMINAL_THEME,
     ) -> list[Strip]:
@@ -209,9 +209,7 @@ class StylesCache:
 
         is_dirty = self._dirty_lines.__contains__
         render_line = self.render_line
-        apply_filters = (
-            [] if filters is None else [filter for filter in filters if filter.enabled]
-        )
+
         for y in crop.line_range:
             if is_dirty(y) or y not in self._cache:
                 strip = render_line(
@@ -232,7 +230,7 @@ class StylesCache:
             else:
                 strip = self._cache[y]
 
-            for filter in apply_filters:
+            for filter in filters:
                 strip = strip.apply_filter(filter, background)
 
             if DEBUG:
