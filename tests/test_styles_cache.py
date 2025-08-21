@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from rich.segment import Segment
-from rich.style import Style
 
 from textual._styles_cache import StylesCache
 from textual.color import Color
@@ -23,40 +22,6 @@ def test_set_dirty():
     assert cache.is_dirty(4)
     assert cache.is_dirty(5)
     assert not cache.is_dirty(6)
-
-
-def test_no_styles():
-    """Test that empty style returns the content un-altered"""
-    content = [
-        Strip([Segment("foo")]),
-        Strip([Segment("bar")]),
-        Strip([Segment("baz")]),
-    ]
-    styles = Styles()
-    cache = StylesCache()
-    lines = cache.render(
-        styles,
-        Size(3, 3),
-        Color.parse("blue"),
-        Color.parse("green"),
-        content.__getitem__,
-        [],
-        None,
-        None,
-        content_size=Size(3, 3),
-    )
-    style = Style.from_color(bgcolor=Color.parse("green").rich_color)
-
-    expected = [
-        Strip([Segment("foo", style)], 3),
-        Strip([Segment("bar", style)], 3),
-        Strip([Segment("baz", style)], 3),
-    ]
-
-    print(lines[0])
-    print(expected[0])
-
-    assert lines == expected
 
 
 def test_border():

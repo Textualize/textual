@@ -875,7 +875,10 @@ class OptionList(ScrollView, can_focus=True):
             option_index, line_offset = self._lines[line_number]
             option = self.options[option_index]
         except IndexError:
-            return Strip.blank(self.scrollable_content_region.width)
+            return Strip.blank(
+                self.scrollable_content_region.width,
+                self.get_visual_style("option-list--option").rich_style,
+            )
 
         mouse_over = self._mouse_hovering_over == option_index
         component_class = ""
@@ -895,7 +898,10 @@ class OptionList(ScrollView, can_focus=True):
         try:
             strip = strips[line_offset]
         except IndexError:
-            return Strip.blank(self.scrollable_content_region.width)
+            return Strip.blank(
+                self.scrollable_content_region.width,
+                self.get_visual_style("option-list--option").rich_style,
+            )
         return strip
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:

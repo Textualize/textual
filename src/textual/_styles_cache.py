@@ -108,7 +108,7 @@ class StylesCache:
         border_title = widget._border_title
         border_subtitle = widget._border_subtitle
 
-        base_background, background = widget._opacity_background_colors
+        base_background, background = widget.background_colors
         styles = widget.styles
         strips = self.render(
             styles,
@@ -116,7 +116,7 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
-            widget.app._enabled_filters,
+            widget.get_line_filters(),
             (
                 None
                 if border_title is None
@@ -417,7 +417,7 @@ class StylesCache:
         elif (pad_top and y < gutter.top) or (
             pad_bottom and y >= height - gutter.bottom
         ):
-            background_rich_style = from_color(bgcolor=background.rich_color)
+            background_rich_style = inner.rich_style
             left_style = Style(
                 foreground=base_background + border_left_color.multiply_alpha(opacity)
             )
@@ -444,8 +444,6 @@ class StylesCache:
             else:
                 line = Strip.blank(content_width, inner.rich_style)
 
-            if inner:
-                line = Segment.apply_style(line, inner.rich_style)
             if (text_opacity := styles.text_opacity) != 1.0:
                 line = TextOpacity.process_segments(line, text_opacity, ansi_theme)
             line = line_post(line_pad(line, pad_left, pad_right, inner.rich_style))

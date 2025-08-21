@@ -1264,6 +1264,11 @@ TextArea {
             A rendered line.
         """
         theme = self._theme
+        base_style = (
+            theme.base_style
+            if theme and theme.base_style is not None
+            else self.rich_style
+        )
 
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
@@ -1275,7 +1280,7 @@ TextArea {
         out_of_bounds = y_offset >= wrapped_document.height
 
         if out_of_bounds:
-            return Strip.blank(self.size.width)
+            return Strip.blank(self.size.width, base_style)
 
         # Get the line corresponding to this offset
         try:
@@ -1284,7 +1289,7 @@ TextArea {
             line_info = None
 
         if line_info is None:
-            return Strip.blank(self.size.width)
+            return Strip.blank(self.size.width, base_style)
 
         line_index, section_offset = line_info
 
@@ -1474,11 +1479,7 @@ TextArea {
         text_strip = text_strip.extend_cell_length(target_width, line_style)
         strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
 
-        return strip.apply_style(
-            theme.base_style
-            if theme and theme.base_style is not None
-            else self.rich_style
-        )
+        return strip.apply_style(base_style)
 
     @property
     def text(self) -> str:

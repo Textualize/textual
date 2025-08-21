@@ -94,6 +94,7 @@ from textual.visual import Visual, VisualType, visualize
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
     from textual.css.query import QueryType
+    from textual.filter import LineFilter
     from textual.message_pump import MessagePump
     from textual.scrollbar import (
         ScrollBar,
@@ -673,6 +674,14 @@ class Widget(DOMNode):
     def text_selection(self) -> Selection | None:
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
+
+    def get_line_filters(self) -> Sequence[LineFilter]:
+        """Get the line filters enabled for this widget.
+
+        Returns:
+            A sequence of LineFilter instances.
+        """
+        return self.app._enabled_filters
 
     def preflight_checks(self) -> None:
         """Called in debug mode to do preflight checks.
@@ -4088,7 +4097,7 @@ class Widget(DOMNode):
         try:
             line = self._render_cache.lines[y]
         except IndexError:
-            line = Strip.blank(self.size.width, self.rich_style)
+            line = Strip.blank(self.size.width, self.visual_style.rich_style)
 
         return line
 
