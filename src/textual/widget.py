@@ -679,9 +679,9 @@ class Widget(DOMNode):
         """Get the line filters enabled for this widget.
 
         Returns:
-            A sequence of LineFilter instances.
+            A sequence of [LineFilter][textual.filters.LineFilter] instances.
         """
-        return self.app._enabled_filters
+        return self.app.get_line_filters()
 
     def preflight_checks(self) -> None:
         """Called in debug mode to do preflight checks.

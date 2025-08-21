@@ -1144,20 +1144,6 @@ class DOMNode(MessagePump):
             VisualStyle.from_rich_style(styles.border_subtitle_style),
         )
 
-    # @property
-    # def background_colors(self) -> tuple[Color, Color]:
-    #     """The background color and the color of the parent's background.
-
-    #     Returns:
-    #         `(<background color>, <color>)`
-    #     """
-    #     base_background = background = BLACK
-    #     for node in reversed(self.ancestors_with_self):
-    #         styles = node.styles
-    #         base_background = background
-    #         background += styles.background.tint(styles.background_tint)
-    #     return (base_background, background)
-
     @property
     def background_colors(self) -> tuple[Color, Color]:
         """Background colors adjusted for opacity.

@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `OptionList.set_options` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.suggestion` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048
-- Added `Widget.get_line_filters`
+- Added `Widget.get_line_filters` and `App.get_line_filters` https://github.com/Textualize/textual/pull/6057
 
 ### Changed
 

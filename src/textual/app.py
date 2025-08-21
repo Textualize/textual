@@ -842,8 +842,12 @@ class App(Generic[ReturnType], DOMNode):
                     )
                 )
 
-    @property
-    def _enabled_filters(self) -> list[LineFilter]:
+    def get_line_filters(self) -> Sequence[LineFilter]:
+        """Get currently enabled line filters.
+
+        Returns:
+            A list of [LineFilter][textual.filters.LineFilter] instances.
+        """
         return [filter for filter in self._filters if filter.enabled]
 
     @property
