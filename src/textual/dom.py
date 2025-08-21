@@ -1165,7 +1165,7 @@ class DOMNode(MessagePump):
         Returns:
             `(<background color>, <color>)`
         """
-        base_background = background = BLACK
+        base_background = background = Color(0, 0, 0, 0)
         opacity = 1.0
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
@@ -1749,6 +1749,7 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.update(class_names)
+        self._nodes.updated()
         if old_classes == self._classes:
             return self
         if update:

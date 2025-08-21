@@ -440,9 +440,9 @@ class StylesCache:
             content_y = y - gutter.top
             if content_y < content_height:
                 line = render_content_line(y - gutter.top)
-                line = line.adjust_cell_length(content_width)
+                line = line.adjust_cell_length(content_width, inner.rich_style)
             else:
-                line = [make_blank(content_width, inner.rich_style)]
+                line = Strip.blank(content_width, inner.rich_style)
 
             if inner:
                 line = Segment.apply_style(line, inner.rich_style)
