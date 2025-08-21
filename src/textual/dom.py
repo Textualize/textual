@@ -1146,26 +1146,12 @@ class DOMNode(MessagePump):
 
     @property
     def background_colors(self) -> tuple[Color, Color]:
-        """The background color and the color of the parent's background.
-
-        Returns:
-            `(<background color>, <color>)`
-        """
-        base_background = background = BLACK
-        for node in reversed(self.ancestors_with_self):
-            styles = node.styles
-            base_background = background
-            background += styles.background.tint(styles.background_tint)
-        return (base_background, background)
-
-    @property
-    def _opacity_background_colors(self) -> tuple[Color, Color]:
         """Background colors adjusted for opacity.
 
         Returns:
             `(<background color>, <color>)`
         """
-        base_background = background = BLACK
+        base_background = background = Color(0, 0, 0, 0)
         opacity = 1.0
         for node in reversed(self.ancestors_with_self):
             styles = node.styles

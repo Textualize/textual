@@ -553,7 +553,7 @@ class MaskedInput(Input, can_focus=True):
 
     def render_line(self, y: int) -> Strip:
         if y != 0:
-            return Strip.blank(self.size.width)
+            return Strip.blank(self.size.width, self.rich_style)
 
         result = self._value
         width = self.content_size.width

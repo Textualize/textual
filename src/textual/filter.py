@@ -240,22 +240,26 @@ class ANSIToTruecolor(LineFilter):
             New style.
         """
         terminal_theme = self._terminal_theme
-        color = style.color
-        if color is not None and color.triplet is None:
-            color = RichColor.from_rgb(
-                *color.get_truecolor(terminal_theme, foreground=True)
-            )
-        bgcolor = style.bgcolor
-        if bgcolor is not None and bgcolor.triplet is None:
-            bgcolor = RichColor.from_rgb(
-                *bgcolor.get_truecolor(terminal_theme, foreground=False)
-            )
-        # Convert dim style to RGB
-        if style.dim and color is not None:
-            color = dim_color(background, color)
-            style += NO_DIM
 
-        return style + Style.from_color(color, bgcolor)
+        changed = False
+        if (color := style.color) is not None:
+            if color.triplet is None:
+                color = RichColor.from_triplet(
+                    color.get_truecolor(terminal_theme, foreground=True)
+                )
+                changed = True
+            if style.dim:
+                color = dim_color(background, color)
+                style += NO_DIM
+                changed = True
+
+        if (bgcolor := style.bgcolor) is not None and bgcolor.triplet is None:
+            bgcolor = RichColor.from_triplet(
+                bgcolor.get_truecolor(terminal_theme, foreground=False)
+            )
+            changed = True
+
+        return style + Style.from_color(color, bgcolor) if changed else style
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
@@ -269,9 +273,7 @@ class ANSIToTruecolor(LineFilter):
         """
         _Segment = Segment
         truecolor_style = self.truecolor_style
-
         background_rich_color = background.rich_color
-
         return [
             _Segment(
                 text,

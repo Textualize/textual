@@ -94,6 +94,7 @@ from textual.visual import Visual, VisualType, visualize
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
     from textual.css.query import QueryType
+    from textual.filter import LineFilter
     from textual.message_pump import MessagePump
     from textual.scrollbar import (
         ScrollBar,
@@ -445,6 +446,8 @@ class Widget(DOMNode):
         self._layout_cache: dict[str, object] = {}
         """A dict that is refreshed when the widget is resized / refreshed."""
 
+        self._visual_style: VisualStyle | None = None
+
         self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
@@ -672,6 +675,14 @@ class Widget(DOMNode):
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
+    def get_line_filters(self) -> Sequence[LineFilter]:
+        """Get the line filters enabled for this widget.
+
+        Returns:
+            A sequence of [LineFilter][textual.filters.LineFilter] instances.
+        """
+        return self.app.get_line_filters()
+
     def preflight_checks(self) -> None:
         """Called in debug mode to do preflight checks.
 
@@ -687,6 +698,14 @@ class Widget(DOMNode):
                 self.log.warning(
                     f"'{self.__class__.__name__}.CSS' will be ignored (use 'DEFAULT_CSS' class variable for widgets)"
                 )
+
+    def pre_render(self) -> None:
+        """Called prior to rendering.
+
+        If you implement this in a subclass, be sure to call the base class method via super.
+
+        """
+        self._visual_style = None
 
     def _cover(self, widget: Widget) -> None:
         """Set a widget used to replace the visuals of this widget (used for loading indicator).
@@ -2527,6 +2546,7 @@ class Widget(DOMNode):
             self._dirty_regions.clear()
             self._repaint_regions.clear()
             self._styles_cache.clear()
+            self._styles_cache.set_dirty(self.size.region)
 
             outer_size = self.outer_size
             self._dirty_regions.add(outer_size.region)
@@ -3993,41 +4013,43 @@ class Widget(DOMNode):
 
     @property
     def visual_style(self) -> VisualStyle:
-        background = Color(0, 0, 0, 0)
-        color = Color(255, 255, 255, 0)
+        if self._visual_style is None:
+            background = Color(0, 0, 0, 0)
+            color = Color(255, 255, 255, 0)
 
-        style = Style()
-        opacity = 1.0
+            style = Style()
+            opacity = 1.0
 
-        for node in reversed(self.ancestors_with_self):
-            styles = node.styles
-            has_rule = styles.has_rule
-            opacity *= styles.opacity
-            if has_rule("background"):
-                text_background = background + styles.background.tint(
-                    styles.background_tint
-                )
-                background += (
-                    styles.background.tint(styles.background_tint)
-                ).multiply_alpha(opacity)
-            else:
-                text_background = background
-            if has_rule("color"):
-                color = styles.color
-            style += styles.text_style
-            if has_rule("auto_color") and styles.auto_color:
-                color = text_background.get_contrast_text(color.a)
+            for node in reversed(self.ancestors_with_self):
+                styles = node.styles
+                has_rule = styles.has_rule
+                opacity *= styles.opacity
+                if has_rule("background"):
+                    text_background = background + styles.background.tint(
+                        styles.background_tint
+                    )
+                    background += (
+                        styles.background.tint(styles.background_tint)
+                    ).multiply_alpha(opacity)
+                else:
+                    text_background = background
+                if has_rule("color"):
+                    color = styles.color
+                style += styles.text_style
+                if has_rule("auto_color") and styles.auto_color:
+                    color = text_background.get_contrast_text(color.a)
 
-        return VisualStyle(
-            background,
-            color,
-            bold=style.bold,
-            dim=style.dim,
-            italic=style.italic,
-            reverse=style.reverse,
-            underline=style.underline,
-            strike=style.strike,
-        )
+            self._visual_style = VisualStyle(
+                background,
+                color,
+                bold=style.bold,
+                dim=style.dim,
+                italic=style.italic,
+                reverse=style.reverse,
+                underline=style.underline,
+                strike=style.strike,
+            )
+        return self._visual_style
 
     def get_selection(self, selection: Selection) -> tuple[str, str] | None:
         """Get the text under the selection.
@@ -4075,7 +4097,7 @@ class Widget(DOMNode):
         try:
             line = self._render_cache.lines[y]
         except IndexError:
-            line = Strip.blank(self.size.width, self.rich_style)
+            line = Strip.blank(self.size.width, self.visual_style.rich_style)
 
         return line
 
@@ -4480,6 +4502,7 @@ class Widget(DOMNode):
     def notify_style_update(self) -> None:
         self._rich_style_cache.clear()
         self._visual_style_cache.clear()
+        self._visual_style = None
         super().notify_style_update()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:

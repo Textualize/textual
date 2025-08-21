@@ -601,7 +601,7 @@ class Input(ScrollView):
 
     def render_line(self, y: int) -> Strip:
         if y != 0:
-            return Strip.blank(self.size.width)
+            return Strip.blank(self.size.width, self.rich_style)
 
         console = self.app.console
         console_options = self.app.console_options
