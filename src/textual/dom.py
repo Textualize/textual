@@ -1735,7 +1735,6 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.update(class_names)
-        self._nodes.updated()
         if old_classes == self._classes:
             return self
         if update:
