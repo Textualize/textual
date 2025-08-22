@@ -587,7 +587,7 @@ class Switches(containers.VerticalGroup):
     SWITCHES_MD = """\
 ## Switches
 
-Functionally almost identical to a Checkbox, but more displays more prominently in the UI.
+Functionally almost identical to a Checkbox, but displays more prominently in the UI.
 """
     DEFAULT_CSS = """\
 Switches {    
