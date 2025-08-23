@@ -32,7 +32,7 @@ from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
-    AsyncGenerator,
+    AsyncGenerators,
     Awaitable,
     BinaryIO,
     Callable,
