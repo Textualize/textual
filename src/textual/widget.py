@@ -4391,7 +4391,8 @@ class Widget(DOMNode):
                     screen.post_message(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
-                    screen.post_message(messages.Update(self))
+                    if self.display:
+                        screen.post_message(messages.Update(self))
                 if self._layout_required:
                     self._layout_required = False
                     screen.post_message(messages.Layout())

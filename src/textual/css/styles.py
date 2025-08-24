@@ -1463,7 +1463,6 @@ class RenderStyles(StylesBase):
         return any(inline_has_rule(name) or base_has_rule(name) for name in rule_names)
 
     def set_rule(self, rule_name: str, value: object | None) -> bool:
-        self._updates += 1
         return self._inline_styles.set_rule(rule_name, value)
 
     def get_rule(self, rule_name: str, default: object = None) -> object:
@@ -1473,7 +1472,6 @@ class RenderStyles(StylesBase):
 
     def clear_rule(self, rule_name: str) -> bool:
         """Clear a rule (from inline)."""
-        self._updates += 1
         return self._inline_styles.clear_rule(rule_name)
 
     def get_rules(self) -> RulesMap:

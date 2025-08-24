@@ -813,6 +813,8 @@ class App(Generic[ReturnType], DOMNode):
         self._resize_event: events.Resize | None = None
         """A pending resize event, sent on idle."""
 
+        self._size: Size | None = None
+
         self._css_update_count: int = 0
         """Incremented when CSS is invalidated."""
 
@@ -1532,6 +1534,8 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Size of the terminal.
         """
+        if self._size is not None:
+            return self._size
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -4114,6 +4118,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
+        self._size = event.size
         self._resize_event = event
 
     async def _on_app_focus(self, event: events.AppFocus) -> None:

@@ -222,6 +222,8 @@ class Reactive(Generic[ReactiveType]):
                 else default_or_callable
             )
         setattr(obj, internal_name, default)
+        if (toggle_class := self._toggle_class) is not None:
+            obj.set_class(bool(default), *toggle_class.split())
         if self._init:
             self._check_watchers(obj, name, default)
 
