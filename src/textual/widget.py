@@ -929,7 +929,7 @@ class Widget(DOMNode):
         if parent._nodes._updates == self._odd[0]:
             return self._odd[1]
         try:
-            is_odd = parent._nodes.index(self) % 2 == 0
+            is_odd = parent._nodes.displayed_and_visible.index(self) % 2 == 0
             self._odd = (parent._nodes._updates, is_odd)
             return is_odd
         except ValueError:
@@ -1411,7 +1411,7 @@ class Widget(DOMNode):
                     if child._has_order_style:
                         child._update_styles()
 
-        self.call_later(update_styles, list(self.children))
+        self.call_later(update_styles, self.displayed_children)
         await_mount = AwaitMount(self, mounted)
         self.call_next(await_mount)
 

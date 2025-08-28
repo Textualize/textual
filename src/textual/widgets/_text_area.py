@@ -409,6 +409,9 @@ TextArea {
     suggestion: Reactive[str] = reactive("")
     """A suggestion for auto-complete (pressing right will insert it)."""
 
+    hide_suggestion_on_blur: Reactive[bool] = reactive(True)
+    """Hide suggestion when the TextArea does not have focus."""
+
     placeholder: Reactive[str | Content] = reactive("")
     """Text to show when the text area has no content."""
 
@@ -436,6 +439,23 @@ TextArea {
 
         selection: Selection
         """The new selection."""
+        text_area: TextArea
+        """The `text_area` that sent this message."""
+
+        @property
+        def control(self) -> TextArea:
+            return self.text_area
+
+    @dataclass
+    class UserInsert(Message):
+        """Posted when the user has entered text via the keyboard."""
+
+        location: Location
+        """The location where the text was added."""
+
+        text: str
+        """The text that was entered."""
+
         text_area: TextArea
         """The `text_area` that sent this message."""
 
@@ -1383,7 +1403,7 @@ TextArea {
                         cursor_column + 1,
                     )
 
-            if self.suggestion and self.has_focus:
+            if self.suggestion and (self.has_focus or not self.hide_suggestion_on_blur):
                 suggestion_style = self.get_component_rich_style(
                     "text-area--suggestion"
                 )
@@ -2423,6 +2443,7 @@ TextArea {
         """
         if self.read_only:
             return None
+        self.post_message(self.UserInsert(start, insert, self))
         return self.replace(insert, start, end, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:

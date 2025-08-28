@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 import weakref
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence, overload
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 
 import rich.repr
 
@@ -41,6 +41,8 @@ class NodeList(Sequence["Widget"]):
         # The nodes in the list
         self._nodes: list[Widget] = []
         self._nodes_set: set[Widget] = set()
+        self._displayed_nodes: tuple[int, list[Widget]] = (-1, [])
+        self._displayed_visible_nodes: tuple[int, list[Widget]] = (-1, [])
 
         # We cache widgets by their IDs too for a quick lookup
         # Note that only widgets with IDs are cached like this, so
@@ -187,18 +189,29 @@ class NodeList(Sequence["Widget"]):
         return reversed(self._nodes)
 
     @property
-    def displayed(self) -> Iterable[Widget]:
+    def displayed(self) -> Sequence[Widget]:
         """Just the nodes where `display==True`."""
-        for node in self._nodes:
-            if node.display:
-                yield node
+        if self._displayed_nodes[0] != self._updates:
+            self._displayed_nodes = (
+                self._updates,
+                [node for node in self._nodes if node.display],
+            )
+        return self._displayed_nodes[1]
 
     @property
-    def displayed_reverse(self) -> Iterable[Widget]:
+    def displayed_and_visible(self) -> Sequence[Widget]:
+        """Nodes with both `display==True` and `visible==True`."""
+        if self._displayed_visible_nodes[0] != self._updates:
+            self._displayed_nodes = (
+                self._updates,
+                [node for node in self.displayed if node.visible],
+            )
+        return self._displayed_nodes[1]
+
+    @property
+    def displayed_reverse(self) -> Iterator[Widget]:
         """Just the nodes where `display==True`, in reverse order."""
-        for node in reversed(self._nodes):
-            if node.display:
-                yield node
+        return reversed(self.displayed)
 
     if TYPE_CHECKING:
 

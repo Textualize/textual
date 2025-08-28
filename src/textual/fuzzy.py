@@ -7,9 +7,10 @@ This class is used by the [command palette](/guide/command_palette) to match sea
 
 from __future__ import annotations
 
+from functools import lru_cache
 from operator import itemgetter
-from re import IGNORECASE, escape, finditer, search
-from typing import Iterable, NamedTuple
+from re import finditer
+from typing import Iterable, Sequence
 
 import rich.repr
 
@@ -18,60 +19,28 @@ from textual.content import Content
 from textual.visual import Style
 
 
-class _Search(NamedTuple):
-    """Internal structure to keep track of a recursive search."""
-
-    candidate_offset: int = 0
-    query_offset: int = 0
-    offsets: tuple[int, ...] = ()
-
-    def branch(self, offset: int) -> tuple[_Search, _Search]:
-        """Branch this search when an offset is found.
-
-        Args:
-            offset: Offset of a matching letter in the query.
-
-        Returns:
-            A pair of search objects.
-        """
-        _, query_offset, offsets = self
-        return (
-            _Search(offset + 1, query_offset + 1, offsets + (offset,)),
-            _Search(offset + 1, query_offset, offsets),
-        )
-
-    @property
-    def groups(self) -> int:
-        """Number of groups in offsets."""
-        groups = 1
-        last_offset, *offsets = self.offsets
-        for offset in offsets:
-            if offset != last_offset + 1:
-                groups += 1
-            last_offset = offset
-        return groups
-
-
 class FuzzySearch:
     """Performs a fuzzy search.
 
     Unlike a regex solution, this will finds all possible matches.
     """
 
-    cache: LRUCache[tuple[str, str, bool], tuple[float, tuple[int, ...]]] = LRUCache(
-        1024 * 4
-    )
-
-    def __init__(self, case_sensitive: bool = False) -> None:
+    def __init__(
+        self, case_sensitive: bool = False, *, cache_size: int = 1024 * 4
+    ) -> None:
         """Initialize fuzzy search.
 
         Args:
             case_sensitive: Is the match case sensitive?
+            cache_size: Number of queries to cache.
         """
 
         self.case_sensitive = case_sensitive
+        self.cache: LRUCache[tuple[str, str], tuple[float, Sequence[int]]] = LRUCache(
+            cache_size
+        )
 
-    def match(self, query: str, candidate: str) -> tuple[float, tuple[int, ...]]:
+    def match(self, query: str, candidate: str) -> tuple[float, Sequence[int]]:
         """Match against a query.
 
         Args:
@@ -81,86 +50,105 @@ class FuzzySearch:
         Returns:
             A pair of (score, tuple of offsets). `(0, ())` for no result.
         """
-        query_regex = ".*?".join(f"({escape(character)})" for character in query)
-        if not search(
-            query_regex, candidate, flags=0 if self.case_sensitive else IGNORECASE
-        ):
-            # Bail out early if there is no possibility of a match
-            return (0.0, ())
 
-        cache_key = (query, candidate, self.case_sensitive)
+        cache_key = (query, candidate)
         if cache_key in self.cache:
             return self.cache[cache_key]
-        result = max(
-            self._match(query, candidate), key=itemgetter(0), default=(0.0, ())
-        )
+        default: tuple[float, Sequence[int]] = (0.0, [])
+        result = max(self._match(query, candidate), key=itemgetter(0), default=default)
         self.cache[cache_key] = result
         return result
 
-    def _match(
-        self, query: str, candidate: str
-    ) -> Iterable[tuple[float, tuple[int, ...]]]:
-        """Generator to do the matching.
+    @classmethod
+    @lru_cache(maxsize=1024)
+    def get_first_letters(cls, candidate: str) -> frozenset[int]:
+        return frozenset({match.start() for match in finditer(r"\w+", candidate)})
+
+    def score(self, candidate: str, positions: Sequence[int]) -> float:
+        """Score a search.
 
         Args:
-            query: Query to match.
-            candidate: Candidate to check against.
+            search: Search object.
 
-        Yields:
-            Pairs of score and tuple of offsets.
+        Returns:
+            Score.
         """
+        first_letters = self.get_first_letters(candidate)
+        # This is a heuristic, and can be tweaked for better results
+        # Boost first letter matches
+        offset_count = len(positions)
+        score: float = offset_count + len(first_letters.intersection(positions))
+
+        groups = 1
+        last_offset, *offsets = positions
+        for offset in offsets:
+            if offset != last_offset + 1:
+                groups += 1
+            last_offset = offset
+
+        # Boost to favor less groups
+        normalized_groups = (offset_count - (groups - 1)) / offset_count
+        score *= 1 + (normalized_groups * normalized_groups)
+        return score
+
+    def _match(
+        self, query: str, candidate: str
+    ) -> Iterable[tuple[float, Sequence[int]]]:
+        letter_positions: list[list[int]] = []
+        position = 0
+
         if not self.case_sensitive:
-            query = query.lower()
             candidate = candidate.lower()
+            query = query.lower()
+        score = self.score
+        if query in candidate:
+            # Quick exit when the query exists as a substring
+            query_location = candidate.rfind(query)
+            offsets = list(range(query_location, query_location + len(query)))
+            yield (
+                score(candidate, offsets) * (2.0 if candidate == query else 1.5),
+                offsets,
+            )
+            return
 
-        # We need this to give a bonus to first letters.
-        first_letters = {match.start() for match in finditer(r"\w+", candidate)}
+        for offset, letter in enumerate(query):
+            last_index = len(candidate) - offset
+            positions: list[int] = []
+            letter_positions.append(positions)
+            index = position
+            while (location := candidate.find(letter, index)) != -1:
+                positions.append(location)
+                index = location + 1
+                if index >= last_index:
+                    break
+            if not positions:
+                yield (0.0, ())
+                return
+            position = positions[0] + 1
 
-        def score(search: _Search) -> float:
-            """Sore a search.
+        possible_offsets: list[list[int]] = []
+        query_length = len(query)
+
+        def get_offsets(offsets: list[int], positions_index: int) -> None:
+            """Recursively match offsets.
 
             Args:
-                search: Search object.
-
-            Returns:
-                Score.
+                offsets: A list of offsets.
+                positions_index: Index of query letter.
 
             """
-            # This is a heuristic, and can be tweaked for better results
-            # Boost first letter matches
-            offset_count = len(search.offsets)
-            score: float = offset_count + len(
-                first_letters.intersection(search.offsets)
-            )
-            # Boost to favor less groups
-            normalized_groups = (offset_count - (search.groups - 1)) / offset_count
-            score *= 1 + (normalized_groups * normalized_groups)
-            return score
+            for offset in letter_positions[positions_index]:
+                if not offsets or offset > offsets[-1]:
+                    new_offsets = [*offsets, offset]
+                    if len(new_offsets) == query_length:
+                        possible_offsets.append(new_offsets)
+                    else:
+                        get_offsets(new_offsets, positions_index + 1)
 
-        stack: list[_Search] = [_Search()]
-        push = stack.append
-        pop = stack.pop
-        query_size = len(query)
-        find = candidate.find
-        # Limit the number of loops out of an abundance of caution.
-        # This should be hard to reach without contrived data.
-        remaining_loops = 10_000
-        while stack and (remaining_loops := remaining_loops - 1):
-            search = pop()
-            offset = find(query[search.query_offset], search.candidate_offset)
-            if offset != -1:
-                if not set(candidate[search.candidate_offset :]).issuperset(
-                    query[search.query_offset :]
-                ):
-                    # Early out if there is not change of a match
-                    continue
-                advance_branch, branch = search.branch(offset)
-                if advance_branch.query_offset == query_size:
-                    yield score(advance_branch), advance_branch.offsets
-                    push(branch)
-                else:
-                    push(branch)
-                    push(advance_branch)
+        get_offsets([], 0)
+
+        for offsets in possible_offsets:
+            yield score(candidate, offsets), offsets
 
 
 @rich.repr.auto
@@ -229,3 +217,8 @@ class Matcher:
             if not candidate[offset].isspace():
                 content = content.stylize(self._match_style, offset, offset + 1)
         return content
+
+
+if __name__ == "__main__":
+    fuzzy_search = FuzzySearch()
+    fuzzy_search.match("foo.bar", "foo/egg.bar")

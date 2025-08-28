@@ -2571,9 +2571,9 @@ def test_pseudo_classes(snap_compare):
             for item_number in range(5):
                 yield Label(f"Item {item_number + 1}")
 
-        def on_mount(self) -> None:
+        async def on_mount(self) -> None:
             # Mounting a new widget should updated previous widgets, as the last of type has changed
-            self.mount(Label("HELLO"))
+            await self.mount(Label("HELLO"))
 
     assert snap_compare(PSApp())
 

@@ -405,13 +405,12 @@ class Content(Visual):
         Returns:
             Self.
         """
-        spans = self.spans
-        if not spans:
+        if not (spans := self._spans):
             return self
-        last_span = Span(0, 0, Style())
+        last_span = Span(-1, -1, "")
         new_spans: list[Span] = []
         changed: bool = False
-        for span in self._spans:
+        for span in spans:
             if span.start == last_span.end and span.style == last_span.style:
                 last_span = new_spans[-1] = Span(last_span.start, span.end, span.style)
                 changed = True
@@ -421,6 +420,24 @@ class Content(Visual):
         if changed:
             self._spans[:] = new_spans
         return self
+
+    def add_spans(self, spans: Sequence[Span]) -> Content:
+        """Adds spans to this Content instance.
+
+        Args:
+            spans: A sequence of spans.
+
+        Returns:
+            A Content instance.
+        """
+        if spans:
+            return Content(
+                self.plain,
+                [*self._spans, *spans],
+                None if self._cell_length is None else self.cell_length,
+            )
+        else:
+            return self
 
     def __eq__(self, other: object) -> bool:
         """Compares text only, so that markup doesn't effect sorting."""
@@ -741,11 +758,7 @@ class Content(Visual):
                         for start, end, style in other._spans
                     ],
                 ],
-                (
-                    self.cell_length + other._cell_length
-                    if other._cell_length is not None
-                    else None
-                ),
+                (self.cell_length + other.cell_length),
             )
             return content
         return NotImplemented
@@ -1470,7 +1483,7 @@ class Content(Visual):
         self,
         highlight_regex: re.Pattern[str] | str,
         *,
-        style: Style,
+        style: Style | str,
         maximum_highlights: int | None = None,
     ) -> Content:
         """Apply a style to text that matches a regular expression.
