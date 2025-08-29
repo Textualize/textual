@@ -6,7 +6,7 @@ from datetime import datetime
 
 from rich.text import Text
 
-from textual.app import RenderResult
+from textual.app import ComposeResult, RenderResult
 from textual.content import Content
 from textual.dom import NoScreen
 from textual.events import Click, Mount
@@ -167,7 +167,7 @@ class Header(Widget):
         if time_format is not None:
             self.time_format = time_format
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         yield HeaderIcon().data_bind(Header.icon)
         yield HeaderTitle()
         yield (
