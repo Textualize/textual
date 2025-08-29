@@ -19,6 +19,11 @@ The following app displays the the current time (and keeps it up to date).
 
 With Textual's default settings, this clock will be displayed in 5 lines; 3 for the digits and 2 for a top and bottom border.
 
+!!! note
+
+    Textual also adds a blank line above inline apps for padding.
+    To remove this default padding, you can set `INLINE_PADDING = 0` on your app class.
+
 You can change the height or the border with CSS and the `:inline` pseudo-selector, which only matches rules in inline mode.
 Let's update this app to remove the default border, and increase the height:
 
