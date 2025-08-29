@@ -338,3 +338,14 @@ def test_expand_tabs(input: Content, tab_width: int, expected: Content):
     print(repr(output))
     assert output.plain == expected.plain
     assert output._spans == expected._spans
+
+
+def test_add_spans() -> None:
+    content = Content.from_markup("[red]Hello[/red], World!")
+    content = content.add_spans([Span(0, 5, "green"), Span(7, 9, "blue")])
+    expected = [
+        Span(0, 5, style="red"),
+        Span(0, 5, style="green"),
+        Span(7, 9, style="blue"),
+    ]
+    assert content.spans == expected

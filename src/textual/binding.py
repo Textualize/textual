@@ -86,6 +86,8 @@ class Binding:
 
     @dataclass(frozen=True)
     class Group:
+        """A binding group causes the keys to be grouped under a single description."""
+
         description: str = ""
         """Description of the group."""
 

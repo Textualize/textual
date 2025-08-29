@@ -431,11 +431,7 @@ class Content(Visual):
             A Content instance.
         """
         if spans:
-            return Content(
-                self.plain,
-                [*self._spans, *spans],
-                None if self._cell_length is None else self.cell_length,
-            )
+            return Content(self.plain, [*self._spans, *spans], self._cell_length)
         else:
             return self
 

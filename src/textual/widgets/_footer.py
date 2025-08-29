@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from itertools import groupby
 from typing import TYPE_CHECKING
 
 import rich.repr
@@ -128,7 +127,7 @@ class FooterKey(Widget):
 
 
 class FooterLabel(Label):
-    pass
+    """Text displayed in the footer (used by binding groups)."""
 
 
 @rich.repr.auto
@@ -136,8 +135,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     ALLOW_SELECT = False
     DEFAULT_CSS = """
     Footer {
-        layout: horizontal;
-        # grid-columns: auto;
+        layout: horizontal;        
         color: $footer-foreground;
         background: $footer-background;
         dock: bottom;
