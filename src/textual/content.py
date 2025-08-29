@@ -705,7 +705,9 @@ class Content(Visual):
     @property
     def without_spans(self) -> Content:
         """The content with no spans"""
-        return Content(self.plain, [], self._cell_length)
+        if self._spans:
+            return Content(self.plain, [], self._cell_length)
+        return self
 
     @property
     def first_line(self) -> Content:
