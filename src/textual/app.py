@@ -3305,9 +3305,7 @@ class App(Generic[ReturnType], DOMNode):
                                     console.print()
                             else:
                                 self._driver.write(
-                                    Control.move(
-                                        -cursor_x, -self.INLINE_PADDING - 1
-                                    ).segment.text
+                                    Control.move(0, -self.INLINE_PADDING).segment.text
                                 )
 
                         driver.stop_application_mode()
