@@ -1132,6 +1132,8 @@ class Compositor:
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
         if simplify:
+            # Simplify is done when exporting to SVG
+            # It doesn't make things faster
             render_strips = [
                 Strip.join(chop.values()).simplify().discard_meta() for chop in chops
             ]

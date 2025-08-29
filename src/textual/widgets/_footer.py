@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from itertools import groupby
 from typing import TYPE_CHECKING
 
 import rich.repr
@@ -12,6 +13,7 @@ from textual.binding import Binding
 from textual.containers import ScrollableContainer
 from textual.reactive import reactive
 from textual.widget import Widget
+from textual.widgets import Label
 
 if TYPE_CHECKING:
     from textual.screen import Screen
@@ -64,6 +66,7 @@ class FooterKey(Widget):
     """
 
     compact = reactive(True)
+    """Display compact style."""
 
     def __init__(
         self,
@@ -95,18 +98,22 @@ class FooterKey(Widget):
             "footer-key--description"
         ).padding
         description = self.description
-        label_text = Text.assemble(
-            (
-                " " * key_padding.left + key_display + " " * key_padding.right,
-                key_style,
-            ),
-            (
-                " " * description_padding.left
-                + description
-                + " " * description_padding.right,
-                description_style,
-            ),
-        )
+        if description:
+            label_text = Text.assemble(
+                (
+                    " " * key_padding.left + key_display + " " * key_padding.right,
+                    key_style,
+                ),
+                (
+                    " " * description_padding.left
+                    + description
+                    + " " * description_padding.right,
+                    description_style,
+                ),
+            )
+        else:
+            label_text = Text.assemble((key_display, key_style))
+
         label_text.stylize_before(self.rich_style)
         return label_text
 
@@ -120,13 +127,16 @@ class FooterKey(Widget):
         self.set_class(compact, "-compact")
 
 
+class FooterLabel(Label):
+    """Text displayed in the footer (used by binding groups)."""
+
+
 @rich.repr.auto
 class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     ALLOW_SELECT = False
     DEFAULT_CSS = """
     Footer {
-        layout: grid;
-        grid-columns: auto;
+        layout: horizontal;        
         color: $footer-foreground;
         background: $footer-background;
         dock: bottom;
@@ -139,6 +149,11 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             dock: right;
             padding-right: 1;
             border-left: vkey $foreground 20%;
+        }
+        HorizontalGroup.binding-group {            
+            width: auto;
+            height: 1;
+            layout: horizontal;
         }
 
         &:ansi {
@@ -164,6 +179,15 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 border-left: vkey ansi_black;
             }
         }
+        FooterKey.-grouped {
+            margin: 0 1;
+        }
+        FooterLabel {
+            margin: 0 1;
+            background: red;
+            color: $footer-description-foreground;
+            background: $footer-description-background;
+        }
     }
     """
 
@@ -173,6 +197,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     """True if the bindings are ready to be displayed."""
     show_command_palette = reactive(True)
     """Show the key to invoke the command palette."""
+    combine_groups = reactive(True)
+    """Combine bindings in the same group?"""
 
     def __init__(
         self,
@@ -217,16 +243,33 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             action_to_bindings[binding.action].append((binding, enabled, tooltip))
 
         self.styles.grid_size_columns = len(action_to_bindings)
-        for multi_bindings in action_to_bindings.values():
-            binding, enabled, tooltip = multi_bindings[0]
-            yield FooterKey(
-                binding.key,
-                self.app.get_key_display(binding),
-                binding.description,
-                binding.action,
-                disabled=not enabled,
-                tooltip=tooltip,
-            ).data_bind(Footer.compact)
+
+        for group, multi_bindings_iterable in groupby(
+            action_to_bindings.values(),
+            lambda multi_bindings: multi_bindings[0][0].group,
+        ):
+            if group is not None:
+                for multi_bindings in multi_bindings_iterable:
+                    binding, enabled, tooltip = multi_bindings[0]
+                    yield FooterKey(
+                        binding.key,
+                        self.app.get_key_display(binding),
+                        "",
+                        binding.action,
+                        classes="-grouped",
+                    ).data_bind(Footer.compact)
+                yield FooterLabel(group.description)
+            else:
+                for multi_bindings in multi_bindings_iterable:
+                    binding, enabled, tooltip = multi_bindings[0]
+                    yield FooterKey(
+                        binding.key,
+                        self.app.get_key_display(binding),
+                        binding.description,
+                        binding.action,
+                        disabled=not enabled,
+                        tooltip=tooltip,
+                    ).data_bind(Footer.compact)
         if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             try:
                 _node, binding, enabled, tooltip = active_bindings[
