@@ -1040,7 +1040,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_index: The index of the row.
 
         Returns:
-            Thhe current key of the specified row index.
+            The current key of the specified row index.
 
         Raises:
             RowDoesNotExist: If there is no row with the given index.
