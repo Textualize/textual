@@ -432,8 +432,7 @@ class Content(Visual):
         """
         if spans:
             return Content(self.plain, [*self._spans, *spans], self._cell_length)
-        else:
-            return self
+        return self
 
     def __eq__(self, other: object) -> bool:
         """Compares text only, so that markup doesn't effect sorting."""
