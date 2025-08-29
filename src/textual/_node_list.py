@@ -75,8 +75,6 @@ class NodeList(Sequence["Widget"]):
         """Mark the nodes as having been updated."""
         self._updates += 1
         node = None if self._parent is None else self._parent()
-        if node is None:
-            return
         while node is not None and (node := node._parent) is not None:
             node._nodes._updates += 1
 
