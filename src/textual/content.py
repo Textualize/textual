@@ -748,13 +748,13 @@ class Content(Visual):
             offset = len(self.plain)
             content = Content(
                 self.plain + other.plain,
-                [
-                    *self._spans,
-                    *[
+                (
+                    self._spans
+                    + [
                         Span(start + offset, end + offset, style)
                         for start, end, style in other._spans
-                    ],
-                ],
+                    ]
+                ),
                 (self.cell_length + other.cell_length),
             )
             return content
@@ -1093,7 +1093,7 @@ class Content(Visual):
             return self
         return Content(
             self.plain,
-            [*self._spans, Span(start, length if length < end else end, style)],
+            self._spans + [Span(start, length if length < end else end, style)],
         )
 
     def stylize_before(
