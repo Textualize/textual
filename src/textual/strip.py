@@ -7,7 +7,6 @@ See [Line API](/guide/widgets#line-api) for how to use Strips.
 
 from __future__ import annotations
 
-from itertools import chain
 from typing import Any, Iterable, Iterator, Sequence
 
 import rich.repr
@@ -20,7 +19,6 @@ from rich.style import Style, StyleType
 from textual._segment_tools import index_to_cell_position, line_pad
 from textual.cache import FIFOCache
 from textual.color import Color
-from textual.constants import DEBUG
 from textual.css.types import AlignHorizontal, AlignVertical
 from textual.filter import LineFilter
 
@@ -86,6 +84,7 @@ class Strip:
         "_crop_extend_cache",
         "_offsets_cache",
         "_link_ids",
+        "_cell_count",
     ]
 
     def __init__(
@@ -108,10 +107,7 @@ class Strip:
         self._offsets_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
         self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
-
-        if DEBUG and cell_length is not None:
-            # If `cell_length` is incorrect, render will be fubar
-            assert get_line_length(self._segments) == cell_length
+        self._cell_count: int | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         try:
@@ -290,16 +286,17 @@ class Strip:
         Returns:
             A new combined strip.
         """
+        join_strips = [strip for strip in strips if strip is not None]
+        segments = [segment for strip in join_strips for segment in strip._segments]
+        cell_length: int | None = None
+        if any([strip._cell_length is None for strip in join_strips]):
+            cell_length = None
+        else:
+            cell_length = sum([strip._cell_length or 0 for strip in join_strips])
+        return cls(segments, cell_length)
 
-        segments: list[list[Segment]] = []
-        add_segments = segments.append
-        total_cell_length = 0
-        for strip in strips:
-            if strip is not None:
-                total_cell_length += strip.cell_length
-                add_segments(strip._segments)
-        strip = cls(chain.from_iterable(segments), total_cell_length)
-        return strip
+    def __add__(self, other: Strip) -> Strip:
+        return Strip.join([self, other])
 
     def __bool__(self) -> bool:
         return not not self._segments  # faster than bool(...)
@@ -314,9 +311,21 @@ class Strip:
         return len(self._segments)
 
     def __eq__(self, strip: object) -> bool:
-        return isinstance(strip, Strip) and (
-            self._segments == strip._segments and self.cell_length == strip.cell_length
+        return isinstance(strip, Strip) and (self._segments == strip._segments)
+
+    def __getitem__(self, index: int | slice) -> Strip:
+        if isinstance(index, int):
+            index = slice(index, index + 1)
+        return self.crop(
+            index.start, self.cell_count if index.stop is None else index.stop
         )
+
+    @property
+    def cell_count(self) -> int:
+        """Number of cells in the strip"""
+        if self._cell_count is None:
+            self._cell_count = sum(len(segment.text) for segment in self._segments)
+        return self._cell_count
 
     def extend_cell_length(self, cell_length: int, style: Style | None = None) -> Strip:
         """Extend the cell length if it is less than the given value.
@@ -391,7 +400,7 @@ class Strip:
         return strip
 
     def simplify(self) -> Strip:
-        """Simplify the segments (join segments with same style)
+        """Simplify the segments (join segments with same style).
 
         Returns:
             New strip.
@@ -567,6 +576,7 @@ class Strip:
         cuts = [cut for cut in cuts if cut <= cell_length]
         cache_key = tuple(cuts)
         cached = self._divide_cache.get(cache_key)
+
         if cached is not None:
             return cached
 

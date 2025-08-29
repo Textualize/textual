@@ -10,7 +10,6 @@ import re
 import threading
 from functools import lru_cache, partial
 from inspect import getfile
-from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -407,6 +406,15 @@ class DOMNode(MessagePump):
             The node's children.
         """
         return self._nodes
+
+    @property
+    def displayed_children(self) -> Sequence[Widget]:
+        """The displayed children (where node.display==True).
+
+        Returns:
+            A sequence of widgets.
+        """
+        return self._nodes.displayed
 
     @property
     def is_empty(self) -> bool:
@@ -1214,15 +1222,6 @@ class DOMNode(MessagePump):
         while (node := node._parent) is not None:
             add_node(node)
         return cast("list[DOMNode]", nodes)
-
-    @property
-    def displayed_children(self) -> list[Widget]:
-        """The child nodes which will be displayed.
-
-        Returns:
-            A list of nodes.
-        """
-        return list(filter(attrgetter("display"), self._nodes))
 
     def watch(
         self,

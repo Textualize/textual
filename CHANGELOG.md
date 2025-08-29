@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048
 - Added `Header.format_title` and `App.format_title` for easier customization of title in the Header https://github.com/Textualize/textual/pull/6051
 - Added `Widget.get_line_filters` and `App.get_line_filters` https://github.com/Textualize/textual/pull/6057
+- Added `Binding.Group` https://github.com/Textualize/textual/pull/6070
+- Added `DOMNode.displayed_children` https://github.com/Textualize/textual/pull/6070
+- Added `TextArea.UserInsert` message https://github.com/Textualize/textual/pull/6070
+- Added `TextArea.hide_suggestion_on_blur` boolean https://github.com/Textualize/textual/pull/6070
 
 ### Changed
 
