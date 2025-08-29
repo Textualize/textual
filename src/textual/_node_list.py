@@ -14,6 +14,10 @@ if TYPE_CHECKING:
     from textual.widget import Widget
 
 
+_display_getter = attrgetter("display")
+_visible_getter = attrgetter("visible")
+
+
 class DuplicateIds(Exception):
     """Raised when attempting to add a widget with an id that already exists."""
 
@@ -194,7 +198,7 @@ class NodeList(Sequence["Widget"]):
         if self._displayed_nodes[0] != self._updates:
             self._displayed_nodes = (
                 self._updates,
-                [node for node in self._nodes if node.display],
+                list(filter(_display_getter, self._nodes)),
             )
         return self._displayed_nodes[1]
 
@@ -204,14 +208,14 @@ class NodeList(Sequence["Widget"]):
         if self._displayed_visible_nodes[0] != self._updates:
             self._displayed_nodes = (
                 self._updates,
-                [node for node in self.displayed if node.visible],
+                list(filter(_visible_getter, self.displayed)),
             )
         return self._displayed_nodes[1]
 
     @property
     def displayed_reverse(self) -> Iterator[Widget]:
         """Just the nodes where `display==True`, in reverse order."""
-        return reversed(self.displayed)
+        return filter(_display_getter, reversed(self._nodes))
 
     if TYPE_CHECKING:
 
