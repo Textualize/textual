@@ -843,6 +843,14 @@ class App(Generic[ReturnType], DOMNode):
                     )
                 )
 
+    def get_line_filters(self) -> Sequence[LineFilter]:
+        """Get currently enabled line filters.
+
+        Returns:
+            A list of [LineFilter][textual.filters.LineFilter] instances.
+        """
+        return [filter for filter in self._filters if filter.enabled]
+
     @property
     def _is_devtools_connected(self) -> bool:
         """Is the app connected to the devtools?"""
@@ -3182,7 +3190,6 @@ class App(Generic[ReturnType], DOMNode):
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
-
         self._thread_init()
 
         async def app_prelude() -> bool:

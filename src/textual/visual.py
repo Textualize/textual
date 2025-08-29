@@ -255,7 +255,6 @@ class Visual(ABC):
                     align_vertical,
                 )
             )
-
         return strips
 
 

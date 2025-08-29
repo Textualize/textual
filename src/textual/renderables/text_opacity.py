@@ -79,6 +79,8 @@ class TextOpacity:
             ):
                 invisible_style = _from_color(bgcolor=style.bgcolor)
                 yield _Segment(cell_len(text) * " ", invisible_style)
+        elif opacity == 1:
+            yield from segments
         else:
             filter = ANSIToTruecolor(ansi_theme)
             for segment in filter.apply(list(segments), TRANSPARENT):

@@ -84,6 +84,7 @@ class Strip:
         "_render_cache",
         "_line_length_cache",
         "_crop_extend_cache",
+        "_offsets_cache",
         "_link_ids",
     ]
 
@@ -104,6 +105,7 @@ class Strip:
             tuple[int, int, Style | None],
             Strip,
         ] = FIFOCache(4)
+        self._offsets_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
         self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
@@ -723,6 +725,9 @@ class Strip:
         Returns:
             New strip.
         """
+        cache_key = (x, y)
+        if (cached_strip := self._offsets_cache.get(cache_key)) is not None:
+            return cached_strip
         segments = self._segments
         strip_segments: list[Segment] = []
         for segment in segments:
@@ -732,4 +737,6 @@ class Strip:
                 Segment(text, style + offset_style if style else offset_style)
             )
             x += len(segment.text)
-        return Strip(strip_segments, self._cell_length)
+        strip = Strip(strip_segments, self._cell_length)
+        self._offsets_cache[cache_key] = strip
+        return strip
