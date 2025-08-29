@@ -228,9 +228,11 @@ class NodeList(Sequence["Widget"]):
     def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]
 
-    def __getattr__(self, key: str) -> object:
-        if key in {"clear", "append", "pop", "insert", "remove", "extend"}:
-            raise ReadOnlyError(
-                "Widget.children is read-only: use Widget.mount(...) or Widget.remove(...) to add or remove widgets"
-            )
-        raise AttributeError(key)
+    if not TYPE_CHECKING:
+        # This confused the type checker for some reason
+        def __getattr__(self, key: str) -> object:
+            if key in {"clear", "append", "pop", "insert", "remove", "extend"}:
+                raise ReadOnlyError(
+                    "Widget.children is read-only: use Widget.mount(...) or Widget.remove(...) to add or remove widgets"
+                )
+            raise AttributeError(key)
