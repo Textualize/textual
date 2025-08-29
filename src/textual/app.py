@@ -94,6 +94,7 @@ from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingsMap, BindingType, Keymap
 from textual.command import CommandListItem, CommandPalette, Provider, SimpleProvider
 from textual.compose import compose
+from textual.content import Content
 from textual.css.errors import StylesheetError
 from textual.css.query import NoMatches
 from textual.css.stylesheet import RulesMap, Stylesheet
@@ -970,6 +971,27 @@ class App(Generic[ReturnType], DOMNode):
         text copied from elsewhere in the OS.
         """
         return self._clipboard
+
+    def format_title(self, title: str, sub_title: str) -> Content:
+        """Format the title for display.
+
+        Args:
+            title: The title.
+            sub_title: The sub title.
+
+        Returns:
+            Content instance with title and subtitle.
+        """
+        title_content = Content(title)
+        sub_title_content = Content(sub_title)
+        if sub_title_content:
+            return Content.assemble(
+                title_content,
+                (" — ", "dim"),
+                sub_title_content.stylize("dim"),
+            )
+        else:
+            return title_content
 
     @contextmanager
     def batch_update(self) -> Generator[None, None, None]:
