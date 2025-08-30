@@ -3320,8 +3320,9 @@ class App(Generic[ReturnType], DOMNode):
                         if self._driver.is_inline:
                             cursor_x, cursor_y = self._previous_cursor_position
                             self._driver.write(
-                                Control.move(-cursor_x, -cursor_y + 1).segment.text
+                                Control.move(-cursor_x, -cursor_y).segment.text
                             )
+                            self._driver.flush()
                             if inline_no_clear and not self.app._exit_renderables:
                                 console = Console()
                                 try:
@@ -3330,9 +3331,7 @@ class App(Generic[ReturnType], DOMNode):
                                     console.print()
                             else:
                                 self._driver.write(
-                                    Control.move(
-                                        -cursor_x, -self.INLINE_PADDING - 1
-                                    ).segment.text
+                                    Control.move(0, -self.INLINE_PADDING).segment.text
                                 )
 
                         driver.stop_application_mode()
