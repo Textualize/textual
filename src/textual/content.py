@@ -1499,6 +1499,8 @@ class Content(Visual):
         plain = self.plain
         if isinstance(highlight_regex, str):
             re_highlight = re.compile(highlight_regex)
+        else:
+            re_highlight = highlight_regex
         count = 0
         for match in re_highlight.finditer(plain):
             start, end = match.span()

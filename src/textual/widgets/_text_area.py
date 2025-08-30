@@ -446,23 +446,6 @@ TextArea {
         def control(self) -> TextArea:
             return self.text_area
 
-    @dataclass
-    class UserInsert(Message):
-        """Posted when the user has entered text via the keyboard."""
-
-        location: Location
-        """The location where the text was added."""
-
-        text: str
-        """The text that was entered."""
-
-        text_area: TextArea
-        """The `text_area` that sent this message."""
-
-        @property
-        def control(self) -> TextArea:
-            return self.text_area
-
     def __init__(
         self,
         text: str = "",
@@ -2443,7 +2426,6 @@ TextArea {
         """
         if self.read_only:
             return None
-        self.post_message(self.UserInsert(start, insert, self))
         return self.replace(insert, start, end, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:
