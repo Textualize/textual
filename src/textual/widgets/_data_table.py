@@ -1033,6 +1033,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             raise RowDoesNotExist(f"No row exists for row_key={row_key!r}")
         return self._row_locations.get(row_key)
 
+    def get_row_key(self, row_index: int) -> RowKey:
+        """Return the current key for the row identified by row_index.
+
+        Args:
+            row_index: The index of the row.
+
+        Returns:
+            The current key of the specified row index.
+
+        Raises:
+            RowDoesNotExist: If there is no row with the given index.
+        """
+        if not self.is_valid_row_index(row_index):
+            raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
+        return self._row_locations.get_key(row_index)
+
     def get_column(self, column_key: ColumnKey | str) -> Iterable[CellType]:
         """Get the values from the column identified by the given column key.
 
