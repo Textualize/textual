@@ -5932,6 +5932,30 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.getters.app" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;app
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.getters.app(app_type)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;app_type
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.getters.child_by_id" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;child_by_id
@@ -7329,6 +7353,30 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.getters.app" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;app
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.getters.app(app_type)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;app_type
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.getters.child_by_id" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;child_by_id
@@ -7439,6 +7487,94 @@ window.onload = async (event) => {
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.getters.app" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">app</span>
+
+
+<a href="#textual.getters.app" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">app</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="app_type (textual.getters.app(app_type))" href="#textual.getters.app(app_type)">app_type</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.getters.AppType">AppType</span>]</code></p>
+
+
+
+        <p>Create a property to return the active app.</p>
+<p>All widgets have a default <code>app</code> property which returns an App instance.
+Type checkers will complain if you try to access attributes defined on your App class, which aren't
+present in the base class. To keep the type checker happy you can add this property to get your
+specific App subclass.</p>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyWidget</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">getters</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">MyApp</span><span class="p">)</span>
+</code></pre></div>
+</details>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="textual.getters.app(app_type)" class="doc doc-heading doc-heading-parameter">                  <code>app_type</code>
+<a href="#textual.getters.app(app_type)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.getters.AppType">AppType</span>] | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.getters.AppType">AppType</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The App subclass, or a callable which returns an App subclass.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-class">
 

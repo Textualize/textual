@@ -8007,6 +8007,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.get_line_filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_line_filters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.get_loading_widget" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_loading_widget
@@ -8405,6 +8414,15 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.pre_render" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;pre_render
+    </span>
+  </a>
   
 </li>
         
@@ -12586,6 +12604,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.get_line_filters" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_line_filters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.get_loading_widget" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_loading_widget
@@ -12984,6 +13011,15 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.pre_render" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;pre_render
+    </span>
+  </a>
   
 </li>
         
@@ -19831,6 +19867,48 @@ if you want children to be attached to a different node.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="textual.widget.Widget.get_line_filters" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_line_filters</span>
+
+
+<a href="#textual.widget.Widget.get_line_filters" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_line_filters</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get the line filters enabled for this widget.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="            LineFilter (textual.filter.LineFilter)" href="../filter/#textual.filter.LineFilter">LineFilter</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A sequence of [LineFilter][textual.filters.LineFilter] instances.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="textual.widget.Widget.get_loading_widget" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_loading_widget</span>
 
@@ -21023,6 +21101,26 @@ the layout.</p>
           </tr>
       </tbody>
     </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.widget.Widget.pre_render" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">pre_render</span>
+
+
+<a href="#textual.widget.Widget.pre_render" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">pre_render</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Called prior to rendering.</p>
+<p>If you implement this in a subclass, be sure to call the base class method via super.</p>
 
     </div>
 
@@ -25364,7 +25462,7 @@ if called after a mouse down event and before the click itself.</p>
 
 
 <a href="#textual.widget.Widget.watch_has_focus" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">watch_has_focus</span><span class="p">(</span><span class="n"><span title="textual.widget.Widget.watch_has_focus(value)">value</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">watch_has_focus</span><span class="p">(</span><span class="n"><span title="textual.widget.Widget.watch_has_focus(_has_focus)">_has_focus</span></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -25383,7 +25481,7 @@ if called after a mouse down event and before the click itself.</p>
 
 
 <a href="#textual.widget.Widget.watch_mouse_hover" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">watch_mouse_hover</span><span class="p">(</span><span class="n"><span title="textual.widget.Widget.watch_mouse_hover(value)">value</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">watch_mouse_hover</span><span class="p">(</span><span class="n"><span title="textual.widget.Widget.watch_mouse_hover(_mouse_over)">_mouse_over</span></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
