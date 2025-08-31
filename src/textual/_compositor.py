@@ -630,7 +630,10 @@ class Compositor:
                     placement_scroll_offset = placement_offset - widget.scroll_offset
 
                     placements = [
-                        placement.process_offset(size.region, placement_scroll_offset)
+                        placement.process_offset(
+                            no_clip if styles.overlay == "screen" else size.region,
+                            placement_scroll_offset,
+                        )
                         for placement in placements
                     ]
 

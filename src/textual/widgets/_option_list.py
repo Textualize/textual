@@ -311,6 +311,18 @@ class OptionList(ScrollView, can_focus=True):
         """The number of options."""
         return len(self._options)
 
+    @property
+    def highlighted_option(self) -> Option | None:
+        """The currently highlighted options, or `None` if no option is highlighted,
+
+        Returns:
+            An Option, or `None`.
+        """
+        if self.highlighted is not None:
+            return self.options[self.highlighted]
+        else:
+            return None
+
     def clear_options(self) -> Self:
         """Clear the content of the option list.
 

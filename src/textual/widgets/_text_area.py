@@ -662,6 +662,9 @@ TextArea {
         self._line_cache.clear()
         super().notify_style_update()
 
+    def update_suggestion(self) -> None:
+        """An hook to update suggestions."""
+
     def check_consume_key(self, key: str, character: str | None = None) -> bool:
         """Check if the widget may consume the given key.
 
@@ -1074,6 +1077,7 @@ TextArea {
         self.history.clear()
         self._set_document(text, self.language)
         self.post_message(self.Changed(self).set_sender(self))
+        self.update_suggestion()
 
     def _on_resize(self) -> None:
         self._rewrap_and_refresh_virtual_size()
@@ -1534,7 +1538,10 @@ TextArea {
             Data relating to the edit that may be useful. The data returned
             may be different depending on the edit performed.
         """
-        self.suggestion = ""
+        if self.suggestion.startswith(edit.text):
+            self.suggestion = self.suggestion[len(edit.text) :]
+        else:
+            self.suggestion = ""
         old_gutter_width = self.gutter_width
         result = edit.do(self)
         self.history.record(edit)
@@ -1551,8 +1558,11 @@ TextArea {
 
         self._refresh_size()
         edit.after(self)
+
         self._build_highlight_map()
         self.post_message(self.Changed(self))
+        self.update_suggestion()
+
         return result
 
     def undo(self) -> None:
@@ -1616,6 +1626,7 @@ TextArea {
             edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
+        self.update_suggestion()
 
     def _redo_batch(self, edits: Sequence[Edit]) -> None:
         """Redo a batch of Edits in order.
@@ -1664,6 +1675,7 @@ TextArea {
             edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
+        self.update_suggestion()
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
