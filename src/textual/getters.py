@@ -5,7 +5,8 @@ Descriptors to define properties on your widget, screen, or App.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar, overload
+from inspect import isclass
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar, overload
 
 from textual._context import NoActiveAppError, active_app
 from textual.css.query import NoMatches, QueryType, WrongType
@@ -23,6 +24,11 @@ AppType = TypeVar("AppType", bound="App")
 class app(Generic[AppType]):
     """Create a property to return the active app.
 
+    All widgets have a default `app` property which returns an App instance.
+    Type checkers will complain if you try to access attributes defined on your App class, which aren't
+    present in the base class. To keep the type checker happy you can add this property to get your
+    specific App subclass.
+
     Example:
         ```python
         class MyWidget(Widget):
@@ -30,11 +36,11 @@ class app(Generic[AppType]):
         ```
 
     Args:
-        app_type: The app class.
+        app_type: The App subclass, or a callable which returns an App subclass.
     """
 
-    def __init__(self, app_type: type[AppType]) -> None:
-        self._app_type = app_type
+    def __init__(self, app_type: type[AppType] | Callable[[], type[AppType]]) -> None:
+        self._app_type = app_type if isclass(app_type) else app_type()
 
     def __get__(self, obj: MessagePump, obj_type: type[MessagePump]) -> AppType:
         try:
