@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TextArea.hide_suggestion_on_blur` boolean https://github.com/Textualize/textual/pull/6070
 - Added `OptionList.highlighted_option` property https://github.com/Textualize/textual/pull/6090
 - Added `TextArea.update_suggestion` method https://github.com/Textualize/textual/pull/6090
+- Added `textual.getters.app` https://github.com/Textualize/textual/pull/6089
 
 ### Changed
 
