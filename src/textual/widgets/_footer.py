@@ -256,6 +256,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                         self.app.get_key_display(binding),
                         "",
                         binding.action,
+                        disabled=not enabled,
+                        tooltip=tooltip or binding.description,
                         classes="-grouped",
                     ).data_bind(Footer.compact)
                 yield FooterLabel(group.description)

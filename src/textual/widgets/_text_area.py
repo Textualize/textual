@@ -663,9 +663,7 @@ TextArea {
         super().notify_style_update()
 
     def update_suggestion(self) -> None:
-        """A hook called after edits, to allow subclasses to update the
-        [`suggestion`][textual.widgets.TextArea.suggestion] attribute.
-        """
+        """A hook to update the [`suggestion`][textual.widgets.TextArea.suggestion] attribute."""
 
     def check_consume_key(self, key: str, character: str | None = None) -> bool:
         """Check if the widget may consume the given key.
@@ -1079,6 +1077,7 @@ TextArea {
         self.history.clear()
         self._set_document(text, self.language)
         self.post_message(self.Changed(self).set_sender(self))
+        self.update_suggestion()
 
     def _on_resize(self) -> None:
         self._rewrap_and_refresh_virtual_size()
@@ -1625,6 +1624,7 @@ TextArea {
             edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
+        self.update_suggestion()
 
     def _redo_batch(self, edits: Sequence[Edit]) -> None:
         """Redo a batch of Edits in order.
@@ -1673,6 +1673,7 @@ TextArea {
             edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
+        self.update_suggestion()
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
