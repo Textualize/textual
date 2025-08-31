@@ -54,6 +54,7 @@ class HighlightTheme:
 
 def guess_language(code: str, path: str) -> str:
     """Guess the language based on the code and path.
+    The result may be used in the [highlight][textual.highlight.highlight] function.
 
     Args:
         code: The code to guess from.
@@ -107,7 +108,7 @@ def highlight(
         code: A string to highlight.
         language: The language to highlight.
         theme: A HighlightTheme class (type not instance).
-        tab_size: Number of spaces in a tab. Defaults to 8.
+        tab_size: Number of spaces in a tab.
 
     Returns:
         A Content instance which may be used in a widget.
