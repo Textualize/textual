@@ -25,6 +25,7 @@ The second.
 
 
 class MarkdownFileViewerApp(App[None]):
+
     def __init__(self, markdown_file: Path) -> None:
         super().__init__()
         self.markdown_file = markdown_file
@@ -45,7 +46,7 @@ async def test_markdown_file_viewer_anchor_link(tmp_path, link: int) -> None:
         # There's not really anything to test *for* here, but the lack of an
         # exception is the win (before the fix this is testing it would have
         # been FileNotFoundError).
-        await pilot.click(Markdown, Offset(2, link))
+        await pilot.click(Markdown, Offset(4, link))
 
 
 class MarkdownStringViewerApp(App[None]):
@@ -71,7 +72,7 @@ async def test_markdown_string_viewer_anchor_link(link: int) -> None:
         # There's not really anything to test *for* here, but the lack of an
         # exception is the win (before the fix this is testing it would have
         # been FileNotFoundError).
-        await pilot.click(Markdown, Offset(2, link))
+        await pilot.click(Markdown, Offset(4, link))
 
 
 @pytest.mark.parametrize("text", ["Hey [[/test]]", "[i]Hey there[/i]"])
