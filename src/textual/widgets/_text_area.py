@@ -1558,11 +1558,9 @@ TextArea {
 
         self._refresh_size()
         edit.after(self)
-
         self._build_highlight_map()
         self.post_message(self.Changed(self))
         self.update_suggestion()
-
         return result
 
     def undo(self) -> None:

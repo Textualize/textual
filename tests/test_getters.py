@@ -43,3 +43,19 @@ async def test_getters() -> None:
 
         with pytest.raises(NoMatches):
             app.label2_missing
+
+
+async def test_app_getter() -> None:
+
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            my_widget = MyWidget()
+            my_widget.app
+            yield my_widget
+
+    class MyWidget(Widget):
+        app = getters.app(MyApp)
+
+    app = MyApp()
+    async with app.run_test():
+        assert isinstance(app.query_one(MyWidget).app, MyApp)
