@@ -663,7 +663,7 @@ TextArea {
         super().notify_style_update()
 
     def update_suggestion(self) -> None:
-        """An hook to update suggestions."""
+        """A hook to update the [`suggestion`][textual.widgets.TextArea.suggestion] attribute."""
 
     def check_consume_key(self, key: str, character: str | None = None) -> bool:
         """Check if the widget may consume the given key.
