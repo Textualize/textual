@@ -662,6 +662,11 @@ TextArea {
         self._line_cache.clear()
         super().notify_style_update()
 
+    def update_suggestion(self) -> None:
+        """A hook called after edits, to allow subclasses to update the
+        [`suggestion`][textual.widgets.TextArea.suggestion] attribute.
+        """
+
     def check_consume_key(self, key: str, character: str | None = None) -> bool:
         """Check if the widget may consume the given key.
 
@@ -1534,7 +1539,10 @@ TextArea {
             Data relating to the edit that may be useful. The data returned
             may be different depending on the edit performed.
         """
-        self.suggestion = ""
+        if self.suggestion.startswith(edit.text):
+            self.suggestion = self.suggestion[len(edit.text) :]
+        else:
+            self.suggestion = ""
         old_gutter_width = self.gutter_width
         result = edit.do(self)
         self.history.record(edit)
@@ -1553,6 +1561,7 @@ TextArea {
         edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
+        self.update_suggestion()
         return result
 
     def undo(self) -> None:

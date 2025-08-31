@@ -5,11 +5,52 @@ Descriptors to define properties on your widget, screen, or App.
 
 from __future__ import annotations
 
-from typing import Generic, overload
+from typing import TYPE_CHECKING, Generic, TypeVar, overload
 
+from textual._context import NoActiveAppError, active_app
 from textual.css.query import NoMatches, QueryType, WrongType
-from textual.dom import DOMNode
 from textual.widget import Widget
+
+if TYPE_CHECKING:
+    from textual.app import App
+    from textual.dom import DOMNode
+    from textual.message_pump import MessagePump
+
+
+AppType = TypeVar("AppType", bound="App")
+
+
+class app(Generic[AppType]):
+    """Create a property to return the active app.
+
+    Example:
+        ```python
+        class MyWidget(Widget):
+            app = getters.app(MyApp)
+        ```
+
+    Args:
+        app_type: The app class.
+    """
+
+    def __init__(self, app_type: type[AppType]) -> None:
+        self._app_type = app_type
+
+    def __get__(self, obj: MessagePump, obj_type: type[MessagePump]) -> AppType:
+        try:
+            app = active_app.get()
+        except LookupError:
+            from textual.app import App
+
+            node: MessagePump | None = obj
+            while not isinstance(node, App):
+                if node is None:
+                    raise NoActiveAppError()
+                node = node._parent
+            app = node
+
+        assert isinstance(app, self._app_type)
+        return app
 
 
 class query_one(Generic[QueryType]):
@@ -45,7 +86,7 @@ class query_one(Generic[QueryType]):
     """
 
     selector: str
-    expect_type: type[Widget]
+    expect_type: type["Widget"]
 
     @overload
     def __init__(self, selector: str) -> None:
@@ -72,6 +113,8 @@ class query_one(Generic[QueryType]):
         expect_type: type[QueryType] | None = None,
     ) -> None:
         if expect_type is None:
+            from textual.widget import Widget
+
             self.expect_type = Widget
         else:
             self.expect_type = expect_type
