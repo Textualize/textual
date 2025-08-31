@@ -227,29 +227,35 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Is this a root node (i.e. the App)?"""
         return False
 
-    @property
-    def app(self) -> "App[object]":
-        """
-        Get the current app.
+    if TYPE_CHECKING:
+        from textual import getters
 
-        Returns:
-            The current app.
+        app = getters.app(App)
+    else:
 
-        Raises:
-            NoActiveAppError: if no active app could be found for the current asyncio context
-        """
-        try:
-            return active_app.get()
-        except LookupError:
-            from textual.app import App
+        @property
+        def app(self) -> "App[object]":
+            """
+            Get the current app.
 
-            node: MessagePump | None = self
-            while not isinstance(node, App):
-                if node is None:
-                    raise NoActiveAppError()
-                node = node._parent
+            Returns:
+                The current app.
 
-            return node
+            Raises:
+                NoActiveAppError: if no active app could be found for the current asyncio context
+            """
+            try:
+                return active_app.get()
+            except LookupError:
+                from textual.app import App
+
+                node: MessagePump | None = self
+                while not isinstance(node, App):
+                    if node is None:
+                        raise NoActiveAppError()
+                    node = node._parent
+
+                return node
 
     @property
     def is_attached(self) -> bool:
