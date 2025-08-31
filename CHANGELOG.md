@@ -24,7 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.get_line_filters` and `App.get_line_filters` https://github.com/Textualize/textual/pull/6057
 - Added `Binding.Group` https://github.com/Textualize/textual/pull/6070
 - Added `DOMNode.displayed_children` https://github.com/Textualize/textual/pull/6070
-- Added `TextArea.UserInsert` message https://github.com/Textualize/textual/pull/6070
 - Added `TextArea.hide_suggestion_on_blur` boolean https://github.com/Textualize/textual/pull/6070
 
 ### Changed
