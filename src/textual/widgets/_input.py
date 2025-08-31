@@ -70,6 +70,10 @@ class Selection(NamedTuple):
 class Input(ScrollView):
     """A text input widget."""
 
+        def clear(self) -> None:
+            """Clear the value of the input widget."""
+            self.value = ""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "cursor_left", "Move cursor left", show=False),
         Binding(

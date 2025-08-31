@@ -163,3 +163,14 @@ The input widget provides the following component classes:
 ::: textual.widgets.Input
     options:
       heading_level: 2
+
+### Clearing Input
+
+You can clear the input value using the `clear()` method:
+
+```python
+input_widget = Input()
+input_widget.value = "Some text"
+# Later...
+input_widget.clear()  # Value is now empty
+```
