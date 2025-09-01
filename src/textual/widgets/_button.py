@@ -62,7 +62,8 @@ class Button(Widget, can_focus=True):
             background: $surface;
             border: block $surface;
             &:hover {
-                opacity: 90%;
+                background: $primary;
+                border: block $primary;
             }
             &:focus {
                 text-style: $button-focus-text-style;
@@ -72,22 +73,41 @@ class Button(Widget, can_focus=True):
                 border: block $surface;
                 tint: $background 30%;
             }
+            &:disabled {
+                color: auto 50%;
+            }
 
             &.-primary {
                 background: $primary-muted;
                 border: block $primary-muted;
+                &:hover {
+                    background: $primary;
+                    border: block $primary;
+                }
             }
             &.-success {
                 background: $success-muted;
                 border: block $success-muted;
+                &:hover {
+                    background: $success;
+                    border: block $success;
+                }
             }
             &.-warning {
                 background: $warning-muted;
                 border: block $warning-muted;
+                &:hover {
+                    background: $warning;
+                    border: block $warning;
+                }
             }
             &.-error {
                 background: $error-muted;
                 border: block $error-muted;
+                &:hover {
+                    background: $error;
+                    border: block $error;
+                }
             }
         }
         &.-style-default {
@@ -104,7 +124,7 @@ class Button(Widget, can_focus=True):
             }
 
             &:disabled {
-                text-opacity: 0.4;
+                text-opacity: 0.6;
             }
 
             &:focus {
