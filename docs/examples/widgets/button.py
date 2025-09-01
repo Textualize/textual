@@ -24,6 +24,22 @@ class ButtonsApp(App[str]):
                 Button.warning("Warning!", disabled=True),
                 Button.error("Error!", disabled=True),
             ),
+            VerticalScroll(
+                Static("Flat Buttons", classes="header"),
+                Button("Default", flat=True),
+                Button("Primary!", variant="primary", flat=True),
+                Button.success("Success!", flat=True),
+                Button.warning("Warning!", flat=True),
+                Button.error("Error!", flat=True),
+            ),
+            VerticalScroll(
+                Static("Disabled Flat Buttons", classes="header"),
+                Button("Default", disabled=True, flat=True),
+                Button("Primary!", variant="primary", disabled=True, flat=True),
+                Button.success("Success!", disabled=True, flat=True),
+                Button.warning("Warning!", disabled=True, flat=True),
+                Button.error("Error!", disabled=True, flat=True),
+            ),
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

@@ -41,6 +41,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    Mapping,
     NamedTuple,
     Sequence,
     TextIO,
@@ -3969,12 +3970,17 @@ class App(Generic[ReturnType], DOMNode):
         )
 
     def _parse_action(
-        self, action: str | ActionParseResult, default_namespace: DOMNode
+        self,
+        action: str | ActionParseResult,
+        default_namespace: DOMNode,
+        namespaces: Mapping[str, DOMNode] | None = None,
     ) -> tuple[DOMNode, str, tuple[object, ...]]:
         """Parse an action.
 
         Args:
             action: An action string.
+            default_namespace: Namespace to user when none is supplied in the action.
+            namespaces: Mapping of namespaces.
 
         Raises:
             ActionError: If there are any errors parsing the action string.
@@ -3987,8 +3993,10 @@ class App(Generic[ReturnType], DOMNode):
         else:
             destination, action_name, params = actions.parse(action)
 
-        action_target: DOMNode | None = None
-        if destination:
+        action_target: DOMNode | None = (
+            None if namespaces is None else namespaces.get(destination)
+        )
+        if destination and action_target is None:
             if destination not in self._action_targets:
                 raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination, None)
@@ -4021,6 +4029,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         action: str | ActionParseResult,
         default_namespace: DOMNode | None = None,
+        namespaces: Mapping[str, DOMNode] | None = None,
     ) -> bool:
         """Perform an [action](/guide/actions).
 
@@ -4030,12 +4039,13 @@ class App(Generic[ReturnType], DOMNode):
             action: Action encoded in a string.
             default_namespace: Namespace to use if not provided in the action,
                 or None to use app.
+            namespaces: Mapping of namespaces.
 
         Returns:
             True if the event has been handled.
         """
         action_target, action_name, params = self._parse_action(
-            action, self if default_namespace is None else default_namespace
+            action, self if default_namespace is None else default_namespace, namespaces
         )
         if action_target.check_action(action_name, params):
             return await self._dispatch_action(action_target, action_name, params)

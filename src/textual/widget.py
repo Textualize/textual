@@ -19,6 +19,7 @@ from typing import (
     Collection,
     Generator,
     Iterable,
+    Mapping,
     NamedTuple,
     Sequence,
     TypeVar,
@@ -4304,13 +4305,16 @@ class Widget(DOMNode):
         self._layout_cache[cache_key] = visual
         return visual
 
-    async def run_action(self, action: str) -> None:
+    async def run_action(
+        self, action: str, namespaces: Mapping[str, DOMNode] | None = None
+    ) -> None:
         """Perform a given action, with this widget as the default namespace.
 
         Args:
             action: Action encoded as a string.
+            namespaces: Mapping of namespaces.
         """
-        await self.app.run_action(action, self)
+        await self.app.run_action(action, self, namespaces)
 
     def post_message(self, message: Message) -> bool:
         """Post a message to this widget.
