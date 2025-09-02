@@ -21,7 +21,7 @@ A simple button with a variety of semantic styles.
 
 [Button reference](./widgets/button.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/button.py"}
+```{.textual path="docs/examples/widgets/button.py" columns="100" lines="24"}
 ```
 
 

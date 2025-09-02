@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# [6.1.0] - 2025-08-01
+## [6.1.0] - 2025-08-01
 
 ### Added
 
@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `namespaces` parameter to `run_action` https://github.com/Textualize/textual/pull/6094
 - Added "block" border style https://github.com/Textualize/textual/pull/6094
 
-# [6.0.0] - 2025-08-31
+## [6.0.0] - 2025-08-31
 
 ### Fixed
 
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Renamed `Label` constructor argument `renderable` to `content` for consistency https://github.com/Textualize/textual/pull/6045
 - Breaking change: Optimization to line API to avoid applying background styles to widget content. In practice this means that you can no longer rely on blank Segments automatically getting the background color.
 
-# [5.3.0] - 2025-08-07
+## [5.3.0] - 2025-08-07
 
 ### Added
 
