@@ -57,7 +57,7 @@ class Button(Widget, can_focus=True):
         
 
         &.-style-flat {
-           
+            text-style: bold;
             color: auto 90%;
             background: $surface;
             border: block $surface;
@@ -80,7 +80,9 @@ class Button(Widget, can_focus=True):
             &.-primary {
                 background: $primary-muted;
                 border: block $primary-muted;
+                color: $text-primary;
                 &:hover {
+                    color: $text;
                     background: $primary;
                     border: block $primary;
                 }
@@ -88,7 +90,9 @@ class Button(Widget, can_focus=True):
             &.-success {
                 background: $success-muted;
                 border: block $success-muted;
+                color: $text-success;
                 &:hover {
+                    color: $text;
                     background: $success;
                     border: block $success;
                 }
@@ -96,7 +100,9 @@ class Button(Widget, can_focus=True):
             &.-warning {
                 background: $warning-muted;
                 border: block $warning-muted;
+                color: $text-warning;
                 &:hover {
+                    color: $text;
                     background: $warning;
                     border: block $warning;
                 }
@@ -104,7 +110,9 @@ class Button(Widget, can_focus=True):
             &.-error {
                 background: $error-muted;
                 border: block $error-muted;
+                color: $text-error;
                 &:hover {
+                    color: $text;
                     background: $error;
                     border: block $error;
                 }
