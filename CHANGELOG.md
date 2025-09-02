@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# Unreleased
+
+### Added
+
+- Added `Button.flat` boolean to enable flat button style https://github.com/Textualize/textual/pull/6094
+- Added `namespaces` parameter to `run_action` https://github.com/Textualize/textual/pull/6094
+- Added "block" border style https://github.com/Textualize/textual/pull/6094
+
 # [6.0.0] - 2025-08-31
 
 ### Fixed

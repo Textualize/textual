@@ -24,6 +24,7 @@ VALID_BORDER: Final = {
     "tall",
     "tab",
     "thick",
+    "block",
     "vkey",
     "wide",
 }
