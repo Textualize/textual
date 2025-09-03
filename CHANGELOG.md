@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [6.1.0] - 2025-08-01
 
+### Fixed
+
+- Fixed `Markdown` and `MarkdownViewer` widgets both handling `Markdown.LinkClicked` messages https://github.com/Textualize/textual/pull/6093
+
 ### Added
 
 - Added `Button.flat` boolean to enable flat button style https://github.com/Textualize/textual/pull/6094
@@ -22,7 +26,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed return value for `Pilot.double_click` and `Pilot.triple_click` https://github.com/Textualize/textual/pull/6035
 - Fixed sizing issue with `Pretty` widget https://github.com/Textualize/textual/pull/6040 https://github.com/Textualize/textual/pull/6041
 - Fixed garbled inline app output when `inline_no_clear=True` https://github.com/Textualize/textual/pull/6080
-- Fixed `Markdown` and `MarkdownViewer` widgets both handling `Markdown.LinkClicked` messages https://github.com/Textualize/textual/pull/6093
 
 ### Added
 
