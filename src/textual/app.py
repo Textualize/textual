@@ -2166,7 +2166,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._thread_init()
 
-        app._loop = asyncio.get_running_loop()
+        loop = app._loop = asyncio.get_running_loop()
+        if hasattr(asyncio, "eager_task_factory"):
+            loop.set_task_factory(asyncio.eager_task_factory)
         with app._context():
             try:
                 await app._process_messages(
