@@ -3445,7 +3445,6 @@ class App(Generic[ReturnType], DOMNode):
             self._registry.add(child)
             child._attach(parent)
             child._post_register(self)
-            # child._start_messages()
 
     def _register(
         self,
