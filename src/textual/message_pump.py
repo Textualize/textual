@@ -531,13 +531,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 except CancelledError:
                     pass
 
-    def pre_start_messages(self) -> None:
-        """Called prior to starting the message task."""
-
     def _start_messages(self) -> None:
         """Start messages task."""
         self._thread_init()
-        self.pre_start_messages()
 
         if self.app._running:
             self._task = create_task(

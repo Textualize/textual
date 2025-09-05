@@ -13,6 +13,7 @@ from textual import events
 if TYPE_CHECKING:
     from textual.app import RenderResult
 
+from textual._context import NoActiveAppError
 from textual.css._error_tools import friendly_list
 from textual.reactive import Reactive, reactive
 from textual.widget import Widget
@@ -125,16 +126,16 @@ class Placeholder(Widget):
         self.variant = self.validate_variant(variant)
         """The current variant of the placeholder."""
 
-        self._color_offset = 0
+        try:
+            self._COLORS[self.app] = self._COLORS.setdefault(self.app, -1) + 1
+            self._color_offset = self._COLORS[self.app]
+        except NoActiveAppError:
+            self._color_offset = 0
 
         # Set a cycle through the variants with the correct starting point.
         self._variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
         while next(self._variants_cycle) != self.variant:
             pass
-
-    def pre_start_messages(self) -> None:
-        self._COLORS[self.app] = self._COLORS.setdefault(self.app, -1) + 1
-        self._color_offset = self._COLORS[self.app]
 
     async def _on_compose(self, event: events.Compose) -> None:
         """Set the color for this placeholder."""
