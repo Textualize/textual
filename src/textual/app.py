@@ -2098,6 +2098,7 @@ class App(Generic[ReturnType], DOMNode):
                 await pilot._wait_for_screen()
                 yield pilot
             finally:
+                await asyncio.sleep(0)
                 # Shutdown the app cleanly
                 await app._shutdown()
                 await app_task
@@ -2166,7 +2167,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._thread_init()
 
-        app._loop = asyncio.get_running_loop()
+        loop = app._loop = asyncio.get_running_loop()
+        if hasattr(asyncio, "eager_task_factory"):
+            loop.set_task_factory(asyncio.eager_task_factory)
         with app._context():
             try:
                 await app._process_messages(
@@ -3442,7 +3445,6 @@ class App(Generic[ReturnType], DOMNode):
             self._registry.add(child)
             child._attach(parent)
             child._post_register(self)
-            child._start_messages()
 
     def _register(
         self,
@@ -3495,6 +3497,7 @@ class App(Generic[ReturnType], DOMNode):
                     self._register(widget, *widget._nodes, cache=cache)
         for widget in new_widgets:
             apply_stylesheet(widget, cache=cache)
+            widget._start_messages()
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks

@@ -586,7 +586,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
                     await self._dispatch_message(events.Mount())
             else:
                 await self._dispatch_message(events.Mount())
-            self.check_idle()
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
@@ -620,7 +619,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
         self._thread_id = threading.get_ident()
-
+        await asyncio.sleep(0)
         while not self._closed:
             try:
                 message = await self._get_message()

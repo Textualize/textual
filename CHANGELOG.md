@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Eager tasks are now enabled On Python3.12 and above https://github.com/Textualize/textual/pull/6102
+
 ## [6.1.0] - 2025-08-01
 
 ### Added

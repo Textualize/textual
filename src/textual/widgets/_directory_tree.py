@@ -525,7 +525,7 @@ class DirectoryTree(Tree[DirEntry]):
             key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 
-    @work(exclusive=True)
+    @work()
     async def _loader(self) -> None:
         """Background loading queue processor."""
         worker = get_current_worker()

@@ -717,10 +717,10 @@ class Widget(DOMNode):
         self._uncover()
         self._cover_widget = widget
         widget._parent = self
-        widget._start_messages()
         widget._post_register(self.app)
         self.app.stylesheet.apply(widget)
         self.refresh(layout=True)
+        widget._start_messages()
 
     def _uncover(self) -> None:
         """Remove any widget, previously set via [`_cover`][textual.widget.Widget._cover]."""

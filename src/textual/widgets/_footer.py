@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections import defaultdict
 from itertools import groupby
 from typing import TYPE_CHECKING
@@ -311,7 +312,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 event.stop()
                 event.prevent_default()
 
-    def on_mount(self) -> None:
+    async def on_mount(self) -> None:
+        await asyncio.sleep(0)
         self.call_next(self.bindings_changed, self.screen)
 
         def bindings_changed(screen: Screen) -> None:
