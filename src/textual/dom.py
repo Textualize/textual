@@ -409,12 +409,21 @@ class DOMNode(MessagePump):
 
     @property
     def displayed_children(self) -> Sequence[Widget]:
-        """The displayed children (where node.display==True).
+        """The displayed children (where `node.display==True`).
 
         Returns:
             A sequence of widgets.
         """
         return self._nodes.displayed
+
+    @property
+    def displayed_and_visible_children(self) -> Sequence[Widget]:
+        """The displayed children (where `node.display==True` and `node.visible==True`).
+
+        Returns:
+            A sequence of widgets.
+        """
+        return self._nodes.displayed_and_visible
 
     @property
     def is_empty(self) -> bool:
