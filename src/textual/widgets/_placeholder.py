@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from itertools import cycle
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 from typing_extensions import Literal, Self
@@ -84,7 +84,7 @@ class Placeholder(Widget):
     """
 
     # Consecutive placeholders get assigned consecutive colors.
-    _COLORS: WeakKeyDictionary[App, Iterator[str]] = WeakKeyDictionary()
+    _COLORS: WeakKeyDictionary[App, int] = WeakKeyDictionary()
     _SIZE_RENDER_TEMPLATE = "[b]{} x {}[/b]"
 
     variant: Reactive[PlaceholderVariant] = reactive[PlaceholderVariant]("default")
@@ -125,17 +125,22 @@ class Placeholder(Widget):
         self.variant = self.validate_variant(variant)
         """The current variant of the placeholder."""
 
+        self._color_offset = 0
+
         # Set a cycle through the variants with the correct starting point.
         self._variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
         while next(self._variants_cycle) != self.variant:
             pass
 
+    def pre_start_messages(self) -> None:
+        self._COLORS[self.app] = self._COLORS.setdefault(self.app, -1) + 1
+        self._color_offset = self._COLORS[self.app]
+
     async def _on_compose(self, event: events.Compose) -> None:
         """Set the color for this placeholder."""
-        colors = Placeholder._COLORS.setdefault(
-            self.app, cycle(_PLACEHOLDER_BACKGROUND_COLORS)
-        )
-        self.styles.background = f"{next(colors)} 50%"
+        color_count = len(_PLACEHOLDER_BACKGROUND_COLORS)
+        color = _PLACEHOLDER_BACKGROUND_COLORS[self._color_offset % color_count]
+        self.styles.background = f"{color} 50%"
 
     def render(self) -> RenderResult:
         """Render the placeholder.
