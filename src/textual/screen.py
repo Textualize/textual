@@ -512,7 +512,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 else self._nodes
             ),
             size,
-            self.screen.size,
+            self.app.size,
             False,
         )
 

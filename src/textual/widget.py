@@ -1263,7 +1263,7 @@ class Widget(DOMNode):
             return cached_result
 
         arrangement = self._arrangement_cache[cache_key] = arrange(
-            self, self._nodes, size, self.screen.size, optimal=optimal
+            self, self._nodes, size, self.app.size, optimal=optimal
         )
 
         return arrangement
