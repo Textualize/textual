@@ -25,7 +25,7 @@ class HorizontalLayout(Layout):
         parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-        viewport = parent.app.size
+        viewport = parent.screen.size
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [

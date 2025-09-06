@@ -10,9 +10,6 @@ if TYPE_CHECKING:
     from textual.widget import Widget
 
 
-from textual._profile import timer
-
-
 class StreamLayout(Layout):
     """A cut down version of the vertical layout.
 
@@ -34,15 +31,13 @@ class StreamLayout(Layout):
 
     name = "stream"
 
-    @timer("arrange STREAM")
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
-        print(parent)
         parent.pre_layout(self)
         if not children:
             return []
-        viewport = parent.app.size
+        viewport = parent.screen.size
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
@@ -87,7 +82,6 @@ class StreamLayout(Layout):
 
         return placements
 
-    @timer("STREAM.get_content_width")
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
         """Get the optimal content width by arranging children.
 
@@ -101,7 +95,6 @@ class StreamLayout(Layout):
         """
         return widget.scrollable_content_region.width
 
-    @timer("STREAM.get_content_height")
     def get_content_height(
         self, widget: Widget, container: Size, viewport: Size, width: int
     ) -> int:

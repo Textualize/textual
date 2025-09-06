@@ -226,7 +226,6 @@ class Layout(ABC):
             An iterable of widget location
         """
 
-    # @timer("get_content_width")
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
         """Get the optimal content width by arranging children.
 
@@ -248,7 +247,6 @@ class Layout(ABC):
             width = arrangement.total_region.right
         return width
 
-    # @timer("get_content_height")
     def get_content_height(
         self, widget: Widget, container: Size, viewport: Size, width: int
     ) -> int:

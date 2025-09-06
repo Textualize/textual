@@ -59,7 +59,6 @@ def arrange(
     styles = widget.styles
 
     # Widgets which will be displayed
-    # display_widgets = [child for child in children if get_display(child) != "none"]
     display_widgets = list(filter(_get_display, children))
     # Widgets organized into layers
     layers = _build_layers(display_widgets)
