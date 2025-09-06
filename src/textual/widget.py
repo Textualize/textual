@@ -605,7 +605,7 @@ class Widget(DOMNode):
         Returns:
             Relative offset.
         """
-        return self.styles.offset.resolve(self.size, self.app.size)
+        return self.styles.offset.resolve(self.size, self.screen.size)
 
     @offset.setter
     def offset(self, offset: tuple[int, int]) -> None:
@@ -1263,7 +1263,7 @@ class Widget(DOMNode):
             return cached_result
 
         arrangement = self._arrangement_cache[cache_key] = arrange(
-            self, self._nodes, size, self.app.size, optimal=optimal
+            self, self._nodes, size, self.screen.size, optimal=optimal
         )
 
         return arrangement

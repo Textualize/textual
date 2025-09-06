@@ -341,6 +341,11 @@ class Screen(Generic[ScreenResultType], Widget):
             extras.append("_tooltips")
         return (*super().layers, *extras)
 
+    @property
+    def size(self) -> Size:
+        """The size of the screen."""
+        return self.app.size - self.styles.gutter.totals
+
     def _watch_focused(self):
         self.refresh_bindings()
 
@@ -512,7 +517,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 else self._nodes
             ),
             size,
-            self.app.size,
+            self.size,
             False,
         )
 
