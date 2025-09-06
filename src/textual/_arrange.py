@@ -95,8 +95,10 @@ def arrange(
 
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
-            layout_placements = widget.layout.arrange(
-                widget, layout_widgets, dock_region.size, greedy=not optimal
+            layout_placements = widget.process_layout(
+                widget.layout.arrange(
+                    widget, layout_widgets, dock_region.size, greedy=not optimal
+                )
             )
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             placement_offset = dock_region.offset

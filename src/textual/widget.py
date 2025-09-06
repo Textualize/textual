@@ -79,7 +79,7 @@ from textual.geometry import (
     Spacing,
     clamp,
 )
-from textual.layout import Layout
+from textual.layout import Layout, WidgetPlacement
 from textual.layouts.vertical import VerticalLayout
 from textual.message import Message
 from textual.messages import CallbackType, Prune
@@ -721,6 +721,22 @@ class Widget(DOMNode):
         widget._post_register(self.app)
         self.app.stylesheet.apply(widget)
         self.refresh(layout=True)
+
+    def process_layout(
+        self, placements: list[WidgetPlacement]
+    ) -> list[WidgetPlacement]:
+        """A hook to allow for the manipulation of widget placements before rendering.
+
+        You could use this as a way to modify the positions / margins of widgets if your requirement is
+        not supported in TCSS. In practice, this method is rarely needed!
+
+        Args:
+            placements: A list of [`WidgetPlacement`][textual.layout.WidgetPlacement] objects.
+
+        Returns:
+            A new list of placements.
+        """
+        return placements
 
     def _uncover(self) -> None:
         """Remove any widget, previously set via [`_cover`][textual.widget.Widget._cover]."""
