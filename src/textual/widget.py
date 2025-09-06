@@ -79,7 +79,7 @@ from textual.geometry import (
     Spacing,
     clamp,
 )
-from textual.layout import Layout
+from textual.layout import Layout, WidgetPlacement
 from textual.layouts.vertical import VerticalLayout
 from textual.message import Message
 from textual.messages import CallbackType, Prune
@@ -460,7 +460,7 @@ class Widget(DOMNode):
         self._content_height_cache: tuple[object, int] = (None, 0)
 
         self._arrangement_cache: FIFOCache[
-            tuple[Size, int, Widget], DockArrangeResult
+            tuple[Size, int, Widget | None], DockArrangeResult
         ] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
@@ -605,7 +605,7 @@ class Widget(DOMNode):
         Returns:
             Relative offset.
         """
-        return self.styles.offset.resolve(self.size, self.app.size)
+        return self.styles.offset.resolve(self.size, self.screen.size)
 
     @offset.setter
     def offset(self, offset: tuple[int, int]) -> None:
@@ -717,10 +717,26 @@ class Widget(DOMNode):
         self._uncover()
         self._cover_widget = widget
         widget._parent = self
+        widget._start_messages()
         widget._post_register(self.app)
         self.app.stylesheet.apply(widget)
         self.refresh(layout=True)
-        widget._start_messages()
+
+    def process_layout(
+        self, placements: list[WidgetPlacement]
+    ) -> list[WidgetPlacement]:
+        """A hook to allow for the manipulation of widget placements before rendering.
+
+        You could use this as a way to modify the positions / margins of widgets if your requirement is
+        not supported in TCSS. In practice, this method is rarely needed!
+
+        Args:
+            placements: A list of [`WidgetPlacement`][textual.layout.WidgetPlacement] objects.
+
+        Returns:
+            A new list of placements.
+        """
+        return placements
 
     def _uncover(self) -> None:
         """Remove any widget, previously set via [`_cover`][textual.widget.Widget._cover]."""
