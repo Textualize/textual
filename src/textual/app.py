@@ -1565,6 +1565,14 @@ class App(Generic[ReturnType], DOMNode):
             width, height = self.console.size
         return Size(width, height)
 
+    @property
+    def viewport_size(self) -> Size:
+        """Get the viewport size (size of the screen)."""
+        try:
+            return self.screen.size
+        except (ScreenStackError, NoScreen):
+            return self.size
+
     def _get_inline_height(self) -> int:
         """Get the inline height (height when in inline mode).
 

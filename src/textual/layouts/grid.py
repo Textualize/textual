@@ -60,7 +60,7 @@ class GridLayout(Layout):
                     table_size_columns -= 1
 
         table_size_rows = styles.grid_size_rows
-        viewport = parent.screen.size
+        viewport = parent.app.viewport_size
         keyline_style, _keyline_color = styles.keyline
         offset = (0, 0)
         gutter_spacing: Spacing | None

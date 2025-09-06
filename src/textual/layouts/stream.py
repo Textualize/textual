@@ -37,7 +37,7 @@ class StreamLayout(Layout):
         parent.pre_layout(self)
         if not children:
             return []
-        viewport = parent.screen.size
+        viewport = parent.app.viewport_size
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
