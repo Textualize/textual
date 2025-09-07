@@ -6,7 +6,6 @@ from textual.geometry import NULL_OFFSET, Region, Size
 from textual.layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
-
     from textual.widget import Widget
 
 
@@ -110,7 +109,7 @@ class StreamLayout(Layout):
             Content height (in lines).
         """
         if widget._nodes:
-            arrangement = widget._arrange(Size(width, 0))
+            arrangement = widget.arrange(Size(width, 0))
             height = arrangement.total_region.height
         else:
             height = 0

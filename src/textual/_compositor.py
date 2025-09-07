@@ -597,7 +597,7 @@ class Compositor:
 
                 if widget.is_container:
                     # Arrange the layout
-                    arrange_result = widget._arrange(child_region.size)
+                    arrange_result = widget.arrange(child_region.size)
 
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)

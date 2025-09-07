@@ -468,7 +468,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         return bindings_map
 
-    def _arrange(self, size: Size) -> DockArrangeResult:
+    def arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
 
         Args:

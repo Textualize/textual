@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Eager tasks are now enabled On Python3.12 and above https://github.com/Textualize/textual/pull/6102
+- `Widget._arrange` is now public (as `Widget.arrange`) https://github.com/Textualize/textual/pull/6108
+- Reduced number of layout operations required to update the screen https://github.com/Textualize/textual/pull/6108
 
 ### Added
 
