@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DOMNode.displayed_and_visible_children` https://github.com/Textualize/textual/pull/6102
 - Added `Widget.process_layout` https://github.com/Textualize/textual/pull/6105
+- Added `App.viewport_size` https://github.com/Textualize/textual/pull/6105
+- Added `Screen.size` https://github.com/Textualize/textual/pull/6105
 
 ## [6.1.0] - 2025-08-01
 
