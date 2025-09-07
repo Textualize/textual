@@ -24,21 +24,7 @@ from textual.color import Color
 from textual.css.types import AlignHorizontal, AlignVertical
 from textual.filter import LineFilter
 
-SGR_STYLE_MAP = {
-    0: "1",
-    1: "2",
-    2: "3",
-    3: "4",
-    4: "5",
-    5: "6",
-    6: "7",
-    7: "8",
-    8: "9",
-    9: "21",
-    10: "51",
-    11: "52",
-    12: "53",
-}
+SGR_STYLES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "21", "51", "52", "53"]
 
 
 def get_line_length(segments: Iterable[Segment]) -> int:
@@ -666,8 +652,17 @@ class Strip:
     @classmethod
     @lru_cache(maxsize=16384)
     def render_ansi(cls, style: Style, color_system: ColorSystem) -> str:
+        """Render ANSI codes for a give style.
+
+        Args:
+            style: A Rich style.
+            color_system: Color system enumeration.
+
+        Returns:
+            A string of ANSI escape sequences to render the style.
+        """
         if attributes := style._attributes & style._set_attributes:
-            _style_map = SGR_STYLE_MAP
+            _style_map = SGR_STYLES
             sgr = [
                 _style_map[bit_offset]
                 for bit_offset in range(attributes.bit_length())
@@ -684,6 +679,16 @@ class Strip:
 
     @classmethod
     def render_style(cls, style: Style, text: str, color_system: ColorSystem) -> str:
+        """Render a Rich style and text.
+
+        Args:
+            style: Style to render.
+            text: Content string.
+            color_system: Color system enumeration.
+
+        Returns:
+            Text with ANSI escape sequences.
+        """
         ansi = style._ansi or cls.render_ansi(style, color_system)
         output = f"\x1b[{ansi}m{text}\x1b[0m" if ansi else text
         if style._link:
