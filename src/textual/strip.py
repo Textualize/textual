@@ -672,8 +672,8 @@ class Strip:
             sgr = []
         if (color := style._color) is not None:
             sgr.extend(color.downgrade(color_system).get_ansi_codes())
-        if (color := style._bgcolor) is not None:
-            sgr.extend(color.downgrade(color_system).get_ansi_codes(False))
+        if (bgcolor := style._bgcolor) is not None:
+            sgr.extend(bgcolor.downgrade(color_system).get_ansi_codes(False))
         ansi = style._ansi = ";".join(sgr)
         return ansi
 
