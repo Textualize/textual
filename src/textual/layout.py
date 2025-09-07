@@ -240,7 +240,7 @@ class Layout(ABC):
         if not widget._nodes:
             width = 0
         else:
-            arrangement = widget._arrange(
+            arrangement = widget.arrange(
                 Size(0 if widget.shrink else container.width, 0),
                 optimal=True,
             )
@@ -266,9 +266,9 @@ class Layout(ABC):
                 child.styles.is_dynamic_height for child in widget.displayed_children
             ):
                 # An exception for containers with all dynamic height widgets
-                arrangement = widget._arrange(Size(width, container.height))
+                arrangement = widget.arrange(Size(width, container.height))
             else:
-                arrangement = widget._arrange(Size(width, 0))
+                arrangement = widget.arrange(Size(width, 0))
             height = arrangement.total_region.height
         else:
             height = 0

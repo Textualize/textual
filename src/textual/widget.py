@@ -460,7 +460,7 @@ class Widget(DOMNode):
         self._content_height_cache: tuple[object, int] = (None, 0)
 
         self._arrangement_cache: FIFOCache[
-            tuple[Size, int, Widget | None], DockArrangeResult
+            tuple[Size, int, bool], DockArrangeResult
         ] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
@@ -1264,11 +1264,14 @@ class Widget(DOMNode):
             return text_content
         return Content.from_markup(text_content)
 
-    def _arrange(self, size: Size, optimal: bool = False) -> DockArrangeResult:
-        """Arrange children.
+    def arrange(self, size: Size, optimal: bool = False) -> DockArrangeResult:
+        """Arrange child widgets.
+
+        This method is best left along, unless you have a deep understanding of what it does.
 
         Args:
             size: Size of container.
+            optimal: Whether fr units should expand the widget (`False`) or avoid expanding the widget (`True`).
 
         Returns:
             Widget locations.
@@ -4201,6 +4204,8 @@ class Widget(DOMNode):
                 if not isinstance(ancestor, Widget):
                     break
                 ancestor._clear_arrangement_cache()
+                if not ancestor.styles.auto_dimensions:
+                    break
 
         if recompose:
             self._recompose_required = True
