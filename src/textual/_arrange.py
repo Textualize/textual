@@ -31,6 +31,11 @@ def _build_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
     return layers
 
 
+_get_dock = attrgetter("styles.is_docked")
+_get_split = attrgetter("styles.is_split")
+_get_display = attrgetter("display")
+
+
 def arrange(
     widget: Widget,
     children: Sequence[Widget],
@@ -50,22 +55,17 @@ def arrange(
     """
 
     placements: list[WidgetPlacement] = []
-    scroll_spacing = Spacing()
-
-    get_dock = attrgetter("styles.is_docked")
-    get_split = attrgetter("styles.is_split")
-    get_display = attrgetter("styles.display")
-
+    scroll_spacing = NULL_SPACING
     styles = widget.styles
 
     # Widgets which will be displayed
-    display_widgets = [child for child in children if get_display(child) != "none"]
+    display_widgets = list(filter(_get_display, children))
     # Widgets organized into layers
     layers = _build_layers(display_widgets)
 
     for widgets in layers.values():
         # Partition widgets into split widgets and non-split widgets
-        non_split_widgets, split_widgets = partition(get_split, widgets)
+        non_split_widgets, split_widgets = partition(_get_split, widgets)
         if split_widgets:
             _split_placements, dock_region = _arrange_split_widgets(
                 split_widgets, size, viewport
@@ -78,7 +78,7 @@ def arrange(
 
         # Partition widgets into "layout" widgets (those that appears in the normal 'flow' of the
         # document), and "dock" widgets which are positioned relative to an edge
-        layout_widgets, dock_widgets = partition(get_dock, non_split_widgets)
+        layout_widgets, dock_widgets = partition(_get_dock, non_split_widgets)
 
         # Arrange docked widgets
         if dock_widgets:
@@ -94,8 +94,10 @@ def arrange(
 
         if layout_widgets:
             # Arrange layout widgets (i.e. not docked)
-            layout_placements = widget.layout.arrange(
-                widget, layout_widgets, dock_region.size, greedy=not optimal
+            layout_placements = widget.process_layout(
+                widget.layout.arrange(
+                    widget, layout_widgets, dock_region.size, greedy=not optimal
+                )
             )
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             placement_offset = dock_region.offset
