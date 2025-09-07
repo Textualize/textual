@@ -29,8 +29,6 @@ from textual.pilot import Pilot
 from textual.reactive import var
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
-from textual.strip import Strip
-from textual.widget import Widget
 from textual.widgets import (
     Button,
     Collapsible,
