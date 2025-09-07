@@ -661,6 +661,7 @@ class Strip:
         Returns:
             A string of ANSI escape sequences to render the style.
         """
+        sgr: list[str]
         if attributes := style._attributes & style._set_attributes:
             _style_map = SGR_STYLES
             sgr = [
