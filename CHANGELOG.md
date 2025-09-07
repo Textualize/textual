@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `App.viewport_size` https://github.com/Textualize/textual/pull/6105
 - Added `Screen.size` https://github.com/Textualize/textual/pull/6105
 
+### Fixed
+
+- Fixed issue where Segments with a style of `None` aren't rendered https://github.com/Textualize/textual/pull/6109
+
 ## [6.1.0] - 2025-08-01
 
 ### Added

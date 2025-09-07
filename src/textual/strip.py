@@ -711,9 +711,12 @@ class Strip:
             render = self.render_style
             self._render_cache = "".join(
                 [
-                    render(style, text, color_system=color_system)
+                    (
+                        text
+                        if style is None
+                        else render(style, text, color_system=color_system)
+                    )
                     for text, style, _ in self._segments
-                    if style is not None
                 ]
             )
         return self._render_cache
