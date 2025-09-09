@@ -1583,7 +1583,33 @@ def test_example_color_command(snap_compare):
         press=[App.COMMAND_PALETTE_BINDING, "r", "e", "d", "enter"],
     )
 
+import runpy
+from pathlib import Path
 
+def test_header_alignment(snap_compare):
+    """Test that Header title is visually centered."""
+    # Load the app module directly using runpy
+    app_file = Path("./tests/snapshot_tests/snapshot_apps/header_alignment.py").resolve()
+    global_vars = runpy.run_path(str(app_file), {})
+    
+    # Get the App class
+    app_class = None
+    for value in global_vars.values():
+        if (
+            isinstance(value, type) and
+            hasattr(value, "__bases__") and
+            any(base.__name__ == "App" for base in value.__bases__)
+        ):
+            app_class = value
+            break
+    
+    if app_class is None:
+        raise RuntimeError("Could not find App class in header_alignment.py")
+    
+    assert snap_compare(
+        app_class(),  # Add parentheses to instantiate the class
+        terminal_size=(80, 24),
+    )
 def test_example_dictionary(snap_compare):
     """Test the dictionary example (basic layout test)."""
 
