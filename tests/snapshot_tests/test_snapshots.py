@@ -1588,11 +1588,10 @@ from pathlib import Path
 
 def test_header_alignment(snap_compare):
     """Test that Header title is visually centered."""
-    # Load the app module directly using runpy
     app_file = Path("./tests/snapshot_tests/snapshot_apps/header_alignment.py").resolve()
     global_vars = runpy.run_path(str(app_file), {})
     
-    # Get the App class
+
     app_class = None
     for value in global_vars.values():
         if (
@@ -1607,7 +1606,7 @@ def test_header_alignment(snap_compare):
         raise RuntimeError("Could not find App class in header_alignment.py")
     
     assert snap_compare(
-        app_class(),  # Add parentheses to instantiate the class
+        app_class(), 
         terminal_size=(80, 24),
     )
 def test_example_dictionary(snap_compare):
