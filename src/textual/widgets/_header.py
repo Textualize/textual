@@ -22,7 +22,7 @@ class HeaderIcon(Widget):
     HeaderIcon {
         dock: left;
         padding: 0 1;
-        width: 8;
+        width: 10;
         content-align: left middle;
     }
 
