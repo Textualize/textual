@@ -44,7 +44,7 @@ include = [
 target-version = "py38"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = "^3.8.1"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 rich = ">=13.3.3"
 #rich = {path="../rich", develop=true}
