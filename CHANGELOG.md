@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `bar_renderable` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
+- Added `BAR_RENDERABLE` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
 - Added `OptionList.set_options` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.suggestion` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048
