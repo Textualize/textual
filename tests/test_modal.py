@@ -87,9 +87,11 @@ async def test_modal_pop_screen():
     # https://github.com/Textualize/textual/issues/4656
 
     async with ModalApp().run_test() as pilot:
-        await pilot.pause()
+        # Pause to ensure the footer is fully composed to avoid flakiness in CI
+        await pilot.pause(0.4)
         # Check clicking the footer brings up the quit screen
         await pilot.click(Footer)
+        await pilot.pause()
         assert isinstance(pilot.app.screen, QuitScreen)
         # Check activating the quit button exits the app
         await pilot.press("enter")
