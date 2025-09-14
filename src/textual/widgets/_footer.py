@@ -185,9 +185,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         }
         FooterLabel {
             margin: 0 1;
-            background: red;
-            color: $footer-description-foreground;
             background: $footer-description-background;
+            color: $footer-description-foreground;
         }
     }
     """
