@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -41,10 +40,10 @@ include = [
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = "^3.9"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 rich = ">=13.3.3"
 #rich = {path="../rich", develop=true}
