@@ -7,10 +7,12 @@ See [Line API](/guide/widgets#line-api) for how to use Strips.
 
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Any, Iterable, Iterator, Sequence
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
+from rich.color import ColorSystem
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.measure import Measurement
 from rich.segment import Segment
@@ -21,6 +23,8 @@ from textual.cache import FIFOCache
 from textual.color import Color
 from textual.css.types import AlignHorizontal, AlignVertical
 from textual.filter import LineFilter
+
+SGR_STYLES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "21", "51", "52", "53"]
 
 
 def get_line_length(segments: Iterable[Segment]) -> int:
@@ -645,6 +649,55 @@ class Strip:
         ]
         return Strip(segments, self._cell_length)
 
+    @classmethod
+    @lru_cache(maxsize=16384)
+    def render_ansi(cls, style: Style, color_system: ColorSystem) -> str:
+        """Render ANSI codes for a give style.
+
+        Args:
+            style: A Rich style.
+            color_system: Color system enumeration.
+
+        Returns:
+            A string of ANSI escape sequences to render the style.
+        """
+        sgr: list[str]
+        if attributes := style._attributes & style._set_attributes:
+            _style_map = SGR_STYLES
+            sgr = [
+                _style_map[bit_offset]
+                for bit_offset in range(attributes.bit_length())
+                if attributes & (1 << bit_offset)
+            ]
+        else:
+            sgr = []
+        if (color := style._color) is not None:
+            sgr.extend(color.downgrade(color_system).get_ansi_codes())
+        if (bgcolor := style._bgcolor) is not None:
+            sgr.extend(bgcolor.downgrade(color_system).get_ansi_codes(False))
+        ansi = style._ansi = ";".join(sgr)
+        return ansi
+
+    @classmethod
+    def render_style(cls, style: Style, text: str, color_system: ColorSystem) -> str:
+        """Render a Rich style and text.
+
+        Args:
+            style: Style to render.
+            text: Content string.
+            color_system: Color system enumeration.
+
+        Returns:
+            Text with ANSI escape sequences.
+        """
+        ansi = style._ansi or cls.render_ansi(style, color_system)
+        output = f"\x1b[{ansi}m{text}\x1b[0m" if ansi else text
+        if style._link:
+            output = (
+                f"\x1b]8;id={style._link_id};{style._link}\x1b\\{output}\x1b]8;;\x1b\\"
+            )
+        return output
+
     def render(self, console: Console) -> str:
         """Render the strip into terminal sequences.
 
@@ -655,8 +708,8 @@ class Strip:
             Rendered sequences.
         """
         if self._render_cache is None:
-            color_system = console._color_system
-            render = Style.render
+            color_system = console._color_system or ColorSystem.TRUECOLOR
+            render = self.render_style
             self._render_cache = "".join(
                 [
                     (
