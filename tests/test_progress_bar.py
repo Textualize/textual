@@ -11,7 +11,7 @@ from textual.widget import Widget
 from textual.widgets import ProgressBar
 
 
-def test_initial_status():
+async def test_initial_status():
     pb = ProgressBar()
     assert pb.total is None
     assert pb.progress == 0
@@ -23,7 +23,7 @@ def test_initial_status():
     assert pb.percentage == 0
 
 
-def test_advance():
+async def test_advance():
     pb = ProgressBar(total=100)
 
     pb.advance(10)
@@ -39,7 +39,7 @@ def test_advance():
     assert pb.percentage == approx(0.520625)
 
 
-def test_advance_backwards():
+async def test_advance_backwards():
     pb = ProgressBar(total=100)
 
     pb.progress = 50
@@ -48,7 +48,7 @@ def test_advance_backwards():
     assert pb.progress == 40
 
 
-def test_progress_overflow():
+async def test_progress_overflow():
     pb = ProgressBar(total=100)
 
     pb.advance(999_999)
@@ -58,19 +58,19 @@ def test_progress_overflow():
     assert pb.percentage == 1
 
 
-def test_progress_underflow():
+async def test_progress_underflow():
     pb = ProgressBar(total=100)
 
     pb.advance(-999_999)
     assert pb.percentage == 0
 
 
-def test_non_negative_total():
+async def test_non_negative_total():
     pb = ProgressBar(total=-100)
     assert pb.total == 0
 
 
-def test_update_total():
+async def test_update_total():
     pb = ProgressBar()
 
     pb.update(total=100)
@@ -86,7 +86,7 @@ def test_update_total():
     assert pb.total == 100
 
 
-def test_update_progress():
+async def test_update_progress():
     pb = ProgressBar(total=100)
 
     pb.update(progress=10)
@@ -99,7 +99,7 @@ def test_update_progress():
     assert pb.progress == 40
 
 
-def test_update_advance():
+async def test_update_advance():
     pb = ProgressBar(total=100)
 
     pb.update(advance=10)
@@ -112,7 +112,7 @@ def test_update_advance():
     assert pb.progress == 30
 
 
-def test_update():
+async def test_update():
     pb = ProgressBar()
 
     pb.update(total=100, progress=30, advance=20)
@@ -120,7 +120,7 @@ def test_update():
     assert pb.progress == 50
 
 
-def test_go_back_to_indeterminate():
+async def test_go_back_to_indeterminate():
     pb = ProgressBar()
 
     pb.total = 100

@@ -2,7 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Log
 
 
-def test_process_line():
+async def test_process_line():
     log = Log()
     assert log._process_line("foo") == "foo"
     assert log._process_line("foo\t") == "foo     "
