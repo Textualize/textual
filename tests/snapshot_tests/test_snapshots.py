@@ -4626,3 +4626,16 @@ def test_header_format(snap_compare):
             yield Header()
 
     assert snap_compare(HeaderApp())
+
+
+def test_textarea_multiline_placeholder(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/6122
+
+    Test that a TextArea with a multi-line placeholder is rendered correctly.
+    """
+
+    class TextAreaMultilinePlaceholder(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(placeholder="Line 1\nLine 2\nLine 3")
+
+    assert snap_compare(TextAreaMultilinePlaceholder())
