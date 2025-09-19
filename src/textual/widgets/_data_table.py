@@ -35,12 +35,8 @@ from textual.widget import PseudoClasses
 CellCacheKey: TypeAlias = (
     "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
 )
-LineCacheKey: TypeAlias = (
-    "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
-)
-RowCacheKey: TypeAlias = (
-    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
-)
+LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
+RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
 CursorType = Literal["cell", "row", "column", "none"]
 """The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
@@ -1158,6 +1154,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
 
     def watch_zebra_stripes(self) -> None:
+        self._clear_caches()
+
+    def watch_header_height(self) -> None:
         self._clear_caches()
 
     def validate_cell_padding(self, cell_padding: int) -> int:
