@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue where Segments with a style of `None` aren't rendered https://github.com/Textualize/textual/pull/6109
+- Fixed `TextArea` rendering with a multi-line `placeholder` https://github.com/Textualize/textual/issues/6122
 
 ## [6.1.0] - 2025-08-01
 
