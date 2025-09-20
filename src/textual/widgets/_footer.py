@@ -137,7 +137,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     ALLOW_SELECT = False
     DEFAULT_CSS = """
     Footer {
-        layout: horizontal;        
+        layout: horizontal;
         color: $footer-foreground;
         background: $footer-background;
         dock: bottom;
@@ -151,7 +151,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             padding-right: 1;
             border-left: vkey $foreground 20%;
         }
-        HorizontalGroup.binding-group {            
+        HorizontalGroup.binding-group {
             width: auto;
             height: 1;
             layout: horizontal;
@@ -185,9 +185,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         }
         FooterLabel {
             margin: 0 1;
-            background: red;
-            color: $footer-description-foreground;
             background: $footer-description-background;
+            color: $footer-description-foreground;
         }
     }
     """
