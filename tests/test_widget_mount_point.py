@@ -11,7 +11,7 @@ class Body(Widget):
     pass
 
 
-def test_find_dom_spot():
+async def test_find_dom_spot():
     # Build up a "fake" DOM for an application.
     screen = Widget(name="Screen")
     header = Widget(name="Header", id="header")

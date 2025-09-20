@@ -4,7 +4,7 @@ from textual.widgets import Tree
 from textual.widgets.tree import TreeNode
 
 
-def test_tree_node_label() -> None:
+async def test_tree_node_label() -> None:
     """It should be possible to modify a TreeNode's label."""
     node = TreeNode(Tree[None]("Xenomorph Lifecycle"), None, 0, "Facehugger")
     assert node.label == Text("Facehugger")
@@ -12,7 +12,7 @@ def test_tree_node_label() -> None:
     assert node.label == Text("Chestbuster")
 
 
-def test_tree_node_label_via_tree() -> None:
+async def test_tree_node_label_via_tree() -> None:
     """It should be possible to modify a TreeNode's label when created via a Tree."""
     tree = Tree[None]("Xenomorph Lifecycle")
     node = tree.root.add("Facehugger")

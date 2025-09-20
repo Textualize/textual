@@ -9,7 +9,7 @@ def label_of(node: TreeNode[None]):
     return str(node.label)
 
 
-def test_tree_node_children() -> None:
+async def test_tree_node_children() -> None:
     """A node's children property should act like an immutable list."""
     CHILDREN = 23
     tree = Tree[None]("Root")
