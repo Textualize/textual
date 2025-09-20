@@ -398,7 +398,6 @@ class Button(Widget, can_focus=True):
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
@@ -434,7 +433,6 @@ class Button(Widget, can_focus=True):
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
@@ -470,7 +468,6 @@ class Button(Widget, can_focus=True):
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.

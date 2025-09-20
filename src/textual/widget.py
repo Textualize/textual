@@ -1267,7 +1267,7 @@ class Widget(DOMNode):
     def arrange(self, size: Size, optimal: bool = False) -> DockArrangeResult:
         """Arrange child widgets.
 
-        This method is best left along, unless you have a deep understanding of what it does.
+        This method is best left alone, unless you have a deep understanding of what it does.
 
         Args:
             size: Size of container.

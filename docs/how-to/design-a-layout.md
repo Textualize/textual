@@ -10,7 +10,7 @@ Textual's layout system is flexible enough to accommodate just about any applica
 The initial design of your application is best done with a sketch.
 You could use a drawing package such as [Excalidraw](https://excalidraw.com/) for your sketch, but pen and paper is equally as good.
 
-Start by drawing a rectangle to represent a blank terminal, then draw a rectangle for each element in your application. Annotate each of the rectangles with the content they will contain, and note wether they will scroll (and in what direction).
+Start by drawing a rectangle to represent a blank terminal, then draw a rectangle for each element in your application. Annotate each of the rectangles with the content they will contain, and note whether they will scroll (and in what direction).
 
 For the purposes of this article we are going to design a layout for a Twitter or Mastodon client, which will have a header / footer and a number of columns.
 
