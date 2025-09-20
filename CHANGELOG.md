@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue where Segments with a style of `None` aren't rendered https://github.com/Textualize/textual/pull/6109
+- Fixed visual glitches and crash when changing `DataTable.header_height` https://github.com/Textualize/textual/pull/6128
 
 ## [6.1.0] - 2025-08-01
 
