@@ -1160,6 +1160,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def watch_zebra_stripes(self) -> None:
         self._clear_caches()
 
+    def watch_header_height(self) -> None:
+        self._clear_caches()
+
     def validate_cell_padding(self, cell_padding: int) -> int:
         return max(cell_padding, 0)
 
