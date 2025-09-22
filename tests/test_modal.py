@@ -92,7 +92,7 @@ async def test_modal_pop_screen():
         await pilot.pause(0.4)
         await app.wait_for_refresh()
         # Check clicking the footer brings up the quit screen
-        await pilot.click(Footer)
+        await pilot.mouse_down(Footer)
         await pilot.pause()
         assert isinstance(pilot.app.screen, QuitScreen)
         # Check activating the quit button exits the app
