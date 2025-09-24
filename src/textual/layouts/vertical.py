@@ -105,7 +105,6 @@ class VerticalLayout(Layout):
                 content_width.__floor__(),
                 next_y.__floor__() - y.__floor__(),
             )
-
             absolute = styles.has_rule("position") and styles.position == "absolute"
             add_placement(
                 _WidgetPlacement(

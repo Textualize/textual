@@ -91,6 +91,9 @@ class Binding:
         description: str = ""
         """Description of the group."""
 
+        compact: bool = False
+        """Show keys in compact form (no spaces)."""
+
     group: Group | None = None
     """Optional binding group (used to group related bindings in the footer)."""
 
