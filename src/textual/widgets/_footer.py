@@ -160,10 +160,13 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 margin: 0;
             }
             FooterKey {
-                margin-left: 1;
+                margin-right: 1;
             }
             FooterKey.-grouped {
                 margin: 0 1;            
+            }
+            FooterKey.-command-palette  {
+                padding-right: 0;
             }
         }
         FooterKey.-command-palette  {
@@ -293,7 +296,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                             disabled=not enabled,
                             tooltip=tooltip or binding.description,
                             classes="-grouped",
-                        ).data_bind(Footer.compact)
+                        ).data_bind(compact=Footer.compact)
                 yield FooterLabel(group.description)
             else:
                 for multi_bindings in multi_bindings:
@@ -305,7 +308,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                         binding.action,
                         disabled=not enabled,
                         tooltip=tooltip,
-                    ).data_bind(Footer.compact)
+                    ).data_bind(compact=Footer.compact)
         if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             try:
                 _node, binding, enabled, tooltip = active_bindings[
