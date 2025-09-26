@@ -690,7 +690,8 @@ class Strip:
         Returns:
             Text with ANSI escape sequences.
         """
-        ansi = style._ansi or cls.render_ansi(style, color_system)
+        if (ansi := style._ansi) is None:
+            ansi = cls.render_ansi(style, color_system)
         output = f"\x1b[{ansi}m{text}\x1b[0m" if ansi else text
         if style._link:
             output = (

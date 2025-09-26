@@ -83,7 +83,6 @@ class HorizontalLayout(Layout):
             children, box_models, margins
         ):
             styles = widget.styles
-
             overlay = styles.overlay == "screen"
             offset = (
                 styles.offset.resolve(
