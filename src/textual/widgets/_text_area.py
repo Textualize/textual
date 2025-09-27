@@ -1176,6 +1176,15 @@ TextArea {
         """Is there a usable cursor?"""
         return not (self.read_only and not self.show_cursor)
 
+    @property
+    def _placeholder_lines(self) -> list[Content]:
+        content = (
+            Content(self.placeholder)
+            if isinstance(self.placeholder, str)
+            else self.placeholder
+        )
+        return content.split()
+
     def get_line(self, line_index: int) -> Text:
         """Retrieve the line at the given line index.
 
@@ -1206,15 +1215,11 @@ TextArea {
         Returns:
             A rendered line.
         """
-        if y == 0 and not self.text and self.placeholder:
+        if not self.text and self.placeholder and y < len(self._placeholder_lines):
             style = self.get_visual_style("text-area--placeholder")
-            content = (
-                Content(self.placeholder)
-                if isinstance(self.placeholder, str)
-                else self.placeholder
-            )
+            content = self._placeholder_lines[y]
             content = content.stylize(style)
-            if self._draw_cursor:
+            if y == 0 and self._draw_cursor:
                 theme = self._theme
                 cursor_style = theme.cursor_style if theme else None
                 if cursor_style:
