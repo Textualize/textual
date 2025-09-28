@@ -230,6 +230,7 @@ class Pilot(Generic[ReturnType]):
             True if no selector was specified or if the click landed on the selected
                 widget, False otherwise.
         """
+        await self.app.wait_for_refresh()
         try:
             return await self._post_mouse_events(
                 [MouseDown, MouseUp, Click],
