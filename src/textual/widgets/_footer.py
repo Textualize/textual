@@ -130,7 +130,7 @@ class FooterKey(Widget):
         label_text.stylize_before(self.rich_style)
         return label_text
 
-    async def on_mouse_down(self) -> None:
+    def on_mouse_down(self) -> None:
         if self._disabled:
             self.app.bell()
         else:
