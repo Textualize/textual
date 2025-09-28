@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Reduced number of layout operations required to update the screen https://github.com/Textualize/textual/pull/6108
 - The :hover pseudo-class no applies to the first widget under the mouse with a hover style set https://github.com/Textualize/textual/pull/6132
 - The footer key hover background is more visible https://github.com/Textualize/textual/pull/6132
-- Made `App.delay_update` public
+- Made `App.delay_update` public https://github.com/Textualize/textual/pull/6137
 
 ### Added
 

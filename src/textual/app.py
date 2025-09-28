@@ -1023,6 +1023,7 @@ class App(Generic[ReturnType], DOMNode):
         """Delay updates for a short period of time.
 
         May be used to mask a brief transition.
+        Consider this method only if you aren't able to use `App.batch_update`.
 
         Args:
             delay: Delay before updating.
