@@ -313,7 +313,7 @@ class OptionList(ScrollView, can_focus=True):
 
     @property
     def highlighted_option(self) -> Option | None:
-        """The currently highlighted options, or `None` if no option is highlighted,
+        """The currently highlighted option, or `None` if no option is highlighted.
 
         Returns:
             An Option, or `None`.
