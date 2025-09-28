@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Screen.size` https://github.com/Textualize/textual/pull/6105
 - Added `compact` to Binding.Group https://github.com/Textualize/textual/pull/6132
 - Added `Screen.get_hover_widgets_at` https://github.com/Textualize/textual/pull/6132
+- Added `Content.wrap`
 
 ### Fixed
 

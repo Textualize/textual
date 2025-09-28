@@ -349,3 +349,19 @@ def test_add_spans() -> None:
         Span(7, 9, style="blue"),
     ]
     assert content.spans == expected
+
+
+def test_wrap() -> None:
+    content = Content.from_markup("[green]Hello, [b]World, One two three[/b]")
+    wrapped = content.wrap(6)
+    print(wrapped)
+    expected = [
+        Content("Hello,", spans=[Span(0, 6, style="green")]),
+        Content("World,", spans=[Span(0, 6, style="green"), Span(0, 6, style="b")]),
+        Content("One", spans=[Span(0, 3, style="green"), Span(0, 3, style="b")]),
+        Content("two", spans=[Span(0, 3, style="green"), Span(0, 3, style="b")]),
+        Content("three", spans=[Span(0, 5, style="green"), Span(0, 5, style="b")]),
+    ]
+    assert len(wrapped) == len(expected)
+    for line1, line2 in zip(wrapped, expected):
+        assert line1.is_same(line2)
