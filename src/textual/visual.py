@@ -259,31 +259,6 @@ class Visual(ABC):
 
 
 @rich.repr.auto
-class NullVisual(Visual):
-    """A visual with no size, which therefore renders nothing.
-
-    This is a placeholder for when a Widget has been reduced to zero area.
-    """
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield from ()
-
-    def render_strips(
-        self, width: int, height: int | None, style: Style, options: RenderOptions
-    ) -> list[Strip]:
-        return []
-
-    def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
-        return 0
-
-    def get_minimal_width(self, rules: RulesMap) -> int:
-        return 0
-
-    def get_height(self, rules: RulesMap, width: int) -> int:
-        return 0
-
-
-@rich.repr.auto
 class RichVisual(Visual):
     """A Visual to wrap a Rich renderable."""
 

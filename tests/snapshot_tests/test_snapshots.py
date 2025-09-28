@@ -4629,7 +4629,10 @@ def test_header_format(snap_compare):
 
 
 def test_progress_bar_width_1fr(snap_compare):
-    """Regression test for https://github.com/Textualize/textual/issues/6127"""
+    """Regression test for https://github.com/Textualize/textual/issues/6127
+
+    You should see a progress bar, and it shouldn't crash.
+    """
 
     class WideBarApp(App[None]):
 
