@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue where Segments with a style of `None` aren't rendered https://github.com/Textualize/textual/pull/6109
 - Fixed visual glitches and crash when changing `DataTable.header_height` https://github.com/Textualize/textual/pull/6128
 - Fixed TextArea.placeholder not handling multi-lines https://github.com/Textualize/textual/pull/6138
+- Fixed issue with RichLog when App.theme is set early https://github.com/Textualize/textual/pull/6141
 
 ## [6.1.0] - 2025-08-01
 
