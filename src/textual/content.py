@@ -874,6 +874,9 @@ class Content(Visual):
     ) -> list[Content]:
         """Wrap text so that it fits within the given dimensions.
 
+        Note that Textual will automatically wrap Content in widgets.
+        This method is only required if you need some additional processing to lines.
+
         Args:
             width: Maximum width of the line (in cells).
             align: Alignment of lines.
