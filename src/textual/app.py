@@ -1419,7 +1419,7 @@ class App(Generic[ReturnType], DOMNode):
             raise InvalidThemeError(message)
         return theme_name
 
-    def _watch_theme(self, theme_name: str) -> None:
+    async def _watch_theme(self, theme_name: str) -> None:
         """Apply a theme to the application.
 
         This method is called when the theme reactive attribute is set.
