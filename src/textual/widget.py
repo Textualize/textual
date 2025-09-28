@@ -90,7 +90,7 @@ from textual.rlock import RLock
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.style import Style as VisualStyle
-from textual.visual import Visual, VisualType, visualize
+from textual.visual import NullVisual, Visual, VisualType, visualize
 
 if TYPE_CHECKING:
     from textual.app import App, ComposeResult
@@ -4322,7 +4322,10 @@ class Widget(DOMNode):
         if cached_visual is not None:
             assert isinstance(cached_visual, Visual)
             return cached_visual
-        visual = visualize(self, self.render(), markup=self._render_markup)
+        if self.size.width:
+            visual = visualize(self, self.render(), markup=self._render_markup)
+        else:
+            visual = NullVisual()
         self._layout_cache[cache_key] = visual
         return visual
 

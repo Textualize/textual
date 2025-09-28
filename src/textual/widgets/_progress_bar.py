@@ -121,7 +121,7 @@ class Bar(Widget, can_focus=False):
         total_imaginary_width = width + highlighted_bar_width
         start: float
         end: float
-        if self.app.animation_level == "none" or width == 0:
+        if self.app.animation_level == "none":
             start = 0
             end = width
         else:
