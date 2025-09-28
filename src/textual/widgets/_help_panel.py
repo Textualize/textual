@@ -79,7 +79,10 @@ class HelpPanel(Widget):
     DEFAULT_CLASSES = "-textual-system"
 
     def on_mount(self):
-        self.watch(self.screen, "focused", self.update_help)
+        def update_help(focused_widget: Widget | None):
+            self.update_help(focused_widget)
+
+        self.watch(self.screen, "focused", update_help)
 
     def update_help(self, focused_widget: Widget | None) -> None:
         """Update the help for the focused widget.

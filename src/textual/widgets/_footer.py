@@ -331,9 +331,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         self._bindings_ready = True
         if not screen.app.app_focus:
             return
-        self.app.delay_update()
         if self.is_attached and screen is self.screen:
-            await self.recompose()
+            self.call_after_refresh(self.recompose)
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if self.allow_horizontal_scroll:
