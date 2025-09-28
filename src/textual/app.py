@@ -1019,10 +1019,11 @@ class App(Generic[ReturnType], DOMNode):
         if not self._batch_count:
             self.check_idle()
 
-    def _delay_update(self, delay: float = 0.05) -> None:
+    def delay_update(self, delay: float = 0.05) -> None:
         """Delay updates for a short period of time.
 
         May be used to mask a brief transition.
+        Consider this method only if you aren't able to use `App.batch_update`.
 
         Args:
             delay: Delay before updating.
@@ -1035,7 +1036,7 @@ class App(Generic[ReturnType], DOMNode):
             if not self._batch_count:
                 self.screen.refresh()
 
-        self.set_timer(delay, end_batch, name="_delay_update")
+        self.set_timer(delay, end_batch, name="delay_update")
 
     @contextmanager
     def _context(self) -> Generator[None, None, None]:

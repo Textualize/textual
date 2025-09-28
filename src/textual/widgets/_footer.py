@@ -130,7 +130,7 @@ class FooterKey(Widget):
         label_text.stylize_before(self.rich_style)
         return label_text
 
-    async def on_mouse_down(self) -> None:
+    def on_mouse_down(self) -> None:
         if self._disabled:
             self.app.bell()
         else:
@@ -332,7 +332,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         if not screen.app.app_focus:
             return
         if self.is_attached and screen is self.screen:
-            await self.recompose()
+            self.call_after_refresh(self.recompose)
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if self.allow_horizontal_scroll:
@@ -351,12 +351,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     async def on_mount(self) -> None:
         await asyncio.sleep(0)
         self.call_next(self.bindings_changed, self.screen)
-
-        def bindings_changed(screen: Screen) -> None:
-            """Update bindings after a short delay to avoid flicker."""
-            self.call_after_refresh(self.bindings_changed, screen)
-
-        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)
