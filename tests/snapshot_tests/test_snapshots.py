@@ -4626,3 +4626,20 @@ def test_header_format(snap_compare):
             yield Header()
 
     assert snap_compare(HeaderApp())
+
+
+def test_progress_bar_width_1fr(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/6127"""
+
+    class WideBarApp(App[None]):
+
+        CSS = """
+        ProgressBar Bar {
+            width: 1fr;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield ProgressBar()
+
+    assert snap_compare(WideBarApp())
