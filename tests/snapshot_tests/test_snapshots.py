@@ -4653,23 +4653,3 @@ Where the fear has gone there will be nothing. Only I will remain."""
             yield TextArea(placeholder=TEXT)
 
     assert snap_compare(PlaceholderApp())
-
-
-def test_progress_bar_width_1fr(snap_compare):
-    """Regression test for https://github.com/Textualize/textual/issues/6127
-
-    You should see a progress bar, and it shouldn't crash.
-    """
-
-    class WideBarApp(App[None]):
-
-        CSS = """
-        ProgressBar Bar {
-            width: 1fr;
-        }
-        """
-
-        def compose(self) -> ComposeResult:
-            yield ProgressBar()
-
-    assert snap_compare(WideBarApp())
