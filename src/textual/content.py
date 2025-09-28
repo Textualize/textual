@@ -870,7 +870,7 @@ class Content(Visual):
         return Content("".join(text), spans, total_cell_length)
 
     def wrap(
-        self, width: int, align: TextAlign = "left", overflow: TextOverflow = "fold"
+        self, width: int, *, align: TextAlign = "left", overflow: TextOverflow = "fold"
     ) -> list[Content]:
         """Wrap text so that it fits within the given dimensions.
 
