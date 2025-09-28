@@ -4628,6 +4628,33 @@ def test_header_format(snap_compare):
     assert snap_compare(HeaderApp())
 
 
+def test_long_textarea_placeholder(snap_compare) -> None:
+    """Test multi-line placeholders are wrapped and rendered.
+    You should see a TextArea at 50% width, with several lines of wrapped text.
+    """
+
+    TEXT = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain."""
+
+    class PlaceholderApp(App):
+
+        CSS = """
+        TextArea {
+            width: 50%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield TextArea(placeholder=TEXT)
+
+    assert snap_compare(PlaceholderApp())
+
+
 def test_progress_bar_width_1fr(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/6127
 
