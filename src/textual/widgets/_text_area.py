@@ -1206,24 +1206,24 @@ TextArea {
         Returns:
             A rendered line.
         """
-        if y == 0 and not self.text and self.placeholder:
-            style = self.get_visual_style("text-area--placeholder")
-            content = (
-                Content(self.placeholder)
-                if isinstance(self.placeholder, str)
-                else self.placeholder
+
+        if not self.text and self.placeholder:
+            placeholder_lines = Content.from_text(self.placeholder).wrap(
+                self.content_size.width
             )
-            content = content.stylize(style)
-            if self._draw_cursor:
-                theme = self._theme
-                cursor_style = theme.cursor_style if theme else None
-                if cursor_style:
-                    content = content.stylize(
-                        ContentStyle.from_rich_style(cursor_style), 0, 1
-                    )
-            return Strip(
-                content.render_segments(self.visual_style), content.cell_length
-            )
+            if y < len(placeholder_lines):
+                style = self.get_visual_style("text-area--placeholder")
+                content = placeholder_lines[y].stylize(style)
+                if self._draw_cursor and y == 0:
+                    theme = self._theme
+                    cursor_style = theme.cursor_style if theme else None
+                    if cursor_style:
+                        content = content.stylize(
+                            ContentStyle.from_rich_style(cursor_style), 0, 1
+                        )
+                return Strip(
+                    content.render_segments(self.visual_style), content.cell_length
+                )
 
         scroll_x, scroll_y = self.scroll_offset
         absolute_y = scroll_y + y
