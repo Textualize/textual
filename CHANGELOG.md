@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The :hover pseudo-class no applies to the first widget under the mouse with a hover style set https://github.com/Textualize/textual/pull/6132
 - The footer key hover background is more visible https://github.com/Textualize/textual/pull/6132
 - Made `App.delay_update` public https://github.com/Textualize/textual/pull/6137
+- Pilot.click will return True if the initial mouse down is on the specified target https://github.com/Textualize/textual/pull/6139
 
 ### Added
 

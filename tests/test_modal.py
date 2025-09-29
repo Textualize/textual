@@ -68,7 +68,7 @@ Button {
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Label(TEXT * 8)
+        yield Label(TEXT)
         yield Footer()
 
     def action_request_quit(self) -> None:
@@ -90,15 +90,8 @@ async def test_modal_pop_screen():
     async with app.run_test() as pilot:
         # Pause to ensure the footer is fully composed to avoid flakiness in CI
         await pilot.pause()
-        await app.wait_for_refresh()
-        print(1, app.screen)
-        # Check clicking the footer brings up the quit screen
-        assert await pilot.click(offset=(1, app.size.height - 1))
-        print(2, app.screen)
-        await app.wait_for_refresh()
-        print(3, app.screen)
-        await pilot.pause(1)
-        print(4, app.screen)
+        assert await pilot.click("FooterKey")
+        assert await app.wait_for_refresh()
         assert isinstance(app.screen, QuitScreen)
         # Check activating the quit button exits the app
         await pilot.press("enter")

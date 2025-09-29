@@ -347,7 +347,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 event.stop()
                 event.prevent_default()
 
-    async def on_mount(self) -> None:
+    def on_mount(self) -> None:
         self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:

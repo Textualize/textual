@@ -444,7 +444,8 @@ class Pilot(Generic[ReturnType]):
                 if mouse_event_cls is Click:
                     kwargs = {**kwargs, "chain": chain}
 
-                widget_at, _ = app.get_widget_at(*offset)
+                if widget_at is None:
+                    widget_at, _ = app.get_widget_at(*offset)
                 event = mouse_event_cls(**kwargs)
                 # Bypass event processing in App.on_event. Because App.on_event
                 # is responsible for updating App.mouse_position, and because
