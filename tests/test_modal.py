@@ -89,11 +89,11 @@ async def test_modal_pop_screen():
     app = ModalApp()
     async with app.run_test() as pilot:
         # Pause to ensure the footer is fully composed to avoid flakiness in CI
-        await pilot.pause()
+        await pilot.pause(0.4)
         await app.wait_for_refresh()
-        await pilot.pause()
         # Check clicking the footer brings up the quit screen
-        await pilot.click(Footer, offset=(1, 0))
+        footer_key_clicked = await pilot.mouse_down("FooterKey")
+        assert footer_key_clicked is True  # Sanity check
         await pilot.pause()
         assert isinstance(pilot.app.screen, QuitScreen)
         # Check activating the quit button exits the app
