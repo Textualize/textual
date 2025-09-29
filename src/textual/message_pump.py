@@ -468,8 +468,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 due to calling it within the node's own task.
 
         """
-
-        if self._task is None or asyncio.current_task() is self._task:
+        assert (
+            self._task is not None
+        ), "Node must be running before calling wait_for_refresh"
+        if asyncio.current_task() is self._task:
             return False
         refreshed_event = asyncio.Event()
         self.call_after_refresh(refreshed_event.set)

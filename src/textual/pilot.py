@@ -434,6 +434,7 @@ class Pilot(Generic[ReturnType]):
         widget_at = None
         for chain in range(1, times + 1):
             for mouse_event_cls in events:
+                await self.pause()
                 # Get the widget under the mouse before the event because the app might
                 # react to the event and move things around. We override on each iteration
                 # because we assume the final event in `events` is the actual event we care
@@ -453,8 +454,8 @@ class Pilot(Generic[ReturnType]):
                 # we patch the offset in there as well.
                 app.mouse_position = offset
                 screen._forward_event(event)
-                await self.pause()
 
+        await self.pause()
         return widget is None or widget_at is target_widget
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
