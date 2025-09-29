@@ -89,7 +89,7 @@ async def test_modal_pop_screen():
     app = ModalApp()
     async with app.run_test() as pilot:
         # Pause to ensure the footer is fully composed to avoid flakiness in CI
-        await pilot.pause()
+        await pilot.pause(0.4)
         await app.wait_for_refresh()
         # Check clicking the footer brings up the quit screen
         footer_key_clicked = await pilot.mouse_down("FooterKey")
