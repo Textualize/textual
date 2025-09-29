@@ -414,7 +414,7 @@ class Pilot(Generic[ReturnType]):
         elif isinstance(widget, Widget):
             target_widget = widget
         else:
-            target_widget = app.screen.query_one(widget)
+            target_widget = screen.query_one(widget)
 
         message_arguments = _get_mouse_message_arguments(
             target_widget,
@@ -447,6 +447,7 @@ class Pilot(Generic[ReturnType]):
 
                 if widget_at is None:
                     widget_at, _ = app.get_widget_at(*offset)
+                    print("widget_at", repr(widget_at))
                 event = mouse_event_cls(**kwargs)
                 # Bypass event processing in App.on_event. Because App.on_event
                 # is responsible for updating App.mouse_position, and because
