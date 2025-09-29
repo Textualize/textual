@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from collections import defaultdict
 from itertools import groupby
 from typing import TYPE_CHECKING
@@ -327,7 +326,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     tooltip=binding.tooltip or binding.description,
                 )
 
-    async def bindings_changed(self, screen: Screen) -> None:
+    def bindings_changed(self, screen: Screen) -> None:
         self._bindings_ready = True
         if not screen.app.app_focus:
             return
@@ -348,9 +347,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 event.stop()
                 event.prevent_default()
 
-    async def on_mount(self) -> None:
-        await asyncio.sleep(0)
-        self.call_next(self.bindings_changed, self.screen)
+    def on_mount(self) -> None:
         self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:

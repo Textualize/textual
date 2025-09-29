@@ -2099,7 +2099,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Launch the app in the "background"
 
-        app_task = create_task(run_app(app), name=f"run_test {app}")
+        self._task = app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()

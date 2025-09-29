@@ -4630,7 +4630,6 @@ def test_header_format(snap_compare):
 
 def test_long_textarea_placeholder(snap_compare) -> None:
     """Test multi-line placeholders are wrapped and rendered.
-
     You should see a TextArea at 50% width, with several lines of wrapped text.
     """
 

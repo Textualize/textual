@@ -545,7 +545,7 @@ async def test_async_reactive_watch_callbacks_go_on_the_watcher():
         def update(self):
             self.holder.attr = "hello world"
 
-        async def callback(self):
+        def callback(self):
             nonlocal from_app
             from_app = True
 
