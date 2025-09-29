@@ -3657,8 +3657,9 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
         try:
-            self.screen._refresh_layout(self.size)
-            self.screen._css_update_count = self._css_update_count
+            if self.screen.is_mounted:
+                self.screen._refresh_layout(self.size)
+                self.screen._css_update_count = self._css_update_count
         except ScreenError:
             pass
         # The other screens in the stack will need to know about some style

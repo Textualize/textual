@@ -4653,3 +4653,25 @@ Where the fear has gone there will be nothing. Only I will remain."""
             yield TextArea(placeholder=TEXT)
 
     assert snap_compare(PlaceholderApp())
+
+
+def test_rich_log_early_write(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6123
+
+    You should see a RichLog with "Hello World" text
+
+    """
+
+    class TestApp(App):
+        def compose(self) -> ComposeResult:
+            with Horizontal():
+                yield RichLog()
+
+        def on_mount(self) -> None:
+            self.theme = "nord"
+
+        def on_ready(self) -> None:
+            log_widget = self.query_one(RichLog)
+            log_widget.write("Hello, World!")
+
+    assert snap_compare(TestApp())
