@@ -227,8 +227,8 @@ class Pilot(Generic[ReturnType]):
             OutOfBounds: If the position to be clicked is outside of the (visible) screen.
 
         Returns:
-            True if no selector was specified or if the click landed on the selected
-                widget, False otherwise.
+            `True` if no selector was specified or if the selected widget was under the mouse
+                when the click was initiated. `False` is the selected widget was not under the pointer.
         """
         try:
             return await self._post_mouse_events(
@@ -284,8 +284,8 @@ class Pilot(Generic[ReturnType]):
             OutOfBounds: If the position to be clicked is outside of the (visible) screen.
 
         Returns:
-            True if no selector was specified or if the clicks landed on the selected
-                widget, False otherwise.
+            `True` if no selector was specified or if the selected widget was under the mouse
+                when the click was initiated. `False` is the selected widget was not under the pointer.
         """
         return await self.click(widget, offset, shift, meta, control, times=2)
 
@@ -329,8 +329,8 @@ class Pilot(Generic[ReturnType]):
             OutOfBounds: If the position to be clicked is outside of the (visible) screen.
 
         Returns:
-            True if no selector was specified or if the clicks landed on the selected
-                widget, False otherwise.
+            `True` if no selector was specified or if the selected widget was under the mouse
+                when the click was initiated. `False` is the selected widget was not under the pointer.
         """
         return await self.click(widget, offset, shift, meta, control, times=3)
 
