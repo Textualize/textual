@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed visual glitches and crash when changing `DataTable.header_height` https://github.com/Textualize/textual/pull/6128
 - Fixed TextArea.placeholder not handling multi-lines https://github.com/Textualize/textual/pull/6138
 - Fixed issue with RichLog when App.theme is set early https://github.com/Textualize/textual/pull/6141
+- Fixed children of collapsible not being focusable after collapsible is expanded
 
 ## [6.1.0] - 2025-08-01
 
