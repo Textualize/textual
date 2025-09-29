@@ -4675,3 +4675,18 @@ def test_rich_log_early_write(snap_compare) -> None:
             log_widget.write("Hello, World!")
 
     assert snap_compare(TestApp())
+
+
+def test_collapsible_focus_children(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6140
+
+    You should see an expanded collapsible containing a button. The button should be focused.
+
+    """
+
+    class CollapseApp(App):
+        def compose(self) -> ComposeResult:
+            with Collapsible(title="Collapsible", collapsed=False):
+                yield Button("Hello")
+
+    assert snap_compare(CollapseApp(), press=["enter", "enter", "tab"])
