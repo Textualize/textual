@@ -326,7 +326,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     tooltip=binding.tooltip or binding.description,
                 )
 
-    async def bindings_changed(self, screen: Screen) -> None:
+    def bindings_changed(self, screen: Screen) -> None:
         self._bindings_ready = True
         if not screen.app.app_focus:
             return
