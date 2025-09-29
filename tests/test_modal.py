@@ -90,6 +90,7 @@ async def test_modal_pop_screen():
     async with app.run_test() as pilot:
         # Pause to ensure the footer is fully composed to avoid flakiness in CI
         await pilot.pause()
+        assert await app.wait_for_refresh()
         assert await pilot.click("FooterKey")
         assert await app.wait_for_refresh()
         assert isinstance(app.screen, QuitScreen)
