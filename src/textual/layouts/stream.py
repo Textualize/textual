@@ -65,6 +65,12 @@ class StreamLayout(Layout):
                     if height < (max_height_value := int(max_height.value))
                     else max_height_value
                 )
+            if (min_height := styles.min_height) is not None and min_height.is_cells:
+                height = (
+                    height
+                    if height > (min_height_value := int(min_height.value))
+                    else min_height_value
+                )
             placements.append(
                 _WidgetPlacement(
                     _Region(left, y, width - (left + right), height),

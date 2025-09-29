@@ -869,6 +869,26 @@ class Content(Visual):
 
         return Content("".join(text), spans, total_cell_length)
 
+    def wrap(
+        self, width: int, *, align: TextAlign = "left", overflow: TextOverflow = "fold"
+    ) -> list[Content]:
+        """Wrap text so that it fits within the given dimensions.
+
+        Note that Textual will automatically wrap Content in widgets.
+        This method is only required if you need some additional processing to lines.
+
+        Args:
+            width: Maximum width of the line (in cells).
+            align: Alignment of lines.
+            overflow: Overflow of lines (what happens when the text doesn't fit).
+
+        Returns:
+            A list of Content objects, one per line.
+        """
+        lines = self._wrap_and_format(width, align, overflow)
+        content_lines = [line.content for line in lines]
+        return content_lines
+
     def get_style_at_offset(self, offset: int) -> Style:
         """Get the style of a character at give offset.
 

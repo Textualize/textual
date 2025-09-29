@@ -617,6 +617,9 @@ class App(Generic[ReturnType], DOMNode):
         self._sync_available = False
 
         self.mouse_over: Widget | None = None
+        """The widget directly under the mouse."""
+        self.hover_over: Widget | None = None
+        """The first widget with a hover style under the mouse."""
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
         self._exit_renderables: list[RenderableType] = []
@@ -1016,10 +1019,11 @@ class App(Generic[ReturnType], DOMNode):
         if not self._batch_count:
             self.check_idle()
 
-    def _delay_update(self, delay: float = 0.05) -> None:
+    def delay_update(self, delay: float = 0.05) -> None:
         """Delay updates for a short period of time.
 
         May be used to mask a brief transition.
+        Consider this method only if you aren't able to use `App.batch_update`.
 
         Args:
             delay: Delay before updating.
@@ -1032,7 +1036,7 @@ class App(Generic[ReturnType], DOMNode):
             if not self._batch_count:
                 self.screen.refresh()
 
-        self.set_timer(delay, end_batch, name="_delay_update")
+        self.set_timer(delay, end_batch, name="delay_update")
 
     @contextmanager
     def _context(self) -> Generator[None, None, None]:
@@ -2095,7 +2099,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Launch the app in the "background"
 
-        app_task = create_task(run_app(app), name=f"run_test {app}")
+        self._task = app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -3010,7 +3014,9 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.set_focus(widget, scroll_visible)
 
-    def _set_mouse_over(self, widget: Widget | None) -> None:
+    def _set_mouse_over(
+        self, widget: Widget | None, hover_widget: Widget | None
+    ) -> None:
         """Called when the mouse is over another widget.
 
         Args:
@@ -3031,6 +3037,12 @@ class App(Generic[ReturnType], DOMNode):
                         widget.post_message(events.Enter(widget))
                 finally:
                     self.mouse_over = widget
+        if self.hover_over is not None:
+            self.hover_over.mouse_hover = False
+        if hover_widget is not None:
+            hover_widget.mouse_hover = True
+
+        self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
         """Updates the mouse over after the next refresh.
@@ -3046,12 +3058,16 @@ class App(Generic[ReturnType], DOMNode):
         async def check_mouse() -> None:
             """Check if the mouse over widget has changed."""
             try:
-                widget, _ = screen.get_widget_at(*self.mouse_position)
+                hover_widgets = screen.get_hover_widgets_at(*self.mouse_position)
             except NoWidget:
                 pass
             else:
-                if widget is not self.mouse_over:
-                    self._set_mouse_over(widget)
+                mouse_over, hover_over = hover_widgets.widgets
+                if (
+                    mouse_over is not self.mouse_over
+                    or hover_over is not self.hover_over
+                ):
+                    self._set_mouse_over(mouse_over, hover_over)
 
         self.call_after_refresh(check_mouse)
 
@@ -3641,8 +3657,9 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
         try:
-            self.screen._refresh_layout(self.size)
-            self.screen._css_update_count = self._css_update_count
+            if self.screen.is_mounted:
+                self.screen._refresh_layout(self.size)
+                self.screen._css_update_count = self._css_update_count
         except ScreenError:
             pass
         # The other screens in the stack will need to know about some style

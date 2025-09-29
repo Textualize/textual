@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from collections import defaultdict
 from itertools import groupby
 from typing import TYPE_CHECKING
@@ -11,13 +10,22 @@ from rich.text import Text
 from textual import events
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import ScrollableContainer
+from textual.containers import HorizontalGroup, ScrollableContainer
 from textual.reactive import reactive
 from textual.widget import Widget
 from textual.widgets import Label
 
 if TYPE_CHECKING:
     from textual.screen import Screen
+
+
+@rich.repr.auto
+class KeyGroup(HorizontalGroup):
+    DEFAULT_CSS = """
+    KeyGroup {
+        width: auto;        
+    }
+    """
 
 
 @rich.repr.auto
@@ -32,6 +40,7 @@ class FooterKey(Widget):
     FooterKey {
         width: auto;
         height: 1;
+        text-wrap: nowrap;
         background: $footer-item-background;
         .footer-key--key {
             color: $footer-key-foreground;
@@ -87,6 +96,7 @@ class FooterKey(Widget):
         if disabled:
             classes += " -disabled"
         super().__init__(classes=classes)
+        self.shrink = False
         if tooltip:
             self.tooltip = tooltip
 
@@ -98,6 +108,7 @@ class FooterKey(Widget):
         description_padding = self.get_component_styles(
             "footer-key--description"
         ).padding
+
         description = self.description
         if description:
             label_text = Text.assemble(
@@ -118,7 +129,7 @@ class FooterKey(Widget):
         label_text.stylize_before(self.rich_style)
         return label_text
 
-    async def on_mouse_down(self) -> None:
+    def on_mouse_down(self) -> None:
         if self._disabled:
             self.app.bell()
         else:
@@ -144,7 +155,18 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         height: 1;
         scrollbar-size: 0 0;
         &.-compact {
-            grid-gutter: 1;
+            FooterLabel {
+                margin: 0;
+            }
+            FooterKey {
+                margin-right: 1;
+            }
+            FooterKey.-grouped {
+                margin: 0 1;            
+            }
+            FooterKey.-command-palette  {
+                padding-right: 0;
+            }
         }
         FooterKey.-command-palette  {
             dock: right;
@@ -155,6 +177,22 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             width: auto;
             height: 1;
             layout: horizontal;
+        }
+        KeyGroup.-compact {            
+            FooterKey.-grouped {
+                margin: 0;
+            }
+            margin: 0 1 0 0;
+            padding-left: 1;
+        }
+
+        FooterKey.-grouped {
+            margin: 0 1;            
+        }
+        FooterLabel {
+            margin: 0 1 0 0;            
+            color: $footer-description-foreground;
+            background: $footer-description-background;
         }
 
         &:ansi {
@@ -180,19 +218,11 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 border-left: vkey ansi_black;
             }
         }
-        FooterKey.-grouped {
-            margin: 0 1;
-        }
-        FooterLabel {
-            margin: 0 1;
-            background: red;
-            color: $footer-description-foreground;
-            background: $footer-description-background;
-        }
+        
     }
     """
 
-    compact = reactive(False)
+    compact = reactive(False, toggle_class="-compact")
     """Display in compact style."""
     _bindings_ready = reactive(False, repaint=False)
     """True if the bindings are ready to be displayed."""
@@ -209,6 +239,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         classes: str | None = None,
         disabled: bool = False,
         show_command_palette: bool = True,
+        compact: bool = False,
     ) -> None:
         """A footer to show key bindings.
 
@@ -219,6 +250,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
             show_command_palette: Show key binding to invoke the command palette, on the right of the footer.
+            compact: Display a compact style (less whitespace) footer.
         """
         super().__init__(
             *children,
@@ -228,6 +260,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             disabled=disabled,
         )
         self.set_reactive(Footer.show_command_palette, show_command_palette)
+        self.compact = compact
 
     def compose(self) -> ComposeResult:
         if not self._bindings_ready:
@@ -247,23 +280,25 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
         for group, multi_bindings_iterable in groupby(
             action_to_bindings.values(),
-            lambda multi_bindings: multi_bindings[0][0].group,
+            lambda multi_bindings_: multi_bindings_[0][0].group,
         ):
-            if group is not None:
-                for multi_bindings in multi_bindings_iterable:
-                    binding, enabled, tooltip = multi_bindings[0]
-                    yield FooterKey(
-                        binding.key,
-                        self.app.get_key_display(binding),
-                        "",
-                        binding.action,
-                        disabled=not enabled,
-                        tooltip=tooltip or binding.description,
-                        classes="-grouped",
-                    ).data_bind(Footer.compact)
+            multi_bindings = list(multi_bindings_iterable)
+            if group is not None and len(multi_bindings) > 1:
+                with KeyGroup(classes="-compact" if group.compact else ""):
+                    for multi_bindings in multi_bindings:
+                        binding, enabled, tooltip = multi_bindings[0]
+                        yield FooterKey(
+                            binding.key,
+                            self.app.get_key_display(binding),
+                            "",
+                            binding.action,
+                            disabled=not enabled,
+                            tooltip=tooltip or binding.description,
+                            classes="-grouped",
+                        ).data_bind(compact=Footer.compact)
                 yield FooterLabel(group.description)
             else:
-                for multi_bindings in multi_bindings_iterable:
+                for multi_bindings in multi_bindings:
                     binding, enabled, tooltip = multi_bindings[0]
                     yield FooterKey(
                         binding.key,
@@ -272,7 +307,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                         binding.action,
                         disabled=not enabled,
                         tooltip=tooltip,
-                    ).data_bind(Footer.compact)
+                    ).data_bind(compact=Footer.compact)
         if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             try:
                 _node, binding, enabled, tooltip = active_bindings[
@@ -291,12 +326,12 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     tooltip=binding.tooltip or binding.description,
                 )
 
-    async def bindings_changed(self, screen: Screen) -> None:
+    def bindings_changed(self, screen: Screen) -> None:
         self._bindings_ready = True
         if not screen.app.app_focus:
             return
         if self.is_attached and screen is self.screen:
-            await self.recompose()
+            self.call_after_refresh(self.recompose)
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if self.allow_horizontal_scroll:
@@ -312,18 +347,8 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 event.stop()
                 event.prevent_default()
 
-    async def on_mount(self) -> None:
-        await asyncio.sleep(0)
-        self.call_next(self.bindings_changed, self.screen)
-
-        def bindings_changed(screen: Screen) -> None:
-            """Update bindings after a short delay to avoid flicker."""
-            self.call_after_refresh(self.bindings_changed, screen)
-
-        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
+    def on_mount(self) -> None:
+        self.screen.bindings_updated_signal.subscribe(self, self.bindings_changed)
 
     def on_unmount(self) -> None:
         self.screen.bindings_updated_signal.unsubscribe(self)
-
-    def watch_compact(self, compact: bool) -> None:
-        self.set_class(compact, "-compact")

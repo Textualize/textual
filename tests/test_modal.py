@@ -68,7 +68,7 @@ Button {
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Label(TEXT * 8)
+        yield Label(TEXT)
         yield Footer()
 
     def action_request_quit(self) -> None:
@@ -86,11 +86,14 @@ Button {
 async def test_modal_pop_screen():
     # https://github.com/Textualize/textual/issues/4656
 
-    async with ModalApp().run_test() as pilot:
+    app = ModalApp()
+    async with app.run_test() as pilot:
+        # Pause to ensure the footer is fully composed to avoid flakiness in CI
         await pilot.pause()
-        # Check clicking the footer brings up the quit screen
-        await pilot.click(Footer)
-        assert isinstance(pilot.app.screen, QuitScreen)
+        await pilot.pause()  # Required in Windows
+        assert await pilot.click("FooterKey")
+        assert await app.wait_for_refresh()
+        assert isinstance(app.screen, QuitScreen)
         # Check activating the quit button exits the app
         await pilot.press("enter")
         assert pilot.app._exit

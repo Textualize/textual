@@ -841,6 +841,12 @@ class StringEnumProperty(Generic[EnumType]):
                     children=self._refresh_children,
                     parent=self._refresh_parent,
                 )
+
+                if self._display:
+                    node = obj.node
+                    if node is not None and node.parent:
+                        node._nodes.updated()
+
         else:
             if value not in self._valid_values:
                 raise StyleValueError(

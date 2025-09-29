@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Eager tasks are now enabled On Python3.12 and above https://github.com/Textualize/textual/pull/6102
 - `Widget._arrange` is now public (as `Widget.arrange`) https://github.com/Textualize/textual/pull/6108
 - Reduced number of layout operations required to update the screen https://github.com/Textualize/textual/pull/6108
+- The :hover pseudo-class no applies to the first widget under the mouse with a hover style set https://github.com/Textualize/textual/pull/6132
+- The footer key hover background is more visible https://github.com/Textualize/textual/pull/6132
+- Made `App.delay_update` public https://github.com/Textualize/textual/pull/6137
+- Pilot.click will return True if the initial mouse down is on the specified target https://github.com/Textualize/textual/pull/6139
 
 ### Added
 
@@ -19,10 +23,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.process_layout` https://github.com/Textualize/textual/pull/6105
 - Added `App.viewport_size` https://github.com/Textualize/textual/pull/6105
 - Added `Screen.size` https://github.com/Textualize/textual/pull/6105
+- Added `compact` to Binding.Group https://github.com/Textualize/textual/pull/6132
+- Added `Screen.get_hover_widgets_at` https://github.com/Textualize/textual/pull/6132
+- Added `Content.wrap` https://github.com/Textualize/textual/pull/6138
 
 ### Fixed
 
 - Fixed issue where Segments with a style of `None` aren't rendered https://github.com/Textualize/textual/pull/6109
+- Fixed visual glitches and crash when changing `DataTable.header_height` https://github.com/Textualize/textual/pull/6128
+- Fixed TextArea.placeholder not handling multi-lines https://github.com/Textualize/textual/pull/6138
+- Fixed issue with RichLog when App.theme is set early https://github.com/Textualize/textual/pull/6141
+- Fixed children of collapsible not being focusable after collapsible is expanded https://github.com/Textualize/textual/pull/6143
 
 ## [6.1.0] - 2025-08-01
 
@@ -44,7 +55,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `bar_renderable` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
+- Added `BAR_RENDERABLE` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
 - Added `OptionList.set_options` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.suggestion` https://github.com/Textualize/textual/pull/6048
 - Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048

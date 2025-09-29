@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from functools import partial
 from itertools import groupby
 from operator import itemgetter
 from typing import TYPE_CHECKING
@@ -164,16 +163,17 @@ class KeyPanel(VerticalScroll, can_focus=False):
         yield BindingsTable(shrink=True, expand=False)
 
     async def on_mount(self) -> None:
+        mount_screen = self.screen
+
         async def bindings_changed(screen: Screen) -> None:
             """Update bindings."""
             if not screen.app.app_focus:
                 return
-            if self.is_attached and screen is self.screen:
-                self.refresh(recompose=True)
+            if self.is_attached and screen is mount_screen:
+                await self.recompose()
 
         def _bindings_changed(screen: Screen) -> None:
-            """Update bindings after a short delay."""
-            screen.set_timer(1 / 20, partial(bindings_changed, screen))
+            self.call_after_refresh(bindings_changed, screen)
 
         self.set_class(self.app.ansi_color, "-ansi-scrollbar")
         self.screen.bindings_updated_signal.subscribe(self, _bindings_changed)
