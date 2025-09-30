@@ -442,7 +442,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey $border;
+        border-bottom: hkey black;
         border-left: none;
         border-right: none;
         height: auto;
@@ -586,7 +586,7 @@ class CommandPalette(SystemModalScreen[None]):
     CommandPalette #--input {
         height: auto;
         visibility: visible;
-        border: hkey $border;
+        border: hkey black 50%;
     }
 
     CommandPalette #--input.--list-visible {
@@ -1230,7 +1230,7 @@ class CommandPalette(SystemModalScreen[None]):
                 # decide what to do with it (hopefully it'll run it).
                 self._cancel_gather_commands()
                 self.app.post_message(CommandPalette.Closed(option_selected=True))
-                self.app._delay_update()
+                self.app.delay_update()
                 self.dismiss()
                 self.app.call_later(self._selected_command.command)
 

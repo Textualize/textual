@@ -29,8 +29,6 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    _renderable: VisualType
-
     def __init__(
         self,
         content: VisualType = "",
@@ -48,25 +46,33 @@ class Static(Widget, inherit_bindings=False):
         )
         self.expand = expand
         self.shrink = shrink
-        self._content = content
-        self._visual: Visual | None = None
+        self.__content = content
+        self.__visual: Visual | None = None
 
     @property
     def visual(self) -> Visual:
-        if self._visual is None:
-            self._visual = visualize(self, self._content, markup=self._render_markup)
-        return self._visual
+        """The visual to be displayed.
+
+        Note that the visual is what is ultimately rendered in the widget, but may not be the
+        same object set with the `update` method  or `content` property. For instance, if you
+        update with a string, then the visual will be a [Content][textual.content.Content] instance.
+
+        """
+        if self.__visual is None:
+            self.__visual = visualize(self, self.__content, markup=self._render_markup)
+        return self.__visual
 
     @property
-    def renderable(self) -> VisualType:
-        return self._content or ""
+    def content(self) -> VisualType:
+        """The original content set in the constructor."""
+        return self.__content
 
-    # TODO: Should probably be renamed to `content`.
-    @renderable.setter
-    def renderable(self, renderable: VisualType) -> None:
-        self._renderable = renderable
-        self._visual = None
+    @content.setter
+    def content(self, content: VisualType) -> None:
+        self.__content = content
+        self.__visual = visualize(self, content, markup=self._render_markup)
         self.clear_cached_dimensions()
+        self.refresh(layout=True)
 
     def render(self) -> RenderResult:
         """Get a rich renderable for the widget's content.
@@ -76,13 +82,14 @@ class Static(Widget, inherit_bindings=False):
         """
         return self.visual
 
-    def update(self, content: VisualType = "") -> None:
-        """Update the widget's content area with new text or Rich renderable.
+    def update(self, content: VisualType = "", *, layout: bool = True) -> None:
+        """Update the widget's content area with a string, a Visual (such as [Content][textual.content.Content]), or a [Rich renderable](https://rich.readthedocs.io/en/latest/protocol.html).
 
         Args:
             content: New content.
+            layout: Also perform a layout operation (set to `False` if you are certain the size won't change).
         """
 
-        self._content = content
-        self._visual = visualize(self, content, markup=self._render_markup)
-        self.refresh(layout=True)
+        self.__content = content
+        self.__visual = visualize(self, content, markup=self._render_markup)
+        self.refresh(layout=layout)

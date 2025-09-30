@@ -20,6 +20,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    NamedTuple,
     Optional,
     TypeVar,
     Union,
@@ -81,6 +82,23 @@ ScreenResultCallbackType = Union[
     Callable[[Optional[ScreenResultType]], Awaitable[None]],
 ]
 """Type of a screen result callback function."""
+
+
+class HoverWidgets(NamedTuple):
+    """Result of [get_hover_widget_at][textual.screen.Screen.get_hover_widget_at]"""
+
+    mouse_over: tuple[Widget, Region]
+    """Widget and region directly under the mouse."""
+    hover_over: tuple[Widget, Region] | None
+    """Widget with a hover style under the mouse, or `None` for no hover style widget."""
+
+    @property
+    def widgets(self) -> tuple[Widget, Widget | None]:
+        """Just the widgets."""
+        return (
+            self.mouse_over[0],
+            None if self.hover_over is None else self.hover_over[0],
+        )
 
 
 @rich.repr.auto
@@ -341,6 +359,11 @@ class Screen(Generic[ScreenResultType], Widget):
             extras.append("_tooltips")
         return (*super().layers, *extras)
 
+    @property
+    def size(self) -> Size:
+        """The size of the screen."""
+        return self.app.size - self.styles.gutter.totals
+
     def _watch_focused(self):
         self.refresh_bindings()
 
@@ -463,7 +486,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         return bindings_map
 
-    def _arrange(self, size: Size) -> DockArrangeResult:
+    def arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
 
         Args:
@@ -512,7 +535,8 @@ class Screen(Generic[ScreenResultType], Widget):
                 else self._nodes
             ),
             size,
-            self.screen.size,
+            self.size,
+            False,
         )
 
         return arrangement
@@ -577,6 +601,33 @@ class Screen(Generic[ScreenResultType], Widget):
             NoWidget: If there is no widget under the screen coordinate.
         """
         return self._compositor.get_widget_at(x, y)
+
+    def get_hover_widgets_at(self, x: int, y: int) -> HoverWidgets:
+        """Get the widget, and its region directly under the mouse, and the first
+        widget, region pair with a hover style.
+
+        Args:
+            x: X Coordinate.
+            y: Y Coordinate.
+
+        Returns:
+            A pair of (WIDGET, REGION) tuples for the top most and first hover style respectively.
+
+        Raises:
+            NoWidget: If there is no widget under the screen coordinate.
+
+        """
+        widgets_under_coordinate = iter(self._compositor.get_widgets_at(x, y))
+        try:
+            top_widget, top_region = next(widgets_under_coordinate)
+        except StopIteration:
+            raise errors.NoWidget(f"No hover widget under screen coordinate ({x}, {y})")
+        if not top_widget._has_hover_style:
+            for widget, region in widgets_under_coordinate:
+                if widget._has_hover_style:
+                    return HoverWidgets((top_widget, top_region), (widget, region))
+            return HoverWidgets((top_widget, top_region), None)
+        return HoverWidgets((top_widget, top_region), (top_widget, top_region))
 
     def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
         """Get all widgets under a given coordinate.
@@ -896,6 +947,20 @@ class Screen(Generic[ScreenResultType], Widget):
     def action_blur(self) -> None:
         """Action to remove focus (if set)."""
         self.set_focus(None)
+
+    async def action_focus(self, selector: str) -> None:
+        """An [action](/guide/actions) to focus the given widget.
+
+        Args:
+            selector: Selector of widget to focus (first match).
+        """
+        try:
+            node = self.query(selector).first()
+        except NoMatches:
+            pass
+        else:
+            if isinstance(node, Widget):
+                self.set_focus(node)
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
@@ -1331,16 +1396,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.app._refresh_notifications()
         size = self.app.size
 
-        # Only auto-focus when the app has focus (textual-web only)
-        if self.app.app_focus:
-            auto_focus = (
-                self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
-            )
-            if auto_focus and self.focused is None:
-                for widget in self.query(auto_focus):
-                    if widget.focusable:
-                        self.set_focus(widget)
-                        break
+        self._update_auto_focus()
 
         if self.is_attached:
             self._compositor_refresh()
@@ -1348,11 +1404,28 @@ class Screen(Generic[ScreenResultType], Widget):
             self._refresh_layout(size)
             self.refresh()
 
+    async def _compose(self) -> None:
+        await super()._compose()
+        self._update_auto_focus()
+
+    def _update_auto_focus(self) -> None:
+        """Update auto focus."""
+        if self.app.app_focus:
+            auto_focus = (
+                self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
+            )
+            if auto_focus and self.focused is None:
+                for widget in self.query(auto_focus):
+                    if widget.focusable:
+                        widget.has_focus = True
+                        self.set_focus(widget)
+                        break
+
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.add_class(self.app.SUSPENDED_SCREEN_CLASS)
-        self.app._set_mouse_over(None)
+        self.app._set_mouse_over(None, None)
         self._clear_tooltip()
         self.stack_updates += 1
 
@@ -1464,14 +1537,17 @@ class Screen(Generic[ScreenResultType], Widget):
                 tooltip.update(tooltip_content)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
+        hover_widget: Widget | None = None
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
                 region = self.find_widget(widget).region
             else:
-                widget, region = self.get_widget_at(event.x, event.y)
+                (widget, region), hover = self.get_hover_widgets_at(event.x, event.y)
+                if hover is not None:
+                    hover_widget = hover[0]
         except errors.NoWidget:
-            self.app._set_mouse_over(None)
+            self.app._set_mouse_over(None, None)
             if self._tooltip_timer is not None:
                 self._tooltip_timer.stop()
             if not self.app._disable_tooltips:
@@ -1479,9 +1555,8 @@ class Screen(Generic[ScreenResultType], Widget):
                     self.get_child_by_type(Tooltip).display = False
                 except NoMatches:
                     pass
-
         else:
-            self.app._set_mouse_over(widget)
+            self.app._set_mouse_over(widget, hover_widget)
             widget.hover_style = event.style
             if widget is self:
                 self.post_message(event)
@@ -1663,12 +1738,15 @@ class Screen(Generic[ScreenResultType], Widget):
         if end_region.y <= start_region.bottom or self._box_select:
             select_regions.append(Region.union(start_region, end_region))
         else:
-            container_region = Region.from_union(
-                [
-                    start_widget.select_container.content_region,
-                    end_widget.select_container.content_region,
-                ]
-            )
+            try:
+                container_region = Region.from_union(
+                    [
+                        start_widget.select_container.content_region,
+                        end_widget.select_container.content_region,
+                    ]
+                )
+            except NoMatches:
+                return
 
             start_region = Region.from_corners(
                 start_region.x,

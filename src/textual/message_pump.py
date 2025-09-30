@@ -36,6 +36,7 @@ from textual._context import NoActiveAppError, active_app, active_message_pump
 from textual._context import message_hook as message_hook_context_var
 from textual._context import prevent_message_types_stack
 from textual._on import OnNoWidget
+from textual._queue import Queue
 from textual._time import time
 from textual.constants import SLOW_THRESHOLD
 from textual.css.match import match
@@ -143,8 +144,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
 
     @cached_property
-    def _message_queue(self) -> asyncio.Queue[Message | None]:
-        return asyncio.Queue()
+    def _message_queue(self) -> Queue[Message | None]:
+        return Queue()
 
     @cached_property
     def _mounted_event(self) -> asyncio.Event:
@@ -226,29 +227,35 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Is this a root node (i.e. the App)?"""
         return False
 
-    @property
-    def app(self) -> "App[object]":
-        """
-        Get the current app.
+    if TYPE_CHECKING:
+        from textual import getters
 
-        Returns:
-            The current app.
+        app = getters.app(App)
+    else:
 
-        Raises:
-            NoActiveAppError: if no active app could be found for the current asyncio context
-        """
-        try:
-            return active_app.get()
-        except LookupError:
-            from textual.app import App
+        @property
+        def app(self) -> "App[object]":
+            """
+            Get the current app.
 
-            node: MessagePump | None = self
-            while not isinstance(node, App):
-                if node is None:
-                    raise NoActiveAppError()
-                node = node._parent
+            Returns:
+                The current app.
 
-            return node
+            Raises:
+                NoActiveAppError: if no active app could be found for the current asyncio context
+            """
+            try:
+                return active_app.get()
+            except LookupError:
+                from textual.app import App
+
+                node: MessagePump | None = self
+                while not isinstance(node, App):
+                    if node is None:
+                        raise NoActiveAppError()
+                    node = node._parent
+
+                return node
 
     @property
     def is_attached(self) -> bool:
@@ -450,6 +457,27 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
         return self.post_message(message)
 
+    async def wait_for_refresh(self) -> bool:
+        """Wait for the next refresh.
+
+        This method should only be called from a task other than the one running this widget.
+        If called from the same task, it will return immediately to avoid blocking the event loop.
+
+        Returns:
+            `True` if waiting for refresh was successful, or `False` if the call was a null-op
+                due to calling it within the node's own task.
+
+        """
+        assert (
+            self._task is not None
+        ), "Node must be running before calling wait_for_refresh"
+        if asyncio.current_task() is self._task:
+            return False
+        refreshed_event = asyncio.Event()
+        self.call_after_refresh(refreshed_event.set)
+        await refreshed_event.wait()
+        return True
+
     def call_later(self, callback: Callback, *args: Any, **kwargs: Any) -> bool:
         """Schedule a callback to run after all messages are processed in this object.
         Positional and keywords arguments are passed to the callable.
@@ -565,7 +593,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
                     await self._dispatch_message(events.Mount())
             else:
                 await self._dispatch_message(events.Mount())
-            self.check_idle()
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
@@ -599,7 +626,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
         self._thread_id = threading.get_ident()
-
+        await asyncio.sleep(0)
         while not self._closed:
             try:
                 message = await self._get_message()

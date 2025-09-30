@@ -36,13 +36,13 @@ class ScrollView(ScrollableContainer):
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = new_value
         if round(old_value) != round(new_value):
-            self.refresh()
+            self.refresh(self.size.region)
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = new_value
         if round(old_value) != round(new_value):
-            self.refresh()
+            self.refresh(self.size.region)
 
     def on_mount(self):
         self._refresh_scrollbars()

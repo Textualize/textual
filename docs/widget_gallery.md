@@ -21,7 +21,7 @@ A simple button with a variety of semantic styles.
 
 [Button reference](./widgets/button.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/button.py"}
+```{.textual path="docs/examples/widgets/button.py" columns="100" lines="24"}
 ```
 
 
@@ -172,7 +172,7 @@ Display a markdown document.
 [Markdown reference](./widgets/markdown.md){ .md-button .md-button--primary }
 
 
-```{.textual path="docs/examples/widgets/markdown.py" columns="120" lines="51"}
+```{.textual path="docs/examples/widgets/markdown.py" columns="120" lines="53"}
 ```
 
 ## MaskedInput

@@ -50,109 +50,177 @@ class Button(Widget, can_focus=True):
     Button {
         width: auto;
         min-width: 16;
-        height: auto;
-        color: $button-foreground;
-        background: $surface;
-        border: none;
-        border-top: tall $surface-lighten-1;
-        border-bottom: tall $surface-darken-1;
+        height:auto;
+        line-pad: 1;
         text-align: center;
         content-align: center middle;
-        text-style: bold;
-        line-pad: 1;
-
-        &.-textual-compact {
-            border: none !important;
-        }
-
-        &:disabled {            
-            text-opacity: 0.6;
-        }
         
-        &:focus {
-            text-style: $button-focus-text-style;
-            background-tint: $foreground 5%;
-        }
-        &:hover {
-            border-top: tall $surface;
-            background: $surface-darken-1;
-        }
-        &.-active {
+
+        &.-style-flat {
+            text-style: bold;
+            color: auto 90%;
             background: $surface;
-            border-bottom: tall $surface-lighten-1;
-            border-top: tall $surface-darken-1;
-            tint: $background 30%;
-        }
-
-        &.-primary {
-            color: $button-color-foreground;
-            background: $primary;
-            border-top: tall $primary-lighten-3;
-            border-bottom: tall $primary-darken-3;
-
+            border: block $surface;
             &:hover {
-                background: $primary-darken-2;
-                border-top: tall $primary;
-            }
-
-            &.-active {
                 background: $primary;
-                border-bottom: tall $primary-lighten-3;
-                border-top: tall $primary-darken-3;
+                border: block $primary;
+            }
+            &:focus {
+                text-style: $button-focus-text-style;
+            }
+            &.-active {
+                background: $surface;
+                border: block $surface;
+                tint: $background 30%;
+            }
+            &:disabled {
+                color: auto 50%;
+            }
+
+            &.-primary {
+                background: $primary-muted;
+                border: block $primary-muted;
+                color: $text-primary;
+                &:hover {
+                    color: $text;
+                    background: $primary;
+                    border: block $primary;
+                }
+            }
+            &.-success {
+                background: $success-muted;
+                border: block $success-muted;
+                color: $text-success;
+                &:hover {
+                    color: $text;
+                    background: $success;
+                    border: block $success;
+                }
+            }
+            &.-warning {
+                background: $warning-muted;
+                border: block $warning-muted;
+                color: $text-warning;
+                &:hover {
+                    color: $text;
+                    background: $warning;
+                    border: block $warning;
+                }
+            }
+            &.-error {
+                background: $error-muted;
+                border: block $error-muted;
+                color: $text-error;
+                &:hover {
+                    color: $text;
+                    background: $error;
+                    border: block $error;
+                }
             }
         }
+        &.-style-default {
+            text-style: bold;
+            color: $button-foreground;
+            background: $surface;
+            border: none;
+            border-top: tall $surface-lighten-1;
+            border-bottom: tall $surface-darken-1;
+            
 
-        &.-success {
-            color: $button-color-foreground;
-            background: $success;
-            border-top: tall $success-lighten-2;
-            border-bottom: tall $success-darken-3;
-
-            &:hover {
-                background: $success-darken-2;
-                border-top: tall $success;
+            &.-textual-compact {
+                border: none !important;
             }
 
+            &:disabled {
+                text-opacity: 0.6;
+            }
+
+            &:focus {
+                text-style: $button-focus-text-style;
+                background-tint: $foreground 5%;
+            }
+            &:hover {
+                border-top: tall $surface;
+                background: $surface-darken-1;
+            }
+    
             &.-active {
+                background: $surface;
+                border-bottom: tall $surface-lighten-1;
+                border-top: tall $surface-darken-1;
+                tint: $background 30%;
+            }
+
+            &.-primary {
+                color: $button-color-foreground;
+                background: $primary;
+                border-top: tall $primary-lighten-3;
+                border-bottom: tall $primary-darken-3;
+
+                &:hover {
+                    background: $primary-darken-2;
+                    border-top: tall $primary;
+                }
+
+                &.-active {
+                    background: $primary;
+                    border-bottom: tall $primary-lighten-3;
+                    border-top: tall $primary-darken-3;
+                }
+            }
+
+            &.-success {
+                color: $button-color-foreground;
                 background: $success;
-                border-bottom: tall $success-lighten-2;
-                border-top: tall $success-darken-2;
+                border-top: tall $success-lighten-2;
+                border-bottom: tall $success-darken-3;
+
+                &:hover {
+                    background: $success-darken-2;
+                    border-top: tall $success;
+                }
+
+                &.-active {
+                    background: $success;
+                    border-bottom: tall $success-lighten-2;
+                    border-top: tall $success-darken-2;
+                }
             }
-        }
 
-        &.-warning{
-            color: $button-color-foreground;
-            background: $warning;
-            border-top: tall $warning-lighten-2;
-            border-bottom: tall $warning-darken-3;
-
-            &:hover {
-                background: $warning-darken-2;
-                border-top: tall $warning;
-            }
-
-            &.-active {
+            &.-warning{
+                color: $button-color-foreground;
                 background: $warning;
-                border-bottom: tall $warning-lighten-2;
-                border-top: tall $warning-darken-2;
+                border-top: tall $warning-lighten-2;
+                border-bottom: tall $warning-darken-3;
+
+                &:hover {
+                    background: $warning-darken-2;
+                    border-top: tall $warning;
+                }
+
+                &.-active {
+                    background: $warning;
+                    border-bottom: tall $warning-lighten-2;
+                    border-top: tall $warning-darken-2;
+                }
             }
-        }
 
-        &.-error {
-            color: $button-color-foreground;
-            background: $error;
-            border-top: tall $error-lighten-2;
-            border-bottom: tall $error-darken-3;
-
-            &:hover {
-                background: $error-darken-1;
-                border-top: tall $error;
-            }
-
-            &.-active {
+            &.-error {
+                color: $button-color-foreground;
                 background: $error;
-                border-bottom: tall $error-lighten-2;
-                border-top: tall $error-darken-2;
+                border-top: tall $error-lighten-2;
+                border-bottom: tall $error-darken-3;
+
+                &:hover {
+                    background: $error-darken-1;
+                    border-top: tall $error;
+                }
+
+                &.-active {
+                    background: $error;
+                    border-bottom: tall $error-lighten-2;
+                    border-top: tall $error-darken-2;
+                }
             }
         }
     }
@@ -168,6 +236,9 @@ class Button(Widget, can_focus=True):
 
     compact = reactive(False, toggle_class="-textual-compact")
     """Make the button compact (without borders)."""
+
+    flat = reactive(False)
+    """Enable alternative flat button style."""
 
     class Pressed(Message):
         """Event sent when a `Button` is pressed and there is no Button action.
@@ -201,6 +272,7 @@ class Button(Widget, can_focus=True):
         tooltip: RenderableType | None = None,
         action: str | None = None,
         compact: bool = False,
+        flat: bool = False,
     ):
         """Create a Button widget.
 
@@ -214,6 +286,7 @@ class Button(Widget, can_focus=True):
             tooltip: Optional tooltip.
             action: Optional action to run when clicked.
             compact: Enable compact button style.
+            flat: Enable alternative flat look buttons.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -224,6 +297,7 @@ class Button(Widget, can_focus=True):
         self.variant = variant
         self.action = action
         self.compact = compact
+        self.flat = flat
         self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
 
@@ -252,6 +326,10 @@ class Button(Widget, can_focus=True):
     def watch_variant(self, old_variant: str, variant: str):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
+
+    def watch_flat(self, flat: bool) -> None:
+        self.set_class(flat, "-style-flat")
+        self.set_class(not flat, "-style-default")
 
     def validate_label(self, label: ContentText) -> Content:
         """Parse markup for self.label"""
@@ -314,16 +392,17 @@ class Button(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        flat: bool = False,
     ) -> Button:
         """Utility constructor for creating a success Button variant.
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
+            flat: Enable alternative flat look buttons.
 
         Returns:
             A [`Button`][textual.widgets.Button] widget of the 'success'
@@ -336,6 +415,7 @@ class Button(Widget, can_focus=True):
             id=id,
             classes=classes,
             disabled=disabled,
+            flat=flat,
         )
 
     @classmethod
@@ -347,16 +427,17 @@ class Button(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        flat: bool = False,
     ) -> Button:
         """Utility constructor for creating a warning Button variant.
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
+            flat: Enable alternative flat look buttons.
 
         Returns:
             A [`Button`][textual.widgets.Button] widget of the 'warning'
@@ -369,6 +450,7 @@ class Button(Widget, can_focus=True):
             id=id,
             classes=classes,
             disabled=disabled,
+            flat=flat,
         )
 
     @classmethod
@@ -380,16 +462,17 @@ class Button(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        flat: bool = False,
     ) -> Button:
         """Utility constructor for creating an error Button variant.
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
+            flat: Enable alternative flat look buttons.
 
         Returns:
             A [`Button`][textual.widgets.Button] widget of the 'error'
@@ -402,4 +485,5 @@ class Button(Widget, can_focus=True):
             id=id,
             classes=classes,
             disabled=disabled,
+            flat=flat,
         )

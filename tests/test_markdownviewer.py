@@ -5,6 +5,7 @@ from rich.text import Text
 
 import textual.widgets._markdown as MD
 from textual.app import App, ComposeResult
+from textual.content import Content
 from textual.geometry import Offset
 from textual.widgets import Markdown, MarkdownViewer, Tree
 
@@ -81,7 +82,8 @@ async def test_headings_that_look_like_they_contain_markup(text: str) -> None:
 
     document = f"# {text}"
     async with MarkdownStringViewerApp(document).run_test() as pilot:
-        assert pilot.app.query_one(MD.MarkdownH1)._text == Text(text)
+        await pilot.pause()
+        assert pilot.app.query_one(MD.MarkdownH1)._content == Content(text)
         toc_tree = pilot.app.query_one(MD.MarkdownTableOfContents).query_one(Tree)
         # The toc label looks like "I {text}" but the I is styled so we drop it.
         toc_label = toc_tree.root.children[0].label

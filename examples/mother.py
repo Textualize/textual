@@ -74,6 +74,7 @@ class MotherApp(App):
     def on_mount(self) -> None:
         """You might want to change the model if you don't have access to it."""
         self.model = llm.get_model("gpt-4o")
+        self.query_one("#chat-view").anchor()
 
     @on(Input.Submitted)
     async def on_input(self, event: Input.Submitted) -> None:
@@ -82,8 +83,6 @@ class MotherApp(App):
         event.input.clear()
         await chat_view.mount(Prompt(event.value))
         await chat_view.mount(response := Response())
-        response.anchor()
-
         self.send_prompt(event.value, response)
 
     @work(thread=True)

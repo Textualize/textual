@@ -66,7 +66,7 @@ class DirectoryTree(Tree[DirEntry]):
         }
 
         & > .directory-tree--hidden {
-            color: $text 50%;
+            text-style: dim;
         }
 
         &:ansi {
@@ -431,7 +431,7 @@ class DirectoryTree(Tree[DirEntry]):
 
         if node_label.plain.startswith("."):
             node_label.stylize_before(
-                self.get_component_rich_style("directory-tree--hidden")
+                self.get_component_rich_style("directory-tree--hidden", partial=True)
             )
 
         text = Text.assemble(prefix, node_label)
@@ -525,7 +525,7 @@ class DirectoryTree(Tree[DirEntry]):
             key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 
-    @work(exclusive=True)
+    @work()
     async def _loader(self) -> None:
         """Background loading queue processor."""
         worker = get_current_worker()

@@ -3,7 +3,7 @@ from pytest import approx
 from rich.console import Console
 from rich.text import Text
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.color import Gradient
 from textual.css.query import NoMatches
 from textual.renderables.bar import _apply_gradient
@@ -181,3 +181,25 @@ def test_apply_gradient():
     _apply_gradient(text, gradient, 1)
     console = Console()
     assert text.get_style_at_offset(console, 0).color.triplet == (255, 0, 0)
+
+
+async def test_progress_bar_width_1fr(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/6127
+
+    Just shouldn't crash...
+    """
+
+    class WideBarApp(App[None]):
+
+        CSS = """
+        ProgressBar Bar {
+            width: 1fr;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield ProgressBar()
+
+    app = WideBarApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()

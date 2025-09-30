@@ -36,12 +36,12 @@ from textual._loop import loop_last
 from textual.geometry import NULL_SPACING, Offset, Region, Size, Spacing
 from textual.map_geometry import MapGeometry
 from textual.strip import Strip, StripRenderable
+from textual.widget import Widget
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
     from textual.screen import Screen
-    from textual.widget import Widget
 
 
 class ReflowResult(NamedTuple):
@@ -597,13 +597,25 @@ class Compositor:
 
                 if widget.is_container:
                     # Arrange the layout
-                    arrange_result = widget._arrange(child_region.size)
+                    arrange_result = widget.arrange(child_region.size)
 
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
                     # Get the region that will be updated
                     sub_clip = clip.intersection(child_region)
+
+                    if widget._anchored and not widget._anchor_released:
+                        new_scroll_y = (
+                            arrange_result.spatial_map.total_region.bottom
+                            - (
+                                widget.container_size.height
+                                - widget.scrollbar_size_horizontal
+                            )
+                        )
+                        widget.set_reactive(Widget.scroll_y, new_scroll_y)
+                        widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
+                        widget.vertical_scrollbar._reactive_position = new_scroll_y
 
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
@@ -836,9 +848,10 @@ class Compositor:
             Sequence of (WIDGET, REGION) tuples.
         """
         contains = Region.contains
-        for widget, cropped_region, region in self.layers_visible[y]:
-            if contains(cropped_region, x, y) and widget.visible:
-                yield widget, region
+        if len(self.layers_visible) > y >= 0:
+            for widget, cropped_region, region in self.layers_visible[y]:
+                if contains(cropped_region, x, y) and widget.visible:
+                    yield widget, region
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Style at the given cell or Style.null()
@@ -1120,6 +1133,8 @@ class Compositor:
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
         if simplify:
+            # Simplify is done when exporting to SVG
+            # It doesn't make things faster
             render_strips = [
                 Strip.join(chop.values()).simplify().discard_meta() for chop in chops
             ]

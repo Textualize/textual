@@ -60,7 +60,7 @@ async def test_value_assign_to_blank():
         assert select.is_blank()
 
 
-async def test_initial_value_is_picked_if_allow_blank_is_false():
+async def test_default_value_is_picked_if_allow_blank_is_false():
     """The initial value should be picked by default if allow_blank=False."""
 
     class SelectApp(App[None]):

@@ -113,12 +113,14 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         ALLOW_SELECTOR_MATCH = {"item"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
-        def __init__(self, list_view: ListView, item: ListItem) -> None:
+        def __init__(self, list_view: ListView, item: ListItem, index: int) -> None:
             super().__init__()
             self.list_view: ListView = list_view
             """The view that contains the item selected."""
             self.item: ListItem = item
             """The selected item."""
+            self.index = index
+            """Index of the selected item."""
 
         @property
         def control(self) -> ListView:
@@ -356,7 +358,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         selected_child = self.highlighted_child
         if selected_child is None:
             return
-        self.post_message(self.Selected(self, selected_child))
+        self.post_message(self.Selected(self, selected_child, self.index))
 
     def action_cursor_down(self) -> None:
         """Highlight the next item in the list."""
@@ -387,7 +389,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         event.stop()
         self.focus()
         self.index = self._nodes.index(event.item)
-        self.post_message(self.Selected(self, event.item))
+        self.post_message(self.Selected(self, event.item, self.index))
 
     def __len__(self) -> int:
         """Compute the length (in number of items) of the list view."""

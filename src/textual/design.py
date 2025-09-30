@@ -251,7 +251,7 @@ class ColorSystem:
             "block-cursor-blurred-text-style", "none"
         )
         colors["block-hover-background"] = get(
-            "block-hover-background", boost.with_alpha(0.05).hex
+            "block-hover-background", boost.with_alpha(0.1).hex
         )
 
         # The border color for focused widgets which have a border.

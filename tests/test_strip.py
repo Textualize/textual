@@ -1,4 +1,5 @@
 import pytest
+from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
 
@@ -196,3 +197,9 @@ def test_text():
     assert Strip([]).text == ""
     assert Strip([Segment("foo")]).text == "foo"
     assert Strip([Segment("foo"), Segment("bar")]).text == "foobar"
+
+
+def test_render_with_missing_style() -> None:
+    """Test that render with segments that omit a style still work."""
+    strip = Strip([Segment("Hello")])
+    assert strip.render(Console()) == "Hello"
