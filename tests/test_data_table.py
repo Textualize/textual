@@ -299,6 +299,25 @@ async def test_add_columns():
         assert len(table.columns) == 3
 
 
+async def test_add_columns_with_tuples():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_keys = table.add_columns(
+            ("Column 1", "col1"), "Column 2", ("Column 3", "col3")
+        )
+        assert len(column_keys) == 3
+        assert len(table.columns) == 3
+
+        assert column_keys[0] == "col1"
+        assert column_keys[1] != "col1"
+        assert column_keys[2] == "col3"
+
+        assert table.columns[column_keys[0]].label.plain == "Column 1"
+        assert table.columns[column_keys[1]].label.plain == "Column 2"
+        assert table.columns[column_keys[2]].label.plain == "Column 3"
+
+
 async def test_add_columns_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():

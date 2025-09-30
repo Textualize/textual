@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `compact` to Binding.Group https://github.com/Textualize/textual/pull/6132
 - Added `Screen.get_hover_widgets_at` https://github.com/Textualize/textual/pull/6132
 - Added `Content.wrap` https://github.com/Textualize/textual/pull/6138
+- Added support to allow support for manual keys in add_columns as well. https://github.com/Textualize/textual/pull/5923
 
 ### Fixed
 
