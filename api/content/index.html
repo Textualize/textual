@@ -6915,6 +6915,48 @@ window.onload = async (event) => {
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;wrap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" wrap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap(width)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;width
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap(align)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;align
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap(overflow)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;overflow
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -9632,6 +9674,48 @@ window.onload = async (event) => {
   <a href="#textual.content.Content.truncate(pad)" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;pad
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;wrap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" wrap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap(width)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;width
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap(align)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;align
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.content.Content.wrap(overflow)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;overflow
     </span>
   </a>
   
@@ -12898,6 +12982,113 @@ nor its hash.</p>
             <td>
               <div class="doc-md-description">
                 <p>New Content.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.content.Content.wrap" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">wrap</span>
+
+
+<a href="#textual.content.Content.wrap" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">wrap</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="width (textual.content.Content.wrap(width))" href="#textual.content.Content.wrap(width)">width</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="align (textual.content.Content.wrap(align))" href="#textual.content.Content.wrap(align)">align</a></span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="overflow (textual.content.Content.wrap(overflow))" href="#textual.content.Content.wrap(overflow)">overflow</a></span><span class="o">=</span><span class="s1">&#39;fold&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Wrap text so that it fits within the given dimensions.</p>
+<p>Note that Textual will automatically wrap Content in widgets.
+This method is only required if you need some additional processing to lines.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.content.Content.wrap(width)" class="doc doc-heading doc-heading-parameter">                  <code>width</code>
+<a href="#textual.content.Content.wrap(width)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Maximum width of the line (in cells).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.content.Content.wrap(align)" class="doc doc-heading doc-heading-parameter">                  <code>align</code>
+<a href="#textual.content.Content.wrap(align)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><span title="textual.css.types.TextAlign">TextAlign</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Alignment of lines.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;left&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.content.Content.wrap(overflow)" class="doc doc-heading doc-heading-parameter">                  <code>overflow</code>
+<a href="#textual.content.Content.wrap(overflow)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><span title="textual.css.types.TextOverflow">TextOverflow</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Overflow of lines (what happens when the text doesn't fit).</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;fold&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="            Content (textual.content.Content)" href="#textual.content.Content">Content</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of Content objects, one per line.</p>
               </div>
             </td>
           </tr>

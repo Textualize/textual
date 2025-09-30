@@ -9342,6 +9342,30 @@ scheduled (may occur if the message pump was closed or closing).</p>
 <p>This method should only be called from a task other than the one running this widget.
 If called from the same task, it will return immediately to avoid blocking the event loop.</p>
 
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if waiting for refresh was successful, or <code>False</code> if the call was a null-op
+due to calling it within the node's own task.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
     </div>
 
 </div>

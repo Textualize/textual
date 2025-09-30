@@ -5671,9 +5671,9 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.widgets.DataTable.add_columns(*labels)" class="md-nav__link">
+  <a href="#textual.widgets.DataTable.add_columns(*columns)" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;*labels
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;*columns
     </span>
   </a>
   
@@ -10371,9 +10371,9 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.widgets.DataTable.add_columns(*labels)" class="md-nav__link">
+  <a href="#textual.widgets.DataTable.add_columns(*columns)" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;*labels
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;*columns
     </span>
   </a>
   
@@ -15929,12 +15929,12 @@ after being added due to sorting/insertion/deletion of other columns).</p>
 
 
 <a href="#textual.widgets.DataTable.add_columns" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_columns</span><span class="p">(</span><span class="o">*</span><span class="n"><a class="autorefs autorefs-internal" title="*labels (textual.widgets.DataTable.add_columns(*labels))" href="#textual.widgets.DataTable.add_columns(*labels)">labels</a></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_columns</span><span class="p">(</span><span class="o">*</span><span class="n"><a class="autorefs autorefs-internal" title="*columns (textual.widgets.DataTable.add_columns(*columns))" href="#textual.widgets.DataTable.add_columns(*columns)">columns</a></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Add a number of columns.</p>
+        <p>Add multiple columns to the DataTable.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -15950,14 +15950,16 @@ after being added due to sorting/insertion/deletion of other columns).</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-<h3 id="textual.widgets.DataTable.add_columns(*labels)" class="doc doc-heading doc-heading-parameter">                  <code>*labels</code>
-<a href="#textual.widgets.DataTable.add_columns(*labels)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
+<h3 id="textual.widgets.DataTable.add_columns(*columns)" class="doc doc-heading doc-heading-parameter">                  <code>*columns</code>
+<a href="#textual.widgets.DataTable.add_columns(*columns)" class="headerlink" title="Permanent link">&para;</a></h3>            </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="rich.text.TextType" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.TextType">TextType</a></code>
+                  <code><a class="autorefs autorefs-external" title="typing.Union" href="https://docs.python.org/3/library/typing.html#typing.Union">Union</a>[<a class="autorefs autorefs-external" title="rich.text.TextType" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.TextType">TextType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" title="rich.text.TextType" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.TextType">TextType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Column headers.</p>
+                <p>Column specifications. Each can be either:
+- A string or Text object (label only, auto-generated key)
+- A tuple of (label, key) for manual key control</p>
               </div>
             </td>
             <td>
@@ -15991,6 +15993,19 @@ these keys are used.</p>
           </tr>
       </tbody>
     </table>
+
+
+<p><span class="doc-section-title">Examples:</span></p>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Add columns with auto-generated keys</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">keys</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Age&quot;</span><span class="p">,</span> <span class="s2">&quot;City&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Add columns with manual keys</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">keys</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;name_col&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">(</span><span class="s2">&quot;Age&quot;</span><span class="p">,</span> <span class="s2">&quot;age_col&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">&quot;City&quot;</span>  <span class="c1"># Mixed with auto-generated key</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
+</code></pre></div>
 
     </div>
 
