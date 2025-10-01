@@ -16,6 +16,7 @@ from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER, get_language
+from textual.actions import SkipAction
 from textual.cache import LRUCache
 from textual.color import Color
 from textual.content import Content
@@ -2513,6 +2514,8 @@ TextArea {
         selected_text = self.selected_text
         if selected_text:
             self.app.copy_to_clipboard(selected_text)
+        else:
+            raise SkipAction()
 
     def action_paste(self) -> None:
         """Paste from local clipboard."""
