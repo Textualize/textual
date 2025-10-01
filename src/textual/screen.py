@@ -924,7 +924,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if selected_text_in_widget is not None:
                 widget_text.extend(selected_text_in_widget)
 
-        selected_text = "".join(widget_text)
+        selected_text = "".join(widget_text).rstrip("\n")
         return selected_text
 
     def action_copy_text(self) -> None:
