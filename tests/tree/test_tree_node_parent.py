@@ -1,7 +1,7 @@
 from textual.widgets import Tree
 
 
-def test_tree_node_parent() -> None:
+async def test_tree_node_parent() -> None:
     """It should be possible to access a TreeNode's parent."""
     tree = Tree[None]("Anakin")
     child = tree.root.add("Leia")
