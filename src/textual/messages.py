@@ -148,11 +148,25 @@ class TerminalColorTheme(Message):
     """
 
     def __init__(self, theme: TerminalLightDarkMode) -> None:
+        """Initialize message.
+
+        Args:
+            theme: set to "dark" or "light" if known, None otherwise
+        """
         self.theme = theme
         super().__init__()
 
     @classmethod
     def from_setting_parameter(cls, setting_parameter: int) -> TerminalColorTheme:
+        """Construct the message from the setting parameter.
+
+        Args:
+            setting_parameter: Seting parameter from stdin.
+
+        Returns:
+            New TerminalColorTheme instance.
+        """
+
         if setting_parameter == 1:
             return TerminalColorTheme("dark")
         elif setting_parameter == 2:
