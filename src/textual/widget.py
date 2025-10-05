@@ -3430,7 +3430,11 @@ class Widget(DOMNode):
             return False
 
         while isinstance(widget.parent, Widget) and widget is not self:
+            if not region:
+                break
+
             container = widget.parent
+
             if widget.styles.dock != "none":
                 scroll_offset = Offset(0, 0)
             else:
@@ -3454,13 +3458,11 @@ class Widget(DOMNode):
 
             # Adjust the region by the amount we just scrolled it, and convert to
             # its parent's virtual coordinate system.
-
             region = (
                 (
                     region.translate(-scroll_offset)
                     .translate(container.styles.margin.top_left)
                     .translate(container.styles.border.spacing.top_left)
-                    .translate(-widget.scroll_offset)
                     .translate(container.virtual_region_with_margin.offset)
                 )
                 .grow(container.styles.margin)
