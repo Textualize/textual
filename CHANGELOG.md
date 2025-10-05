@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
+
 ## [6.2.1] - 2025-10-01
 
 - Fix inability to copy text outside of an input/textarea when it was focused https://github.com/Textualize/textual/pull/6148

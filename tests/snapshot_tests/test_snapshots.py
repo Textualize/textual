@@ -4690,3 +4690,24 @@ def test_collapsible_focus_children(snap_compare) -> None:
                 yield Button("Hello")
 
     assert snap_compare(CollapseApp(), press=["enter", "enter", "tab"])
+
+
+def test_scrollbar_visibility(snap_compare) -> None:
+    """Test scrollbar-visibility rule
+
+    You should see a screen of text that overflows, but there should be *no* scrollbar.
+    """
+
+    class ScrollbarApp(App):
+
+        CSS = """
+        Screen {
+            overflow: auto;
+            scrollbar-visibility: hidden;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello, World! 293487 " * 200)
+
+    assert snap_compare(ScrollbarApp())
