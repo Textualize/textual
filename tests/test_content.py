@@ -136,7 +136,7 @@ def test_add() -> None:
     assert content.spans == [Span(0, 3, "red"), Span(4, 7, "blue")]
     assert content.cell_length == 7
 
-def test_radd() -> NOne
+def test_radd() -> None:
     """Test reverse addition."""
     assert "foo" + Content("bar") == Content("foobar")
 
