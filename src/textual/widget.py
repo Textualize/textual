@@ -3421,7 +3421,6 @@ class Widget(DOMNode):
             `True` if any scrolling has occurred in any descendant, otherwise `False`.
         """
         # Grow the region by the margin so to keep the margin in view.
-
         region = widget.virtual_region_with_margin
         scrolled = False
 
