@@ -52,6 +52,7 @@ from textual.css.constants import (
     VALID_OVERLAY,
     VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
+    VALID_SCROLLBAR_VISIBILITY,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
     VALID_TEXT_OVERFLOW,
@@ -76,6 +77,7 @@ from textual.css.types import (
     Display,
     EdgeType,
     Overflow,
+    ScrollbarVisibility,
     TextOverflow,
     TextWrap,
     Visibility,
@@ -767,6 +769,13 @@ class StylesBuilder:
     process_scrollbar_background = process_color
     process_scrollbar_background_hover = process_color
     process_scrollbar_background_active = process_color
+
+    def process_scrollbar_visibility(self, name: str, tokens: list[Token]) -> None:
+        """Process scrollbar visibility rules."""
+        self.styles._rules["scrollbar_visibility"] = cast(
+            ScrollbarVisibility,
+            self._process_enum(name, tokens, VALID_SCROLLBAR_VISIBILITY),
+        )
 
     process_link_color = process_color
     process_link_background = process_color

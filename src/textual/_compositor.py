@@ -694,7 +694,7 @@ class Compositor:
                     if (
                         widget.show_vertical_scrollbar
                         or widget.show_horizontal_scrollbar
-                    ):
+                    ) and styles.scrollbar_visibility == "visible":
                         for chrome_widget, chrome_region in widget._arrange_scrollbars(
                             container_region
                         ):

@@ -346,7 +346,7 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
-    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
+    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True, repaint=False)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
 
     has_focus: Reactive[bool] = Reactive(False, repaint=False)
@@ -3421,6 +3421,7 @@ class Widget(DOMNode):
             `True` if any scrolling has occurred in any descendant, otherwise `False`.
         """
         # Grow the region by the margin so to keep the margin in view.
+
         region = widget.virtual_region_with_margin
         scrolled = False
 
@@ -3430,7 +3431,11 @@ class Widget(DOMNode):
             return False
 
         while isinstance(widget.parent, Widget) and widget is not self:
+            if not region:
+                break
+
             container = widget.parent
+
             if widget.styles.dock != "none":
                 scroll_offset = Offset(0, 0)
             else:
@@ -3454,13 +3459,11 @@ class Widget(DOMNode):
 
             # Adjust the region by the amount we just scrolled it, and convert to
             # its parent's virtual coordinate system.
-
             region = (
                 (
                     region.translate(-scroll_offset)
                     .translate(container.styles.margin.top_left)
                     .translate(container.styles.border.spacing.top_left)
-                    .translate(-widget.scroll_offset)
                     .translate(container.virtual_region_with_margin.offset)
                 )
                 .grow(container.styles.margin)
