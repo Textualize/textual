@@ -11,15 +11,19 @@ if TYPE_CHECKING:
     from textual.geometry import Spacing
     from textual.widget import Widget
 
+from textual._profile import timer
+
 
 class VerticalLayout(Layout):
     """Used to layout Widgets vertically on screen, from top to bottom."""
 
     name = "vertical"
 
+    @timer("Vertical.arrange")
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
+        print(parent, size, greedy, len(children))
         parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
@@ -50,15 +54,16 @@ class VerticalLayout(Layout):
         else:
             resolve_margin = Size(0, 0)
 
-        box_models = resolve_box_models(
-            [styles.height for styles in child_styles],
-            children,
-            size,
-            parent.app.size,
-            resolve_margin,
-            resolve_dimension="height",
-            greedy=greedy,
-        )
+        with timer("resolve_box_models"):
+            box_models = resolve_box_models(
+                [styles.height for styles in child_styles],
+                children,
+                size,
+                parent.app.size,
+                resolve_margin,
+                resolve_dimension="height",
+                greedy=greedy,
+            )
 
         margins = [
             (

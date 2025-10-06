@@ -321,6 +321,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self._css_update_count = -1
         """Track updates to CSS."""
 
+        self._layout_widgets: set[Widget] = set()
+        """Widgets whose layout may have changed."""
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -486,11 +489,12 @@ class Screen(Generic[ScreenResultType], Widget):
 
         return bindings_map
 
-    def arrange(self, size: Size) -> DockArrangeResult:
+    def arrange(self, size: Size, _optimal: bool = False) -> DockArrangeResult:
         """Arrange children.
 
         Args:
             size: Size of container.
+            optimal: Ignored on screen.
 
         Returns:
             Widget locations.
@@ -1270,7 +1274,7 @@ class Screen(Generic[ScreenResultType], Widget):
         ResizeEvent = events.Resize
 
         try:
-            if scroll:
+            if scroll and not self._layout_widgets:
                 exposed_widgets = self._compositor.reflow_visible(self, size)
                 if exposed_widgets:
                     layers = self._compositor.layers
@@ -1295,6 +1299,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
             else:
                 hidden, shown, resized = self._compositor.reflow(self, size)
+                self._layout_widgets.clear()
                 Hide = events.Hide
                 Show = events.Show
 
@@ -1348,8 +1353,10 @@ class Screen(Generic[ScreenResultType], Widget):
     async def _on_layout(self, message: messages.Layout) -> None:
         message.stop()
         message.prevent_default()
-        self._layout_required = True
-        self.check_idle()
+        if message.widget not in self._layout_widgets:
+            self._layout_widgets.add(message.widget)
+            self._layout_required = True
+            self.check_idle()
 
     async def _on_update_scroll(self, message: messages.UpdateScroll) -> None:
         message.stop()

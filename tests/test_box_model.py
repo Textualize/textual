@@ -133,7 +133,6 @@ def test_height():
     styles.margin = 2
 
     box_model = widget._get_box_model(Size(60, 20), Size(80, 24), one, one)
-    print(box_model)
     assert box_model == BoxModel(Fraction(56), Fraction(10), Spacing(2, 2, 2, 2))
 
     styles.margin = 1, 2, 3, 4
