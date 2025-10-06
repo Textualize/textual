@@ -54,16 +54,15 @@ class VerticalLayout(Layout):
         else:
             resolve_margin = Size(0, 0)
 
-        with timer("resolve_box_models"):
-            box_models = resolve_box_models(
-                [styles.height for styles in child_styles],
-                children,
-                size,
-                parent.app.size,
-                resolve_margin,
-                resolve_dimension="height",
-                greedy=greedy,
-            )
+        box_models = resolve_box_models(
+            [styles.height for styles in child_styles],
+            children,
+            size,
+            parent.app.size,
+            resolve_margin,
+            resolve_dimension="height",
+            greedy=greedy,
+        )
 
         margins = [
             (

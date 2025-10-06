@@ -1650,8 +1650,8 @@ class Widget(DOMNode):
             viewport,
             width_fraction,
             height_fraction,
-            greedy,
             constrain_width,
+            greedy,
             self._layout_updates,
             self.styles._cache_key,
         )
