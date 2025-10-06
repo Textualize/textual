@@ -3627,7 +3627,7 @@ class Widget(DOMNode):
         """
         parent = self.parent
         if isinstance(parent, Widget):
-            if self.region:
+            if self._size:
                 self.screen.scroll_to_widget(
                     self,
                     animate=animate,
