@@ -53,6 +53,7 @@ def arrange(
     Returns:
         Widget arrangement information.
     """
+    print("ARRANGE", widget)
     placements: list[WidgetPlacement] = []
     scroll_spacing = NULL_SPACING
     styles = widget.styles
