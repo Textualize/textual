@@ -46,7 +46,7 @@ target-version = "py38"
 [tool.poetry.dependencies]
 python = "^3.8.1"
 markdown-it-py = { extras = ["linkify"], version = ">=2.1.0" }
-mdit-py-plugins ">=0.5.0"
+mdit-py-plugins = "*"
 rich = ">=13.3.3"
 #rich = {path="../rich", develop=true}
 typing-extensions = "^4.4.0"
