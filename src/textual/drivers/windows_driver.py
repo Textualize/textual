@@ -95,7 +95,6 @@ class WindowsDriver(Driver):
         self.write("\x1b[?1049h")  # Enable alt screen
         self._enable_mouse_support()
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1003h")
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
         self.flush()
         self._enable_bracketed_paste()
