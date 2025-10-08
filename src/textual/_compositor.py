@@ -1248,8 +1248,7 @@ class Compositor:
             offset = region.offset
             intersection = clip.intersection
             for dirty_region in widget._exchange_repaint_regions():
-                update_region = intersection(dirty_region.translate(offset))
-                if update_region:
+                if update_region := intersection(dirty_region.translate(offset)):
                     add_region(update_region)
 
         self._dirty_regions.update(regions)

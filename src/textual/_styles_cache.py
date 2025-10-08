@@ -104,7 +104,6 @@ class StylesCache:
         Returns:
             Rendered lines.
         """
-
         border_title = widget._border_title
         border_subtitle = widget._border_subtitle
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import zip_longest
 from typing import TYPE_CHECKING
 
 from textual.geometry import NULL_OFFSET, Region, Size
@@ -30,6 +31,11 @@ class StreamLayout(Layout):
 
     name = "stream"
 
+    def __init__(self) -> None:
+        self._cached_placements: list[WidgetPlacement] | None = None
+        self._cached_width = 0
+        super().__init__()
+
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
@@ -37,6 +43,12 @@ class StreamLayout(Layout):
         if not children:
             return []
         viewport = parent.app.viewport_size
+
+        if size.width != self._cached_width:
+            self._cached_placements = None
+        previous_results = self._cached_placements or []
+
+        layout_widgets = parent.screen._layout_widgets.get(parent, [])
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
@@ -48,7 +60,20 @@ class StreamLayout(Layout):
         previous_margin = first_child_styles.margin.top
         null_offset = NULL_OFFSET
 
-        for widget in children:
+        pre_populate = bool(previous_results and layout_widgets)
+        for widget, placement in zip_longest(children, previous_results):
+            if pre_populate and placement is not None and widget is placement.widget:
+                if widget in layout_widgets:
+                    pre_populate = False
+                else:
+                    placements.append(placement)
+                    y = placement.region.bottom
+                    styles = widget.styles._base_styles
+                    previous_margin = styles.margin.bottom
+                    continue
+            if widget is None:
+                break
+
             styles = widget.styles._base_styles
             margin = styles.margin
             gutter_width, gutter_height = styles.gutter.totals
@@ -85,6 +110,8 @@ class StreamLayout(Layout):
             )
             y += height
 
+        self._cached_width = size.width
+        self._cached_placements = placements
         return placements
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:

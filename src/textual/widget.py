@@ -60,7 +60,7 @@ from textual._types import AnimationLevel
 from textual.actions import SkipAction
 from textual.await_remove import AwaitRemove
 from textual.box_model import BoxModel
-from textual.cache import FIFOCache
+from textual.cache import FIFOCache, LRUCache
 from textual.color import Color
 from textual.compose import compose
 from textual.content import Content, ContentType
@@ -427,6 +427,7 @@ class Widget(DOMNode):
         self._size = _null_size
         self._container_size = _null_size
         self._layout_required = False
+        self._layout_updates = 0
         self._repaint_required = False
         self._scroll_required = False
         self._recompose_required = False
@@ -454,6 +455,8 @@ class Widget(DOMNode):
         self._dirty_regions: set[Region] = set()
         # Regions which need to be transferred from cache to screen
         self._repaint_regions: set[Region] = set()
+
+        self._box_model_cache: LRUCache[object, BoxModel] = LRUCache(16)
 
         # Cache the auto content dimensions
         self._content_width_cache: tuple[object, int] = (None, 0)
@@ -1642,6 +1645,19 @@ class Widget(DOMNode):
         Returns:
             The size and margin for this widget.
         """
+        cache_key = (
+            container,
+            viewport,
+            width_fraction,
+            height_fraction,
+            constrain_width,
+            greedy,
+            self._layout_updates,
+            self.styles._cache_key,
+        )
+        if cached_box_model := self._box_model_cache.get(cache_key):
+            return cached_box_model
+
         styles = self.styles
         is_border_box = styles.box_sizing == "border-box"
         gutter = styles.gutter  # Padding plus border
@@ -1750,6 +1766,7 @@ class Widget(DOMNode):
         model = BoxModel(
             content_width + gutter.width, content_height + gutter.height, margin
         )
+        self._box_model_cache[cache_key] = model
         return model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -3610,7 +3627,7 @@ class Widget(DOMNode):
         """
         parent = self.parent
         if isinstance(parent, Widget):
-            if self.region:
+            if self._size:
                 self.screen.scroll_to_widget(
                     self,
                     animate=animate,
@@ -4200,14 +4217,9 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-        if layout:
+        if layout and not self._layout_required:
             self._layout_required = True
-            for ancestor in self.ancestors:
-                if not isinstance(ancestor, Widget):
-                    break
-                ancestor._clear_arrangement_cache()
-                if not ancestor.styles.auto_dimensions:
-                    break
+            self._layout_updates += 1
 
         if recompose:
             self._recompose_required = True
@@ -4422,7 +4434,14 @@ class Widget(DOMNode):
                         screen.post_message(messages.Update(self))
                 if self._layout_required:
                     self._layout_required = False
-                    screen.post_message(messages.Layout())
+                    for ancestor in self.ancestors:
+                        if not isinstance(ancestor, Widget):
+                            break
+                        ancestor._clear_arrangement_cache()
+                        ancestor._layout_updates += 1
+                        if not ancestor.styles.auto_dimensions:
+                            break
+                    screen.post_message(messages.Layout(self))
 
     def focus(self, scroll_visible: bool = True) -> Self:
         """Give focus to this widget.
