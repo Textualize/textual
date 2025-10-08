@@ -4016,10 +4016,10 @@ class Widget(DOMNode):
             if self._size != size:
                 self._set_dirty()
             self._size = size
-            # if layout:
-            #     self.virtual_size = virtual_size
-            # else:
-            self.set_reactive(Widget.virtual_size, virtual_size)
+            if layout:
+                self.virtual_size = virtual_size
+            else:
+                self.set_reactive(Widget.virtual_size, virtual_size)
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
