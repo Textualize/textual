@@ -4220,12 +4220,6 @@ class Widget(DOMNode):
         if layout and not self._layout_required:
             self._layout_required = True
             self._layout_updates += 1
-            # for ancestor in self.ancestors:
-            #     if not isinstance(ancestor, Widget):
-            #         break
-            #     ancestor._clear_arrangement_cache()
-            #     if not ancestor.styles.auto_dimensions:
-            #         break
 
         if recompose:
             self._recompose_required = True
