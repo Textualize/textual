@@ -52,7 +52,7 @@ class HighlightTheme:
     }
 
 
-def guess_language(code: str, path: str) -> str:
+def guess_language(code: str, path: str | None) -> str:
     """Guess the language based on the code and path.
     The result may be used in the [highlight][textual.highlight.highlight] function.
 
