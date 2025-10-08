@@ -362,8 +362,6 @@ class Reactive(Generic[ReactiveType]):
 
             # Refresh according to descriptor flags
             if self._layout or self._repaint or self._recompose:
-                if self._layout:
-                    print(self, "layout", obj)
                 obj.refresh(
                     repaint=self._repaint,
                     layout=self._layout,

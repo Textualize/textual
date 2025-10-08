@@ -321,7 +321,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._css_update_count = -1
         """Track updates to CSS."""
 
-        self._layout_widgets: set[Widget] = set()
+        self._layout_widgets: dict[DOMNode, set[Widget]] = {}
         """Widgets whose layout may have changed."""
 
     @property
@@ -1353,8 +1353,22 @@ class Screen(Generic[ScreenResultType], Widget):
     async def _on_layout(self, message: messages.Layout) -> None:
         message.stop()
         message.prevent_default()
-        if message.widget not in self._layout_widgets:
-            self._layout_widgets.add(message.widget)
+
+        layout_required = True
+        widget: DOMNode = message.widget
+        for ancestor in message.widget.ancestors:
+            if not isinstance(ancestor, Widget):
+                break
+            if ancestor not in self._layout_widgets:
+                self._layout_widgets[ancestor] = set()
+            # assert isinstance(widget, Widget)
+            self._layout_widgets[ancestor].add(widget)
+            layout_required = True
+            if not ancestor.styles.auto_dimensions:
+                break
+            widget = ancestor
+
+        if layout_required:
             self._layout_required = True
             self.check_idle()
 
