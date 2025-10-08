@@ -32,7 +32,9 @@ class StreamLayout(Layout):
     name = "stream"
 
     def __init__(self) -> None:
-        self._cache: dict[object, list[WidgetPlacement]] = {}
+        self._cached_placements: list[WidgetPlacement] | None = None
+        self._cached_width = 0
+        super().__init__()
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
@@ -42,8 +44,10 @@ class StreamLayout(Layout):
             return []
         viewport = parent.app.viewport_size
 
-        cache_key = (size, viewport)
-        previous_results = self._cache.get(cache_key, None) or []
+        if size.width != self._cached_width:
+            self._cached_placements = None
+        previous_results = self._cached_placements or []
+
         layout_widgets = parent.screen._layout_widgets.get(parent, [])
 
         _Region = Region
@@ -58,12 +62,14 @@ class StreamLayout(Layout):
 
         pre_populate = bool(previous_results and layout_widgets)
         for widget, placement in zip_longest(children, previous_results):
-            if pre_populate and placement is not None and widget == placement.widget:
+            if pre_populate and placement is not None and widget is placement.widget:
                 if widget in layout_widgets:
                     pre_populate = False
                 else:
                     placements.append(placement)
                     y = placement.region.bottom
+                    styles = widget.styles._base_styles
+                    previous_margin = styles.margin.bottom
                     continue
             if widget is None:
                 break
@@ -104,7 +110,8 @@ class StreamLayout(Layout):
             )
             y += height
 
-        self._cache[cache_key] = placements
+        self._cached_width = size.width
+        self._cached_placements = placements
         return placements
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:

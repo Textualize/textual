@@ -64,10 +64,8 @@ def arrange(
 
     for widgets in layers.values():
         # Partition widgets into split widgets and non-split widgets
-
         non_split_widgets, split_widgets = partition(_get_split, widgets)
         if split_widgets:
-
             _split_placements, dock_region = _arrange_split_widgets(
                 split_widgets, size, viewport
             )
