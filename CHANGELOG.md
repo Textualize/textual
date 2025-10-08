@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
 
+### Fixed
+
+- Fixed highlight not auto-detecting lexer https://github.com/Textualize/textual/pull/6167
+
 ## [6.2.1] - 2025-10-01
 
 - Fix inability to copy text outside of an input/textarea when it was focused https://github.com/Textualize/textual/pull/6148
