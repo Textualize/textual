@@ -1368,7 +1368,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 break
             widget = ancestor
 
-        if layout_required:
+        if layout_required and not self._layout_required:
             self._layout_required = True
             self.check_idle()
 
