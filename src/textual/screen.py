@@ -1354,16 +1354,16 @@ class Screen(Generic[ScreenResultType], Widget):
         message.stop()
         message.prevent_default()
 
-        layout_required = True
+        layout_required = False
         widget: DOMNode = message.widget
         for ancestor in message.widget.ancestors:
             if not isinstance(ancestor, Widget):
                 break
             if ancestor not in self._layout_widgets:
                 self._layout_widgets[ancestor] = set()
-            # assert isinstance(widget, Widget)
-            self._layout_widgets[ancestor].add(widget)
-            layout_required = True
+            if widget not in self._layout_widgets:
+                self._layout_widgets[ancestor].add(widget)
+                layout_required = True
             if not ancestor.styles.auto_dimensions:
                 break
             widget = ancestor
