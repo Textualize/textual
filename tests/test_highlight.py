@@ -19,9 +19,13 @@ def test_highlight() -> None:
 @pytest.mark.parametrize(
     "code,path,language",
     [
+        ("", "", "default"),
+        ("# Don't matter", "foo.tcss", "scss"),
         ("import this", "foo.py", "python"),
         ("<xml>", "foo.xml", "xml"),
         ("{}", "data.json", "json"),
+        ("#! python", "", "python"),
+        ("", "foo.py", "python"),
     ],
 )
 def test_guess_language(code: str, path: str, language: str) -> None:
