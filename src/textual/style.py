@@ -472,7 +472,6 @@ class Style:
         Returns:
             A Rich Style object.
         """
-        print(self)
         (
             background,
             foreground,
