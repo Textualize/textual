@@ -114,15 +114,23 @@ class Sparkline(Generic[T]):
 
                 if bar_index < current_bar_part_low:
                     bar = " "
+                    with_color = False
                 elif bar_index >= current_bar_part_high:
                     bar = "█"
+                    with_color = True
                 else:
                     bar = self.BARS[bar_index % bar_line_segments]
+                    with_color = True
 
-                bar_color = blend_colors(min_color, max_color, height_ratio)
+                if with_color:
+                    bar_color = blend_colors(min_color, max_color, height_ratio)
+                    style = Style.from_color(bar_color)
+                else:
+                    style = None
+
                 bars_rendered += 1
                 bucket_index += step
-                yield Segment(bar, Style.from_color(bar_color))
+                yield Segment(bar, style)
 
             if i > 0:
                 yield Segment.line()
