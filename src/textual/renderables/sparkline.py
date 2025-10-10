@@ -23,7 +23,7 @@ class Sparkline(Generic[T]):
     Args:
         data: The sequence of data to render.
         width: The width of the sparkline/the number of buckets to partition the data into.
-        height: The height of the sparkline in lines. Defaults to 1.
+        height: The height of the sparkline in lines.
         min_color: The color of values equal to the min value in data.
         max_color: The color of values equal to the max value in data.
         summary_function: Function that will be applied to each bucket.
