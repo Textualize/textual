@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
+- Added support for Python3.14 https://github.com/Textualize/textual/pull/6173
 
 ### Fixed
 
@@ -17,8 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed 
 
-- Dropped support for Python3.8
-- Added support for Python3.14
+- Dropped support for Python3.8 https://github.com/Textualize/textual/pull/6173
 
 ## [6.2.1] - 2025-10-01
 

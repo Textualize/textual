@@ -2366,14 +2366,14 @@ pytest = ">=7.0.0,<9.0.0"
 
 [[package]]
 name = "textual-dev"
-version = "1.7.0"
+version = "1.8.0"
 description = "Development tools for working with Textual"
 optional = false
-python-versions = "<4.0.0,>=3.8.1"
+python-versions = "<4.0,>=3.9"
 groups = ["dev"]
 files = [
-    {file = "textual_dev-1.7.0-py3-none-any.whl", hash = "sha256:a93a846aeb6a06edb7808504d9c301565f7f4bf2e7046d56583ed755af356c8d"},
-    {file = "textual_dev-1.7.0.tar.gz", hash = "sha256:bf1a50eaaff4cd6a863535dd53f06dbbd62617c371604f66f56de3908220ccd5"},
+    {file = "textual_dev-1.8.0-py3-none-any.whl", hash = "sha256:227b6d24a485fbbc77e302aa21f4fdf3083beb57eb45cd95bae082c81cbeddeb"},
+    {file = "textual_dev-1.8.0.tar.gz", hash = "sha256:7e56867b0341405a95e938cac0647e6d2763d38d0df08710469ad6b6a8db76df"},
 ]
 
 [package.dependencies]
@@ -3151,4 +3151,4 @@ syntax = ["tree-sitter", "tree-sitter-bash", "tree-sitter-css", "tree-sitter-go"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9.0"
-content-hash = "4d667f2036727fd7da72293960d472985db48c53fe99b2d1e7aa37c815245977"
+content-hash = "87ba856e6e838f188fdb382af139e5b6c65ec5eb299729d4dce35de4c9235866"
