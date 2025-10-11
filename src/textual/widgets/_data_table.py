@@ -4,7 +4,16 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Generic,
+    Iterable,
+    NamedTuple,
+    TypeVar,
+    Union,
+)
 
 import rich.repr
 from rich.console import RenderableType
@@ -1725,20 +1734,41 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.check_idle()
         return row_key
 
-    def add_columns(self, *labels: TextType) -> list[ColumnKey]:
-        """Add a number of columns.
+    def add_columns(
+        self, *columns: Union[TextType, tuple[TextType, str]]
+    ) -> list[ColumnKey]:
+        """Add multiple columns to the DataTable.
 
         Args:
-            *labels: Column headers.
+            *columns: Column specifications. Each can be either:
+                - A string or Text object (label only, auto-generated key)
+                - A tuple of (label, key) for manual key control
 
         Returns:
             A list of the keys for the columns that were added. See
                 the `add_column` method docstring for more information on how
                 these keys are used.
+
+        Examples:
+            ```python
+            # Add columns with auto-generated keys
+            keys = table.add_columns("Name", "Age", "City")
+
+            # Add columns with manual keys
+            keys = table.add_columns(
+                ("Name", "name_col"),
+                ("Age", "age_col"),
+                "City"  # Mixed with auto-generated key
+            )
+            ```
         """
         column_keys = []
-        for label in labels:
-            column_key = self.add_column(label, width=None)
+        for column in columns:
+            if isinstance(column, tuple):
+                label, key = column
+                column_key = self.add_column(label, width=None, key=key)
+            else:
+                column_key = self.add_column(column, width=None)
             column_keys.append(column_key)
         return column_keys
 

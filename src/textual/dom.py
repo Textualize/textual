@@ -1723,8 +1723,6 @@ class DOMNode(MessagePump):
 
         Should be called whenever CSS classes / pseudo classes change.
         """
-        if not self.is_attached or not self.screen.is_mounted:
-            return
         try:
             self.app.update_styles(self)
         except NoActiveAppError:

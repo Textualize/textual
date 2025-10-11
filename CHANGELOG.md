@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
+
+### Fixed
+
+- Fixed highlight not auto-detecting lexer https://github.com/Textualize/textual/pull/6167
+
+## [6.2.1] - 2025-10-01
+
+- Fix inability to copy text outside of an input/textarea when it was focused https://github.com/Textualize/textual/pull/6148
+- Fix issue when copying text after a double click https://github.com/Textualize/textual/pull/6148
+
+## [6.2.0] - 2025-09-30
+
 ### Changed
 
 - Eager tasks are now enabled On Python3.12 and above https://github.com/Textualize/textual/pull/6102
@@ -26,6 +41,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `compact` to Binding.Group https://github.com/Textualize/textual/pull/6132
 - Added `Screen.get_hover_widgets_at` https://github.com/Textualize/textual/pull/6132
 - Added `Content.wrap` https://github.com/Textualize/textual/pull/6138
+- Added support to allow support for manual keys in add_columns as well. https://github.com/Textualize/textual/pull/5923
 
 ### Fixed
 
@@ -3128,6 +3144,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.2.1]: https://github.com/Textualize/textual/compare/v6.2.0...v6.2.1
+[6.2.0]: https://github.com/Textualize/textual/compare/v6.1.0...v6.2.0
 [6.1.0]: https://github.com/Textualize/textual/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/Textualize/textual/compare/v5.3.0...v6.0.0
 [5.3.0]: https://github.com/Textualize/textual/compare/v5.2.0...v5.3.0

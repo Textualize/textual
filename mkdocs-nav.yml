@@ -136,6 +136,7 @@ nav:
               - "styles/scrollbar_colors/scrollbar_corner_color.md"
           - "styles/scrollbar_gutter.md"
           - "styles/scrollbar_size.md"
+          - "styles/scrollbar_visibility.md"
           - "styles/text_align.md"
           - "styles/text_opacity.md"
           - "styles/text_overflow.md"

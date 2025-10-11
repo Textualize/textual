@@ -807,7 +807,9 @@ def test_remove_with_auto_height(snap_compare):
 
 
 def test_auto_table(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40))
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40), press=["wait:100"]
+    )
 
 
 def test_table_markup(snap_compare):
@@ -4690,3 +4692,24 @@ def test_collapsible_focus_children(snap_compare) -> None:
                 yield Button("Hello")
 
     assert snap_compare(CollapseApp(), press=["enter", "enter", "tab"])
+
+
+def test_scrollbar_visibility(snap_compare) -> None:
+    """Test scrollbar-visibility rule
+
+    You should see a screen of text that overflows, but there should be *no* scrollbar.
+    """
+
+    class ScrollbarApp(App):
+
+        CSS = """
+        Screen {
+            overflow: auto;
+            scrollbar-visibility: hidden;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello, World! 293487 " * 200)
+
+    assert snap_compare(ScrollbarApp())

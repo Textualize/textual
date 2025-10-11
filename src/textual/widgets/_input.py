@@ -11,6 +11,7 @@ from rich.text import Text
 from typing_extensions import Literal
 
 from textual import events
+from textual.actions import SkipAction
 from textual.expand_tabs import expand_tabs_inline
 from textual.screen import Screen
 from textual.scroll_view import ScrollView
@@ -1106,7 +1107,11 @@ class Input(ScrollView):
 
     def action_copy(self) -> None:
         """Copy the current selection to the clipboard."""
-        self.app.copy_to_clipboard(self.selected_text)
+        selected_text = self.selected_text
+        if selected_text:
+            self.app.copy_to_clipboard(selected_text)
+        else:
+            raise SkipAction()
 
     def action_paste(self) -> None:
         """Paste from the local clipboard."""

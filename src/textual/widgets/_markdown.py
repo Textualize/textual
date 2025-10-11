@@ -870,12 +870,13 @@ class MarkdownFence(MarkdownBlock):
         self.lexer = token.info
         self._highlighted_code = self.highlight(self.code, self.lexer)
 
+    @property
     def allow_horizontal_scroll(self) -> bool:
         return True
 
     @classmethod
     def highlight(cls, code: str, language: str) -> Content:
-        return highlight(code, language=language)
+        return highlight(code, language=language or None)
 
     def _copy_context(self, block: MarkdownBlock) -> None:
         if isinstance(block, MarkdownFence):

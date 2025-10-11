@@ -228,7 +228,7 @@ class Button(Widget, can_focus=True):
 
     BINDINGS = [Binding("enter", "press", "Press button", show=False)]
 
-    label: reactive[ContentText] = reactive[ContentText](Content.empty)
+    label: reactive[ContentText] = reactive[ContentText](Content.empty())
     """The text label that appears within the button."""
 
     variant = reactive("default", init=False)
@@ -293,11 +293,12 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = Content.from_text(label)
         self.variant = variant
-        self.action = action
-        self.compact = compact
         self.flat = flat
+        self.compact = compact
+        self.set_reactive(Button.label, Content.from_text(label))
+
+        self.action = action
         self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
 
