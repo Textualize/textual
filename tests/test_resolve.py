@@ -61,7 +61,7 @@ def test_resolve(scalars, total, gutter, result):
     )
 
 
-def test_resolve_fraction_unit():
+async def test_resolve_fraction_unit():
     """Test resolving fraction units in combination with minimum widths."""
     widget1 = Widget()
     widget2 = Widget()
@@ -124,7 +124,7 @@ def test_resolve_fraction_unit():
     ) == Fraction(2)
 
 
-def test_resolve_fraction_unit_stress_test():
+async def test_resolve_fraction_unit_stress_test():
     """Check for zero division errors."""
     # https://github.com/Textualize/textual/issues/2673
     widget = Widget()
@@ -149,7 +149,7 @@ def test_resolve_fraction_unit_stress_test():
                 assert resolved_unit <= remaining_space
 
 
-def test_resolve_issue_2502():
+async def test_resolve_issue_2502():
     """Test https://github.com/Textualize/textual/issues/2502"""
 
     widget = Widget()

@@ -1,7 +1,7 @@
 
 
 [![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
-[![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/1.0.0)](https://pypi.org/project/textual/)
+[![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual)](https://pypi.org/project/textual/)
 [![PyPI version](https://badge.fury.io/py/textual.svg?)](https://badge.fury.io/py/textual)
 ![OS support](https://img.shields.io/badge/OS-macOS%20Linux%20Windows-red)
 

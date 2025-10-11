@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [6.3.0] - 2025-10-11
 
 ### Added
 
@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed highlight not auto-detecting lexer https://github.com/Textualize/textual/pull/6167
+
+### Changed
+
+- Dropped support for Python3.8 https://github.com/Textualize/textual/pull/6121/
+- Added support for Python3.14 https://github.com/Textualize/textual/pull/6121/
 
 ## [6.2.1] - 2025-10-01
 
@@ -3144,6 +3149,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.3.0]: https://github.com/Textualize/textual/compare/v6.2.1...v6.3.0
 [6.2.1]: https://github.com/Textualize/textual/compare/v6.2.0...v6.2.1
 [6.2.0]: https://github.com/Textualize/textual/compare/v6.1.0...v6.2.0
 [6.1.0]: https://github.com/Textualize/textual/compare/v6.0.0...v6.1.0

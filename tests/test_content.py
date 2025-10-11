@@ -286,7 +286,7 @@ def test_first_line():
     assert first_line.spans == [Span(0, 3, "red")]
 
 
-def test_split_and_tabs():
+async def test_split_and_tabs():
     spans = [
         Span(0, 49, style="$text"),
     ]

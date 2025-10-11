@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "6.2.1"
+version = "6.3.0"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -17,12 +17,12 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Typing :: Typed",
 ]
 include = [
@@ -41,12 +41,12 @@ include = [
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = "^3.9"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
-rich = ">=13.3.3"
+rich = ">=14.2.0"
 #rich = {path="../rich", develop=true}
 typing-extensions = "^4.4.0"
 platformdirs = ">=3.6.0,<5"

@@ -4,13 +4,13 @@ from textual.widgets import Tree
 from textual.widgets.tree import AddNodeError
 
 
-def test_tree_node_add_before_and_after_raises_exception():
+async def test_tree_node_add_before_and_after_raises_exception():
     tree = Tree[None]("root")
     with pytest.raises(AddNodeError):
         tree.root.add("error", before=99, after=0)
 
 
-def test_tree_node_add_before_or_after_with_invalid_type_raises_exception():
+async def test_tree_node_add_before_or_after_with_invalid_type_raises_exception():
     tree = Tree[None]("root")
     tree.root.add("node")
     with pytest.raises(TypeError):
@@ -19,7 +19,7 @@ def test_tree_node_add_before_or_after_with_invalid_type_raises_exception():
         tree.root.add("after node", after="node")
 
 
-def test_tree_node_add_before_index():
+async def test_tree_node_add_before_index():
     tree = Tree[None]("root")
     tree.root.add("node")
     tree.root.add("before node", before=0)
@@ -38,7 +38,7 @@ def test_tree_node_add_before_index():
     assert str(tree.root.children[6].label) == "last"
 
 
-def test_tree_node_add_after_index():
+async def test_tree_node_add_after_index():
     tree = Tree[None]("root")
     tree.root.add("node")
     tree.root.add("after node", after=0)
@@ -57,7 +57,7 @@ def test_tree_node_add_after_index():
     assert str(tree.root.children[6].label) == "last"
 
 
-def test_tree_node_add_relative_to_unknown_node_raises_exception():
+async def test_tree_node_add_relative_to_unknown_node_raises_exception():
     tree = Tree[None]("root")
     removed_node = tree.root.add("removed node")
     removed_node.remove()
@@ -67,7 +67,7 @@ def test_tree_node_add_relative_to_unknown_node_raises_exception():
         tree.root.add("node", after=removed_node)
 
 
-def test_tree_node_add_before_node():
+async def test_tree_node_add_before_node():
     tree = Tree[None]("root")
     node = tree.root.add("node")
     before_node = tree.root.add("before node", before=node)
@@ -86,7 +86,7 @@ def test_tree_node_add_before_node():
     assert str(tree.root.children[6].label) == "last"
 
 
-def test_tree_node_add_after_node():
+async def test_tree_node_add_after_node():
     tree = Tree[None]("root")
     node = tree.root.add("node")
     after_node = tree.root.add("after node", after=node)
@@ -105,7 +105,7 @@ def test_tree_node_add_after_node():
     assert str(tree.root.children[6].label) == "last"
 
 
-def test_tree_node_add_leaf_before_or_after():
+async def test_tree_node_add_leaf_before_or_after():
     tree = Tree[None]("root")
     leaf = tree.root.add_leaf("leaf")
     tree.root.add_leaf("before leaf", before=leaf)

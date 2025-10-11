@@ -63,7 +63,7 @@ async def test_widget_construct():
         ["visible", True, "visible"],
     ],
 )
-def test_widget_set_visible_true(set_val, get_val, style_str):
+async def test_widget_set_visible_true(set_val, get_val, style_str):
     widget = Widget()
     widget.visible = set_val
 
@@ -71,7 +71,7 @@ def test_widget_set_visible_true(set_val, get_val, style_str):
     assert widget.styles.visibility == style_str
 
 
-def test_widget_set_visible_invalid_string():
+async def test_widget_set_visible_invalid_string():
     widget = Widget()
 
     with pytest.raises(StyleValueError):
@@ -80,7 +80,7 @@ def test_widget_set_visible_invalid_string():
     assert widget.visible
 
 
-def test_widget_content_width():
+async def test_widget_content_width():
     class TextWidget(Widget):
         def __init__(self, text: str, id: str) -> None:
             self.text = text
@@ -238,19 +238,19 @@ async def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(hierarchy
             parent.mount(widget2)
 
 
-def test_get_pseudo_class_state():
+async def test_get_pseudo_class_state():
     widget = Widget()
     pseudo_classes = widget.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=True, focus=False, hover=False)
 
 
-def test_get_pseudo_class_state_disabled():
+async def test_get_pseudo_class_state_disabled():
     widget = Widget(disabled=True)
     pseudo_classes = widget.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
 
 
-def test_get_pseudo_class_state_parent_disabled():
+async def test_get_pseudo_class_state_parent_disabled():
     child = Widget()
     _parent = Widget(disabled=True)
     child._attach(_parent)
@@ -258,14 +258,14 @@ def test_get_pseudo_class_state_parent_disabled():
     assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
 
 
-def test_get_pseudo_class_state_hover():
+async def test_get_pseudo_class_state_hover():
     widget = Widget()
     widget.mouse_hover = True
     pseudo_classes = widget.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=True, focus=False, hover=True)
 
 
-def test_get_pseudo_class_state_focus():
+async def test_get_pseudo_class_state_focus():
     widget = Widget()
     widget.has_focus = True
     pseudo_classes = widget.get_pseudo_class_state()
@@ -314,7 +314,7 @@ async def test_remove_unmounted():
         assert mounted
 
 
-def test_render_str() -> None:
+async def test_render_str() -> None:
     widget = Label()
     assert widget.render_str("foo") == Content("foo")
     assert widget.render_str("[b]foo") == Content.from_markup("[b]foo")
@@ -371,11 +371,11 @@ def test_children_must_be_widgets():
         Widget(1, 2, 3)
 
 
-def test_orphan_widget_has_no_siblings():
+async def test_orphan_widget_has_no_siblings():
     assert Widget().siblings == []
 
 
-def test__allow_scroll_default():
+async def test__allow_scroll_default():
     assert not Widget()._allow_scroll
 
 
@@ -407,7 +407,7 @@ async def test_offset_getter_setter():
         assert label.offset == Offset(7, 3)
 
 
-def test_get_set_tooltip():
+async def test_get_set_tooltip():
     widget = Widget()
     assert widget.tooltip is None
     widget.tooltip = "This is a tooltip."
