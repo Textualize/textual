@@ -760,10 +760,10 @@ class Content(Visual):
             return content
         return NotImplemented
 
-    def __radd__(self, other: Content | str) -> Content:
-        if not isinstance(other, (Content, str)):
+    def __radd__(self, other: str) -> Content:
+        if not isinstance(other, str):
             return NotImplemented
-        return self + other
+        return Content(other) + self
 
     @classmethod
     def _trim_spans(cls, text: str, spans: list[Span]) -> list[Span]:
