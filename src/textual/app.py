@@ -8,6 +8,7 @@ See [app basics](/guide/app) for how to build Textual apps.
 from __future__ import annotations
 
 import asyncio
+import builtins
 import importlib
 import inspect
 import io
@@ -2231,6 +2232,15 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             App return value.
         """
+
+        # If some part of the user code uses breakpoint(), it's better to
+        # raise an exception than show an empty screen.
+        def disabled_breakpoint():
+            raise RuntimeError(
+                "breakpoint() is disabled in this UI environment to prevent the app from freezing."
+            )
+
+        builtins.breakpoint = disabled_breakpoint
 
         async def run_app() -> ReturnType | None:
             """Run the app."""
