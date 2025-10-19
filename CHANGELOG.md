@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed type hint aliasing for App under TYPE_CHECKING https://github.com/Textualize/textual/pull/6152
+
 ## [6.3.0] - 2025-10-11
 
 ### Added
@@ -24,7 +30,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix inability to copy text outside of an input/textarea when it was focused https://github.com/Textualize/textual/pull/6148
 - Fix issue when copying text after a double click https://github.com/Textualize/textual/pull/6148
-- Fixed type hint aliasing for App under TYPE_CHECKING https://github.com/Textualize/textual/pull/6152
 
 ## [6.2.0] - 2025-09-30
 
