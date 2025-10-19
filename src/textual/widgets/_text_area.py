@@ -1485,7 +1485,10 @@ TextArea {
             line_style = theme.base_style if theme else None
 
         text_strip = text_strip.extend_cell_length(target_width, line_style)
-        strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
+        if gutter:
+            strip = Strip.join([Strip(gutter, cell_length=gutter_width), text_strip])
+        else:
+            strip = text_strip
 
         return strip.apply_style(base_style)
 
@@ -2343,6 +2346,8 @@ TextArea {
         Returns:
             An `EditResult` containing information about the edit.
         """
+        if len(text) > 1:
+            self._restart_blink()
         if location is None:
             location = self.cursor_location
         return self.edit(Edit(text, location, location, maintain_selection_offset))
