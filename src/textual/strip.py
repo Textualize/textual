@@ -290,14 +290,21 @@ class Strip:
         Returns:
             A new combined strip.
         """
-        join_strips = [strip for strip in strips if strip is not None]
+        join_strips = [
+            strip for strip in strips if strip is not None and strip.cell_count
+        ]
         segments = [segment for strip in join_strips for segment in strip._segments]
         cell_length: int | None = None
         if any([strip._cell_length is None for strip in join_strips]):
             cell_length = None
         else:
             cell_length = sum([strip._cell_length or 0 for strip in join_strips])
-        return cls(segments, cell_length)
+        joined_strip = cls(segments, cell_length)
+        if all(strip._render_cache is not None for strip in join_strips):
+            joined_strip._render_cache = "".join(
+                [strip._render_cache for strip in join_strips]
+            )
+        return joined_strip
 
     def __add__(self, other: Strip) -> Strip:
         return Strip.join([self, other])
@@ -579,9 +586,7 @@ class Strip:
         cell_length = self.cell_length
         cuts = [cut for cut in cuts if cut <= cell_length]
         cache_key = tuple(cuts)
-        cached = self._divide_cache.get(cache_key)
-
-        if cached is not None:
+        if (cached := self._divide_cache.get(cache_key)) is not None:
             return cached
 
         strips: list[Strip]
@@ -721,6 +726,7 @@ class Strip:
                     for text, style, _ in self._segments
                 ]
             )
+
         return self._render_cache
 
     def crop_pad(self, cell_length: int, left: int, right: int, style: Style) -> Strip:
@@ -805,5 +811,6 @@ class Strip:
             )
             x += len(segment.text)
         strip = Strip(strip_segments, self._cell_length)
+        strip._render_cache = self._render_cache
         self._offsets_cache[cache_key] = strip
         return strip

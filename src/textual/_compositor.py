@@ -75,7 +75,7 @@ class CompositorUpdate:
 class LayoutUpdate(CompositorUpdate):
     """A renderable containing the result of a render for a given region."""
 
-    def __init__(self, strips: list[Strip], region: Region) -> None:
+    def __init__(self, strips: list[Iterable[Strip]], region: Region) -> None:
         self.strips = strips
         self.region = region
 
@@ -87,7 +87,8 @@ class LayoutUpdate(CompositorUpdate):
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
             yield move_to(x, y).segment
-            yield from line
+            for strip in line:
+                yield from strip
             if not last:
                 yield new_line
 
@@ -102,11 +103,12 @@ class LayoutUpdate(CompositorUpdate):
         """
         sequences: list[str] = []
         append = sequences.append
+        extend = sequences.extend
         x = self.region.x
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
             append(move_to(x, y).segment.text)
-            append(line.render(console))
+            extend([strip.render(console) for strip in line])
             if not last:
                 append("\n")
         return "".join(sequences)
@@ -239,7 +241,6 @@ class ChopsUpdate(CompositorUpdate):
         Returns:
             Raw data with escape sequences.
         """
-
         sequences: list[str] = []
         append = sequences.append
 
@@ -613,8 +614,9 @@ class Compositor:
                                 - widget.scrollbar_size_horizontal
                             )
                         )
-                        widget.set_reactive(Widget.scroll_y, new_scroll_y)
-                        widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
+                        capped_scroll_y = widget.validate_scroll_y(new_scroll_y)
+                        widget.set_reactive(Widget.scroll_y, capped_scroll_y)
+                        widget.set_reactive(Widget.scroll_target_y, capped_scroll_y)
                         widget.vertical_scrollbar._reactive_position = new_scroll_y
 
                     if visible_only:
@@ -1132,14 +1134,15 @@ class Compositor:
         self._dirty_regions.clear()
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
+        render_strips: list[Iterable[Strip]]
         if simplify:
             # Simplify is done when exporting to SVG
             # It doesn't make things faster
             render_strips = [
-                Strip.join(chop.values()).simplify().discard_meta() for chop in chops
+                [Strip.join(chop.values()).simplify().discard_meta()] for chop in chops
             ]
         else:
-            render_strips = [Strip.join(chop.values()) for chop in chops]
+            render_strips = [chop.values() for chop in chops]
 
         return LayoutUpdate(render_strips, screen_region)
 
@@ -1182,7 +1185,7 @@ class Compositor:
         self,
         crop: Region,
         is_rendered_line: Callable[[int], bool],
-    ) -> Sequence[Mapping[int, Strip | None]]:
+    ) -> Sequence[Mapping[int, Strip]]:
         """Render update 'chops'.
 
         Args:
@@ -1221,8 +1224,7 @@ class Compositor:
                 for cut, strip in zip(final_cuts, cut_strips):
                     if get_chops_line(cut) is None:
                         chops_line[cut] = strip
-
-        return chops
+        return cast("Sequence[Mapping[int, Strip]]", chops)
 
     def __rich__(self) -> StripRenderable:
         return StripRenderable(self.render_strips())

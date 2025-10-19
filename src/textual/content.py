@@ -395,8 +395,8 @@ class Content(Visual):
     def simplify(self) -> Content:
         """Simplify spans by joining contiguous spans together.
 
-        This can produce faster renders but typically only worth it if you have appended a
-        large number of Content instances together.
+        This may produce faster renders if you have concatenated a large number of small pieces
+        of content with repeating styles.
 
         Note that this modifies the Content instance in-place, which might appear
         to violate the immutability constraints, but it will not change the rendered output,
