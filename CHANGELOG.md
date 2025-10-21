@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed type hint aliasing for App under TYPE_CHECKING https://github.com/Textualize/textual/pull/6152
 
+### Changed
+
+- Simplified system commands (command palette) to a single word https://github.com/Textualize/textual/pull/6183
+
 ## [6.3.0] - 2025-10-11
 
 ### Added

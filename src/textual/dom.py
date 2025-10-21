@@ -179,7 +179,7 @@ class DOMNode(MessagePump):
     # Names of potential computed reactives
     _computes: ClassVar[frozenset[str]]
 
-    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[object], bool]]] = {}
+    _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {}
     """Pseudo class checks."""
 
     def __init__(
