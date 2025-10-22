@@ -240,6 +240,7 @@ def test_assemble():
         ("\\[/foo]", "[/foo]"),
         ("\\[]", "[]"),
         ("\\[0]", "[0]"),
+        ("\\[/", "[/"),
     ],
 )
 def test_escape(markup: str, plain: str) -> None:
