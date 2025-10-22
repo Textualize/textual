@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed type hint aliasing for App under TYPE_CHECKING https://github.com/Textualize/textual/pull/6152
+- Fixed circular dependency effecting `bazel` users https://github.com/Textualize/textual/pull/6163
 - Fixed for text selection with double width characters https://github.com/Textualize/textual/pull/6186
 
 ### Changed

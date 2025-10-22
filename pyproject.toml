@@ -9,7 +9,7 @@ description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
 license = "MIT"
 readme = "README.md"
-classifiers = [    
+classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
@@ -45,7 +45,8 @@ target-version = "py39"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
+markdown-it-py = { extras = ["linkify"], version = ">=2.1.0" }
+mdit-py-plugins = "*"
 rich = ">=14.2.0"
 #rich = {path="../rich", develop=true}
 typing-extensions = "^4.4.0"
