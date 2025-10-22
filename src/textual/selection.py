@@ -56,12 +56,12 @@ class Selection(NamedTuple):
             return lines[start_line][start_offset:end_offset]
 
         selection: list[str] = []
-        selected_lines = lines[start_line:end_line]
+        selected_lines = lines[start_line : end_line + 1]
         if len(selected_lines) >= 2:
             first_line, *mid_lines, last_line = selected_lines
             selection.append(first_line[start_offset:])
             selection.extend(mid_lines)
-            selection.append(last_line[: end_offset + 1])
+            selection.append(last_line[:end_offset])
         else:
             return lines[start_line][start_offset:end_offset]
         return "\n".join(selection)

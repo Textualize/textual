@@ -1738,7 +1738,6 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             select_end: The end selection.
         """
-
         if select_end is None or self._select_start is None:
             # Nothing to select
             return
