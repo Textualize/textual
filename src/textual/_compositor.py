@@ -926,6 +926,9 @@ class Compositor:
         offset_y: int | None = None
         offset_x = 0
         offset_x2 = 0
+        cell_position = 0
+
+        from rich.cells import get_character_cell_size
 
         for segment in line:
             end += len(segment.text)
@@ -940,13 +943,22 @@ class Compositor:
                         if x == end - 1:
                             segment_offset = len(segment.text)
                         else:
-                            first, _ = segment.split_cells(x - start)
-                            segment_offset = len(first.text)
+                            segment_cell_length = 0
+                            cell_cut = x - cell_position
+                            segment_offset = 0
+                            for character in segment.text:
+                                if segment_cell_length >= cell_cut:
+                                    break
+                                segment_cell_length += get_character_cell_size(
+                                    character
+                                )
+                                segment_offset += 1
                         return widget, (
                             None
                             if offset_y is None
                             else Offset(offset_x + segment_offset, offset_y)
                         )
+            cell_position += cell_len(segment.text)
             start = end
 
         return widget, (None if offset_y is None else Offset(offset_x2, offset_y))
