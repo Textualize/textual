@@ -1652,14 +1652,22 @@ class Screen(Generic[ScreenResultType], Widget):
                 ):
                     end_widget = self._select_end[0]
                     select_offset = end_widget.content_region.bottom_right_inclusive
-                    self._select_end = (end_widget, event.offset, select_offset)
+                    self._select_end = (
+                        end_widget,
+                        event.screen_offset,
+                        select_offset,
+                    )
 
                 elif (
                     select_widget is not None
                     and select_widget.allow_select
                     and select_offset is not None
                 ):
-                    self._select_end = (select_widget, event.offset, select_offset)
+                    self._select_end = (
+                        select_widget,
+                        event.screen_offset,
+                        select_offset,
+                    )
 
         elif isinstance(event, events.MouseEvent):
             if isinstance(event, events.MouseUp):
@@ -1730,7 +1738,6 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             select_end: The end selection.
         """
-
         if select_end is None or self._select_start is None:
             # Nothing to select
             return

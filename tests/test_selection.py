@@ -1,7 +1,9 @@
 import pytest
 
+from textual.app import App, ComposeResult
 from textual.geometry import Offset
 from textual.selection import Selection
+from textual.widgets import Static
 
 
 @pytest.mark.parametrize(
@@ -20,3 +22,24 @@ from textual.selection import Selection
 def test_extract(text: str, selection: Selection, expected: str) -> None:
     """Test Selection.extract"""
     assert selection.extract(text) == expected
+
+
+async def test_double_width():
+    """Test that selection works with double width characters."""
+
+    TEXT = """😂❤️👍Select😊🙏😍\nme🔥💯😭😂❤️👍"""
+
+    class TextSelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static(TEXT)
+
+    app = TextSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        assert await pilot.mouse_down(offset=(2, 0))
+        await pilot.pause()
+        assert await pilot.mouse_up(offset=(7, 1))
+        selected_text = app.screen.get_selected_text()
+        expected = "❤️👍Select😊🙏😍\nme🔥💯😭"
+
+    assert selected_text == expected

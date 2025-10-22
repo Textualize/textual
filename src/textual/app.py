@@ -518,7 +518,7 @@ class App(Generic[ReturnType], DOMNode):
         "inline": lambda app: app.is_inline,
         "ansi": lambda app: app.ansi_color,
         "nocolor": lambda app: app.no_color,
-    }  # type: ignore[assignment]
+    }
 
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
@@ -1256,25 +1256,25 @@ class App(Generic[ReturnType], DOMNode):
         """
         if not self.ansi_color:
             yield SystemCommand(
-                "Change theme",
+                "Theme",
                 "Change the current theme",
                 self.action_change_theme,
             )
         yield SystemCommand(
-            "Quit the application",
+            "Quit",
             "Quit the application as soon as possible",
             self.action_quit,
         )
 
         if screen.query("HelpPanel"):
             yield SystemCommand(
-                "Hide keys and help panel",
+                "Keys",
                 "Hide the keys and widget help panel",
                 self.action_hide_help_panel,
             )
         else:
             yield SystemCommand(
-                "Show keys and help panel",
+                "Keys",
                 "Show help for the focused widget and a summary of available keys",
                 self.action_show_help_panel,
             )
@@ -1291,7 +1291,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         yield SystemCommand(
-            "Save screenshot",
+            "Screenshot",
             "Save an SVG 'screenshot' of the current screen",
             lambda: self.set_timer(0.1, self.deliver_screenshot),
         )
