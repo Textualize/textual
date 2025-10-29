@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import re
 from functools import lru_cache
 from typing import Iterable, Iterator, NoReturn
 
@@ -16,7 +17,13 @@ from textual.css.model import (
     SelectorType,
 )
 from textual.css.styles import Styles
-from textual.css.tokenize import Token, tokenize, tokenize_declarations, tokenize_values
+from textual.css.tokenize import (
+    IDENTIFIER,
+    Token,
+    tokenize,
+    tokenize_declarations,
+    tokenize_values,
+)
 from textual.css.tokenizer import ReferencedBy, UnexpectedEnd
 from textual.css.types import CSSLocation, Specificity3
 from textual.suggestions import get_suggestion
@@ -32,6 +39,21 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "selector_start_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
     "nested": (SelectorType.NESTED, (0, 0, 0)),
 }
+
+RE_ID_SELECTOR = re.compile("#" + IDENTIFIER)
+
+
+@lru_cache(maxsize=128)
+def is_id_selector(selector: str) -> bool:
+    """Is the selector a single ID selector, i.e. "#foo"?
+
+    Args:
+        selector: A CSS selector.
+
+    Returns:
+        `True` if the selector is a simple ID selector, otherwise `False`.
+    """
+    return RE_ID_SELECTOR.fullmatch(selector) is not None
 
 
 def _add_specificity(

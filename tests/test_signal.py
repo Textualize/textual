@@ -58,7 +58,7 @@ async def test_signal():
         assert called == 3
 
 
-def test_signal_errors():
+async def test_signal_errors():
     """Check exceptions raised by Signal class."""
     app = App()
     test_signal = Signal(app, "test")

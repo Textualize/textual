@@ -46,21 +46,22 @@ class Selection(NamedTuple):
             start_line, start_offset = self.start.transpose
 
         if self.end is None:
-            end_line = len(lines) - 1
-            end_offset = len(lines[end_line])
+            end_line = len(lines)
+            end_offset = len(lines[-1])
         else:
             end_line, end_offset = self.end.transpose
+        end_line = min(len(lines), end_line)
 
         if start_line == end_line:
             return lines[start_line][start_offset:end_offset]
 
         selection: list[str] = []
-        selected_lines = lines[start_line:end_line]
+        selected_lines = lines[start_line : end_line + 1]
         if len(selected_lines) >= 2:
             first_line, *mid_lines, last_line = selected_lines
             selection.append(first_line[start_offset:])
             selection.extend(mid_lines)
-            selection.append(last_line[: end_offset + 1])
+            selection.append(last_line[:end_offset])
         else:
             return lines[start_line][start_offset:end_offset]
         return "\n".join(selection)

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 @rich.repr.auto(angular=True)
 class WorkerManager:
-    """An object to manager a number of workers.
+    """An object to manage a number of workers.
 
     You will not have to construct this class manually, as widgets, screens, and apps
     have a worker manager accessibly via a `workers` attribute.

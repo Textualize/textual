@@ -49,7 +49,7 @@ class CheckerBoard(ScrollView):
             for column in range(self.board_size)
         ]
         strip = Strip(segments, self.board_size * 8)
-        # Crop the strip so that is covers the visible area
+        # Crop the strip so that it covers the visible area
         strip = strip.crop(scroll_x, scroll_x + self.size.width)
         return strip
 

@@ -6,7 +6,7 @@ except ImportError:
     raise ImportError("Please install httpx with 'pip install httpx' ")
 
 
-from textual import work
+from textual import getters, work
 from textual.app import App, ComposeResult
 from textual.containers import VerticalScroll
 from textual.widgets import Input, Markdown
@@ -16,6 +16,9 @@ class DictionaryApp(App):
     """Searches a dictionary API as-you-type."""
 
     CSS_PATH = "dictionary.tcss"
+
+    results = getters.query_one("#results", Markdown)
+    input = getters.query_one(Input)
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word", id="dictionary-search")
@@ -28,7 +31,7 @@ class DictionaryApp(App):
             self.lookup_word(message.value)
         else:
             # Clear the results
-            await self.query_one("#results", Markdown).update("")
+            await self.results.update("")
 
     @work(exclusive=True)
     async def lookup_word(self, word: str) -> None:
@@ -40,12 +43,12 @@ class DictionaryApp(App):
             try:
                 results = response.json()
             except Exception:
-                self.query_one("#results", Markdown).update(response.text)
+                self.results.update(response.text)
                 return
 
-        if word == self.query_one(Input).value:
+        if word == self.input.value:
             markdown = self.make_word_markdown(results)
-            self.query_one("#results", Markdown).update(markdown)
+            self.results.update(markdown)
 
     def make_word_markdown(self, results: object) -> str:
         """Convert the results into markdown."""

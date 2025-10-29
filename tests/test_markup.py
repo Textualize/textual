@@ -10,6 +10,15 @@ from textual.markup import MarkupError, to_content
     ["markup", "content"],
     [
         ("", Content("")),
+        ("[", Content("[")),
+        ("[]", Content("[]")),
+        ("[ ", Content("[ ")),
+        ("[  ", Content("[  ")),
+        ("[  ]", Content("[  ]")),
+        ("[0", Content("[0")),
+        ("[0]", Content("[0]")),
+        ("[red", Content("[red")),
+        ("[red]", Content("")),
         ("foo", Content("foo")),
         ("foo\n", Content("foo\n")),
         ("foo\nbar", Content("foo\nbar")),
@@ -35,9 +44,9 @@ from textual.markup import MarkupError, to_content
             Content(
                 "What is up with you?",
                 spans=[
+                    Span(0, 20, style="b"),
                     Span(0, 10, style="on red"),
                     Span(5, 20, style="i"),
-                    Span(0, 20, style="b"),
                 ],
             ),
         ),
@@ -84,6 +93,64 @@ from textual.markup import MarkupError, to_content
                 spans=[Span(0, 35, style="#ff0000"), Span(7, 35, style="#ffffff")],
             ),
         ),
+        (
+            "[blue][green][red]R[/red]G[/green]B[/blue]",
+            Content(
+                "RGB",
+                spans=[
+                    Span(0, 3, "blue"),
+                    Span(0, 2, "green"),
+                    Span(0, 1, "red"),
+                ],
+            ),
+        ),
+        (
+            "[red][blue]X[/blue][/red]",
+            Content(
+                "X",
+                spans=[
+                    Span(0, 1, "red"),
+                    Span(0, 1, "blue"),
+                ],
+            ),
+        ),
+        # Non-nested tags
+        (
+            "[red][blue]X[/red][/blue]",
+            Content(
+                "X",
+                spans=[
+                    Span(0, 1, "blue"),
+                    Span(0, 1, "red"),
+                ],
+            ),
+        ),
+        (
+            "[red][blue]X[/red]",
+            Content(
+                "X",
+                spans=[
+                    Span(0, 1, "blue"),
+                    Span(0, 1, "red"),
+                ],
+            ),
+        ),
+        (
+            "[red][blue]X",
+            Content(
+                "X",
+                spans=[
+                    Span(0, 1, "red"),
+                    Span(0, 1, "blue"),
+                ],
+            ),
+        ),
+        # Edge cases
+        ("[bold][/bold]", Content("")),
+        ("[bold][/]", Content("")),
+        ("[bold]", Content("")),
+        ("", Content("")),
+        ("[red][green][/red]", Content("")),
     ],
 )
 def test_to_content(markup: str, content: Content):
@@ -94,8 +161,6 @@ def test_to_content(markup: str, content: Content):
 
 
 def test_content_parse_fail() -> None:
-    with pytest.raises(MarkupError):
-        to_content("[rgb(1,2,3,4)]foo")
     with pytest.raises(MarkupError):
         to_content("[foo]foo[/bar]")
     with pytest.raises(MarkupError):

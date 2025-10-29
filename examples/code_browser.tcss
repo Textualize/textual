@@ -26,4 +26,6 @@ CodeBrowser.-show-tree #tree-view {
 }
 #code {
     width: auto;
+    padding: 0 1;
+    background: $surface;
 }

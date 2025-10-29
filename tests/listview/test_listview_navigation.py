@@ -21,7 +21,7 @@ class ListViewDisabledItemsApp(App[None]):
         if message.item is None:
             self.highlighted.append(None)
         else:
-            self.highlighted.append(str(message.item.children[0].renderable))
+            self.highlighted.append(str(message.item.children[0].content))
 
 
 async def test_keyboard_navigation_with_disabled_items() -> None:

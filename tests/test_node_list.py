@@ -9,14 +9,14 @@ def test_empty_list():
     assert len(NodeList()) == 0
 
 
-def test_add_one():
+async def test_add_one():
     """Does adding a node to the node list report as having one item?"""
     nodes = NodeList()
     nodes._append(Widget())
     assert len(nodes) == 1
 
 
-def test_length_hint():
+async def test_length_hint():
     """Check length hint dunder method."""
     nodes = NodeList()
     assert nodes.__length_hint__() == 0
@@ -26,7 +26,7 @@ def test_length_hint():
     assert nodes.__length_hint__() == 3
 
 
-def test_repeat_add_one():
+async def test_repeat_add_one():
     """Does adding the same item to the node list ignore the additional adds?"""
     nodes = NodeList()
     widget = Widget()
@@ -35,7 +35,7 @@ def test_repeat_add_one():
     assert len(nodes) == 1
 
 
-def test_insert():
+async def test_insert():
     nodes = NodeList()
     widget1 = Widget()
     widget2 = Widget()
@@ -46,7 +46,7 @@ def test_insert():
     assert list(nodes) == [widget1, widget2, widget3]
 
 
-def test_truthy():
+async def test_truthy():
     """Does a node list act as a truthy object?"""
     nodes = NodeList()
     assert not bool(nodes)
@@ -54,7 +54,7 @@ def test_truthy():
     assert bool(nodes)
 
 
-def test_contains():
+async def test_contains():
     """Can we check if a widget is (not) within the list?"""
     widget = Widget()
     nodes = NodeList()
@@ -64,7 +64,7 @@ def test_contains():
     assert Widget() not in nodes
 
 
-def test_index():
+async def test_index():
     """Can we get the index of a widget in the list?"""
     widget = Widget()
     nodes = NodeList()
@@ -74,7 +74,7 @@ def test_index():
     assert nodes.index(widget) == 0
 
 
-def test_remove():
+async def test_remove():
     """Can we remove a widget we've added?"""
     widget = Widget()
     nodes = NodeList()
@@ -84,7 +84,7 @@ def test_remove():
     assert widget not in nodes
 
 
-def test_clear():
+async def test_clear():
     """Can we clear the list?"""
     nodes = NodeList()
     assert len(nodes) == 0
@@ -100,7 +100,7 @@ def test_clear():
         assert widget not in nodes
 
 
-def test_listy():
+async def test_listy():
     nodes = NodeList()
     widget1 = Widget()
     widget2 = Widget()

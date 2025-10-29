@@ -70,12 +70,12 @@ class MarkupPlayground(App):
     ]
     variables: reactive[dict[str, object]] = reactive({})
 
-    show_variables = reactive(False)
+    show_variables = reactive(True)
     show_spans = reactive(False)
 
     def compose(self) -> ComposeResult:
         with containers.HorizontalGroup():
-            yield (editor := TextArea(id="editor"))
+            yield (editor := TextArea(id="editor", soft_wrap=False))
             yield (variables := TextArea("", id="variables", language="json"))
         editor.border_title = "Markup"
         variables.border_title = "Variables (JSON)"

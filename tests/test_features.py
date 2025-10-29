@@ -3,7 +3,7 @@ from __future__ import annotations
 from textual.app import App
 
 
-def test_textual_env_var(monkeypatch):
+async def test_textual_env_var(monkeypatch):
     monkeypatch.setenv("TEXTUAL", "")
     app = App()
     assert app.features == set()

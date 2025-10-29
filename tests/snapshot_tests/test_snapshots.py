@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -39,6 +40,7 @@ from textual.widgets import (
     ListItem,
     ListView,
     Log,
+    Markdown,
     OptionList,
     Placeholder,
     ProgressBar,
@@ -480,7 +482,14 @@ def test_content_switcher_example_switch(snap_compare):
 
 
 def test_tabbed_content(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "tabbed_content.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
+    )
 
 
 def test_tabbed_content_with_modified_tabs(snap_compare):
@@ -646,7 +655,14 @@ def test_sparkline_component_classes_colors(snap_compare):
 
 
 def test_collapsible_render(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py")
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["wait:1000", "1"],
+        run_before=run_before,
+    )
 
 
 def test_collapsible_collapsed(snap_compare):
@@ -654,7 +670,14 @@ def test_collapsible_collapsed(snap_compare):
 
 
 def test_collapsible_expanded(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "collapsible.py",
+        press=["e", "wait:1000"],
+        terminal_size=(80, 50),
+    )
 
 
 def test_collapsible_nested(snap_compare):
@@ -784,7 +807,9 @@ def test_remove_with_auto_height(snap_compare):
 
 
 def test_auto_table(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40))
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40), press=["wait:100"]
+    )
 
 
 def test_table_markup(snap_compare):
@@ -2548,11 +2573,12 @@ def test_pseudo_classes(snap_compare):
             for item_number in range(5):
                 yield Label(f"Item {item_number + 1}")
 
-        def on_mount(self) -> None:
+        async def on_mount(self) -> None:
             # Mounting a new widget should updated previous widgets, as the last of type has changed
-            self.mount(Label("HELLO"))
+            await self.mount(Label("HELLO"))
 
     assert snap_compare(PSApp())
+
 
 def test_child_pseudo_classes(snap_compare):
     """Test pseudo classes added in https://github.com/Textualize/textual/pull/XXXX
@@ -3539,6 +3565,53 @@ def test_focus_within_transparent(snap_compare):
     assert snap_compare(FocusWithinTransparentApp(), press=["tab"])
 
 
+def test_setting_transparency(snap_compare):
+    """Check that setting a widget's background color to transparent
+    works as expected using python.
+    Regression test for https://github.com/Textualize/textual/pull/5890"""
+
+    class TransparentPythonApp(App):
+        CSS = """
+        Screen { 
+            background: darkblue;
+            align: center middle; 
+        }
+
+        TextArea {
+            height: 5;
+            width: 50;
+            &.-transparent { background: transparent; }
+        }
+        
+        OptionList {
+            height: 8;
+            width: 50;
+        }
+        """
+
+        def compose(self):
+            yield TextArea("Baseline normal TextArea, not transparent")
+            text_area2 = TextArea(
+                "This TextArea made transparent by adding a CSS class",
+                classes="-transparent",
+            )
+            yield text_area2
+            text_area3 = TextArea(
+                "This TextArea made transparent by setting style with python"
+            )
+            text_area3.styles.background = "transparent"
+            yield text_area3
+            option_list = OptionList(
+                "1) This is an OptionList\n",
+                "2) With a transparent background\n",
+                "3) Made transparent by setting style with python",
+            )
+            option_list.styles.background = "transparent"
+            yield option_list
+
+    assert snap_compare(TransparentPythonApp())
+
+
 def test_option_list_wrapping(snap_compare):
     """You should see a 40 cell wide Option list with a single line, ending in an ellipsis."""
 
@@ -3888,14 +3961,12 @@ def test_enforce_visual(snap_compare):
     """
 
     class OverflowOption(Option):
-
         def __init__(self) -> None:
             super().__init__(
                 Text.from_markup(f"Line one\n{'a' * 100}", overflow="ellipsis")
             )
 
     class OptionListOverflowApp(App[None]):
-
         CSS = """
         OptionList {
             width: 30;
@@ -4073,7 +4144,6 @@ def test_breakpoints_horizontal(snap_compare, size):
     """
 
     class BreakpointApp(App):
-
         HORIZONTAL_BREAKPOINTS = [
             (0, "-narrow"),
             (40, "-normal"),
@@ -4101,9 +4171,10 @@ def test_breakpoints_horizontal(snap_compare, size):
         def compose(self) -> ComposeResult:
             with Grid():
                 for n in range(16):
-                    yield Placeholder(f"Placeholder {n+1}")
+                    yield Placeholder(f"Placeholder {n + 1}")
 
     assert snap_compare(BreakpointApp(), terminal_size=size)
+
 
 @pytest.mark.parametrize(
     "size",
@@ -4123,7 +4194,6 @@ def test_breakpoints_vertical(snap_compare, size):
     """
 
     class BreakpointApp(App):
-
         VERTICAL_BREAKPOINTS = [
             (0, "-low"),
             (30, "-middle"),
@@ -4151,9 +4221,10 @@ def test_breakpoints_vertical(snap_compare, size):
         def compose(self) -> ComposeResult:
             with Grid():
                 for n in range(16):
-                    yield Placeholder(f"Placeholder {n+1}")
+                    yield Placeholder(f"Placeholder {n + 1}")
 
     assert snap_compare(BreakpointApp(), terminal_size=size)
+
 
 def test_compact(snap_compare):
     """Test compact styles.
@@ -4165,10 +4236,8 @@ def test_compact(snap_compare):
     """
 
     class CompactApp(App):
-
         def compose(self) -> ComposeResult:
             with Horizontal():
-
                 with Vertical():
                     yield Button("Foo")
                     yield Input("hello")
@@ -4186,3 +4255,461 @@ def test_compact(snap_compare):
                     yield TextArea("Edit me", compact=True)
 
     assert snap_compare(CompactApp())
+
+
+def test_app_default_classes(snap_compare):
+    """Test that default classes classvar is working.
+
+    You should see a blue screen with a white border, confirming that
+    the classes foo and bar have been added to the app.
+
+    """
+    from textual.app import App
+
+    class DC(App):
+        DEFAULT_CLASSES = "foo bar"
+
+        CSS = """
+        DC {
+            &.foo {
+                Screen { background: blue; }
+            }
+            &.bar {
+                Screen { border: white; }
+            }
+        }
+        """
+
+    assert snap_compare(DC())
+
+
+def test_textarea_line_highlight(snap_compare):
+    """Check the highlighted line may be disabled in the TextArea.
+
+    You should see a TextArea with the text Hello\nWorld.
+
+    There should be a cursor, but the line will *not* be highlighted."""
+
+    class TextAreaLine(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea("Hello\nWorld!", highlight_cursor_line=False)
+
+        def on_mount(self) -> None:
+            self.query_one(TextArea).move_cursor((0, 2))
+
+    assert snap_compare(TextAreaLine())
+
+
+def test_read_only_textarea(snap_compare):
+    """A read only textarea.
+
+    Should have a cursor by default. You should see the cursor on the second line (line 2)
+
+    """
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(
+                "\n".join(f"line {n + 1}" for n in range(100)), read_only=True
+            )
+
+    assert snap_compare(TextAreaApp(), press=["down"])
+
+
+def test_read_only_textarea_no_cursor(snap_compare):
+    """A read only textarea with a hidden cursor.
+
+    You should see a text area with no visible cursor.
+    The user has pressed down, which will move the view down one line (*not* the cursor as there isn't a cursor here).
+    Line 2 should be at the top of the view.
+
+    """
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(
+                "\n".join(f"line {n + 1}" for n in range(100)),
+                read_only=True,
+                show_cursor=False,
+            )
+
+    assert snap_compare(TextAreaApp(), press=["down"])
+
+
+def test_snapshot_scroll(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5918
+
+    You should see a column of Verticals with keylines scrolled down 3 lines.
+    """
+
+    class ScrollKeylineApp(App):
+        CSS = """\
+    #my-container {
+        keyline: heavy blue;
+        Vertical {
+            margin: 1;
+            width: 1fr;
+        height: 3;
+        }
+    }
+    """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll(id="my-container"):
+                for i in range(10):
+                    yield Vertical(Input(valid_empty=False, id=f"test-{i}", value="x"))
+
+        def on_mount(self) -> None:
+            self.query_one("#my-container").scroll_to(0, 3)
+
+    assert snap_compare(ScrollKeylineApp())
+
+
+def test_textarea_select(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5939
+
+    You should see three lines selected, starting from the third character with the curser ending at the fifth character.
+
+    """
+
+    class TextApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea("Hello, World! " * 100)
+
+    assert snap_compare(
+        TextApp(),
+        press=(
+            "right",
+            "right",
+            "shift+down",
+            "shift+down",
+            "shift+down",
+            "shift+right",
+            "shift+right",
+        ),
+    )
+
+
+def test_markdown_append(snap_compare):
+    """Test Markdown.append method.
+
+    You should see a view of markdown, ending with a quote that says "There can be only one"
+
+    """
+
+    MD = [
+        "# Title\n",
+        "\n",
+        "1. List item 1\n2. List item 2\n\n> There can be only one\n",
+    ]
+
+    class MDApp(App):
+        def compose(self) -> ComposeResult:
+            yield Markdown()
+
+        async def on_mount(self) -> None:
+            markdown = self.query_one(Markdown)
+            for line in MD:
+                await markdown.append(line)
+                await asyncio.sleep(0.01)
+
+    assert snap_compare(MDApp(), press=["1", "wait:500"])
+
+
+def test_append_with_initial_document(snap_compare):
+    """Test appending to an an existing document works.
+
+    You should a header, followed by Hello World on the next line.
+    "Hello" will be in bold, and "World" in italics.
+    """
+
+    TEXT = """\
+### Header
+**Hello**"""
+
+    class MyApp(App):
+        def compose(self):
+            yield Markdown(TEXT)
+
+        async def on_mount(self) -> None:
+            await self.query_one(Markdown).append(" *World*")
+
+    assert snap_compare(MyApp())
+
+
+def test_text_area_css_theme_updates_background(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/5964"""
+
+    class TextAreaThemeApp(App):
+        def compose(self) -> ComposeResult:
+            text_area_control = TextArea(
+                "This TextArea theme is always `css`.",
+                theme="css",
+                id="text-area-control",
+            )
+            text_area_control.cursor_blink = False
+
+            text_area_variable = TextArea(
+                "This TextArea theme changes from `github_light` to `css`.\n"
+                "The colors should match the TextArea above.",
+                theme="github_light",
+                id="text-area-variable",
+            )
+            text_area_variable.cursor_blink = False
+
+            yield text_area_control
+            yield text_area_variable
+
+        def on_mount(self) -> None:
+            text_area = self.query_one("#text-area-variable", TextArea)
+            text_area.theme = "css"
+
+    assert snap_compare(TextAreaThemeApp())
+
+
+def test_empty(snap_compare):
+    """Test empty: pseudo class
+
+    You should see three styled containers.
+    The top and bottom should be empty and have a red border.
+    The middle should container text, and will have a green border.
+
+    """
+
+    class EmptyApp(App):
+        CSS = """
+        .container {
+            border:green;
+        }
+        .container:empty {
+            border: red;            
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalGroup(classes="container"):
+                pass
+            with VerticalGroup(classes="container"):
+                yield Label("FOO")
+            with VerticalGroup(classes="container"):
+                pass
+
+    assert snap_compare(EmptyApp())
+
+
+def test_stream_layout(snap_compare):
+    """Test stream layout.
+
+    You should see 3 blue labels.
+    The topmost should be a single line.
+    The middle should be two lines.
+    The last should be three lines.
+    There will be a one character margin between them.
+
+    """
+
+    class StreamApp(App):
+        CSS = """
+        VerticalScroll {            
+            layout: stream;
+            Label {
+                background: blue;
+                margin: 1;
+            }
+            #many-lines {
+                max-height: 3;
+            }
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll():
+                yield Label("Hello")
+                yield Label("foo\nbar")
+                yield Label(
+                    "\n".join(["Only 3 lines should be visible"] * 100), id="many-lines"
+                )
+
+    assert snap_compare(StreamApp())
+
+
+def test_pretty_auto(snap_compare):
+    """Test that pretty works with auto dimensions.
+
+    You should see 'Hello World' including strings, 3 times in a purple box, top left.
+
+    """
+    from textual.widgets import Pretty
+
+    class Demo(App):
+        CSS = """
+        Vertical {
+            background: blue 30%;
+            height: auto;
+            width: auto;
+        }
+
+        Pretty {
+            width: auto;            
+            height: auto;
+            background: red 30%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical():
+                yield Pretty("hello world")
+                yield Pretty("hello world")
+                yield Pretty("hello world")
+
+    assert snap_compare(Demo())
+
+
+def test_static_content_property(snap_compare):
+    """Test that the Static.content property.
+
+    You should see the text "FOO BAR"
+
+    """
+
+    class StaticApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Hello, World")
+
+        def on_mount(self) -> None:
+            self.query_one(Static).content = "FOO BAR"
+
+    assert snap_compare(StaticApp())
+
+
+def test_textarea_suggestion(snap_compare):
+    """Test Text Area displays suggestions.
+
+    You should see "Hello ," followed by a dimmed "World!"
+    The cursor should be over the comma.
+    """
+
+    class TextApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea()
+
+        def on_mount(self) -> None:
+            self.query_one(TextArea).insert("Hello, ")
+            self.query_one(TextArea).suggestion = "World!"
+
+    assert snap_compare(TextApp())
+
+
+def test_textarea_placeholder(snap_compare):
+    """Test text area placeholder
+
+    You should see a TextArea with dimmed text "Your text here".
+
+    """
+
+    class TextApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea(placeholder="Your text here")
+
+    assert snap_compare(TextApp())
+
+
+def test_header_format(snap_compare):
+    """Test title and sub-title are formatted as expected.
+
+    You should see "Title - Sub-title" in the header. Where sub-title is dimmed.
+    """
+
+    class HeaderApp(App):
+        TITLE = "Title"
+        SUB_TITLE = "Sub-title"
+
+        def compose(self) -> ComposeResult:
+            yield Header()
+
+    assert snap_compare(HeaderApp())
+
+
+def test_long_textarea_placeholder(snap_compare) -> None:
+    """Test multi-line placeholders are wrapped and rendered.
+    You should see a TextArea at 50% width, with several lines of wrapped text.
+    """
+
+    TEXT = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain."""
+
+    class PlaceholderApp(App):
+
+        CSS = """
+        TextArea {
+            width: 50%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield TextArea(placeholder=TEXT)
+
+    assert snap_compare(PlaceholderApp())
+
+
+def test_rich_log_early_write(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6123
+
+    You should see a RichLog with "Hello World" text
+
+    """
+
+    class TestApp(App):
+        def compose(self) -> ComposeResult:
+            with Horizontal():
+                yield RichLog()
+
+        def on_mount(self) -> None:
+            self.theme = "nord"
+
+        def on_ready(self) -> None:
+            log_widget = self.query_one(RichLog)
+            log_widget.write("Hello, World!")
+
+    assert snap_compare(TestApp())
+
+
+def test_collapsible_focus_children(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6140
+
+    You should see an expanded collapsible containing a button. The button should be focused.
+
+    """
+
+    class CollapseApp(App):
+        def compose(self) -> ComposeResult:
+            with Collapsible(title="Collapsible", collapsed=False):
+                yield Button("Hello")
+
+    assert snap_compare(CollapseApp(), press=["enter", "enter", "tab"])
+
+
+def test_scrollbar_visibility(snap_compare) -> None:
+    """Test scrollbar-visibility rule
+
+    You should see a screen of text that overflows, but there should be *no* scrollbar.
+    """
+
+    class ScrollbarApp(App):
+
+        CSS = """
+        Screen {
+            overflow: auto;
+            scrollbar-visibility: hidden;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello, World! 293487 " * 200)
+
+    assert snap_compare(ScrollbarApp())

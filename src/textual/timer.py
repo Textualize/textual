@@ -152,6 +152,7 @@ class Timer:
         count = 0
         _repeat = self._repeat
         _interval = self._interval
+        self._active  # Force instantiation in same thread
         await self._active.wait()
         start = _time.get_time()
 

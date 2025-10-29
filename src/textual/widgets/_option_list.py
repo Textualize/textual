@@ -311,6 +311,18 @@ class OptionList(ScrollView, can_focus=True):
         """The number of options."""
         return len(self._options)
 
+    @property
+    def highlighted_option(self) -> Option | None:
+        """The currently highlighted option, or `None` if no option is highlighted.
+
+        Returns:
+            An Option, or `None`.
+        """
+        if self.highlighted is not None:
+            return self.options[self.highlighted]
+        else:
+            return None
+
     def clear_options(self) -> Self:
         """Clear the content of the option list.
 
@@ -324,8 +336,27 @@ class OptionList(ScrollView, can_focus=True):
         self._option_to_index.clear()
         self.highlighted = None
         self.refresh()
-        self.scroll_to(0, 0, animate=False)
+        self.scroll_y = 0
         self._update_lines()
+        return self
+
+    def set_options(self, options: Iterable[OptionListContent]) -> Self:
+        """Set options, potentially clearing existing options.
+
+        Args:
+            options: Options to set.
+
+        Returns:
+            The `OptionList` instance.
+        """
+        self._options.clear()
+        self._line_cache.clear()
+        self._option_render_cache.clear()
+        self._id_to_option.clear()
+        self._option_to_index.clear()
+        self.highlighted = None
+        self.scroll_y = 0
+        self.add_options(options)
         return self
 
     def add_options(self, new_options: Iterable[OptionListContent]) -> Self:
@@ -333,6 +364,9 @@ class OptionList(ScrollView, can_focus=True):
 
         Args:
             new_options: Content of new options.
+
+        Returns:
+            The `OptionList` instance.
         """
 
         new_options = list(new_options)
@@ -853,7 +887,10 @@ class OptionList(ScrollView, can_focus=True):
             option_index, line_offset = self._lines[line_number]
             option = self.options[option_index]
         except IndexError:
-            return Strip.blank(self.scrollable_content_region.width)
+            return Strip.blank(
+                self.scrollable_content_region.width,
+                self.get_visual_style("option-list--option").rich_style,
+            )
 
         mouse_over = self._mouse_hovering_over == option_index
         component_class = ""
@@ -873,7 +910,10 @@ class OptionList(ScrollView, can_focus=True):
         try:
             strip = strips[line_offset]
         except IndexError:
-            return Strip.blank(self.scrollable_content_region.width)
+            return Strip.blank(
+                self.scrollable_content_region.width,
+                self.get_visual_style("option-list--option").rich_style,
+            )
         return strip
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:

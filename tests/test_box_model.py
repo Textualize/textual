@@ -7,7 +7,7 @@ from textual.geometry import Size, Spacing
 from textual.widget import Widget
 
 
-def test_content_box():
+async def test_content_box():
     one = Fraction(1)
 
     class TestWidget(Widget):
@@ -44,7 +44,7 @@ def test_content_box():
     assert box_model == BoxModel(Fraction(14), Fraction(12), Spacing(0, 0, 0, 0))
 
 
-def test_width():
+async def test_width():
     """Test width settings."""
 
     one = Fraction(1)
@@ -93,7 +93,7 @@ def test_width():
     assert box_model == BoxModel(Fraction(27), Fraction(16), Spacing(1, 2, 3, 4))
 
 
-def test_height():
+async def test_height():
     """Test height settings."""
 
     one = Fraction(1)
@@ -133,7 +133,6 @@ def test_height():
     styles.margin = 2
 
     box_model = widget._get_box_model(Size(60, 20), Size(80, 24), one, one)
-    print(box_model)
     assert box_model == BoxModel(Fraction(56), Fraction(10), Spacing(2, 2, 2, 2))
 
     styles.margin = 1, 2, 3, 4
@@ -144,7 +143,7 @@ def test_height():
     assert box_model == BoxModel(Fraction(54), Fraction(8), Spacing(1, 2, 3, 4))
 
 
-def test_max():
+async def test_max():
     """Check that max_width and max_height are respected."""
     one = Fraction(1)
 
@@ -167,7 +166,7 @@ def test_max():
     assert box_model == BoxModel(Fraction(40), Fraction(30), Spacing(0, 0, 0, 0))
 
 
-def test_min():
+async def test_min():
     """Check that min_width and min_height are respected."""
 
     one = Fraction(1)

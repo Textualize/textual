@@ -271,7 +271,9 @@ class Canvas:
                                 text[offset:next_offset],
                                 base_style
                                 + Style.from_color(
-                                    colors[max(color_indices)].rich_color
+                                    colors[
+                                        max(color_indices) if color_indices else 0
+                                    ].rich_color
                                 ),
                             )
                         )

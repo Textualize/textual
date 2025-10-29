@@ -16,6 +16,7 @@ EdgeType = Literal[
     "round",
     "solid",
     "thick",
+    "block",
     "double",
     "dashed",
     "heavy",
@@ -42,6 +43,8 @@ Overlay = Literal["none", "screen"]
 Position = Literal["relative", "absolute"]
 TextWrap = Literal["wrap", "nowrap"]
 TextOverflow = Literal["clip", "fold", "ellipsis"]
+Expand = Literal["greedy", "expand"]
+ScrollbarVisibility = Literal["visible", "hidden"]
 
 Specificity3 = Tuple[int, int, int]
 Specificity6 = Tuple[int, int, int, int, int, int]

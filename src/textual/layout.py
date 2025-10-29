@@ -210,7 +210,11 @@ class Layout(ABC):
 
     @abstractmethod
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self,
+        parent: Widget,
+        children: list[Widget],
+        size: Size,
+        greedy: bool = True,
     ) -> ArrangeResult:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
@@ -236,8 +240,9 @@ class Layout(ABC):
         if not widget._nodes:
             width = 0
         else:
-            arrangement = widget._arrange(
-                Size(0 if widget.shrink else container.width, 0)
+            arrangement = widget.arrange(
+                Size(0 if widget.shrink else container.width, 0),
+                optimal=True,
             )
             width = arrangement.total_region.right
         return width
@@ -261,9 +266,9 @@ class Layout(ABC):
                 child.styles.is_dynamic_height for child in widget.displayed_children
             ):
                 # An exception for containers with all dynamic height widgets
-                arrangement = widget._arrange(Size(width, container.height))
+                arrangement = widget.arrange(Size(width, container.height))
             else:
-                arrangement = widget._arrange(Size(width, 0))
+                arrangement = widget.arrange(Size(width, 0))
             height = arrangement.total_region.height
         else:
             height = 0

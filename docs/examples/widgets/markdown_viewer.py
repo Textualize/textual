@@ -33,7 +33,7 @@ Tables are displayed in a DataTable widget.
 
 ## Code Blocks
 
-Code blocks are syntax highlighted, with guidelines.
+Code blocks are syntax highlighted.
 
 ```python
 class ListViewExample(App):
@@ -45,12 +45,24 @@ class ListViewExample(App):
         )
         yield Footer()
 ```
+
+## Litany Against Fear
+
+I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain.
 """
 
 
 class MarkdownExampleApp(App):
     def compose(self) -> ComposeResult:
-        yield MarkdownViewer(EXAMPLE_MARKDOWN, show_table_of_contents=True)
+        markdown_viewer = MarkdownViewer(EXAMPLE_MARKDOWN, show_table_of_contents=True)
+        markdown_viewer.code_indent_guides = False
+        yield markdown_viewer
 
 
 if __name__ == "__main__":

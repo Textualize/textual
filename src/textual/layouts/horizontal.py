@@ -20,12 +20,12 @@ class HorizontalLayout(Layout):
     name = "horizontal"
 
     def arrange(
-        self, parent: Widget, children: list[Widget], size: Size
+        self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
     ) -> ArrangeResult:
         parent.pre_layout(self)
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-        viewport = parent.app.size
+        viewport = parent.app.viewport_size
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [
@@ -57,6 +57,7 @@ class HorizontalLayout(Layout):
             viewport,
             resolve_margin,
             resolve_dimension="width",
+            greedy=greedy,
         )
 
         margins = [
@@ -82,7 +83,6 @@ class HorizontalLayout(Layout):
             children, box_models, margins
         ):
             styles = widget.styles
-
             overlay = styles.overlay == "screen"
             offset = (
                 styles.offset.resolve(

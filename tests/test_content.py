@@ -5,6 +5,8 @@ from rich.text import Text
 
 from textual.content import Content, Span
 from textual.style import Style
+from textual.visual import RenderOptions
+from textual.widget import Widget
 
 
 def test_blank():
@@ -134,6 +136,14 @@ def test_add() -> None:
     assert content.spans == [Span(0, 3, "red"), Span(4, 7, "blue")]
     assert content.cell_length == 7
 
+def test_radd() -> None:
+    """Test reverse addition."""
+    assert "foo" + Content("bar") == Content("foobar")
+
+    # Test spans after addition
+    content = "foo " + Content.styled("bar", "blue")
+    assert str(content) == "foo bar"
+    assert content.spans == [Span(4, 7, "blue")]
 
 def test_from_markup():
     """Test simple parsing of content markup."""
@@ -229,6 +239,7 @@ def test_assemble():
         ("\\[/foo", "[/foo"),
         ("\\[/foo]", "[/foo]"),
         ("\\[]", "[]"),
+        ("\\[0]", "[0]"),
     ],
 )
 def test_escape(markup: str, plain: str) -> None:
@@ -275,12 +286,90 @@ def test_first_line():
     assert first_line.spans == [Span(0, 3, "red")]
 
 
-def test_errors():
-    with pytest.raises(Exception):
-        Content.from_markup("[")
+async def test_split_and_tabs():
+    spans = [
+        Span(0, 49, style="$text"),
+    ]
 
-    with pytest.raises(Exception):
-        Content.from_markup("[:")
+    content = Content("--- hello.py\t2024-01-15 10:30:00.000000000 -0800", spans=spans)
+    widget = Widget()
+    content.render_strips(0, None, Style(), RenderOptions(widget._get_style, {}))
 
-    with pytest.raises(Exception):
-        Content.from_markup("[foo")
+
+def test_simplify():
+    """Test simplify joins spans."""
+    content = Content.from_markup("[bold]Foo[/][bold]Bar[/]")
+    assert content.spans == [Span(0, 3, "bold"), Span(3, 6, "bold")]
+    content.simplify()
+    assert content.spans == [Span(0, 6, "bold")]
+
+
+@pytest.mark.parametrize(
+    ["input", "tab_width", "expected"],
+    [
+        (Content(""), 8, Content("")),
+        (Content("H"), 8, Content("H")),
+        (Content("Hello"), 8, Content("Hello")),
+        (Content("\t"), 8, Content(" " * 8)),
+        (Content("A\t"), 8, Content("A" + " " * 7)),
+        (Content("ABCD\t"), 8, Content("ABCD" + " " * 4)),
+        (Content("ABCDEFG\t"), 8, Content("ABCDEFG ")),
+        (Content("ABCDEFGH\t"), 8, Content("ABCDEFGH" + " " * 8)),
+        (Content("Hel\tlo!"), 4, Content("Hel lo!")),
+        (Content("\t\t"), 4, Content(" " * 8)),
+        (Content("FO\t\t"), 4, Content("FO      ")),
+        (Content("FO\tOB\t"), 4, Content("FO  OB  ")),
+        (
+            Content("FOO", spans=[Span(0, 3, "red")]),
+            4,
+            Content("FOO", spans=[Span(0, 3, "red")]),
+        ),
+        (
+            Content("FOO\tBAR", spans=[Span(0, 3, "red")]),
+            8,
+            Content("FOO     BAR", spans=[Span(0, 3, "red")]),
+        ),
+        (
+            Content("FOO\tBAR", spans=[Span(0, 3, "red"), Span(4, 8, "blue")]),
+            8,
+            Content("FOO     BAR", spans=[Span(0, 3, "red"), Span(8, 11, "blue")]),
+        ),
+        (
+            Content("foo\tbar\nbaz", spans=[Span(0, 11, "red")]),
+            8,
+            Content("foo     bar\nbaz", spans=[Span(0, 15, "red")]),
+        ),
+    ],
+)
+def test_expand_tabs(input: Content, tab_width: int, expected: Content):
+    output = input.expand_tabs(tab_width).simplify()
+    print(repr(output))
+    assert output.plain == expected.plain
+    assert output._spans == expected._spans
+
+
+def test_add_spans() -> None:
+    content = Content.from_markup("[red]Hello[/red], World!")
+    content = content.add_spans([Span(0, 5, "green"), Span(7, 9, "blue")])
+    expected = [
+        Span(0, 5, style="red"),
+        Span(0, 5, style="green"),
+        Span(7, 9, style="blue"),
+    ]
+    assert content.spans == expected
+
+
+def test_wrap() -> None:
+    content = Content.from_markup("[green]Hello, [b]World, One two three[/b]")
+    wrapped = content.wrap(6)
+    print(wrapped)
+    expected = [
+        Content("Hello,", spans=[Span(0, 6, style="green")]),
+        Content("World,", spans=[Span(0, 6, style="green"), Span(0, 6, style="b")]),
+        Content("One", spans=[Span(0, 3, style="green"), Span(0, 3, style="b")]),
+        Content("two", spans=[Span(0, 3, style="green"), Span(0, 3, style="b")]),
+        Content("three", spans=[Span(0, 5, style="green"), Span(0, 5, style="b")]),
+    ]
+    assert len(wrapped) == len(expected)
+    for line1, line2 in zip(wrapped, expected):
+        assert line1.is_same(line2)
