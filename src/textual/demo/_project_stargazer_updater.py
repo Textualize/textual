@@ -1,11 +1,12 @@
-import httpx
-import os
 import json
-from rich.console import Console
+import os
+
+import httpx
 
 # Not using the Absolute reference because
 # I can't get python to run it.
 from _project_data import PROJECTS
+from rich.console import Console
 
 console = Console()
 error_console = Console(stderr=True, style="bold red")
