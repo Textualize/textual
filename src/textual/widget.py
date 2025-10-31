@@ -4460,6 +4460,7 @@ class Widget(DOMNode):
             except NoScreen:
                 pass
 
+        self.refresh()
         self.app.call_later(set_focus, self)
         return self
 
