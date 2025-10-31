@@ -7697,7 +7697,7 @@ window.onload = async (event) => {
 
 
 <h1 id="content">Content<a class="headerlink" href="#content" title="Permanent link">&para;</a></h1>
-<p>The <em>content</em> of widget (displayed within the widget's borders) is typically specified in a call to <a class="autorefs autorefs-internal" title="update()" href="../../widgets/static/#textual.widgets._static.Static.update"><code>Static.update</code></a> or returned from <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.render"><code>render()</code></a> in the case of <a href="../widgets/#custom-widgets">custom widgets</a>.</p>
+<p>The <em>content</em> of widget (displayed within the widget's borders) is typically specified in a call to <a class="autorefs autorefs-internal" title="            update" href="../../widgets/static/#textual.widgets.Static.update"><code>Static.update</code></a> or returned from <a class="autorefs autorefs-internal" title="            render" href="../../api/widget/#textual.widget.Widget.render"><code>render()</code></a> in the case of <a href="../widgets/#custom-widgets">custom widgets</a>.</p>
 <p>There are a few ways for you to specify this content.</p>
 <ul>
 <li>Text &mdash; a string containing <a href="#markup">markup</a>.</li>
@@ -7706,7 +7706,7 @@ window.onload = async (event) => {
 </ul>
 <p>In this chapter, we will cover all these methods. </p>
 <h2 id="markup">Markup<a class="headerlink" href="#markup" title="Permanent link">&para;</a></h2>
-<p>When building a custom widget you can embed color and style information in the string returned from the Widget's <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.render"><code>render()</code></a> method.
+<p>When building a custom widget you can embed color and style information in the string returned from the Widget's <a class="autorefs autorefs-internal" title="            render" href="../../api/widget/#textual.widget.Widget.render"><code>render()</code></a> method.
 Markup is specified as a string which contains 
 Text enclosed in square brackets (<code>[]</code>) won't appear in the output, but will modify the style of the text that follows.
 This is known as <em>content markup</em>.</p>
@@ -9364,16 +9364,16 @@ If you do need to close the tag explicitly, you can omit the action:</p>
 </p>
 <div class="admonition tip">
 <p class="admonition-title">Escaping markup</p>
-<p>You can also use the <a class="autorefs autorefs-internal" title="escape()" href="../../api/markup/#textual.markup.escape">escape</a> function to escape tags</p>
+<p>You can also use the <a class="autorefs autorefs-internal" title="            escape" href="../../api/markup/#textual.markup.escape">escape</a> function to escape tags</p>
 </div>
-<p>Some methods, such as <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.notify"><code>notify()</code></a>, have a <code>markup</code> switch that you can use to disable markup.
+<p>Some methods, such as <a class="autorefs autorefs-internal" title="            notify" href="../../api/widget/#textual.widget.Widget.notify"><code>notify()</code></a>, have a <code>markup</code> switch that you can use to disable markup.
 You may want to use this if you want to output a Python repr strings, so that Textual doesn't interpret a list as a tag.</p>
 <p>Here's an example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># debug code: what is my_list at this point?</span>
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">my_list</span><span class="p">),</span> <span class="n">markup</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="content-class">Content class<a class="headerlink" href="#content-class" title="Permanent link">&para;</a></h2>
-<p>Under the hood, Textual will convert markup into a <a class="autorefs autorefs-internal" href="../../api/content/#textual.content.Content">Content</a> instance.
+<p>Under the hood, Textual will convert markup into a <a class="autorefs autorefs-internal" title="            Content" href="../../api/content/#textual.content.Content">Content</a> instance.
 You can also return a Content object directly from <code>render()</code>.
 This can give you more flexibility beyond the markup.</p>
 <p>To clarify, here's a render method that returns a string with markup:</p>
@@ -9387,16 +9387,21 @@ This can give you more flexibility beyond the markup.</p>
 <a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>        <span class="k">return</span> <span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;[b]Hello, World![/b]&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="constructing-content">Constructing content<a class="headerlink" href="#constructing-content" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" href="../../api/content/#textual.content.Content">Content</a> class accepts a default string in it's constructor.</p>
+<p>The <a class="autorefs autorefs-internal" title="            Content" href="../../api/content/#textual.content.Content">Content</a> class accepts a default string in it's constructor.</p>
 <p>Here's an example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">Content</span><span class="p">(</span><span class="s2">&quot;hello, World!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Note that if you construct Content in this way, it <em>won't</em> process markup (any square brackets will be displayed literally).</p>
-<p>If you want markup, you can create a <code>Content</code> with the <a class="autorefs autorefs-internal" title="from_markup()" href="../../api/content/#textual.content.Content.from_markup">Content.from_markup</a> alternative constructor:</p>
+<p>If you want markup, you can create a <code>Content</code> with the <a class="autorefs autorefs-internal" title="            from_markup
+
+
+  
+      classmethod
+  " href="../../api/content/#textual.content.Content.from_markup">Content.from_markup</a> alternative constructor:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">Content</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="s2">&quot;hello, [bold]World[/bold]!&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="styling-content">Styling content<a class="headerlink" href="#styling-content" title="Permanent link">&para;</a></h3>
-<p>You can add styles to content with the <a class="autorefs autorefs-internal" title="stylize()" href="../../api/content/#textual.content.Content.stylize">stylize</a> or <a class="autorefs autorefs-internal" title="stylize()" href="../../api/content/#textual.content.Content.stylize">stylize_before</a> methods.</p>
+<p>You can add styles to content with the <a class="autorefs autorefs-internal" title="            stylize" href="../../api/content/#textual.content.Content.stylize">stylize</a> or <a class="autorefs autorefs-internal" title="            stylize" href="../../api/content/#textual.content.Content.stylize">stylize_before</a> methods.</p>
 <p>For instance, in the following code we create content with the text "Hello, World!" and style "World" to be bold:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">content</span> <span class="o">=</span> <span class="n">Content</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
 <a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">stylize</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;bold&quot;</span><span class="p">)</span>
@@ -9413,7 +9418,12 @@ Something along these lines:</p>
 <p>While this is straightforward and intuitive, it can potentially break in subtle ways.
 If the 'name' variable contains square brackets, these may be interpreted as markup.
 For instance if the user entered their name at some point as "[magenta italic]Will" then your app will display those styles where you didn't intend them to be.</p>
-<p>We can avoid this problem by relying on the <a class="autorefs autorefs-internal" title="from_markup()" href="../../api/content/#textual.content.Content.from_markup">Content.from_markup</a> method to insert the variables for us.
+<p>We can avoid this problem by relying on the <a class="autorefs autorefs-internal" title="            from_markup
+
+
+  
+      classmethod
+  " href="../../api/content/#textual.content.Content.from_markup">Content.from_markup</a> method to insert the variables for us.
 If you supply variables as keyword arguments, these will be substituted in the markup using the same syntax as <a href="https://docs.python.org/3/library/string.html#template-strings">string.Template</a>.
 Any square brackets in the variables will be present in the output, but won't change the styles.</p>
 <p>Here's how we can fix the previous example:</p>

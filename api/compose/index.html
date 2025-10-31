@@ -5743,7 +5743,25 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.compose.compose" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.compose.compose
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;compose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(node)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;node
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(compose_result)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;compose_result
     </span>
   </a>
   
@@ -7281,7 +7299,25 @@ window.onload = async (event) => {
         <li class="md-nav__item">
   <a href="#textual.compose.compose" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.compose.compose
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;compose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(node)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;node
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.compose.compose(compose_result)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;compose_result
     </span>
   </a>
   
@@ -7311,10 +7347,12 @@ window.onload = async (event) => {
 <div class="doc doc-object doc-function">
 
 
+
 <a id="textual.compose.compose"></a>
-  <div class="doc doc-contents first">
-  
-      <p>Compose child widgets from a generator in the same way as <a class="autorefs autorefs-internal" title="compose()" href="../widget/#textual.widget.Widget.compose">compose</a>.</p>
+    <div class="doc doc-contents first">
+
+        <p>Compose child widgets from a generator in the same way as <a class="autorefs autorefs-internal" title="            compose" href="../widget/#textual.widget.Widget.compose">compose</a>.</p>
+
 
 <details class="example" open>
   <summary>Example</summary>
@@ -7331,74 +7369,76 @@ window.onload = async (event) => {
 </code></pre></div>
 </details>
 
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>node</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.app.App" href="../app/#textual.app.App">App</a> | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>The parent node.</p>
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
         </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.compose.compose(node)" class="doc doc-heading doc-heading-parameter">                  <code>node</code>
+<a href="#textual.compose.compose(node)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            App (textual.app.App)" href="../app/#textual.app.App">App</a> | <a class="autorefs autorefs-internal" title="            Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The parent node.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h2 id="textual.compose.compose(compose_result)" class="doc doc-heading doc-heading-parameter">                  <code>compose_result</code>
+<a href="#textual.compose.compose(compose_result)" class="headerlink" title="Permanent link">&para;</a></h2>            </td>
+            <td>
+                  <code><span title="textual.app.ComposeResult">ComposeResult</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A compose result, or <code>None</code> to call <code>node.compose()</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
         <tr>
-          <td><code>compose_result</code></td>
-          <td>
-                <code><span title="textual.app.ComposeResult">ComposeResult</span> | None</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>A compose result, or <code>None</code> to call <code>node.compose()</code>.</p>
-            </div>
-          </td>
-          <td>
-                <code>None</code>
-          </td>
+          <th>Type</th>
+          <th>Description</th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="            Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of widgets.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>A list of widgets.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
+    </div>
 
 </div>
 

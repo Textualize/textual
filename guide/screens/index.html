@@ -7694,7 +7694,7 @@ window.onload = async (event) => {
 <p>This chapter covers Textual's screen API. We will discuss how to create screens and switch between them.</p>
 <h2 id="what-is-a-screen">What is a screen?<a class="headerlink" href="#what-is-a-screen" title="Permanent link">&para;</a></h2>
 <p>Screens are containers for widgets that occupy the dimensions of your terminal. There can be many screens in a given app, but only one screen is active at a time.</p>
-<p>Textual requires that there be at least one screen object and will create one implicitly in the App class. If you don't change the screen, any widgets you <a class="autorefs autorefs-internal" title="mount()" href="../../api/widget/#textual.widget.Widget.mount">mount</a> or <a class="autorefs autorefs-internal" title="compose()" href="../../api/widget/#textual.widget.Widget.compose">compose</a> will be added to this default screen.</p>
+<p>Textual requires that there be at least one screen object and will create one implicitly in the App class. If you don't change the screen, any widgets you <a class="autorefs autorefs-internal" title="            mount" href="../../api/widget/#textual.widget.Widget.mount">mount</a> or <a class="autorefs autorefs-internal" title="            compose" href="../../api/widget/#textual.widget.Widget.compose">compose</a> will be added to this default screen.</p>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 204 272.6953125" width="204" height="272.6953125">
   <!-- svg-source:excalidraw -->
@@ -7715,7 +7715,7 @@ window.onload = async (event) => {
 </div>
 
 <h2 id="creating-a-screen">Creating a screen<a class="headerlink" href="#creating-a-screen" title="Permanent link">&para;</a></h2>
-<p>You can create a screen by extending the <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen">Screen</a> class which you can import from <code>textual.screen</code>. The screen may be styled in the same way as other widgets, with the exception that you can't modify the screen's dimensions (as these will always be the size of your terminal).</p>
+<p>You can create a screen by extending the <a class="autorefs autorefs-internal" title="            Screen" href="../../api/screen/#textual.screen.Screen">Screen</a> class which you can import from <code>textual.screen</code>. The screen may be styled in the same way as other widgets, with the exception that you can't modify the screen's dimensions (as these will always be the size of your terminal).</p>
 <p>Let's look at a simple example of writing a screen class to simulate Window's <a href="https://en.wikipedia.org/wiki/Blue_screen_of_death">blue screen of death</a>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">screen01.py</label><label for="__tabbed_1_2">screen01.tcss</label><label for="__tabbed_1_3">Output</label></div>
 <div class="tabbed-content">
@@ -7938,7 +7938,7 @@ window.onload = async (event) => {
 <p>The app class has a new <code>SCREENS</code> class variable. Textual uses this class variable to associate a name with screen object (the name is used to reference screens in the screen API). Also in the app is a key binding associated with the action <code>"push_screen('bsod')"</code>. The screen class has a similar action <code>"pop_screen"</code> bound to the <span class="keys"><kbd class="key-escape">Esc</kbd></span> key. We will cover these actions below.</p>
 <h2 id="named-screens">Named screens<a class="headerlink" href="#named-screens" title="Permanent link">&para;</a></h2>
 <p>You can associate a screen with a name by defining a <code>SCREENS</code> class variable in your app, which should be a <code>dict</code> that maps names on to <code>Screen</code> objects. The name of the screen may be used interchangeably with screen objects in much of the screen API.</p>
-<p>You can also <em>install</em> new named screens dynamically with the <a class="autorefs autorefs-internal" title="install_screen()" href="../../api/app/#textual.app.App.install_screen">install_screen</a> method. The following example installs the <code>BSOD</code> screen in a mount handler rather than from the <code>SCREENS</code> variable.</p>
+<p>You can also <em>install</em> new named screens dynamically with the <a class="autorefs autorefs-internal" title="            install_screen" href="../../api/app/#textual.app.App.install_screen">install_screen</a> method. The following example installs the <code>BSOD</code> screen in a mount handler rather than from the <code>SCREENS</code> variable.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">screen02.py</label><label for="__tabbed_2_2">screen02.tcss</label><label for="__tabbed_2_3">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -8159,8 +8159,8 @@ window.onload = async (event) => {
 </div>
 <p>Although both do the same thing, we recommend <code>SCREENS</code> for screens that exist for the lifetime of your app.</p>
 <h3 id="uninstalling-screens">Uninstalling screens<a class="headerlink" href="#uninstalling-screens" title="Permanent link">&para;</a></h3>
-<p>Screens defined in <code>SCREENS</code> or added with <a class="autorefs autorefs-internal" title="install_screen()" href="../../api/app/#textual.app.App.install_screen">install_screen</a> are <em>installed</em> screens. Textual will keep these screens in memory for the lifetime of your app.</p>
-<p>If you have installed a screen, but you later want it to be removed and cleaned up, you can call <a class="autorefs autorefs-internal" title="uninstall_screen()" href="../../api/app/#textual.app.App.uninstall_screen">uninstall_screen</a>.</p>
+<p>Screens defined in <code>SCREENS</code> or added with <a class="autorefs autorefs-internal" title="            install_screen" href="../../api/app/#textual.app.App.install_screen">install_screen</a> are <em>installed</em> screens. Textual will keep these screens in memory for the lifetime of your app.</p>
+<p>If you have installed a screen, but you later want it to be removed and cleaned up, you can call <a class="autorefs autorefs-internal" title="            uninstall_screen" href="../../api/app/#textual.app.App.uninstall_screen">uninstall_screen</a>.</p>
 <h2 id="screen-stack">Screen stack<a class="headerlink" href="#screen-stack" title="Permanent link">&para;</a></h2>
 <p>Textual apps keep a <em>stack</em> of screens. You can think of this screen stack as a stack of paper, where only the very top sheet is visible. If you remove the top sheet, the paper underneath becomes visible. Screens work in a similar way.</p>
 <div class="admonition note">
@@ -8169,7 +8169,7 @@ window.onload = async (event) => {
 </div>
 <p>The active screen (top of the stack) will render the screen and receive input events. The following API methods on the App class can manipulate this stack, and let you decide which screen the user can interact with.</p>
 <h3 id="push-screen">Push screen<a class="headerlink" href="#push-screen" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title="push_screen()" href="../../api/app/#textual.app.App.push_screen">push_screen</a> method puts a screen on top of the stack and makes that screen active. You can call this method with the name of an installed screen, or a screen object.</p>
+<p>The <a class="autorefs autorefs-internal" title="            push_screen" href="../../api/app/#textual.app.App.push_screen">push_screen</a> method puts a screen on top of the stack and makes that screen active. You can call this method with the name of an installed screen, or a screen object.</p>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1752.6835070486932 783.2607590007455" width="1752.6835070486932" height="783.2607590007455">
   <!-- svg-source:excalidraw -->
@@ -8192,10 +8192,10 @@ window.onload = async (event) => {
 <h4 id="action">Action<a class="headerlink" href="#action" title="Permanent link">&para;</a></h4>
 <p>You can also push screens with the <code>"app.push_screen"</code> action, which requires the name of an installed screen.</p>
 <h3 id="pop-screen">Pop screen<a class="headerlink" href="#pop-screen" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title="pop_screen()" href="../../api/app/#textual.app.App.pop_screen">pop_screen</a> method removes the top-most screen from the stack, and makes the new top screen active.</p>
+<p>The <a class="autorefs autorefs-internal" title="            pop_screen" href="../../api/app/#textual.app.App.pop_screen">pop_screen</a> method removes the top-most screen from the stack, and makes the new top screen active.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The screen stack must always have at least one screen. If you attempt to remove the last screen, Textual will raise a <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.ScreenStackError">ScreenStackError</a> exception.</p>
+<p>The screen stack must always have at least one screen. If you attempt to remove the last screen, Textual will raise a <a class="autorefs autorefs-internal" title="            ScreenStackError" href="../../api/app/#textual.app.ScreenStackError">ScreenStackError</a> exception.</p>
 </div>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1807.5351283922685 752.379385524772" width="1807.5351283922685" height="752.379385524772">
@@ -8220,7 +8220,7 @@ window.onload = async (event) => {
 <h4 id="action_1">Action<a class="headerlink" href="#action_1" title="Permanent link">&para;</a></h4>
 <p>You can also pop screens with the <code>"app.pop_screen"</code> action.</p>
 <h3 id="switch-screen">Switch screen<a class="headerlink" href="#switch-screen" title="Permanent link">&para;</a></h3>
-<p>The <a class="autorefs autorefs-internal" title="switch_screen()" href="../../api/app/#textual.app.App.switch_screen">switch_screen</a> method replaces the top of the stack with a new screen.</p>
+<p>The <a class="autorefs autorefs-internal" title="            switch_screen" href="../../api/app/#textual.app.App.switch_screen">switch_screen</a> method replaces the top of the stack with a new screen.</p>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1797.6627924021118 702.6368730495067" width="1797.6627924021118" height="702.6368730495067">
   <!-- svg-source:excalidraw -->
@@ -8678,14 +8678,14 @@ From the quit screen you can click either Quit to exit the app immediately, or C
 </div>
 </div>
 <p>Note the <code>request_quit</code> action in the app which pushes a new instance of <code>QuitScreen</code>.
-This makes the quit screen active. If you click Cancel, the quit screen calls <a class="autorefs autorefs-internal" title="pop_screen()" href="../../api/app/#textual.app.App.pop_screen">pop_screen</a> to return the default screen. This also removes and deletes the <code>QuitScreen</code> object.</p>
+This makes the quit screen active. If you click Cancel, the quit screen calls <a class="autorefs autorefs-internal" title="            pop_screen" href="../../api/app/#textual.app.App.pop_screen">pop_screen</a> to return the default screen. This also removes and deletes the <code>QuitScreen</code> object.</p>
 <p>There are two flaws with this modal screen, which we can fix in the same way.</p>
 <p>The first flaw is that the app adds a new quit screen every time you press <span class="keys"><kbd class="key-q">Q</kbd></span>, even when the quit screen is still visible.
 Consequently if you press <span class="keys"><kbd class="key-q">Q</kbd></span> three times, you will have to click Cancel three times to get back to the main screen.
 This is because bindings defined on App are always checked, and we call <code>push_screen</code> for every press of <span class="keys"><kbd class="key-q">Q</kbd></span>.</p>
 <p>The second flaw is that the modal dialog doesn't <em>look</em> modal.
 There is no indication that the main interface is still there, waiting to become active again.</p>
-<p>We can solve both those issues by replacing our use of <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen">Screen</a> with <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.ModalScreen">ModalScreen</a>.
+<p>We can solve both those issues by replacing our use of <a class="autorefs autorefs-internal" title="            Screen" href="../../api/screen/#textual.screen.Screen">Screen</a> with <a class="autorefs autorefs-internal" title="            ModalScreen" href="../../api/screen/#textual.screen.ModalScreen">ModalScreen</a>.
 This screen sub-class will prevent key bindings on the app from being processed.
 It also sets a background with a little alpha to allow the previous screen to show through.</p>
 <p>Let's see what happens when we use <code>ModalScreen</code>.</p>
@@ -9101,8 +9101,8 @@ The main screen is darkened to indicate to the user that it is not active, and o
 <h2 id="returning-data-from-screens">Returning data from screens<a class="headerlink" href="#returning-data-from-screens" title="Permanent link">&para;</a></h2>
 <p>It is a common requirement for screens to be able to return data.
 For instance, you may want a screen to show a dialog and have the result of that dialog processed <em>after</em> the screen has been popped.</p>
-<p>To return data from a screen, call <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen.dismiss"><code>dismiss()</code></a> on the screen with the data you wish to return.
-This will pop the screen and invoke a callback set when the screen was pushed (with <a class="autorefs autorefs-internal" title="push_screen()" href="../../api/app/#textual.app.App.push_screen"><code>push_screen</code></a>).</p>
+<p>To return data from a screen, call <a class="autorefs autorefs-internal" title="            dismiss" href="../../api/screen/#textual.screen.Screen.dismiss"><code>dismiss()</code></a> on the screen with the data you wish to return.
+This will pop the screen and invoke a callback set when the screen was pushed (with <a class="autorefs autorefs-internal" title="            push_screen" href="../../api/app/#textual.app.App.push_screen"><code>push_screen</code></a>).</p>
 <p>Let's modify the previous example to use <code>dismiss</code> rather than an explicit <code>pop_screen</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">modal03.py</label><label for="__tabbed_5_2">modal01.tcss</label></div>
 <div class="tabbed-content">
@@ -9209,7 +9209,12 @@ This makes it easier for the app to perform any cleanup actions prior to exiting
 The addition of <code>[bool]</code> adds typing information that tells the type checker to expect a boolean in the call to <code>dismiss</code>, and that any callback set in <code>push_screen</code> should also expect the same type. As always, typing is optional in Textual, but this may help you catch bugs.</p>
 <h3 id="waiting-for-screens">Waiting for screens<a class="headerlink" href="#waiting-for-screens" title="Permanent link">&para;</a></h3>
 <p>It is also possible to wait on a screen to be dismissed, which can feel like a more natural way of expressing logic than a callback.
-The <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.push_screen_wait"><code>push_screen_wait()</code></a> method will push a screen and wait for its result (the value from <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen.dismiss"><code>Screen.dismiss()</code></a>).</p>
+The <a class="autorefs autorefs-internal" title="            push_screen_wait
+
+
+  
+      async
+  " href="../../api/app/#textual.app.App.push_screen_wait"><code>push_screen_wait()</code></a> method will push a screen and wait for its result (the value from <a class="autorefs autorefs-internal" title="            dismiss" href="../../api/screen/#textual.screen.Screen.dismiss"><code>Screen.dismiss()</code></a>).</p>
 <p>This can only be done from a <a href="../workers/">worker</a>, so that waiting for the screen doesn't prevent your app from updating.</p>
 <p>Let's look at an example that uses <code>push_screen_wait</code> to ask a question and waits for the user to reply by clicking a button.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="6:3"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><input id="__tabbed_6_3" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">questions01.py</label><label for="__tabbed_6_2">questions01.tcss</label><label for="__tabbed_6_3">Output</label></div>
@@ -9451,7 +9456,7 @@ The <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.p
 </div>
 <p>The mount handler on the app is decorated with <code>@work</code>, which makes the code run in a worker (background task).
 In the mount handler we push the screen with the <code>push_screen_wait</code>.
-When the user presses one of the buttons, the screen calls <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen.dismiss"><code>dismiss()</code></a> with either <code>True</code> or <code>False</code>.
+When the user presses one of the buttons, the screen calls <a class="autorefs autorefs-internal" title="            dismiss" href="../../api/screen/#textual.screen.Screen.dismiss"><code>dismiss()</code></a> with either <code>True</code> or <code>False</code>.
 This value is then returned from the <code>push_screen_wait</code> method in the mount handler.</p>
 <h2 id="modes">Modes<a class="headerlink" href="#modes" title="Permanent link">&para;</a></h2>
 <p>Some apps may benefit from having multiple screen stacks, rather than just one.
@@ -9504,12 +9509,22 @@ On startup the app switches to the "dashboard" mode which makes the top of the s
 
 </div>
 
-<p>To add modes to your app, define a <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.MODES"><code>MODES</code></a> class variable in your App class which should be a <code>dict</code> that maps the name of the mode on to either a screen object, a callable that returns a screen, or the name of an installed screen.
+<p>To add modes to your app, define a <a class="autorefs autorefs-internal" title="            MODES
+
+
+  
+      class-attribute
+  " href="../../api/app/#textual.app.App.MODES"><code>MODES</code></a> class variable in your App class which should be a <code>dict</code> that maps the name of the mode on to either a screen object, a callable that returns a screen, or the name of an installed screen.
 However you specify it, the values in <code>MODES</code> set the base screen for each mode's screen stack.</p>
-<p>You can switch between these screens at any time by calling <a class="autorefs autorefs-internal" title="switch_mode()" href="../../api/app/#textual.app.App.switch_mode"><code>App.switch_mode</code></a>.
+<p>You can switch between these screens at any time by calling <a class="autorefs autorefs-internal" title="            switch_mode" href="../../api/app/#textual.app.App.switch_mode"><code>App.switch_mode</code></a>.
 When you switch to a new mode, the topmost screen in the new stack becomes visible.
-Any calls to <a class="autorefs autorefs-internal" title="push_screen()" href="../../api/app/#textual.app.App.push_screen"><code>App.push_screen</code></a> or <a class="autorefs autorefs-internal" title="pop_screen()" href="../../api/app/#textual.app.App.pop_screen"><code>App.pop_screen</code></a> will affect only the active mode.</p>
-<p>You can set which mode will be active when the app starts by setting the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.DEFAULT_MODE"><code>DEFAULT_MODE</code></a> class variable.</p>
+Any calls to <a class="autorefs autorefs-internal" title="            push_screen" href="../../api/app/#textual.app.App.push_screen"><code>App.push_screen</code></a> or <a class="autorefs autorefs-internal" title="            pop_screen" href="../../api/app/#textual.app.App.pop_screen"><code>App.pop_screen</code></a> will affect only the active mode.</p>
+<p>You can set which mode will be active when the app starts by setting the <a class="autorefs autorefs-internal" title="            DEFAULT_MODE
+
+
+  
+      class-attribute
+  " href="../../api/app/#textual.app.App.DEFAULT_MODE"><code>DEFAULT_MODE</code></a> class variable.</p>
 <p>Let's look at an example with modes:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="7:3"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><input id="__tabbed_7_3" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">modes01.py</label><label for="__tabbed_7_2">Output</label><label for="__tabbed_7_3">Output (after pressing S)</label></div>
 <div class="tabbed-content">

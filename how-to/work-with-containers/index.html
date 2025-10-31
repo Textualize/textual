@@ -7499,14 +7499,14 @@ window.onload = async (event) => {
 
 
 <h1 id="save-time-with-textual-containers">Save time with Textual containers<a class="headerlink" href="#save-time-with-textual-containers" title="Permanent link">&para;</a></h1>
-<p>Textual's <a class="autorefs autorefs-internal" title="textual.containers" href="../../api/containers/#textual.containers">containers</a> provide a convenient way of arranging your widgets. Let's look at them in a little detail.</p>
+<p>Textual's <a class="autorefs autorefs-internal" title=" containers" href="../../api/containers/#textual.containers">containers</a> provide a convenient way of arranging your widgets. Let's look at them in a little detail.</p>
 <div class="admonition info">
 <p class="admonition-title">Are you in the right place?</p>
 <p>We are talking about Textual container widgets here. Not to be confused with <a href="https://en.wikipedia.org/wiki/Containerization_(computing)">containerization</a>&mdash;which is something else entirely!</p>
 </div>
 <h2 id="what-are-containers">What are containers?<a class="headerlink" href="#what-are-containers" title="Permanent link">&para;</a></h2>
 <p>Containers are reusable <a href="../../guide/widgets/#compound-widgets">compound widgets</a> with preset styles to arrange their children.
-For instance, there is a <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Horizontal">Horizontal</a> container which arranges all of its children in a horizontal row.
+For instance, there is a <a class="autorefs autorefs-internal" title="            Horizontal" href="../../api/containers/#textual.containers.Horizontal">Horizontal</a> container which arranges all of its children in a horizontal row.
 Let's look at a quick example of that:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">textual.containers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Horizontal</span>
@@ -7719,7 +7719,7 @@ A simple widget with a few preset styles.
 The other containers are just as simple.</p>
 <h2 id="horizontal-and-vertical">Horizontal and Vertical<a class="headerlink" href="#horizontal-and-vertical" title="Permanent link">&para;</a></h2>
 <p>We've seen the <code>Horizontal</code> container in action.
-The <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Vertical">Vertical</a> container, as you may have guessed, work the same but arranges its children vertically, i.e. from top to bottom.</p>
+The <a class="autorefs autorefs-internal" title="            Vertical" href="../../api/containers/#textual.containers.Vertical">Vertical</a> container, as you may have guessed, work the same but arranges its children vertically, i.e. from top to bottom.</p>
 <p>You can probably imagine what this looks like, but for sake of completeness, here is an example with a Vertical container:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">textual.containers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vertical</span>
@@ -8319,7 +8319,7 @@ If you were to add another horizontal it would divide the screen space in to thi
 <p>You can implement this behavior of dividing the screen in your own widgets with <a href="../../guide/styles/#fr-units">FR units</a></p>
 </div>
 <h2 id="group-containers">Group containers<a class="headerlink" href="#group-containers" title="Permanent link">&para;</a></h2>
-<p>The <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.HorizontalGroup">HorizontalGroup</a> and <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.VerticalGroup">VerticalGroup</a> containers are very similar to their non-group counterparts, but don't expand to fill the screen space.</p>
+<p>The <a class="autorefs autorefs-internal" title="            HorizontalGroup" href="../../api/containers/#textual.containers.HorizontalGroup">HorizontalGroup</a> and <a class="autorefs autorefs-internal" title="            VerticalGroup" href="../../api/containers/#textual.containers.VerticalGroup">VerticalGroup</a> containers are very similar to their non-group counterparts, but don't expand to fill the screen space.</p>
 <p>Let's look at an example.
 In the following code, we have two HorizontalGroups with a border so we can visualize their size.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -8719,7 +8719,7 @@ Let's see what happens if we add more boxes than could fit on the screen.</p>
 </p>
 <p>We have add 10 <code>Box</code> widgets, but there is not enough room for them to fit.
 The remaining boxes are off-screen and can't be viewed unless the user resizes their screen.</p>
-<p>If we expect more content that fits, we can replacing the containers with <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.HorizontalScroll">HorizontalScroll</a> or <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.VerticalScroll">VerticalScroll</a>, which will automatically add scrollbars if required.</p>
+<p>If we expect more content that fits, we can replacing the containers with <a class="autorefs autorefs-internal" title="            HorizontalScroll" href="../../api/containers/#textual.containers.HorizontalScroll">HorizontalScroll</a> or <a class="autorefs autorefs-internal" title="            VerticalScroll" href="../../api/containers/#textual.containers.VerticalScroll">VerticalScroll</a>, which will automatically add scrollbars if required.</p>
 <p>Let's make that change:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">textual.containers</span><span class="w"> </span><span class="kn">import</span> <span class="n">HorizontalScroll</span>
@@ -8922,7 +8922,7 @@ The remaining boxes are off-screen and can't be viewed unless the user resizes t
 <p>You can also implement automatic scrollbars with the <a href="../../styles/overflow/">overflow</a> style.</p>
 </div>
 <h2 id="center-right-and-middle">Center, Right, and Middle<a class="headerlink" href="#center-right-and-middle" title="Permanent link">&para;</a></h2>
-<p>The <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Center">Center</a>, <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Right">Right</a>, and <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Middle">Middle</a> containers are handy for setting the alignment of select widgets.</p>
+<p>The <a class="autorefs autorefs-internal" title="            Center" href="../../api/containers/#textual.containers.Center">Center</a>, <a class="autorefs autorefs-internal" title="            Right" href="../../api/containers/#textual.containers.Right">Right</a>, and <a class="autorefs autorefs-internal" title="            Middle" href="../../api/containers/#textual.containers.Middle">Middle</a> containers are handy for setting the alignment of select widgets.</p>
 <p>First lets look at <code>Center</code> and <code>Right</code> which align their children on the horizontal axis (there is no <code>Left</code> container, as this is the default).</p>
 <p>Here's an example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -9127,7 +9127,7 @@ The remaining boxes are off-screen and can't be viewed unless the user resizes t
 <p class="admonition-title">Alignment in TCSS</p>
 <p>You can set alignment in TCSS with the <a href="../../styles/align/">align</a> rule.</p>
 </div>
-<p>The <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Middle">Middle</a> container aligns its children to the center of the <em>vertical</em> axis.
+<p>The <a class="autorefs autorefs-internal" title="            Middle" href="../../api/containers/#textual.containers.Middle">Middle</a> container aligns its children to the center of the <em>vertical</em> axis.
 Let's look at an example.
 The following code aligns three boxes on the vertical axis:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">textual.app</span><span class="w"> </span><span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -9327,10 +9327,10 @@ The following code aligns three boxes on the vertical axis:</p>
 <p>Note how the container expands on the vertical axis, but fits on the horizontal axis.</p>
 <h2 id="other-containers">Other containers<a class="headerlink" href="#other-containers" title="Permanent link">&para;</a></h2>
 <p>This how-to covers the most common widgets, but isn't exhausted.
-Be sure to visit the <a class="autorefs autorefs-internal" title="textual.containers" href="../../api/containers/#textual.containers">container reference</a> for the full list.
+Be sure to visit the <a class="autorefs autorefs-internal" title=" containers" href="../../api/containers/#textual.containers">container reference</a> for the full list.
 There may be new containers added in future versions of Textual.</p>
 <h2 id="custom-containers">Custom containers<a class="headerlink" href="#custom-containers" title="Permanent link">&para;</a></h2>
-<p>The builtin <a class="autorefs autorefs-internal" title="textual.containers" href="../../api/containers/#textual.containers">containers</a> cover a number of common layout patterns, but are unlikely to cover every possible requirement.
+<p>The builtin <a class="autorefs autorefs-internal" title=" containers" href="../../api/containers/#textual.containers">containers</a> cover a number of common layout patterns, but are unlikely to cover every possible requirement.
 Fortunately, creating your own is easy.
 Just like the builtin containers, you can create a container by extending Widget and adding little TCSS.</p>
 <p>Here's a template for a custom container:</p>
@@ -9345,10 +9345,10 @@ Just like the builtin containers, you can create a container by extending Widget
 <h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Containers are compound widgets with preset styles for arranging their children.</li>
-<li><a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Horizontal"><code>Horizontal</code></a> and <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Vertical"><code>Vertical</code></a> containers stretch to fill available space.</li>
-<li><a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.HorizontalGroup"><code>HorizontalGroup</code></a> and <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.VerticalGroup"><code>VerticalGroup</code></a> fit to the height of their contents.</li>
-<li><a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.HorizontalScroll"><code>HorizontalScroll</code></a> and <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.VerticalScroll"><code>VerticalScroll</code></a> add automatic scrollbars.</li>
-<li><a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Center"><code>Center</code></a>, <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Right"><code>Right</code></a>, and <a class="autorefs autorefs-internal" href="../../api/containers/#textual.containers.Middle"><code>Middle</code></a> set alignment.</li>
+<li><a class="autorefs autorefs-internal" title="            Horizontal" href="../../api/containers/#textual.containers.Horizontal"><code>Horizontal</code></a> and <a class="autorefs autorefs-internal" title="            Vertical" href="../../api/containers/#textual.containers.Vertical"><code>Vertical</code></a> containers stretch to fill available space.</li>
+<li><a class="autorefs autorefs-internal" title="            HorizontalGroup" href="../../api/containers/#textual.containers.HorizontalGroup"><code>HorizontalGroup</code></a> and <a class="autorefs autorefs-internal" title="            VerticalGroup" href="../../api/containers/#textual.containers.VerticalGroup"><code>VerticalGroup</code></a> fit to the height of their contents.</li>
+<li><a class="autorefs autorefs-internal" title="            HorizontalScroll" href="../../api/containers/#textual.containers.HorizontalScroll"><code>HorizontalScroll</code></a> and <a class="autorefs autorefs-internal" title="            VerticalScroll" href="../../api/containers/#textual.containers.VerticalScroll"><code>VerticalScroll</code></a> add automatic scrollbars.</li>
+<li><a class="autorefs autorefs-internal" title="            Center" href="../../api/containers/#textual.containers.Center"><code>Center</code></a>, <a class="autorefs autorefs-internal" title="            Right" href="../../api/containers/#textual.containers.Right"><code>Right</code></a>, and <a class="autorefs autorefs-internal" title="            Middle" href="../../api/containers/#textual.containers.Middle"><code>Middle</code></a> set alignment.</li>
 <li>Custom containers are trivial to create.</li>
 </ul>
 
