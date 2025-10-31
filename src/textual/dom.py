@@ -228,6 +228,7 @@ class DOMNode(MessagePump):
         ) = None
         self._pruning = False
         self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
+        self._trap_focus = False
 
         super().__init__()
 
@@ -474,6 +475,17 @@ class DOMNode(MessagePump):
     def workers(self) -> WorkerManager:
         """The app's worker manager. Shortcut for `self.app.workers`."""
         return self.app.workers
+
+    def trap_focus(self, trap_focus: bool = True) -> None:
+        """Trap the focus.
+
+        When applied to a container, pressing tab to change focus will be limited to the container's
+        children if one of the children currently has focus.
+
+        Args:
+            trap_focus: `True` to trap focus. `False` to restore default behavior.
+        """
+        self._trap_focus = trap_focus
 
     def run_worker(
         self,
