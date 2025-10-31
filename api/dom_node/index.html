@@ -13645,8 +13645,10 @@ or <code>None</code> to sort without a key function.</p>
     <div class="doc doc-contents ">
 
         <p>Trap the focus.</p>
-<p>When applied to a container, pressing tab to change focus will be limited to the container's
-children if one of the children currently has focus.</p>
+<p>When applied to a container, this will limit tab-to-focus to the children of that
+container (assuming focus is within that container).</p>
+<p>This can be useful for widgets that act like modal dialogs, where you want to restrict
+the user the controls within the dialog.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
