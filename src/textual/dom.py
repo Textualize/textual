@@ -479,8 +479,11 @@ class DOMNode(MessagePump):
     def trap_focus(self, trap_focus: bool = True) -> None:
         """Trap the focus.
 
-        When applied to a container, pressing tab to change focus will be limited to the container's
-        children if one of the children currently has focus.
+        When applied to a container, this will limit tab-to-focus to the children of that
+        container (assuming focus is within that container).
+
+        This can be useful for widgets that act like modal dialogs, where you want to restrict
+        the user the controls within the dialog.
 
         Args:
             trap_focus: `True` to trap focus. `False` to restore default behavior.
