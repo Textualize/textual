@@ -537,7 +537,7 @@ async def test_trap_focus():
         assert focus_ids == ["one", "two"]
 
         # Trap focus on the right container
-        # Since the right containers doesn't contain a focused widget, we would expect no change
+        # Since the right container doesn't contain a focused widget, we would expect no change
         app.screen.query_one("#right").trap_focus()
         focus_ids = [node.id for node in app.screen.focus_chain]
         assert focus_ids == ["one", "two"]
