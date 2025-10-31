@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `DOMNode.trap_focus`
+- Added `DOMNode.trap_focus` https://github.com/Textualize/textual/pull/6202
 
 ## [6.4.0] - 2025-10-22
 
