@@ -527,6 +527,7 @@ async def test_trap_focus():
 
     app = TrapApp()
     async with app.run_test():
+        # Normal focus chain reports all focusable widgets
         focus_ids = [node.id for node in app.screen.focus_chain]
         assert focus_ids == ["one", "two", "a", "b"]
 
@@ -542,7 +543,7 @@ async def test_trap_focus():
         focus_ids = [node.id for node in app.screen.focus_chain]
         assert focus_ids == ["one", "two"]
 
-        # Untrap the focus on the left container
+        # Un-trap the focus on the left container
         # Should restore original focus chain
         app.screen.query_one("#left").trap_focus(False)
         focus_ids = [node.id for node in app.screen.focus_chain]
