@@ -480,10 +480,10 @@ class DOMNode(MessagePump):
         """Trap the focus.
 
         When applied to a container, this will limit tab-to-focus to the children of that
-        container (assuming focus is within that container).
+        container (once focus is within that container).
 
         This can be useful for widgets that act like modal dialogs, where you want to restrict
-        the user the controls within the dialog.
+        the user to the controls within the dialog.
 
         Args:
             trap_focus: `True` to trap focus. `False` to restore default behavior.
