@@ -4274,9 +4274,7 @@ class Widget(DOMNode):
             ]
         else:
             children_to_remove = selector
-        await_remove = self.app._prune(
-            *children_to_remove, parent=cast(DOMNode, self._parent)
-        )
+        await_remove = self.app._prune(*children_to_remove, parent=self)
         return await_remove
 
     @asynccontextmanager
@@ -4423,11 +4421,12 @@ class Widget(DOMNode):
                     self.call_later(self._update_styles)
                 if self._scroll_required:
                     self._scroll_required = False
-                    if self.styles.keyline[0] != "none":
-                        # TODO: Feels like a hack
-                        # Perhaps there should be an explicit mechanism for backgrounds to refresh when scrolled?
-                        self._set_dirty()
-                    screen.post_message(messages.UpdateScroll())
+                    if not self._layout_required:
+                        if self.styles.keyline[0] != "none":
+                            # TODO: Feels like a hack
+                            # Perhaps there should be an explicit mechanism for backgrounds to refresh when scrolled?
+                            self._set_dirty()
+                        screen.post_message(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
                     if self.display:
