@@ -1229,6 +1229,7 @@ TextArea {
         scroll_x, scroll_y = self.scroll_offset
         absolute_y = scroll_y + y
         selection = self.selection
+        _, cursor_y = self._cursor_offset
         cache_key = (
             self.size,
             scroll_x,
@@ -1243,7 +1244,7 @@ TextArea {
                 if (
                     self._cursor_visible
                     and self.cursor_blink
-                    and absolute_y == selection.end[0]
+                    and absolute_y == cursor_y
                 )
                 else None
             ),
