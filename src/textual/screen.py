@@ -743,9 +743,18 @@ class Screen(Generic[ScreenResultType], Widget):
         # Additionally, we manually keep track of the visibility of the DOM
         # instead of relying on the property `.visible` to save on DOM traversals.
         # node_stack: list[tuple[iterator over node children, node visibility]]
+
+        root_node = self.screen
+
+        if (focused := self.focused) is not None:
+            for node in focused.ancestors_with_self:
+                if node._trap_focus:
+                    root_node = node
+                    break
+
         node_stack: list[tuple[Iterator[Widget], bool]] = [
             (
-                iter(sorted(self.displayed_children, key=focus_sorter)),
+                iter(sorted(root_node.displayed_children, key=focus_sorter)),
                 self.visible,
             )
         ]

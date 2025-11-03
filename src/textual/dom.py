@@ -228,6 +228,7 @@ class DOMNode(MessagePump):
         ) = None
         self._pruning = False
         self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
+        self._trap_focus = False
 
         super().__init__()
 
@@ -474,6 +475,20 @@ class DOMNode(MessagePump):
     def workers(self) -> WorkerManager:
         """The app's worker manager. Shortcut for `self.app.workers`."""
         return self.app.workers
+
+    def trap_focus(self, trap_focus: bool = True) -> None:
+        """Trap the focus.
+
+        When applied to a container, this will limit tab-to-focus to the children of that
+        container (once focus is within that container).
+
+        This can be useful for widgets that act like modal dialogs, where you want to restrict
+        the user to the controls within the dialog.
+
+        Args:
+            trap_focus: `True` to trap focus. `False` to restore default behavior.
+        """
+        self._trap_focus = trap_focus
 
     def run_worker(
         self,

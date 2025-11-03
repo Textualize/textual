@@ -4826,7 +4826,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.notify("Saved screenshot", title="Screenshot")
             else:
                 self.notify(
-                    f"Saved screenshot to [green]{str(event.path)!r}",
+                    f"Saved screenshot to [$text-success]{str(event.path)!r}",
                     title="Screenshot",
                 )
 

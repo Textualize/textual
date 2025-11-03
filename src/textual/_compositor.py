@@ -614,9 +614,8 @@ class Compositor:
                                 - widget.scrollbar_size_horizontal
                             )
                         )
-                        capped_scroll_y = widget.validate_scroll_y(new_scroll_y)
-                        widget.set_reactive(Widget.scroll_y, capped_scroll_y)
-                        widget.set_reactive(Widget.scroll_target_y, capped_scroll_y)
+                        widget.set_reactive(Widget.scroll_y, new_scroll_y)
+                        widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
                         widget.vertical_scrollbar._reactive_position = new_scroll_y
 
                     if visible_only:
