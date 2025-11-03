@@ -4713,3 +4713,29 @@ def test_scrollbar_visibility(snap_compare) -> None:
             yield Static("Hello, World! 293487 " * 200)
 
     assert snap_compare(ScrollbarApp())
+
+
+def test_prune_fix(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6205
+
+    You should see the text "Hello" and "World" across the first two lines.
+    The original issue is that a layout operation wasn't done after removing children, leaving
+    a large gap between "Hello" and "World"
+
+    """
+
+    class PruneApp(App):
+        BINDINGS = [Binding("c", "clear", priority=True)]
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello")
+            with VerticalGroup():
+                for i in range(10):
+                    yield Static(str(i))
+            yield Static("World")
+
+        async def action_clear(self) -> None:
+            vs = self.query_one(VerticalGroup)
+            await vs.remove_children()
+
+    assert snap_compare(PruneApp(), press=["c"])
