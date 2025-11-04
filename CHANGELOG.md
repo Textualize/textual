@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `TextArea` cursor display on wrapped lines https://github.com/Textualize/textual/pull/6196
 - Fixed `remove_children` not refreshing layout https://github.com/Textualize/textual/pull/6206
 
+### Added
+
+- Added support for the kitty keyboard protocol on Windows https://github.com/Textualize/textual/pull/6207
+
 ## [6.5.0] - 2025-10-31
 
 ### Added
