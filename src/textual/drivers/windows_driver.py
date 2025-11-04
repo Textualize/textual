@@ -97,6 +97,7 @@ class WindowsDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h")
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.flush()
         self._enable_bracketed_paste()
 
@@ -123,6 +124,10 @@ class WindowsDriver(Driver):
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
         self.disable_input()
+
+        # Disable the Kitty keyboard protocol. This must be done before leaving
+        # the alt screen. https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.write("\x1b[<u")
 
         # Disable alt screen, show cursor
         self.write("\x1b[?1049l" + "\x1b[?25h")
