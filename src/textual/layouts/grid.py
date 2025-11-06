@@ -29,6 +29,17 @@ class GridLayout(Layout):
         """Shrink the grid to fit the container if it is larger."""
         self.auto_minimum: bool = False
         """If self.shrink is `True`, auto-detect and limit the width."""
+        self._grid_size: tuple[int, int] | None = None
+        """Grid size after last arrange call."""
+
+    @property
+    def grid_size(self) -> tuple[int, int] | None:
+        """The grid size after the last arrange call.
+
+        Returns:
+            A tuple of (WIDTH, HEIGHT) or `None` prior to the first `arrange`
+        """
+        return self._grid_size
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
@@ -60,6 +71,9 @@ class GridLayout(Layout):
                     table_size_columns -= 1
 
         table_size_rows = styles.grid_size_rows
+
+        self._grid_size = (table_size_columns, table_size_rows)
+
         viewport = parent.app.viewport_size
         keyline_style, _keyline_color = styles.keyline
         offset = (0, 0)
