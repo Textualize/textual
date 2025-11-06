@@ -72,8 +72,6 @@ class GridLayout(Layout):
 
         table_size_rows = styles.grid_size_rows
 
-        self._grid_size = (table_size_columns, table_size_rows)
-
         viewport = parent.app.viewport_size
         keyline_style, _keyline_color = styles.keyline
         offset = (0, 0)
@@ -171,9 +169,9 @@ class GridLayout(Layout):
             cell_coord = next_coord()
 
         column_scalars = repeat_scalars(column_scalars, table_size_columns)
-        row_scalars = repeat_scalars(
-            row_scalars, table_size_rows if table_size_rows else row + 1
-        )
+        table_size_rows = table_size_rows if table_size_rows else row + 1
+        row_scalars = repeat_scalars(row_scalars, table_size_rows)
+        self._grid_size = (table_size_columns, table_size_rows)
 
         def apply_width_limits(widget: Widget, width: int) -> int:
             """Apply min and max widths to dimension.
