@@ -37,7 +37,7 @@ class GridLayout(Layout):
         """The grid size after the last arrange call.
 
         Returns:
-            A tuple of (WIDTH, HEIGHT) or `None` prior to the first `arrange`
+            A tuple of (WIDTH, HEIGHT) or `None` prior to the first `arrange`.
         """
         return self._grid_size
 
