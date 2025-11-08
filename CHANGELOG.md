@@ -11,10 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `TextArea` cursor display on wrapped lines https://github.com/Textualize/textual/pull/6196
 - Fixed `remove_children` not refreshing layout https://github.com/Textualize/textual/pull/6206
+- Fixed flicker with :hover pseudo class https://github.com/Textualize/textual/pull/6214
 
 ### Added
 
 - Added `grid_size` property to `GridLayout` https://github.com/Textualize/textual/pull/6210
+- Exposed `NoSelection` and `BLANK` via `textual.widgets.select` https://github.com/Textualize/textual/pull/6214
 
 ## [6.5.0] - 2025-10-31
 
