@@ -3037,11 +3037,17 @@ class App(Generic[ReturnType], DOMNode):
                         widget.post_message(events.Enter(widget))
                 finally:
                     self.mouse_over = widget
-        if self.hover_over is not None:
-            self.hover_over.mouse_hover = False
+
+        current_hover_over = self.hover_over
+        if current_hover_over is not None:
+            current_hover_over.mouse_hover = False
+
         if hover_widget is not None:
             hover_widget.mouse_hover = True
-
+            if hover_widget._has_hover_style:
+                hover_widget._update_styles()
+        if current_hover_over is not None and current_hover_over._has_hover_style:
+            current_hover_over._update_styles()
         self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
