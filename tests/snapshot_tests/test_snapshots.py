@@ -4762,3 +4762,22 @@ def test_focus_on_click(snap_compare) -> None:
         await pilot.click(NonFocusButton)
 
     assert snap_compare(FocusApp(), run_before=run_before)
+
+
+def test_mount_compose(snap_compare) -> None:
+    """Test the `Widget.mount_compose` method.
+
+    You should see a Hello World message.
+    """
+
+    class ComposeApp(App):
+
+        async def on_mount(self) -> None:
+            # Perform compose outside of usual compose method.
+            def compose_things() -> ComposeResult:
+                """Add a label."""
+                yield Label("Hello, World!")
+
+            await self.screen.mount_compose(compose_things())
+
+    assert snap_compare(ComposeApp())
