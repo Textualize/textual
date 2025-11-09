@@ -4739,3 +4739,26 @@ def test_prune_fix(snap_compare) -> None:
             await vs.remove_children()
 
     assert snap_compare(PruneApp(), press=["c"])
+
+
+def test_focus_on_click(snap_compare) -> None:
+    """Test focus on click may be prevented.
+
+    You should see a button in a non-focused stated
+
+    """
+
+    class NonFocusButton(Button):
+        FOCUS_ON_CLICK = False
+
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield NonFocusButton("Click")
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(NonFocusButton)
+
+    assert snap_compare(FocusApp(), run_before=run_before)
