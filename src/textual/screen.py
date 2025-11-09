@@ -1722,7 +1722,7 @@ class Screen(Generic[ScreenResultType], Widget):
             else:
                 if isinstance(event, events.MouseDown):
                     focusable_widget = self.get_focusable_widget_at(event.x, event.y)
-                    if focusable_widget:
+                    if focusable_widget and focusable_widget.focus_on_click():
                         self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget.loading:
