@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `grid_size` property to `GridLayout` https://github.com/Textualize/textual/pull/6210
 - Exposed `NoSelection` and `BLANK` via `textual.widgets.select` https://github.com/Textualize/textual/pull/6214
-- Added `Widget.FOCUS_ON_CLICK` classvar amd `Widget.focus_on_click` method
+- Added `Widget.FOCUS_ON_CLICK` classvar amd `Widget.focus_on_click` method https://github.com/Textualize/textual/pull/6216
 
 ### Changed
 
