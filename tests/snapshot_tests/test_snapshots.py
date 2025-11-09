@@ -4739,3 +4739,45 @@ def test_prune_fix(snap_compare) -> None:
             await vs.remove_children()
 
     assert snap_compare(PruneApp(), press=["c"])
+
+
+def test_focus_on_click(snap_compare) -> None:
+    """Test focus on click may be prevented.
+
+    You should see a button in a non-focused stated
+
+    """
+
+    class NonFocusButton(Button):
+        FOCUS_ON_CLICK = False
+
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield NonFocusButton("Click")
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(NonFocusButton)
+
+    assert snap_compare(FocusApp(), run_before=run_before)
+
+
+def test_mount_compose(snap_compare) -> None:
+    """Test the `Widget.mount_compose` method.
+
+    You should see a Hello World message.
+    """
+
+    class ComposeApp(App):
+
+        async def on_mount(self) -> None:
+            # Perform compose outside of usual compose method.
+            def compose_things() -> ComposeResult:
+                """Add a label."""
+                yield Label("Hello, World!")
+
+            await self.screen.mount_compose(compose_things())
+
+    assert snap_compare(ComposeApp())
