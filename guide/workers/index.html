@@ -7983,8 +7983,8 @@ This works well if you are using an async API like <code>httpx</code>, but if yo
 </div>
 <p>You can create threads by setting <code>thread=True</code> on the <code>run_worker</code> method or the <code>work</code> decorator.
 The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing code for thread workers.</p>
-<p>The first difference is that you should avoid calling methods on your UI directly, or setting reactive variables.
-You can work around this with the <a class="autorefs autorefs-internal" title="            call_from_thread" href="../../api/app/#textual.app.App.call_from_thread">App.call_from_thread</a> method which schedules a call in the main thread.</p>
+<p>The first difference is that you should <strong>avoid calling methods on your UI directly</strong> from a threaded worker, or setting reactive variables.
+You can work around this with the <a class="autorefs autorefs-internal" title="            call_from_thread" href="../../api/app/#textual.app.App.call_from_thread">App.call_from_thread</a> method which runs your function from the main thread.</p>
 <p>The second difference is that you can't cancel threads in the same way as coroutines, but you <em>can</em> manually check if the worker was cancelled.</p>
 <p>Let's demonstrate thread workers by replacing <code>httpx</code> with <code>urllib.request</code> (in the standard library).
 The <code>urllib</code> module is not async aware, so we will need to use threads:</p>
@@ -8073,7 +8073,7 @@ If your worker needs to make multiple updates to the UI, it is a good idea to se
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 29, 2024 13:58:10 UTC">October 29, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 4, 2025 09:36:14 UTC">November 4, 2025</span>
   </span>
 
     
