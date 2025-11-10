@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
+
 ## [6.6.0] - 2025-11-10
 
 ### Fixed
@@ -53,7 +59,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
-- Allow `Sparkline` to be of any height, not just 1
 
 ### Fixed
 
