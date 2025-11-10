@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `TextArea` scrollbar position not updated after paste https://github.com/Textualize/textual/issues/4852
 - Fixed `TextArea` cursor display on wrapped lines https://github.com/Textualize/textual/pull/6196
 - Fixed `remove_children` not refreshing layout https://github.com/Textualize/textual/pull/6206
 - Fixed flicker with :hover pseudo class https://github.com/Textualize/textual/pull/6214
