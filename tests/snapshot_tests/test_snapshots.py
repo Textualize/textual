@@ -4781,3 +4781,22 @@ def test_mount_compose(snap_compare) -> None:
             await self.screen.mount_compose(compose_things())
 
     assert snap_compare(ComposeApp())
+
+
+def test_text_area_paste(snap_compare) -> None:
+    """_summary_
+
+    Args:
+        snap_compare (_type_): _description_
+    """
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea()
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        pilot.app._clipboard = "\n".join(["Where there is a Will"] * 100)
+        await pilot.press("ctrl+v")
+
+    assert snap_compare(TextAreaApp(), run_before=run_before)

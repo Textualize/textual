@@ -1158,6 +1158,7 @@ TextArea {
             # +1 width to make space for the cursor resting at the end of the line
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
+        self._refresh_scrollbars()
 
     @property
     def _draw_cursor(self) -> bool:
@@ -1561,11 +1562,11 @@ TextArea {
                 result.end_location,
             )
 
-        self._refresh_size()
         edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
         self.update_suggestion()
+        self._refresh_size()
         return result
 
     def undo(self) -> None:
