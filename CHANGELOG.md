@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Change highlight style of Select to only highlight the border, not the label https://github.com/Textualize/textual/pull/6214
 
+### Added
+
+- Added support for the kitty keyboard protocol on Windows https://github.com/Textualize/textual/pull/6207
+
 ## [6.5.0] - 2025-10-31
 
 ### Added
