@@ -395,8 +395,8 @@ class Content(Visual):
     def simplify(self) -> Content:
         """Simplify spans by joining contiguous spans together.
 
-        This can produce faster renders but typically only worth it if you have appended a
-        large number of Content instances together.
+        This may produce faster renders if you have concatenated a large number of small pieces
+        of content with repeating styles.
 
         Note that this modifies the Content instance in-place, which might appear
         to violate the immutability constraints, but it will not change the rendered output,
@@ -760,10 +760,10 @@ class Content(Visual):
             return content
         return NotImplemented
 
-    def __radd__(self, other: Content | str) -> Content:
-        if not isinstance(other, (Content, str)):
+    def __radd__(self, other: str) -> Content:
+        if not isinstance(other, str):
             return NotImplemented
-        return self + other
+        return Content(other) + self
 
     @classmethod
     def _trim_spans(cls, text: str, spans: list[Span]) -> list[Span]:

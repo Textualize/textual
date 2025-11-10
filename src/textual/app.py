@@ -518,7 +518,7 @@ class App(Generic[ReturnType], DOMNode):
         "inline": lambda app: app.is_inline,
         "ansi": lambda app: app.ansi_color,
         "nocolor": lambda app: app.no_color,
-    }  # type: ignore[assignment]
+    }
 
     title: Reactive[str] = Reactive("", compute=False)
     """The title of the app, displayed in the header."""
@@ -1256,25 +1256,25 @@ class App(Generic[ReturnType], DOMNode):
         """
         if not self.ansi_color:
             yield SystemCommand(
-                "Change theme",
+                "Theme",
                 "Change the current theme",
                 self.action_change_theme,
             )
         yield SystemCommand(
-            "Quit the application",
+            "Quit",
             "Quit the application as soon as possible",
             self.action_quit,
         )
 
         if screen.query("HelpPanel"):
             yield SystemCommand(
-                "Hide keys and help panel",
+                "Keys",
                 "Hide the keys and widget help panel",
                 self.action_hide_help_panel,
             )
         else:
             yield SystemCommand(
-                "Show keys and help panel",
+                "Keys",
                 "Show help for the focused widget and a summary of available keys",
                 self.action_show_help_panel,
             )
@@ -1291,7 +1291,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         yield SystemCommand(
-            "Save screenshot",
+            "Screenshot",
             "Save an SVG 'screenshot' of the current screen",
             lambda: self.set_timer(0.1, self.deliver_screenshot),
         )
@@ -2437,8 +2437,8 @@ class App(Generic[ReturnType], DOMNode):
             MountError: If there is a problem with the mount request.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If both are
-            provided a ``MountError`` will be raised.
+            Only one of `before` or `after` can be provided. If both are
+            provided a `MountError` will be raised.
         """
         return self.screen.mount(*widgets, before=before, after=after)
 
@@ -2467,8 +2467,8 @@ class App(Generic[ReturnType], DOMNode):
             MountError: If there is a problem with the mount request.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If both are
-            provided a ``MountError`` will be raised.
+            Only one of `before` or `after` can be provided. If both are
+            provided a `MountError` will be raised.
         """
         return self.mount(*widgets, before=before, after=after)
 
@@ -3037,11 +3037,17 @@ class App(Generic[ReturnType], DOMNode):
                         widget.post_message(events.Enter(widget))
                 finally:
                     self.mouse_over = widget
-        if self.hover_over is not None:
-            self.hover_over.mouse_hover = False
+
+        current_hover_over = self.hover_over
+        if current_hover_over is not None:
+            current_hover_over.mouse_hover = False
+
         if hover_widget is not None:
             hover_widget.mouse_hover = True
-
+            if hover_widget._has_hover_style:
+                hover_widget._update_styles()
+        if current_hover_over is not None and current_hover_over._has_hover_style:
+            current_hover_over._update_styles()
         self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
@@ -4576,9 +4582,11 @@ class App(Generic[ReturnType], DOMNode):
             # app, and we don't want to have the driver auto-restart
             # application mode when the application comes back to the
             # foreground, in this context.
-            with self._driver.no_automatic_restart(), redirect_stdout(
-                sys.__stdout__
-            ), redirect_stderr(sys.__stderr__):
+            with (
+                self._driver.no_automatic_restart(),
+                redirect_stdout(sys.__stdout__),
+                redirect_stderr(sys.__stderr__),
+            ):
                 yield
             # We're done with the dev's code so resume application mode.
             self._driver.resume_application_mode()
@@ -4824,7 +4832,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.notify("Saved screenshot", title="Screenshot")
             else:
                 self.notify(
-                    f"Saved screenshot to [green]{str(event.path)!r}",
+                    f"Saved screenshot to [$text-success]{str(event.path)!r}",
                     title="Screenshot",
                 )
 

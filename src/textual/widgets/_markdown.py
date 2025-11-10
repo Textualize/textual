@@ -38,7 +38,7 @@ The triples encode the level, the label, and the optional block id of each headi
 
 
 class MarkdownStream:
-    """An object to manager streaming markdown.
+    """An object to manage streaming markdown.
 
     This will accumulate markdown fragments if they can't be rendered fast enough.
 

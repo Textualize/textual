@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Container, ScrollableContainer
+from textual.containers import Container, ScrollableContainer, Vertical
 from textual.widget import Widget
 from textual.widgets import Button, Label
 from textual.widgets._placeholder import Placeholder
@@ -507,3 +507,44 @@ async def test_allow_focus_override():
         assert isinstance(app.focused, Focusable)
         # Check focus chain
         assert app.screen.focus_chain == [app.query_one(Focusable)]
+
+
+async def test_trap_focus():
+    class TrapApp(App):
+        CSS = """
+        Screen {
+            layout: horizontal;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="left"):
+                yield Button("1", id="one")
+                yield Button("2", id="two")
+            with Vertical(id="right"):
+                yield Button("A", id="a")
+                yield Button("B", id="b")
+
+    app = TrapApp()
+    async with app.run_test():
+        # Normal focus chain reports all focusable widgets
+        focus_ids = [node.id for node in app.screen.focus_chain]
+        assert focus_ids == ["one", "two", "a", "b"]
+
+        # Trap the focus on the left container
+        # Since Button#one is focused, the focus chain will be limited to the left vertical
+        app.screen.query_one("#left").trap_focus()
+        focus_ids = [node.id for node in app.screen.focus_chain]
+        assert focus_ids == ["one", "two"]
+
+        # Trap focus on the right container
+        # Since the right container doesn't contain a focused widget, we would expect no change
+        app.screen.query_one("#right").trap_focus()
+        focus_ids = [node.id for node in app.screen.focus_chain]
+        assert focus_ids == ["one", "two"]
+
+        # Un-trap the focus on the left container
+        # Should restore original focus chain
+        app.screen.query_one("#left").trap_focus(False)
+        focus_ids = [node.id for node in app.screen.focus_chain]
+        assert focus_ids == ["one", "two", "a", "b"]

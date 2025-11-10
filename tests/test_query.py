@@ -30,7 +30,7 @@ async def test_query_errors():
             app.query_one("1")
 
 
-def test_query():
+async def test_query():
     class View(Widget):
         pass
 
@@ -159,7 +159,7 @@ def test_query():
             _ = app.query(".float").last(View)
 
 
-def test_query_classes():
+async def test_query_classes():
     class App(Widget):
         pass
 
@@ -225,7 +225,7 @@ def test_query_classes():
     assert len(app.query(".test")) == 0
 
 
-def test_invalid_query():
+async def test_invalid_query():
     class App(Widget):
         pass
 

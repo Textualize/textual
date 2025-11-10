@@ -75,7 +75,7 @@ class CompositorUpdate:
 class LayoutUpdate(CompositorUpdate):
     """A renderable containing the result of a render for a given region."""
 
-    def __init__(self, strips: list[Strip], region: Region) -> None:
+    def __init__(self, strips: list[Iterable[Strip]], region: Region) -> None:
         self.strips = strips
         self.region = region
 
@@ -87,7 +87,8 @@ class LayoutUpdate(CompositorUpdate):
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
             yield move_to(x, y).segment
-            yield from line
+            for strip in line:
+                yield from strip
             if not last:
                 yield new_line
 
@@ -102,11 +103,12 @@ class LayoutUpdate(CompositorUpdate):
         """
         sequences: list[str] = []
         append = sequences.append
+        extend = sequences.extend
         x = self.region.x
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
             append(move_to(x, y).segment.text)
-            append(line.render(console))
+            extend([strip.render(console) for strip in line])
             if not last:
                 append("\n")
         return "".join(sequences)
@@ -239,7 +241,6 @@ class ChopsUpdate(CompositorUpdate):
         Returns:
             Raw data with escape sequences.
         """
-
         sequences: list[str] = []
         append = sequences.append
 
@@ -925,8 +926,10 @@ class Compositor:
         offset_x = 0
         offset_x2 = 0
 
+        from rich.cells import get_character_cell_size
+
         for segment in line:
-            end += len(segment.text)
+            end += segment.cell_length
             style = segment.style
             if style is not None and style._meta is not None:
                 meta = style.meta
@@ -935,11 +938,14 @@ class Compositor:
                     offset_x2 = offset_x + len(segment.text)
 
                     if x < end and x >= start:
-                        if x == end - 1:
-                            segment_offset = len(segment.text)
-                        else:
-                            first, _ = segment.split_cells(x - start)
-                            segment_offset = len(first.text)
+                        segment_cell_length = 0
+                        cell_cut = x - start
+                        segment_offset = 0
+                        for character in segment.text:
+                            if segment_cell_length >= cell_cut:
+                                break
+                            segment_cell_length += get_character_cell_size(character)
+                            segment_offset += 1
                         return widget, (
                             None
                             if offset_y is None
@@ -1132,14 +1138,15 @@ class Compositor:
         self._dirty_regions.clear()
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
+        render_strips: list[Iterable[Strip]]
         if simplify:
             # Simplify is done when exporting to SVG
             # It doesn't make things faster
             render_strips = [
-                Strip.join(chop.values()).simplify().discard_meta() for chop in chops
+                [Strip.join(chop.values()).simplify().discard_meta()] for chop in chops
             ]
         else:
-            render_strips = [Strip.join(chop.values()) for chop in chops]
+            render_strips = [chop.values() for chop in chops]
 
         return LayoutUpdate(render_strips, screen_region)
 
@@ -1182,7 +1189,7 @@ class Compositor:
         self,
         crop: Region,
         is_rendered_line: Callable[[int], bool],
-    ) -> Sequence[Mapping[int, Strip | None]]:
+    ) -> Sequence[Mapping[int, Strip]]:
         """Render update 'chops'.
 
         Args:
@@ -1221,8 +1228,7 @@ class Compositor:
                 for cut, strip in zip(final_cuts, cut_strips):
                     if get_chops_line(cut) is None:
                         chops_line[cut] = strip
-
-        return chops
+        return cast("Sequence[Mapping[int, Strip]]", chops)
 
     def __rich__(self) -> StripRenderable:
         return StripRenderable(self.render_strips())

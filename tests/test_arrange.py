@@ -7,7 +7,7 @@ from textual.layout import WidgetPlacement
 from textual.widget import Widget
 
 
-def test_arrange_empty():
+async def test_arrange_empty():
     container = Widget(id="container")
 
     result = arrange(container, [], Size(80, 24), Size(80, 24))
@@ -15,7 +15,7 @@ def test_arrange_empty():
     assert result.widgets == set()
 
 
-def test_arrange_dock_top():
+async def test_arrange_dock_top():
     container = Widget(id="container")
     container._parent = App()
     child = Widget(id="child")
@@ -36,7 +36,7 @@ def test_arrange_dock_top():
     assert result.widgets == {child, header}
 
 
-def test_arrange_dock_left():
+async def test_arrange_dock_left():
     container = Widget(id="container")
     container._parent = App()
     child = Widget(id="child")
@@ -61,7 +61,7 @@ def test_arrange_dock_left():
     assert result.widgets == {child, header}
 
 
-def test_arrange_dock_right():
+async def test_arrange_dock_right():
     container = Widget(id="container")
     container._parent = App()
     child = Widget(id="child")
@@ -86,7 +86,7 @@ def test_arrange_dock_right():
     assert result.widgets == {child, header}
 
 
-def test_arrange_dock_bottom():
+async def test_arrange_dock_bottom():
     container = Widget(id="container")
     container._parent = App()
     child = Widget(id="child")
@@ -111,7 +111,7 @@ def test_arrange_dock_bottom():
     assert result.widgets == {child, header}
 
 
-def test_arrange_dock_badly():
+async def test_arrange_dock_badly():
     child = Widget(id="child")
     child.styles.dock = "nowhere"
     with pytest.raises(AssertionError):

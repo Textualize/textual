@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 from rich.text import Text
 
+from textual.color import Color
 from textual.content import Content, Span
 from textual.style import Style
 from textual.visual import RenderOptions
@@ -52,7 +53,11 @@ def test_from_rich_text():
     content = Content.from_rich_text(text)
     assert len(content) == 11
     assert content.plain == "Hello World"
-    assert [Span(start=0, end=5, style="red"), Span(start=6, end=11, style="blue")]
+    print(content.spans)
+    assert content.spans == [
+        Span(0, 5, style=Style(foreground=Color(128, 0, 0, ansi=1))),
+        Span(6, 11, style=Style(foreground=Color(0, 0, 128, ansi=4))),
+    ]
 
 
 def test_styled():
@@ -135,6 +140,16 @@ def test_add() -> None:
     assert str(content) == "foo bar"
     assert content.spans == [Span(0, 3, "red"), Span(4, 7, "blue")]
     assert content.cell_length == 7
+
+
+def test_radd() -> None:
+    """Test reverse addition."""
+    assert "foo" + Content("bar") == Content("foobar")
+
+    # Test spans after addition
+    content = "foo " + Content.styled("bar", "blue")
+    assert str(content) == "foo bar"
+    assert content.spans == [Span(4, 7, "blue")]
 
 
 def test_from_markup():
@@ -278,7 +293,7 @@ def test_first_line():
     assert first_line.spans == [Span(0, 3, "red")]
 
 
-def test_split_and_tabs():
+async def test_split_and_tabs():
     spans = [
         Span(0, 49, style="$text"),
     ]

@@ -5,7 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [6.6.0] - 2025-11-10
+
+### Fixed
+
+- Fixed `TextArea` cursor display on wrapped lines https://github.com/Textualize/textual/pull/6196
+- Fixed `remove_children` not refreshing layout https://github.com/Textualize/textual/pull/6206
+- Fixed flicker with :hover pseudo class https://github.com/Textualize/textual/pull/6214
+- Fixed scrollbar not updating after textarea paste https://github.com/Textualize/textual/pull/6219
+
+### Added
+
+- Added `grid_size` property to `GridLayout` https://github.com/Textualize/textual/pull/6210
+- Exposed `NoSelection` and `BLANK` via `textual.widgets.select` https://github.com/Textualize/textual/pull/6214
+- Added `Widget.FOCUS_ON_CLICK` classvar amd `Widget.focus_on_click` method https://github.com/Textualize/textual/pull/6216
+- Added support for the kitty keyboard protocol on Windows https://github.com/Textualize/textual/pull/6207
+- Added `Widget.mount_compose` https://github.com/Textualize/textual/pull/6216
+
+### Changed
+
+- Change highlight style of Select to only highlight the border, not the label https://github.com/Textualize/textual/pull/6214
+
+## [6.5.0] - 2025-10-31
+
+### Added
+
+- Added `DOMNode.trap_focus` https://github.com/Textualize/textual/pull/6202
+
+### Fixed
+
+- Fixed issue with focus + scroll https://github.com/Textualize/textual/pull/6203
+
+## [6.4.0] - 2025-10-22
+
+### Fixed
+
+- Fixed type hint aliasing for App under TYPE_CHECKING https://github.com/Textualize/textual/pull/6152
+- Fixed circular dependency effecting `bazel` users https://github.com/Textualize/textual/pull/6163
+- Fixed for text selection with double width characters https://github.com/Textualize/textual/pull/6186
+
+### Changed
+
+- Simplified system commands (command palette) to a single word https://github.com/Textualize/textual/pull/6183
+
+## [6.3.0] - 2025-10-11
 
 ### Added
 
@@ -15,6 +58,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed highlight not auto-detecting lexer https://github.com/Textualize/textual/pull/6167
+
+### Changed
+
+- Dropped support for Python3.8 https://github.com/Textualize/textual/pull/6121/
+- Added support for Python3.14 https://github.com/Textualize/textual/pull/6121/
 
 ## [6.2.1] - 2025-10-01
 
@@ -3145,6 +3193,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.6.0]: https://github.com/Textualize/textual/compare/v6.5.0...v6.6.0
+[6.5.0]: https://github.com/Textualize/textual/compare/v6.4.0...v6.5.0
+[6.4.0]: https://github.com/Textualize/textual/compare/v6.3.0...v6.4.0
+[6.3.0]: https://github.com/Textualize/textual/compare/v6.2.1...v6.3.0
 [6.2.1]: https://github.com/Textualize/textual/compare/v6.2.0...v6.2.1
 [6.2.0]: https://github.com/Textualize/textual/compare/v6.1.0...v6.2.0
 [6.1.0]: https://github.com/Textualize/textual/compare/v6.0.0...v6.1.0

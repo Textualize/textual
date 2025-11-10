@@ -743,9 +743,18 @@ class Screen(Generic[ScreenResultType], Widget):
         # Additionally, we manually keep track of the visibility of the DOM
         # instead of relying on the property `.visible` to save on DOM traversals.
         # node_stack: list[tuple[iterator over node children, node visibility]]
+
+        root_node = self.screen
+
+        if (focused := self.focused) is not None:
+            for node in focused.ancestors_with_self:
+                if node._trap_focus:
+                    root_node = node
+                    break
+
         node_stack: list[tuple[Iterator[Widget], bool]] = [
             (
-                iter(sorted(self.displayed_children, key=focus_sorter)),
+                iter(sorted(root_node.displayed_children, key=focus_sorter)),
                 self.visible,
             )
         ]
@@ -1652,14 +1661,22 @@ class Screen(Generic[ScreenResultType], Widget):
                 ):
                     end_widget = self._select_end[0]
                     select_offset = end_widget.content_region.bottom_right_inclusive
-                    self._select_end = (end_widget, event.offset, select_offset)
+                    self._select_end = (
+                        end_widget,
+                        event.screen_offset,
+                        select_offset,
+                    )
 
                 elif (
                     select_widget is not None
                     and select_widget.allow_select
                     and select_offset is not None
                 ):
-                    self._select_end = (select_widget, event.offset, select_offset)
+                    self._select_end = (
+                        select_widget,
+                        event.screen_offset,
+                        select_offset,
+                    )
 
         elif isinstance(event, events.MouseEvent):
             if isinstance(event, events.MouseUp):
@@ -1705,7 +1722,10 @@ class Screen(Generic[ScreenResultType], Widget):
             else:
                 if isinstance(event, events.MouseDown):
                     focusable_widget = self.get_focusable_widget_at(event.x, event.y)
-                    if focusable_widget:
+                    if (
+                        focusable_widget is not None
+                        and focusable_widget.focus_on_click()
+                    ):
                         self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget.loading:
@@ -1730,7 +1750,6 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             select_end: The end selection.
         """
-
         if select_end is None or self._select_start is None:
             # Nothing to select
             return

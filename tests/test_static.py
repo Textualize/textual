@@ -2,7 +2,7 @@ from textual.content import Content
 from textual.widgets import Static
 
 
-def test_content_property():
+async def test_content_property():
     static = Static()
     assert static.content == ""
     static.content = "Foo"
