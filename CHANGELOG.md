@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Exposed `NoSelection` and `BLANK` via `textual.widgets.select` https://github.com/Textualize/textual/pull/6214
 - Added `Widget.FOCUS_ON_CLICK` classvar amd `Widget.focus_on_click` method https://github.com/Textualize/textual/pull/6216
 - Added support for the kitty keyboard protocol on Windows https://github.com/Textualize/textual/pull/6207
+- Added `Widget.mount_compose` https://github.com/Textualize/textual/pull/6216
 
 ### Changed
 
