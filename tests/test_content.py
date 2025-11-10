@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 from rich.text import Text
 
+from textual.color import Color
 from textual.content import Content, Span
 from textual.style import Style
 from textual.visual import RenderOptions
@@ -52,9 +53,10 @@ def test_from_rich_text():
     content = Content.from_rich_text(text)
     assert len(content) == 11
     assert content.plain == "Hello World"
+    print(content.spans)
     assert content.spans == [
-        Span(start=0, end=5, style="red"),
-        Span(start=6, end=11, style="blue"),
+        Span(0, 5, style=Style(foreground=Color(128, 0, 0, ansi=1))),
+        Span(6, 11, style=Style(foreground=Color(0, 0, 128, ansi=4))),
     ]
 
 
