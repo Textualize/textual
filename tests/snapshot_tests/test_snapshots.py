@@ -4784,10 +4784,10 @@ def test_mount_compose(snap_compare) -> None:
 
 
 def test_text_area_paste(snap_compare) -> None:
-    """_summary_
+    """Regression test for https://github.com/Textualize/textual/issues/4852
 
-    Args:
-        snap_compare (_type_): _description_
+    You should see a TextArea where the scrollbar and cursor at at the bottom
+    of the document.
     """
 
     class TextAreaApp(App):
