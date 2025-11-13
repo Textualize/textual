@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed 
 
 - Added `Screen.get_loading_widget` which deferes to `App.get_loading_widget` https://github.com/Textualize/textual/pull/6228
+- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
 
 ### Fixed 
 
