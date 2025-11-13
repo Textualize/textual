@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
+
+### Changed 
+
+- Added `Screen.get_loading_widget` which deferes to `App.get_loading_widget` https://github.com/Textualize/textual/pull/6228
+
+### Fixed 
+
+- Fixed `anchor` with `ScrollView` widgets https://github.com/Textualize/textual/pull/6228
+
 ## [6.6.0] - 2025-11-10
 
 ### Fixed
