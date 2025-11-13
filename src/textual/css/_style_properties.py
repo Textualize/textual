@@ -667,8 +667,9 @@ class LayoutProperty:
         Args:
             obj: The Styles object.
             objtype: The Styles class.
+
         Returns:
-            The ``Layout`` object.
+            The `Layout` object.
         """
         return obj.get_rule(self.name)  # type: ignore[return-value]
 
@@ -677,7 +678,7 @@ class LayoutProperty:
         Args:
             obj: The Styles object.
             layout: The layout to use. You can supply the name of the layout
-                or a ``Layout`` object.
+                or a `Layout` object.
         """
 
         from textual.layouts.factory import Layout  # Prevents circular import
@@ -687,19 +688,23 @@ class LayoutProperty:
         if layout is None:
             if obj.clear_rule("layout"):
                 obj.refresh(layout=True, children=True)
-        elif isinstance(layout, Layout):
-            if obj.set_rule("layout", layout):
-                obj.refresh(layout=True, children=True)
-        else:
-            try:
-                layout_object = get_layout(layout)
-            except MissingLayout as error:
-                raise StyleValueError(
-                    str(error),
-                    help_text=layout_property_help_text(self.name, context="inline"),
-                )
-            if obj.set_rule("layout", layout_object):
-                obj.refresh(layout=True, children=True)
+            return
+
+        if isinstance(layout, Layout):
+            layout = layout.name
+
+        if obj.layout is not None and obj.layout.name == layout:
+            return
+
+        try:
+            layout_object = get_layout(layout)
+        except MissingLayout as error:
+            raise StyleValueError(
+                str(error),
+                help_text=layout_property_help_text(self.name, context="inline"),
+            )
+        if obj.set_rule("layout", layout_object):
+            obj.refresh(layout=True, children=True)
 
 
 class OffsetProperty:

@@ -32,6 +32,10 @@ class ScrollView(ScrollableContainer):
         """Always scrollable."""
         return True
 
+    @property
+    def is_container(self) -> bool:
+        return False
+
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = new_value
