@@ -234,7 +234,7 @@ class Driver(ABC):
                 in the `Content-Type` header.
             mime_type: *web only* The MIME type of the file. This will be used to
                 set the `Content-Type` header in the HTTP response.
-            name: A user-defined named which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
+            name: A user-defined name which will be returned in [`DeliveryComplete`][textual.events.DeliveryComplete]
                 and [`DeliveryComplete`][textual.events.DeliveryComplete].
 
         """

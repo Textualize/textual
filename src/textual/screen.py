@@ -558,6 +558,17 @@ class Screen(Generic[ScreenResultType], Widget):
         """Check if this widget permits text selection."""
         return self.ALLOW_SELECT
 
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to display a loading indicator.
+
+        The default implementation will defer to App.get_loading_widget.
+
+        Returns:
+            A widget in place of this widget to indicate a loading.
+        """
+        loading_widget = self.app.get_loading_widget()
+        return loading_widget
+
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
 

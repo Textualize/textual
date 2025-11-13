@@ -267,6 +267,7 @@ class ItemGrid(Widget):
 
     stretch_height: reactive[bool] = reactive(True)
     min_column_width: reactive[int | None] = reactive(None, layout=True)
+    max_column_width: reactive[int | None] = reactive(None, layout=True)
     regular: reactive[bool] = reactive(False)
 
     def __init__(
@@ -277,6 +278,7 @@ class ItemGrid(Widget):
         classes: str | None = None,
         disabled: bool = False,
         min_column_width: int | None = None,
+        max_column_width: int | None = None,
         stretch_height: bool = True,
         regular: bool = False,
     ) -> None:
@@ -298,10 +300,12 @@ class ItemGrid(Widget):
         )
         self.set_reactive(ItemGrid.stretch_height, stretch_height)
         self.set_reactive(ItemGrid.min_column_width, min_column_width)
+        self.set_reactive(ItemGrid.max_column_width, max_column_width)
         self.set_reactive(ItemGrid.regular, regular)
 
     def pre_layout(self, layout: Layout) -> None:
         if isinstance(layout, GridLayout):
             layout.stretch_height = self.stretch_height
             layout.min_column_width = self.min_column_width
+            layout.max_column_width = self.max_column_width
             layout.regular = self.regular

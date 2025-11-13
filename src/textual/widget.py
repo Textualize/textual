@@ -1014,7 +1014,7 @@ class Widget(DOMNode):
         Returns:
             A widget in place of this widget to indicate a loading.
         """
-        loading_widget = self.app.get_loading_widget()
+        loading_widget = self.screen.get_loading_widget()
         return loading_widget
 
     def set_loading(self, loading: bool) -> None:
