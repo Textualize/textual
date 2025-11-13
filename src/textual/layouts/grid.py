@@ -20,9 +20,13 @@ class GridLayout(Layout):
 
     def __init__(self) -> None:
         self.min_column_width: int | None = None
+        """Maintain a minimum column width, or `None` for no minimum."""
+        self.max_column_width: int | None = None
+        """Maintain a maximum column width, or `None` for no maximum."""
         self.stretch_height: bool = False
         """Stretch the height of cells to be equal in each row."""
         self.regular: bool = False
+        """Grid should be regular (no remainder in last row)."""
         self.expand: bool = False
         """Expand the grid to fit the container if it is smaller."""
         self.shrink: bool = False
@@ -57,14 +61,23 @@ class GridLayout(Layout):
 
         table_size_columns = max(1, styles.grid_size_columns)
         min_column_width = self.min_column_width
+        max_column_width = self.max_column_width
+
+        container_width = size.width
+        if max_column_width is not None:
+            container_width = (
+                max(1, min(len(children), (container_width // max_column_width)))
+                * max_column_width
+            )
+            size = Size(container_width, size.height)
 
         if min_column_width is not None:
-            container_width = size.width
             table_size_columns = max(
                 1,
                 (container_width + gutter_horizontal)
                 // (min_column_width + gutter_horizontal),
             )
+
             table_size_columns = min(table_size_columns, len(children))
             if self.regular:
                 while len(children) % table_size_columns and table_size_columns > 1:
@@ -139,8 +152,7 @@ class GridLayout(Layout):
         cell_map: dict[tuple[int, int], tuple[Widget, bool]] = {}
         cell_size_map: dict[Widget, tuple[int, int, int, int]] = {}
 
-        column_count = table_size_columns
-        next_coord = iter(cell_coords(column_count)).__next__
+        next_coord = iter(cell_coords(table_size_columns)).__next__
         cell_coord = (0, 0)
         column = row = 0
 
