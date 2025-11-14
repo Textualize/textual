@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from textual import events, on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Horizontal, ItemGrid, Vertical, VerticalScroll
+from textual.demo._project_data import PROJECTS, ProjectInfo
+from textual.demo._project_stars import STARS
 from textual.demo.page import PageScreen
 from textual.widgets import Footer, Label, Link, Markdown, Static
-from textual.demo._project_stars import STARS
-from textual.demo._project_data import PROJECTS, ProjectInfo
 
 PROJECTS_MD = """\
 # Projects
