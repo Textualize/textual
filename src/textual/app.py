@@ -80,6 +80,7 @@ from textual._compositor import CompositorUpdate
 from textual._context import active_app, active_message_pump
 from textual._context import message_hook as message_hook_context_var
 from textual._dispatch_key import dispatch_key
+from textual._easing import DefaultEasingFunctions
 from textual._event_broker import NoHandler, extract_handler_actions
 from textual._files import generate_datetime_filename
 from textual._path import (
@@ -1064,7 +1065,7 @@ class App(Generic[ReturnType], DOMNode):
         duration: float | None = None,
         speed: float | None = None,
         delay: float = 0.0,
-        easing: EasingFunction | str = DEFAULT_EASING,
+        easing: EasingFunction | DefaultEasingFunctions = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "full",
     ) -> None:
