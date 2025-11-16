@@ -106,7 +106,8 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         ALLOW_SELECTOR_MATCH = {"pressed"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
-        def __init__(self, radio_set: RadioSet, pressed: RadioButton) -> None:
+        def __init__(self, radio_set: RadioSet, pressed: RadioButton | None) -> None: # None = cleared state 
+
             """Initialise the message.
 
             Args:
@@ -247,7 +248,12 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         This handler ensures that, when a button is pressed, it's also the
         selected button.
         """
-        self._selected = event.index
+        if event.index >= 0:
+            self._selected = event.index
+        else:
+            # cleared state - avoid triggering watcher
+            with self.prevent(RadioSet.Changed):
+                self._selected = None
 
     async def _on_click(self, _: Click) -> None:
         """Handle a click on or within the radio set.
@@ -299,6 +305,30 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             button = self._nodes[self._selected]
             assert isinstance(button, RadioButton)
             button.toggle()
+            
+    def clear(self) -> None:
+        """Clear the radio set so that no button is pressed.
+    
+    This returns the RadioSet to its initial unset state, useful for
+    survey/questionnaire interfaces where "no response" is a valid state.
+    See: https://github.com/Textualize/textual/issues/6197
+    """
+        # turn off all buttons
+        with self.prevent(RadioButton.Changed):
+            for button in self.query(RadioButton):
+                button.value = False
+        
+        self._pressed_button = None
+        self.query(RadioButton).remove_class("-selected")
+        
+        # set to None without triggering the watcher
+        with self.prevent(RadioSet.Changed):
+            self._selected = None
+        
+        self.post_message(self.Changed(self, None))
+        self.refresh()
+
+
 
     def _scroll_to_selected(self) -> None:
         """Ensure that the selected button is in view."""
