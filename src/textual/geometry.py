@@ -1202,13 +1202,15 @@ class Spacing(NamedTuple):
     def css(self) -> str:
         """A string containing the spacing in CSS format.
 
-        For example: "1" or "2 4" or "4 2 8 2".
+        For example: "1" or "2 4" or "3 5 2" or "4 2 8 2".
         """
         top, right, bottom, left = self
         if top == right == bottom == left:
             return f"{top}"
         if (top, right) == (bottom, left):
             return f"{top} {right}"
+        if right == left:
+            return f"{top} {right} {bottom}"
         else:
             return f"{top} {right} {bottom} {left}"
 
@@ -1217,7 +1219,7 @@ class Spacing(NamedTuple):
         """Unpack padding specified in CSS style.
 
         Args:
-            pad: An integer, or tuple of 1, 2, or 4 integers.
+            pad: An integer, or tuple of 1, 2, 3 or 4 integers.
 
         Raises:
             ValueError: If `pad` is an invalid value.
@@ -1234,11 +1236,14 @@ class Spacing(NamedTuple):
         if pad_len == 2:
             pad_top, pad_right = cast(Tuple[int, int], pad)
             return cls(pad_top, pad_right, pad_top, pad_right)
+        if pad_len == 3:
+            pad_top, pad_side, pad_bottom = cast(Tuple[int, int, int], pad)
+            return cls(pad_top, pad_side, pad_bottom, pad_side)
         if pad_len == 4:
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
         raise ValueError(
-            f"1, 2 or 4 integers required for spacing properties; {pad_len} given"
+            f"1, 2, 3 or 4 integers required for spacing properties; {pad_len} given"
         )
 
     @classmethod
