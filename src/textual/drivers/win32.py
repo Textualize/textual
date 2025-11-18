@@ -10,6 +10,7 @@ from ctypes.wintypes import BOOL, CHAR, DWORD, HANDLE, SHORT, UINT, WCHAR, WORD
 from typing import IO, TYPE_CHECKING, Callable, List, Optional
 
 from textual import constants
+from textual._windows_key_sequences import coalesce_alt_sequences
 from textual._xterm_parser import XTermParser
 from textual.events import Event, Resize
 from textual.geometry import Size
@@ -266,28 +267,33 @@ class EventMonitor(threading.Thread):
                     event_type = input_record.EventType
 
                     if event_type == KEY_EVENT:
-                        # Key event, store unicode char in keys list
                         key_event = input_record.Event.KeyEvent
-                        key = key_event.uChar.UnicodeChar
                         if key_event.bKeyDown:
-                            if (
-                                key_event.dwControlKeyState
-                                and key_event.wVirtualKeyCode == 0
-                            ):
+                            # Key event, store the character for later processing
+                            # so we can coalesce Alt sequences before decoding.
+                            char = key_event.uChar.UnicodeChar or ""
+                            if char == "\x00":
+                                char = ""
+                            if not char:
                                 continue
-                            append_key(key)
+                            append_key(char)
                     elif event_type == WINDOW_BUFFER_SIZE_EVENT:
                         # Window size changed, store size
                         size = input_record.Event.WindowBufferSizeEvent.dwSize
                         new_size = (size.X, size.Y)
 
                 if keys:
+                    # Coalesce ESC-prefixed pairs into Kitty key sequences when the
+                    # terminal doesn't support the Kitty keyboard protocol.
+                    converted_keys = coalesce_alt_sequences(keys)
                     # Process keys
                     #
                     # https://github.com/Textualize/textual/issues/3178 has
                     # the context for the encode/decode here.
                     for event in parser.feed(
-                        "".join(keys).encode("utf-16", "surrogatepass").decode("utf-16")
+                        "".join(converted_keys)
+                        .encode("utf-16", "surrogatepass")
+                        .decode("utf-16")
                     ):
                         self.process_event(event)
                 if new_size is not None:

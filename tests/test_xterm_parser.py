@@ -166,6 +166,20 @@ def test_key_presses_and_escape_sequence_mixed(parser):
     assert "".join(event.key for event in events) == "abcf3123"
 
 
+def test_kitty_alt_sequences(parser):
+    alt = list(parser.feed("\x1b[97;3u"))
+    assert len(alt) == 1
+    assert alt[0].key == "alt+a"
+
+    alt_shift = list(parser.feed("\x1b[65;4u"))
+    assert len(alt_shift) == 1
+    assert alt_shift[0].key == "alt+shift+A"
+
+    alt_ctrl = list(parser.feed("\x1b[120;7u"))
+    assert len(alt_ctrl) == 1
+    assert alt_ctrl[0].key == "alt+ctrl+x"
+
+
 def test_single_escape(parser):
     """A single \x1b should be interpreted as a single press of the Escape key"""
     events = list(parser.feed("\x1b"))

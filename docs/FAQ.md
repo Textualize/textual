@@ -248,6 +248,19 @@ recommend picking keys and key combinations from the above.
 Keys that aren't normally passed through by terminals include Cmd and Option
 on macOS, and the Windows key on Windows.
 
+!!! note "Windows and Alt-modified keys"
+
+    On Windows terminals that don't support the [Kitty keyboard
+    protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) (for example,
+    Windows Terminal), Textual emulates Alt-modified keys by watching for
+    ``ESC`` followed by another key. This covers most ``alt+letter`` and
+    ``alt+shift+letter`` combinations, but it can't disambiguate cases where
+    the terminal already turned the input into a composed character (e.g.
+    ``Ctrl+Alt`` behaving as AltGr) or where the original modifiers are lost.
+    If you need every modifier combination (especially `ctrl+alt`, `ctrl+shift`
+    and AltGr), use a terminal with Kitty keyboard protocol support such as
+    WezTerm, kitty, or Alacritty.
+
 If you need to test what [key
 combinations](https://textual.textualize.io/guide/input/#keyboard-input)
 work in different environments you can try them out with `textual keys`.
@@ -297,7 +310,7 @@ We recommend any of the following terminals:
 
 Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
 
-This is an intentional design decision we took for for the following reasons:
+This is an intentional design decision we took for the following reasons:
 
 - Not everyone has a carefully chosen ANSI color theme. Color combinations which may look fine on your system, may be unreadable on another machine. There is very little an app author or Textual can do to resolve this. Asking users to simply pick a better theme is not a good solution, since not all users will know how.
 - ANSI colors can't be manipulated in the way Textual can do with other colors. Textual can blend colors and produce light and dark shades from an original color, which is used to create more readable text and user interfaces. Color blending will also be used to power future accessibility features.
