@@ -363,7 +363,7 @@ class Content(Visual):
             New Content instance.
         """
         if not text:
-            return Content("")
+            return EMPTY_CONTENT
         new_content = cls(
             text,
             [Span(0, len(text), style)] if style else None,
@@ -865,7 +865,7 @@ class Content(Visual):
                 ),
                 strip_control_codes=False,
             )
-        return Content("").join([self, content])
+        return EMPTY_CONTENT.join([self, content])
 
     def append_text(self, text: str, style: Style | str = "") -> Content:
         """Append text give as a string, with an optional style.
@@ -1165,7 +1165,7 @@ class Content(Visual):
         ]
         text = self.plain[:-amount]
         length = None if self._cell_length is None else self._cell_length - amount
-        return Content(text, spans, length)
+        return Content(text, spans, length, strip_control_codes=False)
 
     def stylize(
         self, style: Style | str, start: int = 0, end: int | None = None
@@ -1575,7 +1575,7 @@ class Content(Visual):
                         cell_position += part.cell_length
                     append(part)
 
-        content = Content("").join(new_text)
+        content = EMPTY_CONTENT.join(new_text)
         return content
 
     def highlight_regex(
@@ -1613,7 +1613,7 @@ class Content(Visual):
                 and (count := count + 1) >= maximum_highlights
             ):
                 break
-        return Content(self._text, spans)
+        return Content(self._text, spans, cell_length=self._cell_length)
 
 
 class _FormattedLine:
