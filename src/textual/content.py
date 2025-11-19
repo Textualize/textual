@@ -158,10 +158,10 @@ class Content(Visual):
             cell_length: Cell length of text if known, otherwise `None`.
             strip_control_codes: Strip control codes that may break output?
         """
-        if strip_control_codes and text:
-            self._text: str = _strip_control_codes(text)
-        else:
-            self._text = text
+
+        self._text: str = (
+            _strip_control_codes(text) if strip_control_codes and text else text
+        )
         self._spans: list[Span] = [] if spans is None else spans
         self._cell_length = cell_length
         self._optimal_width_cache: int | None = None
@@ -817,7 +817,11 @@ class Content(Visual):
                         for start, end, style in other._spans
                     ]
                 ),
-                (self.cell_length + other.cell_length),
+                (
+                    None
+                    if self._cell_length is not None
+                    else (self.cell_length + other.cell_length)
+                ),
             )
             return content
         return NotImplemented
