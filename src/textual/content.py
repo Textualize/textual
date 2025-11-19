@@ -276,6 +276,8 @@ class Content(Visual):
                 raise ValueError("A literal string is require to substitute variables.")
             return markup
         markup = _strip_control_codes(markup)
+        if "[" not in markup and not variables:
+            return Content(markup)
         from textual.markup import to_content
 
         content = to_content(markup, template_variables=variables or None)
