@@ -57,7 +57,7 @@ class SupportsVisual(Protocol):
 
         Args:
             widget: The widget that generated the render.
-            obj: The result of the the render.
+            obj: The result of the render.
 
         Returns:
             A Visual instance, or `None` if it wasn't possible.
