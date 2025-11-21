@@ -283,7 +283,7 @@ class StylesBase:
     """
 
     layout = LayoutProperty()
-    """Set the layout of the widget, defining how it's children are laid out.
+    """Set the layout of the widget, defining how its children are laid out.
     
     Valid values are "grid", "stream", "horizontal", or "vertical" or None to clear any layout
     that was set at runtime.
@@ -395,7 +395,7 @@ class StylesBase:
     transitions = TransitionsProperty()
 
     tint = ColorProperty("transparent")
-    """Set the tint of the widget. This allows you apply a opaque color above the widget.
+    """Set the tint of the widget. This allows you apply an opaque color above the widget.
 
     You can specify an opacity after a color e.g. "blue 10%"
     """

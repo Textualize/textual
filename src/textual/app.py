@@ -561,7 +561,7 @@ class App(Generic[ReturnType], DOMNode):
                 will be loaded in order.
             watch_css: Reload CSS if the files changed. This is set automatically if
                 you are using `textual run` with the `dev` switch.
-            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to to RGB if `False`.
+            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to RGB if `False`.
 
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -1824,7 +1824,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> str | None:
         """Deliver a screenshot of the app.
 
-        This with save the screenshot when running locally, or serve it when the app
+        This will save the screenshot when running locally, or serve it when the app
         is running in a web browser.
 
         Args:
@@ -3438,7 +3438,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             parent: Parent node.
             child: The child widget to register.
-            widgets: The widget to register.
             before: A location to mount before.
             after: A location to mount after.
         """

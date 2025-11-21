@@ -165,7 +165,7 @@ Setting `border_title` will display text within the top border, and setting `bor
 The default value for these attributes is empty string, which disables the title.
 You can change the default value for the title attributes with the [`BORDER_TITLE`][textual.widget.Widget.BORDER_TITLE] and [`BORDER_SUBTITLE`][textual.widget.Widget.BORDER_SUBTITLE] class variables.
 
-Let's demonstrate setting a title, both as a class variable and a instance variable:
+Let's demonstrate setting a title, both as a class variable and an instance variable:
 
 
 === "hello06.py"
