@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed 
 
 - Fixed `anchor` with `ScrollView` widgets https://github.com/Textualize/textual/pull/6228
+- Fixed Alt-modified key presses on Windows terminals without Kitty keyboard protocol support
 
 ## [6.6.0] - 2025-11-10
 

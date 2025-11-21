@@ -31,6 +31,19 @@ recommend picking keys and key combinations from the above.
 Keys that aren't normally passed through by terminals include Cmd and Option
 on macOS, and the Windows key on Windows.
 
+!!! note "Windows and Alt-modified keys"
+
+    On Windows terminals that don't support the [Kitty keyboard
+    protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) (for example,
+    Windows Terminal), Textual emulates Alt-modified keys by watching for
+    ``ESC`` followed by another key. This covers most ``alt+letter`` and
+    ``alt+shift+letter`` combinations, but it can't disambiguate cases where
+    the terminal already turned the input into a composed character (e.g.
+    ``Ctrl+Alt`` behaving as AltGr) or where the original modifiers are lost.
+    If you need every modifier combination (especially `ctrl+alt`, `ctrl+shift`
+    and AltGr), use a terminal with Kitty keyboard protocol support such as
+    WezTerm, kitty, or Alacritty.
+
 If you need to test what [key
 combinations](https://textual.textualize.io/guide/input/#keyboard-input)
 work in different environments you can try them out with `textual keys`.
