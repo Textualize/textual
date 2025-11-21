@@ -81,6 +81,50 @@ BUILTIN_LANGUAGES = [
     "xml",
 ]
 """Languages that are included in the `syntax` extras."""
+HIGHLIGHT_PRIORITY = {
+    # Keywords have highest priority
+    "keyword": 1,
+    "keyword.function": 1,
+    "keyword.control": 1,
+    "keyword.return": 1,
+    "keyword.operator": 1,
+    
+    # Built-in types and functions
+    "type.builtin": 2,
+    "function.builtin": 2,
+    "constant.builtin": 2,
+    
+    # Function calls and types
+    "function.call": 3,
+    "type": 3,
+    
+    # Variables and identifiers
+    "variable": 4,
+    "variable.parameter": 4,
+    "property": 4,
+    
+    # Literals
+    "string": 2,
+    "number": 2,
+    "constant": 2,
+    
+    # Comments
+    "comment": 1,
+    
+    # Operators and punctuation (lowest priority)
+    "operator": 5,
+    "punctuation": 6,
+    "punctuation.bracket": 6,
+    "punctuation.delimiter": 6,
+}
+
+def _get_highlight_priority(highlight_name: str) -> int:
+    """Get priority for a highlight. Lower number = higher priority (wins in conflicts)."""
+    # Handle compound names like "string.special"
+    for key in [highlight_name, highlight_name.split('.')[0]]:
+        if key in HIGHLIGHT_PRIORITY:
+            return HIGHLIGHT_PRIORITY[key]
+    return 99  # Default low priority for unknown highlights
 
 
 class ThemeDoesNotExist(Exception):
@@ -1363,7 +1407,21 @@ TextArea {
             byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
             get_highlight_from_theme = theme.syntax_styles.get
             line_highlights = highlights[line_index]
+            
+            # Filter to keep only the highest priority highlight for each position
+            # Build a dict mapping (start, end) -> (highlight_name, priority)
+            position_highlights: dict[tuple[int, int | None], tuple[str, int]] = {}
+            
             for highlight_start, highlight_end, highlight_name in line_highlights:
+                priority = _get_highlight_priority(highlight_name)
+                key = (highlight_start, highlight_end)
+                
+                # Only keep this highlight if it's higher priority than existing
+                if key not in position_highlights or priority < position_highlights[key][1]:
+                    position_highlights[key] = (highlight_name, priority)
+            
+            # Apply the filtered highlights
+            for (highlight_start, highlight_end), (highlight_name, _) in position_highlights.items():
                 node_style = get_highlight_from_theme(highlight_name)
                 if node_style is not None:
                     line.stylize(
