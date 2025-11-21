@@ -239,6 +239,10 @@ class Style:
     @lru_cache(maxsize=1024 * 4)
     def __add__(self, other: object | None) -> Style:
         if isinstance(other, Style):
+            if self._is_null:
+                return other
+            if other._is_null:
+                return self
             (
                 background,
                 foreground,
