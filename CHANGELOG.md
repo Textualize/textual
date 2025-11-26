@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
-- Added `Content.fold`
+- Added `Content.fold` https://github.com/Textualize/textual/pull/6238
 
 ### Changed 
 
