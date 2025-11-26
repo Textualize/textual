@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
 - Added `Content.fold` https://github.com/Textualize/textual/pull/6238
+- Added `strip_control_codes` to Content constructors https://github.com/Textualize/textual/pull/6238
+
 
 ### Changed 
 

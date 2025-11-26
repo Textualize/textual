@@ -106,7 +106,7 @@ class Span(NamedTuple):
             return Span(start, end + cells, style)
         return self
 
-    def shift(self, distance: int) -> "Span":
+    def _shift(self, distance: int) -> "Span":
         """Shift a span a given distance.
 
         Note that the start offset is clamped to 0.
@@ -794,7 +794,7 @@ class Content(Visual):
                 else:
                     text = self.plain[start:stop]
                     spans = [
-                        span.shift(-start) for span in self._spans if span.end > start
+                        span._shift(-start) for span in self._spans if span.end > start
                     ]
                     return Content(
                         text, self._trim_spans(text, spans), strip_control_codes=False
