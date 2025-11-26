@@ -966,6 +966,54 @@ class Content(Visual):
         content_lines = [line.content for line in lines]
         return content_lines
 
+    def fold(self, width: int) -> list[Content]:
+        """Fold this line into a list of lines which have a cell length no greater than `width`.
+
+        Folded lines may be 1 less than the width if it contains double width characters (which may
+        not be subdivided).
+
+        Note that this method will not do any word wrappig. For that, see [wrap()][textual.content.Content.wrap].
+
+        Args:
+            width: Desired maximum width (in cells)
+
+        Returns:
+            List of content instances.
+        """
+        if not self:
+            return []
+        text = self.plain
+        lines: list[Content] = []
+        position = 0
+        width = max(width, 2)
+        while text:
+            snip = text[position : position + width]
+            if not snip:
+                break
+            snip_cell_length = cell_len(snip)
+            if snip_cell_length < width:
+                # last snip
+                lines.append(self[position : position + width])
+                break
+            if snip_cell_length == width:
+                # Cell length is exactly width
+                lines.append(self[position : position + width])
+                text = text[len(snip) :]
+                position += len(snip)
+                continue
+            # TODO: Can this be more efficient?
+            extra_cells = snip_cell_length - width
+            if start_snip := extra_cells // 2:
+                snip_cell_length -= cell_len(snip[-start_snip:])
+                snip = snip[: len(snip) - start_snip]
+            while snip_cell_length > width:
+                snip_cell_length -= cell_len(snip[-1])
+                snip = snip[:-1]
+            lines.append(self[position : position + len(snip)])
+            position += len(snip)
+
+        return lines
+
     def get_style_at_offset(self, offset: int) -> Style:
         """Get the style of a character at give offset.
 

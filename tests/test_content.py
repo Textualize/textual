@@ -380,3 +380,173 @@ def test_wrap() -> None:
     assert len(wrapped) == len(expected)
     for line1, line2 in zip(wrapped, expected):
         assert line1.is_same(line2)
+
+
+@pytest.mark.parametrize(
+    "content, width, expected",
+    [
+        (
+            Content(""),
+            10,
+            [Content("")],
+        ),
+        (
+            Content("1"),
+            10,
+            [Content("1")],
+        ),
+        (
+            Content("📦"),
+            10,
+            [Content("📦")],
+        ),
+        (
+            Content("📦"),
+            1,
+            [Content("📦")],
+        ),
+        (
+            Content("Hello"),
+            10,
+            [Content("Hello")],
+        ),
+        (
+            Content("Hello"),
+            5,
+            [Content("Hello")],
+        ),
+        (
+            Content("Hello"),
+            2,
+            [Content("He"), Content("ll"), Content("o")],
+        ),
+        (
+            Content.from_markup("H[b]ell[/]o"),
+            2,
+            [
+                Content.from_markup("H[b]e"),
+                Content.from_markup("[b]ll[/]"),
+                Content("o"),
+            ],
+        ),
+        (
+            Content.from_markup("💩H[b]ell[/]o"),
+            2,
+            [
+                Content("💩"),
+                Content.from_markup("H[b]e"),
+                Content.from_markup("[b]ll[/]"),
+                Content("o"),
+            ],
+        ),
+        (
+            Content.from_markup("💩H[b]ell[/]o"),
+            3,
+            [
+                Content("💩H"),
+                Content.from_markup("[b]ell"),
+                Content.from_markup("[b]o[/]"),
+            ],
+        ),
+        (
+            Content.from_markup("💩H[b]ell[/]💩"),
+            3,
+            [
+                Content("💩H"),
+                Content.from_markup("[b]ell"),
+                Content.from_markup("[b]o[/]💩"),
+            ],
+        ),
+        (
+            Content.from_markup("💩💩💩"),
+            1,
+            [
+                Content("💩"),
+                Content("💩"),
+                Content("💩"),
+            ],
+        ),
+        (
+            Content.from_markup("💩💩💩"),
+            3,
+            [
+                Content("💩"),
+                Content("💩"),
+                Content("💩"),
+            ],
+        ),
+        (
+            Content.from_markup("💩💩💩"),
+            4,
+            [
+                Content("💩💩"),
+                Content("💩"),
+            ],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            50,
+            [Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999")],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            49,
+            [
+                Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦99"),
+                Content("9"),
+            ],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            48,
+            [
+                Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦9"),
+                Content("99"),
+            ],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            47,
+            [
+                Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦"),
+                Content("999"),
+            ],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            46,
+            [
+                Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888"),
+                Content("📦999"),
+            ],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            45,
+            [
+                Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888"),
+                Content("📦999"),
+            ],
+        ),
+        (
+            Content("📦000📦111📦222📦333📦444📦555📦666📦777📦888📦999"),
+            44,
+            [
+                Content("📦000📦111📦222📦333📦444📦555📦666📦777📦88"),
+                Content("8📦999"),
+            ],
+        ),
+    ],
+)
+def test_fold(content: Content, width: int, expected: list[Content]) -> None:
+    """Test content.fold method works, and correctly handles double width cells.
+
+    Args:
+        content: Test content.
+        width: Desired width.
+        expected: Expectected result.
+    """
+    result = content.fold(width)
+    assert isinstance(result, list)
+    for line, expected_line in zip(result, expected):
+        assert line.is_same(expected_line)
