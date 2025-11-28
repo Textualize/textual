@@ -6,7 +6,7 @@ from contextlib import suppress
 from functools import partial
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -1129,8 +1129,9 @@ class Markdown(Widget):
         return updater
 
     def on_markdown_link_clicked(self, event: LinkClicked) -> None:
-        if self._open_links:
+        if self._open_links and is_http_url(event.href):
             self.app.open_url(event.href)
+            event.stop()
 
     @staticmethod
     def sanitize_location(location: str) -> tuple[Path, str]:
@@ -1629,8 +1630,9 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
             self.post_message(self.NavigatorUpdated())
 
     async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
-        message.stop()
-        await self.go(message.href)
+        if not is_http_url(message.href):
+            message.stop()
+            await self.go(message.href)
 
     def watch_show_table_of_contents(self, show_table_of_contents: bool) -> None:
         self.set_class(show_table_of_contents, "-show-table-of-contents")
@@ -1658,3 +1660,9 @@ class MarkdownViewer(VerticalScroll, can_focus=False, can_focus_children=True):
         block = self.query_one(block_selector, MarkdownBlock)
         self.scroll_to_widget(block, top=True)
         message.stop()
+
+
+def is_http_url(url: str) -> bool:
+    """Check if a URL is an HTTP or HTTPS URL."""
+    parsed = urlparse(url)
+    return parsed.scheme in ("http", "https")
