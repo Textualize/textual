@@ -70,7 +70,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
-- Allow `Sparkline` to be of any height, not just 1
 
 ### Fixed
 
