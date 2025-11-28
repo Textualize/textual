@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Label, Button
+from textual.widgets import Button, Label
 
 
 class QuestionApp(App[str]):
