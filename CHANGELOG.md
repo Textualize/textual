@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Content.fold` https://github.com/Textualize/textual/pull/6238
 - Added `strip_control_codes` to Content constructors https://github.com/Textualize/textual/pull/6238
 
-
 ### Changed 
 
 - Added `Screen.get_loading_widget` which deferes to `App.get_loading_widget` https://github.com/Textualize/textual/pull/6228
