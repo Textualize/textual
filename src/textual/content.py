@@ -981,12 +981,12 @@ class Content(Visual):
             List of content instances.
         """
         if not self:
-            return []
+            return [self]
         text = self.plain
         lines: list[Content] = []
         position = 0
         width = max(width, 2)
-        while text:
+        while True:
             snip = text[position : position + width]
             if not snip:
                 break
@@ -998,7 +998,6 @@ class Content(Visual):
             if snip_cell_length == width:
                 # Cell length is exactly width
                 lines.append(self[position : position + width])
-                text = text[len(snip) :]
                 position += len(snip)
                 continue
             # TODO: Can this be more efficient?
