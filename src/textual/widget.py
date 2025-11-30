@@ -53,7 +53,7 @@ from textual._arrange import DockArrangeResult, arrange
 from textual._context import NoActiveAppError
 from textual._debug import get_caller_file_and_line
 from textual._dispatch_key import dispatch_key
-from textual._easing import DEFAULT_SCROLL_EASING
+from textual._easing import DEFAULT_SCROLL_EASING, DefaultEasingFunctions
 from textual._extrema import Extrema
 from textual._styles_cache import StylesCache
 from textual._types import AnimationLevel
@@ -2463,7 +2463,7 @@ class Widget(DOMNode):
         duration: float | None = None,
         speed: float | None = None,
         delay: float = 0.0,
-        easing: EasingFunction | str = DEFAULT_EASING,
+        easing: EasingFunction | DefaultEasingFunctions = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "full",
     ) -> None:
