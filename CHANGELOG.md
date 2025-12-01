@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.7.1] - 2025-12-1
+
+### Fixed
+
+- Fixed `Content.fold` https://github.com/Textualize/textual/pull/6256
+
 ## [6.7.0] - 2025-11-29
 
 ### Added
@@ -3208,6 +3214,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
 [6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
 [6.6.0]: https://github.com/Textualize/textual/compare/v6.5.0...v6.6.0
 [6.5.0]: https://github.com/Textualize/textual/compare/v6.4.0...v6.5.0
