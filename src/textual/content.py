@@ -967,12 +967,12 @@ class Content(Visual):
         return content_lines
 
     def fold(self, width: int) -> list[Content]:
-        """Fold this line into a list of lines which have a cell length no greater than `width`.
+        """Fold this line into a list of lines which have a cell length no less than 2 and no greater than `width`.
 
         Folded lines may be 1 less than the width if it contains double width characters (which may
         not be subdivided).
 
-        Note that this method will not do any word wrappig. For that, see [wrap()][textual.content.Content.wrap].
+        Note that this method will not do any word wrapping. For that, see [wrap()][textual.content.Content.wrap].
 
         Args:
             width: Desired maximum width (in cells)
@@ -1303,7 +1303,6 @@ class Content(Visual):
             An iterable of string and styles, which make up the content.
 
         """
-
         if not self._spans:
             yield (self._text, base_style)
             if end:
