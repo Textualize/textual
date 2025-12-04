@@ -570,3 +570,20 @@ def test_fold(content: Content, width: int, expected: list[Content]) -> None:
     assert len(result) == len(expected)
     for line, expected_line in zip(result, expected):
         assert line.is_same(expected_line)
+
+
+@pytest.mark.parametrize(
+    "width,style,text,spans,cell_length",
+    [
+        (5, None, "     ", [], 5),
+        (0, None, "", [], 0),
+        (5, "on red", "     ", [Span(0, 5, "on red")], 5),
+    ],
+)
+def test_blank_method(
+    width: int, style: str | None, text: str, spans: list[Span], cell_length: int
+) -> None:
+    blank = Content.blank(width, style)
+    assert blank.plain == text
+    assert blank.spans == spans
+    assert blank.cell_length == cell_length
