@@ -389,7 +389,7 @@ class Content(Visual):
         return new_content
 
     @classmethod
-    def blank(cls, width: int, style: Style | str = "") -> Content:
+    def blank(cls, width: int, style: Style | str | None = None) -> Content:
         """Get a Content instance consisting of spaces.
 
         Args:
