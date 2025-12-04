@@ -181,7 +181,7 @@ class Content(Visual):
 
     @property
     def _is_regular(self) -> bool:
-        """Check if the line is regular (spans.start > span.end for all spans).
+        """Check if the line is regular (spans.end > span.start for all spans).
 
         This is a debugging aid, and unlikely to be useful in your app.
 
