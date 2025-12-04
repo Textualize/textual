@@ -179,6 +179,20 @@ class Content(Visual):
     def __str__(self) -> str:
         return self._text
 
+    @property
+    def _is_regular(self) -> bool:
+        """Check if the line is regular (spans.start > span.end for all spans).
+
+        This is a debugging aid, and unlikely to be useful in your app.
+
+        Returns:
+            `True` if the content is regular, `False` if it is not (and broken).
+        """
+        for span in self.spans:
+            if span.end <= span.start:
+                return False
+        return True
+
     @cached_property
     def markup(self) -> str:
         """Get content markup to render this Text.
@@ -375,6 +389,26 @@ class Content(Visual):
         return new_content
 
     @classmethod
+    def blank(cls, width: int, style: Style | str = "") -> Content:
+        """Get a Content instance consisting of spaces.
+
+        Args:
+            width: Width of blank content (number of spaces).
+            style: Style of blank.
+
+        Returns:
+            Content instance.
+        """
+        if not width:
+            return EMPTY_CONTENT
+        blank = cls(
+            " " * width,
+            [Span(0, width, style)] if style else None,
+            cell_length=width,
+        )
+        return blank
+
+    @classmethod
     def assemble(
         cls,
         *parts: str | Content | tuple[str, str | Style],
@@ -431,7 +465,10 @@ class Content(Visual):
                 position += len(part.plain)
         if end:
             text_append(end)
-        return cls("".join(text), spans, strip_control_codes=strip_control_codes)
+        assembled_content = cls(
+            "".join(text), spans, strip_control_codes=strip_control_codes
+        )
+        return assembled_content
 
     def simplify(self) -> Content:
         """Simplify spans by joining contiguous spans together.
@@ -786,7 +823,7 @@ class Content(Visual):
                     if stop >= len(self.plain):
                         return self
                     text = self.plain[:stop]
-                    return Content(
+                    sliced_content = Content(
                         text,
                         self._trim_spans(text, self._spans),
                         strip_control_codes=False,
@@ -794,11 +831,14 @@ class Content(Visual):
                 else:
                     text = self.plain[start:stop]
                     spans = [
-                        span._shift(-start) for span in self._spans if span.end > start
+                        span._shift(-start)
+                        for span in self._spans
+                        if span.end - start > 0
                     ]
-                    return Content(
+                    sliced_content = Content(
                         text, self._trim_spans(text, spans), strip_control_codes=False
                     )
+                return sliced_content
 
             else:
                 # This would be a bit of work to implement efficiently
