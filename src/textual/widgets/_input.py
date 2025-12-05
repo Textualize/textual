@@ -218,7 +218,8 @@ class Input(ScrollView):
             background: ansi_default;
             color: ansi_default;
             &>.input--cursor {
-                text-style: reverse;
+                background: ansi_white;
+                color: ansi_black;
             }
             &>.input--placeholder, &>.input--suggestion {
                 text-style: dim;
