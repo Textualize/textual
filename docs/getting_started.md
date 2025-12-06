@@ -3,7 +3,7 @@ All you need to get started building Textual apps.
 
 ## Requirements
 
-Textual requires Python 3.9 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs. You also need a unicode font that includes the line drawing and block characters, which are used to render the controls.
+Textual requires Python 3.9 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs. 
 
 !!! info "Your platform"
 
@@ -11,7 +11,7 @@ Textual requires Python 3.9 or later (if you have a choice, pick the most recent
 
     All Linux distros come with a terminal emulator that can run Textual apps.
 
-    The linux console is more limited and not all fonts are suitable. See [Linux console]](./linux-console.md) for details. 
+    If you are using the Linux console (rather than a desktop environment), see [Linux console]](./linux-console.md) for details. 
 
     ### :material-apple: macOS
 
