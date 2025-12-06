@@ -169,14 +169,21 @@ class XTermParser(Parser[Message]):
             Args:
                 reissue_sequence: Key sequence to report to the app.
             """
+            alt:bool = False
             if reissue_sequence:
                 self.debug_log("REISSUE", repr(reissue_sequence))
                 for character in reissue_sequence:
+                    if character == ESC:
+                        alt = True
+                        continue
                     key_events = sequence_to_key_events(character)
                     for event in key_events:
                         if event.key == "escape":
                             event = events.Key("circumflex_accent", "^")
+                        if alt and not event.key.startswith("alt+"):
+                            event.key = f"alt+{event.key}"
                         on_token(event)
+                    alt = False
 
         while not self.is_eof:
             if not bracketed_paste and paste_buffer:
@@ -211,23 +218,27 @@ class XTermParser(Parser[Message]):
             # # Could be the escape key was pressed OR the start of an escape sequence
             sequence: str = ESC
 
-            def send_escape() -> None:
+
+            def send_sequence() -> None:
                 """Send escape key and reissue sequence."""
-                on_token(events.Key("escape", "\x1b"))
-                reissue_sequence_as_keys(sequence[1:])
+                if sequence == ESC:
+                    on_token(events.Key("escape", "\x1b"))
+                else:
+                    reissue_sequence_as_keys(sequence)
+
 
             while True:
                 try:
                     new_character = yield read1(constants.ESCAPE_DELAY)
                 except ParseTimeout:
-                    send_escape()
+                    send_sequence()
                     break
                 except ParseEOF:
-                    send_escape()
+                    send_sequence()
                     return
 
                 if new_character == ESC:
-                    send_escape()
+                    send_sequence()
                     sequence = character
                     continue
                 else:
