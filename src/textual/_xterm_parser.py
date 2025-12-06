@@ -351,7 +351,7 @@ class XTermParser(Parser[Message]):
                         key_tokens.append(modifier)
 
             key_tokens.sort()
-            key_tokens.append(key)
+            key_tokens.append(key.lower())
             yield events.Key(
                 "+".join(key_tokens), sequence if len(sequence) == 1 else None
             )
