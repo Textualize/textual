@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `Content.blank` https://github.com/Textualize/textual/pull/6264
 
+### Fixed
+
+- Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
+
 ## [6.7.1] - 2025-12-1
 
 ### Fixed
