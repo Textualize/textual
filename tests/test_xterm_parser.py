@@ -182,6 +182,23 @@ def test_double_escape(parser):
 
 
 @pytest.mark.parametrize(
+    "sequence,key",
+    [
+        ("\x1ba", "alt+a"),
+    ],
+)
+def test_keys(parser, sequence: str, key: str) -> None:
+    """Test rarer keys."""
+    events = []
+    for event in parser.feed(sequence):
+        events.append(event)
+    for event in parser.feed(""):
+        events.append(event)
+    event = events[0]
+    assert event.key == key
+
+
+@pytest.mark.parametrize(
     "sequence, event_type, shift, meta",
     [
         # Mouse down, with and without modifiers
