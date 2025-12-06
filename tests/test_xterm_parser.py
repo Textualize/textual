@@ -132,13 +132,13 @@ def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
     events = []
 
     for chunk in chunks(sequence, chunk_size):
-        events.append(parser.feed(chunk))
+        events.extend(list(parser.feed(chunk)))
 
-    events = list(itertools.chain.from_iterable(list(event) for event in events))
+    # events = list(itertools.chain.from_iterable(list(event) for event in events))
     print(repr([event.key for event in events]))
 
     assert [event.key for event in events] == [
-        "escape",
+        "circumflex_accent",
         "left_square_bracket",
         "question_mark",
         "end",
@@ -179,6 +179,29 @@ def test_double_escape(parser):
     events.extend(parser.feed(""))
     print(events)
     assert [event.key for event in events] == ["escape", "escape"]
+
+
+@pytest.mark.parametrize(
+    "sequence,key",
+    [
+        ("a", "a"),
+        ("B", "B"),
+        ("\x1ba", "alt+a"),
+        ("\x1b[97;3u", "alt+a"),
+        ("\x1b[65;4u", "alt+shift+a"),
+        ("\x1bA", "alt+shift+a"),
+        ("\x1b[120;7u", "alt+ctrl+x"),
+    ],
+)
+def test_keys(parser, sequence: str, key: str) -> None:
+    """Test rarer keys."""
+    events = []
+    for event in parser.feed(sequence):
+        events.append(event)
+    for event in parser.feed(""):
+        events.append(event)
+    event = events[0]
+    assert event.key == key
 
 
 @pytest.mark.parametrize(
