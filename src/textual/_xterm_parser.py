@@ -163,22 +163,26 @@ class XTermParser(Parser[Message]):
             else:
                 on_token(event)
 
-        def reissue_sequence_as_keys(reissue_sequence: str) -> None:
+        def reissue_sequence_as_keys(
+            reissue_sequence: str, process_alt: bool = False
+        ) -> None:
             """Called when an escape sequence hasn't been understood.
 
             Args:
                 reissue_sequence: Key sequence to report to the app.
             """
-            alt: bool = False
+
+            alt = False
+
             if reissue_sequence:
                 self.debug_log("REISSUE", repr(reissue_sequence))
                 for character in reissue_sequence:
-                    if character == ESC:
+                    if process_alt and character == ESC:
                         alt = True
                         continue
                     key_events = sequence_to_key_events(character, alt=alt)
                     for event in key_events:
-                        if event.key == "escape":
+                        if event.key == "escape" and not process_alt:
                             event = events.Key("circumflex_accent", "^")
                         on_token(event)
                     alt = False
@@ -216,12 +220,12 @@ class XTermParser(Parser[Message]):
             # # Could be the escape key was pressed OR the start of an escape sequence
             sequence: str = ESC
 
-            def send_sequence() -> None:
+            def send_sequence(process_alt: bool = True) -> None:
                 """Send escape key and reissue sequence."""
                 if sequence == ESC:
                     on_token(events.Key("escape", "\x1b"))
                 else:
-                    reissue_sequence_as_keys(sequence)
+                    reissue_sequence_as_keys(sequence, process_alt=process_alt)
 
             while True:
                 try:
@@ -234,7 +238,7 @@ class XTermParser(Parser[Message]):
                     return
 
                 if new_character == ESC:
-                    send_sequence()
+                    send_sequence(process_alt=False)
                     sequence = character
                     continue
                 else:
@@ -385,11 +389,11 @@ class XTermParser(Parser[Message]):
                     name = _character_to_key(sequence)
                 else:
                     name = sequence
-                if name.isupper():
-                    name = f"shift+{name.lower()}"
-                else:
-                    name = KEY_NAME_REPLACEMENTS.get(name, name)
-                if alt:
+
+                name = KEY_NAME_REPLACEMENTS.get(name, name)
+                if len(name) == 1 and alt:
+                    if name.isupper():
+                        name = f"shift+{name.lower()}"
                     name = f"alt+{name}"
                 yield events.Key(name, sequence)
             except Exception:

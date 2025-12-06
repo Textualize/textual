@@ -132,13 +132,13 @@ def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
     events = []
 
     for chunk in chunks(sequence, chunk_size):
-        events.append(parser.feed(chunk))
+        events.extend(list(parser.feed(chunk)))
 
-    events = list(itertools.chain.from_iterable(list(event) for event in events))
+    # events = list(itertools.chain.from_iterable(list(event) for event in events))
     print(repr([event.key for event in events]))
 
     assert [event.key for event in events] == [
-        "escape",
+        "circumflex_accent",
         "left_square_bracket",
         "question_mark",
         "end",
