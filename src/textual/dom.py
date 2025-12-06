@@ -1134,7 +1134,7 @@ class DOMNode(MessagePump):
     def _get_title_style_information(
         self, background: Color
     ) -> tuple[Color, Color, VisualStyle]:
-        """Get a Visual Style object for for titles.
+        """Get a Visual Style object for titles.
 
         Args:
             background: The background color.
@@ -1157,7 +1157,7 @@ class DOMNode(MessagePump):
     def _get_subtitle_style_information(
         self, background: Color
     ) -> tuple[Color, Color, VisualStyle]:
-        """Get a Rich Style object for for titles.
+        """Get a Rich Style object for subtitles.
 
         Args:
             background: The background color.
@@ -1623,7 +1623,7 @@ class DOMNode(MessagePump):
         self,
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
-    ) -> DOMNode | None:
+    ) -> DOMNode:
         """Get an ancestor which matches a query.
 
         Args:

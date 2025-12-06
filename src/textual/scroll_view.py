@@ -19,7 +19,7 @@ class ScrollView(ScrollableContainer):
 
     !!! note
 
-        This is the typically wrong class for making something scrollable. If you want to make something scroll, set it's
+        This is the typically wrong class for making something scrollable. If you want to make something scroll, set its
         `overflow` style to auto or scroll. Or use one of the pre-defined scrolling containers such as [VerticalScroll][textual.containers.VerticalScroll].
     """
 

@@ -730,7 +730,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._select_end = None
 
     def _select_all_in_widget(self, widget: Widget) -> None:
-        """Select a widget and all it's children.
+        """Select a widget and all its children.
 
         Args:
             widget: Widget to select.

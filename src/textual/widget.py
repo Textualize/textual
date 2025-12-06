@@ -1035,7 +1035,10 @@ class Widget(DOMNode):
 
     def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
-        self.set_loading(loading)
+        if not self.is_mounted:
+            self.call_later(self.set_loading, loading)
+        else:
+            self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -1896,7 +1899,7 @@ class Widget(DOMNode):
     ) -> None:
         # TODO: This will cause the widget to refresh, even when there are no links
         # Can we avoid this?
-        if self.auto_links:
+        if self.auto_links and not self.app.mouse_captured:
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
@@ -4270,6 +4273,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+
         if layout and not self._layout_required:
             self._layout_required = True
             self._layout_updates += 1

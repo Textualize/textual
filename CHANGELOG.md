@@ -9,7 +9,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added `Content.blank` https://github.com/Textualize/textual/pull/6264
+
+### Fixed
+
+- Fixed alt modifier on systems without extended Key Protocol https://github.com/Textualize/textual/pull/6267
+- Fixed an issue where alpha keys with modifiers weren't lower cased. If you have bound to something like `ctrl+A`, then change to `ctrl+shift+a` https://github.com/Textualize/textual/pull/6267
+- Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
+
+## [6.7.1] - 2025-12-1
+
+### Fixed
+
+- Fixed `Content.fold` https://github.com/Textualize/textual/pull/6256
+
+## [6.7.0] - 2025-11-29
+
+### Added
+
 - Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
+- Added `Content.fold` https://github.com/Textualize/textual/pull/6238
+- Added `strip_control_codes` to Content constructors https://github.com/Textualize/textual/pull/6238
 
 ### Changed 
 
@@ -3206,6 +3226,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
+[6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
 [6.6.0]: https://github.com/Textualize/textual/compare/v6.5.0...v6.6.0
 [6.5.0]: https://github.com/Textualize/textual/compare/v6.4.0...v6.5.0
 [6.4.0]: https://github.com/Textualize/textual/compare/v6.3.0...v6.4.0
