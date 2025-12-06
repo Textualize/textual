@@ -1623,7 +1623,7 @@ class DOMNode(MessagePump):
         self,
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
-    ) -> DOMNode | None:
+    ) -> DOMNode:
         """Get an ancestor which matches a query.
 
         Args:
