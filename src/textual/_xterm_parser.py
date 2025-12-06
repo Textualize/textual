@@ -176,12 +176,10 @@ class XTermParser(Parser[Message]):
                     if character == ESC:
                         alt = True
                         continue
-                    key_events = sequence_to_key_events(character)
+                    key_events = sequence_to_key_events(character, alt=alt)
                     for event in key_events:
                         if event.key == "escape":
                             event = events.Key("circumflex_accent", "^")
-                        if alt and not event.key.startswith("alt+"):
-                            event.key = f"alt+{event.key}"
                         on_token(event)
                     alt = False
 
@@ -322,7 +320,9 @@ class XTermParser(Parser[Message]):
             self._debug_log_file.close()
             self._debug_log_file = None
 
-    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
+    def _sequence_to_key_events(
+        self, sequence: str, alt: bool = False
+    ) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
@@ -385,7 +385,12 @@ class XTermParser(Parser[Message]):
                     name = _character_to_key(sequence)
                 else:
                     name = sequence
-                name = KEY_NAME_REPLACEMENTS.get(name, name)
+                if name.isupper():
+                    name = f"shift+{name.lower()}"
+                else:
+                    name = KEY_NAME_REPLACEMENTS.get(name, name)
+                if alt:
+                    name = f"alt+{name}"
                 yield events.Key(name, sequence)
             except Exception:
                 yield events.Key(sequence, sequence)
