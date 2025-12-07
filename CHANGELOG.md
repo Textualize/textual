@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed alt modifier on systems without extended Key Protocol https://github.com/Textualize/textual/pull/6267
 - Fixed an issue where alpha keys with modifiers weren't lower cased. If you have bound to something like `ctrl+A`, then change to `ctrl+shift+a` https://github.com/Textualize/textual/pull/6267
 - Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
-- Fixed issue with dim filter and ansi colors
+- Fixed issue with dim filter not using background (may cause snapshot failures) https://github.com/Textualize/textual/pull/6269
 
 ## [6.7.1] - 2025-12-1
 
