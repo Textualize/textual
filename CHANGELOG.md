@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `Input` cursor color display in ANSI mode (`ansi_color=True`) https://github.com/Textualize/textual/issues/6234
 - Fixed alt modifier on systems without extended Key Protocol https://github.com/Textualize/textual/pull/6267
 - Fixed an issue where alpha keys with modifiers weren't lower cased. If you have bound to something like `ctrl+A`, then change to `ctrl+shift+a` https://github.com/Textualize/textual/pull/6267
 - Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
