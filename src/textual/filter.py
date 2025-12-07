@@ -248,15 +248,16 @@ class ANSIToTruecolor(LineFilter):
                     color.get_truecolor(terminal_theme, foreground=True)
                 )
                 changed = True
-            if style.dim:
-                color = dim_color(background, color)
-                style += NO_DIM
-                changed = True
 
         if (bgcolor := style.bgcolor) is not None and bgcolor.triplet is None:
             bgcolor = RichColor.from_triplet(
                 bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
+            changed = True
+
+        if style.dim and color is not None:
+            color = dim_color(background if bgcolor is None else bgcolor, color)
+            style += NO_DIM
             changed = True
 
         return style + Style.from_color(color, bgcolor) if changed else style
