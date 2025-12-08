@@ -10,14 +10,14 @@
 (interpolation) @none
 
 ;; Identifier naming conventions
-((identifier) @type
- (#match? @type "^[A-Z].*[a-z]"))
-((identifier) @constant
- (#match? @constant "^[A-Z][A-Z_0-9]*$"))
-
-((attribute
-    attribute: (identifier) @field)
- (#match? @field "^([A-Z])@!.*$"))
+;; ((identifier) @type
+;;  (#match? @type "^[A-Z].*[a-z]"))
+;; ((identifier) @constant
+;;  (#match? @constant "^[A-Z][A-Z_0-9]*$"))
+;;
+;; ((attribute
+;;     attribute: (identifier) @field)
+;;  (#match? @field "^([A-Z])@!.*$"))
 
 ((identifier) @type.builtin
  (#any-of? @type.builtin
@@ -57,14 +57,14 @@
   function: (attribute
               attribute: (identifier) @method.call))
 
-((call
-   function: (identifier) @constructor)
- (#match? @constructor "^[A-Z]"))
-
-((call
-  function: (attribute
-              attribute: (identifier) @constructor))
- (#match? @constructor "^[A-Z]"))
+;; ((call
+;;    function: (identifier) @constructor)
+;;  (#match? @constructor "^[A-Z]"))
+;;
+;; ((call
+;;   function: (attribute
+;;               attribute: (identifier) @constructor))
+;;  (#match? @constructor "^[A-Z]"))
 
 ;; Decorators
 
