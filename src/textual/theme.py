@@ -345,7 +345,7 @@ BUILTIN_THEMES: dict[str, Theme] = {
         background="#faf4ed",
         surface="#fffaf3",
         panel="#f2e9e1",
-        dark=True,
+        dark=False,
         variables={
             "input-cursor-foreground": "#cecacd",
             "input-cursor-background": "#f4ede8",
