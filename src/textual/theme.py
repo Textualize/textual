@@ -283,6 +283,27 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "footer-description-foreground": "#fdf6e3",
         },
     ),
+    "solarized-dark": Theme(
+        name="solarized-dark",
+        primary="#268bd2",
+        secondary="#2aa198",
+        warning="#cb4b16",
+        error="#dc322f",
+        success="#859900",
+        accent="#6c71c4",
+        background="#002b36",
+        surface="#073642",
+        panel="#073642",
+        foreground="#839496",
+        dark=True,
+        variables={
+            "button-color-foreground": "#fdf6e3",
+            "footer-background": "#268bd2",
+            "footer-key-foreground": "#fdf6e3",
+            "footer-description-foreground": "#fdf6e3",
+            "input-selection-background": "#073642", # Base02
+        },
+    ),
 }
 
 
