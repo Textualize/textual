@@ -474,6 +474,7 @@ class MaskedInput(Input, can_focus=True):
                 which determine when to do input validation. The default is to do
                 validation for all messages.
             valid_empty: Empty values are valid.
+            select_on_focus: Whether to select all text on focus.
             name: Optional name for the masked input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
