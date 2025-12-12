@@ -83,6 +83,8 @@ class Binding:
     """
     system: bool = False
     """Make this binding a system binding, which removes it from the key panel."""
+    order_group: str | None = None
+    """Group used in sort, or `None` for default."""
 
     @dataclass(frozen=True)
     class Group:
@@ -93,6 +95,9 @@ class Binding:
 
         compact: bool = False
         """Show keys in compact form (no spaces)."""
+
+        order_group: str | None = None
+        """Group used in sort, or `None` for default."""
 
     group: Group | None = None
     """Optional binding group (used to group related bindings in the footer)."""
@@ -165,6 +170,7 @@ class Binding:
                     id=binding.id,
                     system=binding.system,
                     group=binding.group,
+                    order_group=binding.order_group,
                 )
 
 
@@ -188,6 +194,7 @@ class BindingsMap:
     def __init__(
         self,
         bindings: Iterable[BindingType] | None = None,
+        order_group: str = "default",
     ) -> None:
         """Initialise a collection of bindings.
 
