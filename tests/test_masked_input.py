@@ -94,6 +94,39 @@ async def test_editing():
         assert input.cursor_position == len(serial)
 
 
+async def test_overwrite_typing():
+    app = InputApp("9999-9999-9999-9999;0")
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        input.value = "0000-99"
+        input.action_home()
+
+        await pilot.press("1", "2", "3")
+        assert input.cursor_position == 3
+        assert input.value == "1230-99"
+
+        await pilot.press("4")
+        assert input.cursor_position == 5
+        assert input.value == "1234-99"
+
+        await pilot.press("0", "0")
+        assert input.cursor_position == 7
+        assert input.value == "1234-00"
+
+        await pilot.press("7", "8")
+        assert input.cursor_position == 10
+        assert input.value == "1234-0078-"
+
+        await pilot.press("left", "left")
+        await pilot.press("backspace", "backspace")
+        assert input.cursor_position == 5
+        assert input.value == "1234-  78"
+
+        await pilot.press("5", "6")
+        assert input.cursor_position == 7
+        assert input.value == "1234-5678"
+
+
 async def test_key_movement_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
