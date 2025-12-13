@@ -200,19 +200,23 @@ class _Template(Validator):
             cursor_position += 1
         return value, cursor_position
 
-    def insert_text_at_cursor(self, text: str) -> tuple[str, int] | None:
-        """Inserts `text` at current cursor position. If not present in `text`, any expected separator is automatically
-        inserted at the correct position.
+    def replace(self, text: str, start: int, end: int) -> tuple[str, int] | None:
+        """Replace the text between the start and end locations with the given text.
+        If not present in `text`, any expected separator is automatically inserted at the correct position.
 
         Args:
-            text: The text to be inserted.
+            text: Text to replace the existing text with.
+            start: Start index to replace (inclusive).
+            end: End index to replace (inclusive).
 
         Returns:
             A tuple in the form `(value, cursor_position)` with the new control value and current cursor position if
                 `text` matches the template, None otherwise.
         """
         value = self.input.value
-        cursor_position = self.input.cursor_position
+        start, end = sorted((max(0, start), min(len(value), end)))
+
+        template_len = len(self.template)
         separators = set(
             [
                 char_definition.char
@@ -220,6 +224,9 @@ class _Template(Validator):
                 if _CharFlags.SEPARATOR in char_definition.flags
             ]
         )
+
+        cursor_position = start
+
         for char in text:
             if char in separators:
                 if char == self.next_separator(cursor_position):
@@ -241,20 +248,53 @@ class _Template(Validator):
                             )
                             cursor_position += 1
                 continue
-            if cursor_position >= len(self.template):
+
+            if cursor_position >= template_len:
                 break
+
             char_definition = self.template[cursor_position]
             assert _CharFlags.SEPARATOR not in char_definition.flags
+
             if not char_definition.pattern.match(char):
                 return None
+
             if _CharFlags.LOWERCASE in char_definition.flags:
                 char = char.lower()
             elif _CharFlags.UPPERCASE in char_definition.flags:
                 char = char.upper()
+
             value = value[:cursor_position] + char + value[cursor_position + 1 :]
             cursor_position += 1
             value, cursor_position = self.insert_separators(value, cursor_position)
+
         return value, cursor_position
+
+    def insert(self, text: str, index: int) -> tuple[str, int] | None:
+        """Inserts `text` at the given index. If not present in `text`, any expected separator is automatically
+        inserted at the correct position.
+
+        Args:
+            text: The text to be inserted.
+            index: Index to insert the text at (inclusive).
+
+        Returns:
+            A tuple in the form `(value, cursor_position)` with the new control value and current cursor position if
+                `text` matches the template, None otherwise.
+        """
+        return self.replace(text, index, index)
+
+    def insert_text_at_cursor(self, text: str) -> tuple[str, int] | None:
+        """Inserts `text` at current cursor position. If not present in `text`, any expected separator is automatically
+        inserted at the correct position.
+
+        Args:
+            text: The text to be inserted.
+
+        Returns:
+            A tuple in the form `(value, cursor_position)` with the new control value and current cursor position if
+                `text` matches the template, None otherwise.
+        """
+        return self.insert(text, self.input.cursor_position)
 
     def move_cursor(self, delta: int) -> None:
         """Moves the cursor position by `delta` characters, skipping separators if
