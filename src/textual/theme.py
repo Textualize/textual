@@ -301,8 +301,8 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "footer-background": "#268bd2",
             "footer-key-foreground": "#fdf6e3",
             "footer-description-foreground": "#fdf6e3",
-            "input-selection-background": "#073642", # Base02
-        }
+            "input-selection-background": "#073642",  # Base02
+        },
     ),
     "rose-pine": Theme(
         name="rose-pine",
