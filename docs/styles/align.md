@@ -1,6 +1,8 @@
 # Align
 
-The `align` style aligns children within a container.
+The `align` style defines how a widget's *children* are aligned.
+
+Apply this rule to a container to adjust where its children are positioned.
 
 ## Syntax
 

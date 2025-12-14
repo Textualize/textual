@@ -9,11 +9,14 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: Did we solve your problem?
+      - name: Did I help?
         uses: peter-evans/create-or-update-comment@a35cf36e5301d70b76f316e867e7788a55a31dae
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Don't forget to [star](https://github.com/Textualize/textual) the repository!
-
-            Follow [@textualizeio](https://twitter.com/textualizeio) for Textual updates.
+            I hope I solved your issue!
+            
+            Consider [sponsoring my work](https://github.com/sponsors/willmcgugan) to continue to maintain and develop Textual.
+            
+            - Will McGugan
+            

@@ -52,6 +52,10 @@ class Update(Message, verbose=True):
 class Layout(Message, verbose=True):
     """Sent by Textual when a layout is required."""
 
+    def __init__(self, widget: Widget) -> None:
+        super().__init__()
+        self.widget = widget
+
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Layout)
 

@@ -44,7 +44,7 @@ class ListViewApp(App[None]):
         if message.item is None:
             self.highlighted.append(None)
         else:
-            self.highlighted.append(str(message.item.children[0].renderable))
+            self.highlighted.append(str(message.item.children[0].content))
 
 
 async def test_listview_remove_items() -> None:

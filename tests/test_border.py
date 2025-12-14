@@ -31,7 +31,7 @@ def test_border_render_row():
     ]
 
 
-def test_border_title_single_line():
+async def test_border_title_single_line():
     """The border_title gets set to a single line even when multiple lines are provided."""
     widget = Widget()
 
@@ -59,7 +59,7 @@ def test_border_title_single_line():
     assert widget.border_title == "[bold]Hello World[/bold]"
 
 
-def test_border_subtitle_single_line():
+async def test_border_subtitle_single_line():
     """The border_subtitle gets set to a single line even when multiple lines are provided."""
     widget = Widget()
 

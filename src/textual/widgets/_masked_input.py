@@ -461,8 +461,9 @@ class MaskedInput(Input, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         tooltip: RenderableType | None = None,
+        compact: bool = False,
     ) -> None:
-        """Initialise the `Input` widget.
+        """Initialise the `MaskedInput` widget.
 
         Args:
             template: Template string.
@@ -478,6 +479,7 @@ class MaskedInput(Input, can_focus=True):
             classes: Optional initial classes for the widget.
             disabled: Whether the input is disabled or not.
             tooltip: Optional tooltip.
+            compact: Enable compact style (without borders).
         """
         self._template: _Template = None
         super().__init__(
@@ -490,6 +492,7 @@ class MaskedInput(Input, can_focus=True):
             id=id,
             classes=classes,
             disabled=disabled,
+            compact=compact,
         )
 
         self._template = _Template(self, template)
@@ -550,7 +553,7 @@ class MaskedInput(Input, can_focus=True):
 
     def render_line(self, y: int) -> Strip:
         if y != 0:
-            return Strip.blank(self.size.width)
+            return Strip.blank(self.size.width, self.rich_style)
 
         result = self._value
         width = self.content_size.width

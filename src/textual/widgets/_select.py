@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Generic, Hashable, Iterable, TypeVar, Union
 
 import rich.repr
 from rich.console import RenderableType
@@ -261,7 +261,7 @@ class SelectCurrent(Horizontal):
         self.post_message(self.Toggle())
 
 
-SelectType = TypeVar("SelectType")
+SelectType = TypeVar("SelectType", bound=Hashable)
 """The type used for data in the Select."""
 SelectOption: TypeAlias = "tuple[str, SelectType]"
 """The type used for options in the Select."""

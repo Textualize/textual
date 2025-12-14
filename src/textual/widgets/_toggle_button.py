@@ -64,6 +64,15 @@ class ToggleButton(Static, can_focus=True):
         &.-textual-compact {
             border: none !important;
             padding: 0;
+            &:focus {
+                border: tall $border;
+                background-tint: $foreground 5%;
+                & > .toggle--label {
+                    color: $block-cursor-foreground;
+                    background: $block-cursor-background;
+                    text-style: $block-cursor-text-style;
+                }
+            }
         }
 
         & > .toggle--button {
@@ -80,9 +89,7 @@ class ToggleButton(Static, can_focus=True):
             border: tall $border;
             background-tint: $foreground 5%;
             & > .toggle--label {
-                color: $block-cursor-foreground;
-                background: $block-cursor-background;
-                text-style: $block-cursor-text-style;
+                color: $block-cursor-foreground;                
             }
         }
         &:blur:hover {

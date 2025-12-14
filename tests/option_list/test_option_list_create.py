@@ -156,3 +156,13 @@ async def test_options_are_available_soon() -> None:
     option = Option("", id="some_id")
     option_list = OptionList(option)
     assert option_list.get_option("some_id") is option
+
+
+async def test_set_options():
+    """Test set_options method."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        option_list.set_options(["foo", "bar"])
+        assert option_list.option_count == 2
+        assert option_list.get_option_at_index(0).prompt == "foo"
+        assert option_list.get_option_at_index(1).prompt == "bar"

@@ -1,0 +1,11 @@
+VerticalScroll {
+    width: 1fr;
+}
+
+.left {
+    scrollbar-visibility: visible; # The default
+}
+
+.right {
+    scrollbar-visibility: hidden;
+}

@@ -6,6 +6,7 @@ from typing import Any
 
 from rich.pretty import Pretty as PrettyRenderable
 
+from textual.app import RenderResult
 from textual.widget import Widget
 
 
@@ -37,27 +38,19 @@ class Pretty(Widget):
             id: The ID of the pretty in the DOM.
             classes: The CSS classes of the pretty.
         """
-        super().__init__(
-            name=name,
-            id=id,
-            classes=classes,
-        )
-        self._renderable = PrettyRenderable(object)
+        super().__init__(name=name, id=id, classes=classes)
+        self.shrink = False
+        self._pretty_renderable = PrettyRenderable(object)
 
-    def render(self) -> PrettyRenderable:
-        """Render the pretty-printed object.
+    def render(self) -> RenderResult:
+        return self._pretty_renderable
 
-        Returns:
-            The rendered pretty-print.
-        """
-        return self._renderable
-
-    def update(self, object: Any) -> None:
+    def update(self, object: object) -> None:
         """Update the content of the pretty widget.
 
         Args:
             object: The object to pretty-print.
         """
-        self._renderable = PrettyRenderable(object)
+        self._pretty_renderable = PrettyRenderable(object)
         self.clear_cached_dimensions()
         self.refresh(layout=True)

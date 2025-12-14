@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import cached_property, lru_cache
-from marshal import dumps, loads
 from operator import attrgetter
+from pickle import dumps, loads
 from typing import TYPE_CHECKING, Any, Iterable, Mapping
 
 import rich.repr
@@ -41,7 +41,53 @@ _get_hash_attributes = attrgetter(
 )
 
 
-@rich.repr.auto(angular=True)
+_get_simple_attributes = attrgetter(
+    "background",
+    "foreground",
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "underline2",
+    "reverse",
+    "strike",
+    "blink",
+    "link",
+    "_meta",
+)
+
+_get_simple_attributes_sans_color = attrgetter(
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "underline2",
+    "reverse",
+    "strike",
+    "blink",
+    "link",
+    "_meta",
+)
+
+
+_get_attributes = attrgetter(
+    "background",
+    "foreground",
+    "bold",
+    "dim",
+    "italic",
+    "underline",
+    "underline2",
+    "reverse",
+    "strike",
+    "blink",
+    "link",
+    "meta",
+    "_meta",
+)
+
+
+@rich.repr.auto()
 @dataclass(frozen=True)
 class Style:
     """Represents a style in the Visual interface (color and other attributes).
@@ -82,19 +128,19 @@ class Style:
 
     @cached_property
     def _is_null(self) -> bool:
-        return (
-            self.foreground is None
-            and self.background is None
-            and self.bold is None
-            and self.dim is None
-            and self.italic is None
-            and self.underline is None
-            and self.underline2 is None
-            and self.reverse is None
-            and self.strike is None
-            and self.blink is None
-            and self.link is None
-            and self._meta is None
+        return _get_simple_attributes(self) == (
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
         )
 
     @cached_property
@@ -193,30 +239,66 @@ class Style:
     @lru_cache(maxsize=1024 * 4)
     def __add__(self, other: object | None) -> Style:
         if isinstance(other, Style):
+            if self._is_null:
+                return other
+            if other._is_null:
+                return self
+            (
+                background,
+                foreground,
+                bold,
+                dim,
+                italic,
+                underline,
+                underline2,
+                reverse,
+                strike,
+                blink,
+                link,
+                meta,
+                _meta,
+            ) = _get_attributes(self)
+
+            (
+                other_background,
+                other_foreground,
+                other_bold,
+                other_dim,
+                other_italic,
+                other_underline,
+                other_underline2,
+                other_reverse,
+                other_strike,
+                other_blink,
+                other_link,
+                other_meta,
+                other__meta,
+            ) = _get_attributes(other)
+
             new_style = Style(
                 (
-                    other.background
-                    if (self.background is None or self.background.a == 0)
-                    else self.background + other.background
+                    other_background
+                    if (background is None or background.a == 0)
+                    else background + other_background
                 ),
                 (
-                    self.foreground
-                    if (other.foreground is None or other.foreground.a == 0)
-                    else other.foreground
+                    foreground
+                    if (other_foreground is None or other_foreground.a == 0)
+                    else other_foreground
                 ),
-                self.bold if other.bold is None else other.bold,
-                self.dim if other.dim is None else other.dim,
-                self.italic if other.italic is None else other.italic,
-                self.underline if other.underline is None else other.underline,
-                self.underline2 if other.underline2 is None else other.underline2,
-                self.reverse if other.reverse is None else other.reverse,
-                self.strike if other.strike is None else other.strike,
-                self.blink if other.blink is None else other.blink,
-                self.link if other.link is None else other.link,
+                bold if other_bold is None else other_bold,
+                dim if other_dim is None else other_dim,
+                italic if other_italic is None else other_italic,
+                underline if other_underline is None else other_underline,
+                underline2 if other_underline2 is None else other_underline2,
+                reverse if other_reverse is None else other_reverse,
+                strike if other_strike is None else other_strike,
+                blink if other_blink is None else other_blink,
+                link if other_link is None else other_link,
                 (
-                    dumps({**self.meta, **other.meta})
-                    if self._meta is not None and other._meta is not None
-                    else (self._meta if other._meta is None else other._meta)
+                    dumps({**meta, **other_meta})
+                    if _meta is not None and other__meta is not None
+                    else (_meta if other__meta is None else other__meta)
                 ),
             )
             return new_style
@@ -327,6 +409,7 @@ class Style:
             underline2=text_style.underline2,
             reverse=text_style.reverse,
             strike=text_style.strike,
+            blink=text_style.blink,
             auto_color=styles.auto_color,
         )
 
@@ -349,26 +432,43 @@ class Style:
         Returns:
             A Rich style object.
         """
-        color = None if self.foreground is None else self.background + self.foreground
+
+        (
+            background,
+            foreground,
+            bold,
+            dim,
+            italic,
+            underline,
+            underline2,
+            reverse,
+            strike,
+            blink,
+            link,
+            _meta,
+        ) = _get_simple_attributes(self)
+
+        color = None if foreground is None else background + foreground
+
         return RichStyle(
             color=None if color is None else color.rich_color,
-            bgcolor=None if self.background is None else self.background.rich_color,
-            bold=self.bold,
-            dim=self.dim,
-            italic=self.italic,
-            underline=self.underline,
-            underline2=self.underline2,
-            reverse=self.reverse,
-            strike=self.strike,
-            blink=self.blink,
-            link=self.link,
-            meta=None if self._meta is None else self.meta,
+            bgcolor=None if background is None else background.rich_color,
+            bold=bold,
+            dim=dim,
+            italic=italic,
+            underline=underline,
+            underline2=underline2,
+            reverse=reverse,
+            strike=strike,
+            blink=blink,
+            link=link,
+            meta=None if _meta is None else self.meta,
         )
 
     def rich_style_with_offset(self, x: int, y: int) -> RichStyle:
         """Get a Rich style with the given offset included in meta.
 
-        This is used in text seleciton.
+        This is used in text selection.
 
         Args:
             x: X coordinate.
@@ -377,37 +477,40 @@ class Style:
         Returns:
             A Rich Style object.
         """
-        color = None if self.foreground is None else self.background + self.foreground
+        (
+            background,
+            foreground,
+            bold,
+            dim,
+            italic,
+            underline,
+            underline2,
+            reverse,
+            strike,
+            blink,
+            link,
+            _meta,
+        ) = _get_simple_attributes(self)
+        color = None if foreground is None else background + foreground
         return RichStyle(
             color=None if color is None else color.rich_color,
-            bgcolor=None if self.background is None else self.background.rich_color,
-            bold=self.bold,
-            dim=self.dim,
-            italic=self.italic,
-            underline=self.underline,
-            underline2=self.underline2,
-            reverse=self.reverse,
-            strike=self.strike,
-            blink=self.blink,
-            link=self.link,
+            bgcolor=None if background is None else background.rich_color,
+            bold=bold,
+            dim=dim,
+            italic=italic,
+            underline=underline,
+            underline2=underline2,
+            reverse=reverse,
+            strike=strike,
+            blink=blink,
+            link=link,
             meta={**self.meta, "offset": (x, y)},
         )
 
     @cached_property
     def without_color(self) -> Style:
         """The style without any colors."""
-        return Style(
-            bold=self.bold,
-            dim=self.dim,
-            italic=self.italic,
-            underline=self.underline,
-            underline2=self.underline2,
-            reverse=self.reverse,
-            strike=self.strike,
-            blink=self.blink,
-            link=self.link,
-            _meta=self._meta,
-        )
+        return Style(None, None, *_get_simple_attributes_sans_color(self))
 
     @cached_property
     def background_style(self) -> Style:

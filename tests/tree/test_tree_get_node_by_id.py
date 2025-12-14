@@ -6,7 +6,7 @@ from textual.widgets import Tree
 from textual.widgets.tree import NodeID, UnknownNodeID
 
 
-def test_get_tree_node_by_id() -> None:
+async def test_get_tree_node_by_id() -> None:
     """It should be possible to get a TreeNode by its ID."""
     tree = Tree[None]("Anakin")
     child = tree.root.add("Leia")

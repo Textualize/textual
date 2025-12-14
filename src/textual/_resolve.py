@@ -21,7 +21,10 @@ def resolve(
     gutter: int,
     size: Size,
     viewport: Size,
-    min_size: int | None = None,
+    *,
+    expand: bool = False,
+    shrink: bool = False,
+    minimums: list[int] | None = None,
 ) -> list[tuple[int, int]]:
     """Resolve a list of dimensions.
 
@@ -49,8 +52,8 @@ def resolve(
         sum([scalar.value for scalar, fraction in resolved if fraction is None])
     )
 
+    total_gutter = gutter * (len(dimensions) - 1)
     if total_fraction:
-        total_gutter = gutter * (len(dimensions) - 1)
         consumed = sum([fraction for _, fraction in resolved if fraction is not None])
         remaining = max(Fraction(0), Fraction(total - total_gutter) - consumed)
         fraction_unit = Fraction(remaining, total_fraction)
@@ -63,12 +66,42 @@ def resolve(
             "list[Fraction]", [fraction for _, fraction in resolved]
         )
 
-    if min_size is not None:
-        resolved_fractions = [
-            max(Fraction(min_size), fraction) for fraction in resolved_fractions
-        ]
-
     fraction_gutter = Fraction(gutter)
+
+    if expand or shrink:
+        total_space = total - total_gutter
+        used_space = sum(resolved_fractions)
+        if expand:
+            remaining_space = total_space - used_space
+            if remaining_space > 0:
+                resolved_fractions = [
+                    width + Fraction(width, used_space) * remaining_space
+                    for width in resolved_fractions
+                ]
+        if shrink:
+            one = Fraction(1)
+            excess_space = used_space - total_space
+            if minimums is not None and excess_space > 0:
+                for index, (minimum_width, width) in enumerate(
+                    zip(map(Fraction, minimums), resolved_fractions)
+                ):
+                    remove_space = max(Fraction(width, used_space), one) * excess_space
+                    updated_width = max(minimum_width, width - remove_space)
+                    resolved_fractions[index] = updated_width
+                    used_space = used_space - width + updated_width
+                    excess_space = used_space - total_space
+                    if excess_space <= 0:
+                        break
+
+                used_space = sum(resolved_fractions)
+                excess_space = used_space - total_space
+
+            if excess_space > 0:
+                resolved_fractions = [
+                    width - Fraction(width, used_space) * excess_space
+                    for width in resolved_fractions
+                ]
+
     offsets = [0] + [
         fraction.__floor__()
         for fraction in accumulate(
@@ -189,6 +222,7 @@ def resolve_box_models(
     viewport_size: Size,
     margin: Size,
     resolve_dimension: Literal["width", "height"] = "width",
+    greedy: bool = True,
 ) -> list[BoxModel]:
     """Resolve box models for a list of dimensions
 
@@ -230,6 +264,7 @@ def resolve_box_models(
                     if (_height := fraction_height - margin_height) < 0
                     else _height
                 ),
+                greedy=greedy,
             )
         )
         for (_dimension, widget, (margin_width, margin_height)) in zip(
@@ -301,10 +336,7 @@ def resolve_box_models(
     box_models = [
         box_model
         or widget._get_box_model(
-            size,
-            viewport_size,
-            width_fraction,
-            height_fraction,
+            size, viewport_size, width_fraction, height_fraction, greedy=greedy
         )
         for widget, box_model in zip(widgets, box_models)
     ]

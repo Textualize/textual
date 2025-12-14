@@ -36,7 +36,7 @@ class Timer:
         event_target: The object which will receive the timer events.
         interval: The time between timer events, in seconds.
         name: A name to assign the event (for debugging).
-        callback: A optional callback to invoke when the event is handled.
+        callback: An optional callback to invoke when the event is handled.
         repeat: The number of times to repeat the timer, or None to repeat forever.
         skip: Enable skipping of scheduled events that couldn't be sent in time.
         pause: Start the timer paused.
@@ -152,6 +152,7 @@ class Timer:
         count = 0
         _repeat = self._repeat
         _interval = self._interval
+        self._active  # Force instantiation in same thread
         await self._active.wait()
         start = _time.get_time()
 

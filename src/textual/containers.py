@@ -29,7 +29,7 @@ class Container(Widget):
     """
 
 
-class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
+class ScrollableContainer(Widget, can_focus=True):
     """A scrollable container with vertical layout, and auto scrollbars on both axis."""
 
     # We don't typically want to maximize scrollable containers,
@@ -118,7 +118,7 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
         return self.can_maximize
 
 
-class Vertical(Widget, inherit_bindings=False):
+class Vertical(Widget):
     """An expanding container with vertical layout and no scrollbars."""
 
     DEFAULT_CSS = """
@@ -131,7 +131,7 @@ class Vertical(Widget, inherit_bindings=False):
     """
 
 
-class VerticalGroup(Widget, inherit_bindings=False):
+class VerticalGroup(Widget):
     """A non-expanding container with vertical layout and no scrollbars."""
 
     DEFAULT_CSS = """
@@ -156,7 +156,7 @@ class VerticalScroll(ScrollableContainer):
     """
 
 
-class Horizontal(Widget, inherit_bindings=False):
+class Horizontal(Widget):
     """An expanding container with horizontal layout and no scrollbars."""
 
     DEFAULT_CSS = """
@@ -169,7 +169,7 @@ class Horizontal(Widget, inherit_bindings=False):
     """
 
 
-class HorizontalGroup(Widget, inherit_bindings=False):
+class HorizontalGroup(Widget):
     """A non-expanding container with horizontal layout and no scrollbars."""
 
     DEFAULT_CSS = """
@@ -194,7 +194,7 @@ class HorizontalScroll(ScrollableContainer):
     """
 
 
-class Center(Widget, inherit_bindings=False):
+class Center(Widget):
     """A container which aligns children on the X axis."""
 
     DEFAULT_CSS = """
@@ -206,7 +206,7 @@ class Center(Widget, inherit_bindings=False):
     """
 
 
-class Right(Widget, inherit_bindings=False):
+class Right(Widget):
     """A container which aligns children on the X axis."""
 
     DEFAULT_CSS = """
@@ -218,7 +218,7 @@ class Right(Widget, inherit_bindings=False):
     """
 
 
-class Middle(Widget, inherit_bindings=False):
+class Middle(Widget):
     """A container which aligns children on the Y axis."""
 
     DEFAULT_CSS = """
@@ -230,7 +230,19 @@ class Middle(Widget, inherit_bindings=False):
     """
 
 
-class Grid(Widget, inherit_bindings=False):
+class CenterMiddle(Widget):
+    """A container which aligns its children on both axis."""
+
+    DEFAULT_CSS = """
+    CenterMiddle {
+        align: center middle;
+        width: 1fr;
+        height: 1fr;
+    }
+    """
+
+
+class Grid(Widget):
     """A container with grid layout."""
 
     DEFAULT_CSS = """
@@ -242,7 +254,7 @@ class Grid(Widget, inherit_bindings=False):
     """
 
 
-class ItemGrid(Widget, inherit_bindings=False):
+class ItemGrid(Widget):
     """A container with grid layout and automatic columns."""
 
     DEFAULT_CSS = """
@@ -255,6 +267,7 @@ class ItemGrid(Widget, inherit_bindings=False):
 
     stretch_height: reactive[bool] = reactive(True)
     min_column_width: reactive[int | None] = reactive(None, layout=True)
+    max_column_width: reactive[int | None] = reactive(None, layout=True)
     regular: reactive[bool] = reactive(False)
 
     def __init__(
@@ -265,6 +278,7 @@ class ItemGrid(Widget, inherit_bindings=False):
         classes: str | None = None,
         disabled: bool = False,
         min_column_width: int | None = None,
+        max_column_width: int | None = None,
         stretch_height: bool = True,
         regular: bool = False,
     ) -> None:
@@ -286,10 +300,12 @@ class ItemGrid(Widget, inherit_bindings=False):
         )
         self.set_reactive(ItemGrid.stretch_height, stretch_height)
         self.set_reactive(ItemGrid.min_column_width, min_column_width)
+        self.set_reactive(ItemGrid.max_column_width, max_column_width)
         self.set_reactive(ItemGrid.regular, regular)
 
     def pre_layout(self, layout: Layout) -> None:
         if isinstance(layout, GridLayout):
             layout.stretch_height = self.stretch_height
             layout.min_column_width = self.min_column_width
+            layout.max_column_width = self.max_column_width
             layout.regular = self.regular

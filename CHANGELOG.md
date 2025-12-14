@@ -5,6 +5,346 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Added Rosé Pine themes https://github.com/Textualize/textual/pull/6277
+
+## [6.8.0] - 2025-12-07
+
+### Added
+
+- Added `Content.blank` https://github.com/Textualize/textual/pull/6264
+
+### Fixed
+
+- Fixed `Input` cursor color display in ANSI mode (`ansi_color=True`) https://github.com/Textualize/textual/issues/6234
+- Fixed alt modifier on systems without extended Key Protocol https://github.com/Textualize/textual/pull/6267
+- Fixed an issue where alpha keys with modifiers weren't lower cased. If you have bound to something like `ctrl+A`, then change to `ctrl+shift+a` https://github.com/Textualize/textual/pull/6267
+- Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
+- Fixed issue with dim filter not using background (may cause snapshot failures) https://github.com/Textualize/textual/pull/6269
+
+## [6.7.1] - 2025-12-1
+
+### Fixed
+
+- Fixed `Content.fold` https://github.com/Textualize/textual/pull/6256
+
+## [6.7.0] - 2025-11-29
+
+### Added
+
+- Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
+- Added `Content.fold` https://github.com/Textualize/textual/pull/6238
+- Added `strip_control_codes` to Content constructors https://github.com/Textualize/textual/pull/6238
+
+### Changed 
+
+- Added `Screen.get_loading_widget` which deferes to `App.get_loading_widget` https://github.com/Textualize/textual/pull/6228
+
+### Fixed 
+
+- Fixed `anchor` with `ScrollView` widgets https://github.com/Textualize/textual/pull/6228
+
+## [6.6.0] - 2025-11-10
+
+### Fixed
+
+- Fixed `TextArea` cursor display on wrapped lines https://github.com/Textualize/textual/pull/6196
+- Fixed `remove_children` not refreshing layout https://github.com/Textualize/textual/pull/6206
+- Fixed flicker with :hover pseudo class https://github.com/Textualize/textual/pull/6214
+- Fixed scrollbar not updating after textarea paste https://github.com/Textualize/textual/pull/6219
+
+### Added
+
+- Added `grid_size` property to `GridLayout` https://github.com/Textualize/textual/pull/6210
+- Exposed `NoSelection` and `BLANK` via `textual.widgets.select` https://github.com/Textualize/textual/pull/6214
+- Added `Widget.FOCUS_ON_CLICK` classvar amd `Widget.focus_on_click` method https://github.com/Textualize/textual/pull/6216
+- Added support for the kitty keyboard protocol on Windows https://github.com/Textualize/textual/pull/6207
+- Added `Widget.mount_compose` https://github.com/Textualize/textual/pull/6216
+
+### Changed
+
+- Change highlight style of Select to only highlight the border, not the label https://github.com/Textualize/textual/pull/6214
+
+## [6.5.0] - 2025-10-31
+
+### Added
+
+- Added `DOMNode.trap_focus` https://github.com/Textualize/textual/pull/6202
+
+### Fixed
+
+- Fixed issue with focus + scroll https://github.com/Textualize/textual/pull/6203
+
+## [6.4.0] - 2025-10-22
+
+### Fixed
+
+- Fixed type hint aliasing for App under TYPE_CHECKING https://github.com/Textualize/textual/pull/6152
+- Fixed circular dependency effecting `bazel` users https://github.com/Textualize/textual/pull/6163
+- Fixed for text selection with double width characters https://github.com/Textualize/textual/pull/6186
+
+### Changed
+
+- Simplified system commands (command palette) to a single word https://github.com/Textualize/textual/pull/6183
+
+## [6.3.0] - 2025-10-11
+
+### Added
+
+- Added scrollbar-visibility rule https://github.com/Textualize/textual/pull/6156
+
+### Fixed
+
+- Fixed highlight not auto-detecting lexer https://github.com/Textualize/textual/pull/6167
+
+### Changed
+
+- Dropped support for Python3.8 https://github.com/Textualize/textual/pull/6121/
+- Added support for Python3.14 https://github.com/Textualize/textual/pull/6121/
+
+## [6.2.1] - 2025-10-01
+
+- Fix inability to copy text outside of an input/textarea when it was focused https://github.com/Textualize/textual/pull/6148
+- Fix issue when copying text after a double click https://github.com/Textualize/textual/pull/6148
+
+## [6.2.0] - 2025-09-30
+
+### Changed
+
+- Eager tasks are now enabled On Python3.12 and above https://github.com/Textualize/textual/pull/6102
+- `Widget._arrange` is now public (as `Widget.arrange`) https://github.com/Textualize/textual/pull/6108
+- Reduced number of layout operations required to update the screen https://github.com/Textualize/textual/pull/6108
+- The :hover pseudo-class no applies to the first widget under the mouse with a hover style set https://github.com/Textualize/textual/pull/6132
+- The footer key hover background is more visible https://github.com/Textualize/textual/pull/6132
+- Made `App.delay_update` public https://github.com/Textualize/textual/pull/6137
+- Pilot.click will return True if the initial mouse down is on the specified target https://github.com/Textualize/textual/pull/6139
+
+### Added
+
+- Added `DOMNode.displayed_and_visible_children` https://github.com/Textualize/textual/pull/6102
+- Added `Widget.process_layout` https://github.com/Textualize/textual/pull/6105
+- Added `App.viewport_size` https://github.com/Textualize/textual/pull/6105
+- Added `Screen.size` https://github.com/Textualize/textual/pull/6105
+- Added `compact` to Binding.Group https://github.com/Textualize/textual/pull/6132
+- Added `Screen.get_hover_widgets_at` https://github.com/Textualize/textual/pull/6132
+- Added `Content.wrap` https://github.com/Textualize/textual/pull/6138
+- Added support to allow support for manual keys in add_columns as well. https://github.com/Textualize/textual/pull/5923
+
+### Fixed
+
+- Fixed issue where Segments with a style of `None` aren't rendered https://github.com/Textualize/textual/pull/6109
+- Fixed visual glitches and crash when changing `DataTable.header_height` https://github.com/Textualize/textual/pull/6128
+- Fixed TextArea.placeholder not handling multi-lines https://github.com/Textualize/textual/pull/6138
+- Fixed issue with RichLog when App.theme is set early https://github.com/Textualize/textual/pull/6141
+- Fixed children of collapsible not being focusable after collapsible is expanded https://github.com/Textualize/textual/pull/6143
+
+## [6.1.0] - 2025-08-01
+
+### Added
+
+- Added `Button.flat` boolean to enable flat button style https://github.com/Textualize/textual/pull/6094
+- Added `namespaces` parameter to `run_action` https://github.com/Textualize/textual/pull/6094
+- Added "block" border style https://github.com/Textualize/textual/pull/6094
+
+## [6.0.0] - 2025-08-31
+
+### Fixed
+
+- Fix type hint for SelectType: only hashable types are allowed. https://github.com/Textualize/textual/pull/6034
+- Fixed `Content.expand_tabs` https://github.com/Textualize/textual/pull/6038
+- Fixed return value for `Pilot.double_click` and `Pilot.triple_click` https://github.com/Textualize/textual/pull/6035
+- Fixed sizing issue with `Pretty` widget https://github.com/Textualize/textual/pull/6040 https://github.com/Textualize/textual/pull/6041
+- Fixed garbled inline app output when `inline_no_clear=True` https://github.com/Textualize/textual/pull/6080
+
+### Added
+
+- Added `BAR_RENDERABLE` to `ProgressBar` widget https://github.com/Textualize/textual/pull/5963
+- Added `OptionList.set_options` https://github.com/Textualize/textual/pull/6048
+- Added `TextArea.suggestion` https://github.com/Textualize/textual/pull/6048
+- Added `TextArea.placeholder` https://github.com/Textualize/textual/pull/6048
+- Added `Header.format_title` and `App.format_title` for easier customization of title in the Header https://github.com/Textualize/textual/pull/6051
+- Added `Widget.get_line_filters` and `App.get_line_filters` https://github.com/Textualize/textual/pull/6057
+- Added `Binding.Group` https://github.com/Textualize/textual/pull/6070
+- Added `DOMNode.displayed_children` https://github.com/Textualize/textual/pull/6070
+- Added `TextArea.hide_suggestion_on_blur` boolean https://github.com/Textualize/textual/pull/6070
+- Added `OptionList.highlighted_option` property https://github.com/Textualize/textual/pull/6090
+- Added `TextArea.update_suggestion` method https://github.com/Textualize/textual/pull/6090
+- Added `textual.getters.app` https://github.com/Textualize/textual/pull/6089
+
+### Changed
+
+- Breaking change: The `renderable` property on the `Static` widget has been changed to `content`. https://github.com/Textualize/textual/pull/6041
+- Breaking change: `HeaderTitle` widget is now a static, with no `text` and `sub_text` reactives https://github.com/Textualize/textual/pull/6051
+- Breaking change: Renamed `Label` constructor argument `renderable` to `content` for consistency https://github.com/Textualize/textual/pull/6045
+- Breaking change: Optimization to line API to avoid applying background styles to widget content. In practice this means that you can no longer rely on blank Segments automatically getting the background color.
+
+## [5.3.0] - 2025-08-07
+
+### Added
+
+- Added `Content.simplify` https://github.com/Textualize/textual/pull/6023
+- Added `textual.reactive.Initialize` https://github.com/Textualize/textual/pull/6023
+
+### Fixed
+
+- Fixed issue with IDs in markdown https://github.com/Textualize/textual/pull/6019 https://github.com/Textualize/textual/pull/6023
+
+## [5.2.0] - 2025-08-01
+
+### Added
+
+- Added a 'stream' layout, which is a lot like vertical but with fewer supported rules (which is why it is faster), will remain undocumented for now. https://github.com/Textualize/textual/pull/6013
+
+## [5.1.1] - 2025-07-21
+
+### Fixed
+
+- Fixed overly large distribution, no code changes https://github.com/Textualize/textual/pull/6010
+
+## [5.1.0] - 2025-07-31
+
+### Added
+
+- Added `empty` pseudo class, which applies when a widget has no displayed children https://github.com/Textualize/textual/pull/5999
+- Added `Screen.action_focus` https://github.com/Textualize/textual/pull/5999
+- Added support for left and right mouse scroll for terminals and input devices which support it https://github.com/Textualize/textual/pull/5995
+
+### Changed
+
+- `last-child`, `last-of-type`, `first-child`, and `first-of-type` apply to displayed children only https://github.com/Textualize/textual/pull/5999
+- `textual.compose` is now public https://github.com/Textualize/textual/pull/5999
+
+## [5.0.1] - 2025-07-25
+
+
+### Fixed
+
+- Fixed appending to Markdown widgets that were constructed with an existing document https://github.com/Textualize/textual/pull/5990
+
+## [5.0.0] - 2025-07-25
+
+### Added
+
+- Added get_minimal_width to Visual protocol https://github.com/Textualize/textual/pull/5962
+- Added `expand` and `shrink` attributes to GridLayout https://github.com/Textualize/textual/pull/5962
+- Added `Markdown.get_stream` https://github.com/Textualize/textual/pull/5966
+- Added `textual.highlight` module for syntax highlighting https://github.com/Textualize/textual/pull/5966
+- Added `MessagePump.wait_for_refresh` method https://github.com/Textualize/textual/pull/5966
+- Added `Widget.container_scroll_offset` https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added `Markdown.source` attribute to MarkdownBlocks https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added extension mechanism to Markdown https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Added `index` to `ListView.Selected` event https://github.com/Textualize/textual/pull/5973
+- Added `layout` switch to Static.update https://github.com/Textualize/textual/pull/5973
+
+### Fixed
+
+- Fixed `TextArea` issue with the `css` theme, where the background color was stuck from the previous theme https://github.com/Textualize/textual/issues/5964
+- Fixed `TextArea` runtime crash caused by tree-sitter breaking change https://github.com/Textualize/textual/issues/5976
+
+### Changed
+
+- Improved rendering of Markdown tables (replace Rich table with grid) which allows text selection https://github.com/Textualize/textual/pull/5962
+- Change look of command palette, to drop accented borders https://github.com/Textualize/textual/pull/5966
+- Some style tweaks to Markdown https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+- Content markup can now accept component classes when preceded by a dot, e.g. "Hello [.my_custo_style]World[/]!" https://github.com/Textualize/textual/pull/5981
+- Breaking change: `Visual.render_strips` has a new signature. If you aren't explicitly building Visuals then this won't effect you. https://github.com/Textualize/textual/pull/5981
+- Breaking change: The component classes on Markdown have been moved to MarkdownBlock. This won't affect you unless you have customize the Markdown CSS https://github.com/Textualize/textual/pull/5981
+- The textual-speedups library will now be imported automatically if it is installed. Set `TEXTUAL_SPEEDUPS=0` to disable.
+- Breaking change: Updated tree-sitter dependency for `syntax` extras now requires Python 3.10+ https://github.com/Textualize/textual/pull/5977
+- Some `TextArea` syntax highlighting changes due to tree-sitter updates https://github.com/Textualize/textual/pull/5977
+
+### Removed
+
+- Breaking change: Removed `Markdown.code_dark_theme`, `Markdown.code_light_theme`, `Markdown.code_indent_guides` which are no longer needed with the new code fence. https://github.com/Textualize/textual/pull/5967
+- Removed focus style from Markdown, as it can be a little expensive https://github.com/Textualize/textual/commit/e84600cfb31630f8b5493bf1043a4a1e7c212f7c
+
+## [4.0.0] - 2025-07-12
+
+### Fixed
+
+- Fixed `query_one` and `query_exactly_one` not raising documented `WrongType` exception. https://github.com/Textualize/textual/pull/5945
+- Fixed logging to a file on Windows https://github.com/Textualize/textual/issues/5941
+- Fixed eight bit colors crashing when applying dim style https://github.com/Textualize/textual/pull/5957
+
+### Changed
+
+- Breaking change: `Widget.anchor` now has different semantics. It should be applied to a container and anchors to the bottom of the scroll position. https://github.com/Textualize/textual/pull/5950
+
+### Added
+
+- Added `Markdown.append` https://github.com/Textualize/textual/pull/5950
+- Added `Widget.release_anchor` https://github.com/Textualize/textual/pull/5950
+- Added `compact` parameter to `MaskedInput` https://github.com/Textualize/textual/pull/5952
+
+## [3.7.1] - 2025-07-09
+
+### Fixed
+
+- Fixed broken text selection with soft_wrap=False https://github.com/Textualize/textual/pull/5940
+
+## [3.7.0] - 2025-07-07
+
+### Added
+
+- Added textual.getters https://github.com/Textualize/textual/pull/5930
+- Added a `show_cursor` boolean to TextArea https://github.com/Textualize/textual/pull/5934
+
+### Changed
+
+- Potential breaking change: Changed default `query_one` and `query_exactly_one` search to breadth first https://github.com/Textualize/textual/pull/5930
+- Cursor is now visible by default when in read only mode (restoring pre 3.6.0 behavior) https://github.com/Textualize/textual/pull/5934
+
+### Fixed
+
+- Fixed issue with Keylines not scrolling https://github.com/Textualize/textual/pull/5936
+
+## [3.6.0] - 2025-07-06
+
+### Fixed
+
+- Fixed issue with the "transparent" CSS value not being transparent when set using python https://github.com/Textualize/textual/pull/5890
+- Fixed issue with pushing screens when Input has mouse captured https://github.com/Textualize/textual/pull/5900
+- Implemented workaround for Ghostty bug which produces negative mouse coordinates https://github.com/Textualize/textual/pull/5926
+
+### Changed
+
+- Widget.release_mouse will now only release the mouse, if it was captured by self https://github.com/Textualize/textual/pull/5900
+- Some optimizations to TextArea, which may be noticeable during scrolling (note: may break snapshots with a TextArea) https://github.com/Textualize/textual/pull/5925
+- Selecting in the TextArea now hides the cursor until you release the mouse https://github.com/Textualize/textual/pull/5925
+- Read only TextAreas will no longer display a cursor https://github.com/Textualize/textual/pull/5925
+
+### Added
+
+- Added `TextArea.highlight_cursor_line` toggle https://github.com/Textualize/textual/pull/5924
+
+## [3.5.0] - 2025-06-20
+
+### Changed
+
+- Optimized startup https://github.com/Textualize/textual/pull/5869
+- New blank visual which makes background faster to render (note this will break snapshots tests this version) https://github.com/Textualize/textual/pull/5869
+- Exposed `code_indent_guides` boolean on Markdown widget https://github.com/Textualize/textual/pull/5874
+- Changed code fence background to use CSS background rather than its code theme https://github.com/Textualize/textual/pull/5874
+
+## [3.4.0] - 2025-06-14
+
+### Fixed
+
+- Fixed issues with initial flicker in `TextArea` rendering https://github.com/Textualize/textual/issues/5841vcomm
+- Fixed issue with workers that have large parameter lists breaking dev tools https://github.com/Textualize/textual/pull/5850
+- Fixed post_message failing on 3.8 https://github.com/Textualize/textual/pull/5848
+- Fixed log not working from threads https://github.com/Textualize/textual/pull/5863
+
+### Added
+
+- Added experimental opt-in support for https://github.com/willmcgugan/textual-speedups
+
+### Changed
+
+- Content markup is now more lenient; if a 'tag' doesn't contain a valid style it will be included verbatim. https://github.com/Textualize/textual/pull/5851
 
 ## [3.3.0] - 2025-06-01
 
@@ -134,7 +474,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed IndexError in OptionList https://github.com/Textualize/textual/pull/5574
 - Fixed issue with clear_panes breaking tabbed content https://github.com/Textualize/textual/pull/5573
 
-## Changed
+### Changed
 
 - The user can now interrupt a scroll to end by grabbing the scrollbar or scrolling in any other way. Press ++end++ or scroll to the end to restore default behavior. This is more intuitive that it may sound.
 
@@ -261,7 +601,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 
 ## [0.89.0] - 2024-12-05
 
-## Added
+### Added
 
 - Added "tab" border style https://github.com/Textualize/textual/pull/5335
 - Added support for XML syntax highlighting https://github.com/Textualize/textual/pull/5320
@@ -274,12 +614,12 @@ the selection if there is one, otherwise it will cut the current line https://gi
 - Added `Input.selected_text` property for getting the currently selected text https://github.com/Textualize/textual/pull/5340
 - `Input` can now be scrolled independently of cursor position (hold shift and scroll with the mouse wheel in supported environments) https://github.com/Textualize/textual/pull/5340
 
-## Changed
+### Changed
 
 - Breaking change: Removed `Input` reactive attributes `view_position`, `cursor_position` (now exists as a property which proxies to the `Input.selection` reactive attribute), https://github.com/Textualize/textual/pull/5340
 - `Input.restrict` now checked on all edit operations (rather than just on `insert`) https://github.com/Textualize/textual/pull/5340
 
-## Fixed
+### Fixed
 
 - Fixed Select not scrolling highlight in to view when clicked https://github.com/Textualize/textual/issues/5255
 - Upgraded tree-sitter to 0.23+ (`syntax` extras) https://github.com/Textualize/textual/pull/5320
@@ -317,7 +657,7 @@ the selection if there is one, otherwise it will cut the current line https://gi
 
 ## [0.87.1] - 2024-11-24
 
-## Fixed
+### Fixed
 
 - Fixed offset not being applied to grid layout https://github.com/Textualize/textual/pull/5281
 - Fixed Select overlay set to auto width https://github.com/Textualize/textual/pull/5282
@@ -2894,6 +3234,29 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.8.0]: https://github.com/Textualize/textual/compare/v6.7.1...v6.8.0
+[6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
+[6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
+[6.6.0]: https://github.com/Textualize/textual/compare/v6.5.0...v6.6.0
+[6.5.0]: https://github.com/Textualize/textual/compare/v6.4.0...v6.5.0
+[6.4.0]: https://github.com/Textualize/textual/compare/v6.3.0...v6.4.0
+[6.3.0]: https://github.com/Textualize/textual/compare/v6.2.1...v6.3.0
+[6.2.1]: https://github.com/Textualize/textual/compare/v6.2.0...v6.2.1
+[6.2.0]: https://github.com/Textualize/textual/compare/v6.1.0...v6.2.0
+[6.1.0]: https://github.com/Textualize/textual/compare/v6.0.0...v6.1.0
+[6.0.0]: https://github.com/Textualize/textual/compare/v5.3.0...v6.0.0
+[5.3.0]: https://github.com/Textualize/textual/compare/v5.2.0...v5.3.0
+[5.2.0]: https://github.com/Textualize/textual/compare/v5.1.1...v5.2.0
+[5.1.1]: https://github.com/Textualize/textual/compare/v5.1.0...v5.1.1
+[5.1.0]: https://github.com/Textualize/textual/compare/v5.0.1...v5.1.0
+[5.0.1]: https://github.com/Textualize/textual/compare/v5.0.0...v5.0.1
+[5.0.0]: https://github.com/Textualize/textual/compare/v4.1.0...v5.0.0
+[4.0.0]: https://github.com/Textualize/textual/compare/v3.7.1...v4.0.0
+[3.7.1]: https://github.com/Textualize/textual/compare/v3.7.0...v3.7.1
+[3.7.0]: https://github.com/Textualize/textual/compare/v3.6.0...v3.7.0
+[3.6.0]: https://github.com/Textualize/textual/compare/v3.5.0...v3.6.0
+[3.5.0]: https://github.com/Textualize/textual/compare/v3.4.0...v3.5.0
+[3.4.0]: https://github.com/Textualize/textual/compare/v3.3.0...v3.4.0
 [3.3.0]: https://github.com/Textualize/textual/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/Textualize/textual/compare/v3.1.1...v3.2.0
 [3.1.1]: https://github.com/Textualize/textual/compare/v3.1.0...v3.1.1

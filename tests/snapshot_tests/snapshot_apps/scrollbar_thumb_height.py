@@ -16,7 +16,7 @@ class TestScrollView(ScrollView, can_focus=True):
     def render_line(self, y: int) -> Strip:
         return Strip(
             [
-                Segment(f"Welcome to line {self.scroll_offset.y + y}"),
+                Segment(f"Welcome to line {self.scroll_offset.y + y}", self.rich_style),
             ]
         )
 
@@ -33,7 +33,7 @@ class ScrollViewTester(App[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield TestScrollView(height=1000, border_title=f"1")
+        yield TestScrollView(height=1000, border_title="1")
         yield Footer()
 
     def on_ready(self) -> None:

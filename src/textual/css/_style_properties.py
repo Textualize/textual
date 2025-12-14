@@ -667,8 +667,9 @@ class LayoutProperty:
         Args:
             obj: The Styles object.
             objtype: The Styles class.
+
         Returns:
-            The ``Layout`` object.
+            The `Layout` object.
         """
         return obj.get_rule(self.name)  # type: ignore[return-value]
 
@@ -677,7 +678,7 @@ class LayoutProperty:
         Args:
             obj: The Styles object.
             layout: The layout to use. You can supply the name of the layout
-                or a ``Layout`` object.
+                or a `Layout` object.
         """
 
         from textual.layouts.factory import Layout  # Prevents circular import
@@ -687,19 +688,23 @@ class LayoutProperty:
         if layout is None:
             if obj.clear_rule("layout"):
                 obj.refresh(layout=True, children=True)
-        elif isinstance(layout, Layout):
-            if obj.set_rule("layout", layout):
-                obj.refresh(layout=True, children=True)
-        else:
-            try:
-                layout_object = get_layout(layout)
-            except MissingLayout as error:
-                raise StyleValueError(
-                    str(error),
-                    help_text=layout_property_help_text(self.name, context="inline"),
-                )
-            if obj.set_rule("layout", layout_object):
-                obj.refresh(layout=True, children=True)
+            return
+
+        if isinstance(layout, Layout):
+            layout = layout.name
+
+        if obj.layout is not None and obj.layout.name == layout:
+            return
+
+        try:
+            layout_object = get_layout(layout)
+        except MissingLayout as error:
+            raise StyleValueError(
+                str(error),
+                help_text=layout_property_help_text(self.name, context="inline"),
+            )
+        if obj.set_rule("layout", layout_object):
+            obj.refresh(layout=True, children=True)
 
 
 class OffsetProperty:
@@ -783,6 +788,7 @@ class StringEnumProperty(Generic[EnumType]):
         default: The default value (or a factory thereof) of the property.
         layout: Whether to refresh the node layout on value change.
         refresh_children: Whether to refresh the node children on value change.
+        display: Does this property change display?
     """
 
     def __init__(
@@ -792,12 +798,14 @@ class StringEnumProperty(Generic[EnumType]):
         layout: bool = False,
         refresh_children: bool = False,
         refresh_parent: bool = False,
+        display: bool = False,
     ) -> None:
         self._valid_values = valid_values
         self._default = default
         self._layout = layout
         self._refresh_children = refresh_children
         self._refresh_parent = refresh_parent
+        self._display = display
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -838,6 +846,12 @@ class StringEnumProperty(Generic[EnumType]):
                     children=self._refresh_children,
                     parent=self._refresh_parent,
                 )
+
+                if self._display:
+                    node = obj.node
+                    if node is not None and node.parent:
+                        node._nodes.updated()
+
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
@@ -849,6 +863,12 @@ class StringEnumProperty(Generic[EnumType]):
                     ),
                 )
             if obj.set_rule(self.name, value):
+                if self._display and obj.node is not None:
+                    node = obj.node
+                    if node.parent:
+                        node._nodes.updated()
+                        node.parent._refresh_styles()
+
                 self._before_refresh(obj, value)
                 obj.refresh(
                     layout=self._layout,
@@ -991,7 +1011,7 @@ class ColorProperty:
                             self.name, context="inline", error=error, value=token
                         ),
                     )
-            parsed_color = parsed_color.with_alpha(alpha)
+            parsed_color = parsed_color.multiply_alpha(alpha)
 
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh(children=True)

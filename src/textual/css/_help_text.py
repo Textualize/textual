@@ -12,6 +12,7 @@ from textual.css.constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
+    VALID_EXPAND,
     VALID_KEYLINE,
     VALID_LAYOUT,
     VALID_POSITION,
@@ -784,6 +785,23 @@ def position_help_text(property_name: str) -> HelpText:
         summary=f"Invalid value for [i]{property_name}[/]",
         bullets=[
             Bullet(f"Valid values are {friendly_list(VALID_POSITION)}"),
+        ],
+    )
+
+
+def expand_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies the wrong value for expand.
+
+    Args:
+        property_name: The name of the property.
+
+    Returns:
+        Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(f"Valid values are {friendly_list(VALID_EXPAND)}"),
         ],
     )
 

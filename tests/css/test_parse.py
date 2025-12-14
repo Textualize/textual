@@ -4,7 +4,7 @@ import pytest
 
 from textual.color import Color
 from textual.css.errors import UnresolvedVariableError
-from textual.css.parse import substitute_references
+from textual.css.parse import is_id_selector, substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
@@ -1272,3 +1272,27 @@ Widget:blu {
         stylesheet.parse()
 
     assert error.value.start == (2, 7)
+
+
+@pytest.mark.parametrize(
+    "selector, expected",
+    [
+        # True cases
+        ("#foo", True),
+        ("#bar", True),
+        ("#f", True),
+        # False cases
+        ("#", False),
+        ("Foo", False),
+        (".foo", False),
+        ("#5foo", False),
+        ("#foo .bar", False),
+        ("#foo>.bar", False),
+        ("#foo.bar", False),
+        (".foo #foo", False),
+        ("#foo #bar", False),
+    ],
+)
+def test_is_id_selector(selector: str, expected: bool) -> None:
+    """Test is_id_selector is working as expected."""
+    assert is_id_selector(selector) is expected

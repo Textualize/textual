@@ -11,6 +11,7 @@ from rich.text import Text
 from typing_extensions import Literal
 
 from textual import events
+from textual.actions import SkipAction
 from textual.expand_tabs import expand_tabs_inline
 from textual.screen import Screen
 from textual.scroll_view import ScrollView
@@ -98,7 +99,10 @@ class Input(ScrollView):
             show=False,
         ),
         Binding(
-            "ctrl+right", "cursor_right_word", "Move cursor right a word", show=False
+            "ctrl+right",
+            "cursor_right_word",
+            "Move cursor right a word",
+            show=False,
         ),
         Binding(
             "ctrl+shift+right",
@@ -107,6 +111,7 @@ class Input(ScrollView):
             show=False,
         ),
         Binding("backspace", "delete_left", "Delete character left", show=False),
+        Binding("ctrl+shift+a", "select_all", "Select all", show=False),
         Binding("home,ctrl+a", "home", "Go to start", show=False),
         Binding("end,ctrl+e", "end", "Go to end", show=False),
         Binding("shift+home", "home(True)", "Select line start", show=False),
@@ -137,6 +142,7 @@ class Input(ScrollView):
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
     | ctrl+shift+right | Move cursor right a word and select. |
+    | ctrl+shift+a | Select all text in the input. |
     | home,ctrl+a | Go to the beginning of the input. |
     | end,ctrl+e | Go to the end of the input. |
     | shift+home | Select up to the input start. |
@@ -187,9 +193,8 @@ class Input(ScrollView):
         }
 
         &:focus {
-            border: tall $border;            
+            border: tall $border;
             background-tint: $foreground 5%;
-            
         }
         &>.input--cursor {
             background: $input-cursor-background;
@@ -207,13 +212,14 @@ class Input(ScrollView):
         }
         &.-invalid:focus {
             border: tall $error;
-        }    
+        }
 
         &:ansi {
             background: ansi_default;
             color: ansi_default;
-            &>.input--cursor {     
-                text-style: reverse;
+            &>.input--cursor {
+                background: ansi_white;
+                color: ansi_black;
             }
             &>.input--placeholder, &>.input--suggestion {
                 text-style: dim;
@@ -224,8 +230,7 @@ class Input(ScrollView):
             }
             &.-invalid:focus {
                 border: tall ansi_red;
-            }  
-            
+            }
         }
     }
 
@@ -488,7 +493,7 @@ class Input(ScrollView):
             character: A character associated with the key, or `None` if there isn't one.
 
         Returns:
-            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+            `True` if the widget may capture the key in its `Key` message, or `False` if it won't.
         """
         return character is not None and character.isprintable()
 
@@ -598,9 +603,10 @@ class Input(ScrollView):
 
     def render_line(self, y: int) -> Strip:
         if y != 0:
-            return Strip.blank(self.size.width)
+            return Strip.blank(self.size.width, self.rich_style)
 
         console = self.app.console
+        console_options = self.app.console_options
         max_content_width = self.scrollable_content_region.width
 
         if not self.value:
@@ -617,7 +623,7 @@ class Input(ScrollView):
 
             strip = Strip(
                 console.render(
-                    placeholder, console.options.update_width(max_content_width + 1)
+                    placeholder, console_options.update_width(max_content_width + 1)
                 )
             )
         else:
@@ -650,7 +656,7 @@ class Input(ScrollView):
                     result.stylize(cursor_style, cursor, cursor + 1)
 
             segments = list(
-                console.render(result, console.options.update_width(self.content_width))
+                console.render(result, console_options.update_width(self.content_width))
             )
 
             strip = Strip(segments)
@@ -689,7 +695,10 @@ class Input(ScrollView):
 
     def _toggle_cursor(self) -> None:
         """Toggle visibility of cursor."""
-        self._cursor_visible = not self._cursor_visible
+        if self.screen.is_active:
+            self._cursor_visible = not self._cursor_visible
+        else:
+            self._cursor_visible = True
 
     def _on_mount(self, event: Mount) -> None:
         def text_selection_started(screen: Screen) -> None:
@@ -769,11 +778,18 @@ class Input(ScrollView):
         self._selecting = True
         self.capture_mouse()
 
-    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+    def _end_selecting(self) -> None:
+        """End selecting if it is currently active."""
         if self._selecting:
             self._selecting = False
             self.release_mouse()
             self._restart_blink()
+
+    async def _on_mouse_release(self, _event: events.MouseRelease) -> None:
+        self._end_selecting()
+
+    async def _on_mouse_up(self, _event: events.MouseUp) -> None:
+        self._end_selecting()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         if self._selecting:
@@ -861,6 +877,15 @@ class Input(ScrollView):
                     self.cursor_position += 1
                 else:
                     self.cursor_position = max(start, end)
+
+    def select_all(self) -> None:
+        """Select all of the text in the Input."""
+        self.selection = Selection(0, len(self.value))
+        self._suggestion = ""
+
+    def action_select_all(self) -> None:
+        """Select all of the text in the Input."""
+        self.select_all()
 
     def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input.
@@ -1083,7 +1108,11 @@ class Input(ScrollView):
 
     def action_copy(self) -> None:
         """Copy the current selection to the clipboard."""
-        self.app.copy_to_clipboard(self.selected_text)
+        selected_text = self.selected_text
+        if selected_text:
+            self.app.copy_to_clipboard(selected_text)
+        else:
+            raise SkipAction()
 
     def action_paste(self) -> None:
         """Paste from the local clipboard."""

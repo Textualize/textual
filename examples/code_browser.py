@@ -9,12 +9,13 @@ Run with:
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
-from rich.syntax import Syntax
 from rich.traceback import Traceback
 
 from textual.app import App, ComposeResult
 from textual.containers import Container, VerticalScroll
+from textual.highlight import highlight
 from textual.reactive import reactive, var
 from textual.widgets import DirectoryTree, Footer, Header, Static
 
@@ -68,13 +69,8 @@ class CodeBrowser(App):
             code_view.update("")
             return
         try:
-            syntax = Syntax.from_path(
-                path,
-                line_numbers=True,
-                word_wrap=False,
-                indent_guides=True,
-                theme="github-dark" if self.current_theme.dark else "github-light",
-            )
+            code = Path(path).read_text(encoding="utf-8")
+            syntax = highlight(code, path=path)
         except Exception:
             code_view.update(Traceback(theme="github-dark", width=None))
             self.sub_title = "ERROR"

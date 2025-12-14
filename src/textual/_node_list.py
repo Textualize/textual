@@ -14,6 +14,10 @@ if TYPE_CHECKING:
     from textual.widget import Widget
 
 
+_display_getter = attrgetter("display")
+_visible_getter = attrgetter("visible")
+
+
 class DuplicateIds(Exception):
     """Raised when attempting to add a widget with an id that already exists."""
 
@@ -41,6 +45,8 @@ class NodeList(Sequence["Widget"]):
         # The nodes in the list
         self._nodes: list[Widget] = []
         self._nodes_set: set[Widget] = set()
+        self._displayed_nodes: tuple[int, list[Widget]] = (-1, [])
+        self._displayed_visible_nodes: tuple[int, list[Widget]] = (-1, [])
 
         # We cache widgets by their IDs too for a quick lookup
         # Note that only widgets with IDs are cached like this, so
@@ -69,8 +75,6 @@ class NodeList(Sequence["Widget"]):
         """Mark the nodes as having been updated."""
         self._updates += 1
         node = None if self._parent is None else self._parent()
-        if node is None:
-            return
         while node is not None and (node := node._parent) is not None:
             node._nodes._updates += 1
 
@@ -152,9 +156,8 @@ class NodeList(Sequence["Widget"]):
         """
         if widget_id in self._nodes_by_id:
             raise DuplicateIds(
-                f"Tried to insert a widget with ID {widget_id!r}, but a widget {self._nodes_by_id[widget_id]!r} "
-                "already exists with that ID in this list of children. "
-                "The children of a widget must have unique IDs."
+                f"Tried to insert a widget with ID {widget_id!r}, but a widget already exists with that ID ({self._nodes_by_id[widget_id]!r}); "
+                "ensure all child widgets have a unique ID."
             )
 
     def _remove(self, widget: Widget) -> None:
@@ -187,6 +190,31 @@ class NodeList(Sequence["Widget"]):
     def __reversed__(self) -> Iterator[Widget]:
         return reversed(self._nodes)
 
+    @property
+    def displayed(self) -> Sequence[Widget]:
+        """Just the nodes where `display==True`."""
+        if self._displayed_nodes[0] != self._updates:
+            self._displayed_nodes = (
+                self._updates,
+                list(filter(_display_getter, self._nodes)),
+            )
+        return self._displayed_nodes[1]
+
+    @property
+    def displayed_and_visible(self) -> Sequence[Widget]:
+        """Nodes with both `display==True` and `visible==True`."""
+        if self._displayed_visible_nodes[0] != self._updates:
+            self._displayed_nodes = (
+                self._updates,
+                list(filter(_visible_getter, self.displayed)),
+            )
+        return self._displayed_nodes[1]
+
+    @property
+    def displayed_reverse(self) -> Iterator[Widget]:
+        """Just the nodes where `display==True`, in reverse order."""
+        return filter(_display_getter, reversed(self._nodes))
+
     if TYPE_CHECKING:
 
         @overload
@@ -198,9 +226,11 @@ class NodeList(Sequence["Widget"]):
     def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]
 
-    def __getattr__(self, key: str) -> object:
-        if key in {"clear", "append", "pop", "insert", "remove", "extend"}:
-            raise ReadOnlyError(
-                "Widget.children is read-only: use Widget.mount(...) or Widget.remove(...) to add or remove widgets"
-            )
-        raise AttributeError(key)
+    if not TYPE_CHECKING:
+        # This confused the type checker for some reason
+        def __getattr__(self, key: str) -> object:
+            if key in {"clear", "append", "pop", "insert", "remove", "extend"}:
+                raise ReadOnlyError(
+                    "Widget.children is read-only: use Widget.mount(...) or Widget.remove(...) to add or remove widgets"
+                )
+            raise AttributeError(key)

@@ -18,7 +18,7 @@ from textual.message import Message
 # to be unsuccessful?
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 32
 
-_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
+_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
@@ -50,7 +50,7 @@ IS_ITERM = (
 
 
 class XTermParser(Parser[Message]):
-    _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
+    _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(-?\d+);(-?\d+)([Mm])")
 
     def __init__(self, debug: bool = False) -> None:
         self.last_x = 0.0
@@ -78,6 +78,9 @@ class XTermParser(Parser[Message]):
             buttons = int(_buttons)
             x = float(int(_x) - 1)
             y = float(int(_y) - 1)
+            if x < 0 or y < 0:
+                # TODO: Workaround for Ghostty erroneous negative coordinate bug
+                return None
             if (
                 self.mouse_pixels
                 and self.terminal_pixel_size is not None
@@ -97,9 +100,12 @@ class XTermParser(Parser[Message]):
             event_class: type[events.MouseEvent]
 
             if buttons & 64:
-                event_class = (
-                    events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
-                )
+                event_class = [
+                    events.MouseScrollUp,
+                    events.MouseScrollDown,
+                    events.MouseScrollLeft,
+                    events.MouseScrollRight,
+                ][buttons & 3]
                 button = 0
             else:
                 button = (buttons + 1) & 3
@@ -157,20 +163,29 @@ class XTermParser(Parser[Message]):
             else:
                 on_token(event)
 
-        def reissue_sequence_as_keys(reissue_sequence: str) -> None:
+        def reissue_sequence_as_keys(
+            reissue_sequence: str, process_alt: bool = False
+        ) -> None:
             """Called when an escape sequence hasn't been understood.
 
             Args:
                 reissue_sequence: Key sequence to report to the app.
             """
+
+            alt = False
+
             if reissue_sequence:
                 self.debug_log("REISSUE", repr(reissue_sequence))
                 for character in reissue_sequence:
-                    key_events = sequence_to_key_events(character)
+                    if process_alt and character == ESC:
+                        alt = True
+                        continue
+                    key_events = sequence_to_key_events(character, alt=alt)
                     for event in key_events:
-                        if event.key == "escape":
+                        if event.key == "escape" and not process_alt:
                             event = events.Key("circumflex_accent", "^")
                         on_token(event)
+                    alt = False
 
         while not self.is_eof:
             if not bracketed_paste and paste_buffer:
@@ -205,23 +220,25 @@ class XTermParser(Parser[Message]):
             # # Could be the escape key was pressed OR the start of an escape sequence
             sequence: str = ESC
 
-            def send_escape() -> None:
+            def send_sequence(process_alt: bool = True) -> None:
                 """Send escape key and reissue sequence."""
-                on_token(events.Key("escape", "\x1b"))
-                reissue_sequence_as_keys(sequence[1:])
+                if sequence == ESC:
+                    on_token(events.Key("escape", "\x1b"))
+                else:
+                    reissue_sequence_as_keys(sequence, process_alt=process_alt)
 
             while True:
                 try:
                     new_character = yield read1(constants.ESCAPE_DELAY)
                 except ParseTimeout:
-                    send_escape()
+                    send_sequence()
                     break
                 except ParseEOF:
-                    send_escape()
+                    send_sequence()
                     return
 
                 if new_character == ESC:
-                    send_escape()
+                    send_sequence(process_alt=False)
                     sequence = character
                     continue
                 else:
@@ -307,7 +324,9 @@ class XTermParser(Parser[Message]):
             self._debug_log_file.close()
             self._debug_log_file = None
 
-    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
+    def _sequence_to_key_events(
+        self, sequence: str, alt: bool = False
+    ) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
@@ -336,7 +355,7 @@ class XTermParser(Parser[Message]):
                         key_tokens.append(modifier)
 
             key_tokens.sort()
-            key_tokens.append(key)
+            key_tokens.append(key.lower())
             yield events.Key(
                 "+".join(key_tokens), sequence if len(sequence) == 1 else None
             )
@@ -370,7 +389,12 @@ class XTermParser(Parser[Message]):
                     name = _character_to_key(sequence)
                 else:
                     name = sequence
+
                 name = KEY_NAME_REPLACEMENTS.get(name, name)
+                if len(name) == 1 and alt:
+                    if name.isupper():
+                        name = f"shift+{name.lower()}"
+                    name = f"alt+{name}"
                 yield events.Key(name, sequence)
             except Exception:
                 yield events.Key(sequence, sequence)
