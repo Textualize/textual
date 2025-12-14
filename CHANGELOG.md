@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added Solarized Dark theme https://github.com/Textualize/textual/pull/6278
 - Added Rosé Pine themes https://github.com/Textualize/textual/pull/6277
 
 ### Fixed
 
-- Fixed fuzzy matcher displaying wrong matched characters with simple substring match
+- Fixed fuzzy matcher displaying wrong matched characters with simple substring match https://github.com/Textualize/textual/pull/6282
 
 ## [6.8.0] - 2025-12-07
 
@@ -3238,6 +3239,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.9.0]: https://github.com/Textualize/textual/compare/v6.8.0...v6.9.0
 [6.8.0]: https://github.com/Textualize/textual/compare/v6.7.1...v6.8.0
 [6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
 [6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
