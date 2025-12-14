@@ -20,15 +20,30 @@ class GridLayout(Layout):
 
     def __init__(self) -> None:
         self.min_column_width: int | None = None
+        """Maintain a minimum column width, or `None` for no minimum."""
+        self.max_column_width: int | None = None
+        """Maintain a maximum column width, or `None` for no maximum."""
         self.stretch_height: bool = False
         """Stretch the height of cells to be equal in each row."""
         self.regular: bool = False
+        """Grid should be regular (no remainder in last row)."""
         self.expand: bool = False
         """Expand the grid to fit the container if it is smaller."""
         self.shrink: bool = False
         """Shrink the grid to fit the container if it is larger."""
         self.auto_minimum: bool = False
         """If self.shrink is `True`, auto-detect and limit the width."""
+        self._grid_size: tuple[int, int] | None = None
+        """Grid size after last arrange call."""
+
+    @property
+    def grid_size(self) -> tuple[int, int] | None:
+        """The grid size after the last arrange call.
+
+        Returns:
+            A tuple of (WIDTH, HEIGHT) or `None` prior to the first `arrange`.
+        """
+        return self._grid_size
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size, greedy: bool = True
@@ -46,20 +61,30 @@ class GridLayout(Layout):
 
         table_size_columns = max(1, styles.grid_size_columns)
         min_column_width = self.min_column_width
+        max_column_width = self.max_column_width
+
+        container_width = size.width
+        if max_column_width is not None:
+            container_width = (
+                max(1, min(len(children), (container_width // max_column_width)))
+                * max_column_width
+            )
+            size = Size(container_width, size.height)
 
         if min_column_width is not None:
-            container_width = size.width
             table_size_columns = max(
                 1,
                 (container_width + gutter_horizontal)
                 // (min_column_width + gutter_horizontal),
             )
+
             table_size_columns = min(table_size_columns, len(children))
             if self.regular:
                 while len(children) % table_size_columns and table_size_columns > 1:
                     table_size_columns -= 1
 
         table_size_rows = styles.grid_size_rows
+
         viewport = parent.app.viewport_size
         keyline_style, _keyline_color = styles.keyline
         offset = (0, 0)
@@ -127,8 +152,7 @@ class GridLayout(Layout):
         cell_map: dict[tuple[int, int], tuple[Widget, bool]] = {}
         cell_size_map: dict[Widget, tuple[int, int, int, int]] = {}
 
-        column_count = table_size_columns
-        next_coord = iter(cell_coords(column_count)).__next__
+        next_coord = iter(cell_coords(table_size_columns)).__next__
         cell_coord = (0, 0)
         column = row = 0
 
@@ -157,9 +181,9 @@ class GridLayout(Layout):
             cell_coord = next_coord()
 
         column_scalars = repeat_scalars(column_scalars, table_size_columns)
-        row_scalars = repeat_scalars(
-            row_scalars, table_size_rows if table_size_rows else row + 1
-        )
+        table_size_rows = table_size_rows if table_size_rows else row + 1
+        row_scalars = repeat_scalars(row_scalars, table_size_rows)
+        self._grid_size = (table_size_columns, table_size_rows)
 
         def apply_width_limits(widget: Widget, width: int) -> int:
             """Apply min and max widths to dimension.

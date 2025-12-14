@@ -614,9 +614,8 @@ class Compositor:
                                 - widget.scrollbar_size_horizontal
                             )
                         )
-                        capped_scroll_y = widget.validate_scroll_y(new_scroll_y)
-                        widget.set_reactive(Widget.scroll_y, capped_scroll_y)
-                        widget.set_reactive(Widget.scroll_target_y, capped_scroll_y)
+                        widget.set_reactive(Widget.scroll_y, new_scroll_y)
+                        widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
                         widget.vertical_scrollbar._reactive_position = new_scroll_y
 
                     if visible_only:
@@ -690,6 +689,15 @@ class Compositor:
                                 arrange_result.scroll_spacing,
                             )
                         layer_order -= 1
+                else:
+                    if widget._anchored and not widget._anchor_released:
+                        new_scroll_y = widget.virtual_size.height - (
+                            widget.container_size.height
+                            - widget.scrollbar_size_horizontal
+                        )
+                        widget.scroll_y = new_scroll_y
+                        widget.scroll_target_y = new_scroll_y
+                        widget.vertical_scrollbar.position = new_scroll_y
 
                 if visible:
                     # Add any scrollbars
@@ -710,7 +718,7 @@ class Compositor:
                                 dock_gutter,
                             )
 
-                    map[widget] = _MapGeometry(
+                    map[widget._render_widget] = _MapGeometry(
                         region,
                         order,
                         clip,

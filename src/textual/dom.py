@@ -228,6 +228,7 @@ class DOMNode(MessagePump):
         ) = None
         self._pruning = False
         self._query_one_cache: LRUCache[QueryOneCacheKey, DOMNode] = LRUCache(1024)
+        self._trap_focus = False
 
         super().__init__()
 
@@ -474,6 +475,20 @@ class DOMNode(MessagePump):
     def workers(self) -> WorkerManager:
         """The app's worker manager. Shortcut for `self.app.workers`."""
         return self.app.workers
+
+    def trap_focus(self, trap_focus: bool = True) -> None:
+        """Trap the focus.
+
+        When applied to a container, this will limit tab-to-focus to the children of that
+        container (once focus is within that container).
+
+        This can be useful for widgets that act like modal dialogs, where you want to restrict
+        the user to the controls within the dialog.
+
+        Args:
+            trap_focus: `True` to trap focus. `False` to restore default behavior.
+        """
+        self._trap_focus = trap_focus
 
     def run_worker(
         self,
@@ -1119,7 +1134,7 @@ class DOMNode(MessagePump):
     def _get_title_style_information(
         self, background: Color
     ) -> tuple[Color, Color, VisualStyle]:
-        """Get a Visual Style object for for titles.
+        """Get a Visual Style object for titles.
 
         Args:
             background: The background color.
@@ -1142,7 +1157,7 @@ class DOMNode(MessagePump):
     def _get_subtitle_style_information(
         self, background: Color
     ) -> tuple[Color, Color, VisualStyle]:
-        """Get a Rich Style object for for titles.
+        """Get a Rich Style object for subtitles.
 
         Args:
             background: The background color.
@@ -1608,7 +1623,7 @@ class DOMNode(MessagePump):
         self,
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
-    ) -> DOMNode | None:
+    ) -> DOMNode:
         """Get an ancestor which matches a query.
 
         Args:

@@ -5,6 +5,79 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Added Rosé Pine themes https://github.com/Textualize/textual/pull/6277
+
+## [6.8.0] - 2025-12-07
+
+### Added
+
+- Added `Content.blank` https://github.com/Textualize/textual/pull/6264
+
+### Fixed
+
+- Fixed `Input` cursor color display in ANSI mode (`ansi_color=True`) https://github.com/Textualize/textual/issues/6234
+- Fixed alt modifier on systems without extended Key Protocol https://github.com/Textualize/textual/pull/6267
+- Fixed an issue where alpha keys with modifiers weren't lower cased. If you have bound to something like `ctrl+A`, then change to `ctrl+shift+a` https://github.com/Textualize/textual/pull/6267
+- Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
+- Fixed issue with dim filter not using background (may cause snapshot failures) https://github.com/Textualize/textual/pull/6269
+
+## [6.7.1] - 2025-12-1
+
+### Fixed
+
+- Fixed `Content.fold` https://github.com/Textualize/textual/pull/6256
+
+## [6.7.0] - 2025-11-29
+
+### Added
+
+- Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
+- Added `Content.fold` https://github.com/Textualize/textual/pull/6238
+- Added `strip_control_codes` to Content constructors https://github.com/Textualize/textual/pull/6238
+
+### Changed 
+
+- Added `Screen.get_loading_widget` which deferes to `App.get_loading_widget` https://github.com/Textualize/textual/pull/6228
+
+### Fixed 
+
+- Fixed `anchor` with `ScrollView` widgets https://github.com/Textualize/textual/pull/6228
+
+## [6.6.0] - 2025-11-10
+
+### Fixed
+
+- Fixed `TextArea` cursor display on wrapped lines https://github.com/Textualize/textual/pull/6196
+- Fixed `remove_children` not refreshing layout https://github.com/Textualize/textual/pull/6206
+- Fixed flicker with :hover pseudo class https://github.com/Textualize/textual/pull/6214
+- Fixed scrollbar not updating after textarea paste https://github.com/Textualize/textual/pull/6219
+
+### Added
+
+- Added `grid_size` property to `GridLayout` https://github.com/Textualize/textual/pull/6210
+- Exposed `NoSelection` and `BLANK` via `textual.widgets.select` https://github.com/Textualize/textual/pull/6214
+- Added `Widget.FOCUS_ON_CLICK` classvar amd `Widget.focus_on_click` method https://github.com/Textualize/textual/pull/6216
+- Added support for the kitty keyboard protocol on Windows https://github.com/Textualize/textual/pull/6207
+- Added `Widget.mount_compose` https://github.com/Textualize/textual/pull/6216
+
+### Changed
+
+- Change highlight style of Select to only highlight the border, not the label https://github.com/Textualize/textual/pull/6214
+
+## [6.5.0] - 2025-10-31
+
+### Added
+
+- Added `DOMNode.trap_focus` https://github.com/Textualize/textual/pull/6202
+
+### Fixed
+
+- Fixed issue with focus + scroll https://github.com/Textualize/textual/pull/6203
+
 ## [6.4.0] - 2025-10-22
 
 ### Fixed
@@ -3161,6 +3234,11 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.8.0]: https://github.com/Textualize/textual/compare/v6.7.1...v6.8.0
+[6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
+[6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
+[6.6.0]: https://github.com/Textualize/textual/compare/v6.5.0...v6.6.0
+[6.5.0]: https://github.com/Textualize/textual/compare/v6.4.0...v6.5.0
 [6.4.0]: https://github.com/Textualize/textual/compare/v6.3.0...v6.4.0
 [6.3.0]: https://github.com/Textualize/textual/compare/v6.2.1...v6.3.0
 [6.2.1]: https://github.com/Textualize/textual/compare/v6.2.0...v6.2.1

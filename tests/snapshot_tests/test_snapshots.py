@@ -4713,3 +4713,90 @@ def test_scrollbar_visibility(snap_compare) -> None:
             yield Static("Hello, World! 293487 " * 200)
 
     assert snap_compare(ScrollbarApp())
+
+
+def test_prune_fix(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6205
+
+    You should see the text "Hello" and "World" across the first two lines.
+    The original issue is that a layout operation wasn't done after removing children, leaving
+    a large gap between "Hello" and "World"
+
+    """
+
+    class PruneApp(App):
+        BINDINGS = [Binding("c", "clear", priority=True)]
+
+        def compose(self) -> ComposeResult:
+            yield Static("Hello")
+            with VerticalGroup():
+                for i in range(10):
+                    yield Static(str(i))
+            yield Static("World")
+
+        async def action_clear(self) -> None:
+            vs = self.query_one(VerticalGroup)
+            await vs.remove_children()
+
+    assert snap_compare(PruneApp(), press=["c"])
+
+
+def test_focus_on_click(snap_compare) -> None:
+    """Test focus on click may be prevented.
+
+    You should see a button in a non-focused stated
+
+    """
+
+    class NonFocusButton(Button):
+        FOCUS_ON_CLICK = False
+
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield NonFocusButton("Click")
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.click(NonFocusButton)
+
+    assert snap_compare(FocusApp(), run_before=run_before)
+
+
+def test_mount_compose(snap_compare) -> None:
+    """Test the `Widget.mount_compose` method.
+
+    You should see a Hello World message.
+    """
+
+    class ComposeApp(App):
+
+        async def on_mount(self) -> None:
+            # Perform compose outside of usual compose method.
+            def compose_things() -> ComposeResult:
+                """Add a label."""
+                yield Label("Hello, World!")
+
+            await self.screen.mount_compose(compose_things())
+
+    assert snap_compare(ComposeApp())
+
+
+def test_text_area_paste(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/4852
+
+    You should see a TextArea where the scrollbar and cursor at at the bottom
+    of the document.
+    """
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea()
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        pilot.app._clipboard = "\n".join(["Where there is a Will"] * 100)
+        await pilot.press("ctrl+v")
+
+    assert snap_compare(TextAreaApp(), run_before=run_before)

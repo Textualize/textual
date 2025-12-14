@@ -561,7 +561,7 @@ class App(Generic[ReturnType], DOMNode):
                 will be loaded in order.
             watch_css: Reload CSS if the files changed. This is set automatically if
                 you are using `textual run` with the `dev` switch.
-            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to to RGB if `False`.
+            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to RGB if `False`.
 
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -1824,7 +1824,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> str | None:
         """Deliver a screenshot of the app.
 
-        This with save the screenshot when running locally, or serve it when the app
+        This will save the screenshot when running locally, or serve it when the app
         is running in a web browser.
 
         Args:
@@ -2437,8 +2437,8 @@ class App(Generic[ReturnType], DOMNode):
             MountError: If there is a problem with the mount request.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If both are
-            provided a ``MountError`` will be raised.
+            Only one of `before` or `after` can be provided. If both are
+            provided a `MountError` will be raised.
         """
         return self.screen.mount(*widgets, before=before, after=after)
 
@@ -2467,8 +2467,8 @@ class App(Generic[ReturnType], DOMNode):
             MountError: If there is a problem with the mount request.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If both are
-            provided a ``MountError`` will be raised.
+            Only one of `before` or `after` can be provided. If both are
+            provided a `MountError` will be raised.
         """
         return self.mount(*widgets, before=before, after=after)
 
@@ -3037,11 +3037,17 @@ class App(Generic[ReturnType], DOMNode):
                         widget.post_message(events.Enter(widget))
                 finally:
                     self.mouse_over = widget
-        if self.hover_over is not None:
-            self.hover_over.mouse_hover = False
+
+        current_hover_over = self.hover_over
+        if current_hover_over is not None:
+            current_hover_over.mouse_hover = False
+
         if hover_widget is not None:
             hover_widget.mouse_hover = True
-
+            if hover_widget._has_hover_style:
+                hover_widget._update_styles()
+        if current_hover_over is not None and current_hover_over._has_hover_style:
+            current_hover_over._update_styles()
         self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
@@ -3432,7 +3438,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             parent: Parent node.
             child: The child widget to register.
-            widgets: The widget to register.
             before: A location to mount before.
             after: A location to mount after.
         """
@@ -4826,7 +4831,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.notify("Saved screenshot", title="Screenshot")
             else:
                 self.notify(
-                    f"Saved screenshot to [green]{str(event.path)!r}",
+                    f"Saved screenshot to [$text-success]{str(event.path)!r}",
                     title="Screenshot",
                 )
 

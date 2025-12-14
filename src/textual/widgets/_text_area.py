@@ -676,7 +676,7 @@ TextArea {
             character: A character associated with the key, or `None` if there isn't one.
 
         Returns:
-            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+            `True` if the widget may capture the key in its `Key` message, or `False` if it won't.
         """
         if self.read_only:
             # In read only mode we don't consume any key events
@@ -1035,7 +1035,7 @@ TextArea {
                 "Try `pip install 'textual[syntax]'` or '`poetry add textual[syntax]' to get started quickly.\n\n"
                 "Alternatively, install tree-sitter manually (`pip install tree-sitter`) and then\n"
                 "install the required language (e.g. `pip install tree-sitter-ruby`), then register it.\n"
-                "and it's highlight query using TextArea.register_language().\n\n"
+                "and its highlight query using TextArea.register_language().\n\n"
                 "Falling back to plain text for now."
             )
             document = Document(text)
@@ -1158,6 +1158,7 @@ TextArea {
             # +1 width to make space for the cursor resting at the end of the line
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
+        self._refresh_scrollbars()
 
     @property
     def _draw_cursor(self) -> bool:
@@ -1229,6 +1230,7 @@ TextArea {
         scroll_x, scroll_y = self.scroll_offset
         absolute_y = scroll_y + y
         selection = self.selection
+        _, cursor_y = self._cursor_offset
         cache_key = (
             self.size,
             scroll_x,
@@ -1243,7 +1245,7 @@ TextArea {
                 if (
                     self._cursor_visible
                     and self.cursor_blink
-                    and absolute_y == selection.end[0]
+                    and absolute_y == cursor_y
                 )
                 else None
             ),
@@ -1560,11 +1562,11 @@ TextArea {
                 result.end_location,
             )
 
-        self._refresh_size()
         edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
         self.update_suggestion()
+        self._refresh_size()
         return result
 
     def undo(self) -> None:

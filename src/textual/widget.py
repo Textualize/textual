@@ -324,7 +324,10 @@ class Widget(DOMNode):
     """
 
     ALLOW_SELECT: ClassVar[bool] = True
-    """Does this widget support automatic text selection? May be further refined with [Widget.allow_select][textual.widget.Widget.allow_select]"""
+    """Does this widget support automatic text selection? May be further refined with [Widget.allow_select][textual.widget.Widget.allow_select]."""
+
+    FOCUS_ON_CLICK: ClassVar[bool] = True
+    """Should focusable widgets be automatically focused on click? Default return value of [Widget.focus_on_click][textual.widget.Widget.focus_on_click]."""
 
     can_focus: bool = False
     """Widget may receive focus."""
@@ -679,6 +682,17 @@ class Widget(DOMNode):
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
+    def focus_on_click(self) -> bool:
+        """Automatically focus the widget on click?
+
+        Implement this if you want to change the default click to focus behavior.
+        The default will return the classvar `FOCUS_ON_CLICK`.
+
+        Returns:
+            `True` if Textual should set focus automatically on a click, or `False` if it shouldn't.
+        """
+        return self.FOCUS_ON_CLICK
+
     def get_line_filters(self) -> Sequence[LineFilter]:
         """Get the line filters enabled for this widget.
 
@@ -1000,7 +1014,7 @@ class Widget(DOMNode):
         Returns:
             A widget in place of this widget to indicate a loading.
         """
-        loading_widget = self.app.get_loading_widget()
+        loading_widget = self.screen.get_loading_widget()
         return loading_widget
 
     def set_loading(self, loading: bool) -> None:
@@ -1021,7 +1035,10 @@ class Widget(DOMNode):
 
     def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
-        self.set_loading(loading)
+        if not self.is_mounted:
+            self.call_later(self.set_loading, loading)
+        else:
+            self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -1470,13 +1487,57 @@ class Widget(DOMNode):
             MountError: If there is a problem with the mount request.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If both are
-            provided a ``MountError`` will be raised.
+            Only one of `before` or `after` can be provided. If both are
+            provided a `MountError` will be raised.
         """
         if self.app._exit:
             return AwaitMount(self, [])
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
+
+    def mount_compose(
+        self,
+        compose_result: ComposeResult,
+        *,
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
+    ) -> AwaitMount:
+        """Mount widgets from the result of a compose method.
+
+        Example:
+        ```python
+            def on_key(self, event:events.Key) -> None:
+
+                def add_key(key:str) -> ComposeResult:
+                    '''Compose key information widgets'''
+                    with containers.HorizontalGroup():
+                        yield Label("You pressed:")
+                        yield Label(key)
+
+                self.mount_compose(add_key(event.key))
+
+        ```
+
+        Args:
+            compose_result: The result of a compose method.
+            before: Optional location to mount before. An `int` is the index
+                of the child to mount before, a `str` is a `query_one` query to
+                find the widget to mount before.
+            after: Optional location to mount after. An `int` is the index
+                of the child to mount after, a `str` is a `query_one` query to
+                find the widget to mount after.
+
+        Returns:
+            An awaitable object that waits for widgets to be mounted.
+
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `MountError` will be raised.
+        """
+        return self.mount_all(compose(self, compose_result), before=before, after=after)
 
     if TYPE_CHECKING:
 
@@ -1838,7 +1899,7 @@ class Widget(DOMNode):
     ) -> None:
         # TODO: This will cause the widget to refresh, even when there are no links
         # Can we avoid this?
-        if self.auto_links:
+        if self.auto_links and not self.app.mouse_captured:
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
@@ -3963,11 +4024,6 @@ class Widget(DOMNode):
 
         return renderable
 
-    def watch_mouse_hover(self, _mouse_over: bool) -> None:
-        """Update from CSS if mouse over state changes."""
-        if self._has_hover_style:
-            self._update_styles()
-
     def watch_has_focus(self, _has_focus: bool) -> None:
         """Update from CSS if has focus state changes."""
         self._update_styles()
@@ -4217,6 +4273,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+
         if layout and not self._layout_required:
             self._layout_required = True
             self._layout_updates += 1
@@ -4274,9 +4331,7 @@ class Widget(DOMNode):
             ]
         else:
             children_to_remove = selector
-        await_remove = self.app._prune(
-            *children_to_remove, parent=cast(DOMNode, self._parent)
-        )
+        await_remove = self.app._prune(*children_to_remove, parent=self)
         return await_remove
 
     @asynccontextmanager
@@ -4423,11 +4478,12 @@ class Widget(DOMNode):
                     self.call_later(self._update_styles)
                 if self._scroll_required:
                     self._scroll_required = False
-                    if self.styles.keyline[0] != "none":
-                        # TODO: Feels like a hack
-                        # Perhaps there should be an explicit mechanism for backgrounds to refresh when scrolled?
-                        self._set_dirty()
-                    screen.post_message(messages.UpdateScroll())
+                    if not self._layout_required:
+                        if self.styles.keyline[0] != "none":
+                            # TODO: Feels like a hack
+                            # Perhaps there should be an explicit mechanism for backgrounds to refresh when scrolled?
+                            self._set_dirty()
+                        screen.post_message(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
                     if self.display:
@@ -4460,6 +4516,7 @@ class Widget(DOMNode):
             except NoScreen:
                 pass
 
+        self.refresh()
         self.app.call_later(set_focus, self)
         return self
 
