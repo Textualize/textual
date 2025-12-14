@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [6.9.0] - 2024-12-14
 
 ### Added
 
 - Added Rosé Pine themes https://github.com/Textualize/textual/pull/6277
+
+### Fixed
+
+- Fixed fuzzy matcher displaying wrong matched characters with simple substring match
 
 ## [6.8.0] - 2025-12-07
 
