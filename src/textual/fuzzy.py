@@ -103,7 +103,7 @@ class FuzzySearch:
         score = self.score
         if query in candidate:
             # Quick exit when the query exists as a substring
-            query_location = candidate.rfind(query)
+            query_location = candidate.find(query)
             offsets = list(range(query_location, query_location + len(query)))
             yield (
                 score(candidate, offsets) * (2.0 if candidate == query else 1.5),
