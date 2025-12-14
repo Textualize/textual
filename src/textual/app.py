@@ -2799,6 +2799,7 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
+        self.app.capture_mouse(None)
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
