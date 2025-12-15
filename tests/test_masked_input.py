@@ -10,16 +10,24 @@ from textual.widgets import MaskedInput
 InputEvent = Union[MaskedInput.Changed, MaskedInput.Submitted]
 
 
-class InputApp(App[None]):
-    def __init__(self, template: str, placeholder: str = ""):
+class MaskedInputApp(App[None]):
+    def __init__(
+        self,
+        template: str,
+        value: str | None = None,
+        select_on_focus: bool = True,
+    ):
         super().__init__()
         self.messages: list[InputEvent] = []
         self.template = template
-        self.placeholder = placeholder
+        self.value = value
+        self.select_on_focus = select_on_focus
 
     def compose(self) -> ComposeResult:
         yield MaskedInput(
-            template=self.template, placeholder=self.placeholder, select_on_focus=False
+            template=self.template,
+            value=self.value,
+            select_on_focus=self.select_on_focus,
         )
 
     @on(MaskedInput.Changed)
@@ -29,7 +37,10 @@ class InputApp(App[None]):
 
 
 async def test_missing_required():
-    app = InputApp(">9999-99-99")
+    app = MaskedInputApp(
+        template=">9999-99-99",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "2024-12"
@@ -48,7 +59,10 @@ async def test_missing_required():
 
 
 async def test_valid_required():
-    app = InputApp(">9999-99-99")
+    app = MaskedInputApp(
+        template=">9999-99-99",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "2024-12-31"
@@ -59,7 +73,10 @@ async def test_valid_required():
 
 
 async def test_missing_optional():
-    app = InputApp(">9999-99-00")
+    app = MaskedInputApp(
+        template=">9999-99-00",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "2024-12"
@@ -71,7 +88,10 @@ async def test_missing_optional():
 
 async def test_editing():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
-    app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("A", "B", "C", "D")
@@ -95,7 +115,10 @@ async def test_editing():
 
 
 async def test_overwrite_typing():
-    app = InputApp("9999-9999-9999-9999;0")
+    app = MaskedInputApp(
+        template="9999-9999-9999-9999;0",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "0000-99"
@@ -129,7 +152,10 @@ async def test_overwrite_typing():
 
 async def test_key_movement_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
-    app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test():
         input = app.query_one(MaskedInput)
         input.value = serial
@@ -149,7 +175,10 @@ async def test_key_movement_actions():
 
 async def test_key_modification_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
-    app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = serial
@@ -186,7 +215,10 @@ async def test_key_modification_actions():
 
 
 async def test_cursor_word_right_after_last_separator():
-    app = InputApp(">NNN-NNN-NNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNN-NNN-NNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test():
         input = app.query_one(MaskedInput)
         input.value = "123-456-789-012"
@@ -196,7 +228,10 @@ async def test_cursor_word_right_after_last_separator():
 
 
 async def test_case_conversion_meta_characters():
-    app = InputApp("NN<-N!N>N")
+    app = MaskedInputApp(
+        template="NN<-N!N>N",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "B", "C", "D", "e")
@@ -205,7 +240,10 @@ async def test_case_conversion_meta_characters():
 
 
 async def test_case_conversion_override():
-    app = InputApp(">-<NN")
+    app = MaskedInputApp(
+        template=">-<NN",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "B")
@@ -214,7 +252,10 @@ async def test_case_conversion_override():
 
 
 async def test_case_conversion_cancel():
-    app = InputApp("-!N-")
+    app = MaskedInputApp(
+        template="-!N-",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a")
@@ -223,14 +264,20 @@ async def test_case_conversion_cancel():
 
 
 async def test_only_separators__raises_ValueError():
-    app = InputApp("---")
+    app = MaskedInputApp(
+        template="---",
+        select_on_focus=False,
+    )
     with pytest.raises(ValueError):
         async with app.run_test() as pilot:
             await pilot.press("a")
 
 
 async def test_custom_separator_escaping():
-    app = InputApp("N\\aN\\N\\cN")
+    app = MaskedInputApp(
+        template="N\\aN\\N\\cN",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("D", "e", "F")
@@ -239,7 +286,10 @@ async def test_custom_separator_escaping():
 
 
 async def test_digits_not_required():
-    app = InputApp("00;_")
+    app = MaskedInputApp(
+        template="00;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "1")
@@ -248,7 +298,10 @@ async def test_digits_not_required():
 
 
 async def test_digits_required():
-    app = InputApp("99;_")
+    app = MaskedInputApp(
+        template="99;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "1")
@@ -259,14 +312,10 @@ async def test_digits_required():
 async def test_replace_selection_with_invalid_value():
     """Regression test for https://github.com/Textualize/textual/issues/5493"""
 
-    class MaskedInputApp(App):
-        def compose(self) -> ComposeResult:
-            yield MaskedInput(
-                template="9999-99-99",
-                value="2025-12",
-            )
-
-    app = MaskedInputApp()
+    app = MaskedInputApp(
+        template="9999-99-99",
+        value="2025-12",
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         assert input.selection == (0, len(input.value))  # Sanity check
