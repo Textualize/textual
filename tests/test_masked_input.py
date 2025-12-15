@@ -254,3 +254,21 @@ async def test_digits_required():
         await pilot.press("a", "1")
         assert input.value == "1"
         assert not input.is_valid
+
+
+async def test_replace_selection_with_invalid_value():
+    """Regression test for https://github.com/Textualize/textual/issues/5493"""
+
+    class MaskedInputApp(App):
+        def compose(self) -> ComposeResult:
+            yield MaskedInput(
+                template="9999-99-99",
+                value="2025-12",
+            )
+
+    app = MaskedInputApp()
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        assert input.selection == (0, len(input.value))  # Sanity check
+        await pilot.press("a")
+        assert input.value == "2025-12"

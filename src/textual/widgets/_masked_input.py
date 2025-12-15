@@ -216,6 +216,11 @@ class _Template(Validator):
         value = self.input.value
         start, end = sorted((max(0, start), min(len(value), end)))
 
+        if not text and end == len(value):
+            new_value = value[:start]
+            cursor_position = start
+            return new_value, cursor_position
+
         template_len = len(self.template)
         separators = set(
             [
@@ -224,6 +229,9 @@ class _Template(Validator):
                 if _CharFlags.SEPARATOR in char_definition.flags
             ]
         )
+
+        empty_text = self.empty_mask[start:end]
+        new_value = f"{value[:start]}{empty_text}{value[end:]}"
 
         cursor_position = start
 
@@ -241,10 +249,10 @@ class _Template(Validator):
                                 char = self.template[cursor_position].char
                             else:
                                 char = " "
-                            value = (
-                                value[:cursor_position]
+                            new_value = (
+                                new_value[:cursor_position]
                                 + char
-                                + value[cursor_position + 1 :]
+                                + new_value[cursor_position + 1 :]
                             )
                             cursor_position += 1
                 continue
@@ -263,11 +271,15 @@ class _Template(Validator):
             elif _CharFlags.UPPERCASE in char_definition.flags:
                 char = char.upper()
 
-            value = value[:cursor_position] + char + value[cursor_position + 1 :]
+            new_value = (
+                new_value[:cursor_position] + char + new_value[cursor_position + 1 :]
+            )
             cursor_position += 1
-            value, cursor_position = self.insert_separators(value, cursor_position)
+            new_value, cursor_position = self.insert_separators(
+                new_value, cursor_position
+            )
 
-        return value, cursor_position
+        return new_value, cursor_position
 
     def insert(self, text: str, index: int) -> tuple[str, int] | None:
         """Inserts `text` at the given index. If not present in `text`, any expected separator is automatically
@@ -656,6 +668,20 @@ class MaskedInput(Input, can_focus=True):
         """
 
         new_value = self._template.insert_text_at_cursor(text)
+        if new_value is not None:
+            self.value, self.cursor_position = new_value
+        else:
+            self.restricted()
+
+    def replace(self, text: str, start: int, end: int) -> None:
+        """Replace the text between the start and end locations with the given text.
+
+        Args:
+            text: Text to replace the existing text with.
+            start: Start index to replace (inclusive).
+            end: End index to replace (inclusive).
+        """
+        new_value = self._template.replace(text, start, end)
         if new_value is not None:
             self.value, self.cursor_position = new_value
         else:
