@@ -85,11 +85,14 @@ class ToggleButton(Static, can_focus=True):
             background: $panel;
         }
 
-        &:focus {
-            border: tall $border;
-            background-tint: $foreground 5%;
-            & > .toggle--label {
-                color: $block-cursor-foreground;                
+        &:focus {       
+            border: tall $border;            
+            background-tint: $foreground 5%;     
+     
+            & > .toggle--label {                         
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;       
+                text-style: $block-cursor-text-style;                
             }
         }
         &:blur:hover {
@@ -160,7 +163,7 @@ class ToggleButton(Static, can_focus=True):
         Returns:
             A `Content` rendering of the label for use in the button.
         """
-        label = Content.from_text(label).first_line
+        label = Content.from_text(label).first_line.rstrip()
         return label
 
     @property
@@ -202,19 +205,18 @@ class ToggleButton(Static, can_focus=True):
         """
         button = self._button
         label_style = self.get_visual_style("toggle--label")
-        label = self._label.stylize_before(label_style)
-        spacer = " " if label else ""
+        label = self._label.pad(1, 1).stylize_before(label_style)
 
         if self._button_first:
-            content = Content.assemble(button, spacer, label)
+            content = Content.assemble(button, label)
         else:
-            content = Content.assemble(label, spacer, button)
+            content = Content.assemble(label, button)
         return content
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return (
             self._button.get_optimal_width(self.styles, 0)
-            + (1 if self._label else 0)
+            + (2 if self._label else 0)
             + self._label.get_optimal_width(self.styles, 0)
         )
 
