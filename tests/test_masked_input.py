@@ -323,3 +323,41 @@ async def test_replace_selection_with_invalid_value():
         assert input.selection == (0, len(input.value))  # Sanity check
         await pilot.press("a")
         assert input.value == "2025-12"
+
+
+async def test_movement_actions_with_select():
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        value="ABCDE-FGHIJ-KLMNO-PQRST",
+        select_on_focus=False,
+    )
+    async with app.run_test():
+        input = app.query_one(MaskedInput)
+
+        input.action_home(select=True)
+        assert input.selection == (len(input.value), 0)
+
+        input.action_cursor_left()
+        assert input.selection.is_empty
+        assert input.cursor_position == 0
+
+        input.action_cursor_right_word(select=True)
+        assert input.selection == (0, 6)
+
+        input.action_cursor_right()
+        assert input.selection.is_empty
+        assert input.cursor_position == 6
+
+        input.action_cursor_left(select=True)
+        assert input.selection == (6, 4)
+
+        input.action_cursor_left()
+        input.action_cursor_right(select=True)
+        assert input.selection == (4, 6)
+
+        input.action_end(select=True)
+        assert input.selection == (6, len(input.value))
+
+        input.action_cursor_right()
+        input.action_cursor_left_word(select=True)
+        assert input.selection == (len(input.value), 18)

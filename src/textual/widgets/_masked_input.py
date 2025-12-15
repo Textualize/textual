@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 from textual.reactive import Reactive, var
 from textual.validation import ValidationResult, Validator
-from textual.widgets._input import Input
+from textual.widgets._input import Input, Selection
 
 InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
@@ -703,8 +703,15 @@ class MaskedInput(Input, can_focus=True):
         Args:
             select: If `True`, select the text to the left of the cursor.
         """
+        start, end = self.selection
         cursor_position = self._template.move_cursor(-1)
-        self.cursor_position = cursor_position
+        if select:
+            self.selection = Selection(start, cursor_position)
+        else:
+            if self.selection.is_empty:
+                self.cursor_position = cursor_position
+            else:
+                self.cursor_position = min(start, end)
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one position to the right; separators are skipped.
@@ -712,8 +719,15 @@ class MaskedInput(Input, can_focus=True):
         Args:
             select: If `True`, select the text to the right of the cursor.
         """
+        start, end = self.selection
         cursor_position = self._template.move_cursor(1)
-        self.cursor_position = cursor_position
+        if select:
+            self.selection = Selection(start, cursor_position)
+        else:
+            if self.selection.is_empty:
+                self.cursor_position = cursor_position
+            else:
+                self.cursor_position = max(start, end)
 
     def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input.
@@ -722,7 +736,10 @@ class MaskedInput(Input, can_focus=True):
             select: If `True`, select the text between the old and new cursor positions.
         """
         cursor_position = self._template.move_cursor(-len(self.template))
-        self.cursor_position = cursor_position
+        if select:
+            self.selection = Selection(self.cursor_position, cursor_position)
+        else:
+            self.cursor_position = cursor_position
 
     def action_cursor_left_word(self, select: bool = False) -> None:
         """Move the cursor left next to the previous separator. If no previous
@@ -732,12 +749,22 @@ class MaskedInput(Input, can_focus=True):
             select: If `True`, select the text between the old and new cursor positions.
         """
         if self._template.at_separator(self.cursor_position - 1):
-            position = self._template.prev_separator_position(self.cursor_position - 1)
+            separator_position = self._template.prev_separator_position(
+                self.cursor_position - 1
+            )
         else:
-            position = self._template.prev_separator_position()
-        if position:
-            position += 1
-        self.cursor_position = position or 0
+            separator_position = self._template.prev_separator_position()
+
+        if separator_position is None:
+            cursor_position = 0
+        else:
+            cursor_position = separator_position + 1
+
+        if select:
+            start, _ = self.selection
+            self.selection = Selection(start, cursor_position)
+        else:
+            self.cursor_position = cursor_position
 
     def action_cursor_right_word(self, select: bool = False) -> None:
         """Move the cursor right next to the next separator. If no next
@@ -746,11 +773,17 @@ class MaskedInput(Input, can_focus=True):
         Args:
             select: If `True`, select the text between the old and new cursor positions.
         """
-        position = self._template.next_separator_position()
-        if position is None:
-            self.cursor_position = len(self._template.mask)
+        separator_position = self._template.next_separator_position()
+        if separator_position is None:
+            cursor_position = len(self._template.mask)
         else:
-            self.cursor_position = position + 1
+            cursor_position = separator_position + 1
+
+        if select:
+            start, _ = self.selection
+            self.selection = Selection(start, cursor_position)
+        else:
+            self.cursor_position = cursor_position
 
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
