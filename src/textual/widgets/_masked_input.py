@@ -308,13 +308,16 @@ class _Template(Validator):
         """
         return self.insert(text, self.input.cursor_position)
 
-    def move_cursor(self, delta: int) -> None:
+    def move_cursor(self, delta: int) -> int:
         """Moves the cursor position by `delta` characters, skipping separators if
         running over them.
 
         Args:
             delta: The number of characters to move; positive moves right, negative
                 moves left.
+
+        Returns:
+            The new cursor position.
         """
         cursor_position = self.input.cursor_position
         if delta < 0 and all(
@@ -323,7 +326,8 @@ class _Template(Validator):
                 for char_definition in self.template[:cursor_position]
             ]
         ):
-            return
+            return cursor_position
+
         cursor_position += delta
         while (
             (cursor_position >= 0)
@@ -331,7 +335,8 @@ class _Template(Validator):
             and (_CharFlags.SEPARATOR in self.template[cursor_position].flags)
         ):
             cursor_position += delta
-        self.input.cursor_position = cursor_position
+
+        return cursor_position
 
     def delete_at_position(self, position: int | None = None) -> None:
         """Deletes character at `position`.
@@ -658,7 +663,8 @@ class MaskedInput(Input, can_focus=True):
         """Ensure clicking on value does not leave cursor on a separator."""
         await super()._on_click(event)
         if self._template.at_separator():
-            self._template.move_cursor(1)
+            cursor_position = self._template.move_cursor(1)
+            self.cursor_position = cursor_position
 
     def insert_text_at_cursor(self, text: str) -> None:
         """Insert new text at the cursor, move the cursor to the end of the new text.
@@ -697,7 +703,8 @@ class MaskedInput(Input, can_focus=True):
         Args:
             select: If `True`, select the text to the left of the cursor.
         """
-        self._template.move_cursor(-1)
+        cursor_position = self._template.move_cursor(-1)
+        self.cursor_position = cursor_position
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one position to the right; separators are skipped.
@@ -705,7 +712,8 @@ class MaskedInput(Input, can_focus=True):
         Args:
             select: If `True`, select the text to the right of the cursor.
         """
-        self._template.move_cursor(1)
+        cursor_position = self._template.move_cursor(1)
+        self.cursor_position = cursor_position
 
     def action_home(self, select: bool = False) -> None:
         """Move the cursor to the start of the input.
@@ -713,7 +721,8 @@ class MaskedInput(Input, can_focus=True):
         Args:
             select: If `True`, select the text between the old and new cursor positions.
         """
-        self._template.move_cursor(-len(self.template))
+        cursor_position = self._template.move_cursor(-len(self.template))
+        self.cursor_position = cursor_position
 
     def action_cursor_left_word(self, select: bool = False) -> None:
         """Move the cursor left next to the previous separator. If no previous
@@ -765,7 +774,8 @@ class MaskedInput(Input, can_focus=True):
         if self.cursor_position <= 0:
             # Cursor at the start, so nothing to delete
             return
-        self._template.move_cursor(-1)
+        cursor_position = self._template.move_cursor(-1)
+        self.cursor_position = cursor_position
         self._template.delete_at_position()
 
     def action_delete_left_word(self) -> None:
