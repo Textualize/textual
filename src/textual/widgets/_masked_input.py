@@ -691,21 +691,37 @@ class MaskedInput(Input, can_focus=True):
         """Clear the masked input."""
         self.value, self.cursor_position = self._template.insert_separators("", 0)
 
-    def action_cursor_left(self) -> None:
-        """Move the cursor one position to the left; separators are skipped."""
+    def action_cursor_left(self, select: bool = False) -> None:
+        """Move the cursor one position to the left; separators are skipped.
+
+        Args:
+            select: If `True`, select the text to the left of the cursor.
+        """
         self._template.move_cursor(-1)
 
-    def action_cursor_right(self) -> None:
-        """Move the cursor one position to the right; separators are skipped."""
+    def action_cursor_right(self, select: bool = False) -> None:
+        """Move the cursor one position to the right; separators are skipped.
+
+        Args:
+            select: If `True`, select the text to the right of the cursor.
+        """
         self._template.move_cursor(1)
 
-    def action_home(self) -> None:
-        """Move the cursor to the start of the input."""
+    def action_home(self, select: bool = False) -> None:
+        """Move the cursor to the start of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
         self._template.move_cursor(-len(self.template))
 
-    def action_cursor_left_word(self) -> None:
+    def action_cursor_left_word(self, select: bool = False) -> None:
         """Move the cursor left next to the previous separator. If no previous
-        separator is found, moves the cursor to the start of the input."""
+        separator is found, moves the cursor to the start of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
         if self._template.at_separator(self.cursor_position - 1):
             position = self._template.prev_separator_position(self.cursor_position - 1)
         else:
@@ -714,9 +730,13 @@ class MaskedInput(Input, can_focus=True):
             position += 1
         self.cursor_position = position or 0
 
-    def action_cursor_right_word(self) -> None:
+    def action_cursor_right_word(self, select: bool = False) -> None:
         """Move the cursor right next to the next separator. If no next
-        separator is found, moves the cursor to the end of the input."""
+        separator is found, moves the cursor to the end of the input.
+
+        Args:
+            select: If `True`, select the text between the old and new cursor positions.
+        """
         position = self._template.next_separator_position()
         if position is None:
             self.cursor_position = len(self._template.mask)
