@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [6.10.0] - 2025-12-15
+## [6.10.0] - 2025-12-16
 
 ### Fixed
 
-- Fixed broken thems
-- Updated toggle button style for consistancy
+- Fixed broken themes https://github.com/Textualize/textual/pull/6286
+- Updated toggle button style for consistency https://github.com/Textualize/textual/pull/6286
 
 ## [6.9.0] - 2025-12-14
 
