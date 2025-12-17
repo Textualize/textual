@@ -279,6 +279,12 @@ class _Template(Validator):
                 new_value, cursor_position
             )
 
+        if (
+            new_value[cursor_position:]
+            == self.empty_mask[cursor_position : len(new_value)]
+        ):
+            new_value = new_value[:cursor_position]
+
         return new_value, cursor_position
 
     def insert(self, text: str, index: int) -> tuple[str, int] | None:

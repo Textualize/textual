@@ -413,3 +413,16 @@ async def test_replace_selection():
         assert input.value == "a    -   IJ-KLMx -PQRST"
         assert input.selection.is_empty
         assert input.cursor_position == 1
+
+        input.cursor_position = 13
+        input.action_end(select=True)
+        await pilot.press("x")
+        assert input.value == "a    -   IJ-Kx"
+        assert input.selection.is_empty
+        assert input.cursor_position == 14
+
+        input.action_home(select=True)
+        await pilot.press("x")
+        assert input.value == "x"
+        assert input.selection.is_empty
+        assert input.cursor_position == 1
