@@ -361,3 +361,55 @@ async def test_movement_actions_with_select():
         input.action_cursor_right()
         input.action_cursor_left_word(select=True)
         assert input.selection == (len(input.value), 18)
+
+
+async def test_replace_selection():
+    app = MaskedInputApp(
+        template="NNNNN-NNNNN-NNNNN-NNNNN;_",
+        value="ABCDE-FGHIJ-KLMNO-PQRST",
+        select_on_focus=False,
+    )
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+
+        input.cursor_position = 0
+        input.action_cursor_right(select=True)
+        await pilot.press("x")
+        assert input.value == "xBCDE-FGHIJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 1
+
+        input.cursor_position = 3
+        input.action_cursor_left(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDE-FGHIJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 3
+
+        input.cursor_position = 6
+        input.action_cursor_left(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDx-FGHIJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 6
+
+        input.cursor_position = 9
+        input.action_cursor_left_word(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDx-x  IJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 7
+
+        input.cursor_position = 15
+        input.action_cursor_right_word(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDx-x  IJ-KLMx -PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 16
+
+        input.cursor_position = 9
+        input.action_home(select=True)
+        await pilot.press("a")
+        assert input.value == "a    -   IJ-KLMx -PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 1
