@@ -1,0 +1,29 @@
+name: Bug Report
+description: Report a bug or issue
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues require an initial discussion, and will be promoted to an issue once the work has been agreed upon or started.
+  - type: input
+    id: discussion-link
+    attributes:
+      label: Discussion link
+      description: Please enter the discussion link here
+      placeholder: https://github.com/batrachianai/toad/discussions/123
+    validations:
+      required: true
+  
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: Describe the bug you encountered
+      placeholder: |
+        What happened?
+        What did you expect to happen?
+        Steps to reproduce...
+    validations:
+      required: true
