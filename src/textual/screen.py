@@ -1698,6 +1698,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     self.clear_selection()
                 self._mouse_down_offset = None
                 self._selecting = False
+                self.post_message(events.TextSelected())
 
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
                 self._box_select = event.shift

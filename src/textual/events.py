@@ -976,3 +976,7 @@ class DeliveryFailed(Event, bubble=False):
 
     name: str | None = None
     """Optional name returned to the app to identify the download."""
+
+
+class TextSelected(Event, bubble=True):
+    """Sent from the screen when text is selected (Not Input and TextArea)"""
