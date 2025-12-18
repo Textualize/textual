@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added a TextSelected event.
+- Added a `TextSelected` event. https://github.com/Textualize/textual/pull/6290
 
 ## [6.10.0] - 2025-12-16
 
