@@ -41,6 +41,7 @@ from textual.widgets import (
     ListView,
     Log,
     Markdown,
+    MaskedInput,
     OptionList,
     Placeholder,
     ProgressBar,
@@ -4800,3 +4801,22 @@ def test_text_area_paste(snap_compare) -> None:
         await pilot.press("ctrl+v")
 
     assert snap_compare(TextAreaApp(), run_before=run_before)
+
+
+def test_masked_input_highlights_selection(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/5495
+
+    You should see a MaskedInput where the selection is highlighted.
+    """
+
+    class MaskedInputApp(App):
+        def compose(self) -> ComposeResult:
+            yield MaskedInput(
+                template="9999-9999-9999-9999;0",
+                value="123"
+            )
+
+    async def run_before(pilot):
+        pilot.app.query_one(MaskedInput).cursor_blink = False
+
+    assert snap_compare(MaskedInputApp(), run_before=run_before)
