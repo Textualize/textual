@@ -465,6 +465,15 @@ If we decide we want to change some aspect of our design in the future, we only 
 
     Variables can only be used in the _values_ of a CSS declaration. You cannot, for example, refer to a variable inside a selector.
 
+!!! note "Variable Scope & Inheritance"
+
+    When you **use** a variable in a CSS rule (e.g., `color: $text-muted;`), it behaves like any other CSS property:
+    
+    1.  **Inheritance:** The value is applied to the widget and inherited by its children (descendants), unless the children override it.
+    2.  **Isolation:** The value does **not** affect siblings or parents.
+    
+    Variables themselves are global (defined by the Theme), but their *application* is scoped to the widget tree where they are used.
+
 Variables can refer to other variables.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
