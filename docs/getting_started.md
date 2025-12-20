@@ -3,13 +3,15 @@ All you need to get started building Textual apps.
 
 ## Requirements
 
-Textual requires Python 3.9 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs.
+Textual requires Python 3.9 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs. 
 
 !!! info "Your platform"
 
     ### :fontawesome-brands-linux: Linux (all distros)
 
     All Linux distros come with a terminal emulator that can run Textual apps.
+
+    If you are using the Linux console (rather than a desktop environment), see [Linux console]](./linux-console.md) for details. 
 
     ### :material-apple: macOS
 
