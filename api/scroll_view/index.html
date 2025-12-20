@@ -6358,6 +6358,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.scroll_view.ScrollView.is_container" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_container
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.scroll_view.ScrollView.is_scrollable" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_scrollable
@@ -7484,6 +7493,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.scroll_view.ScrollView.is_container" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_container
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.scroll_view.ScrollView.is_scrollable" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;is_scrollable
@@ -7734,6 +7752,11 @@ window.onload = async (event) => {
 
         <p>A base class for a Widget that handles its own scrolling (i.e. doesn't rely
 on the compositor to render children).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the typically wrong class for making something scrollable. If you want to make something scroll, set its
+<code>overflow</code> style to auto or scroll. Or use one of the pre-defined scrolling containers such as <a class="autorefs autorefs-internal" title="            VerticalScroll" href="../containers/#textual.containers.VerticalScroll">VerticalScroll</a>.</p>
+</div>
 
 
 
@@ -7750,6 +7773,30 @@ on the compositor to render children).</p>
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.scroll_view.ScrollView.is_container" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">is_container</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.scroll_view.ScrollView.is_container" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_container</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Since a ScrollView should be a line-api widget, it won't have children,
+and therefore isn't a container.</p>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-attribute">
 

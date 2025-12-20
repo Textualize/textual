@@ -7056,6 +7056,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.get_loading_widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_loading_widget
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.get_offset" class="md-nav__link">
     <span class="md-ellipsis">
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_offset
@@ -9091,6 +9100,15 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.get_loading_widget" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;get_loading_widget
+    </span>
+  </a>
   
 </li>
         
@@ -11690,6 +11708,49 @@ widget, region pair with a hover style.</p>
             <td>
               <div class="doc-md-description">
                 <p>If there is no widget under the screen coordinate.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="textual.screen.Screen.get_loading_widget" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_loading_widget</span>
+
+
+<a href="#textual.screen.Screen.get_loading_widget" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_loading_widget</span><span class="p">()</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Get a widget to display a loading indicator.</p>
+<p>The default implementation will defer to App.get_loading_widget.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            Widget (textual.widget.Widget)" href="../widget/#textual.widget.Widget">Widget</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A widget in place of this widget to indicate a loading.</p>
               </div>
             </td>
           </tr>
