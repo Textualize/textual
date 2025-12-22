@@ -1226,12 +1226,11 @@ class DOMNode(MessagePump):
         Returns:
             A list of nodes.
         """
-        nodes: list[MessagePump | None] = [self]
-        add_node = nodes.append
-        node: MessagePump | None = self
-        while (node := node._parent) is not None:
-            add_node(node)
-        return cast("list[DOMNode]", nodes)
+        nodes = [self]
+        node: DOMNode | None = self
+        while node is not None and (node := node._parent) is not None:
+            nodes.append(node)
+        return nodes
 
     @property
     def ancestors(self) -> list[DOMNode]:
@@ -1240,12 +1239,11 @@ class DOMNode(MessagePump):
         Returns:
             A list of nodes.
         """
-        nodes: list[MessagePump | None] = []
-        add_node = nodes.append
-        node: MessagePump | None = self
-        while (node := node._parent) is not None:
-            add_node(node)
-        return cast("list[DOMNode]", nodes)
+        nodes = []
+        node: DOMNode | None = self
+        while node is not None and (node := node._parent) is not None:
+            nodes.append(node)
+        return nodes
 
     def watch(
         self,
@@ -1306,7 +1304,7 @@ class DOMNode(MessagePump):
             node: A DOM node.
         """
         self._nodes._append(node)
-        node._attach(self)
+        node._attach(self)  # type: ignore[arg-type]
 
     def _add_children(self, *nodes: Widget) -> None:
         """Add multiple children to this node.
@@ -1319,7 +1317,7 @@ class DOMNode(MessagePump):
         """
         _append = self._nodes._append
         for node in nodes:
-            node._attach(self)
+            node._attach(self)  # type: ignore[arg-type]
             _append(node)
             node._add_children(*node._pending_children)
 

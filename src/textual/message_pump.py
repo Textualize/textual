@@ -266,7 +266,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         except NoActiveAppError:
             return False
         node: MessagePump | None = self
-        while (node := node._parent) is not None:
+        while node is not None and (node := node._parent) is not None:
             if node.is_dom_root:
                 return True
         return False
@@ -291,7 +291,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
         return self.app._logger
 
-    def _attach(self, parent: MessagePump) -> None:
+    def _attach(self, parent: Self) -> None:
         """Set the parent, and therefore attach this node to the tree.
 
         Args:

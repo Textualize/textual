@@ -114,6 +114,7 @@ class Edit:
         Returns:
             An `EditResult` containing information about the replace operation.
         """
+        assert self._edit_result is not None
         replaced_text = self._edit_result.replaced_text
         edit_end = self._edit_result.end_location
 
