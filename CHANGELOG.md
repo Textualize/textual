@@ -5,11 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [6.11.0] - 2025-12-18
 
 ### Added
 
+- Added a `TextSelected` event. https://github.com/Textualize/textual/pull/6290
+
+## [6.10.0] - 2025-12-16
+
+### Fixed
+
+- Fixed broken themes https://github.com/Textualize/textual/pull/6286
+- Updated toggle button style for consistency https://github.com/Textualize/textual/pull/6286
+
+## [6.9.0] - 2025-12-14
+
+### Added
+
+- Added Solarized Dark theme https://github.com/Textualize/textual/pull/6278
 - Added Rosé Pine themes https://github.com/Textualize/textual/pull/6277
+
+### Fixed
+
+- Fixed fuzzy matcher displaying wrong matched characters with simple substring match https://github.com/Textualize/textual/pull/6282
 
 ## [6.8.0] - 2025-12-07
 
@@ -3234,6 +3252,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[6.11.0]: https://github.com/Textualize/textual/compare/v6.10.0...v6.11.0
+[6.10.0]: https://github.com/Textualize/textual/compare/v6.9.0...v6.10.0
+[6.9.0]: https://github.com/Textualize/textual/compare/v6.8.0...v6.9.0
 [6.8.0]: https://github.com/Textualize/textual/compare/v6.7.1...v6.8.0
 [6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
 [6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
