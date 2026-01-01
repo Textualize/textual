@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import rich.repr
 
-from textual._types import CallbackType
+from textual._types import CallbackType, TerminalLightDarkMode
 from textual.geometry import Region
 from textual.message import Message
 
@@ -138,3 +138,37 @@ class InBandWindowResize(Message):
         supported = setting_parameter not in (0, 4)
         enabled = setting_parameter in (1, 3)
         return InBandWindowResize(supported, enabled)
+
+
+@rich.repr.auto
+class TerminalColorTheme(Message):
+    """
+    Reports the current light/dark mode setting on the terminal.
+    @link https://github.com/contour-terminal/contour/blob/c9492cd5c8d2be5d39eb76c7e72838bd44ff2f42/docs/vt-extensions/color-palette-update-notifications.md
+    """
+
+    def __init__(self, theme: TerminalLightDarkMode) -> None:
+        """Initialize message.
+
+        Args:
+            theme: set to "dark" or "light" if known, None otherwise
+        """
+        self.theme = theme
+        super().__init__()
+
+    @classmethod
+    def from_setting_parameter(cls, setting_parameter: int) -> TerminalColorTheme:
+        """Construct the message from the setting parameter.
+
+        Args:
+            setting_parameter: Seting parameter from stdin.
+
+        Returns:
+            New TerminalColorTheme instance.
+        """
+
+        if setting_parameter == 1:
+            return TerminalColorTheme("dark")
+        elif setting_parameter == 2:
+            return TerminalColorTheme("light")
+        return TerminalColorTheme(None)

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added support for [terminal dark and light mode detection](https://github.com/contour-terminal/contour/blob/c9492cd5c8d2be5d39eb76c7e72838bd44ff2f42/docs/vt-extensions/color-palette-update-notifications.md) using `messages.TerminalColorTheme` https://github.com/Textualize/textual/pull/6152
+
 ## [6.11.0] - 2025-12-18
 
 ### Added

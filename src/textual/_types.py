@@ -1,4 +1,13 @@
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, List, Literal, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    List,
+    Literal,
+    Optional,
+    Union,
+)
 
 from typing_extensions import Protocol
 
@@ -55,3 +64,6 @@ WatchCallbackType = Union[
 
 AnimationLevel = Literal["none", "basic", "full"]
 """The levels that the [`TEXTUAL_ANIMATIONS`][textual.constants.TEXTUAL_ANIMATIONS] env var can be set to."""
+
+TerminalLightDarkMode = Optional[Literal["light", "dark"]]
+"""Possible terminal color modes for App.terminal_light_dark_mode and messages.TerminalColorTheme"""

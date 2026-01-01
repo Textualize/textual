@@ -22,6 +22,10 @@ _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-\d;]+[mM]|M...)\Z
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
+# DSR - Device Status Report, overly specific regex just for color modes
+_re_dsr_response = re.compile(
+    "^" + re.escape("\x1b[") + r"\?(?P<param1>\d+);(?P<param2>\d+)n"
+)
 
 _re_cursor_position = re.compile(r"\x1b\[(?P<row>\d+);(?P<col>\d+)R")
 
@@ -318,6 +322,17 @@ class XTermParser(Parser[Message]):
                                 )
                             )
                             on_token(in_band_event)
+                        break
+                    dsr_report_match = _re_dsr_response.match(sequence)
+                    if dsr_report_match is not None:
+                        mode_id = dsr_report_match["param1"]
+                        setting_parameter = dsr_report_match["param2"]
+                        if mode_id == "997":
+                            on_token(
+                                messages.TerminalColorTheme.from_setting_parameter(
+                                    int(setting_parameter)
+                                )
+                            )
                         break
 
         if self._debug_log_file is not None:

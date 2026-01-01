@@ -87,7 +87,7 @@ from textual._path import (
     _css_path_type_as_list,
     _make_path_object_relative,
 )
-from textual._types import AnimationLevel
+from textual._types import AnimationLevel, TerminalLightDarkMode
 from textual._wait import wait_for_idle
 from textual.actions import ActionParseResult, SkipAction
 from textual.await_complete import AwaitComplete
@@ -572,7 +572,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._registered_themes: dict[str, Theme] = {}
         """Themes that have been registered with the App using `App.register_theme`.
-        
+
         This excludes the built-in themes."""
 
         for theme in BUILTIN_THEMES.values():
@@ -774,7 +774,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.theme_changed_signal: Signal[Theme] = Signal(self, "theme-changed")
         """Signal that is published when the App's theme is changed.
-        
+
         Subscribers will receive the new theme object as an argument to the callback.
         """
 
@@ -831,6 +831,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._compose_screen: Screen | None = None
         """The screen composed by App.compose."""
+
+        self.terminal_light_dark_mode: TerminalLightDarkMode = None
+        """The current light/dark mode theme of the terminal, if known, or None otherwise."""
 
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
@@ -4414,6 +4417,10 @@ class App(Generic[ReturnType], DOMNode):
         log.system("SynchronizedOutput mode is supported")
         if self._driver is not None and not self._driver.is_inline:
             self._sync_available = True
+
+    def _on_terminal_color_theme(self, message: messages.TerminalColorTheme) -> None:
+        log.system("set color theme to", message.theme)
+        self.terminal_light_dark_mode = message.theme
 
     def _begin_update(self) -> None:
         if self._sync_available and self._driver is not None:
