@@ -3045,9 +3045,9 @@ class App(Generic[ReturnType], DOMNode):
         if hover_widget is not None:
             hover_widget.mouse_hover = True
             if hover_widget._has_hover_style:
-                hover_widget._update_styles()
+                hover_widget.update_node_styles()
         if current_hover_over is not None and current_hover_over._has_hover_style:
-            current_hover_over._update_styles()
+            current_hover_over.update_node_styles()
         self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
@@ -4247,7 +4247,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
-        self.screen._update_styles()
+        self.screen.update_node_styles()
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
             # and if the screen is still the current screen and if nothing
