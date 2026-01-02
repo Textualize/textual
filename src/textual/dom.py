@@ -125,7 +125,7 @@ class _ClassesDescriptor:
             class_names = set(classes)
         check_identifiers("class name", *class_names)
         obj._classes = class_names
-        obj._update_styles()
+        obj.update_node_styles()
 
 
 @rich.repr.auto
@@ -1733,10 +1733,10 @@ class DOMNode(MessagePump):
         self.classes = classes
         return self
 
-    def _update_styles(self) -> None:
+    def update_node_styles(self) -> None:
         """Request an update of this node's styles.
 
-        Should be called whenever CSS classes / pseudo classes change.
+        Called by Textual whenever CSS classes / pseudo classes change.
         """
         try:
             self.app.update_styles(self)
@@ -1759,7 +1759,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return self
         if update:
-            self._update_styles()
+            self.update_node_styles()
         return self
 
     def remove_class(self, *class_names: str, update: bool = True) -> Self:
@@ -1778,7 +1778,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return self
         if update:
-            self._update_styles()
+            self.update_node_styles()
         return self
 
     def toggle_class(self, *class_names: str) -> Self:
@@ -1795,7 +1795,7 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        self.update_node_styles()
         return self
 
     def has_pseudo_class(self, class_name: str) -> bool:

@@ -1445,11 +1445,11 @@ class Widget(DOMNode):
                 # we need to update both odd/even, first-of-type/last-of-type and first-child/last-child
                 for child in children:
                     if child._has_order_style or child._has_odd_or_even:
-                        child._update_styles()
+                        child.update_node_styles()
             else:
                 for child in children:
                     if child._has_order_style:
-                        child._update_styles()
+                        child.update_node_styles()
 
         self.call_later(update_styles, self.displayed_children)
         await_mount = AwaitMount(self, mounted)
@@ -4026,7 +4026,7 @@ class Widget(DOMNode):
 
     def watch_has_focus(self, _has_focus: bool) -> None:
         """Update from CSS if has focus state changes."""
-        self._update_styles()
+        self.update_node_styles()
 
     def watch_disabled(self, disabled: bool) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
@@ -4046,7 +4046,7 @@ class Widget(DOMNode):
         except (ScreenStackError, NoActiveAppError, NoScreen):
             pass
 
-        self._update_styles()
+        self.update_node_styles()
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
@@ -4475,7 +4475,7 @@ class Widget(DOMNode):
             else:
                 if self._refresh_styles_required:
                     self._refresh_styles_required = False
-                    self.call_later(self._update_styles)
+                    self.call_later(self.update_node_styles)
                 if self._scroll_required:
                     self._scroll_required = False
                     if not self._layout_required:
