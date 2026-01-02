@@ -24,12 +24,13 @@ from rich.terminal_theme import TerminalTheme
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
 
+from textual._bidi import apply_bidi_to_content, contains_rtl
 from textual._cells import cell_len
 from textual._context import active_app
 from textual._loop import loop_last
 from textual.cache import FIFOCache
 from textual.color import Color
-from textual.css.types import TextAlign, TextOverflow
+from textual.css.types import TextAlign, TextDirection, TextOverflow
 from textual.selection import Selection
 from textual.strip import Strip
 from textual.style import Style
@@ -626,6 +627,7 @@ class Content(Visual):
         selection_style: Style | None = None,
         post_style: Style | None = None,
         get_style: Callable[[str | Style], Style] = Style.parse,
+        text_direction: TextDirection = "auto",
     ) -> list[_FormattedLine]:
         """Wraps the text and applies formatting.
 
@@ -637,6 +639,7 @@ class Content(Visual):
             tab_size: Cell with of tabs.
             selection: Selection information or `None` if no selection.
             selection_style: Selection style, or `None` if no selection.
+            text_direction: Text direction for BiDi support ("auto", "ltr", "rtl").
 
         Returns:
             List of formatted lines.
@@ -661,6 +664,12 @@ class Content(Visual):
                 line = line.stylize(selection_style, start, end)
 
             line = line.expand_tabs(tab_size)
+
+            # Apply BiDi (bidirectional) text reordering for RTL languages
+            if text_direction == "rtl" or (
+                text_direction == "auto" and contains_rtl(line.plain)
+            ):
+                line = apply_bidi_to_content(line)
 
             if no_wrap:
                 if overflow == "fold":
@@ -738,6 +747,7 @@ class Content(Visual):
             selection_style=options.selection_style,
             post_style=options.post_style,
             get_style=options.get_style,
+            text_direction=get_rule("text_direction", "auto"),
         )
 
         if height is not None:

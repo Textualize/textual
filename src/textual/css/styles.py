@@ -50,6 +50,7 @@ from textual.css.constants import (
     VALID_SCROLLBAR_GUTTER,
     VALID_SCROLLBAR_VISIBILITY,
     VALID_TEXT_ALIGN,
+    VALID_TEXT_DIRECTION,
     VALID_TEXT_OVERFLOW,
     VALID_TEXT_WRAP,
     VALID_VISIBILITY,
@@ -70,6 +71,7 @@ from textual.css.types import (
     Specificity3,
     Specificity6,
     TextAlign,
+    TextDirection,
     TextOverflow,
     TextWrap,
     Visibility,
@@ -176,6 +178,7 @@ class RulesMap(TypedDict, total=False):
     column_span: int
 
     text_align: TextAlign
+    text_direction: TextDirection
 
     link_color: Color
     auto_link_color: bool
@@ -205,6 +208,7 @@ class RulesMap(TypedDict, total=False):
 
     text_wrap: TextWrap
     text_overflow: TextOverflow
+    text_direction: TextDirection
     expand: Expand
 
     line_pad: int
@@ -249,6 +253,7 @@ class StylesBase:
         "link_background_hover",
         "text_wrap",
         "text_overflow",
+        "text_direction",
         "line_pad",
     }
 
@@ -499,6 +504,9 @@ class StylesBase:
     )
     text_overflow: StringEnumProperty[TextOverflow] = StringEnumProperty(
         VALID_TEXT_OVERFLOW, "fold"
+    )
+    text_direction: StringEnumProperty[TextDirection] = StringEnumProperty(
+        VALID_TEXT_DIRECTION, "auto"
     )
     expand: StringEnumProperty[Expand] = StringEnumProperty(VALID_EXPAND, "greedy")
     line_pad = IntegerProperty(default=0, layout=True)
@@ -1299,6 +1307,8 @@ class Styles(StylesBase):
             append_declaration("text-wrap", self.text_wrap)
         if "text_overflow" in rules:
             append_declaration("text-overflow", self.text_overflow)
+        if "text_direction" in rules:
+            append_declaration("text-direction", self.text_direction)
         if "expand" in rules:
             append_declaration("expand", self.expand)
         if "line_pad" in rules:
