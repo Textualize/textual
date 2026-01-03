@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [7.0.0] - 2026-01-03
+
+### Changed
+
+- `Node.update_node_styles` has grown a `animate` parameter
+
 ## [6.12.0] - 2026-01-02
 
 ### Fixed
@@ -3262,6 +3268,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.0.0]: https://github.com/Textualize/textual/compare/v6.11.0...v7.0.0
 [6.11.0]: https://github.com/Textualize/textual/compare/v6.10.0...v6.11.0
 [6.10.0]: https://github.com/Textualize/textual/compare/v6.9.0...v6.10.0
 [6.9.0]: https://github.com/Textualize/textual/compare/v6.8.0...v6.9.0
