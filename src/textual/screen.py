@@ -1441,8 +1441,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if self.is_attached:
             self._compositor_refresh()
-            if self.stack_updates == 1:
-                self.app.stylesheet.update(self)
+            self.update_node_styles(animate=False)
             self._refresh_layout(size)
             self.refresh()
 

@@ -2402,16 +2402,26 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.get_child_by_type(expect_type)
 
-    def update_styles(self, node: DOMNode) -> None:
+    def update_styles(self, node: DOMNode, animate: bool = True) -> None:
         """Immediately update the styles of this node and all descendant nodes.
 
-        Should be called whenever CSS classes / pseudo classes change.
+        Called by Textual whenever CSS classes / pseudo classes change.
         For example, when you hover over a button, the :hover pseudo class
         will be added, and this method is called to apply the corresponding
         :hover styles.
+
+        Args:
+            node: Node to update.
+            animate: Enable animation?
         """
-        descendants = node.walk_children(with_self=True)
-        self.stylesheet.update_nodes(descendants, animate=True)
+        if isinstance(node, App):
+            for screen in reversed(self.screen_stack):
+                screen.update_node_styles(animate=animate)
+                if not (screen.is_modal and screen.styles.background.a < 1):
+                    break
+        else:
+            descendants = node.walk_children(with_self=True)
+            self.stylesheet.update_nodes(descendants, animate=animate)
 
     def mount(
         self,

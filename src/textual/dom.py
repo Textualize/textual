@@ -1733,13 +1733,13 @@ class DOMNode(MessagePump):
         self.classes = classes
         return self
 
-    def update_node_styles(self) -> None:
+    def update_node_styles(self, animate: bool = True) -> None:
         """Request an update of this node's styles.
 
         Called by Textual whenever CSS classes / pseudo classes change.
         """
         try:
-            self.app.update_styles(self)
+            self.app.update_styles(self, animate=animate)
         except NoActiveAppError:
             pass
 
