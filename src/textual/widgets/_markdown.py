@@ -855,6 +855,7 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         color: rgb(210,210,210);
         background: black 10%;
+        text-direction: ltr;  /* Code should always be LTR, even in RTL documents */
         &:light {
             background: white 30%;
         }

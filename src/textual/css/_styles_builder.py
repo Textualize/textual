@@ -55,6 +55,7 @@ from textual.css.constants import (
     VALID_SCROLLBAR_VISIBILITY,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
+    VALID_TEXT_DIRECTION,
     VALID_TEXT_OVERFLOW,
     VALID_TEXT_WRAP,
     VALID_VISIBILITY,
@@ -78,6 +79,7 @@ from textual.css.types import (
     EdgeType,
     Overflow,
     ScrollbarVisibility,
+    TextDirection,
     TextOverflow,
     TextWrap,
     Visibility,
@@ -410,6 +412,30 @@ class StylesBuilder:
                 string_enum_help_text(
                     "text-overflow",
                     valid_values=list(VALID_TEXT_OVERFLOW),
+                    context="css",
+                )
+
+    def process_text_direction(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            name, value, _, _, location, _ = token
+            if name == "token":
+                value = value.lower()
+                if value in VALID_TEXT_DIRECTION:
+                    self.styles._rules["text_direction"] = cast(TextDirection, value)
+                else:
+                    self.error(
+                        name,
+                        token,
+                        string_enum_help_text(
+                            "text-direction",
+                            valid_values=list(VALID_TEXT_DIRECTION),
+                            context="css",
+                        ),
+                    )
+            else:
+                string_enum_help_text(
+                    "text-direction",
+                    valid_values=list(VALID_TEXT_DIRECTION),
                     context="css",
                 )
 

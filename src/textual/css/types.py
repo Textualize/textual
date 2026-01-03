@@ -43,6 +43,7 @@ Overlay = Literal["none", "screen"]
 Position = Literal["relative", "absolute"]
 TextWrap = Literal["wrap", "nowrap"]
 TextOverflow = Literal["clip", "fold", "ellipsis"]
+TextDirection = Literal["auto", "ltr", "rtl"]
 Expand = Literal["greedy", "expand"]
 ScrollbarVisibility = Literal["visible", "hidden"]
 

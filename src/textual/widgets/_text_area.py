@@ -14,6 +14,7 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Literal
 
+from textual._bidi import apply_bidi_to_line, contains_rtl
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER, get_language
 from textual.actions import SkipAction
@@ -415,6 +416,17 @@ TextArea {
 
     placeholder: Reactive[str | Content] = reactive("")
     """Text to show when the text area has no content."""
+
+    text_direction: Reactive[Literal["auto", "ltr", "rtl"]] = reactive("ltr")
+    """Text direction for BiDi support.
+
+    "auto" detects RTL characters and applies BiDi algorithm automatically.
+    "ltr" forces left-to-right (default, best for code).
+    "rtl" forces right-to-left.
+
+    Note: Cursor positioning may not be fully accurate in RTL mode as the
+    TextArea is primarily designed for LTR text editing.
+    """
 
     @dataclass
     class Changed(Message):
@@ -1191,6 +1203,12 @@ TextArea {
             A `rich.Text` object containing the requested line.
         """
         line_string = self.document.get_line(line_index)
+
+        # Apply BiDi (bidirectional) text reordering for RTL languages
+        text_dir = self.text_direction
+        if text_dir == "rtl" or (text_dir == "auto" and contains_rtl(line_string)):
+            line_string = apply_bidi_to_line(line_string)
+
         return Text(line_string, end="", no_wrap=True)
 
     def render_lines(self, crop: Region) -> list[Strip]:
@@ -1257,6 +1275,7 @@ TextArea {
             self.read_only,
             self.show_cursor,
             self.suggestion,
+            self.text_direction,
         )
         if (cached_line := self._line_cache.get(cache_key)) is not None:
             return cached_line

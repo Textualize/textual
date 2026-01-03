@@ -89,6 +89,7 @@ VALID_KEYLINE: Final = {"none", "thin", "heavy", "double"}
 VALID_HATCH: Final = {"left", "right", "cross", "vertical", "horizontal"}
 VALID_TEXT_WRAP: Final = {"wrap", "nowrap"}
 VALID_TEXT_OVERFLOW: Final = {"clip", "fold", "ellipsis"}
+VALID_TEXT_DIRECTION: Final = {"auto", "ltr", "rtl"}
 VALID_EXPAND: Final = {"greedy", "optimal"}
 VALID_SCROLLBAR_VISIBILITY: Final = {"visible", "hidden"}
 
