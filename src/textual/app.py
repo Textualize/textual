@@ -2405,10 +2405,14 @@ class App(Generic[ReturnType], DOMNode):
     def update_styles(self, node: DOMNode, animate: bool = True) -> None:
         """Immediately update the styles of this node and all descendant nodes.
 
-        Should be called whenever CSS classes / pseudo classes change.
+        Called by Tsxtual whenever CSS classes / pseudo classes change.
         For example, when you hover over a button, the :hover pseudo class
         will be added, and this method is called to apply the corresponding
         :hover styles.
+
+        Args:
+            node: Node to update.
+            animate: Enable animation?
         """
         if isinstance(node, App):
             for screen in reversed(self.screen_stack):
