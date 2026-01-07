@@ -160,7 +160,7 @@ class Collapsible(Widget):
         Contents {
             width: 100%;
             height: auto;
-            padding: 1 0 0 3;
+            padding: 1 0 0 3;            
         }
         """
 
