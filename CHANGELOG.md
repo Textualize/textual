@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added a `refresh_styles` boolean to the `ScreenResult` message which reduces style updates when popping screens
 
-
 ## [7.0.0] - 2026-01-03
 
 ### Changed
@@ -20,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Adde atom-one-dark and atom-one-light themes @NSPC911 https://github.com/Textualize/textual/pull/6301
+- Added atom-one-dark and atom-one-light themes @NSPC911 https://github.com/Textualize/textual/pull/6301
 
 ## [6.12.0] - 2026-01-02
 
