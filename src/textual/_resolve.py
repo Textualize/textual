@@ -328,7 +328,7 @@ def resolve_box_models(
                     and styles.overlay != "screen"
                 )
             ],
-            Size(size.width, remaining_space),
+            size,
             viewport_size,
             Fraction(remaining_space),
             resolve_dimension,
