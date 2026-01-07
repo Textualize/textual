@@ -21,8 +21,8 @@ class CollapsibleTitle(Static, can_focus=True):
     DEFAULT_CSS = """
     CollapsibleTitle {
         width: auto;
-        height: auto;
-        padding: 0 1;
+        height: auto;        
+        padding: 0 1;        
         text-style: $block-cursor-blurred-text-style;
         color: $block-cursor-blurred-foreground;
 

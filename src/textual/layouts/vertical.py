@@ -50,6 +50,8 @@ class VerticalLayout(Layout):
         else:
             resolve_margin = Size(0, 0)
 
+        print("!!", parent)
+
         box_models = resolve_box_models(
             [styles.height for styles in child_styles],
             children,

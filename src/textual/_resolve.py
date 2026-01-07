@@ -246,6 +246,8 @@ def resolve_box_models(
 
     margins = [widget.styles.margin.totals for widget in widgets]
 
+    print("--", size, margin)
+    print(widgets)
     # Fixed box models
     box_models: list[BoxModel | None] = [
         (
@@ -271,6 +273,10 @@ def resolve_box_models(
             dimensions, widgets, margins
         )
     ]
+
+    from textual import log
+
+    log(box_models)
 
     if None not in box_models:
         # No fr units, so we're done
@@ -316,14 +322,19 @@ def resolve_box_models(
             )
         )
 
+        print("MARGINS")
+        log(margins)
+
         remaining_space = int(max(0, size.height - total_remaining - margin_height))
         fraction_unit = resolve_fraction_unit(
             [
                 styles
                 for styles in widget_styles
-                if styles.height is not None
-                and styles.height.is_fraction
-                and styles.overlay != "screen"
+                if (
+                    styles.height is not None
+                    and styles.height.is_fraction
+                    and styles.overlay != "screen"
+                )
             ],
             size,
             viewport_size,

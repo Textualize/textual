@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Node.update_node_styles` has grown a `animate` parameter
 
+### Added
+
+- Adde atom-one-dark and atom-one-light themes @NSPC911 https://github.com/Textualize/textual/pull/6301
+
 ## [6.12.0] - 2026-01-02
 
 ### Fixed
