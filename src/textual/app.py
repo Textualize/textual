@@ -2979,7 +2979,9 @@ class App(Generic[ReturnType], DOMNode):
 
         previous_screen = screen_stack.pop()
         previous_screen._pop_result_callback()
-        self.screen.post_message(events.ScreenResume())
+        self.screen.post_message(
+            events.ScreenResume(refresh_styles=previous_screen.styles.background.a < 0)
+        )
         self.log.system(f"{self.screen} is active")
 
         async def do_pop() -> None:

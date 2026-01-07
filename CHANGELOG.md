@@ -5,11 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [7.0.1] - 2026-01-07
+
+### Added
+
+- Added a `refresh_styles` boolean to the `ScreenResult` message which reduces style updates when popping screens
+
 ## [7.0.0] - 2026-01-03
 
 ### Changed
 
 - `Node.update_node_styles` has grown a `animate` parameter
+
+### Added
+
+- Added atom-one-dark and atom-one-light themes @NSPC911 https://github.com/Textualize/textual/pull/6301
 
 ## [6.12.0] - 2026-01-02
 
@@ -3268,6 +3278,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.0.1]: https://github.com/Textualize/textual/compare/v7.0.0...v7.0.1
 [7.0.0]: https://github.com/Textualize/textual/compare/v6.11.0...v7.0.0
 [6.11.0]: https://github.com/Textualize/textual/compare/v6.10.0...v6.11.0
 [6.10.0]: https://github.com/Textualize/textual/compare/v6.9.0...v6.10.0
