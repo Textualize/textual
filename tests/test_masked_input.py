@@ -152,6 +152,33 @@ async def test_overwrite_typing():
         assert input.value == "1234-5678"
 
 
+async def test_insert_jump_to_next_separator():
+    app = MaskedInputApp(
+        template="9999-9999-9999-9999;0",
+        select_on_focus=False,
+    )
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+
+        # If cursor is at the start, input should not jump to next separator
+        await pilot.press("-")
+        assert input.value == ""
+        assert input.cursor_position == 0
+
+        await pilot.press("1", "-")
+        assert input.value == "1   -"
+        assert input.cursor_position == 5
+
+        # If previous character is a separator, input should not jump to next separator
+        await pilot.press("-")
+        assert input.value == "1   -"
+        assert input.cursor_position == 5
+
+        await pilot.press("2", "-")
+        assert input.value == "1   -2   -"
+        assert input.cursor_position == 10
+
+
 async def test_key_movement_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = MaskedInputApp(
