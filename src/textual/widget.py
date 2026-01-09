@@ -349,7 +349,7 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
-    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
+    virtual_size = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
 
     has_focus: Reactive[bool] = Reactive(False, repaint=False)
@@ -1903,12 +1903,14 @@ class Widget(DOMNode):
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
-        self.horizontal_scrollbar.position = new_value
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.position = new_value
         if round(old_value) != round(new_value):
             self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
-        self.vertical_scrollbar.position = new_value
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.position = new_value
         if self._anchored and self._anchor_released:
             self._check_anchor()
         if round(old_value) != round(new_value):
@@ -2644,8 +2646,6 @@ class Widget(DOMNode):
             self._dirty_regions.clear()
             self._repaint_regions.clear()
             self._styles_cache.clear()
-            self._styles_cache.set_dirty(self.size.region)
-
             outer_size = self.outer_size
             self._dirty_regions.add(outer_size.region)
             if outer_size:
@@ -4092,13 +4092,13 @@ class Widget(DOMNode):
         self._refresh_scrollbars()
         width, height = self.container_size
 
-        if self.show_vertical_scrollbar:
+        if self.show_vertical_scrollbar and self.styles.scrollbar_size_vertical:
             self.vertical_scrollbar.window_virtual_size = virtual_size.height
             self.vertical_scrollbar.window_size = (
                 height - self.scrollbar_size_horizontal
             )
             self.vertical_scrollbar.refresh()
-        if self.show_horizontal_scrollbar:
+        if self.show_horizontal_scrollbar and self.styles.scrollbar_size_horizontal:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
             self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
             self.horizontal_scrollbar.refresh()
