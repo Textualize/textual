@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [7.0.2] -2026-02-09
+
+### Fixed
+
+- Removed superfluous style udpates when setting `display` attribute.
+
 ## [7.0.1] - 2026-01-07
 
 ### Added
@@ -3278,6 +3284,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.0.2]: https://github.com/Textualize/textual/compare/v7.0.1...v7.0.2
 [7.0.1]: https://github.com/Textualize/textual/compare/v7.0.0...v7.0.1
 [7.0.0]: https://github.com/Textualize/textual/compare/v6.11.0...v7.0.0
 [6.11.0]: https://github.com/Textualize/textual/compare/v6.10.0...v6.11.0
