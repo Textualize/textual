@@ -349,7 +349,7 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
-    virtual_size = Reactive(Size(0, 0), repaint=False)
+    virtual_size = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
 
     has_focus: Reactive[bool] = Reactive(False, repaint=False)
@@ -1897,9 +1897,6 @@ class Widget(DOMNode):
             self._content_height_cache = (cache_key, height)
 
         return height
-
-    def watch_virtual_size(self, virtual_size: Size) -> None:
-        self.refresh(layout=True)
 
     def watch_hover_style(
         self, previous_hover_style: Style, hover_style: Style
