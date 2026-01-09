@@ -349,6 +349,7 @@ class Reactive(Generic[ReactiveType]):
         # If the value has changed, or this is the first time setting the value
         if always or self._always_update or current_value != value:
             # Store the internal value
+
             setattr(obj, self.internal_name, value)
 
             # Check all watchers
