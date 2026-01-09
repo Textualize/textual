@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Removed superfluous style udpates when setting `display` attribute.
+- Removed superfluous style udpates when setting `display` attribute. https://github.com/Textualize/textual/pull/6316
 
 ## [7.0.1] - 2026-01-07
 
