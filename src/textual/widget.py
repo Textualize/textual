@@ -2653,9 +2653,6 @@ class Widget(DOMNode):
             self._dirty_regions.clear()
             self._repaint_regions.clear()
             self._styles_cache.clear()
-
-            # self._styles_cache.set_dirty(self.size.region)
-
             outer_size = self.outer_size
             self._dirty_regions.add(outer_size.region)
             if outer_size:
