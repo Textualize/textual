@@ -370,14 +370,10 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
     """Scroll target destination, Y coord."""
 
-    show_vertical_scrollbar: Reactive[bool] = Reactive(
-        False, layout=False, repaint=False
-    )
+    show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a vertical scrollbar?"""
 
-    show_horizontal_scrollbar: Reactive[bool] = Reactive(
-        False, layout=False, repaint=False
-    )
+    show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a horizontal scrollbar?"""
 
     border_title = _BorderTitle()  # type: ignore
