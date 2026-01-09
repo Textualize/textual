@@ -723,14 +723,11 @@ class Stylesheet:
         for node in nodes:
             apply(node, animate=animate, cache=cache)
             if isinstance(node, Widget) and node.is_scrollable:
-                scrollbar_size_vertical, scrollbar_size_horizontal = (
-                    node.scrollbars_space
-                )
                 show_vertical_scrollbar = (
-                    node.show_vertical_scrollbar and scrollbar_size_vertical
+                    node.show_vertical_scrollbar and node.scrollbar_size_vertical
                 )
                 show_horizontal_scrollbar = (
-                    node.show_horizontal_scrollbar and scrollbar_size_horizontal
+                    node.show_horizontal_scrollbar and node.scrollbar_size_horizontal
                 )
                 if show_vertical_scrollbar:
                     apply(node.vertical_scrollbar, cache=cache)
