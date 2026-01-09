@@ -867,7 +867,6 @@ class StringEnumProperty(Generic[EnumType]):
                     node = obj.node
                     if node.parent:
                         node._nodes.updated()
-                        node.parent._refresh_styles()
 
                 self._before_refresh(obj, value)
                 obj.refresh(
