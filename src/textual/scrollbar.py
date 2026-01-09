@@ -275,6 +275,7 @@ class ScrollBar(Widget):
             yield "thickness", self.thickness
 
     def validate_position(self, position: float) -> float:
+        """Position has a granulatory of 1/8 of a cell."""
         return int(position * 8) / 8
 
     def render(self) -> RenderableType:

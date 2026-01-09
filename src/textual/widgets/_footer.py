@@ -261,7 +261,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         )
         self.set_reactive(Footer.show_command_palette, show_command_palette)
         self.set_reactive(Footer.compact, compact)
-        self.set_class(compact, "-compact")
+        self.set_class(compact, "-compact", update=False)
 
     def compose(self) -> ComposeResult:
         if not self._bindings_ready:
