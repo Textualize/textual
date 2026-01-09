@@ -236,6 +236,7 @@ class Visual(ABC):
             ),
         )
         if widget.auto_links and not widget.is_container:
+            # TODO: This is suprisingly expensive (why?)
             link_style = widget.link_style
             strips = [strip._apply_link_style(link_style) for strip in strips]
 
