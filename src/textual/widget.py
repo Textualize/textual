@@ -331,7 +331,7 @@ class Widget(DOMNode):
     """Should focusable widgets be automatically focused on click? Default return value of [Widget.focus_on_click][textual.widget.Widget.focus_on_click]."""
 
     BLANK: ClassVar[bool] = False
-    """Is this widget blank (solid border, no border, no content)? Enable for very large scrolling containers."""
+    """Is this widget blank (no border, no content)? Enable for very large scrolling containers."""
 
     can_focus: bool = False
     """Widget may receive focus."""
