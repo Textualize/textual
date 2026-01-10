@@ -135,6 +135,7 @@ class Strip:
         return self._link_ids
 
     @classmethod
+    @lru_cache(maxsize=1024)
     def blank(cls, cell_length: int, style: StyleType | None = None) -> Strip:
         """Create a blank strip.
 
