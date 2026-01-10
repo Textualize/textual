@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with missing refresh
+- Fixed issue with missing refresh https://github.com/Textualize/textual/pull/6318
 
 ### Added
 
-- Added Widget.BLANK which can optimize rendering of large widgets (typically containers that scroll)
+- Added Widget.BLANK which can optimize rendering of large widgets (typically containers that scroll) https://github.com/Textualize/textual/pull/6318
 
 ## [7.0.3] - 2026-01-09
 
