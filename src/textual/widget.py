@@ -307,6 +307,7 @@ class Widget(DOMNode):
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
+    """A set of component classes."""
 
     BORDER_TITLE: ClassVar[str] = ""
     """Initial value for border_title attribute."""
@@ -328,6 +329,9 @@ class Widget(DOMNode):
 
     FOCUS_ON_CLICK: ClassVar[bool] = True
     """Should focusable widgets be automatically focused on click? Default return value of [Widget.focus_on_click][textual.widget.Widget.focus_on_click]."""
+
+    BLANK: ClassVar[bool] = False
+    """Is this widget blank (no border, no content)? Enable for very large scrolling containers."""
 
     can_focus: bool = False
     """Widget may receive focus."""
@@ -2646,6 +2650,7 @@ class Widget(DOMNode):
             self._dirty_regions.clear()
             self._repaint_regions.clear()
             self._styles_cache.clear()
+            self._styles_cache.set_dirty(self.size.region)
             outer_size = self.outer_size
             self._dirty_regions.add(outer_size.region)
             if outer_size:
@@ -4187,6 +4192,9 @@ class Widget(DOMNode):
         Returns:
             A rendered line.
         """
+        if self.BLANK:
+            return Strip.blank(self.size.width, self.visual_style.rich_style)
+
         if self._dirty_regions:
             self._render_content()
         try:
