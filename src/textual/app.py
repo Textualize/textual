@@ -2402,16 +2402,26 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.get_child_by_type(expect_type)
 
-    def update_styles(self, node: DOMNode) -> None:
+    def update_styles(self, node: DOMNode, animate: bool = True) -> None:
         """Immediately update the styles of this node and all descendant nodes.
 
-        Should be called whenever CSS classes / pseudo classes change.
+        Called by Textual whenever CSS classes / pseudo classes change.
         For example, when you hover over a button, the :hover pseudo class
         will be added, and this method is called to apply the corresponding
         :hover styles.
+
+        Args:
+            node: Node to update.
+            animate: Enable animation?
         """
-        descendants = node.walk_children(with_self=True)
-        self.stylesheet.update_nodes(descendants, animate=True)
+        if isinstance(node, App):
+            for screen in reversed(self.screen_stack):
+                screen.update_node_styles(animate=animate)
+                if not (screen.is_modal and screen.styles.background.a < 1):
+                    break
+        else:
+            descendants = node.walk_children(with_self=True)
+            self.stylesheet.update_nodes(descendants, animate=animate)
 
     def mount(
         self,
@@ -2969,7 +2979,9 @@ class App(Generic[ReturnType], DOMNode):
 
         previous_screen = screen_stack.pop()
         previous_screen._pop_result_callback()
-        self.screen.post_message(events.ScreenResume())
+        self.screen.post_message(
+            events.ScreenResume(refresh_styles=previous_screen.styles.background.a < 0)
+        )
         self.log.system(f"{self.screen} is active")
 
         async def do_pop() -> None:
@@ -3045,9 +3057,9 @@ class App(Generic[ReturnType], DOMNode):
         if hover_widget is not None:
             hover_widget.mouse_hover = True
             if hover_widget._has_hover_style:
-                hover_widget._update_styles()
+                hover_widget.update_node_styles()
         if current_hover_over is not None and current_hover_over._has_hover_style:
-            current_hover_over._update_styles()
+            current_hover_over.update_node_styles()
         self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
@@ -4247,7 +4259,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
-        self.screen._update_styles()
+        self.screen.update_node_styles()
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
             # and if the screen is still the current screen and if nothing

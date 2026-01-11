@@ -71,6 +71,7 @@ class Selection(NamedTuple):
 class Input(ScrollView):
     """A text input widget."""
 
+    BINDING_GROUP_TITLE = "Input"
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "cursor_left", "Move cursor left", show=False),
         Binding(
@@ -218,7 +219,8 @@ class Input(ScrollView):
             background: ansi_default;
             color: ansi_default;
             &>.input--cursor {
-                text-style: reverse;
+                background: ansi_white;
+                color: ansi_black;
             }
             &>.input--placeholder, &>.input--suggestion {
                 text-style: dim;

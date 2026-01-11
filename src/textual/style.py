@@ -409,6 +409,7 @@ class Style:
             underline2=text_style.underline2,
             reverse=text_style.reverse,
             strike=text_style.strike,
+            blink=text_style.blink,
             auto_color=styles.auto_color,
         )
 

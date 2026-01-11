@@ -7,12 +7,115 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
+
+## [7.2.0] - 2026-01-11
+
+### Changed
+
+- The help panel will look at ancestor widgets for a `HELP` attribute if there isn't one on the focused widget https://github.com/Textualize/textual/pull/6320
+
+## [7.1.0] - 2026-01-10
+
+### Fixed
+
+- Fixed issue with missing refresh
+
+### Added
+
+- Added Widget.BLANK which can optimize rendering of large widgets (typically containers that scroll)
+
+## [7.0.3] - 2026-01-09
+
+### Fixed
+
+- Fixed performance issue with large scrollable containers https://github.com/Textualize/textual/pull/6317
+
+## [7.0.2] - 2026-01-09
+
+### Fixed
+
+- Removed superfluous style udpates when setting `display` attribute. https://github.com/Textualize/textual/pull/6316
+
+## [7.0.1] - 2026-01-07
+
+### Added
+
+- Added a `refresh_styles` boolean to the `ScreenResult` message which reduces style updates when popping screens
+
+## [7.0.0] - 2026-01-03
+
+### Changed
+
+- `Node.update_node_styles` has grown a `animate` parameter
+
+### Added
+
+- Added atom-one-dark and atom-one-light themes @NSPC911 https://github.com/Textualize/textual/pull/6301
+
+## [6.12.0] - 2026-01-02
+
+### Fixed
+
+- Fixed unnecessary style update when popping screens, which may have caused noticable pauses changing screens (with a lot of widgets) https://github.com/Textualize/textual/pull/6304
+
+### Changed
+
+- Promoted private `_update_styes` to `update_node_styles` https://github.com/Textualize/textual/pull/6304
+
+## [6.11.0] - 2025-12-18
+
+### Added
+
+- Added a `TextSelected` event. https://github.com/Textualize/textual/pull/6290
+
+## [6.10.0] - 2025-12-16
+
+### Fixed
+
+- Fixed broken themes https://github.com/Textualize/textual/pull/6286
+- Updated toggle button style for consistency https://github.com/Textualize/textual/pull/6286
+
+## [6.9.0] - 2025-12-14
+
+### Added
+
+- Added Solarized Dark theme https://github.com/Textualize/textual/pull/6278
+- Added Rosé Pine themes https://github.com/Textualize/textual/pull/6277
+
+### Fixed
+
+- Fixed fuzzy matcher displaying wrong matched characters with simple substring match https://github.com/Textualize/textual/pull/6282
+
+## [6.8.0] - 2025-12-07
+
+### Added
+
+- Added `Content.blank` https://github.com/Textualize/textual/pull/6264
+
+### Fixed
+
+- Fixed `Input` cursor color display in ANSI mode (`ansi_color=True`) https://github.com/Textualize/textual/issues/6234
+- Fixed alt modifier on systems without extended Key Protocol https://github.com/Textualize/textual/pull/6267
+- Fixed an issue where alpha keys with modifiers weren't lower cased. If you have bound to something like `ctrl+A`, then change to `ctrl+shift+a` https://github.com/Textualize/textual/pull/6267
+- Fixed exception when setting `loading` attribute before mount https://github.com/Textualize/textual/pull/6268
+- Fixed issue with dim filter not using background (may cause snapshot failures) https://github.com/Textualize/textual/pull/6269
+
+## [6.7.1] - 2025-12-1
+
+### Fixed
+
+- Fixed `Content.fold` https://github.com/Textualize/textual/pull/6256
+
+## [6.7.0] - 2025-11-29
+
 ### Added
 
 - Added `GridLayout.max_column_width` https://github.com/Textualize/textual/pull/6228
 - Added `Content.fold` https://github.com/Textualize/textual/pull/6238
 - Added `strip_control_codes` to Content constructors https://github.com/Textualize/textual/pull/6238
-- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
 
 ### Changed 
 
@@ -3209,6 +3312,18 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.2.0]: https://github.com/Textualize/textual/compare/v7.1.0...v7.2.0
+[7.1.0]: https://github.com/Textualize/textual/compare/v7.0.3...v7.1.0
+[7.0.3]: https://github.com/Textualize/textual/compare/v7.0.2...v7.0.3
+[7.0.2]: https://github.com/Textualize/textual/compare/v7.0.1...v7.0.2
+[7.0.1]: https://github.com/Textualize/textual/compare/v7.0.0...v7.0.1
+[7.0.0]: https://github.com/Textualize/textual/compare/v6.11.0...v7.0.0
+[6.11.0]: https://github.com/Textualize/textual/compare/v6.10.0...v6.11.0
+[6.10.0]: https://github.com/Textualize/textual/compare/v6.9.0...v6.10.0
+[6.9.0]: https://github.com/Textualize/textual/compare/v6.8.0...v6.9.0
+[6.8.0]: https://github.com/Textualize/textual/compare/v6.7.1...v6.8.0
+[6.7.1]: https://github.com/Textualize/textual/compare/v6.7.0...v6.7.1
+[6.7.0]: https://github.com/Textualize/textual/compare/v6.6.0...v6.7.0
 [6.6.0]: https://github.com/Textualize/textual/compare/v6.5.0...v6.6.0
 [6.5.0]: https://github.com/Textualize/textual/compare/v6.4.0...v6.5.0
 [6.4.0]: https://github.com/Textualize/textual/compare/v6.3.0...v6.4.0

@@ -317,13 +317,16 @@ def resolve_box_models(
         )
 
         remaining_space = int(max(0, size.height - total_remaining - margin_height))
+
         fraction_unit = resolve_fraction_unit(
             [
                 styles
                 for styles in widget_styles
-                if styles.height is not None
-                and styles.height.is_fraction
-                and styles.overlay != "screen"
+                if (
+                    styles.height is not None
+                    and styles.height.is_fraction
+                    and styles.overlay != "screen"
+                )
             ],
             size,
             viewport_size,

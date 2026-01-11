@@ -386,6 +386,25 @@ def test_wrap() -> None:
     "content, width, expected",
     [
         (
+            Content("111222333"),
+            3,
+            [
+                Content("111"),
+                Content("222"),
+                Content("333"),
+            ],
+        ),
+        (
+            Content("1112223334"),
+            3,
+            [
+                Content("111"),
+                Content("222"),
+                Content("333"),
+                Content("4"),
+            ],
+        ),
+        (
             Content(""),
             10,
             [Content("")],
@@ -445,16 +464,16 @@ def test_wrap() -> None:
             [
                 Content("💩H"),
                 Content.from_markup("[b]ell"),
-                Content.from_markup("[b]o[/]"),
+                Content.from_markup("o"),
             ],
         ),
         (
-            Content.from_markup("💩H[b]ell[/]💩"),
+            Content.from_markup("💩H[b]ell[/]o💩"),
             3,
             [
                 Content("💩H"),
                 Content.from_markup("[b]ell"),
-                Content.from_markup("[b]o[/]💩"),
+                Content.from_markup("o💩"),
             ],
         ),
         (
@@ -548,5 +567,23 @@ def test_fold(content: Content, width: int, expected: list[Content]) -> None:
     """
     result = content.fold(width)
     assert isinstance(result, list)
+    assert len(result) == len(expected)
     for line, expected_line in zip(result, expected):
         assert line.is_same(expected_line)
+
+
+@pytest.mark.parametrize(
+    "width,style,text,spans,cell_length",
+    [
+        (5, None, "     ", [], 5),
+        (0, None, "", [], 0),
+        (5, "on red", "     ", [Span(0, 5, "on red")], 5),
+    ],
+)
+def test_blank_method(
+    width: int, style: str | None, text: str, spans: list[Span], cell_length: int
+) -> None:
+    blank = Content.blank(width, style)
+    assert blank.plain == text
+    assert blank.spans == spans
+    assert blank.cell_length == cell_length

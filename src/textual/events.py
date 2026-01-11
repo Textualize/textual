@@ -901,12 +901,19 @@ class Paste(Event, bubble=True):
         yield "text", self.text
 
 
+@dataclass
 class ScreenResume(Event, bubble=False):
     """Sent to screen that has been made active.
 
     - [ ] Bubbles
     - [ ] Verbose
     """
+
+    refresh_styles: bool = True
+    """Should the resuming screen refresh its styles?"""
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.refresh_styles
 
 
 class ScreenSuspend(Event, bubble=False):
@@ -976,3 +983,7 @@ class DeliveryFailed(Event, bubble=False):
 
     name: str | None = None
     """Optional name returned to the app to identify the download."""
+
+
+class TextSelected(Event, bubble=True):
+    """Sent from the screen when text is selected (Not Input and TextArea)"""

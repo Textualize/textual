@@ -1427,7 +1427,7 @@ class Screen(Generic[ScreenResultType], Widget):
         if self.stack_updates and self.is_attached:
             self._refresh_layout(size)
 
-    def _on_screen_resume(self) -> None:
+    def _on_screen_resume(self, event: events.ScreenResume) -> None:
         """Screen has resumed."""
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
@@ -1441,8 +1441,10 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if self.is_attached:
             self._compositor_refresh()
-            self.app.stylesheet.update(self)
-            self._refresh_layout(size)
+            if event.refresh_styles:
+                self.update_node_styles(animate=False)
+            if self._size != size:
+                self._refresh_layout(size)
             self.refresh()
 
     async def _compose(self) -> None:
@@ -1698,6 +1700,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     self.clear_selection()
                 self._mouse_down_offset = None
                 self._selecting = False
+                self.post_message(events.TextSelected())
 
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
                 self._box_select = event.shift

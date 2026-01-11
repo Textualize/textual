@@ -4748,8 +4748,7 @@ def test_prune_fix(snap_compare) -> None:
 def test_focus_on_click(snap_compare) -> None:
     """Test focus on click may be prevented.
 
-    You should see a button in a non-focused stated
-
+    You should see a button in a non-focused state.
     """
 
     class NonFocusButton(Button):
@@ -4762,6 +4761,7 @@ def test_focus_on_click(snap_compare) -> None:
             yield NonFocusButton("Click")
 
     async def run_before(pilot: Pilot) -> None:
+        pilot.app.query_one(NonFocusButton).active_effect_duration = 0
         await pilot.pause()
         await pilot.click(NonFocusButton)
 

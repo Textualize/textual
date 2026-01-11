@@ -258,7 +258,7 @@ class ScrollBar(Widget):
         self.thickness = thickness
         self.grabbed_position: float = 0
         super().__init__(name=name)
-        self.auto_links = False
+        self.set_reactive(ScrollBar.auto_links, False)
 
     window_virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(0)
@@ -273,6 +273,10 @@ class ScrollBar(Widget):
         yield "position", self.position
         if self.thickness > 1:
             yield "thickness", self.thickness
+
+    def validate_position(self, position: float) -> float:
+        """Position has a granulatory of 1/8 of a cell."""
+        return int(position * 8) / 8
 
     def render(self) -> RenderableType:
         assert self.parent is not None
