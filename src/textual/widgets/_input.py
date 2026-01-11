@@ -71,6 +71,7 @@ class Selection(NamedTuple):
 class Input(ScrollView):
     """A text input widget."""
 
+    BINDING_GROUP_TITLE = "Input"
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "cursor_left", "Move cursor left", show=False),
         Binding(
