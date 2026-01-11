@@ -8724,6 +8724,30 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label=" update_styles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.update_styles(node)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;node
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.update_styles(animate)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;animate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -13807,6 +13831,30 @@ window.onload = async (event) => {
       <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;update_styles
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label=" update_styles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.update_styles(node)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;node
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.update_styles(animate)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;animate
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -23031,16 +23079,63 @@ argument, the <code>keymap</code> argument takes precedence.</p>
 
 
 <a href="#textual.app.App.update_styles" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">update_styles</span><span class="p">(</span><span class="n"><span title="textual.app.App.update_styles(node)">node</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">update_styles</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="node (textual.app.App.update_styles(node))" href="#textual.app.App.update_styles(node)">node</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="animate (textual.app.App.update_styles(animate))" href="#textual.app.App.update_styles(animate)">animate</a></span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Immediately update the styles of this node and all descendant nodes.</p>
-<p>Should be called whenever CSS classes / pseudo classes change.
+<p>Called by Textual whenever CSS classes / pseudo classes change.
 For example, when you hover over a button, the :hover pseudo class
 will be added, and this method is called to apply the corresponding
 :hover styles.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.app.App.update_styles(node)" class="doc doc-heading doc-heading-parameter">                  <code>node</code>
+<a href="#textual.app.App.update_styles(node)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            DOMNode (textual.dom.DOMNode)" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Node to update.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h4 id="textual.app.App.update_styles(animate)" class="doc doc-heading doc-heading-parameter">                  <code>animate</code>
+<a href="#textual.app.App.update_styles(animate)" class="headerlink" title="Permanent link">&para;</a></h4>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Enable animation?</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
     </div>
 
