@@ -4213,7 +4213,12 @@ class Widget(DOMNode):
         Returns:
             A list of list of segments.
         """
-        strips = self._styles_cache.render_widget(self, crop)
+        if self.BLANK:
+            strips = [
+                Strip.blank(crop.width, self.visual_style.rich_style)
+            ] * crop.height
+        else:
+            strips = self._styles_cache.render_widget(self, crop)
         return strips
 
     def get_style_at(self, x: int, y: int) -> Style:

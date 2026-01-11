@@ -451,7 +451,10 @@ class StylesCache:
 
             if (text_opacity := styles.text_opacity) != 1.0:
                 line = TextOpacity.process_segments(line, text_opacity, ansi_theme)
-            line = line_post(line_pad(line, pad_left, pad_right, inner.rich_style))
+            if pad_left or pad_right:
+                line = line_post(line_pad(line, pad_left, pad_right, inner.rich_style))
+            else:
+                line = line_post(line)
 
             if border_left or border_right:
                 # Add left / right border
