@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- The help panel will look at ancestor widgets for a `HELP` attribute if there isn't one on the focused widget https://github.com/Textualize/textual/pull/6320
+
 ## [7.1.0] - 2026-01-10
 
 ### Fixed
