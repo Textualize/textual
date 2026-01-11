@@ -63,6 +63,8 @@ class StylesCache:
         self._cache: dict[int, Strip] = {}
         self._dirty_lines: set[int] = set()
         self._width = 1
+        self._simple_strip: Strip | None = None
+        """A simple strip consisting of left border + background + right border, which may be reused in a render."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         if self._dirty_lines:
@@ -106,6 +108,7 @@ class StylesCache:
         """
         border_title = widget._border_title
         border_subtitle = widget._border_subtitle
+        self._simple_strip = None
 
         base_background, background = widget.background_colors
         styles = widget.styles
@@ -348,6 +351,7 @@ class StylesCache:
                 segments = _apply_opacity(segments, base_background, opacity)
             return segments
 
+        cache_simple_strip: bool = False
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
@@ -411,11 +415,13 @@ class StylesCache:
                 label_segments,
                 label_alignment,  # type: ignore
             )
-
         # Draw padding (B)
         elif (pad_top and y < gutter.top) or (
             pad_bottom and y >= height - gutter.bottom
         ):
+            if self._simple_strip is not None:
+                return self._simple_strip
+            cache_simple_strip = True
             background_rich_style = inner.rich_style
             left_style = Style(
                 foreground=base_background + border_left_color.multiply_alpha(opacity)
@@ -498,6 +504,7 @@ class StylesCache:
                 line = [left, *line]
             else:
                 line = [*line, right]
-
         strip = Strip(post(line), width)
+        if cache_simple_strip:
+            self._simple_strip = strip
         return strip
