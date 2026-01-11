@@ -17,6 +17,8 @@ __all__ = ["Collapsible", "CollapsibleTitle"]
 class CollapsibleTitle(Static, can_focus=True):
     """Title and symbol for the Collapsible."""
 
+    BINDING_GROUP_TITLE = "Collapsible"
+
     ALLOW_SELECT = False
     DEFAULT_CSS = """
     CollapsibleTitle {
