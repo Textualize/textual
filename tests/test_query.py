@@ -397,3 +397,8 @@ async def test_query_one_optional():
 
         assert isinstance(app.query_one_optional("Input"), Input)
         assert isinstance(app.query_one_optional(".bar"), Input)
+
+        # Verify that WrongType exceptions still propagate
+        with pytest.raises(WrongType):
+            # Asking for a Label, but the widget is an Input
+            app.query_one_optional("#foo", Label)
