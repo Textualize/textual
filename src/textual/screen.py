@@ -264,7 +264,7 @@ class Screen(Generic[ScreenResultType], Widget):
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
-        Binding("ctrl+c", "screen.copy_text", "Copy selected text", show=False),
+        Binding("ctrl+c,super+c", "screen.copy_text", "Copy selected text", show=False),
     ]
 
     def __init__(

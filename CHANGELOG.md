@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DOM.query_one_optional`
 
+### Changed
+
+- Added super+c (command on mac) alternative bindings for copy, for terminals that support it (Ghostty does)
+
 ## [7.2.0] - 2026-01-11
 
 ### Changed

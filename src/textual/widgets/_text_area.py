@@ -266,7 +266,7 @@ TextArea {
             "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
         Binding("ctrl+x", "cut", "Cut", show=False),
-        Binding("ctrl+c", "copy", "Copy", show=False),
+        Binding("ctrl+c,super+c", "copy", "Copy", show=False),
         Binding("ctrl+v", "paste", "Paste", show=False),
         Binding(
             "ctrl+u", "delete_to_start_of_line", "Delete to line start", show=False
