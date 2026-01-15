@@ -380,3 +380,25 @@ async def test_query_error():
         # Widget is an Input so this works
         foo = app.query_one("#foo", Input)
         assert isinstance(foo, Input)
+
+
+async def test_query_one_optional():
+    class QueryApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield Input(id="foo")
+            yield Input(classes="bar")
+
+    app = QueryApp()
+    async with app.run_test():
+        assert app.query_one_optional("TextArea") is None
+        assert app.query_one_optional("Input#bar") is None
+
+        assert isinstance(app.query_one_optional("Input"), Input)
+        assert isinstance(app.query_one_optional(".bar"), Input)
+
+        # Verify that WrongType exceptions still propagate
+        with pytest.raises(WrongType):
+            # Asking for a Label, but the widget is an Input
+            app.query_one_optional("#foo", Label)

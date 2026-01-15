@@ -1529,6 +1529,43 @@ class DOMNode(MessagePump):
     if TYPE_CHECKING:
 
         @overload
+        def query_one_optional(self, selector: str) -> Widget | None: ...
+
+        @overload
+        def query_one_optional(self, selector: type[QueryType]) -> QueryType | None: ...
+
+        @overload
+        def query_one_optional(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType | None: ...
+
+    def query_one_optional(
+        self,
+        selector: str | type[QueryType],
+        expect_type: type[QueryType] | None = None,
+    ) -> QueryType | Widget | None:
+        """Get a widget from this widget's children that matches a selector or widget type,
+        or `None` if there is no match.
+
+        Args:
+            selector: A selector or widget type.
+            expect_type: Require the object be of the supplied type, or None for any type.
+
+        Raises:
+            WrongType: If the wrong type was found.
+
+        Returns:
+            A widget matching the selector, or `None`.
+        """
+        try:
+            widget = self.query_one(selector, expect_type)
+        except NoMatches:
+            return None
+        return widget
+
+    if TYPE_CHECKING:
+
+        @overload
         def query_exactly_one(self, selector: str) -> Widget: ...
 
         @overload

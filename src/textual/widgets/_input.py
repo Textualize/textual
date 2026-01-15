@@ -128,7 +128,7 @@ class Input(ScrollView):
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
         Binding("ctrl+x", "cut", "Cut selected text", show=False),
-        Binding("ctrl+c", "copy", "Copy selected text", show=False),
+        Binding("ctrl+c,super+c", "copy", "Copy selected text", show=False),
         Binding("ctrl+v", "paste", "Paste text from the clipboard", show=False),
     ]
     """
