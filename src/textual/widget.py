@@ -1148,6 +1148,10 @@ class Widget(DOMNode):
         Args:
             names: Names of components.
             partial: Return a partial style (not combined with parent).
+            default: A Style to return if any component style doesn't exist.
+
+        Raises:
+            KeyError: If a component style doesn't exist, and no `default` is provided.
 
         Returns:
             A Rich style object.
