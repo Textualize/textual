@@ -1140,19 +1140,32 @@ class Widget(DOMNode):
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
 
-    def get_component_rich_style(self, *names: str, partial: bool = False) -> Style:
+    def get_component_rich_style(
+        self, *names: str, partial: bool = False, default: Style | None = None
+    ) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
             names: Names of components.
             partial: Return a partial style (not combined with parent).
+            default: A Style to return if any component style doesn't exist.
+
+        Raises:
+            KeyError: If a component style doesn't exist, and no `default` is provided.
 
         Returns:
             A Rich style object.
         """
 
         if names not in self._rich_style_cache:
-            component_styles = self.get_component_styles(*names)
+            if default is None:
+                component_styles = self.get_component_styles(*names)
+            else:
+                try:
+                    component_styles = self.get_component_styles(*names)
+                except KeyError:
+                    return default
+
             style = component_styles.rich_style
             text_opacity = component_styles.text_opacity
             if text_opacity < 1 and style.bgcolor is not None:
