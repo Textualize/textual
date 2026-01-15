@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
+- 
 ### Added
 
 - Added `DOM.query_one_optional`

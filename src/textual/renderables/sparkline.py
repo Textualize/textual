@@ -23,6 +23,7 @@ class Sparkline(Generic[T]):
     Args:
         data: The sequence of data to render.
         width: The width of the sparkline/the number of buckets to partition the data into.
+        height: The height of the sparkline in lines.
         min_color: The color of values equal to the min value in data.
         max_color: The color of values equal to the max value in data.
         summary_function: Function that will be applied to each bucket.
@@ -35,12 +36,14 @@ class Sparkline(Generic[T]):
         data: Sequence[T],
         *,
         width: int | None,
+        height: int | None = None,
         min_color: Color = Color.from_rgb(0, 255, 0),
         max_color: Color = Color.from_rgb(255, 0, 0),
         summary_function: SummaryFunction[T] = max,
     ) -> None:
         self.data: Sequence[T] = data
         self.width = width
+        self.height = height
         self.min_color = Style.from_color(min_color)
         self.max_color = Style.from_color(max_color)
         self.summary_function: SummaryFunction[T] = summary_function
@@ -66,40 +69,76 @@ class Sparkline(Generic[T]):
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         width = self.width or options.max_width
+        height = self.height or 1
+
         len_data = len(self.data)
         if len_data == 0:
+            for _ in range(height - 1):
+                yield Segment.line()
+
             yield Segment("▁" * width, self.min_color)
             return
         if len_data == 1:
-            yield Segment("█" * width, self.max_color)
+            for i in range(height):
+                yield Segment("█" * width, self.max_color)
+
+                if i < height - 1:
+                    yield Segment.line()
             return
+
+        bar_line_segments = len(self.BARS)
+        bar_segments = bar_line_segments * height - 1
 
         minimum, maximum = min(self.data), max(self.data)
         extent = maximum - minimum or 1
 
-        buckets = tuple(self._buckets(list(self.data), num_buckets=width))
-
-        bucket_index = 0.0
-        bars_rendered = 0
-        step = len(buckets) / width
         summary_function = self.summary_function
         min_color, max_color = self.min_color.color, self.max_color.color
         assert min_color is not None
         assert max_color is not None
-        while bars_rendered < width:
-            partition = buckets[int(bucket_index)]
-            partition_summary = summary_function(partition)
-            height_ratio = (partition_summary - minimum) / extent
-            bar_index = int(height_ratio * (len(self.BARS) - 1))
-            bar_color = blend_colors(min_color, max_color, height_ratio)
-            bars_rendered += 1
-            bucket_index += step
-            yield Segment(self.BARS[bar_index], Style.from_color(bar_color))
+
+        buckets = tuple(self._buckets(list(self.data), num_buckets=width))
+
+        for i in reversed(range(height)):
+            current_bar_part_low = i * bar_line_segments
+            current_bar_part_high = (i + 1) * bar_line_segments
+
+            bucket_index = 0.0
+            bars_rendered = 0
+            step = len(buckets) / width
+            while bars_rendered < width:
+                partition = buckets[int(bucket_index)]
+                partition_summary = summary_function(partition)
+                height_ratio = (partition_summary - minimum) / extent
+                bar_index = int(height_ratio * bar_segments)
+
+                if bar_index < current_bar_part_low:
+                    bar = " "
+                    with_color = False
+                elif bar_index >= current_bar_part_high:
+                    bar = "█"
+                    with_color = True
+                else:
+                    bar = self.BARS[bar_index % bar_line_segments]
+                    with_color = True
+
+                if with_color:
+                    bar_color = blend_colors(min_color, max_color, height_ratio)
+                    style = Style.from_color(bar_color)
+                else:
+                    style = None
+
+                bars_rendered += 1
+                bucket_index += step
+                yield Segment(bar, style)
+
+            if i > 0:
+                yield Segment.line()
 
     def __rich_measure__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> Measurement:
-        return Measurement(self.width or options.max_width, 1)
+        return Measurement(self.width or options.max_width, self.height or 1)
 
 
 if __name__ == "__main__":
