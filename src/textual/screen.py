@@ -558,6 +558,9 @@ class Screen(Generic[ScreenResultType], Widget):
         """Check if this widget permits text selection."""
         return self.ALLOW_SELECT
 
+    def get_binding_sort_order(self) -> list[str]:
+        return ["default"]
+
     def get_loading_widget(self) -> Widget:
         """Get a widget to display a loading indicator.
 
