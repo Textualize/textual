@@ -25,6 +25,7 @@ from typing import (
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
+from rich.style import NULL_STYLE as RICH_NULL_STYLE
 from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
@@ -1072,7 +1073,9 @@ class DOMNode(MessagePump):
     @property
     def selection_style(self) -> Style:
         """The style of selected text."""
-        style = self.screen.get_component_rich_style("screen--selection")
+        style = self.screen.get_component_rich_style(
+            "screen--selection", default=RICH_NULL_STYLE
+        )
         return style
 
     @property

@@ -5,19 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [7.3.0] - 2026-01-15
 
-### Changed
+### Fixed
 
-- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
-- 
+- Fixed triple click on command palette raising an exception https://github.com/Textualize/textual/pull/6329
+
 ### Added
 
 - Added `DOM.query_one_optional`
+- Added `default` parameter to `get_component_rich_style` get_component_rich_style
 
 ### Changed
 
 - Added super+c (command on mac) alternative bindings for copy, for terminals that support it (Ghostty does)
+- Allow `Sparkline` to be of any height, not just 1 https://github.com/Textualize/textual/pull/6171
 
 ## [7.2.0] - 2026-01-11
 
@@ -3320,6 +3322,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.3.0]: https://github.com/Textualize/textual/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/Textualize/textual/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/Textualize/textual/compare/v7.0.3...v7.1.0
 [7.0.3]: https://github.com/Textualize/textual/compare/v7.0.2...v7.0.3

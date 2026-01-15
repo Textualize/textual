@@ -10,6 +10,7 @@ from rich.console import Console, ConsoleOptions, RenderableType
 from rich.measure import Measurement
 from rich.protocol import is_renderable, rich_cast
 from rich.segment import Segment
+from rich.style import NULL_STYLE as RICH_NULL_STYLE
 from rich.style import Style as RichStyle
 from rich.text import Text
 
@@ -219,7 +220,9 @@ class Visual(ABC):
         selection = widget.text_selection
         if selection is not None:
             selection_style: Style | None = Style.from_rich_style(
-                widget.screen.get_component_rich_style("screen--selection")
+                widget.screen.get_component_rich_style(
+                    "screen--selection", default=RICH_NULL_STYLE
+                )
             )
         else:
             selection_style = None
