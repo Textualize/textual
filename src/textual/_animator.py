@@ -11,7 +11,7 @@ from typing_extensions import Protocol, runtime_checkable
 from textual import _time
 from textual._callback import invoke
 from textual._compat import cached_property
-from textual._easing import DEFAULT_EASING, EASING
+from textual._easing import DEFAULT_EASING, EASING, DefaultEasingFunctions
 from textual._types import AnimationLevel, CallbackType
 from textual.timer import Timer
 
@@ -303,7 +303,7 @@ class Animator:
         final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
-        easing: EasingFunction | str = DEFAULT_EASING,
+        easing: EasingFunction | DefaultEasingFunctions = DEFAULT_EASING,
         delay: float = 0.0,
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "full",
