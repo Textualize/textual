@@ -160,7 +160,12 @@ def test_Regex_validate(regex, value, expected_result):
         ("123", 100, 200, True),  # valid integer within range
         ("99", 100, 200, False),  # valid integer but not in range
         ("201", 100, 200, False),  # valid integer but not in range
-        ("1.23e4", None, None, False),  # valid scientific notation, even resolving to an integer, is not valid
+        (
+            "1.23e4",
+            None,
+            None,
+            False,
+        ),  # valid scientific notation, even resolving to an integer, is not valid
         ("123.", None, None, False),  # periods not valid in integers
         ("123_456", None, None, True),  # underscores are valid python
         ("_123_456", None, None, False),  # leading underscores are not valid python
