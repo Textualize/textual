@@ -4555,6 +4555,7 @@ class App(Generic[ReturnType], DOMNode):
     def _resume_signal(self) -> None:
         """Signal that the application is being resumed from a suspension."""
         self.app_resume_signal.publish(self)
+        self.refresh(layout=True)
 
     @contextmanager
     def suspend(self) -> Iterator[None]:
@@ -4613,7 +4614,7 @@ class App(Generic[ReturnType], DOMNode):
         """Suspend the process into the background.
 
         Note:
-            On Unix and Unix-like systems a `SIGTSTP` is sent to the
+            On Unix and Unix-like systems a `SIGSTOP` is sent to the
             application's process. Currently on Windows and when running
             under Textual Web this is a non-operation.
         """
@@ -4623,8 +4624,9 @@ class App(Generic[ReturnType], DOMNode):
             # First, ensure that the suspend signal gets published while
             # we're still in application mode.
             self._suspend_signal()
-            # With that out of the way, send the SIGTSTP signal.
-            os.kill(os.getpid(), signal.SIGTSTP)
+            self._driver.suspend_application_mode()
+            self._driver._must_signal_resume = True
+            os.kill(os.getpid(), signal.SIGSTOP)
             # NOTE: There is no call to publish the resume signal here, this
             # will be handled by the driver posting a SignalResume event
             # (see the event handler on App._resume_signal) above.

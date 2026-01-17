@@ -72,20 +72,18 @@ class LinuxDriver(Driver):
         signal.signal(signal.SIGCONT, self._sigcont_application)
 
     def _sigtstp_application(self, *_) -> None:
-        """Handle a SIGTSTP signal."""
-        # If we're supposed to auto-restart, that means we need to shut down
-        # first.
-        if self._auto_restart:
-            self.suspend_application_mode()
-            # Flag that we'll need to signal a resume on successful startup
-            # again.
-            self._must_signal_resume = True
-        # Now send a SIGSTOP to our process to *actually* suspend the
-        # process.
-        os.kill(os.getpid(), signal.SIGSTOP)
+        """Handle a SIGTSTP signal.
+
+        This is called when the process receives SIGTSTP from an external
+        source (e.g., `kill -TSTP`). We schedule action_suspend_process via
+        the event loop, avoiding deadlock from calling _key_thread.join()
+        in signal context.
+        """
+        if self._auto_restart and self._loop is not None:
+            self._loop.call_soon_threadsafe(self._app.action_suspend_process)
 
     def _sigcont_application(self, *_) -> None:
-        """Handle a SICONT application."""
+        """Handle a SIGCONT signal."""
         if self._auto_restart:
             self.resume_application_mode()
 
