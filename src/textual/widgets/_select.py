@@ -23,6 +23,10 @@ if TYPE_CHECKING:
     from textual.app import ComposeResult
 
 
+class NonSelectableStatic(Static):
+    ALLOW_SELECT = False
+
+
 class NoSelection:
     """Used by the `Select` widget to flag the unselected state. See [`Select.BLANK`][textual.widgets.Select.BLANK]."""
 
@@ -45,6 +49,8 @@ class SelectOverlay(OptionList):
     """The 'pop-up' overlay for the Select control."""
 
     BINDINGS = [("escape", "dismiss", "Dismiss menu")]
+
+    ALLOW_SELECT = False
 
     @dataclass
     class Dismiss(Message):
@@ -217,6 +223,8 @@ class SelectCurrent(Horizontal):
     }
     """
 
+    ALLOW_SELECT = False
+
     has_value: var[bool] = var(False)
     """True if there is a current value, or False if it is None."""
 
@@ -247,9 +255,9 @@ class SelectCurrent(Horizontal):
 
     def compose(self) -> ComposeResult:
         """Compose label and down arrow."""
-        yield Static(self.placeholder, id="label")
-        yield Static("▼", classes="arrow down-arrow")
-        yield Static("▲", classes="arrow up-arrow")
+        yield NonSelectableStatic(self.placeholder, id="label")
+        yield NonSelectableStatic("▼", classes="arrow down-arrow")
+        yield NonSelectableStatic("▲", classes="arrow up-arrow")
 
     def _watch_has_value(self, has_value: bool) -> None:
         """Toggle the class."""
@@ -285,6 +293,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     | :- | :- |
     | enter,down,space,up | Activate the overlay |
     """
+
+    ALLOW_SELECT = False
 
     DEFAULT_CSS = """
     Select {

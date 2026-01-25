@@ -360,12 +360,14 @@ class ScrollBar(Widget):
         event.stop()
 
     def _on_mouse_capture(self, event: events.MouseCapture) -> None:
+        self.styles.pointer = "grabbing"
         if isinstance(self._parent, Widget):
             self._parent.release_anchor()
         self.grabbed = event.mouse_position
         self.grabbed_position = self.position
 
     def _on_mouse_release(self, event: events.MouseRelease) -> None:
+        self.styles.pointer = "default"
         self.grabbed = None
         if self.vertical and isinstance(self.parent, Widget):
             self.parent._check_anchor()

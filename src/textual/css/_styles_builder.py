@@ -50,6 +50,7 @@ from textual.css.constants import (
     VALID_KEYLINE,
     VALID_OVERFLOW,
     VALID_OVERLAY,
+    VALID_POINTER,
     VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_SCROLLBAR_VISIBILITY,
@@ -1277,6 +1278,24 @@ class StylesBuilder:
             if token.value not in VALID_EXPAND:
                 self.error(name, tokens[0], expand_help_text(name))
             self.styles._rules["expand"] = token.value
+
+    def process_pointer(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            name, value, _, _, location, _ = token
+            if name == "token":
+                value = value.lower()
+                if value in VALID_POINTER:
+                    self.styles._rules["pointer"] = value
+                else:
+                    self.error(
+                        name,
+                        token,
+                        string_enum_help_text(
+                            "pointer",
+                            valid_values=list(VALID_POINTER),
+                            context="css",
+                        ),
+                    )
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """

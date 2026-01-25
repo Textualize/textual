@@ -91,6 +91,38 @@ VALID_TEXT_WRAP: Final = {"wrap", "nowrap"}
 VALID_TEXT_OVERFLOW: Final = {"clip", "fold", "ellipsis"}
 VALID_EXPAND: Final = {"greedy", "optimal"}
 VALID_SCROLLBAR_VISIBILITY: Final = {"visible", "hidden"}
+VALID_POINTER: Final = {
+    "alias",
+    "cell",
+    "copy",
+    "crosshair",
+    "default",
+    "e-resize",
+    "ew-resize",
+    "grab",
+    "grabbing",
+    "help",
+    "move",
+    "n-resize",
+    "ne-resize",
+    "nesw-resize",
+    "no-drop",
+    "not-allowed",
+    "ns-resize",
+    "nw-resize",
+    "nwse-resize",
+    "pointer",
+    "progress",
+    "s-resize",
+    "se-resize",
+    "sw-resize",
+    "text",
+    "vertical-text",
+    "w-resize",
+    "wait",
+    "zoom-in",
+    "zoom-out",
+}
 
 HATCHES: Final = {
     "left": "╲",
