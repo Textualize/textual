@@ -386,3 +386,19 @@ def test_app_loop_run_after_asyncio_run() -> None:
     app = MyApp()
     result = app.run()
     assert result == 42
+
+
+async def test_pointer_shape() -> None:
+    """Test that the pointer shape updates."""
+
+    class PointerApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Hello")
+            yield Button("Click me")
+
+    app = PointerApp()
+    async with app.run_test() as pilot:
+        await pilot.hover(offset=(0, 0))
+        assert app.screen._pointer_shape == "default"
+        await pilot.hover(offset=(1, 1))
+        assert app.screen._pointer_shape == "pointer"

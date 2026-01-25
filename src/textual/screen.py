@@ -584,8 +584,13 @@ class Screen(Generic[ScreenResultType], Widget):
         widget = self if self.app.mouse_over is None else self.app.mouse_over
         pointer_shape = "default"
         for node in widget.ancestors_with_self:
-            if (pointer_shape := node.styles.pointer) != "default":
-                break
+            if isinstance(node, Widget):
+                if node.loading:
+                    pointer_shape = "wait"
+                    break
+                if (pointer_shape := node.styles.pointer) != "default":
+                    break
+
         self._pointer_shape = pointer_shape
 
     def render(self) -> RenderableType:
