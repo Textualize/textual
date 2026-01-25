@@ -799,6 +799,7 @@ class StringEnumProperty(Generic[EnumType]):
         refresh_children: bool = False,
         refresh_parent: bool = False,
         display: bool = False,
+        pointer: bool = False,
     ) -> None:
         self._valid_values = valid_values
         self._default = default
@@ -806,6 +807,7 @@ class StringEnumProperty(Generic[EnumType]):
         self._refresh_children = refresh_children
         self._refresh_parent = refresh_parent
         self._display = display
+        self._pointer = pointer
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -874,6 +876,13 @@ class StringEnumProperty(Generic[EnumType]):
                     children=self._refresh_children,
                     parent=self._refresh_parent,
                 )
+                if self._pointer and obj.node is not None:
+                    from textual.dom import NoScreen
+
+                    try:
+                        obj.node.screen.update_pointer_shape()
+                    except NoScreen:
+                        pass
 
 
 class OverflowProperty(StringEnumProperty):

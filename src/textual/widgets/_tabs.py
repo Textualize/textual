@@ -99,6 +99,7 @@ class Tab(Static):
         padding: 0 1;
         text-align: center;
         color: $foreground 50%;
+        pointer: pointer;
 
         &:hover {
             color: $foreground;
@@ -115,6 +116,8 @@ class Tab(Static):
         }
     }
     """
+
+    ALLOW_SELECT = False
 
     @dataclass
     class TabMessage(Message):

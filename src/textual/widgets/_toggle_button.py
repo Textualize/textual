@@ -60,6 +60,7 @@ class ToggleButton(Static, can_focus=True):
         background: $surface;
         text-wrap: nowrap;
         text-overflow: ellipsis;
+        pointer: pointer;
 
         &.-textual-compact {
             border: none !important;

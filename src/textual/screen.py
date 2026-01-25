@@ -48,6 +48,7 @@ from textual.binding import ActiveBinding, Binding, BindingsMap
 from textual.css.match import match
 from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, QueryType
+from textual.css.styles import PointerShape
 from textual.dom import DOMNode
 from textual.errors import NoWidget
 from textual.geometry import NULL_OFFSET, Offset, Region, Size
@@ -260,6 +261,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     _mouse_down_offset: var[Offset | None] = var(None)
     """Last mouse down screen offset, or `None` if the mouse is up."""
+
+    _pointer_shape: var[PointerShape] = var("default")
+    """The current mouse pointer shape."""
 
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
@@ -568,6 +572,26 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         loading_widget = self.app.get_loading_widget()
         return loading_widget
+
+    def _watch__pointer_shape(self, pointer_shape: PointerShape) -> None:
+        self.app._set_pointer_shape(pointer_shape)
+
+    def update_pointer_shape(self) -> None:
+        """Get the screen's current pointer shape."""
+        if self._selecting:
+            self._pointer_shape = "text"
+            return
+        widget = self if self.app.mouse_over is None else self.app.mouse_over
+        pointer_shape = "default"
+        for node in widget.ancestors_with_self:
+            if isinstance(node, Widget):
+                if node.loading:
+                    pointer_shape = "wait"
+                    break
+                if (pointer_shape := node.styles.pointer) != "default":
+                    break
+
+        self._pointer_shape = pointer_shape
 
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
@@ -1600,6 +1624,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     pass
         else:
             self.app._set_mouse_over(widget, hover_widget)
+            self.update_pointer_shape()
             widget.hover_style = event.style
             if widget is self:
                 self.post_message(event)
@@ -1626,6 +1651,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         )
                     else:
                         tooltip.display = False
+        self.screen.update_pointer_shape()
 
     @staticmethod
     def _translate_mouse_move_event(
@@ -1752,6 +1778,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         else:
             self.post_message(event)
+        self.update_pointer_shape()
 
     def _key_escape(self) -> None:
         self.clear_selection()

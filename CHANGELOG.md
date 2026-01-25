@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [7.4.0] - 2026-01-25
+
+### Added
+
+- Added `pointer` rule https://github.com/Textualize/textual/pull/6339
+
 ## [7.3.0] - 2026-01-15
 
 ### Fixed
@@ -3322,6 +3328,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.4.0]: https://github.com/Textualize/textual/compare/v7.3.0...v7.4.0
 [7.3.0]: https://github.com/Textualize/textual/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/Textualize/textual/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/Textualize/textual/compare/v7.0.3...v7.1.0

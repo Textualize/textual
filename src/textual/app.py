@@ -3105,6 +3105,7 @@ class App(Generic[ReturnType], DOMNode):
         self.mouse_captured = widget
         if widget is not None:
             widget.post_message(events.MouseCapture(self.mouse_position))
+        self.screen.update_pointer_shape()
 
     def panic(self, *renderables: RenderableType) -> None:
         """Exits the app and display error message(s).
@@ -3781,6 +3782,24 @@ class App(Generic[ReturnType], DOMNode):
         """
         if not self.is_headless and self._driver is not None:
             self._driver.write("\07")
+
+    def _set_pointer_shape(self, shape: str) -> None:
+        """Generate escape sequence to set pointer (cursor) shape using Kitty protocol.
+
+        Args:
+            shape: The pointer shape name (e.g., "default", "pointer", "text", "crosshair", etc.)
+
+        Returns:
+            The escape sequence to set the pointer shape.
+
+        See: https://sw.kovidgoyal.net/kitty/pointer-shapes/
+        """
+        # Kitty pointer shape protocol: ESC ] 22 ; <shape> ST
+        # where ST is ESC \ or BEL (\x07)
+        # Using BEL as terminator for better compatibility
+        if self._driver is not None:
+            shape_sequence = f"\x1b]22;{shape}\x07"
+            self._driver.write(shape_sequence)
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, BindingsMap]]:
