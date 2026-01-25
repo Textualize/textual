@@ -190,6 +190,7 @@ class SelectCurrent(Horizontal):
         width: 1fr;
         height: auto;
         padding: 0 2;
+        pointer: pointer;
 
         &.-textual-compact {
             border: none !important;
