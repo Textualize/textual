@@ -1036,6 +1036,7 @@ class Widget(DOMNode):
             self._cover(loading_indicator)
         else:
             self._uncover()
+        self.screen.update_pointer_shape()
 
     def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
