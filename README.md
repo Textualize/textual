@@ -243,3 +243,8 @@ Join the Textual developers and community on our [Discord Server](https://discor
 
 ## License
 [`MIT`](LICENSE)
+
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=16&pause=400&color=F7077E&vCenter=true&width=95&height=30&lines=We%20Love%20Textual" />
+</p>
+
