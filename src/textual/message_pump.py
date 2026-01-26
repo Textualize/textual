@@ -80,7 +80,7 @@ class _MessagePumpMeta(type):
         **kwargs: Any,
     ) -> _MessagePumpMetaSub:
         handlers: dict[
-            type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]
+            type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]], type | None]]
         ] = class_dict.get("_decorated_handlers", {})
 
         class_dict["_decorated_handlers"] = handlers
@@ -88,10 +88,10 @@ class _MessagePumpMeta(type):
         for value in class_dict.values():
             if callable(value) and hasattr(value, "_textual_on"):
                 textual_on: list[
-                    tuple[type[Message], dict[str, tuple[SelectorSet, ...]]]
+                    tuple[type[Message], dict[str, tuple[SelectorSet, ...]], type | None]
                 ] = getattr(value, "_textual_on")
-                for message_type, selectors in textual_on:
-                    handlers.setdefault(message_type, []).append((value, selectors))
+                for message_type, selectors, control_type in textual_on:
+                    handlers.setdefault(message_type, []).append((value, selectors, control_type))
 
         # Look for reactives with public AND private compute methods.
         prefix = "compute_"
@@ -751,7 +751,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 break
             # Try decorated handlers first
             decorated_handlers = cast(
-                "dict[type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]] | None",
+                "dict[type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]], type | None]]] | None",
                 cls.__dict__.get("_decorated_handlers"),
             )
 
@@ -759,9 +759,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 for message_class in message_mro:
                     handlers = decorated_handlers.get(message_class, [])
 
-                    for method, selectors in handlers:
+                    for method, selectors, control_type in handlers:
                         if method in methods_dispatched:
                             continue
+                        
+                        # Check control_type constraint if specified
+                        if control_type is not None:
+                            control = message.control
+                            if control is None or not isinstance(control, control_type):
+                                continue
+                        
                         if not selectors:
                             yield cls, method.__get__(self, cls)
                             methods_dispatched.add(method)

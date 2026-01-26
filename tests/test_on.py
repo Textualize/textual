@@ -378,3 +378,110 @@ async def test_on_with_enter_and_leave_events():
         await pilot.hover(Button, offset=(0, 20))
         expected_messages.append("Leave")
         assert app.messages == expected_messages
+
+
+async def test_on_control_type_filters_widget_class() -> None:
+    """Test that control_type parameter filters by widget class.
+    
+    This tests the fix for issue #4968: @on decorator should not match
+    parent widget class when control_type specifies a subclass.
+    """
+    pressed: list[str] = []
+
+    class MyButton(Button):
+        """A custom button subclass."""
+        pass
+
+    class ControlTypeApp(App):
+        def compose(self) -> ComposeResult:
+            yield Button("Normal Button", id="normal")
+            yield MyButton("My Button", id="custom")
+
+        @on(Button.Pressed, control_type=MyButton)
+        def handle_my_button_only(self) -> None:
+            """Should only fire for MyButton, not regular Button."""
+            pressed.append("my_button_handler")
+
+        @on(Button.Pressed, "#normal")
+        def handle_normal_button(self) -> None:
+            """Should fire for the normal button."""
+            pressed.append("normal_button_handler")
+
+        def on_button_pressed(self) -> None:
+            """Default handler fires for all buttons."""
+            pressed.append("default")
+
+    app = ControlTypeApp()
+    async with app.run_test() as pilot:
+        # Click the normal Button first
+        await pilot.click("#normal")
+        await pilot.pause()
+        
+        # Click MyButton
+        await pilot.click("#custom")
+        await pilot.pause()
+
+    # Normal button should trigger normal_button_handler and default
+    # MyButton should trigger my_button_handler and default
+    assert pressed == [
+        "normal_button_handler",
+        "default",
+        "my_button_handler",
+        "default",
+    ]
+
+
+async def test_on_control_type_with_selector() -> None:
+    """Test control_type combined with CSS selector."""
+    pressed: list[str] = []
+
+    class MyButton(Button):
+        pass
+
+    class ControlTypeSelectorApp(App):
+        def compose(self) -> ComposeResult:
+            yield MyButton("A", id="a", classes="special")
+            yield MyButton("B", id="b")
+            yield Button("C", id="c", classes="special")
+
+        @on(Button.Pressed, ".special", control_type=MyButton)
+        def handle_special_my_button(self) -> None:
+            """Should only fire for MyButton with .special class."""
+            pressed.append("special_my_button")
+
+        def on_button_pressed(self) -> None:
+            pressed.append("default")
+
+    app = ControlTypeSelectorApp()
+    async with app.run_test() as pilot:
+        # Click MyButton with .special class
+        await pilot.click("#a")
+        await pilot.pause()
+        
+        # Click MyButton without .special class
+        await pilot.click("#b")
+        await pilot.pause()
+        
+        # Click regular Button with .special class (should NOT trigger special_my_button)
+        await pilot.click("#c")
+        await pilot.pause()
+
+    assert pressed == [
+        "special_my_button",
+        "default",
+        "default",
+        "default",
+    ]
+
+
+def test_on_control_type_no_control_raises() -> None:
+    """Check control_type on messages with no 'control' attribute raises an error."""
+
+    class CustomMessage(Message):
+        pass
+
+    with pytest.raises(OnDecoratorError):
+
+        @on(CustomMessage, control_type=Button)
+        def foo():
+            pass
