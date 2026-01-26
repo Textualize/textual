@@ -1,15 +1,35 @@
+<h2 align="center">
+  Textual
+</h2>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png" width="400" />
+</p>
 
-[![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
-[![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual)](https://pypi.org/project/textual/)
-[![PyPI version](https://badge.fury.io/py/textual.svg?)](https://badge.fury.io/py/textual)
-![OS support](https://img.shields.io/badge/OS-macOS%20Linux%20Windows-red)
+<div align="center">
+
+<a href="https://discord.gg/Enf6Z3qhVr">
+  <img src="https://img.shields.io/discord/1026214085173461072?style=for-the-badge&logo=discord&color=cba6f7" />
+</a>
+
+<a href="https://pypi.org/project/textual/">
+  <img src="https://img.shields.io/pypi/pyversions/textual?style=for-the-badge&color=b4befe" />
+</a>
+
+<a href="https://badge.fury.io/py/textual">
+  <img src="https://img.shields.io/pypi/v/textual?style=for-the-badge&color=cba6f7" />
+</a>
+
+<img src="https://img.shields.io/badge/OS-macOS%20Linux%20Windows-cba6f7?style=for-the-badge" />
+
+<br/>
+</div>
 
 
 
 ![textual-splash](https://github.com/user-attachments/assets/4caeb77e-48c0-4cf7-b14d-c53ded855ffd)
 
-# Textual
+# About Textual
 
 <img align="right" width="250" alt="clock" src="https://github.com/user-attachments/assets/63e839c3-5b8e-478d-b78e-cf7647eb85e8" />
 
@@ -54,9 +74,9 @@ if __name__ == "__main__":
     app.run()
 ```
 
-> [!TIP]
+> **TIP :**
 > Textual is an asynchronous framework under the hood. Which means you can integrate your apps with async libraries &mdash; if you want to.
-> If you don't want or need to use async, Textual won't force it on you. 
+> If you don't want or need to use async, Textual won't force it on you.
 
 
 
@@ -67,7 +87,7 @@ if __name__ == "__main__":
 Textual's library of [widgets](https://textual.textualize.io/widget_gallery/) covers everything from buttons, tree controls, data tables, inputs, text areas, and more…
 Combined with a flexible [layout](https://textual.textualize.io/how-to/design-a-layout/) system, you can realize any User Interface you need.
 
-Predefined themes ensure your apps will look good out of the box. 
+Predefined themes ensure your apps will look good out of the box.
 
 
 <table>
@@ -75,34 +95,34 @@ Predefined themes ensure your apps will look good out of the box.
 <tr>
 
   <td>
-    
+
   ![buttons](https://github.com/user-attachments/assets/2ac26387-aaa3-41ed-bc00-7d488600343c)
-    
+
   </td>
 
   <td>
-    
+
 ![tree](https://github.com/user-attachments/assets/61ccd6e9-97ea-4918-8eda-3ee0f0d3770e)
-    
+
   </td>
-  
+
 </tr>
 
 
 <tr>
 
   <td>
-    
+
   ![datatables](https://github.com/user-attachments/assets/3e1f9f7a-f965-4901-a114-3c188bd17695)
-    
+
   </td>
 
   <td>
-    
+
 ![inputs](https://github.com/user-attachments/assets/b02aa203-7c37-42da-a1bb-2cb244b7d0d3)
-    
+
   </td>
-  
+
 </tr>
 <tr>
 
@@ -115,10 +135,10 @@ Predefined themes ensure your apps will look good out of the box.
 <td>
 
 ![textarea](https://github.com/user-attachments/assets/cd4ba787-5519-40e2-8d86-8224e1b7e506)
-  
+
 </td>
 
-  
+
 </tr>
 
 </table>
@@ -126,9 +146,11 @@ Predefined themes ensure your apps will look good out of the box.
 
 <img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
-## Installing
+<p align="left">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=22&pause=400&color=F7077E&vCenter=true&width=95&height=30&lines=Install" />
+</p>
 
-Install Textual via pip:
+**Install Textual via pip:**
 
 ```
 pip install textual textual-dev
@@ -209,3 +231,6 @@ No desktop required!
 ## Join us on Discord
 
 Join the Textual developers and community on our [Discord Server](https://discord.gg/Enf6Z3qhVr).
+
+## License
+[`MIT`](LICENSE)
