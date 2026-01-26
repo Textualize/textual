@@ -231,14 +231,15 @@ class _Template(Validator):
                                 _CharFlags.SEPARATOR
                                 in self.template[cursor_position].flags
                             ):
-                                char = self.template[cursor_position].char
-                            else:
-                                char = " "
-                            value = (
-                                value[:cursor_position]
-                                + char
-                                + value[cursor_position + 1 :]
-                            )
+                                # Insert the separator character
+                                sep_char = self.template[cursor_position].char
+                                value = (
+                                    value[:cursor_position]
+                                    + sep_char
+                                    + value[cursor_position + 1 :]
+                                )
+                            # For non-separator positions, preserve existing text
+                            # (don't overwrite with spaces)
                             cursor_position += 1
                 continue
             if cursor_position >= len(self.template):

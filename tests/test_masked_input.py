@@ -221,3 +221,52 @@ async def test_digits_required():
         await pilot.press("a", "1")
         assert input.value == "1"
         assert not input.is_valid
+
+
+async def test_separator_jump_preserves_existing_text():
+    """Test that typing a separator jumps to next separator without deleting existing text.
+
+    This tests the fix for issue #6315: typing a separator should jump to the next
+    separator position without overwriting any existing text that was already entered.
+    """
+    app = InputApp("9999-9999-9999-9999;_")
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        # Enter some digits in the first group
+        await pilot.press("1", "2", "3", "4")
+        assert input.value == "1234-"
+        assert input.cursor_position == 5
+        # Enter digits in second group
+        await pilot.press("5", "6", "7", "8")
+        assert input.value == "1234-5678-"
+        assert input.cursor_position == 10
+        # Now move cursor back to middle of first group
+        input.cursor_position = 2
+        # Type the separator "-" - should jump to position after first separator
+        # but NOT delete the existing "34" text
+        await pilot.press("-")
+        assert input.cursor_position == 5  # Jumped past the separator
+        assert input.value == "1234-5678-"  # Existing text preserved
+
+
+async def test_separator_jump_preserves_text_with_arrow_then_separator():
+    """Test that moving cursor right then typing separator preserves existing text.
+
+    Regression test for issue #6315: pressing right arrow then separator key
+    with existing text should not delete the existing text.
+    """
+    app = InputApp("9999-9999-9999-9999;_")
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        # Enter full value
+        input.value = "1234-5678-9012-3456"
+        # Move cursor to start of second group
+        input.cursor_position = 5
+        # Move right one position
+        await pilot.press("right")
+        assert input.cursor_position == 6
+        # Type separator - should jump to next separator without deleting "678"
+        await pilot.press("-")
+        assert input.cursor_position == 10  # After the second separator
+        # All existing text should be preserved
+        assert input.value == "1234-5678-9012-3456"
