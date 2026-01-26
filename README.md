@@ -32,6 +32,8 @@ Textual
   <a href="#about-textual"><kbd> <br> About Textual <br> </kbd></a>&ensp;&ensp;
   <a href="#widgets"><kbd> <br> Widgets <br> </kbd></a>&ensp;&ensp;
   <a href="#command-palette"><kbd> <br> Command Palette <br> </kbd></a>&ensp;&ensp;
+  <a href="#installation"><kbd> <br> Installation <br> </kbd></a>&ensp;&ensp;
+  <a href="#command-palette"><kbd> <br> Command Palette <br> </kbd></a>&ensp;&ensp;
   <a href="#demo"><kbd> <br> Demo <br> </kbd></a>&ensp;&ensp;
    <a href="#textual-️-web"><kbd> <br> Textual Web <br> </kbd></a>&ensp;&ensp;
 </div><br>
@@ -155,7 +157,7 @@ Predefined themes ensure your apps will look good out of the box.
 
 <img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
-<p align="left">
+<p id="installation" align="left">
   <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=22&pause=400&color=F7077E&vCenter=true&width=200&height=30&lines=Installation" />
 </p>
 
