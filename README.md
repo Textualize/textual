@@ -25,7 +25,14 @@ Textual
 <br/>
 </div>
 
-
+<div align="center">
+<br>
+  <a href="#about-textual"><kbd> <br> About Textual <br> </kbd></a>&ensp;&ensp;
+  <a href="#widgets"><kbd> <br> Widgets <br> </kbd></a>&ensp;&ensp;
+  <a href="#command-palette"><kbd> <br> Command Palette <br> </kbd></a>&ensp;&ensp;
+  <a href="#demo"><kbd> <br> Demo <br> </kbd></a>&ensp;&ensp;
+   <a href="#textual-️-web"><kbd> <br> Textual Web <br> </kbd></a>&ensp;&ensp;
+</div><br>
 
 ![textual-splash](https://github.com/user-attachments/assets/4caeb77e-48c0-4cf7-b14d-c53ded855ffd)
 
