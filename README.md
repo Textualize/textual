@@ -156,7 +156,7 @@ Predefined themes ensure your apps will look good out of the box.
 <img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 <p align="left">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=22&pause=400&color=F7077E&vCenter=true&width=95&height=30&lines=Install" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=22&pause=400&color=F7077E&vCenter=true&width=200&height=30&lines=Installation" />
 </p>
 
 **Install Textual via pip:**
@@ -244,7 +244,7 @@ Join the Textual developers and community on our [Discord Server](https://discor
 ## License
 [`MIT`](LICENSE)
 
-<p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=16&pause=400&color=F7077E&vCenter=true&width=95&height=30&lines=We%20Love%20Textual" />
-</p>
 
+<p align="center">
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=16&pause=400&color=F7077E&vCenter=true&width=200&height=30&lines=We%20Love%20Textual" />
+</p>
