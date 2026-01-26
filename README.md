@@ -25,7 +25,6 @@ Textual
 ![GitHub repo size](https://img.shields.io/github/repo-size/Textualize/textual?style=for-the-badge&color=cba6f7)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Textualize/textual?style=for-the-badge&color=b4befe)
 
-<br/>
 </div>
 
 <div align="center">
