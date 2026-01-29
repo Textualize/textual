@@ -2384,7 +2384,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 )
             else:
                 extend_style = Style.from_color(row_style.color, row_style.bgcolor)
-        extend_style += Style.from_meta({"row": row_index, "column": 0})
+        extend_style += Style.from_meta(
+            {"row": row_index, "column": 0, "out_of_bounds": True}
+        )
         scrollable_row.append([Segment(" " * remaining_space, extend_style)])
 
         row_pair = (fixed_row, scrollable_row)
@@ -2555,7 +2557,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
-        if not meta:
+        if not meta or meta.get("out_of_bounds"):
             self._set_hover_cursor(False)
             return
 
