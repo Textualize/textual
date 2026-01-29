@@ -268,6 +268,8 @@ class RowRenderables(NamedTuple):
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """A tabular widget that contains data."""
 
+    ALLOW_SELECT = False
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor up", show=False),
@@ -327,8 +329,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface;
         color: $foreground;
         height: auto;
-        max-height: 100%;
-        
+        max-height: 100%;        
         &.datatable--fixed-cursor {
             background: $block-cursor-blurred-background;
         }
@@ -450,7 +451,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         ) -> None:
             self.data_table = data_table
             """The data table."""
-            self.value: CellType = value
+            self.value = value
             """The value in the highlighted cell."""
             self.coordinate: Coordinate = coordinate
             """The coordinate of the highlighted cell."""
@@ -2684,8 +2685,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.post_message(message)
         elif self.show_cursor and self.cursor_type != "none":
             # Only post selection events if there is a visible row/col/cell cursor.
-            self.cursor_coordinate = Coordinate(row_index, column_index)
-            self._post_selected_message()
+            new_coordinate = Coordinate(row_index, column_index)
+            highlight_click = new_coordinate == self.cursor_coordinate
+            self.cursor_coordinate = new_coordinate
+            if highlight_click:
+                self._post_selected_message()
             self._scroll_cursor_into_view(animate=True)
             event.stop()
 

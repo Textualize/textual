@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- The DataTable row cursor will extend to the full width if there is excess space
+- The DataTable will send a selected event on click, only if the cell / row / column is currently highlighted
+
 ## [7.4.0] - 2026-01-25
 
 ### Added
