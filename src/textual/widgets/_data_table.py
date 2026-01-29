@@ -329,7 +329,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface;
         color: $foreground;
         height: auto;
-        max-height: 100%;        
+        max-height: 100%;
         &.datatable--fixed-cursor {
             background: $block-cursor-blurred-background;
         }
