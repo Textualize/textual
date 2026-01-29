@@ -1555,7 +1555,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
-        row_region = Region(0, y, row_width, row.height)
+        row_region = Region(0, y, max(self.size.width, row_width), row.height)
         return row_region
 
     def _get_column_region(self, column_index: int) -> Region:
@@ -2357,17 +2357,34 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
         remaining_space = max(0, widget_width - table_width)
         background_color = self.background_colors[1]
-        if row_style.bgcolor is not None:
-            # TODO: This should really be in a component class
-            faded_color = Color.from_rich_color(row_style.bgcolor).blend(
-                background_color, factor=0.25
+        if self.cursor_type == "row":
+            extend_style, _ = self._get_styles_to_render_cell(
+                row_index == -1,
+                False,
+                False,
+                should_highlight(
+                    hover_location, Coordinate(row_index or 0, 0), cursor_type
+                ),
+                row_index == cursor_location.row,
+                self.show_cursor,
+                self._show_hover_cursor,
+                False,
+                False,
             )
-            faded_style = Style.from_color(
-                color=row_style.color, bgcolor=faded_color.rich_color
-            )
+            extend_style = row_style + extend_style
         else:
-            faded_style = Style.from_color(row_style.color, row_style.bgcolor)
-        scrollable_row.append([Segment(" " * remaining_space, faded_style)])
+            if row_style.bgcolor is not None:
+                # TODO: This should really be in a component class
+                faded_color = Color.from_rich_color(row_style.bgcolor).blend(
+                    background_color, factor=0.25
+                )
+                extend_style = Style.from_color(
+                    color=row_style.color, bgcolor=faded_color.rich_color
+                )
+            else:
+                extend_style = Style.from_color(row_style.color, row_style.bgcolor)
+        extend_style += Style.from_meta({"row": row_index, "column": 0})
+        scrollable_row.append([Segment(" " * remaining_space, extend_style)])
 
         row_pair = (fixed_row, scrollable_row)
         self._row_render_cache[cache_key] = row_pair
@@ -2389,7 +2406,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 return self._header_row_key, y
             y -= header_height
         if y > len(y_offsets):
-            raise LookupError("Y coord {y!r} is greater than total height")
+            raise LookupError(f"Y coord {y!r} is greater than total height")
 
         return y_offsets[y]
 
