@@ -45,6 +45,7 @@ else:
                     return language
 
     else:
+
         def get_language(language_name: str) -> Language | None:
             try:
                 return tslp.get_language(language_name)
