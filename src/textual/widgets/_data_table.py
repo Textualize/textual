@@ -2557,7 +2557,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
-        if not meta or meta.get("out_of_bounds"):
+        if not meta:
+            self._set_hover_cursor(False)
+            return
+
+        if self.cursor_type != "row" and meta.get("out_of_bounds", False):
             self._set_hover_cursor(False)
             return
 
