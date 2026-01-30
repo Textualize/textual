@@ -29,6 +29,7 @@ _DEFAULT_CELL_X_PADDING = 1
 
 
 class DataTableApp(App):
+    AUTO_FOCUS = None
     messages_to_record = {
         "CellHighlighted",
         "CellSelected",
@@ -787,8 +788,8 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
 
 
 async def test_datatable_click_cell_cursor():
-    """When the cell cursor is used, and we click, we emit a CellHighlighted
-    *and* a CellSelected message for the cell that was clicked.
+    """When the cell cursor is used, and we click, we emit a CellHighlighted message,
+    a second click emits a CellSelected message.
     Regression test for https://github.com/Textualize/textual/issues/1723"""
     app = DataTableApp()
     async with app.run_test() as pilot:
@@ -796,6 +797,7 @@ async def test_datatable_click_cell_cursor():
         column_key = table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
+        await pilot.click(offset=Offset(1, 2))
         await pilot.click(offset=Offset(1, 2))
         # There's two CellHighlighted events since a cell is highlighted on initial load,
         # then when we click, another cell is highlighted (and selected).
@@ -825,15 +827,22 @@ async def test_click_row_cursor():
         table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
+
         await pilot.click(offset=Offset(1, 2))
-        assert app.message_names == ["RowHighlighted", "RowHighlighted", "RowSelected"]
+        print(repr(app.message_names))
+        assert app.message_names == ["RowHighlighted", "RowHighlighted"]
 
         row_highlighted: DataTable.RowHighlighted = app.messages[1]
 
         assert row_highlighted.row_key == row_key
+
         assert row_highlighted.cursor_row == 1
 
-        row_selected: DataTable.RowSelected = app.messages[2]
+        app.messages.clear()
+        await pilot.click(offset=Offset(1, 2))
+        assert app.message_names == ["RowSelected"]
+
+        row_selected: DataTable.RowSelected = app.messages[0]
         assert row_selected.row_key == row_key
         assert row_highlighted.cursor_row == 1
 
@@ -848,6 +857,7 @@ async def test_click_column_cursor():
         column_key = table.add_column("ABC")
         table.add_row("123")
         table.add_row("456")
+        await pilot.click(offset=Offset(1, 2))
         await pilot.click(offset=Offset(1, 2))
         assert app.message_names == [
             "ColumnHighlighted",

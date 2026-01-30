@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### [7.5.0] - 2026-01-29
+
+- The DataTable row cursor will extend to the full width if there is excess space https://github.com/Textualize/textual/pull/6345
+- The DataTable will send a selected event on click, only if the cell / row / column is currently highlighted https://github.com/Textualize/textual/pull/6345
+
 ## [7.4.0] - 2026-01-25
 
 ### Added
@@ -3328,6 +3335,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.5.0]: https://github.com/Textualize/textual/compare/v7.4.0...v7.5.0
 [7.4.0]: https://github.com/Textualize/textual/compare/v7.3.0...v7.4.0
 [7.3.0]: https://github.com/Textualize/textual/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/Textualize/textual/compare/v7.1.0...v7.2.0
