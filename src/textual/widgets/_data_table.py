@@ -2671,6 +2671,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         meta = event.style.meta
         if "row" not in meta or "column" not in meta:
             return
+        if self.cursor_type != "row" and meta.get("out_of_bounds", False):
+            return
 
         row_index = meta["row"]
         column_index = meta["column"]
