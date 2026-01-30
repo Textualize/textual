@@ -788,8 +788,8 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
 
 
 async def test_datatable_click_cell_cursor():
-    """When the cell cursor is used, and we click, we emit a CellHighlighted
-    *and* a CellSelected message for the cell that was clicked.
+    """When the cell cursor is used, and we click, we emit a CellHighlighted message,
+    a second click emits a CellSelected message.
     Regression test for https://github.com/Textualize/textual/issues/1723"""
     app = DataTableApp()
     async with app.run_test() as pilot:
