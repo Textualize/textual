@@ -68,7 +68,7 @@ the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.
 The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
 
 Using the keyboard, arrow keys,  ++page-up++, ++page-down++, ++home++ and ++end++ move the cursor highlight, emitting a [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] 
-message, then enter selects the cell, emitting a [`CellSelected`][textual.widgets.DataTable.CellSelected] message.  If the 
+message, then ++enter++ selects the cell, emitting a [`CellSelected`][textual.widgets.DataTable.CellSelected] message.  If the 
 `cursor_type` is row, then [`RowHighlighted`][textual.widgets.DataTable.RowHighlighted] and [`RowSelected`][textual.widgets.DataTable.RowSelected]
 are emitted, similarly for  [`ColumnHighlighted`][textual.widgets.DataTable.ColumnHighlighted] and [`ColumnSelected`][textual.widgets.DataTable.ColumnSelected].
 
@@ -76,6 +76,12 @@ When moving the mouse over the table, a [`MouseMove`][textual.events.MouseMove] 
 and the [`hover_coordinate`][textual.widgets.DataTable.hover_coordinate] reactive attribute is updated.  Clicking the mouse
 then emits the [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] and  [`CellSelected`][textual.widgets.DataTable.CellSelected]
 events. 
+
+!!! note "Changed in version 7.5.0"
+
+    Previously, clicking a new cell would emit both `CellHighlighted` and `CellSelected` messages.
+    `CellSelected` is now only emitted when clicking the currently highlighted cell
+    (i.e. requiring a second click).
 
 === "Column Cursor"
 
