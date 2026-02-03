@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-### [7.5.0] - 2026-01-30
+## [7.5.0] - 2026-01-30
+
+### Changed
 
 - The DataTable row cursor will extend to the full width if there is excess space https://github.com/Textualize/textual/pull/6345
 - The DataTable will send a selected event on click, only if the cell / row / column is currently highlighted https://github.com/Textualize/textual/pull/6345
