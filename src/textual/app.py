@@ -1185,6 +1185,26 @@ class App(Generic[ReturnType], DOMNode):
             is_terminal=console.is_terminal,
         )
 
+    def get_screen_stack(self, mode: str | None = None) -> list[Screen]:
+        """Get the screen stack for the given mode, or the current mode if no mode is specified.
+
+        Args:
+            mode: Name of a model
+
+        Raises:
+            KeyError: If there is no mode.
+
+        Returns:
+            A list of screens. Note that this is a copy, and modifying the list will not impact the app's screen stack.
+        """
+        if mode is None:
+            mode = self._current_mode
+        try:
+            stack = self._screen_stacks[mode]
+        except KeyError:
+            raise KeyError(f"No mode called {mode!r}") from None
+        return stack.copy()
+
     def exit(
         self,
         result: ReturnType | None = None,
