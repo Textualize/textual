@@ -581,7 +581,12 @@ class Screen(Generic[ScreenResultType], Widget):
         if self._selecting:
             self._pointer_shape = "text"
             return
-        widget = self if self.app.mouse_over is None else self.app.mouse_over
+        mouse_over = self.app.mouse_over
+        # If mouse_over refers to a widget on a different (possibly dismissed)
+        # screen, treat it as if no widget is under the mouse.
+        if mouse_over is not None and self not in mouse_over.ancestors_with_self:
+            mouse_over = None
+        widget = self if mouse_over is None else mouse_over
         pointer_shape = "default"
         for node in widget.ancestors_with_self:
             if isinstance(node, Widget):
@@ -1470,6 +1475,11 @@ class Screen(Generic[ScreenResultType], Widget):
             if self._size != size:
                 self._refresh_layout(size)
             self.refresh()
+
+        self.update_pointer_shape()
+        # Force-send the pointer shape to the terminal even if the value
+        # hasn't changed, since a different screen may have changed it.
+        self.app._set_pointer_shape(self._pointer_shape)
 
     async def _compose(self) -> None:
         await super()._compose()

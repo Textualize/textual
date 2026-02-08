@@ -8,7 +8,7 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.command import SimpleCommand
 from textual.pilot import Pilot, _get_mouse_message_arguments
-from textual.screen import Screen
+from textual.screen import ModalScreen, Screen
 from textual.widgets import Button, Input, Label, Static
 
 
@@ -403,6 +403,45 @@ async def test_pointer_shape() -> None:
         assert app.screen._pointer_shape == "default"
         await pilot.hover(offset=(1, 1))
         assert app.screen._pointer_shape == "pointer"
+
+
+async def test_pointer_shape_restored_on_screen_dismiss() -> None:
+    """Test that pointer shape is restored when a modal screen is dismissed.
+
+    Regression test for https://github.com/Textualize/textual/issues/6349
+    """
+
+    class ChildScreen(ModalScreen[None]):
+        def compose(self) -> ComposeResult:
+            yield Button("Press me to close")
+
+        def on_button_pressed(self) -> None:
+            self.dismiss()
+
+    class PointerApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Hello")
+
+    app = PointerApp()
+    async with app.run_test() as pilot:
+        # Default pointer on the main screen
+        await pilot.hover(offset=(0, 0))
+        assert app.screen._pointer_shape == "default"
+
+        # Push modal screen with a button
+        await app.push_screen(ChildScreen())
+        await pilot.pause()
+
+        # Hover over the button on the modal (Button has pointer style)
+        await pilot.hover(offset=(0, 0))
+        assert app.screen._pointer_shape == "pointer"
+
+        # Click the button to dismiss the modal
+        await pilot.click(offset=(0, 0))
+        await pilot.pause()
+
+        # After dismiss, the main screen should have default pointer restored
+        assert app.screen._pointer_shape == "default"
 
 
 async def test_get_screen_stack() -> None:
