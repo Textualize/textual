@@ -4206,7 +4206,7 @@ class Widget(DOMNode):
         Returns:
             A rendered line.
         """
-        if self.BLANK:
+        if self.BLANK is True:
             return Strip.blank(self.size.width, self.visual_style.rich_style)
 
         if self._dirty_regions:
@@ -4227,7 +4227,7 @@ class Widget(DOMNode):
         Returns:
             A list of list of segments.
         """
-        if self.BLANK:
+        if self.BLANK is True:
             strips = [
                 Strip.blank(crop.width, self.visual_style.rich_style)
             ] * crop.height
