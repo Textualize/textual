@@ -123,6 +123,7 @@ from textual.screen import (
     ScreenResultCallbackType,
     ScreenResultType,
     SystemModalScreen,
+    AwaitScreen,
 )
 from textual.signal import Signal
 from textual.theme import BUILTIN_THEMES, Theme, ThemeProvider
@@ -2800,14 +2801,14 @@ class App(Generic[ReturnType], DOMNode):
             screen: Screen[ScreenResultType] | str,
             callback: ScreenResultCallbackType[ScreenResultType] | None = None,
             wait_for_dismiss: Literal[True] = True,
-        ) -> asyncio.Future[ScreenResultType]: ...
+        ) -> AwaitScreen[ScreenResultType]: ...
 
     def push_screen(
         self,
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: bool = False,
-    ) -> AwaitMount | asyncio.Future[ScreenResultType]:
+    ) -> AwaitMount | AwaitScreen[ScreenResultType]:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
@@ -2820,21 +2821,13 @@ class App(Generic[ReturnType], DOMNode):
             NoActiveWorker: If using `wait_for_dismiss` outside of a worker.
 
         Returns:
-            An optional awaitable that awaits the mounting of the screen and its children, or an asyncio Future
+            An optional awaitable that awaits the mounting of the screen and its children, or an awaitable
                 to await the result of the screen.
         """
         if not isinstance(screen, (Screen, str)):
             raise TypeError(
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
-
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            # Mainly for testing, when push_screen isn't called in an async context
-            future: asyncio.Future[ScreenResultType] = asyncio.Future()
-        else:
-            future = loop.create_future()
 
         self.app.capture_mouse(None)
         if self._screen_stack:
@@ -2846,7 +2839,8 @@ class App(Generic[ReturnType], DOMNode):
         except LookupError:
             message_pump = self.app
 
-        next_screen._push_result_callback(message_pump, callback, future)
+        await_screen: AwaitScreen[ScreenResultType] = AwaitScreen()
+        next_screen._push_result_callback(message_pump, callback, await_screen)
         self._load_screen_css(next_screen)
         next_screen._update_auto_focus()
         self._screen_stack.append(next_screen)
@@ -2859,7 +2853,7 @@ class App(Generic[ReturnType], DOMNode):
                 raise NoActiveWorker(
                     "push_screen must be run from a worker when `wait_for_dismiss` is True"
                 ) from None
-            return future
+            return await_screen
         else:
             return await_mount
 

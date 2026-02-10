@@ -8,6 +8,7 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
+import enum
 import asyncio
 from functools import partial
 from operator import attrgetter
@@ -24,6 +25,8 @@ from typing import (
     Optional,
     TypeVar,
     Union,
+    Literal,
+    Generator,
 )
 
 import rich.repr
@@ -85,6 +88,33 @@ ScreenResultCallbackType = Union[
 """Type of a screen result callback function."""
 
 
+class _Unset(enum.Enum):
+    UNSET = enum.auto()
+
+
+class AwaitScreen(Generic[ScreenResultType]):
+    """
+    An Awaitable object that resumes with the result of a Screen.
+    """
+
+    def __init__(self) -> None:
+        self._event = asyncio.Event()
+        self._result: ScreenResultType | Literal[_Unset.UNSET] = _Unset.UNSET
+
+    async def wait(self) -> ScreenResultType:
+        await self._event.wait()
+        assert self._result is not _Unset.UNSET
+        return self._result
+
+    def __await__(self) -> Generator[Any, Any, ScreenResultType]:
+        return self.wait().__await__()
+
+    def set_result(self, result):
+        assert self._result is _Unset.UNSET
+        self._result = result
+        self._event.set()
+
+
 class HoverWidgets(NamedTuple):
     """Result of [get_hover_widget_at][textual.screen.Screen.get_hover_widget_at]"""
 
@@ -110,21 +140,21 @@ class ResultCallback(Generic[ScreenResultType]):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: asyncio.Future[ScreenResultType] | None = None,
+        await_screen: AwaitScreen[ScreenResultType] | None = None,
     ) -> None:
         """Initialise the result callback object.
 
         Args:
             requester: The object making a request for the callback.
             callback: The callback function.
-            future: A Future to hold the result.
+            await_screen: An AwaitScreen to hold the result.
         """
         self.requester = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
-        self.future = future
-        """A future for the result"""
+        self.await_screen = await_screen
+        """An AwaitScreen for the result"""
 
     def __call__(self, result: ScreenResultType) -> None:
         """Call the callback, passing the given result.
@@ -135,8 +165,8 @@ class ResultCallback(Generic[ScreenResultType]):
         Note:
             If the requested or the callback are `None` this will be a no-op.
         """
-        if self.future is not None:
-            self.future.set_result(result)
+        if self.await_screen is not None:
+            self.await_screen.set_result(result)
         if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
         self.callback = None
@@ -1279,17 +1309,19 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: asyncio.Future[ScreenResultType | None] | None = None,
+        await_screen: AwaitScreen[ScreenResultType] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 
         Args:
             requester: The object requesting the callback.
             callback: The callback.
-            future: A Future to hold the result.
+            await_screen: An AwaitScreen to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[Optional[ScreenResultType]](requester, callback, future)
+            ResultCallback[Optional[ScreenResultType]](
+                requester, callback, await_screen
+            )
         )
 
     async def _message_loop_exit(self) -> None:
