@@ -2792,6 +2792,7 @@ class App(Generic[ReturnType], DOMNode):
             screen: Screen[ScreenResultType] | str,
             callback: ScreenResultCallbackType[ScreenResultType] | None = None,
             wait_for_dismiss: Literal[False] = False,
+            mode: str | None = None,
         ) -> AwaitMount: ...
 
         @overload
@@ -2800,6 +2801,7 @@ class App(Generic[ReturnType], DOMNode):
             screen: Screen[ScreenResultType] | str,
             callback: ScreenResultCallbackType[ScreenResultType] | None = None,
             wait_for_dismiss: Literal[True] = True,
+            mode: str | None = None,
         ) -> asyncio.Future[ScreenResultType]: ...
 
     def push_screen(
@@ -2807,6 +2809,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: bool = False,
+        mode: str | None = None,
     ) -> AwaitMount | asyncio.Future[ScreenResultType]:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
@@ -2815,6 +2818,8 @@ class App(Generic[ReturnType], DOMNode):
             callback: An optional callback function that will be called if the screen is [dismissed][textual.screen.Screen.dismiss] with a result.
             wait_for_dismiss: If `True`, awaiting this method will return the dismiss value from the screen. When set to `False`, awaiting
                 this method will wait for the screen to be mounted. Note that `wait_for_dismiss` should only be set to `True` when running in a worker.
+            mode: The mode to push the screen to, or `None` to the currently active mode. If pushing to a non-current mode, the screen will not be immediately visible.
+                Note that setting `mode` to something other than the current mode, will force `wait_for_dismiss` to be False.
 
         Raises:
             NoActiveWorker: If using `wait_for_dismiss` outside of a worker.
@@ -2836,10 +2841,21 @@ class App(Generic[ReturnType], DOMNode):
         else:
             future = loop.create_future()
 
-        self.app.capture_mouse(None)
-        if self._screen_stack:
-            self.screen.post_message(events.ScreenSuspend())
-            self.screen.refresh()
+        if mode is None:
+            mode = self._current_mode
+        if mode != self._current_mode:
+            wait_for_dismiss = False
+
+        try:
+            screen_stack = self._screen_stacks[mode]
+        except KeyError:
+            raise UnknownModeError(f"No such mode {mode!r}")
+
+        if screen_stack and screen_stack[-1].is_active:
+            self.app.capture_mouse(None)
+            mode_screen = screen_stack[-1]
+            mode_screen.post_message(events.ScreenSuspend())
+            mode_screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         try:
             message_pump = active_message_pump.get()
@@ -2849,9 +2865,9 @@ class App(Generic[ReturnType], DOMNode):
         next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
         next_screen._update_auto_focus()
-        self._screen_stack.append(next_screen)
-        next_screen.post_message(events.ScreenResume())
-        self.log.system(f"{self.screen} is current (PUSHED)")
+        screen_stack.append(next_screen)
+        if next_screen.is_active:
+            next_screen.post_message(events.ScreenResume())
         if wait_for_dismiss:
             try:
                 get_current_worker()

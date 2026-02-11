@@ -74,7 +74,6 @@ class Signal(Generic[SignalT]):
         Raises:
             SignalError: Raised when subscribing a non-mounted widget.
         """
-
         if not node.is_running:
             raise SignalError(
                 f"Node must be running to subscribe to a signal (has {node} been mounted)?"
