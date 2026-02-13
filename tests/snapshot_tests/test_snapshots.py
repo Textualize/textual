@@ -4804,3 +4804,28 @@ def test_text_area_paste(snap_compare) -> None:
         await pilot.press("ctrl+v")
 
     assert snap_compare(TextAreaApp(), run_before=run_before)
+
+
+def test_visual_updates_after_style_changes(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6289
+
+    You should see a widget with a red background and yellow text.
+    """
+
+    class UpdateStylesApp(App):
+        CSS = """
+        Static {
+            height: 1fr;
+            content-align: center middle;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("yellow on red")
+
+        def key_s(self) -> None:
+            widget = self.query_one(Static)
+            widget.styles.color = "yellow"
+            widget.styles.background = "red"
+
+    assert snap_compare(UpdateStylesApp(), press=["s"])
