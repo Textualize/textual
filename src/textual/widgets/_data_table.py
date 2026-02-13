@@ -782,6 +782,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Tracking newly added rows to be used in calculation of dimensions on idle."""
         self._updated_cells: set[CellKey] = set()
         """Track which cells were updated, so that we can refresh them once on idle."""
+        self._rows_removed: bool = False
+        """Flag to indicate rows were removed, requiring column width recalculation."""
 
         self._show_hover_cursor = False
         """Used to hide the mouse hover cursor when the user uses the keyboard."""
@@ -1802,6 +1804,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
 
+        self._rows_removed = True
         self._require_update_dimensions = True
         self.check_idle()
 
@@ -1880,6 +1883,35 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             updated_cells = self._updated_cells.copy()
             self._updated_cells.clear()
             self._update_column_widths(updated_cells)
+
+        if self._rows_removed:
+            # Rows were removed, so we need to recalculate column content
+            # widths from scratch since the widest row may have been deleted.
+            self._rows_removed = False
+            console = self.app.console
+            for column in self.columns.values():
+                if column.auto_width:
+                    label_width = measure(console, column.label, 1)
+                    column.content_width = label_width
+                    for row_key in self._data:
+                        value = self._data[row_key].get(column.key)
+                        if value is not None:
+                            content_width = measure(
+                                console,
+                                default_cell_formatter(value),
+                                1,
+                            )
+                            column.content_width = max(
+                                column.content_width, content_width
+                            )
+            # Also recalculate label column width.
+            self._label_column.content_width = 0
+            for row_key, row in self.rows.items():
+                if row.label is not None:
+                    label_content_width = measure(console, row.label, 1)
+                    self._label_column.content_width = max(
+                        self._label_column.content_width, label_content_width
+                    )
 
         if self._require_update_dimensions:
             # Add the new rows *before* updating the column widths, since
