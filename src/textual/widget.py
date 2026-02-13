@@ -1167,7 +1167,74 @@ class Widget(DOMNode):
                 except KeyError:
                     return default
 
-            style = component_styles.rich_style
+            # Build the full style using the widget's own position in
+            # the render tree rather than the virtual node used for CSS
+            # matching.  The virtual node is attached to the defining
+            # widget for selector matching, but its ancestor chain does
+            # not reflect where the resulting style will actually be
+            # rendered.  By walking the real widget's ancestor chain and
+            # only including a background when the component class
+            # explicitly sets one, transparent backgrounds will blend
+            # correctly against the rendering context instead of the
+            # definition-time position.
+            background = Color(0, 0, 0, 0)
+            color = Color(255, 255, 255, 0)
+            style = Style()
+            opacity = 1.0
+
+            for node in reversed(self.ancestors_with_self):
+                styles = node.styles
+                has_rule = styles.has_rule
+                opacity *= styles.opacity
+                if has_rule("background"):
+                    text_background = background + styles.background.tint(
+                        styles.background_tint
+                    )
+                    background += (
+                        styles.background.tint(styles.background_tint)
+                    ).multiply_alpha(opacity)
+                else:
+                    text_background = background
+                if has_rule("color"):
+                    color = styles.color
+                style += styles.text_style
+                if has_rule("auto_color") and styles.auto_color:
+                    color = text_background.get_contrast_text(color.a)
+
+            # Overlay the component's own CSS properties.  Only apply
+            # a background when the component class explicitly sets one;
+            # otherwise leave bgcolor unset so the actual rendering
+            # context's background shows through.
+            cs_has_rule = component_styles.has_rule
+            component_bg = (
+                component_styles.background.tint(component_styles.background_tint)
+                if cs_has_rule("background")
+                else None
+            )
+            if component_bg is not None and component_bg.a > 0:
+                text_background = background + component_bg
+                background += component_bg.multiply_alpha(
+                    opacity * component_styles.opacity
+                )
+            else:
+                text_background = background
+                # Reset background so no bgcolor is included in the
+                # final Rich Style — let the render tree provide it.
+                background = Color(0, 0, 0, 0)
+
+            if cs_has_rule("color"):
+                color = component_styles.color
+            style += component_styles.text_style
+            if cs_has_rule("auto_color") and component_styles.auto_color:
+                color = text_background.get_contrast_text(color.a)
+
+            style += Style.from_color(
+                (background + color).rich_color
+                if (background.a or color.a)
+                else None,
+                background.rich_color if background.a else None,
+            )
+
             text_opacity = component_styles.text_opacity
             if text_opacity < 1 and style.bgcolor is not None:
                 style += Style.from_color(
