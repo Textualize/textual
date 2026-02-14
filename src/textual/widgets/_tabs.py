@@ -532,6 +532,21 @@ class Tabs(Widget, can_focus=True):
         self.active = ""
         return AwaitComplete(self.query("#tabs-list > Tab").remove())
 
+    def get_tab(self, tab_id: str) -> Tab | None:
+        """Get a tab from its ID.
+
+        Args:
+            tab_id: The tab ID.
+
+        Returns:
+            The Tab instance, or `None` if no tab with the given ID.
+        """
+        try:
+            tab = self.query_one(f"#tabs-list > #{tab_id}", Tab)
+        except NoMatches:
+            return None
+        return tab
+
     def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitComplete:
         """Remove a tab.
 

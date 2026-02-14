@@ -109,10 +109,13 @@ class Signal(Generic[SignalT]):
             data: An argument to pass to the callbacks.
 
         """
+        if not self._subscriptions:
+            return
         # Don't publish if the DOM is not ready or shutting down
         owner = self.owner
         if owner is None:
             return
+
         if not owner.is_attached or owner._pruning:
             return
         for ancestor_node in owner.ancestors_with_self:

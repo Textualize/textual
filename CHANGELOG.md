@@ -9,8 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `mode` argument to `push_screen` to enable pushing a screen to a non-active mode https://github.com/Textualize/textual/pull/6362
+- Added `mode` argument to `push_screen` and `push_screen_wait` to enable pushing a screen to a non-active mode https://github.com/Textualize/textual/pull/6362
+- Added `App.mode_change_signal` and `App.screen_change_signal` https://github.com/Textualize/textual/pull/6362
+- Added `Tabs.get_tab` https://github.com/Textualize/textual/pull/6362
 
+### Changed
+
+- It is no longer a NOOP and warning to dismiss a non-active screen. The dismiss will still work, but the screen may not update if the current mode is not active. https://github.com/Textualize/textual/pull/6362# await pilot.press("2")
+  
 ## [7.5.0] - 2026-01-30
 
 ### Changed
