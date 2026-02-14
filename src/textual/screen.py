@@ -1377,7 +1377,10 @@ class Screen(Generic[ScreenResultType], Widget):
             return
 
         if self.is_current:
-            self.call_next(self._compositor_refresh)
+            if self.app._batch_count:
+                self.call_later(self._compositor_refresh)
+            else:
+                self._compositor_refresh()
 
         if self.app._dom_ready:
             self.screen_layout_refresh_signal.publish(self.screen)

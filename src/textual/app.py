@@ -2575,6 +2575,8 @@ class App(Generic[ReturnType], DOMNode):
         if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
+        self.delay_update()
+
         self.screen.post_message(events.ScreenSuspend())
         self.screen.refresh()
 

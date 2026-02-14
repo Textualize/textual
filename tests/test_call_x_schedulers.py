@@ -45,6 +45,6 @@ async def test_call_after_refresh() -> None:
         app.call_after_refresh(callback)
         await asyncio.wait_for(called_event.wait(), 1)
         app_display_count = app.display_count
-        assert app_display_count >= display_count
+        assert app_display_count == display_count
         # Should be app because the callback should be in the same context as app
         assert callback_message_pump is app
