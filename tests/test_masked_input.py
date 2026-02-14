@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Union
 
 import pytest
@@ -10,16 +12,24 @@ from textual.widgets import MaskedInput
 InputEvent = Union[MaskedInput.Changed, MaskedInput.Submitted]
 
 
-class InputApp(App[None]):
-    def __init__(self, template: str, placeholder: str = ""):
+class MaskedInputApp(App[None]):
+    def __init__(
+        self,
+        template: str,
+        value: str | None = None,
+        select_on_focus: bool = True,
+    ):
         super().__init__()
         self.messages: list[InputEvent] = []
         self.template = template
-        self.placeholder = placeholder
+        self.value = value
+        self.select_on_focus = select_on_focus
 
     def compose(self) -> ComposeResult:
         yield MaskedInput(
-            template=self.template, placeholder=self.placeholder, select_on_focus=False
+            template=self.template,
+            value=self.value,
+            select_on_focus=self.select_on_focus,
         )
 
     @on(MaskedInput.Changed)
@@ -29,7 +39,10 @@ class InputApp(App[None]):
 
 
 async def test_missing_required():
-    app = InputApp(">9999-99-99")
+    app = MaskedInputApp(
+        template=">9999-99-99",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "2024-12"
@@ -48,7 +61,10 @@ async def test_missing_required():
 
 
 async def test_valid_required():
-    app = InputApp(">9999-99-99")
+    app = MaskedInputApp(
+        template=">9999-99-99",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "2024-12-31"
@@ -59,7 +75,10 @@ async def test_valid_required():
 
 
 async def test_missing_optional():
-    app = InputApp(">9999-99-00")
+    app = MaskedInputApp(
+        template=">9999-99-00",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = "2024-12"
@@ -71,7 +90,10 @@ async def test_missing_optional():
 
 async def test_editing():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
-    app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("A", "B", "C", "D")
@@ -94,9 +116,75 @@ async def test_editing():
         assert input.cursor_position == len(serial)
 
 
+async def test_overwrite_typing():
+    app = MaskedInputApp(
+        template="9999-9999-9999-9999;0",
+        select_on_focus=False,
+    )
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        input.value = "0000-99"
+        input.action_home()
+
+        await pilot.press("1", "2", "3")
+        assert input.cursor_position == 3
+        assert input.value == "1230-99"
+
+        await pilot.press("4")
+        assert input.cursor_position == 5
+        assert input.value == "1234-99"
+
+        await pilot.press("0", "0")
+        assert input.cursor_position == 7
+        assert input.value == "1234-00"
+
+        await pilot.press("7", "8")
+        assert input.cursor_position == 10
+        assert input.value == "1234-0078-"
+
+        await pilot.press("left", "left")
+        await pilot.press("backspace", "backspace")
+        assert input.cursor_position == 5
+        assert input.value == "1234-  78"
+
+        await pilot.press("5", "6")
+        assert input.cursor_position == 7
+        assert input.value == "1234-5678"
+
+
+async def test_insert_jump_to_next_separator():
+    app = MaskedInputApp(
+        template="9999-9999-9999-9999;0",
+        select_on_focus=False,
+    )
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+
+        # If cursor is at the start, input should not jump to next separator
+        await pilot.press("-")
+        assert input.value == ""
+        assert input.cursor_position == 0
+
+        await pilot.press("1", "-")
+        assert input.value == "1   -"
+        assert input.cursor_position == 5
+
+        # If previous character is a separator, input should not jump to next separator
+        await pilot.press("-")
+        assert input.value == "1   -"
+        assert input.cursor_position == 5
+
+        await pilot.press("2", "-")
+        assert input.value == "1   -2   -"
+        assert input.cursor_position == 10
+
+
 async def test_key_movement_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
-    app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test():
         input = app.query_one(MaskedInput)
         input.value = serial
@@ -116,7 +204,10 @@ async def test_key_movement_actions():
 
 async def test_key_modification_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
-    app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         input.value = serial
@@ -153,7 +244,10 @@ async def test_key_modification_actions():
 
 
 async def test_cursor_word_right_after_last_separator():
-    app = InputApp(">NNN-NNN-NNN-NNNNN;_")
+    app = MaskedInputApp(
+        template=">NNN-NNN-NNN-NNNNN;_",
+        select_on_focus=False,
+    )
     async with app.run_test():
         input = app.query_one(MaskedInput)
         input.value = "123-456-789-012"
@@ -163,7 +257,10 @@ async def test_cursor_word_right_after_last_separator():
 
 
 async def test_case_conversion_meta_characters():
-    app = InputApp("NN<-N!N>N")
+    app = MaskedInputApp(
+        template="NN<-N!N>N",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "B", "C", "D", "e")
@@ -172,7 +269,10 @@ async def test_case_conversion_meta_characters():
 
 
 async def test_case_conversion_override():
-    app = InputApp(">-<NN")
+    app = MaskedInputApp(
+        template=">-<NN",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "B")
@@ -181,7 +281,10 @@ async def test_case_conversion_override():
 
 
 async def test_case_conversion_cancel():
-    app = InputApp("-!N-")
+    app = MaskedInputApp(
+        template="-!N-",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a")
@@ -190,14 +293,20 @@ async def test_case_conversion_cancel():
 
 
 async def test_only_separators__raises_ValueError():
-    app = InputApp("---")
+    app = MaskedInputApp(
+        template="---",
+        select_on_focus=False,
+    )
     with pytest.raises(ValueError):
         async with app.run_test() as pilot:
             await pilot.press("a")
 
 
 async def test_custom_separator_escaping():
-    app = InputApp("N\\aN\\N\\cN")
+    app = MaskedInputApp(
+        template="N\\aN\\N\\cN",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("D", "e", "F")
@@ -206,7 +315,10 @@ async def test_custom_separator_escaping():
 
 
 async def test_digits_not_required():
-    app = InputApp("00;_")
+    app = MaskedInputApp(
+        template="00;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "1")
@@ -215,9 +327,129 @@ async def test_digits_not_required():
 
 
 async def test_digits_required():
-    app = InputApp("99;_")
+    app = MaskedInputApp(
+        template="99;_",
+        select_on_focus=False,
+    )
     async with app.run_test() as pilot:
         input = app.query_one(MaskedInput)
         await pilot.press("a", "1")
         assert input.value == "1"
         assert not input.is_valid
+
+
+async def test_replace_selection_with_invalid_value():
+    """Regression test for https://github.com/Textualize/textual/issues/5493"""
+
+    app = MaskedInputApp(
+        template="9999-99-99",
+        value="2025-12",
+    )
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        assert input.selection == (0, len(input.value))  # Sanity check
+        await pilot.press("a")
+        assert input.value == "2025-12"
+
+
+async def test_movement_actions_with_select():
+    app = MaskedInputApp(
+        template=">NNNNN-NNNNN-NNNNN-NNNNN;_",
+        value="ABCDE-FGHIJ-KLMNO-PQRST",
+        select_on_focus=False,
+    )
+    async with app.run_test():
+        input = app.query_one(MaskedInput)
+
+        input.action_home(select=True)
+        assert input.selection == (len(input.value), 0)
+
+        input.action_cursor_left()
+        assert input.selection.is_empty
+        assert input.cursor_position == 0
+
+        input.action_cursor_right_word(select=True)
+        assert input.selection == (0, 6)
+
+        input.action_cursor_right()
+        assert input.selection.is_empty
+        assert input.cursor_position == 6
+
+        input.action_cursor_left(select=True)
+        assert input.selection == (6, 4)
+
+        input.action_cursor_left()
+        input.action_cursor_right(select=True)
+        assert input.selection == (4, 6)
+
+        input.action_end(select=True)
+        assert input.selection == (6, len(input.value))
+
+        input.action_cursor_right()
+        input.action_cursor_left_word(select=True)
+        assert input.selection == (len(input.value), 18)
+
+
+async def test_replace_selection():
+    app = MaskedInputApp(
+        template="NNNNN-NNNNN-NNNNN-NNNNN;_",
+        value="ABCDE-FGHIJ-KLMNO-PQRST",
+        select_on_focus=False,
+    )
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+
+        input.cursor_position = 0
+        input.action_cursor_right(select=True)
+        await pilot.press("x")
+        assert input.value == "xBCDE-FGHIJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 1
+
+        input.cursor_position = 3
+        input.action_cursor_left(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDE-FGHIJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 3
+
+        input.cursor_position = 6
+        input.action_cursor_left(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDx-FGHIJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 6
+
+        input.cursor_position = 9
+        input.action_cursor_left_word(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDx-x  IJ-KLMNO-PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 7
+
+        input.cursor_position = 15
+        input.action_cursor_right_word(select=True)
+        await pilot.press("x")
+        assert input.value == "xBxDx-x  IJ-KLMx -PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 16
+
+        input.cursor_position = 9
+        input.action_home(select=True)
+        await pilot.press("a")
+        assert input.value == "a    -   IJ-KLMx -PQRST"
+        assert input.selection.is_empty
+        assert input.cursor_position == 1
+
+        input.cursor_position = 13
+        input.action_end(select=True)
+        await pilot.press("x")
+        assert input.value == "a    -   IJ-Kx"
+        assert input.selection.is_empty
+        assert input.cursor_position == 14
+
+        input.action_home(select=True)
+        await pilot.press("x")
+        assert input.value == "x"
+        assert input.selection.is_empty
+        assert input.cursor_position == 1
