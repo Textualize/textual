@@ -5,11 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## Unreleased
 
 ### Added
 
+- Added `mode` argument to `push_screen` and `push_screen_wait` to enable pushing a screen to a non-active mode https://github.com/Textualize/textual/pull/6362
+- Added `App.mode_change_signal` and `App.screen_change_signal` https://github.com/Textualize/textual/pull/6362
+- Added `Tabs.get_tab` https://github.com/Textualize/textual/pull/6362
 - Added Catppuccin Frappe and Macchiato themes https://github.com/Textualize/textual/pull/6335
+
+### Changed
+
+- It is no longer a NOOP and warning to dismiss a non-active screen. The dismiss will still work, but the screen may not update if the current mode is not active. https://github.com/Textualize/textual/pull/6362
+- Added 50ms delay when switching screens to allow state to udpate and prevent janky flash of old content https://github.com/Textualize/textual/pull/6362
+  
+## [7.5.0] - 2026-01-30
+
+### Changed
+
+- The DataTable row cursor will extend to the full width if there is excess space https://github.com/Textualize/textual/pull/6345
+- The DataTable will send a selected event on click, only if the cell / row / column is currently highlighted https://github.com/Textualize/textual/pull/6345
+
+## [7.4.0] - 2026-01-25
+
+### Added
+
+- Added `pointer` rule https://github.com/Textualize/textual/pull/6339
 
 ## [7.3.0] - 2026-01-15
 
@@ -3328,6 +3349,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[7.5.0]: https://github.com/Textualize/textual/compare/v7.4.0...v7.5.0
+[7.4.0]: https://github.com/Textualize/textual/compare/v7.3.0...v7.4.0
 [7.3.0]: https://github.com/Textualize/textual/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/Textualize/textual/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/Textualize/textual/compare/v7.0.3...v7.1.0

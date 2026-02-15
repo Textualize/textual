@@ -8,6 +8,7 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.command import SimpleCommand
 from textual.pilot import Pilot, _get_mouse_message_arguments
+from textual.screen import Screen
 from textual.widgets import Button, Input, Label, Static
 
 
@@ -386,3 +387,39 @@ def test_app_loop_run_after_asyncio_run() -> None:
     app = MyApp()
     result = app.run()
     assert result == 42
+
+
+async def test_pointer_shape() -> None:
+    """Test that the pointer shape updates."""
+
+    class PointerApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Hello")
+            yield Button("Click me")
+
+    app = PointerApp()
+    async with app.run_test() as pilot:
+        await pilot.hover(offset=(0, 0))
+        assert app.screen._pointer_shape == "default"
+        await pilot.hover(offset=(1, 1))
+        assert app.screen._pointer_shape == "pointer"
+
+
+async def test_get_screen_stack() -> None:
+    """Test get_screen_stack"""
+
+    class ModeApp(App):
+        MODES = {"foo": lambda: Screen(id="foo")}
+
+    app = ModeApp()
+    async with app.run_test():
+        screen_stack = app.get_screen_stack()
+        assert isinstance(screen_stack, list)
+        assert len(screen_stack) == 1
+        assert screen_stack[0].id == "_default"
+        await app.switch_mode("foo")
+
+        screen_stack = app.get_screen_stack()
+        assert isinstance(screen_stack, list)
+        assert len(screen_stack) == 1
+        assert screen_stack[0].id == "foo"
