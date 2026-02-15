@@ -4812,6 +4812,8 @@ def test_visual_style_caching(snap_compare) -> None:
 
     Check that `visual_style` isn't cached when it shouldn't be.
 
+    You should see a solid red panel on the left, and a solid green panel on the right.
+
     """
 
     class WatchApp(App):
