@@ -456,6 +456,9 @@ class Widget(DOMNode):
         """A dict that is refreshed when the widget is resized / refreshed."""
 
         self._visual_style: VisualStyle | None = None
+        """Cached style of visual."""
+        self._visual_style_updates: int = -1
+        """Cache busting integer."""
 
         self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
@@ -4127,7 +4130,12 @@ class Widget(DOMNode):
 
     @property
     def visual_style(self) -> VisualStyle:
-        if self._visual_style is None:
+
+        if (
+            self._visual_style is None
+            or self._visual_style_updates != self.styles._updates
+        ):
+            self._visual_style_updates = self.styles._updates
             background = Color(0, 0, 0, 0)
             color = Color(255, 255, 255, 0)
 
