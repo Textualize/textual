@@ -4594,6 +4594,7 @@ class App(Generic[ReturnType], DOMNode):
     def _resume_signal(self) -> None:
         """Signal that the application is being resumed from a suspension."""
         self.app_resume_signal.publish(self)
+        self.refresh(layout=True)
 
     @contextmanager
     def suspend(self) -> Iterator[None]:
@@ -4642,7 +4643,6 @@ class App(Generic[ReturnType], DOMNode):
             self._driver.resume_application_mode()
             # ...and publish a resume signal.
             self._resume_signal()
-            self.refresh(layout=True)
         else:
             raise SuspendNotSupported(
                 "App.suspend is not supported in this environment."
