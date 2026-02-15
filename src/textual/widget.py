@@ -4130,7 +4130,7 @@ class Widget(DOMNode):
 
     @property
     def visual_style(self) -> VisualStyle:
-
+        """The widget's current style."""
         if (
             self._visual_style is None
             or self._visual_style_cache_key != self.styles._cache_key
