@@ -46,6 +46,7 @@ from textual.css.constants import (
     VALID_EXPAND,
     VALID_OVERFLOW,
     VALID_OVERLAY,
+    VALID_POINTER,
     VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_SCROLLBAR_VISIBILITY,
@@ -66,6 +67,7 @@ from textual.css.types import (
     Expand,
     Overflow,
     Overlay,
+    PointerShape,
     ScrollbarGutter,
     Specificity3,
     Specificity6,
@@ -208,6 +210,8 @@ class RulesMap(TypedDict, total=False):
     expand: Expand
 
     line_pad: int
+
+    pointer: PointerShape
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -503,6 +507,17 @@ class StylesBase:
     expand: StringEnumProperty[Expand] = StringEnumProperty(VALID_EXPAND, "greedy")
     line_pad = IntegerProperty(default=0, layout=True)
     """Padding added to left and right of lines."""
+
+    pointer: StringEnumProperty[PointerShape] = StringEnumProperty(
+        VALID_POINTER, "default", pointer=True
+    )
+    """Set the pointer (cursor) shape when the mouse is over this widget.
+    
+    Valid values include "default", "pointer", "text", "crosshair", "help", "wait",
+    "move", "grab", "grabbing", and various resize cursors.
+    
+    Requires terminal support for Kitty pointer shapes protocol.
+    """
 
     def __textual_animation__(
         self,

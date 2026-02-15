@@ -35,6 +35,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         padding: 0 1;        
         height: auto;
         width: 1fr;
+        pointer: pointer;
 
         &.-textual-compact {
             border: none !important;

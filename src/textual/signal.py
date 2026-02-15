@@ -74,7 +74,6 @@ class Signal(Generic[SignalT]):
         Raises:
             SignalError: Raised when subscribing a non-mounted widget.
         """
-
         if not node.is_running:
             raise SignalError(
                 f"Node must be running to subscribe to a signal (has {node} been mounted)?"
@@ -110,10 +109,13 @@ class Signal(Generic[SignalT]):
             data: An argument to pass to the callbacks.
 
         """
+        if not self._subscriptions:
+            return
         # Don't publish if the DOM is not ready or shutting down
         owner = self.owner
         if owner is None:
             return
+
         if not owner.is_attached or owner._pruning:
             return
         for ancestor_node in owner.ancestors_with_self:

@@ -183,6 +183,7 @@ class Input(ScrollView):
         width: 100%;
         height: 3;
         scrollbar-size-horizontal: 0;
+        pointer: text;
 
         &.-textual-compact {
             border: none !important;

@@ -118,6 +118,7 @@ TextArea {
     padding: 0 1;
     color: $foreground;
     background: $surface;
+    pointer: text;
     &.-textual-compact {
         border: none !important;
     }
