@@ -457,7 +457,7 @@ class Widget(DOMNode):
 
         self._visual_style: VisualStyle | None = None
         """Cached style of visual."""
-        self._visual_style_updates: int = -1
+        self._visual_style_cache_key: int = -1
         """Cache busting integer."""
 
         self._render_cache = _RenderCache(_null_size, [])
@@ -4133,9 +4133,9 @@ class Widget(DOMNode):
 
         if (
             self._visual_style is None
-            or self._visual_style_updates != self.styles._updates
+            or self._visual_style_cache_key != self.styles._cache_key
         ):
-            self._visual_style_updates = self.styles._updates
+            self._visual_style_cache_key = self.styles._cache_key
             background = Color(0, 0, 0, 0)
             color = Color(255, 255, 255, 0)
 
