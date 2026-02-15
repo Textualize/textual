@@ -202,7 +202,6 @@ class DimFilter(LineFilter):
         _Segment = Segment
         _dim_style = dim_style
         factor = self.dim_factor
-
         return [
             (
                 _Segment(

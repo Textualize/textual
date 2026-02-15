@@ -275,23 +275,6 @@ async def test_auto_focus_skips_non_focusable_widgets():
         assert isinstance(app.focused, Button)
 
 
-async def test_dismiss_non_top_screen():
-    class MyApp(App[None]):
-        async def key_p(self) -> None:
-            self.bottom = Screen()
-            top = Screen()
-            await self.push_screen(self.bottom)
-            await self.push_screen(top)
-
-    app = MyApp()
-    async with app.run_test() as pilot:
-        await pilot.press("p")
-        # A noop if not the top
-        stack = list(app.screen_stack)
-        await app.bottom.dismiss()
-        assert app.screen_stack == stack
-
-
 async def test_dismiss_action():
     class ConfirmScreen(Screen[bool]):
         BINDINGS = [("y", "dismiss(True)", "Dismiss")]

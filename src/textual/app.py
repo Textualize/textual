@@ -796,6 +796,12 @@ class App(Generic[ReturnType], DOMNode):
         perform work after the app has resumed.
         """
 
+        self.mode_change_signal: Signal[str] = Signal(self, "mode-change")
+        """A signal published when the current screen mode changes."""
+
+        self.screen_change_signal: Signal[Screen] = Signal(self, "screen-change")
+        """A signal published when the current screen changes."""
+
         self.set_class(self.current_theme.dark, "-dark-mode", update=False)
         self.set_class(not self.current_theme.dark, "-light-mode", update=False)
 
@@ -2569,6 +2575,8 @@ class App(Generic[ReturnType], DOMNode):
         if mode not in self._modes:
             raise UnknownModeError(f"No known mode {mode!r}")
 
+        self.delay_update()
+
         self.screen.post_message(events.ScreenSuspend())
         self.screen.refresh()
 
@@ -2580,7 +2588,12 @@ class App(Generic[ReturnType], DOMNode):
         self._current_mode = mode
         if self.screen._css_update_count != self._css_update_count:
             self.refresh_css()
+
+        self.mode_change_signal.publish(mode)
+        self.screen_change_signal.publish(self.screen)
+
         self.screen._screen_resized(self.size)
+
         self.screen.post_message(events.ScreenResume())
 
         self.log.system(f"{self._current_mode!r} is the current mode")
@@ -2792,6 +2805,8 @@ class App(Generic[ReturnType], DOMNode):
             screen: Screen[ScreenResultType] | str,
             callback: ScreenResultCallbackType[ScreenResultType] | None = None,
             wait_for_dismiss: Literal[False] = False,
+            *,
+            mode: str | None = None,
         ) -> AwaitMount: ...
 
         @overload
@@ -2800,6 +2815,8 @@ class App(Generic[ReturnType], DOMNode):
             screen: Screen[ScreenResultType] | str,
             callback: ScreenResultCallbackType[ScreenResultType] | None = None,
             wait_for_dismiss: Literal[True] = True,
+            *,
+            mode: str | None = None,
         ) -> asyncio.Future[ScreenResultType]: ...
 
     def push_screen(
@@ -2807,6 +2824,8 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: bool = False,
+        *,
+        mode: str | None = None,
     ) -> AwaitMount | asyncio.Future[ScreenResultType]:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
@@ -2815,6 +2834,7 @@ class App(Generic[ReturnType], DOMNode):
             callback: An optional callback function that will be called if the screen is [dismissed][textual.screen.Screen.dismiss] with a result.
             wait_for_dismiss: If `True`, awaiting this method will return the dismiss value from the screen. When set to `False`, awaiting
                 this method will wait for the screen to be mounted. Note that `wait_for_dismiss` should only be set to `True` when running in a worker.
+            mode: The mode to push the screen to, or `None` to the currently active mode. If pushing to a non-current mode, the screen will not be immediately visible.
 
         Raises:
             NoActiveWorker: If using `wait_for_dismiss` outside of a worker.
@@ -2836,10 +2856,19 @@ class App(Generic[ReturnType], DOMNode):
         else:
             future = loop.create_future()
 
-        self.app.capture_mouse(None)
-        if self._screen_stack:
-            self.screen.post_message(events.ScreenSuspend())
-            self.screen.refresh()
+        if mode is None:
+            mode = self._current_mode
+
+        try:
+            screen_stack = self._screen_stacks[mode]
+        except KeyError:
+            raise UnknownModeError(f"No such mode {mode!r}")
+
+        if screen_stack and screen_stack[-1].is_active:
+            self.app.capture_mouse(None)
+            mode_screen = screen_stack[-1]
+            mode_screen.post_message(events.ScreenSuspend())
+            mode_screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         try:
             message_pump = active_message_pump.get()
@@ -2849,9 +2878,10 @@ class App(Generic[ReturnType], DOMNode):
         next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
         next_screen._update_auto_focus()
-        self._screen_stack.append(next_screen)
-        next_screen.post_message(events.ScreenResume())
-        self.log.system(f"{self.screen} is current (PUSHED)")
+        screen_stack.append(next_screen)
+        if next_screen.is_active:
+            next_screen.post_message(events.ScreenResume())
+        self.screen_change_signal.publish(next_screen)
         if wait_for_dismiss:
             try:
                 get_current_worker()
@@ -2867,14 +2897,16 @@ class App(Generic[ReturnType], DOMNode):
 
         @overload
         async def push_screen_wait(
-            self, screen: Screen[ScreenResultType]
+            self, screen: Screen[ScreenResultType], *, mode: str | None = None
         ) -> ScreenResultType: ...
 
         @overload
-        async def push_screen_wait(self, screen: str) -> Any: ...
+        async def push_screen_wait(
+            self, screen: str, *, mode: str | None = None
+        ) -> Any: ...
 
     async def push_screen_wait(
-        self, screen: Screen[ScreenResultType] | str
+        self, screen: Screen[ScreenResultType] | str, *, mode: str | None = None
     ) -> ScreenResultType | Any:
         """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
 
@@ -2882,13 +2914,16 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             screen: A screen or the name of an installed screen.
+            mode: The mode to push the screen to, or `None` to the currently active mode. If pushing to a non-current mode, the screen will not be immediately visible.
 
         Returns:
             The screen's result.
         """
         await self._flush_next_callbacks()
         # The shield prevents the cancellation of the current task from canceling the push_screen awaitable
-        return await asyncio.shield(self.push_screen(screen, wait_for_dismiss=True))
+        return await asyncio.shield(
+            self.push_screen(screen, wait_for_dismiss=True, mode=mode)
+        )
 
     def switch_screen(self, screen: Screen | str) -> AwaitComplete:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
@@ -2914,6 +2949,7 @@ class App(Generic[ReturnType], DOMNode):
         self._screen_stack.append(next_screen)
         self.screen.post_message(events.ScreenResume())
         self.screen._push_result_callback(self.screen, None)
+        self.screen_change_signal.publish(self.screen)
         self.log.system(f"{self.screen} is current (SWITCHED)")
 
         async def do_switch() -> None:
@@ -3002,6 +3038,7 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.post_message(
             events.ScreenResume(refresh_styles=previous_screen.styles.background.a < 0)
         )
+        self.screen_change_signal.publish(self.screen)
         self.log.system(f"{self.screen} is active")
 
         async def do_pop() -> None:

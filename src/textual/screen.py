@@ -1375,8 +1375,12 @@ class Screen(Generic[ScreenResultType], Widget):
         except Exception as error:
             self.app._handle_exception(error)
             return
+
         if self.is_current:
-            self._compositor_refresh()
+            if self.app._batch_count:
+                self.call_later(self._compositor_refresh)
+            else:
+                self._compositor_refresh()
 
         if self.app._dom_ready:
             self.screen_layout_refresh_signal.publish(self.screen)
@@ -1464,7 +1468,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_auto_focus()
 
         if self.is_attached:
-            self._compositor_refresh()
+
             if event.refresh_styles:
                 self.update_node_styles(animate=False)
             if self._size != size:
@@ -1890,9 +1894,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Any callback provided in [push_screen][textual.app.App.push_screen] will be invoked with the supplied result.
 
-        Only the active screen may be dismissed. This method will produce a warning in the logs if
-        called on an inactive screen (but otherwise have no effect).
-
         !!! warning
 
             Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
@@ -1904,9 +1905,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
         """
         _rich_traceback_omit = True
-        if not self.is_active:
-            self.log.warning("Can't dismiss inactive screen")
-            return AwaitComplete()
         if self._result_callbacks:
             callback = self._result_callbacks[-1]
             callback(result)
