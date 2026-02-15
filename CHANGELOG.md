@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `mode` argument to `push_screen` and `push_screen_wait` to enable pushing a screen to a non-active mode https://github.com/Textualize/textual/pull/6362
 - Added `App.mode_change_signal` and `App.screen_change_signal` https://github.com/Textualize/textual/pull/6362
 - Added `Tabs.get_tab` https://github.com/Textualize/textual/pull/6362
+- Added Catppuccin Frappe and Macchiato themes https://github.com/Textualize/textual/pull/6335
 
 ### Changed
 
