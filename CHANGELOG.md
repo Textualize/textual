@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Allow `Reactive` class variables to be passed to `DOMNode.watch()` method https://github.com/Textualize/textual/pull/6331
 - Added `mode` argument to `push_screen` and `push_screen_wait` to enable pushing a screen to a non-active mode https://github.com/Textualize/textual/pull/6362
 - Added `App.mode_change_signal` and `App.screen_change_signal` https://github.com/Textualize/textual/pull/6362
 - Added `Tabs.get_tab` https://github.com/Textualize/textual/pull/6362
