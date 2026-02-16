@@ -1,8 +1,8 @@
 from textual.widgets._select import (
-    BLANK,
+    NULL,
     EmptySelectError,
     InvalidSelectValueError,
     NoSelection,
 )
 
-__all__ = ["EmptySelectError", "InvalidSelectValueError", "NoSelection", "BLANK"]
+__all__ = ["EmptySelectError", "InvalidSelectValueError", "NoSelection", "NULL"]

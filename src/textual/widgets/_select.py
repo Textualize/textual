@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Hashable, Iterable, TypeVar, Union
+from typing import TYPE_CHECKING, Generic, Hashable, Iterable, TypeVar
 
 import rich.repr
 from rich.console import RenderableType
@@ -28,13 +28,13 @@ class NonSelectableStatic(Static):
 
 
 class NoSelection:
-    """Used by the `Select` widget to flag the unselected state. See [`Select.BLANK`][textual.widgets.Select.BLANK]."""
+    """Used by the `Select` widget to flag the unselected state. See [`Select.NULL`][textual.widgets.Select.NULL]."""
 
     def __repr__(self) -> str:
-        return "Select.BLANK"
+        return "Select.NULL"
 
 
-BLANK = NoSelection()
+NULL = NoSelection()
 
 
 class InvalidSelectValueError(Exception):
@@ -240,7 +240,7 @@ class SelectCurrent(Horizontal):
         """
         super().__init__()
         self.placeholder = placeholder
-        self.label: RenderableType | NoSelection = Select.BLANK
+        self.label: RenderableType | NoSelection = Select.NULL
 
     def update(self, label: RenderableType | NoSelection) -> None:
         """Update the content in the widget.
@@ -249,7 +249,7 @@ class SelectCurrent(Horizontal):
             label: A renderable to display, or `None` for the placeholder.
         """
         self.label = label
-        self.has_value = label is not Select.BLANK
+        self.has_value = label is not Select.NULL
         self.query_one("#label", Static).update(
             self.placeholder if isinstance(label, NoSelection) else label
         )
@@ -283,7 +283,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     When activated with ++enter++ the widget displays an overlay with a list of all possible options.
     """
 
-    BLANK = BLANK
+    NULL = NULL
     """Constant to flag that the widget has no selection."""
 
     BINDINGS = [
@@ -356,12 +356,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | NoSelection] = var[Union[SelectType, NoSelection]](
-        BLANK, init=False
-    )
+    value: var[SelectType | NoSelection] = var(NULL, init=False)
     """The value of the selection.
 
-    If the widget has no selection, its value will be [`Select.BLANK`][textual.widgets.Select.BLANK].
+    If the widget has no selection, its value will be [`Select.NULL`][textual.widgets.Select.NULL].
     Setting this to an illegal value will raise a [`InvalidSelectValueError`][textual.widgets.select.InvalidSelectValueError]
     exception.
     """
@@ -403,7 +401,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         *,
         prompt: str = "Select",
         allow_blank: bool = True,
-        value: SelectType | NoSelection = BLANK,
+        value: SelectType | NoSelection = NULL,
         type_to_search: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -420,7 +418,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             prompt: Text to show in the control when no option is selected.
             allow_blank: Enables or disables the ability to have the widget in a state
                 with no selection made, in which case its value is set to the constant
-                [`Select.BLANK`][textual.widgets.Select.BLANK].
+                [`Select.NULL`][textual.widgets.Select.NULL].
             value: Initial value selected. Should be one of the values in `options`.
                 If no initial value is set and `allow_blank` is `False`, the widget
                 will auto-select the first available option.
@@ -452,7 +450,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         *,
         prompt: str = "Select",
         allow_blank: bool = True,
-        value: SelectType | NoSelection = BLANK,
+        value: SelectType | NoSelection = NULL,
         type_to_search: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -470,7 +468,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             prompt: Text to show in the control when no option is selected.
             allow_blank: Enables or disables the ability to have the widget in a state
                 with no selection made, in which case its value is set to the constant
-                [`Select.BLANK`][textual.widgets.Select.BLANK].
+                [`Select.NULL`][textual.widgets.Select.NULL].
             value: Initial value selected. Should be one of the values in `values`.
                 If no initial value is set and `allow_blank` is `False`, the widget
                 will auto-select the first available value.
@@ -522,7 +520,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """
         self._options: list[tuple[RenderableType, SelectType | NoSelection]] = []
         if self._allow_blank:
-            self._options.append(("", self.BLANK))
+            self._options.append(("", self.NULL))
         self._options.extend(options)
 
         if not self._options:
@@ -539,7 +537,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         options: list[Option] = [
             (
                 Option(Text(self.prompt, style="dim"))
-                if value == self.BLANK
+                if value == self.NULL
                 else Option(prompt)
             )
             for prompt, value in self._options
@@ -549,9 +547,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         option_list.clear_options()
         option_list.add_options(options)
 
-    def _init_selected_option(self, hint: SelectType | NoSelection = BLANK) -> None:
+    def _init_selected_option(self, hint: SelectType | NoSelection = NULL) -> None:
         """Initialises the selected option for the `Select`."""
-        if hint == self.BLANK and not self._allow_blank:
+        if hint == self.NULL and not self._allow_blank:
             hint = self._options[0][1]
         self.value = hint
 
@@ -604,8 +602,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         except NoMatches:
             pass
         else:
-            if value == self.BLANK:
-                select_current.update(self.BLANK)
+            if value == self.NULL:
+                select_current.update(self.NULL)
             else:
                 for index, (prompt, _value) in enumerate(self._options):
                     if _value == value:
@@ -637,7 +635,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self.set_class(expanded, "-expanded")
         if expanded:
             overlay.focus(scroll_visible=False)
-            if self.value is self.BLANK:
+            if self.value is self.NULL:
                 overlay.select(None)
                 self.query_one(SelectCurrent).has_value = False
             else:
@@ -690,7 +688,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         Returns:
             True if the selection is blank, False otherwise.
         """
-        return self.value == self.BLANK
+        return self.value == self.NULL
 
     def clear(self) -> None:
         """Clear the selection if `allow_blank` is `True`.
@@ -699,7 +697,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             InvalidSelectValueError: If `allow_blank` is set to `False`.
         """
         try:
-            self.value = self.BLANK
+            self.value = self.NULL
         except InvalidSelectValueError:
             raise InvalidSelectValueError(
                 "Can't clear selection if allow_blank is set to False."
@@ -712,7 +710,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         select_current.placeholder = prompt
         if not self._allow_blank:
             return
-        if self.value == self.BLANK:
-            select_current.update(self.BLANK)
+        if self.value == self.NULL:
+            select_current.update(self.NULL)
         option_list = self.query_one(SelectOverlay)
         option_list.replace_option_prompt_at_index(0, Text(prompt, style="dim"))
