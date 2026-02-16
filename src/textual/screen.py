@@ -605,7 +605,7 @@ class Screen(Generic[ScreenResultType], Widget):
         except LookupError:
             base_screen = None
 
-        if base_screen is not None and background.a < 1:
+        if base_screen is not None and base_screen is not self and background.a < 1:
             # If background is translucent, render a background screen
             return BackgroundScreen(base_screen, background)
 
