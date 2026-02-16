@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - It is no longer a NOOP and warning to dismiss a non-active screen. The dismiss will still work, but the screen may not update if the current mode is not active. https://github.com/Textualize/textual/pull/6362
 - Added 50ms delay when switching screens to allow state to udpate and prevent janky flash of old content https://github.com/Textualize/textual/pull/6362
+- Breaking change: Changed `Select.BLANK` to `Select.NULL` to avoid clash with newer `Widget.BLANK` Classvar
   
 ## [7.5.0] - 2026-01-30
 
