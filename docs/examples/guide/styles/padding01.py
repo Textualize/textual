@@ -1,7 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Static
 
-
 TEXT = """I must not fear.
 Fear is the mind-killer.
 Fear is the little-death that brings total obliteration.

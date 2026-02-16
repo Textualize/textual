@@ -81,8 +81,8 @@ class Message:
             qualname = cls.__qualname__.rsplit("<locals>.", 1)[-1]
             # only keep the last two parts of the qualified name of deeply nested classes
             # for backwards compatibility, e.g. A.B.C.D becomes C.D
-            namespace = qualname.rsplit(".", 2)[-2:]
-            name = "_".join(camel_to_snake(part) for part in namespace)
+            namespace_ = qualname.rsplit(".", 2)[-2:]
+            name = "_".join(camel_to_snake(part) for part in namespace_)
         cls.handler_name = f"on_{name}"
 
     @property

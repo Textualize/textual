@@ -254,9 +254,7 @@ async def test_cursor_page_down(app: TextAreaApp):
         text_area.selection = Selection.cursor((0, 1))
         await pilot.press("pagedown")
         margin = 2
-        assert text_area.selection == Selection.cursor(
-            (app.size.height - margin, 1)
-        )
+        assert text_area.selection == Selection.cursor((app.size.height - margin, 1))
 
 
 async def test_cursor_page_up(app: TextAreaApp):

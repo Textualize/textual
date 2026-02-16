@@ -49,7 +49,7 @@ markdown-it-py = { extras = ["linkify"], version = ">=2.1.0" }
 mdit-py-plugins = "*"
 rich = ">=14.2.0"
 #rich = {path="../rich", develop=true}
-typing-extensions = "^4.4.0"
+typing-extensions = "^4.12.0"
 platformdirs = ">=3.6.0,<5"
 
 # start of [syntax] extras
@@ -115,6 +115,7 @@ textual-dev = "^1.7.0"
 types-setuptools = "^67.2.0.1"
 isort = "^5.13.2"
 pytest-textual-snapshot = "^1.0.0"
+tree-sitter = { version = ">=0.23.0", python = ">=3.9" }
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
