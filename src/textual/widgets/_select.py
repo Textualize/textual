@@ -356,9 +356,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | NoSelection] = var[SelectType | NoSelection](
-        NULL, init=False
-    )
+    value: var[SelectType | NoSelection] = var(NULL, init=False)
     """The value of the selection.
 
     If the widget has no selection, its value will be [`Select.NULL`][textual.widgets.Select.NULL].
