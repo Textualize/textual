@@ -115,7 +115,10 @@ TextArea {
     width: 1fr;
     height: 1fr;
     border: tall $border-blurred;
-    padding: 0 1;
+    /* Remove right padding so the vertical scrollbar aligns consistently
+       with other scrollable widgets (Tree, OptionList, VerticalScroll).
+       Issue: Textualize/textual#5954 */
+    padding: 0;
     color: $foreground;
     background: $surface;
     pointer: text;
