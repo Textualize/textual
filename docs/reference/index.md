@@ -46,7 +46,7 @@ Welcome to the Textual Reference.
 
     Layout and alignment containers for arranging widgets.
 
-    :octicons-arrow-right-24: [Containers Reference](../containers/index.md)
+    :octicons-arrow-right-24: [Containers Reference](containers/index.md)
 
   
 
