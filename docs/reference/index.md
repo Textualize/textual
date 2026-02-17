@@ -38,6 +38,15 @@ Welcome to the Textual Reference.
     How to use the many widgets builtin to Textual.
 
     :octicons-arrow-right-24: [Widgets Reference](../widgets/index.md)
+    
+
+-   :octicons-book-16:{ .lg .middle } __Containers__
+
+    ---
+
+    Layout and alignment containers for arranging widgets.
+
+    :octicons-arrow-right-24: [Containers Reference](containers/index.md)
 
   
 
