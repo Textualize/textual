@@ -394,3 +394,12 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     def __len__(self) -> int:
         """Compute the length (in number of items) of the list view."""
         return len(self._nodes)
+
+    def _on_scroll_to(self, message) -> None:
+        """Clear any stuck hovered items that the mouse is no longer over"""
+        hovered = self.query(".-hovered")
+        if hovered:
+            for item in hovered:
+                if not item.is_mouse_over:
+                    item.set_class(False, "-hovered")
+        super()._on_scroll_to(message)
