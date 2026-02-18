@@ -145,6 +145,9 @@ class DOMNode(MessagePump):
     BINDING_GROUP_TITLE: str | None = None
     """Title of widget used where bindings are displayed (such as in the key panel)."""
 
+    BINDING_SORT_GROUP: str = "default"
+    """Binding sort group, if not specified in BINDINGS. Used to define Footer sort order."""
+
     BINDINGS: ClassVar[list[BindingType]] = []
     """A list of key bindings."""
 
@@ -677,11 +680,7 @@ class DOMNode(MessagePump):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:
                     bindings.clear()
-                bindings.append(
-                    BindingsMap(
-                        base.__dict__.get("BINDINGS", []),
-                    )
-                )
+                bindings.append(BindingsMap(base.__dict__.get("BINDINGS", [])))
 
         keys: dict[str, list[Binding]] = {}
         for bindings_ in bindings:
