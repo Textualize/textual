@@ -259,6 +259,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [6.1.0] - 2025-08-01
 
+### Fixed
+
+- Fixed `Markdown` and `MarkdownViewer` widgets both handling `Markdown.LinkClicked` messages https://github.com/Textualize/textual/pull/6093
+
 ### Added
 
 - Added `Button.flat` boolean to enable flat button style https://github.com/Textualize/textual/pull/6094
