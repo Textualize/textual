@@ -59,7 +59,7 @@ class Timer:
         self._target = weakref.ref(event_target)
         self._interval = interval
         self.name = f"Timer#{self._timer_count}" if name is None else name
-        self._timer_count += 1
+        Timer._timer_count += 1
         self._callback = callback
         self._repeat = repeat
         self._skip = skip
