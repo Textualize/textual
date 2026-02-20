@@ -928,16 +928,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         self._clear_line_cache()
         self._current_id = 0
+        self._tree_nodes.clear()
         root_label = self.root._label
         root_data = self.root.data
         root_expanded = self.root.is_expanded
-        self.root = TreeNode(
-            self,
+        self.root = self._add_node(
             None,
-            self._new_id(),
             root_label,
             root_data,
-            expanded=root_expanded,
+            expand=root_expanded,
         )
         self._updates += 1
         self.refresh()
