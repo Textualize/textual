@@ -103,4 +103,3 @@ As always, there are a number of fixes in this release. Mostly related to layout
 ## What's next?
 
 The next release will focus on *pain points* we discovered while in a dog-fooding phase (see the [DevLog](https://textual.textualize.io/blog/category/devlog/) for details on what Textual devs have been building).
-
