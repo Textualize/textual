@@ -10,6 +10,7 @@ from rich.style import Style
 from typing_extensions import TypedDict
 
 from textual._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
+from textual._easing import DefaultEasingFunctions
 from textual._types import AnimationLevel, CallbackType
 from textual.color import Color
 from textual.css._style_properties import (
@@ -1397,7 +1398,7 @@ class RenderStyles(StylesBase):
         duration: float | None = None,
         speed: float | None = None,
         delay: float = 0.0,
-        easing: EasingFunction | str = DEFAULT_EASING,
+        easing: EasingFunction | DefaultEasingFunctions = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
         level: AnimationLevel = "full",
     ) -> None:
