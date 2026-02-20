@@ -223,7 +223,7 @@ class Tile(containers.Vertical):
             width, height = self.tile_size
             self.styles.width = width
             self.styles.height = height
-            column, row = self.position
+            column, row = self.start_position
             self.set_scroll(column * width, row * height)
         self.offset = self.position * self.tile_size
 
@@ -372,6 +372,7 @@ class Game(containers.Vertical, can_focus=True):
             theme="material",
         )
         tile_width, tile_height = self.dimensions
+        blank_pos = self.dimensions - (1, 1)
         self.state = "waiting"
         yield Digits("")
         with containers.HorizontalGroup(id="grid") as grid:
@@ -379,7 +380,8 @@ class Game(containers.Vertical, can_focus=True):
             grid.styles.height = tile_height * self.tile_size[1]
             for row, column in product(range(tile_width), range(tile_height)):
                 position = Offset(row, column)
-                tile_no = self.locations[position]
+                tile_no = (row * tile_width) + column if position != blank_pos else None
+                self.locations[position] = tile_no
                 yield Tile(syntax, tile_no, self.tile_size, position)
         if self.language:
             self.call_after_refresh(self.shuffle)
