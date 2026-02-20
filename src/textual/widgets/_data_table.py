@@ -2737,7 +2737,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             offset = 0
             rows_to_scroll = 0
             row_index, _ = self.cursor_coordinate
-            for ordered_row in self.ordered_rows[: row_index + 1]:
+            for ordered_row in reversed(self.ordered_rows[: row_index + 1]):
                 offset += ordered_row.height
                 rows_to_scroll += 1
                 if offset > height:
