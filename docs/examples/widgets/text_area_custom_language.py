@@ -1,34 +1,39 @@
 from pathlib import Path
 
-from tree_sitter_languages import get_language
+import tree_sitter_ruby
+from tree_sitter import Language
 
 from textual.app import App, ComposeResult
 from textual.widgets import TextArea
 
-java_language = get_language("java")
-java_highlight_query = (Path(__file__).parent / "java_highlights.scm").read_text()
-java_code = """\
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
+ruby_language = Language(tree_sitter_ruby.language())
+ruby_highlight_query = (Path(__file__).parent / "ruby_highlights.scm").read_text()
+
+ruby_code = """\
+class Greeter
+  def initialize(name)
+    @name = name
+  end
+
+  def say_hello
+    puts "Hello, #{@name}!"
+  end
+end
 """
 
 
 class TextAreaCustomLanguage(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea.code_editor(text=java_code)
-        text_area.cursor_blink = False
+        text_area = TextArea.code_editor(text=ruby_code)
 
-        # Register the Java language and highlight query
-        text_area.register_language("java", java_language, java_highlight_query)
+        # Register the Ruby language and highlight query
+        text_area.register_language("ruby", ruby_language, ruby_highlight_query)
 
-        # Switch to Java
-        text_area.language = "java"
+        # Switch to Ruby
+        text_area.language = "ruby"
         yield text_area
 
 
-app = TextAreaCustomLanguage()
 if __name__ == "__main__":
+    app = TextAreaCustomLanguage()
     app.run()
