@@ -159,7 +159,7 @@ class Timer:
         while _repeat is None or count <= _repeat:
             next_timer = start + ((count + 1) * _interval)
             now = _time.get_time()
-            if self._skip and next_timer < now:
+            if self._skip and _interval and next_timer < now:
                 count = int((now - start) / _interval + 1)
                 continue
             now = _time.get_time()
