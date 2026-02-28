@@ -3,6 +3,7 @@ Tools for lazy loading widgets.
 """
 
 from __future__ import annotations
+from collections import deque
 
 from textual.widget import Widget
 
@@ -98,11 +99,11 @@ class Reveal(Widget):
             widget: A widget to mount.
         """
         self._replace_widget = widget
-        self._widgets: list[Widget] = []
+        self._widgets: deque[Widget] = deque()
         super().__init__()
 
     @classmethod
-    def _reveal(cls, parent: Widget, widgets: list[Widget]) -> None:
+    def _reveal(cls, parent: Widget, widgets: deque[Widget]) -> None:
         """Reveal children lazily.
 
         Args:
@@ -114,7 +115,7 @@ class Reveal(Widget):
             """Check for pending children"""
             if not widgets:
                 return
-            widget = widgets.pop(0)
+            widget = widgets.popleft()
             try:
                 await parent.mount(widget)
             except Exception:
