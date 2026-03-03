@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Themes are not in alphabetical order
+- Themes are not in alphabetical order https://github.com/Textualize/textual/pull/6405
 
 ### Fixed
 
-- Fixed issues with Directory Tree
+- Fixed issues with Directory Tree https://github.com/Textualize/textual/pull/6405
 
 ## [8.0.1] - 2026-03-01
 

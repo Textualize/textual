@@ -534,10 +534,8 @@ class DirectoryTree(Tree[DirEntry]):
             # Get the next node that needs loading off the queue. Note that
             # this blocks if the queue is empty.
             node = await self._load_queue.get()
-            # Capture the queue instance now so that task_done() is always
-            # called on the same queue that get() was called on, even if
-            # reload() replaces self._load_queue before the finally block runs.
-            queue = self._load_queue
+
+            load_queue = self._load_queue
             content: list[Path] = []
             async with self.lock:
                 cursor_node = self.cursor_node
@@ -561,8 +559,7 @@ class DirectoryTree(Tree[DirEntry]):
                         if cursor_node is not None:
                             self.move_cursor(cursor_node, animate=False)
                 finally:
-                    # Mark this iteration as done.
-                    queue.task_done()
+                    load_queue.task_done()
 
     async def _on_tree_node_expanded(self, event: Tree.NodeExpanded[DirEntry]) -> None:
         event.stop()
