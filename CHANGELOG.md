@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Themes are not in alphabetical order https://github.com/Textualize/textual/pull/6405
+- Themes are now in alphabetical order in command palette https://github.com/Textualize/textual/pull/6405
 
 ### Fixed
 
