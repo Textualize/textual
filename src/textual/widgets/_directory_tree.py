@@ -530,12 +530,11 @@ class DirectoryTree(Tree[DirEntry]):
     async def _loader(self) -> None:
         """Background loading queue processor."""
         worker = get_current_worker()
+        load_queue = self._load_queue
         while not worker.is_cancelled:
             # Get the next node that needs loading off the queue. Note that
             # this blocks if the queue is empty.
-            node = await self._load_queue.get()
-
-            load_queue = self._load_queue
+            node = await load_queue.get()
             content: list[Path] = []
             async with self.lock:
                 cursor_node = self.cursor_node
