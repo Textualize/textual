@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import partial
+from operator import attrgetter
 from typing import Callable
 
 from textual.command import DiscoveryHit, Hit, Hits, Provider
@@ -475,7 +476,7 @@ class ThemeProvider(Provider):
 
         return [
             (theme.name, partial(set_app_theme, theme.name))
-            for theme in themes.values()
+            for theme in sorted(themes.values(), key=attrgetter("name"))
             if theme.name != "textual-ansi"
         ]
 
