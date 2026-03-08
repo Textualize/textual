@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased 
+
+### Changed
+
+- Replace circuar references in DOM with weak references to improve GC times
+- When animating an attribute a second time, the original `on_complete` is now called
+
+### Added
+
+- Added experimental `App.PAUSE_GC_ON_SCROLL_` boolean (disabled by default)
+
 ## [8.0.2] - 2026-03-03
 
 ### Changed

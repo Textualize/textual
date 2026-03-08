@@ -459,6 +459,10 @@ class Animator:
         if current_animation is not None and current_animation == animation:
             return
 
+        if current_animation is not None:
+            if (on_complete := current_animation.on_complete) is not None:
+                on_complete()
+
         self._animations[animation_key] = animation
         self._timer.resume()
         self._idle_event.clear()

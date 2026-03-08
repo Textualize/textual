@@ -510,6 +510,10 @@ class App(Generic[ReturnType], DOMNode):
     Contents are the same as [`HORIZONTAL_BREAKPOINTS`][textual.app.App.HORIZONTAL_BREAKPOINTS], but the integer is compared to the height, rather than the width.
     """
 
+    # TODO: Enable by default after lengthy testing period
+    PAUSE_GC_ON_SCROLL: ClassVar[bool] = False
+    """Pause garbage collection when scrolling, for potentially smoother scrolling with many widgets (experimental)."""
+
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
         "blur": lambda app: not app.app_focus,
@@ -838,6 +842,9 @@ class App(Generic[ReturnType], DOMNode):
         self._compose_screen: Screen | None = None
         """The screen composed by App.compose."""
 
+        self._scroll_count = 0
+        """Number of current scroll operations."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -983,6 +990,22 @@ class App(Generic[ReturnType], DOMNode):
         text copied from elsewhere in the OS.
         """
         return self._clipboard
+
+    def _scroll_start(self) -> None:
+        """A scroll animation started."""
+        if self.PAUSE_GC_ON_SCROLL:
+            import gc
+
+            gc.disable()
+        self._scroll_count += 1
+
+    def _scroll_end(self) -> None:
+        """A scroll animation ended."""
+        self._scroll_count -= 1
+        if self._scroll_count == 0 and self.PAUSE_GC_ON_SCROLL:
+            import gc
+
+            gc.enable()
 
     def format_title(self, title: str, sub_title: str) -> Content:
         """Format the title for display.

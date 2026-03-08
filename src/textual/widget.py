@@ -2722,6 +2722,7 @@ class Widget(DOMNode):
 
         def _animate_on_complete() -> None:
             """set last scroll time, and invoke callback."""
+            self.app._scroll_end()
             self._last_scroll_time = monotonic()
             if on_complete is not None:
                 self.call_next(on_complete)
@@ -2738,6 +2739,7 @@ class Widget(DOMNode):
                 assert x is not None
                 self.scroll_target_x = x
                 if x != self.scroll_x:
+                    self.app._scroll_start()
                     self.animate(
                         "scroll_x",
                         self.scroll_target_x,
@@ -2752,6 +2754,7 @@ class Widget(DOMNode):
                 assert y is not None
                 self.scroll_target_y = y
                 if y != self.scroll_y:
+                    self.app._scroll_start()
                     self.animate(
                         "scroll_y",
                         self.scroll_target_y,
