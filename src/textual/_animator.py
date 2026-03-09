@@ -421,9 +421,10 @@ class Animator:
                 )
 
             start_value = getattr(obj, attribute)
-
             if start_value == value:
                 self._animations.pop(animation_key, None)
+                if on_complete is not None:
+                    self.app.call_later(on_complete)
                 return
 
             if duration is not None:
@@ -455,13 +456,12 @@ class Animator:
 
         assert animation is not None, "animation expected to be non-None"
 
-        current_animation = self._animations.get(animation_key)
-        if current_animation is not None and current_animation == animation:
-            return
-
-        if current_animation is not None:
+        if (current_animation := self._animations.get(animation_key)) is not None:
             if (on_complete := current_animation.on_complete) is not None:
                 on_complete()
+                self._animations.pop(animation_key)
+            if current_animation == animation:
+                return
 
         self._animations[animation_key] = animation
         self._timer.resume()
