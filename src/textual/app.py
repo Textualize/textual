@@ -493,7 +493,7 @@ class App(Generic[ReturnType], DOMNode):
     
     A breakpoint consists of a tuple containing the minimum width where the class should applied, and the name of the class to set.
 
-    Note that only one class name is set, and if you should avoid having more than one breakpoint set for the same size.
+    Note that only one class name is set, and you should avoid having more than one breakpoint set for the same size.
 
     Example:
         ```python
@@ -512,7 +512,7 @@ class App(Generic[ReturnType], DOMNode):
 
     # TODO: Enable by default after lengthy testing period
     PAUSE_GC_ON_SCROLL: ClassVar[bool] = False
-    """Pause garbage collection when scrolling, for potentially smoother scrolling with many widgets (experimental)."""
+    """Pause Python GC (Garbage Collection) when scrolling, for potentially smoother scrolling with many widgets (experimental)."""
 
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
