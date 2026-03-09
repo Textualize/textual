@@ -510,7 +510,7 @@ class App(Generic[ReturnType], DOMNode):
     Contents are the same as [`HORIZONTAL_BREAKPOINTS`][textual.app.App.HORIZONTAL_BREAKPOINTS], but the integer is compared to the height, rather than the width.
     """
 
-    # TODO: Enable by default after lengthy testing period
+    # TODO: Enable by default after suitable testing period
     PAUSE_GC_ON_SCROLL: ClassVar[bool] = False
     """Pause Python GC (Garbage Collection) when scrolling, for potentially smoother scrolling with many widgets (experimental)."""
 
@@ -842,8 +842,8 @@ class App(Generic[ReturnType], DOMNode):
         self._compose_screen: Screen | None = None
         """The screen composed by App.compose."""
 
-        self._scroll_count = 0
-        """Number of current scroll operations."""
+        self._realtime_animation_count = 0
+        """Number of current realtime animations, such as scrolling."""
 
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
@@ -991,18 +991,18 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self._clipboard
 
-    def _scroll_start(self) -> None:
-        """A scroll animation started."""
+    def _realtime_animation_begin(self) -> None:
+        """A scroll or other animation that must be smooth has begun."""
         if self.PAUSE_GC_ON_SCROLL:
             import gc
 
             gc.disable()
-        self._scroll_count += 1
+        self._realtime_animation_count += 1
 
-    def _scroll_end(self) -> None:
-        """A scroll animation ended."""
-        self._scroll_count -= 1
-        if self._scroll_count == 0 and self.PAUSE_GC_ON_SCROLL:
+    def _realtime_animation_complete(self) -> None:
+        """A scroll or other animation that must be smooth has completed."""
+        self._realtime_animation_count -= 1
+        if self._realtime_animation_count == 0 and self.PAUSE_GC_ON_SCROLL:
             import gc
 
             gc.enable()
