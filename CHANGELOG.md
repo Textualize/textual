@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added experimental `App.PAUSE_GC_ON_SCROLL_` boolean (disabled by default)
+- Added experimental `App.PAUSE_GC_ON_SCROLL_` boolean (disabled by default) https://github.com/Textualize/textual/pull/6410
 
 ## [8.0.2] - 2026-03-03
 
