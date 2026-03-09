@@ -1,6 +1,7 @@
 import pytest
 
 from textual._arrange import TOP_Z, arrange
+from textual._context import active_app
 from textual.app import App
 from textual.geometry import NULL_OFFSET, Region, Size, Spacing
 from textual.layout import WidgetPlacement
@@ -17,7 +18,9 @@ async def test_arrange_empty():
 
 async def test_arrange_dock_top():
     container = Widget(id="container")
-    container._parent = App()
+    app = App()
+    active_app.set(app)
+    container._parent = app
     child = Widget(id="child")
     header = Widget(id="header")
     header.styles.dock = "top"
@@ -63,7 +66,9 @@ async def test_arrange_dock_left():
 
 async def test_arrange_dock_right():
     container = Widget(id="container")
-    container._parent = App()
+    app = App()
+    active_app.set(app)
+    container._parent = app
     child = Widget(id="child")
     header = Widget(id="header")
     header.styles.dock = "right"
@@ -88,7 +93,9 @@ async def test_arrange_dock_right():
 
 async def test_arrange_dock_bottom():
     container = Widget(id="container")
-    container._parent = App()
+    app = App()
+    active_app.set(app)
+    container._parent = app
     child = Widget(id="child")
     header = Widget(id="header")
     header.styles.dock = "bottom"
