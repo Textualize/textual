@@ -25,6 +25,7 @@ from typing import (
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
+from rich.style import NULL_STYLE as RICH_NULL_STYLE
 from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
@@ -125,7 +126,7 @@ class _ClassesDescriptor:
             class_names = set(classes)
         check_identifiers("class name", *class_names)
         obj._classes = class_names
-        obj._update_styles()
+        obj.update_node_styles()
 
 
 @rich.repr.auto
@@ -614,7 +615,8 @@ class DOMNode(MessagePump):
             if name not in self._component_styles:
                 raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
             component_styles = self._component_styles[name]
-            styles.node = component_styles.node
+            assert component_styles.node is not None
+            styles._update_node(component_styles.node)
             styles.base.merge(component_styles.base)
             styles.inline.merge(component_styles.inline)
             styles._updates += 1
@@ -1072,7 +1074,9 @@ class DOMNode(MessagePump):
     @property
     def selection_style(self) -> Style:
         """The style of selected text."""
-        style = self.screen.get_component_rich_style("screen--selection")
+        style = self.screen.get_component_rich_style(
+            "screen--selection", default=RICH_NULL_STYLE
+        )
         return style
 
     @property
@@ -1134,7 +1138,7 @@ class DOMNode(MessagePump):
     def _get_title_style_information(
         self, background: Color
     ) -> tuple[Color, Color, VisualStyle]:
-        """Get a Visual Style object for for titles.
+        """Get a Visual Style object for titles.
 
         Args:
             background: The background color.
@@ -1157,7 +1161,7 @@ class DOMNode(MessagePump):
     def _get_subtitle_style_information(
         self, background: Color
     ) -> tuple[Color, Color, VisualStyle]:
-        """Get a Rich Style object for for titles.
+        """Get a Rich Style object for subtitles.
 
         Args:
             background: The background color.
@@ -1529,6 +1533,43 @@ class DOMNode(MessagePump):
     if TYPE_CHECKING:
 
         @overload
+        def query_one_optional(self, selector: str) -> Widget | None: ...
+
+        @overload
+        def query_one_optional(self, selector: type[QueryType]) -> QueryType | None: ...
+
+        @overload
+        def query_one_optional(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType | None: ...
+
+    def query_one_optional(
+        self,
+        selector: str | type[QueryType],
+        expect_type: type[QueryType] | None = None,
+    ) -> QueryType | Widget | None:
+        """Get a widget from this widget's children that matches a selector or widget type,
+        or `None` if there is no match.
+
+        Args:
+            selector: A selector or widget type.
+            expect_type: Require the object be of the supplied type, or None for any type.
+
+        Raises:
+            WrongType: If the wrong type was found.
+
+        Returns:
+            A widget matching the selector, or `None`.
+        """
+        try:
+            widget = self.query_one(selector, expect_type)
+        except NoMatches:
+            return None
+        return widget
+
+    if TYPE_CHECKING:
+
+        @overload
         def query_exactly_one(self, selector: str) -> Widget: ...
 
         @overload
@@ -1623,7 +1664,7 @@ class DOMNode(MessagePump):
         self,
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
-    ) -> DOMNode | None:
+    ) -> DOMNode:
         """Get an ancestor which matches a query.
 
         Args:
@@ -1733,13 +1774,13 @@ class DOMNode(MessagePump):
         self.classes = classes
         return self
 
-    def _update_styles(self) -> None:
+    def update_node_styles(self, animate: bool = True) -> None:
         """Request an update of this node's styles.
 
-        Should be called whenever CSS classes / pseudo classes change.
+        Called by Textual whenever CSS classes / pseudo classes change.
         """
         try:
-            self.app.update_styles(self)
+            self.app.update_styles(self, animate=animate)
         except NoActiveAppError:
             pass
 
@@ -1759,7 +1800,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return self
         if update:
-            self._update_styles()
+            self.update_node_styles()
         return self
 
     def remove_class(self, *class_names: str, update: bool = True) -> Self:
@@ -1778,7 +1819,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return self
         if update:
-            self._update_styles()
+            self.update_node_styles()
         return self
 
     def toggle_class(self, *class_names: str) -> Self:
@@ -1795,7 +1836,7 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        self.update_node_styles()
         return self
 
     def has_pseudo_class(self, class_name: str) -> bool:

@@ -1,6 +1,7 @@
+Thank you for contributing!
 
-**Please review the following checklist.**
+This project requires all PRs to link to an issue or discussion. Ideally signed off by @willmcgugan
 
-- [ ] Docstrings on all new or modified functions / classes 
-- [ ] Updated documentation
-- [ ] Updated CHANGELOG.md (where appropriate)
+**Link to issue or discussion**
+
+<!-- paste link here -->

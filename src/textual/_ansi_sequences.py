@@ -435,3 +435,20 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str | IgnoredSequence] = {
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
 SYNC_START = "\x1b[?2026h"
 SYNC_END = "\x1b[?2026l"
+
+
+def set_pointer_shape(shape: str) -> str:
+    """Generate escape sequence to set pointer (cursor) shape using Kitty protocol.
+
+    Args:
+        shape: The pointer shape name (e.g., "default", "pointer", "text", "crosshair", etc.)
+
+    Returns:
+        The escape sequence to set the pointer shape.
+
+    See: https://sw.kovidgoyal.net/kitty/pointer-shapes/
+    """
+    # Kitty pointer shape protocol: ESC ] 22 ; <shape> ST
+    # where ST is ESC \ or BEL (\x07)
+    # Using BEL as terminator for better compatibility
+    return f"\x1b]22;{shape}\x07"

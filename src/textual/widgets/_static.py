@@ -44,8 +44,8 @@ class Static(Widget, inherit_bindings=False):
         super().__init__(
             name=name, id=id, classes=classes, disabled=disabled, markup=markup
         )
-        self.expand = expand
-        self.shrink = shrink
+        self.set_reactive(Widget.expand, expand)
+        self.set_reactive(Widget.shrink, shrink)
         self.__content = content
         self.__visual: Visual | None = None
 

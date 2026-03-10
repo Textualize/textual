@@ -12,6 +12,7 @@ from textual import events
 from textual._on import on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.color import Color, ColorParseError
 from textual.command import SimpleCommand
 from textual.containers import (
     Center,
@@ -26,7 +27,7 @@ from textual.containers import (
 )
 from textual.content import Content
 from textual.pilot import Pilot
-from textual.reactive import var
+from textual.reactive import reactive, var
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
@@ -110,6 +111,10 @@ def test_layout_containers(snap_compare):
 
 def test_alignment_containers(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "alignment_containers.py")
+
+
+def test_sparkline(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "sparkline.py")
 
 
 # --- Widgets - rendering and basic interactions ---
@@ -4744,8 +4749,7 @@ def test_prune_fix(snap_compare) -> None:
 def test_focus_on_click(snap_compare) -> None:
     """Test focus on click may be prevented.
 
-    You should see a button in a non-focused stated
-
+    You should see a button in a non-focused state.
     """
 
     class NonFocusButton(Button):
@@ -4758,6 +4762,7 @@ def test_focus_on_click(snap_compare) -> None:
             yield NonFocusButton("Click")
 
     async def run_before(pilot: Pilot) -> None:
+        pilot.app.query_one(NonFocusButton).active_effect_duration = 0
         await pilot.pause()
         await pilot.click(NonFocusButton)
 
@@ -4800,3 +4805,69 @@ def test_text_area_paste(snap_compare) -> None:
         await pilot.press("ctrl+v")
 
     assert snap_compare(TextAreaApp(), run_before=run_before)
+
+
+def test_visual_style_caching(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6322
+
+    Check that `visual_style` isn't cached when it shouldn't be.
+
+    You should see a solid red panel on the left, and a solid green panel on the right.
+
+    """
+
+    class WatchApp(App):
+        CSS = """
+Input {
+    dock: top;
+    margin-top: 1;
+}
+
+#colors {
+    grid-size: 2 1;
+    grid-gutter: 2 4;
+    grid-columns: 1fr;
+    margin: 0 1;
+}
+
+#old {
+    height: 100%;
+    border: wide $secondary;
+}
+
+#new {
+    height: 100%;
+    border: wide $secondary;
+}
+
+"""
+
+        color = reactive(Color.parse("transparent"))
+
+        def compose(self) -> ComposeResult:
+            yield Input(placeholder="Enter a color")
+            yield Grid(Static(id="old"), Static(id="new"), id="colors")
+
+        def watch_color(self, old_color: Color, new_color: Color) -> None:
+            self.query_one("#old").styles.background = old_color
+            self.query_one("#new").styles.background = new_color
+
+        def on_input_submitted(self, event: Input.Submitted) -> None:
+            try:
+                input_color = Color.parse(event.value)
+            except ColorParseError:
+                pass
+            else:
+                self.query_one(Input).value = ""
+                self.color = input_color
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.press(*"red")
+        await pilot.pause()
+        await pilot.press("enter")
+        await pilot.pause()
+        await pilot.press(*"green")
+        await pilot.press("enter")
+
+    assert snap_compare(WatchApp(), run_before=run_before)

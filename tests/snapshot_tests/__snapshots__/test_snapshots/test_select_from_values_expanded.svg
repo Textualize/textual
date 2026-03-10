@@ -39,7 +39,7 @@
 .terminal-r5 { fill: #7f7f7f }
 .terminal-r6 { fill: #0178d4 }
 .terminal-r7 { fill: #ddedf9;font-weight: bold }
-.terminal-r8 { fill: #9fa9b1;font-weight: bold }
+.terminal-r8 { fill: #92c5ec;font-weight: bold }
     </style>
 
     <defs>

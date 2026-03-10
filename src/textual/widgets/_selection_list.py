@@ -193,7 +193,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Message sent when the collection of selected values changes.
 
         This is sent regardless of whether the change occurred via user interaction
-        or programmatically the the `SelectionList` API.
+        or programmatically via the `SelectionList` API.
 
         When a bulk change occurs, such as through `select_all` or `deselect_all`,
         only a single `SelectedChanged` message will be sent (rather than one per

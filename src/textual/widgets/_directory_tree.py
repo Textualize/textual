@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
@@ -464,7 +465,7 @@ class DirectoryTree(Tree[DirEntry]):
         """
         try:
             return path.is_dir()
-        except PermissionError:
+        except OSError:
             # We may or may not have been looking at a directory, but we
             # don't have the rights or permissions to even know that. Best
             # we can do, short of letting the error blow up, is assume it's
@@ -504,7 +505,7 @@ class DirectoryTree(Tree[DirEntry]):
                 if worker.is_cancelled:
                     break
                 yield entry
-        except PermissionError:
+        except OSError:
             pass
 
     @work(thread=True, exit_on_error=False)
@@ -525,14 +526,15 @@ class DirectoryTree(Tree[DirEntry]):
             key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 
-    @work()
+    @work(exclusive=True, group="_loader")
     async def _loader(self) -> None:
         """Background loading queue processor."""
         worker = get_current_worker()
+        load_queue = self._load_queue
         while not worker.is_cancelled:
             # Get the next node that needs loading off the queue. Note that
             # this blocks if the queue is empty.
-            node = await self._load_queue.get()
+            node = await load_queue.get()
             content: list[Path] = []
             async with self.lock:
                 cursor_node = self.cursor_node
@@ -556,25 +558,28 @@ class DirectoryTree(Tree[DirEntry]):
                         if cursor_node is not None:
                             self.move_cursor(cursor_node, animate=False)
                 finally:
-                    # Mark this iteration as done.
-                    self._load_queue.task_done()
+                    load_queue.task_done()
 
     async def _on_tree_node_expanded(self, event: Tree.NodeExpanded[DirEntry]) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if self._safe_is_dir(dir_entry.path):
-            await self._add_to_load_queue(event.node)
+        if await asyncio.to_thread(self._safe_is_dir, dir_entry.path):
+            if event.node.data is not None:
+                await self._add_to_load_queue(event.node)
         else:
-            self.post_message(self.FileSelected(event.node, dir_entry.path))
+            if event.node.data is not None:
+                self.post_message(self.FileSelected(event.node, dir_entry.path))
 
-    def _on_tree_node_selected(self, event: Tree.NodeSelected[DirEntry]) -> None:
+    async def _on_tree_node_selected(self, event: Tree.NodeSelected[DirEntry]) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if self._safe_is_dir(dir_entry.path):
-            self.post_message(self.DirectorySelected(event.node, dir_entry.path))
+        if await asyncio.to_thread(self._safe_is_dir, dir_entry.path):
+            if event.node.data is not None:
+                self.post_message(self.DirectorySelected(event.node, dir_entry.path))
         else:
-            self.post_message(self.FileSelected(event.node, dir_entry.path))
+            if event.node.data is not None:
+                self.post_message(self.FileSelected(event.node, dir_entry.path))

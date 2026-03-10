@@ -1,6 +1,6 @@
 # &lt;position&gt;
 
-The `<position>` CSS type defines how the the `offset` rule is applied..
+The `<position>` CSS type defines how the `offset` rule is applied.
 
 
 ## Syntax

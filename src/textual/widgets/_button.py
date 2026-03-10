@@ -54,7 +54,7 @@ class Button(Widget, can_focus=True):
         line-pad: 1;
         text-align: center;
         content-align: center middle;
-        
+        pointer: pointer;
 
         &.-style-flat {
             text-style: bold;
@@ -75,6 +75,7 @@ class Button(Widget, can_focus=True):
             }
             &:disabled {
                 color: auto 50%;
+                pointer: not-allowed;
             }
 
             &.-primary {
@@ -133,6 +134,7 @@ class Button(Widget, can_focus=True):
 
             &:disabled {
                 text-opacity: 0.6;
+                pointer: not-allowed;
             }
 
             &:focus {

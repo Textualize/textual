@@ -9,7 +9,7 @@ Your apps will typically run inline without modification, but you may want to ma
 This How-To will explain how.
 
 Let's look at an inline app.
-The following app displays the the current time (and keeps it up to date).
+The following app displays the current time (and keeps it up to date).
 
 ```python hl_lines="31"
 --8<-- "docs/examples/how-to/inline01.py"

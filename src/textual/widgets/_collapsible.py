@@ -17,14 +17,17 @@ __all__ = ["Collapsible", "CollapsibleTitle"]
 class CollapsibleTitle(Static, can_focus=True):
     """Title and symbol for the Collapsible."""
 
+    BINDING_GROUP_TITLE = "Collapsible"
+
     ALLOW_SELECT = False
     DEFAULT_CSS = """
     CollapsibleTitle {
         width: auto;
-        height: auto;
-        padding: 0 1;
+        height: auto;        
+        padding: 0 1;        
         text-style: $block-cursor-blurred-text-style;
         color: $block-cursor-blurred-foreground;
+        pointer: pointer;
 
         &:hover {
             background: $block-hover-background;
@@ -160,7 +163,7 @@ class Collapsible(Widget):
         Contents {
             width: 100%;
             height: auto;
-            padding: 1 0 0 3;
+            padding: 1 0 0 3;            
         }
         """
 

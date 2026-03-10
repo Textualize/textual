@@ -35,6 +35,7 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
         padding: 0 1;        
         height: auto;
         width: 1fr;
+        pointer: pointer;
 
         &.-textual-compact {
             border: none !important;
@@ -50,15 +51,19 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             & > .toggle--button {
                 color: $panel-darken-2;
                 background: $panel;
-            }
-
-            &.-selected {
-                background: $block-cursor-blurred-background;
-            }
+            }            
         }
 
         & > RadioButton.-on .toggle--button {
             color: $text-success;
+        }
+
+        &:blur {
+            & > RadioButton.-selected {
+                & > .toggle--label {
+                    background: $block-cursor-blurred-background;
+                }
+            }
         }
 
         &:focus {
@@ -68,9 +73,12 @@ class RadioSet(VerticalScroll, can_focus=True, can_focus_children=False):
             border: tall $border;
             background-tint: $foreground 5%;
             & > RadioButton.-selected {
-                color: $block-cursor-foreground;
-                text-style: $block-cursor-text-style;
-                background: $block-cursor-background;
+            
+                & > .toggle--label {
+                    background: $block-cursor-background;                
+                    color: $block-cursor-foreground;                
+                    text-style: $block-cursor-text-style;
+                }                         
             }
 
         }

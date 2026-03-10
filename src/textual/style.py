@@ -239,6 +239,10 @@ class Style:
     @lru_cache(maxsize=1024 * 4)
     def __add__(self, other: object | None) -> Style:
         if isinstance(other, Style):
+            if self._is_null:
+                return other
+            if other._is_null:
+                return self
             (
                 background,
                 foreground,
@@ -405,6 +409,7 @@ class Style:
             underline2=text_style.underline2,
             reverse=text_style.reverse,
             strike=text_style.strike,
+            blink=text_style.blink,
             auto_color=styles.auto_color,
         )
 

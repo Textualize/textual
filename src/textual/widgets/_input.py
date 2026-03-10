@@ -71,6 +71,7 @@ class Selection(NamedTuple):
 class Input(ScrollView):
     """A text input widget."""
 
+    BINDING_GROUP_TITLE = "Input"
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "cursor_left", "Move cursor left", show=False),
         Binding(
@@ -127,7 +128,7 @@ class Input(ScrollView):
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
         Binding("ctrl+x", "cut", "Cut selected text", show=False),
-        Binding("ctrl+c", "copy", "Copy selected text", show=False),
+        Binding("ctrl+c,super+c", "copy", "Copy selected text", show=False),
         Binding("ctrl+v", "paste", "Paste text from the clipboard", show=False),
     ]
     """
@@ -182,6 +183,7 @@ class Input(ScrollView):
         width: 100%;
         height: 3;
         scrollbar-size-horizontal: 0;
+        pointer: text;
 
         &.-textual-compact {
             border: none !important;
@@ -218,7 +220,8 @@ class Input(ScrollView):
             background: ansi_default;
             color: ansi_default;
             &>.input--cursor {
-                text-style: reverse;
+                background: ansi_white;
+                color: ansi_black;
             }
             &>.input--placeholder, &>.input--suggestion {
                 text-style: dim;
@@ -492,7 +495,7 @@ class Input(ScrollView):
             character: A character associated with the key, or `None` if there isn't one.
 
         Returns:
-            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+            `True` if the widget may capture the key in its `Key` message, or `False` if it won't.
         """
         return character is not None and character.isprintable()
 

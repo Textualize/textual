@@ -307,6 +307,7 @@ class Widget(DOMNode):
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
+    """A set of component classes."""
 
     BORDER_TITLE: ClassVar[str] = ""
     """Initial value for border_title attribute."""
@@ -329,6 +330,9 @@ class Widget(DOMNode):
     FOCUS_ON_CLICK: ClassVar[bool] = True
     """Should focusable widgets be automatically focused on click? Default return value of [Widget.focus_on_click][textual.widget.Widget.focus_on_click]."""
 
+    BLANK: ClassVar[bool] = False
+    """Is this widget blank (no border, no content)? Enable for very large scrolling containers."""
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -349,7 +353,7 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
-    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
+    virtual_size = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
 
     has_focus: Reactive[bool] = Reactive(False, repaint=False)
@@ -452,6 +456,9 @@ class Widget(DOMNode):
         """A dict that is refreshed when the widget is resized / refreshed."""
 
         self._visual_style: VisualStyle | None = None
+        """Cached style of visual."""
+        self._visual_style_cache_key: int = -1
+        """Cache busting integer."""
 
         self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
@@ -1014,7 +1021,7 @@ class Widget(DOMNode):
         Returns:
             A widget in place of this widget to indicate a loading.
         """
-        loading_widget = self.app.get_loading_widget()
+        loading_widget = self.screen.get_loading_widget()
         return loading_widget
 
     def set_loading(self, loading: bool) -> None:
@@ -1032,10 +1039,14 @@ class Widget(DOMNode):
             self._cover(loading_indicator)
         else:
             self._uncover()
+        self.screen.update_pointer_shape()
 
     def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
-        self.set_loading(loading)
+        if not self.is_mounted:
+            self.call_later(self.set_loading, loading)
+        else:
+            self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -1133,19 +1144,32 @@ class Widget(DOMNode):
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
 
-    def get_component_rich_style(self, *names: str, partial: bool = False) -> Style:
+    def get_component_rich_style(
+        self, *names: str, partial: bool = False, default: Style | None = None
+    ) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
             names: Names of components.
             partial: Return a partial style (not combined with parent).
+            default: A Style to return if any component style doesn't exist.
+
+        Raises:
+            KeyError: If a component style doesn't exist, and no `default` is provided.
 
         Returns:
             A Rich style object.
         """
 
         if names not in self._rich_style_cache:
-            component_styles = self.get_component_styles(*names)
+            if default is None:
+                component_styles = self.get_component_styles(*names)
+            else:
+                try:
+                    component_styles = self.get_component_styles(*names)
+                except KeyError:
+                    return default
+
             style = component_styles.rich_style
             text_opacity = component_styles.text_opacity
             if text_opacity < 1 and style.bgcolor is not None:
@@ -1442,11 +1466,11 @@ class Widget(DOMNode):
                 # we need to update both odd/even, first-of-type/last-of-type and first-child/last-child
                 for child in children:
                     if child._has_order_style or child._has_odd_or_even:
-                        child._update_styles()
+                        child.update_node_styles()
             else:
                 for child in children:
                     if child._has_order_style:
-                        child._update_styles()
+                        child.update_node_styles()
 
         self.call_later(update_styles, self.displayed_children)
         await_mount = AwaitMount(self, mounted)
@@ -1896,16 +1920,18 @@ class Widget(DOMNode):
     ) -> None:
         # TODO: This will cause the widget to refresh, even when there are no links
         # Can we avoid this?
-        if self.auto_links:
+        if self.auto_links and not self.app.mouse_captured:
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
-        self.horizontal_scrollbar.position = new_value
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.position = new_value
         if round(old_value) != round(new_value):
             self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
-        self.vertical_scrollbar.position = new_value
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.position = new_value
         if self._anchored and self._anchor_released:
             self._check_anchor()
         if round(old_value) != round(new_value):
@@ -2222,10 +2248,6 @@ class Widget(DOMNode):
     @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen.
-
-        Raises:
-            NoScreen: If there is no screen.
-            errors.NoWidget: If the widget is not on the screen.
 
         Returns:
             Region within screen occupied by widget.
@@ -2642,7 +2664,6 @@ class Widget(DOMNode):
             self._repaint_regions.clear()
             self._styles_cache.clear()
             self._styles_cache.set_dirty(self.size.region)
-
             outer_size = self.outer_size
             self._dirty_regions.add(outer_size.region)
             if outer_size:
@@ -2701,6 +2722,7 @@ class Widget(DOMNode):
 
         def _animate_on_complete() -> None:
             """set last scroll time, and invoke callback."""
+            self.app._realtime_animation_complete()
             self._last_scroll_time = monotonic()
             if on_complete is not None:
                 self.call_next(on_complete)
@@ -2717,6 +2739,7 @@ class Widget(DOMNode):
                 assert x is not None
                 self.scroll_target_x = x
                 if x != self.scroll_x:
+                    self.app._realtime_animation_begin()
                     self.animate(
                         "scroll_x",
                         self.scroll_target_x,
@@ -2731,6 +2754,7 @@ class Widget(DOMNode):
                 assert y is not None
                 self.scroll_target_y = y
                 if y != self.scroll_y:
+                    self.app._realtime_animation_begin()
                     self.animate(
                         "scroll_y",
                         self.scroll_target_y,
@@ -4023,7 +4047,7 @@ class Widget(DOMNode):
 
     def watch_has_focus(self, _has_focus: bool) -> None:
         """Update from CSS if has focus state changes."""
-        self._update_styles()
+        self.update_node_styles()
 
     def watch_disabled(self, disabled: bool) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
@@ -4043,7 +4067,7 @@ class Widget(DOMNode):
         except (ScreenStackError, NoActiveAppError, NoScreen):
             pass
 
-        self._update_styles()
+        self.update_node_styles()
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
@@ -4089,13 +4113,13 @@ class Widget(DOMNode):
         self._refresh_scrollbars()
         width, height = self.container_size
 
-        if self.show_vertical_scrollbar:
+        if self.show_vertical_scrollbar and self.styles.scrollbar_size_vertical:
             self.vertical_scrollbar.window_virtual_size = virtual_size.height
             self.vertical_scrollbar.window_size = (
                 height - self.scrollbar_size_horizontal
             )
             self.vertical_scrollbar.refresh()
-        if self.show_horizontal_scrollbar:
+        if self.show_horizontal_scrollbar and self.styles.scrollbar_size_horizontal:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
             self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
             self.horizontal_scrollbar.refresh()
@@ -4105,7 +4129,12 @@ class Widget(DOMNode):
 
     @property
     def visual_style(self) -> VisualStyle:
-        if self._visual_style is None:
+        """The widget's current style."""
+        if (
+            self._visual_style is None
+            or self._visual_style_cache_key != self.styles._cache_key
+        ):
+            self._visual_style_cache_key = self.styles._cache_key
             background = Color(0, 0, 0, 0)
             color = Color(255, 255, 255, 0)
 
@@ -4184,6 +4213,9 @@ class Widget(DOMNode):
         Returns:
             A rendered line.
         """
+        if self.BLANK:
+            return Strip.blank(self.size.width, self.visual_style.rich_style)
+
         if self._dirty_regions:
             self._render_content()
         try:
@@ -4202,7 +4234,12 @@ class Widget(DOMNode):
         Returns:
             A list of list of segments.
         """
-        strips = self._styles_cache.render_widget(self, crop)
+        if self.BLANK:
+            strips = [
+                Strip.blank(crop.width, self.visual_style.rich_style)
+            ] * crop.height
+        else:
+            strips = self._styles_cache.render_widget(self, crop)
         return strips
 
     def get_style_at(self, x: int, y: int) -> Style:
@@ -4270,6 +4307,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+
         if layout and not self._layout_required:
             self._layout_required = True
             self._layout_updates += 1
@@ -4471,7 +4509,7 @@ class Widget(DOMNode):
             else:
                 if self._refresh_styles_required:
                     self._refresh_styles_required = False
-                    self.call_later(self._update_styles)
+                    self.call_later(self.update_node_styles)
                 if self._scroll_required:
                     self._scroll_required = False
                     if not self._layout_required:

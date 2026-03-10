@@ -89,7 +89,7 @@ The following example presents a `Select` created using the `from_values` class 
 ## Blank state
 
 The `Select` widget has an option `allow_blank` for its constructor.
-If set to `True`, the widget may be in a state where there is no selection, in which case its value will be the special constant [`Select.BLANK`][textual.widgets.Select.BLANK].
+If set to `True`, the widget may be in a state where there is no selection, in which case its value will be the special constant [`Select.NULL`][textual.widgets.Select.NULL].
 The auxiliary methods [`Select.is_blank`][textual.widgets.Select.is_blank] and [`Select.clear`][textual.widgets.Select.clear] provide a convenient way to check if the widget is in this state and to set this state, respectively.
 
 ## Type to search
@@ -98,10 +98,10 @@ The `Select` widget has a `type_to_search` attribute which allows you to type to
 
 ## Reactive Attributes
 
-| Name       | Type                           | Default                                        | Description                         |
-|------------|--------------------------------|------------------------------------------------|-------------------------------------|
-| `expanded` | `bool`                         | `False`                                        | True to expand the options overlay. |
-| `value`    | `SelectType` \| `_NoSelection` | [`Select.BLANK`][textual.widgets.Select.BLANK] | Current value of the Select.        |
+| Name       | Type                           | Default                                      | Description                         |
+| ---------- | ------------------------------ | -------------------------------------------- | ----------------------------------- |
+| `expanded` | `bool`                         | `False`                                      | True to expand the options overlay. |
+| `value`    | `SelectType` \| `_NoSelection` | [`Select.NULL`][textual.widgets.Select.NULL] | Current value of the Select.        |
 
 ## Messages
 

@@ -87,6 +87,22 @@ Textual has enabled an ecosystem of applications and tools for developers and no
 
 Here are a few examples.
 
+## Toad
+
+Toad is a beautiful terminal front-end for AI coding tools such as OpenHands, Claude Code, Gemini CLI, and many more.
+
+[Toad Website](https://batrachian.ai/)
+
+[Toad Github Repository](https://github.com/batrachianai/toad)
+
+<div>
+<a href="https://batrachian.ai">
+--8<-- "docs/images/screenshots/toad.svg"
+</a>
+</div>
+
+---
+
 
 ## Posting
 

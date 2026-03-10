@@ -15,7 +15,7 @@ async def test_value_is_blank_by_default():
     app = SelectApp()
     async with app.run_test():
         select = app.query_one(Select)
-        assert select.value == Select.BLANK
+        assert select.value == Select.NULL
         assert select.is_blank()
 
 
@@ -27,15 +27,15 @@ async def test_setting_and_checking_blank():
     app = SelectApp()
     async with app.run_test():
         select = app.query_one(Select)
-        assert select.value == Select.BLANK
+        assert select.value == Select.NULL
         assert select.is_blank()
 
         select.value = 0
-        assert select.value != Select.BLANK
+        assert select.value != Select.NULL
         assert not select.is_blank()
 
-        select.value = Select.BLANK
-        assert select.value == Select.BLANK
+        select.value = Select.NULL
+        assert select.value == Select.NULL
         assert select.is_blank()
 
 
@@ -63,6 +63,7 @@ async def test_clear_fails_if_allow_blank_is_false():
         assert not select.is_blank()
         with pytest.raises(InvalidSelectValueError):
             select.clear()
+
 
 async def test_selection_is_none_with_blank():
     class SelectApp(App[None]):
