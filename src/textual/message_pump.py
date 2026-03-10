@@ -27,7 +27,7 @@ from typing import (
     TypeVar,
     cast,
 )
-from weakref import WeakSet
+from weakref import WeakSet, ref
 
 from textual import Logger, events, log, messages
 from textual._callback import invoke
@@ -142,6 +142,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
         This is a fairly low-level mechanism, and shouldn't replace regular message handling.
         
         """
+
+    @property
+    def _parent(self) -> MessagePump | None:
+        """The current parent message pump (if set)."""
+        return None if self.__parent is None else self.__parent()
+
+    @_parent.setter
+    def _parent(self, parent: MessagePump | None) -> None:
+        self.__parent = None if parent is None else ref(parent)
 
     @cached_property
     def _message_queue(self) -> Queue[Message | None]:

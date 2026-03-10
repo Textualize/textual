@@ -211,3 +211,36 @@ async def test_cancel_widget_non_animation() -> None:
         assert not pilot.app.animator.is_being_animated(widget, "counter")
         await widget.stop_animation("counter")
         assert not pilot.app.animator.is_being_animated(widget, "counter")
+
+
+async def test_double_animation_on_complete() -> None:
+    """Test that animating an attribute a second time, fires its `on_complete` callback."""
+
+    complete_count = 0
+
+    class AnimApp(App):
+        x = var(0)
+
+        def on_key(self) -> None:
+
+            def on_complete() -> None:
+                nonlocal complete_count
+                complete_count += 1
+
+            self.animator.animate(
+                self,
+                "x",
+                100 + complete_count,
+                duration=0.1,
+                on_complete=on_complete,
+            )
+
+    app = AnimApp()
+    async with app.run_test() as pilot:
+        # Press space twice to initiate 2 animations
+        await pilot.press("space")
+        await pilot.press("space")
+        # Wait for animations to complete
+        await pilot.wait_for_animation()
+        # Check that on_complete callback was invoked twice
+        assert complete_count == 2

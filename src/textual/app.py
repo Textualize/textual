@@ -493,7 +493,7 @@ class App(Generic[ReturnType], DOMNode):
     
     A breakpoint consists of a tuple containing the minimum width where the class should applied, and the name of the class to set.
 
-    Note that only one class name is set, and if you should avoid having more than one breakpoint set for the same size.
+    Note that only one class name is set, and you should avoid having more than one breakpoint set for the same size.
 
     Example:
         ```python
@@ -509,6 +509,10 @@ class App(Generic[ReturnType], DOMNode):
     
     Contents are the same as [`HORIZONTAL_BREAKPOINTS`][textual.app.App.HORIZONTAL_BREAKPOINTS], but the integer is compared to the height, rather than the width.
     """
+
+    # TODO: Enable by default after suitable testing period
+    PAUSE_GC_ON_SCROLL: ClassVar[bool] = False
+    """Pause Python GC (Garbage Collection) when scrolling, for potentially smoother scrolling with many widgets (experimental)."""
 
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
         "focus": lambda app: app.app_focus,
@@ -838,6 +842,9 @@ class App(Generic[ReturnType], DOMNode):
         self._compose_screen: Screen | None = None
         """The screen composed by App.compose."""
 
+        self._realtime_animation_count = 0
+        """Number of current realtime animations, such as scrolling."""
+
         if self.ENABLE_COMMAND_PALETTE:
             for _key, binding in self._bindings:
                 if binding.action in {"command_palette", "app.command_palette"}:
@@ -983,6 +990,22 @@ class App(Generic[ReturnType], DOMNode):
         text copied from elsewhere in the OS.
         """
         return self._clipboard
+
+    def _realtime_animation_begin(self) -> None:
+        """A scroll or other animation that must be smooth has begun."""
+        if self.PAUSE_GC_ON_SCROLL:
+            import gc
+
+            gc.disable()
+        self._realtime_animation_count += 1
+
+    def _realtime_animation_complete(self) -> None:
+        """A scroll or other animation that must be smooth has completed."""
+        self._realtime_animation_count -= 1
+        if self._realtime_animation_count == 0 and self.PAUSE_GC_ON_SCROLL:
+            import gc
+
+            gc.enable()
 
     def format_title(self, title: str, sub_title: str) -> Content:
         """Format the title for display.
