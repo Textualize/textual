@@ -244,3 +244,4 @@ async def test_double_animation_on_complete() -> None:
         await pilot.wait_for_animation()
         # Check that on_complete callback was invoked twice
         assert complete_count == 2
+        assert app.x == 101
