@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.containers import VerticalScroll
-from textual.widgets import Label
+from textual.widgets import Label, Static
 
 
 class LoadingApp(App[None]):
@@ -31,3 +31,25 @@ async def test_loading_disables_and_remove_scrollbars():
         await pilot.pause()
 
         assert vs._check_disabled()
+
+
+async def test_premature_loading():
+    """Test a widget can set the `loading` attribute before mounting."""
+
+    # No assert, we're just expecting it to not crash
+
+    class LoadingWidget(Static):
+        """A widget that shows a loading indicator."""
+
+    class LoadingApp(App[None]):
+        """Simple app with a single loading widget."""
+
+        def compose(self) -> ComposeResult:
+            """Compose the app with the loading widget."""
+            widget = LoadingWidget("Loading content...")
+            widget.loading = True  # Should not crash
+            yield widget
+
+    app = LoadingApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()

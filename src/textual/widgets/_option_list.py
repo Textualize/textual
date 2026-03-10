@@ -283,7 +283,7 @@ class OptionList(ScrollView, can_focus=True):
         self._id_to_option: dict[str, Option] = {}
         """Maps an Options's ID on to the option itself."""
         self._option_to_index: dict[Option, int] = {}
-        """Maps an Option to it's index in self._options."""
+        """Maps an Option to its index in self._options."""
 
         self._option_render_cache: LRUCache[tuple[Option, Style, Spacing], list[Strip]]
         self._option_render_cache = LRUCache(maxsize=1024 * 2)

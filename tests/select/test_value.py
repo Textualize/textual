@@ -9,7 +9,7 @@ MORE_OPTIONS = [(str(n), n) for n in range(5, 8)]
 
 
 class SelectApp(App[None]):
-    def __init__(self, initial_value=Select.BLANK):
+    def __init__(self, initial_value=Select.NULL):
         self.initial_value = initial_value
         super().__init__()
 
@@ -51,12 +51,12 @@ async def test_initial_value_inside_compose_is_validated():
 
 
 async def test_value_assign_to_blank():
-    """Setting the value to BLANK should work with default `allow_blank` value."""
+    """Setting the value to NULL should work with default `allow_blank` value."""
     app = SelectApp(1)
     async with app.run_test():
         select = app.query_one(Select)
         assert select.value == 1
-        select.value = Select.BLANK
+        select.value = Select.NULL
         assert select.is_blank()
 
 
@@ -85,7 +85,7 @@ async def test_initial_value_is_picked_if_allow_blank_is_false():
 
 
 async def test_set_value_to_blank_with_allow_blank_false():
-    """Setting the value to BLANK with allow_blank=False should raise an error."""
+    """Setting the value to NULL with allow_blank=False should raise an error."""
 
     class SelectApp(App[None]):
         def compose(self):
@@ -94,11 +94,11 @@ async def test_set_value_to_blank_with_allow_blank_false():
     app = SelectApp()
     async with app.run_test():
         with pytest.raises(InvalidSelectValueError):
-            app.query_one(Select).value = Select.BLANK
+            app.query_one(Select).value = Select.NULL
 
 
 async def test_set_options_resets_value_to_blank():
-    """Resetting the options should reset the value to BLANK."""
+    """Resetting the options should reset the value to NULL."""
 
     class SelectApp(App[None]):
         def compose(self):

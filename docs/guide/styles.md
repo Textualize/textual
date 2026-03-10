@@ -62,7 +62,7 @@ In addition to color names, you can also use any of the following ways of expres
 
 - RGB hex colors starts with a `#` followed by three pairs of one or two hex digits; one for the red, green, and blue color components. For example, `#f00` is an intense red color, and `#9932CC` is *dark orchid*.
 - RGB decimal color start with `rgb` followed by a tuple of three numbers in the range 0 to 255. For example `rgb(255,0,0)` is intense red, and `rgb(153,50,204)` is *dark orchid*.
-- HSL colors start with `hsl` followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example `hsl(0,100%,50%)` is intense red and `hsl(280,60%,49%)` is *dark orchid*.
+- HSL colors start with `hsl` followed by an angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example `hsl(0,100%,50%)` is intense red and `hsl(280,60%,49%)` is *dark orchid*.
 
 
 The background and color styles also accept a [Color][textual.color.Color] object which can be used to create colors dynamically.

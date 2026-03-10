@@ -44,12 +44,15 @@ class Switch(Widget, can_focus=True):
     | `switch--slider` | Targets the slider of the switch. |
     """
 
+    ALLOW_SELECT = False
+
     DEFAULT_CSS = """
     Switch {
         border: tall $border-blurred;
         background: $surface;
         height: auto;
         width: auto;
+        pointer: pointer;
         
         padding: 0 2;
         &.-on .switch--slider {

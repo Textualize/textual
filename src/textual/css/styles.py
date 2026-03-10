@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import weakref
 from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
@@ -46,6 +47,7 @@ from textual.css.constants import (
     VALID_EXPAND,
     VALID_OVERFLOW,
     VALID_OVERLAY,
+    VALID_POINTER,
     VALID_POSITION,
     VALID_SCROLLBAR_GUTTER,
     VALID_SCROLLBAR_VISIBILITY,
@@ -66,6 +68,7 @@ from textual.css.types import (
     Expand,
     Overflow,
     Overlay,
+    PointerShape,
     ScrollbarGutter,
     Specificity3,
     Specificity6,
@@ -209,6 +212,8 @@ class RulesMap(TypedDict, total=False):
 
     line_pad: int
 
+    pointer: PointerShape
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -252,8 +257,6 @@ class StylesBase:
         "line_pad",
     }
 
-    node: DOMNode | None = None
-
     display = StringEnumProperty(VALID_DISPLAY, "block", layout=True, display=True)
     """Set the display of the widget, defining how it's rendered.
 
@@ -283,7 +286,7 @@ class StylesBase:
     """
 
     layout = LayoutProperty()
-    """Set the layout of the widget, defining how it's children are laid out.
+    """Set the layout of the widget, defining how its children are laid out.
     
     Valid values are "grid", "stream", "horizontal", or "vertical" or None to clear any layout
     that was set at runtime.
@@ -395,7 +398,7 @@ class StylesBase:
     transitions = TransitionsProperty()
 
     tint = ColorProperty("transparent")
-    """Set the tint of the widget. This allows you apply a opaque color above the widget.
+    """Set the tint of the widget. This allows you apply an opaque color above the widget.
 
     You can specify an opacity after a color e.g. "blue 10%"
     """
@@ -503,6 +506,22 @@ class StylesBase:
     expand: StringEnumProperty[Expand] = StringEnumProperty(VALID_EXPAND, "greedy")
     line_pad = IntegerProperty(default=0, layout=True)
     """Padding added to left and right of lines."""
+
+    pointer: StringEnumProperty[PointerShape] = StringEnumProperty(
+        VALID_POINTER, "default", pointer=True
+    )
+    """Set the pointer (cursor) shape when the mouse is over this widget.
+    
+    Valid values include "default", "pointer", "text", "crosshair", "help", "wait",
+    "move", "grab", "grabbing", and various resize cursors.
+    
+    Requires terminal support for Kitty pointer shapes protocol.
+    """
+
+    @property
+    def node(self) -> DOMNode | None:
+        """The DOM node the styles will be applied to, or `None` if it is not set."""
+        return None
 
     def __textual_animation__(
         self,
@@ -1316,13 +1335,21 @@ class RenderStyles(StylesBase):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
 
     def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
-        self.node = node
+        self._node = weakref.ref(node)
         self._base_styles = base
         self._inline_styles = inline_styles
         self._animate: BoundAnimator | None = None
         self._updates: int = 0
         self._rich_style: tuple[int, Style] | None = None
         self._gutter: tuple[int, Spacing] | None = None
+
+    def _update_node(self, node: DOMNode) -> None:
+        """Update the associated DOM node.
+
+        Args:
+            node: New node for the styles.
+        """
+        self._node = weakref.ref(node)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, RenderStyles):
@@ -1340,6 +1367,11 @@ class RenderStyles(StylesBase):
             An opaque integer.
         """
         return self._updates + self._base_styles._updates + self._inline_styles._updates
+
+    @property
+    def node(self) -> DOMNode | None:
+        """The DOM node the styles will be applied to, or `None` if it is not set."""
+        return self._node()
 
     @property
     def base(self) -> Styles:

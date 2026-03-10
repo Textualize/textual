@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import re
+import weakref
 from contextlib import suppress
 from functools import partial
 from pathlib import Path, PurePath
@@ -210,7 +211,7 @@ class MarkdownBlock(Static):
         *args,
         **kwargs,
     ) -> None:
-        self._markdown: Markdown = markdown
+        self._markdown_ref = weakref.ref(markdown)
         """A reference to the Markdown document that contains this block."""
         self._content: Content = Content()
         self._token: Token = token
@@ -223,6 +224,13 @@ class MarkdownBlock(Static):
         super().__init__(
             *args, name=token.type, classes=f"level-{token.level}", **kwargs
         )
+
+    @property
+    def _markdown(self) -> Markdown:
+        """Resolve the weak ref to _markdown"""
+        markdown = self._markdown_ref()
+        assert markdown is not None
+        return markdown
 
     @property
     def select_container(self) -> Widget:

@@ -48,6 +48,7 @@ from textual.binding import ActiveBinding, Binding, BindingsMap
 from textual.css.match import match
 from textual.css.parse import parse_selectors
 from textual.css.query import NoMatches, QueryType
+from textual.css.styles import PointerShape
 from textual.dom import DOMNode
 from textual.errors import NoWidget
 from textual.geometry import NULL_OFFSET, Offset, Region, Size
@@ -261,10 +262,13 @@ class Screen(Generic[ScreenResultType], Widget):
     _mouse_down_offset: var[Offset | None] = var(None)
     """Last mouse down screen offset, or `None` if the mouse is up."""
 
+    _pointer_shape: var[PointerShape] = var("default")
+    """The current mouse pointer shape."""
+
     BINDINGS = [
         Binding("tab", "app.focus_next", "Focus Next", show=False),
         Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
-        Binding("ctrl+c", "screen.copy_text", "Copy selected text", show=False),
+        Binding("ctrl+c,super+c", "screen.copy_text", "Copy selected text", show=False),
     ]
 
     def __init__(
@@ -558,6 +562,37 @@ class Screen(Generic[ScreenResultType], Widget):
         """Check if this widget permits text selection."""
         return self.ALLOW_SELECT
 
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to display a loading indicator.
+
+        The default implementation will defer to App.get_loading_widget.
+
+        Returns:
+            A widget in place of this widget to indicate a loading.
+        """
+        loading_widget = self.app.get_loading_widget()
+        return loading_widget
+
+    def _watch__pointer_shape(self, pointer_shape: PointerShape) -> None:
+        self.app._set_pointer_shape(pointer_shape)
+
+    def update_pointer_shape(self) -> None:
+        """Get the screen's current pointer shape."""
+        if self._selecting:
+            self._pointer_shape = "text"
+            return
+        widget = self if self.app.mouse_over is None else self.app.mouse_over
+        pointer_shape = "default"
+        for node in widget.ancestors_with_self:
+            if isinstance(node, Widget):
+                if node.loading:
+                    pointer_shape = "wait"
+                    break
+                if (pointer_shape := node.styles.pointer) != "default":
+                    break
+
+        self._pointer_shape = pointer_shape
+
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
 
@@ -570,7 +605,7 @@ class Screen(Generic[ScreenResultType], Widget):
         except LookupError:
             base_screen = None
 
-        if base_screen is not None and background.a < 1:
+        if base_screen is not None and base_screen is not self and background.a < 1:
             # If background is translucent, render a background screen
             return BackgroundScreen(base_screen, background)
 
@@ -719,7 +754,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._select_end = None
 
     def _select_all_in_widget(self, widget: Widget) -> None:
-        """Select a widget and all it's children.
+        """Select a widget and all its children.
 
         Args:
             widget: Widget to select.
@@ -1340,8 +1375,12 @@ class Screen(Generic[ScreenResultType], Widget):
         except Exception as error:
             self.app._handle_exception(error)
             return
+
         if self.is_current:
-            self._compositor_refresh()
+            if self.app._batch_count:
+                self.call_later(self._compositor_refresh)
+            else:
+                self._compositor_refresh()
 
         if self.app._dom_ready:
             self.screen_layout_refresh_signal.publish(self.screen)
@@ -1416,7 +1455,7 @@ class Screen(Generic[ScreenResultType], Widget):
         if self.stack_updates and self.is_attached:
             self._refresh_layout(size)
 
-    def _on_screen_resume(self) -> None:
+    def _on_screen_resume(self, event: events.ScreenResume) -> None:
         """Screen has resumed."""
         if self.app.SUSPENDED_SCREEN_CLASS:
             self.remove_class(self.app.SUSPENDED_SCREEN_CLASS)
@@ -1429,9 +1468,11 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_auto_focus()
 
         if self.is_attached:
-            self._compositor_refresh()
-            self.app.stylesheet.update(self)
-            self._refresh_layout(size)
+
+            if event.refresh_styles:
+                self.update_node_styles(animate=False)
+            if self._size != size:
+                self._refresh_layout(size)
             self.refresh()
 
     async def _compose(self) -> None:
@@ -1587,6 +1628,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     pass
         else:
             self.app._set_mouse_over(widget, hover_widget)
+            self.update_pointer_shape()
             widget.hover_style = event.style
             if widget is self:
                 self.post_message(event)
@@ -1613,6 +1655,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         )
                     else:
                         tooltip.display = False
+        self.screen.update_pointer_shape()
 
     @staticmethod
     def _translate_mouse_move_event(
@@ -1687,6 +1730,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     self.clear_selection()
                 self._mouse_down_offset = None
                 self._selecting = False
+                self.post_message(events.TextSelected())
 
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
                 self._box_select = event.shift
@@ -1738,6 +1782,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         else:
             self.post_message(event)
+        self.update_pointer_shape()
 
     def _key_escape(self) -> None:
         self.clear_selection()
@@ -1849,9 +1894,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Any callback provided in [push_screen][textual.app.App.push_screen] will be invoked with the supplied result.
 
-        Only the active screen may be dismissed. This method will produce a warning in the logs if
-        called on an inactive screen (but otherwise have no effect).
-
         !!! warning
 
             Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
@@ -1863,9 +1905,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
         """
         _rich_traceback_omit = True
-        if not self.is_active:
-            self.log.warning("Can't dismiss inactive screen")
-            return AwaitComplete()
         if self._result_callbacks:
             callback = self._result_callbacks[-1]
             callback(result)

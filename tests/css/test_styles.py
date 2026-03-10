@@ -90,7 +90,7 @@ def test_merge_rules():
 def test_render_styles_border():
     base = Styles()
     inline = Styles()
-    styles_view = RenderStyles(None, base, inline)
+    styles_view = RenderStyles(DOMNode(), base, inline)
 
     base.border_top = ("heavy", "red")
     # Base has border-top: heavy red

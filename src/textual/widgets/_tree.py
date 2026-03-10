@@ -558,6 +558,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     | down | Move the cursor down. |
     """
 
+    ALLOW_SELECT = False
+
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "tree--cursor",
         "tree--guides",

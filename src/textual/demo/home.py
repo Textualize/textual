@@ -164,8 +164,8 @@ class StarCount(Vertical):
         &>Horizontal { max-width: 100;} 
     }
     """
-    stars = reactive(25251, recompose=True)
-    forks = reactive(776, recompose=True)
+    stars = reactive(34455, recompose=True)
+    forks = reactive(1108, recompose=True)
 
     @work
     async def get_stars(self):

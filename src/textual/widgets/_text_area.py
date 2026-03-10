@@ -118,6 +118,7 @@ TextArea {
     padding: 0 1;
     color: $foreground;
     background: $surface;
+    pointer: text;
     &.-textual-compact {
         border: none !important;
     }
@@ -266,7 +267,7 @@ TextArea {
             "ctrl+f", "delete_word_right", "Delete right to start of word", show=False
         ),
         Binding("ctrl+x", "cut", "Cut", show=False),
-        Binding("ctrl+c", "copy", "Copy", show=False),
+        Binding("ctrl+c,super+c", "copy", "Copy", show=False),
         Binding("ctrl+v", "paste", "Paste", show=False),
         Binding(
             "ctrl+u", "delete_to_start_of_line", "Delete to line start", show=False
@@ -676,7 +677,7 @@ TextArea {
             character: A character associated with the key, or `None` if there isn't one.
 
         Returns:
-            `True` if the widget may capture the key in it's `Key` message, or `False` if it won't.
+            `True` if the widget may capture the key in its `Key` message, or `False` if it won't.
         """
         if self.read_only:
             # In read only mode we don't consume any key events
@@ -1035,7 +1036,7 @@ TextArea {
                 "Try `pip install 'textual[syntax]'` or '`poetry add textual[syntax]' to get started quickly.\n\n"
                 "Alternatively, install tree-sitter manually (`pip install tree-sitter`) and then\n"
                 "install the required language (e.g. `pip install tree-sitter-ruby`), then register it.\n"
-                "and it's highlight query using TextArea.register_language().\n\n"
+                "and its highlight query using TextArea.register_language().\n\n"
                 "Falling back to plain text for now."
             )
             document = Document(text)

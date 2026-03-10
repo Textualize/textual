@@ -17,6 +17,7 @@ class Link(Static, can_focus=True):
         text-style: underline;
         &:hover { color: $accent; }
         &:focus { text-style: bold reverse; }
+        pointer: pointer;
     }
     """
 

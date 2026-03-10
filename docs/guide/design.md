@@ -29,6 +29,16 @@ Click on the tabs below to see how themes can change the appearance of an app.
     ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t,ctrl+t,ctrl+t,ctrl+t"}
     ```
 
+=== "atom-one-dark"
+
+    ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t,ctrl+t,ctrl+t,ctrl+t,ctrl+t"}
+    ```
+
+=== "atom-one-light"
+
+    ```{.textual path="docs/examples/themes/todo_app.py" press="ctrl+t,ctrl+t,ctrl+t,ctrl+t,ctrl+t,ctrl+t"}
+    ```
+
 ## Changing the theme
 
 The theme can be changed at runtime via the [Command Palette](./command_palette.md) (++ctrl+p++).
