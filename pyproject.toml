@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "8.1.0"
+version = "8.1.1"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -36,6 +36,7 @@ include = [
     # that works around that.
     { path = "docs-offline/**/*", format = "sdist" },
 ]
+exclude = ["tests/snapshot_tests/__snapshots__"]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"

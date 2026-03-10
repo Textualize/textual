@@ -458,10 +458,7 @@ class Animator:
 
         if (current_animation := self._animations.get(animation_key)) is not None:
             if (on_complete := current_animation.on_complete) is not None:
-                on_complete()
-                self._animations.pop(animation_key)
-            if current_animation == animation:
-                return
+                self.app.call_later(on_complete)
 
         self._animations[animation_key] = animation
         self._timer.resume()

@@ -8,6 +8,8 @@ docs/build
 docs/source/_build
 tools/*.txt
 playground/
+.mypy_cache/
+.screenshot_cache/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -129,3 +131,6 @@ sandbox/
 
 # Used by mkdocs-material social plugin
 .cache
+
+# Snapshot tests output
+__snapshots__/
