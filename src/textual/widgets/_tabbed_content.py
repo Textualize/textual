@@ -13,6 +13,7 @@ from textual.app import ComposeResult
 from textual.await_complete import AwaitComplete
 from textual.content import ContentText, ContentType
 from textual.css.query import NoMatches
+from textual.dom import NoScreen
 from textual.message import Message
 from textual.reactive import reactive
 from textual.widget import Widget
@@ -501,6 +502,31 @@ class TabbedContent(Widget):
         """
         self._tab_content.append(widget)
 
+    def _defocus_old_pane(self, switcher: ContentSwitcher) -> None:
+        """If the focused widget is inside the currently active pane, remove focus.
+
+        This prevents a re-activation cascade when hiding the old pane during a
+        tab switch. Without this, hiding the pane causes focus to move to a sibling
+        widget still within the (now-hidden) pane, which fires a DescendantFocus
+        event that re-activates the old tab.
+
+        See https://github.com/Textualize/textual/issues/4955
+        """
+        if switcher.current is None:
+            return
+        try:
+            focused = self.screen.focused
+        except NoScreen:
+            return
+        if focused is None:
+            return
+        try:
+            old_pane = switcher.get_child_by_id(switcher.current)
+        except NoMatches:
+            return
+        if old_pane in focused.ancestors_with_self:
+            self.screen.set_focus(None)
+
     def _on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """User clicked a tab."""
         if self._is_associated_tabs(event.tabs):
@@ -508,6 +534,7 @@ class TabbedContent(Widget):
             event.stop()
             assert event.tab.id is not None
             switcher = self.get_child_by_type(ContentSwitcher)
+            self._defocus_old_pane(switcher)
             switcher.current = ContentTab.sans_prefix(event.tab.id)
             with self.prevent(self.TabActivated):
                 # We prevent TabbedContent.TabActivated because it is also
@@ -558,7 +585,9 @@ class TabbedContent(Widget):
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated, Tabs.Cleared):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
-        self.get_child_by_type(ContentSwitcher).current = active
+        switcher = self.get_child_by_type(ContentSwitcher)
+        self._defocus_old_pane(switcher)
+        switcher.current = active
         if active:
             self.post_message(
                 TabbedContent.TabActivated(

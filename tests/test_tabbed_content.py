@@ -4,7 +4,16 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.reactive import var
-from textual.widgets import Label, Tab, TabbedContent, TabPane, Tabs
+from textual.widgets import (
+    Button,
+    Footer,
+    Input,
+    Label,
+    Tab,
+    TabbedContent,
+    TabPane,
+    Tabs,
+)
 from textual.widgets._tabbed_content import ContentTab
 
 
@@ -914,3 +923,116 @@ async def test_disabling_tab_within_tabbed_content_stays_isolated():
         await pilot.pause()
         assert app.query_one("Tab#duplicate").disabled is True
         assert app.query_one("TabPane#duplicate").disabled is False
+
+
+async def test_tab_switch_with_focused_input():
+    """Regression test for https://github.com/Textualize/textual/issues/4955.
+
+    When a widget with focus (e.g. Input) is inside a TabbedContent,
+    switching tabs via key binding should not re-activate the old tab.
+    """
+
+    class Bug4955App(App):
+        BINDINGS = [
+            ("ctrl+s", "switch_s", "S"),
+            ("ctrl+t", "switch_t", "T"),
+        ]
+
+        def action_switch_s(self) -> None:
+            self.query_one(TabbedContent).active = "s-tab"
+
+        def action_switch_t(self) -> None:
+            self.query_one(TabbedContent).active = "t-tab"
+
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="s-tab"):
+                with TabPane("S Group", id="s-tab"):
+                    yield Input("sss", id="s-input")
+                    yield Button("S", id="s-btn")
+                with TabPane("T Group", id="t-tab"):
+                    yield Input("ttt", id="t-input")
+                    yield Button("T", id="t-btn")
+            yield Footer()
+
+    app = Bug4955App()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+
+        # Focus the input in the first tab
+        app.query_one("#s-input", Input).focus()
+        await pilot.pause()
+        assert tabbed_content.active == "s-tab"
+
+        # Switch to the second tab via key binding
+        await pilot.press("ctrl+t")
+        await pilot.pause()
+
+        # The active tab should be "t-tab", not "s-tab"
+        assert tabbed_content.active == "t-tab"
+        assert tabbed_content.active_pane.id == "t-tab"
+
+
+async def test_tab_switch_with_focused_input_via_click():
+    """Switching tabs by clicking a tab while a widget has focus should work.
+
+    Related to https://github.com/Textualize/textual/issues/4955.
+    """
+
+    class ClickSwitchApp(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="first"):
+                with TabPane("First", id="first"):
+                    yield Input("hello", id="first-input")
+                with TabPane("Second", id="second"):
+                    yield Input("world", id="second-input")
+
+    app = ClickSwitchApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+
+        # Focus input in first tab
+        app.query_one("#first-input", Input).focus()
+        await pilot.pause()
+        assert tabbed_content.active == "first"
+
+        # Click the second tab
+        await pilot.click(f"Tab#{ContentTab.add_prefix('second')}")
+        await pilot.pause()
+
+        # Should switch to second tab
+        assert tabbed_content.active == "second"
+        assert tabbed_content.active_pane.id == "second"
+
+
+async def test_auto_tab_switch_on_programmatic_focus():
+    """Programmatically focusing a widget in a hidden tab should auto-switch.
+
+    Ensures the fix for #4955 doesn't break the auto-tab-switch feature.
+    """
+
+    class AutoSwitchApp(App):
+        BINDINGS = [("space", "focus_btn2", "Focus btn2")]
+
+        def action_focus_btn2(self) -> None:
+            self.query_one("#btn-2", Button).focus()
+
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="tab-1"):
+                with TabPane("Tab 1", id="tab-1"):
+                    yield Button("Button 1", id="btn-1")
+                with TabPane("Tab 2", id="tab-2"):
+                    yield Button("Button 2", id="btn-2")
+            yield Footer()
+
+    app = AutoSwitchApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        assert tabbed_content.active == "tab-1"
+
+        # Programmatically focus a widget in the hidden tab
+        await pilot.press("space")
+        await pilot.pause()
+
+        # Auto-switch should activate tab-2
+        assert tabbed_content.active == "tab-2"
+        assert tabbed_content.active_pane.id == "tab-2"
