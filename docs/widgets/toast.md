@@ -25,9 +25,13 @@ For example:
 
 ```scss
 ToastRack {
-        align: right top;
+    dock: none;
+    align: right top;
 }
 ```
+
+!!! note
+    You must set `dock: none;` to override the default `dock: bottom;` before the `align` property will take effect.
 
 The three severity levels also have corresponding
 [classes](../guide/CSS.md#class-name-selector), allowing you to target the
