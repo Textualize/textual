@@ -212,6 +212,7 @@ class LinuxInlineDriver(Driver):
         self.flush()
 
         self._enable_mouse_support()
+        self.write("\x1b[=8;u")  # Enable extended key reporting for space and other keys
         self.write("\n" * self._app.INLINE_PADDING)
         self.flush()
         try:

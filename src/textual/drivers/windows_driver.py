@@ -98,6 +98,7 @@ class WindowsDriver(Driver):
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.flush()
+        self.write("\x1b[=8;u")  # Enable extended key reporting for space and other keys
         self._enable_bracketed_paste()
 
         self._event_thread = win32.EventMonitor(
