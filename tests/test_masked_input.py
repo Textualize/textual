@@ -221,3 +221,27 @@ async def test_digits_required():
         await pilot.press("a", "1")
         assert input.value == "1"
         assert not input.is_valid
+
+
+async def test_separator_jump_preserves_existing_text():
+    """Regression test for https://github.com/Textualize/textual/issues/6315
+
+    Typing a separator character should jump the cursor to after the next
+    separator, but must not delete any existing text in between.
+    """
+    app = InputApp("9999-9999-9999-9999;_")
+    async with app.run_test() as pilot:
+        input = app.query_one(MaskedInput)
+        # Fill in the full value first
+        input.value = "1234-5678-9012-3456"
+        # Move cursor to the start of the second group (position 5)
+        input.cursor_position = 5
+        # Move one to the right, landing on position 6
+        input.action_cursor_right()
+        assert input.cursor_position == 6
+        # Now type a separator "-" to jump to the next group
+        await pilot.press("-")
+        # Cursor should be just past the separator at position 10
+        assert input.cursor_position == 10
+        # The existing text should still be intact
+        assert input.value == "1234-5678-9012-3456"
