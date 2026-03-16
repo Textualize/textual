@@ -17,6 +17,10 @@ from textual.widgets import Static
         ("Foo", Selection(Offset(1, 0), Offset(2, 0)), "o"),
         ("Foo", Selection(Offset(0, 0), Offset(2, 0)), "Fo"),
         ("Foo", Selection(Offset(0, 0), None), "Foo"),
+        # Regression tests for issue #6428: start_line bounds checking
+        ("line1\nline2", Selection(Offset(0, 5), Offset(10, 5)), ""),  # start_line beyond text
+        ("single", Selection(Offset(0, 1), Offset(10, 1)), ""),  # start_line at boundary
+        ("", Selection(Offset(0, 0), Offset(10, 0)), ""),  # empty text
     ],
 )
 def test_extract(text: str, selection: Selection, expected: str) -> None:

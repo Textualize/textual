@@ -45,6 +45,10 @@ class Selection(NamedTuple):
         else:
             start_line, start_offset = self.start.transpose
 
+        # Bounds check: if start_line is beyond the text, return empty
+        if start_line >= len(lines):
+            return ""
+
         if self.end is None:
             end_line = len(lines)
             end_offset = len(lines[-1])
