@@ -50,7 +50,10 @@ class Selection(NamedTuple):
             end_offset = len(lines[-1])
         else:
             end_line, end_offset = self.end.transpose
-        end_line = min(len(lines), end_line)
+        
+        # Bounds check both start_line and end_line
+        start_line = max(0, min(start_line, len(lines) - 1))
+        end_line = max(0, min(end_line, len(lines)))
 
         if start_line == end_line:
             return lines[start_line][start_offset:end_offset]
