@@ -51,7 +51,9 @@ class Selection(NamedTuple):
         else:
             end_line, end_offset = self.end.transpose
         end_line = min(len(lines), end_line)
-        start_line = min(len(lines) - 1, max(0, start_line))
+        # Explicitly bounds-check start_line to prevent IndexError when
+        # start_line exceeds the number of lines in text (issue #6428)
+        start_line = max(0, min(start_line, len(lines) - 1))
 
         if start_line == end_line:
             return lines[start_line][start_offset:end_offset]
