@@ -10,6 +10,7 @@ tools/*.txt
 playground/
 .mypy_cache/
 .screenshot_cache/
+uv.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

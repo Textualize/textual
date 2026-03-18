@@ -32,6 +32,7 @@ from rich.style import Style
 
 from textual import constants, errors, events, messages
 from textual._arrange import arrange
+from textual._auto_scroll import get_auto_scroll_regions
 from textual._callback import invoke
 from textual._compositor import Compositor, MapGeometry
 from textual._context import active_message_pump, visible_screen_stack
@@ -327,6 +328,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         self._layout_widgets: dict[DOMNode, set[Widget]] = {}
         """Widgets whose layout may have changed."""
+
+        self._auto_select_scroll_timer: Timer | None = None
+        """A timer to auto scroll a container."""
 
     @property
     def is_modal(self) -> bool:
@@ -1680,6 +1684,64 @@ class Screen(Generic[ScreenResultType], Widget):
             style=event.style,
         )
 
+    def _check_auto_scroll(
+        self, select_widget: Widget, mouse_coordinate: Offset
+    ) -> None:
+        for ancestor in select_widget.ancestors:
+            if not isinstance(ancestor, Widget):
+                break
+            if ancestor.allow_vertical_scroll:
+                ancestor_region = ancestor.region
+                up_region, down_region = get_auto_scroll_regions(ancestor_region)
+
+                if self._auto_select_scroll_timer is not None:
+                    self._auto_select_scroll_timer.stop()
+                    self._auto_select_scroll_timer = None
+
+                if mouse_coordinate in up_region and ancestor.scroll_y > 0:
+                    self._auto_select_scroll_timer = self.set_interval(
+                        1 / 60, partial(self._auto_scroll_y, ancestor, -0.5)
+                    )
+                elif (
+                    mouse_coordinate in down_region
+                    and ancestor.scroll_y < ancestor.max_scroll_y
+                ):
+                    self._auto_select_scroll_timer = self.set_interval(
+                        1 / 60, partial(self._auto_scroll_y, ancestor, +0.5)
+                    )
+
+    async def _auto_scroll_y(self, widget: Widget, direction: float) -> None:
+        widget.scroll_y += direction
+        self._update_select(self.app.mouse_position)
+
+    def _update_select(self, screen_offset: Offset) -> None:
+        select_widget, select_offset = self.get_widget_and_offset_at(
+            screen_offset.x, screen_offset.y
+        )
+        if (
+            self._select_end is not None
+            and select_offset is None
+            and screen_offset.y > self._select_end[1].y
+        ):
+            end_widget = self._select_end[0]
+            select_offset = end_widget.content_region.bottom_right_inclusive
+            self._select_end = (
+                end_widget,
+                screen_offset,
+                select_offset,
+            )
+
+        elif (
+            select_widget is not None
+            and select_widget.allow_select
+            and select_offset is not None
+        ):
+            self._select_end = (
+                select_widget,
+                screen_offset,
+                select_offset,
+            )
+
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
             return
@@ -1721,13 +1783,24 @@ class Screen(Generic[ScreenResultType], Widget):
                         select_offset,
                     )
 
+                if select_widget is not None:
+                    self._check_auto_scroll(select_widget, event.screen_offset)
+
         elif isinstance(event, events.MouseEvent):
             if isinstance(event, events.MouseUp):
                 if (
                     self._mouse_down_offset is not None
                     and self._mouse_down_offset == event.screen_offset
                 ):
-                    self.clear_selection()
+                    # A click elsewhere should clear the selection
+                    select_widget, select_offset = self.get_widget_and_offset_at(
+                        event.x, event.y
+                    )
+                    # Exclude scrollbars, so the user may navigate without clearing the selection
+                    if select_widget is None or not select_widget.has_class(
+                        "-textual-system"
+                    ):
+                        self.clear_selection()
                 self._mouse_down_offset = None
                 self._selecting = False
                 self.post_message(events.TextSelected())
@@ -1787,6 +1860,11 @@ class Screen(Generic[ScreenResultType], Widget):
     def _key_escape(self) -> None:
         self.clear_selection()
 
+    def _watch__selecting(self, selecting: bool) -> None:
+        if self._auto_select_scroll_timer is not None:
+            self._auto_select_scroll_timer.stop()
+            self._auto_select_scroll_timer = None
+
     def _watch__select_end(
         self, select_end: tuple[Widget, Offset, Offset] | None
     ) -> None:
@@ -1805,8 +1883,9 @@ class Screen(Generic[ScreenResultType], Widget):
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
             self.selections = {
-                start_widget: Selection.from_offsets(start_offset, end_offset)
+                start_widget: Selection.from_offsets(start_offset, end_offset + (1, 0))
             }
+            self.log(self.selections)
             return
 
         select_start, select_end = sorted(
@@ -1816,6 +1895,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         start_widget, _screen_start, start_offset = select_start
         end_widget, _screen_end, end_offset = select_end
+        end_offset += (1, 0)
 
         select_regions: list[Region] = []
         start_region = start_widget.content_region
@@ -1888,6 +1968,7 @@ class Screen(Generic[ScreenResultType], Widget):
             },
             end_widget: Selection(None, end_offset),
         }
+        self.log(self.selections)
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
