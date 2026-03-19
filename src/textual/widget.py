@@ -2419,6 +2419,36 @@ class Widget(DOMNode):
             return False
         return True
 
+    def filter_children_overlapping_region(self, region: Region) -> list[Widget]:
+        """Filter all children that overlap a given region (in screen space).
+
+        Args:
+            region: A region in screen space.
+
+        Returns:
+            A list of widgets.
+        """
+        return [
+            widget
+            for widget in self.displayed_and_visible_children
+            if region.overlaps(widget.region)
+        ]
+
+    def filter_children_within_region(self, region: Region) -> list[Widget]:
+        """Filter children that are contained within a given region.
+
+        Args:
+            region: a region in screen space.
+
+        Returns:
+            A list of the children contained within the region.
+        """
+        return [
+            widget
+            for widget in self.displayed_and_visible_children
+            if widget.region in region
+        ]
+
     def _resolve_extrema(
         self,
         container: Size,
@@ -2638,11 +2668,12 @@ class Widget(DOMNode):
         Returns:
             A widget which contains this widget.
         """
-        container: Widget = self
         for widget in self.ancestors:
-            if isinstance(widget, Widget) and widget.is_scrollable:
+            if not isinstance(widget, Widget):
+                break
+            if widget.allow_vertical_scroll:
                 return widget
-        return container
+        return self.screen
 
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).

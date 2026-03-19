@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from itertools import product
-from typing import Generic, Iterable, TypeVar
+from typing import TYPE_CHECKING, Generic, Iterable, TypeVar
 
 from typing_extensions import TypeAlias
 
@@ -10,6 +10,9 @@ from textual.geometry import Offset, Region
 
 ValueType = TypeVar("ValueType")
 GridCoordinate: TypeAlias = "tuple[int, int]"
+
+if TYPE_CHECKING:
+    pass
 
 
 class SpatialMap(Generic[ValueType]):

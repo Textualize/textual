@@ -382,7 +382,7 @@ class MarkdownH1(MarkdownHeader):
     MarkdownH1 {
         content-align: center middle;
         color: $markdown-h1-color;
-        background: $markdown-h1-background;
+        # background: $markdown-h1-background;
         text-style: $markdown-h1-text-style;
     }
     """
@@ -396,7 +396,7 @@ class MarkdownH2(MarkdownHeader):
     DEFAULT_CSS = """
     MarkdownH2 {
         color: $markdown-h2-color;
-        background: $markdown-h2-background;
+        # background: $markdown-h2-background;
         text-style: $markdown-h2-text-style;
     }
     """
@@ -410,7 +410,7 @@ class MarkdownH3(MarkdownHeader):
     DEFAULT_CSS = """
     MarkdownH3 {
         color: $markdown-h3-color;
-        background: $markdown-h3-background;
+        # background: $markdown-h3-background;
         text-style: $markdown-h3-text-style;
         margin: 1 0;
         width: auto;

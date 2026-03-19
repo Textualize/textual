@@ -20,6 +20,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    Literal,
     NamedTuple,
     Optional,
     TypeVar,
@@ -1684,35 +1685,78 @@ class Screen(Generic[ScreenResultType], Widget):
             style=event.style,
         )
 
+    def _start_auto_scroll(
+        self, widget: Widget, direction: Literal[+1, -1], speed: float = 1.0
+    ) -> None:
+        """Start (or update) auto scrolling.
+
+        Args:
+            widget: Container widget to scroll.
+            direction: Direction: `+1` for up, `-1` for down.
+            speed: The scroll speed as a factor of the maximum.
+        """
+        print("AUTO SCROLL", widget, direction)
+
+        def _auto_scroll_y(widget: Widget, direction: float) -> None:
+            """Scroll a container a single line in the given direction.
+
+            Args:
+                widget: Container widgets to scroll.
+                direction: Lines to scroll.
+            """
+            if self._select_start is not None:
+                widget.scroll_y += direction
+                widget.scroll_target_y = widget.scroll_y
+                self._update_select(self.app.mouse_position)
+
+        self._stop_auto_scroll()
+
+        lines_to_scroll = (
+            direction * (self.app.SELECT_AUTO_SCROLL_SPEED / constants.MAX_FPS) * speed
+        )
+        _auto_scroll_y(widget, lines_to_scroll)
+        self._auto_select_scroll_timer = self.set_interval(
+            1 / constants.MAX_FPS,
+            partial(_auto_scroll_y, widget, lines_to_scroll),
+        )
+
+    def _stop_auto_scroll(self) -> None:
+        """Stop any auto scrolling."""
+        if self._auto_select_scroll_timer is not None:
+            self._auto_select_scroll_timer.stop()
+            self._auto_select_scroll_timer = None
+            print("STOP AUTO SCROLL")
+
     def _check_auto_scroll(
         self, select_widget: Widget, mouse_coordinate: Offset
     ) -> None:
+
+        if not self.app.ENABLE_SELECT_AUTO_SCROLL:
+            # Disabled by app
+            return
+
         for ancestor in select_widget.ancestors:
             if not isinstance(ancestor, Widget):
                 break
             if ancestor.allow_vertical_scroll:
-                ancestor_region = ancestor.region
-                up_region, down_region = get_auto_scroll_regions(ancestor_region)
-
-                if self._auto_select_scroll_timer is not None:
-                    self._auto_select_scroll_timer.stop()
-                    self._auto_select_scroll_timer = None
-
+                ancestor_region = ancestor.content_region
+                scroll_lines = self.app.SELECT_AUTO_SCROLL_LINES
+                up_region, down_region = get_auto_scroll_regions(
+                    ancestor_region,
+                    auto_scroll_lines=scroll_lines,
+                )
                 if mouse_coordinate in up_region and ancestor.scroll_y > 0:
-                    self._auto_select_scroll_timer = self.set_interval(
-                        1 / 60, partial(self._auto_scroll_y, ancestor, -0.5)
-                    )
+                    speed = (up_region.y - mouse_coordinate.y + 1) / scroll_lines
+                    self._start_auto_scroll(ancestor, -1, speed)
+                    return
                 elif (
                     mouse_coordinate in down_region
                     and ancestor.scroll_y < ancestor.max_scroll_y
                 ):
-                    self._auto_select_scroll_timer = self.set_interval(
-                        1 / 60, partial(self._auto_scroll_y, ancestor, +0.5)
-                    )
-
-    async def _auto_scroll_y(self, widget: Widget, direction: float) -> None:
-        widget.scroll_y += direction
-        self._update_select(self.app.mouse_position)
+                    speed = (mouse_coordinate.y - down_region.y + 1) / scroll_lines
+                    self._start_auto_scroll(ancestor, +1, speed)
+                    return
+        self._stop_auto_scroll()
 
     def _update_select(self, screen_offset: Offset) -> None:
         select_widget, select_offset = self.get_widget_and_offset_at(
@@ -1785,6 +1829,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
                 if select_widget is not None:
                     self._check_auto_scroll(select_widget, event.screen_offset)
+                else:
+                    self._stop_auto_scroll()
 
         elif isinstance(event, events.MouseEvent):
             if isinstance(event, events.MouseUp):
@@ -1801,6 +1847,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         "-textual-system"
                     ):
                         self.clear_selection()
+
                 self._mouse_down_offset = None
                 self._selecting = False
                 self.post_message(events.TextSelected())
@@ -1861,9 +1908,39 @@ class Screen(Generic[ScreenResultType], Widget):
         self.clear_selection()
 
     def _watch__selecting(self, selecting: bool) -> None:
-        if self._auto_select_scroll_timer is not None:
-            self._auto_select_scroll_timer.stop()
-            self._auto_select_scroll_timer = None
+        if not selecting:
+            self._stop_auto_scroll()
+
+    @classmethod
+    def _collect_select_widgets(
+        cls, selection_region: Region, widgets: Iterable[Widget]
+    ) -> list[Widget]:
+        """Collect widgets within a selection region.
+
+        Args:
+            selection_region: A screenspace bounding box to include widgets.
+            widgets: Widgets to consider.
+
+        Returns:
+            Widgets within selection region.
+        """
+        results: list[Widget] = []
+
+        def _recurse_node(node: Widget) -> None:
+            if not node.is_container:
+                if selection_region.overlaps(node.region):
+                    results.append(node)
+                return
+            if node.region in selection_region:
+                results.extend(node.query("*"))
+            else:
+                for child in node.displayed_and_visible_children:
+                    _recurse_node(child)
+
+        for node in widgets:
+            _recurse_node(node)
+
+        return results
 
     def _watch__select_end(
         self, select_end: tuple[Widget, Offset, Offset] | None
@@ -1877,17 +1954,94 @@ class Screen(Generic[ScreenResultType], Widget):
             # Nothing to select
             return
 
-        select_start = self._select_start
-        start_widget, screen_start, start_offset = select_start
+        start_widget, _screen_start, start_offset = self._select_start
         end_widget, screen_end, end_offset = select_end
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
             self.selections = {
-                start_widget: Selection.from_offsets(start_offset, end_offset + (1, 0))
+                start_widget: Selection.from_offsets(
+                    start_offset,
+                    end_offset + (1, 0),
+                )
             }
-            self.log(self.selections)
             return
 
+        # start_widget, end_widget = sorted(
+        #     [start_widget, end_widget],
+        #     key=lambda widget: widget.region.offset.transpose,
+        # )
+
+        mouse_position = self.app.mouse_position
+        selection_start_offset = start_widget.region.offset + start_offset
+        selection_end_offset = mouse_position
+
+        selection_start_offset, selection_end_offset = sorted(
+            [selection_start_offset, selection_end_offset],
+            key=lambda offset: offset.transpose,
+        )
+
+        print(selection_start_offset, selection_end_offset)
+        # select_region = Region.from_corners(
+        #     *selection_start_offset, *selection_end_offset
+        # )
+
+        select_container = start_widget.select_container
+        select_region = Region(
+            0,
+            selection_start_offset.y,
+            select_container.region.width,
+            selection_end_offset.y - selection_start_offset.y,
+        )
+
+        parent_select_widgets = select_container.filter_children_overlapping_region(
+            select_region
+        )
+
+        select_widgets = set(
+            self._collect_select_widgets(select_region, parent_select_widgets)
+        )
+        select_widgets -= {self, start_widget, end_widget}
+
+        select_all = SELECT_ALL
+        self.selections = {
+            start_widget: Selection(start_offset, None),
+            **{
+                widget: select_all
+                for widget in sorted(
+                    select_widgets,
+                    key=lambda widget: widget.content_region.offset.transpose,
+                )
+            },
+            end_widget: Selection(None, end_offset),
+        }
+
+        return
+
+        screen_start = start_widget.region.offset
+        print("START", screen_start)
+
+        select_container = start_widget.select_container
+
+        # select_container.region.intersection(
+        #     Region.from_corners(select_container)
+        # )
+
+        screen_start, screen_end = sorted(
+            [screen_start, screen_end],
+            key=lambda offset: offset.transpose,
+        )
+        print(start_offset, end_offset)
+        select_region = Region.from_corners(*start_offset, *end_offset)
+
+        print(select_region)
+        # select_widgets:list[Widget] = []
+        # for widget in self.filter_children_overlapping_region(select_container.region):
+
+        # select_container = start_widget.select_container
+
+        # for widget in select_container:
+
+        return
         select_start, select_end = sorted(
             [select_start, select_end],
             key=lambda selection: (selection[0].region.offset.transpose),
@@ -1937,12 +2091,13 @@ class Screen(Generic[ScreenResultType], Widget):
                 )
                 select_regions.append(mid_region)
 
+        scroll_container = self._get_scroll_container(start_widget)
+        print("scroll_container", scroll_container)
+        widgets = list(scroll_container.query("*"))
+
         spatial_map: SpatialMap[Widget] = SpatialMap()
         spatial_map.insert(
-            [
-                (widget.region, NULL_OFFSET, False, False, widget)
-                for widget in self._compositor.visible_widgets.keys()
-            ]
+            [(widget.region, NULL_OFFSET, False, False, widget) for widget in widgets]
         )
 
         highlighted_widgets: set[Widget] = set()
