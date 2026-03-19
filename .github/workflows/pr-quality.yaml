@@ -22,6 +22,9 @@ jobs:
           min-account-age: 30
           max-daily-forks: 7
 
+          # Merge Checks
+          min-global-merge-ratio: 30
+
           # PR Description Checks
           require-linked-issue: true
 
@@ -64,6 +67,3 @@ jobs:
           # User Checks
           detect-spam-usernames: false
           min-profile-completeness: 0
-
-          # Merge Checks
-          min-global-merge-ratio: 0
