@@ -1698,8 +1698,7 @@ class Screen(Generic[ScreenResultType], Widget):
             direction: Direction: `+1` for up, `-1` for down.
             speed: The scroll speed as a factor of the maximum.
         """
-        print("start auto scroll", widget, direction, speed)
-        assert speed > 0
+        assert speed > 0, "Speed should be positive and non-zero"
 
         def _auto_scroll_y(widget: Widget, direction: float) -> None:
             """Scroll a container a single line in the given direction.
@@ -1709,19 +1708,27 @@ class Screen(Generic[ScreenResultType], Widget):
                 direction: Lines to scroll.
             """
             if self._select_start is not None:
+                # Update scroll position
                 widget.scroll_y += direction
                 widget.scroll_target_y = widget.scroll_y
+                # Update selection highlights which may have changed due to the scroll
                 self._update_select(self.app.mouse_position)
 
+        # Replace current timer
         self._stop_auto_scroll()
 
+        # Lines to scroll per frame (may be fractional)
         lines_to_scroll = (
             direction * (self.app.SELECT_AUTO_SCROLL_SPEED / constants.MAX_FPS) * speed
         )
-        _auto_scroll_y(widget, lines_to_scroll)
+        # Callable to perform scroll
+        scroll_callback = partial(_auto_scroll_y, widget, lines_to_scroll)
+        # Perform initial scroll
+        scroll_callback()
+        # Start a timer to perform future scrolling
+        # This is so the user doesn't have to move the mouse to keep scrolling
         self._auto_select_scroll_timer = self.set_interval(
-            1 / constants.MAX_FPS,
-            partial(_auto_scroll_y, widget, lines_to_scroll),
+            1 / constants.MAX_FPS, scroll_callback
         )
 
     def _stop_auto_scroll(self) -> None:
@@ -1735,8 +1742,10 @@ class Screen(Generic[ScreenResultType], Widget):
     ) -> None:
         """Check auto-scrolling when selecting.
 
+        This will start, update, or stop a timer used to move the scroll position.
+
         Args:
-            select_widget: The widget under thje mouise pointer.
+            select_widget: The widget under the mouise pointer.
             mouse_coordinate: The screen-space mouse pointer.
         """
 
@@ -1750,6 +1759,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if not isinstance(ancestor, Widget):
                 break
             if not ancestor.allow_vertical_scroll:
+                # Can't scroll, so check the next ancestor
                 continue
             ancestor_region = ancestor.content_region
             scroll_lines = self.app.SELECT_AUTO_SCROLL_LINES
@@ -1758,20 +1768,33 @@ class Screen(Generic[ScreenResultType], Widget):
                 auto_scroll_lines=scroll_lines,
             )
             if mouse_coordinate in up_region:
+                # Mouse is in the up region
                 if ancestor.scroll_y > 0:
+                    # And there is room to scroll
+                    # Speed increases the closer we are to the edge
                     speed = (
                         (scroll_lines - (mouse_coordinate.y - up_region.y))
                     ) / scroll_lines
                     self._start_auto_scroll(ancestor, -1, speed)
-                return
+                    return
             elif mouse_coordinate in down_region:
+                # Mouse is in the down region
                 if ancestor.scroll_y < ancestor.max_scroll_y:
+                    # And there is room to scroll
                     speed = (mouse_coordinate.y - down_region.y + 1) / scroll_lines
                     self._start_auto_scroll(ancestor, +1, speed)
-                return
+                    return
+        # Nothing to auto scroll, so stop the timer
         self._stop_auto_scroll()
 
     def _update_select(self, screen_offset: Offset) -> None:
+        """Update select for a screen-space offset (typically the mouse position).
+
+        This updates the `_select_end` reactrive, which will trigger the watch method `watch__select_end`.
+
+        Args:
+            screen_offset: Screen-space position (i.e. mouse position).
+        """
         select_widget, select_offset = self.get_widget_and_offset_at(
             screen_offset.x, screen_offset.y
         )
@@ -1981,10 +2004,24 @@ class Screen(Generic[ScreenResultType], Widget):
             }
             return
 
+        select_start, select_end = sorted(
+            [self._select_start, select_end],
+            key=lambda select: select[1].transpose,
+        )
+
+        print("START", select_start)
+        print("END  ", select_end)
+        print("--")
+
         # start_widget, end_widget = sorted(
         #     [start_widget, end_widget],
         #     key=lambda widget: widget.region.offset.transpose,
         # )
+
+        self.log(self._select_start)
+        self.log(self._select_end)
+        self.log("---")
+        return
 
         mouse_position = self.app.mouse_position
         selection_start_offset = start_widget.region.offset + start_offset

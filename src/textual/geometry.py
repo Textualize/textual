@@ -25,6 +25,7 @@ from typing_extensions import Final
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
+import rich.repr
 
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
@@ -1313,6 +1314,97 @@ class Spacing(NamedTuple):
             max(right, other_right),
             max(bottom, other_bottom),
             max(left, other_left),
+        )
+
+
+class Shape:
+    """An arbitrary shape."""
+
+    __slots__ = ["_regions", "_bounds"]
+
+    def __init__(self, regions: list[Region]):
+        self._regions = regions.copy()
+        self._bounds = Region.from_union(regions) if self._bounds else NULL_REGION
+
+    def __bool__(self) -> bool:
+        return bool(self._bounds)
+
+    def __hash__(self) -> int:
+        return hash(self._regions)
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._regions
+
+    @classmethod
+    def selection_bounds(cls, container: Region, start: Offset, end: Offset) -> Shape:
+        """Get a shape that would be constructed by a user selecting text between two points.
+
+        The shape would look something like this:
+
+        ```
+            XXXXXXXXXX
+        XXXXXXXXXXXXXX
+        XXXXXXXXXXXXXX
+        XXXXXXXXX
+        ```
+
+        Args:
+            container: The container region for the selection.
+            start: The start offset.
+            end: The end offset.
+
+        Returns:
+            A new shape.
+        """
+        if start.transpose > end.transpose:
+            end, start = start, end
+        start_x, start_y = start
+        end_x, end_y = end
+
+        if start_x == 0 and end_x == container.width:
+            # Special case where start and end offsets are on the edges, and the shape
+            # becomes a single region
+            return Shape([Region(0, start_y, container.width, end_y - start_y)])
+
+        if start.y == end.y:
+            # Simple case: all on one line
+            return Shape([Region(start_x, start_y, end_x - start_x, 1)])
+
+        regions = [
+            Region(start_x, start_y, container.width - start_x, 1),  # top
+            Region(container.x, end_y, container.width - container.x, 1),  # bottom
+        ]
+        if end.y - start.y > 1:
+            # We need a middle region betweem the top and the bottom
+            regions.append(Region(0, start_y + 1, container.width, end_y - start_y - 1))
+        return Shape(regions)
+
+    def overlaps_region(self, region: Region) -> bool:
+        """Does a region overlap this shape?
+
+        Args:
+            region: A Region to check.
+
+        Returns:
+            `True` if any part of the shape overlaps the region, `False` if there is no overlap.
+        """
+        if not self._bounds:
+            return False
+        return self._bounds.overlaps(region) and any(
+            shape_region.overlaps(region) for shape_region in self._regions
+        )
+
+    def contains_point(self, offset: Offset) -> bool:
+        """Check if the given offset is within the shape.
+
+        Args:
+            offset: An offset.
+
+        Returns:
+            `True` if a point is anywhere within the shape, otherwise `False`.
+        """
+        return self._bounds.contains_point(offset) and any(
+            region.contains_point(offset) for region in self._regions
         )
 
 
