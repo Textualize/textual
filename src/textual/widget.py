@@ -2258,6 +2258,19 @@ class Widget(DOMNode):
             return NULL_REGION
 
     @property
+    def clip_region(self) -> Region:
+        """The widget region intersection with its clip region (as you would expect from a scrollable widget)
+
+        Returns:
+            A a screen-space region.
+        """
+        try:
+            map_geometry = self.screen.find_widget(self)
+        except (NoScreen, errors.NoWidget):
+            return NULL_REGION
+        return map_geometry.visible_region
+
+    @property
     def dock_gutter(self) -> Spacing:
         """Space allocated to docks in the parent.
 
@@ -2668,10 +2681,22 @@ class Widget(DOMNode):
         Returns:
             A widget which contains this widget.
         """
+        container: Widget = self
         for widget in self.ancestors:
-            if not isinstance(widget, Widget):
-                break
-            if widget.allow_vertical_scroll:
+            if isinstance(widget, Widget) and widget.is_scrollable:
+                return widget
+        return container
+
+    @property
+    def select_scroll_container(self) -> Widget:
+        """The widget's container used when selecting text..
+
+        Returns:
+            A widget which contains this widget.
+        """
+
+        for widget in self.select_container.ancestors_with_self:
+            if isinstance(widget, Widget) and widget.allow_vertical_scroll:
                 return widget
         return self.screen
 

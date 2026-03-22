@@ -1686,7 +1686,10 @@ class Screen(Generic[ScreenResultType], Widget):
         )
 
     def _start_auto_scroll(
-        self, widget: Widget, direction: Literal[+1, -1], speed: float = 1.0
+        self,
+        widget: Widget,
+        direction: Literal[+1, -1],
+        speed: float = 1.0,
     ) -> None:
         """Start (or update) auto scrolling.
 
@@ -1695,7 +1698,8 @@ class Screen(Generic[ScreenResultType], Widget):
             direction: Direction: `+1` for up, `-1` for down.
             speed: The scroll speed as a factor of the maximum.
         """
-        print("AUTO SCROLL", widget, direction)
+        print("start auto scroll", widget, direction, speed)
+        assert speed > 0
 
         def _auto_scroll_y(widget: Widget, direction: float) -> None:
             """Scroll a container a single line in the given direction.
@@ -1725,37 +1729,46 @@ class Screen(Generic[ScreenResultType], Widget):
         if self._auto_select_scroll_timer is not None:
             self._auto_select_scroll_timer.stop()
             self._auto_select_scroll_timer = None
-            print("STOP AUTO SCROLL")
 
     def _check_auto_scroll(
         self, select_widget: Widget, mouse_coordinate: Offset
     ) -> None:
+        """Check auto-scrolling when selecting.
+
+        Args:
+            select_widget: The widget under thje mouise pointer.
+            mouse_coordinate: The screen-space mouse pointer.
+        """
 
         if not self.app.ENABLE_SELECT_AUTO_SCROLL:
             # Disabled by app
             return
 
-        for ancestor in select_widget.ancestors:
+        # We want to find any scrollable regions further up the DOM,
+        # and apply auto scrolling if we are in a region at the top or bottom
+        for ancestor in select_widget.ancestors_with_self:
             if not isinstance(ancestor, Widget):
                 break
-            if ancestor.allow_vertical_scroll:
-                ancestor_region = ancestor.content_region
-                scroll_lines = self.app.SELECT_AUTO_SCROLL_LINES
-                up_region, down_region = get_auto_scroll_regions(
-                    ancestor_region,
-                    auto_scroll_lines=scroll_lines,
-                )
-                if mouse_coordinate in up_region and ancestor.scroll_y > 0:
-                    speed = (up_region.y - mouse_coordinate.y + 1) / scroll_lines
+            if not ancestor.allow_vertical_scroll:
+                continue
+            ancestor_region = ancestor.content_region
+            scroll_lines = self.app.SELECT_AUTO_SCROLL_LINES
+            up_region, down_region = get_auto_scroll_regions(
+                ancestor_region,
+                auto_scroll_lines=scroll_lines,
+            )
+            if mouse_coordinate in up_region:
+                if ancestor.scroll_y > 0:
+                    speed = (
+                        (scroll_lines - (mouse_coordinate.y - up_region.y))
+                    ) / scroll_lines
                     self._start_auto_scroll(ancestor, -1, speed)
-                    return
-                elif (
-                    mouse_coordinate in down_region
-                    and ancestor.scroll_y < ancestor.max_scroll_y
-                ):
+                return
+            elif mouse_coordinate in down_region:
+                if ancestor.scroll_y < ancestor.max_scroll_y:
                     speed = (mouse_coordinate.y - down_region.y + 1) / scroll_lines
                     self._start_auto_scroll(ancestor, +1, speed)
-                    return
+                return
         self._stop_auto_scroll()
 
     def _update_select(self, screen_offset: Offset) -> None:
@@ -1798,7 +1811,8 @@ class Screen(Generic[ScreenResultType], Widget):
             event.style = self.get_style_at(event.screen_x, event.screen_y)
             self._handle_mouse_move(event)
 
-            if self._selecting:
+            if self._selecting and self._select_start is not None:
+
                 self._box_select = event.shift
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
@@ -1830,6 +1844,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 if select_widget is not None:
                     self._check_auto_scroll(select_widget, event.screen_offset)
                 else:
+                    print("select widget is None")
                     self._stop_auto_scroll()
 
         elif isinstance(event, events.MouseEvent):
@@ -1975,12 +1990,17 @@ class Screen(Generic[ScreenResultType], Widget):
         selection_start_offset = start_widget.region.offset + start_offset
         selection_end_offset = mouse_position
 
-        selection_start_offset, selection_end_offset = sorted(
-            [selection_start_offset, selection_end_offset],
-            key=lambda offset: offset.transpose,
+        (start_widget, selection_start_offset), (end_widget, selection_end_offset) = (
+            sorted(
+                [
+                    (start_widget, selection_start_offset),
+                    (end_widget, selection_end_offset),
+                ],
+                key=lambda widget_offset: widget_offset[1].transpose,
+            )
         )
 
-        print(selection_start_offset, selection_end_offset)
+        # print(selection_start_offset, selection_end_offset)
         # select_region = Region.from_corners(
         #     *selection_start_offset, *selection_end_offset
         # )
@@ -2003,6 +2023,7 @@ class Screen(Generic[ScreenResultType], Widget):
         select_widgets -= {self, start_widget, end_widget}
 
         select_all = SELECT_ALL
+
         self.selections = {
             start_widget: Selection(start_offset, None),
             **{
