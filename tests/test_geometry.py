@@ -639,7 +639,9 @@ def test_shape_contains_point_simple(
 
 
 def build_grid_snapshot(shape: Shape) -> str:
-    """Build a string with a 2D grid of results from §contains_point§"""
+    """Build a string with a 2D grid of results from contains_point."""
+
+    # Add a padding of 2 cells around the output, for clarity.
     width = shape.bounds.right + 2
     height = shape.bounds.bottom + 2
 
@@ -688,6 +690,28 @@ def test_selection_bounds_contains_point():
 XXXXXXXXXX..
 XXXXXXXXXX..
 XXXXXX......
+............
+............"""
+    result = build_grid_snapshot(shape)
+    print(result)
+    assert result == expected
+
+
+def test_selection_bounds_contains_point_simple_case():
+    """Test selection bounds shape and contains_point"""
+
+    shape = Shape.selection_bounds(
+        Region(0, 0, 10, 8),
+        Offset(0, 1),
+        Offset(10, 4),
+    )
+    # Should result in a single region
+    assert len(shape.regions) == 1
+    expected = """\
+............
+XXXXXXXXXX..
+XXXXXXXXXX..
+XXXXXXXXXX..
 ............
 ............"""
     result = build_grid_snapshot(shape)

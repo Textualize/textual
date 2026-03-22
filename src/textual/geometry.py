@@ -1349,6 +1349,11 @@ class Shape:
         yield self._regions
 
     @property
+    def regions(self) -> tuple[Region, ...]:
+        """The regions in the shape."""
+        return self._regions
+
+    @property
     def bounds(self) -> Region:
         """A region that encloses the shape."""
         return self._bounds
