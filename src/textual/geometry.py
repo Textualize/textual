@@ -12,8 +12,10 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Collection,
+    Iterable,
     Literal,
     NamedTuple,
+    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -1322,9 +1324,9 @@ class Shape:
 
     __slots__ = ["_regions", "_bounds"]
 
-    def __init__(self, regions: list[Region]):
-        self._regions = regions.copy()
-        self._bounds = Region.from_union(regions) if self._bounds else NULL_REGION
+    def __init__(self, regions: Sequence[Region]):
+        self._regions = regions
+        self._bounds = Region.from_union(regions) if regions else NULL_REGION
 
     def __bool__(self) -> bool:
         return bool(self._bounds)
@@ -1342,10 +1344,11 @@ class Shape:
         The shape would look something like this:
 
         ```
-            XXXXXXXXXX
+            XXXXXXXXXX <- top
         XXXXXXXXXXXXXX
+        XXXXXXXXXXXXXX <- middle
         XXXXXXXXXXXXXX
-        XXXXXXXXX
+        XXXXXXXXX      <- bottom
         ```
 
         Args:
@@ -1361,22 +1364,33 @@ class Shape:
         start_x, start_y = start
         end_x, end_y = end
 
-        if start_x == 0 and end_x == container.width:
+        def get_regions() -> Iterable[Region]:
+            """Get regions to cover selection bounds.
+
+            Yields:
+                Regions to cover bounds.
+            """
             # Special case where start and end offsets are on the edges, and the shape
             # becomes a single region
-            return Shape([Region(0, start_y, container.width, end_y - start_y)])
+            if start_x == 0 and end_x == container.width:
+                yield Region(0, start_y, container.width, end_y - start_y)
 
-        if start.y == end.y:
             # Simple case: all on one line
-            return Shape([Region(start_x, start_y, end_x - start_x, 1)])
+            elif start.y == end.y:
+                yield Region(start_x, start_y, end_x - start_x, 1)
 
-        regions = [
-            Region(start_x, start_y, container.width - start_x, 1),  # top
-            Region(container.x, end_y, container.width - container.x, 1),  # bottom
-        ]
-        if end.y - start.y > 1:
-            # We need a middle region betweem the top and the bottom
-            regions.append(Region(0, start_y + 1, container.width, end_y - start_y - 1))
+            # Shape is on two or more lines
+            else:
+                # top
+                yield Region(start_x, start_y, container.width - start_x, 1)
+                # middle
+                if end.y - start.y > 1:
+                    # We need a middle region between the top and the bottom
+                    yield Region(0, start_y + 1, container.width, end_y - start_y - 1)
+                # bottom
+                yield Region(container.x, end_y, container.width - container.x, 1)
+
+        regions = list(get_regions())
         return Shape(regions)
 
     def overlaps_region(self, region: Region) -> bool:
