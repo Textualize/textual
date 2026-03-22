@@ -15,7 +15,6 @@ from typing import (
     Iterable,
     Literal,
     NamedTuple,
-    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -1320,13 +1319,25 @@ class Spacing(NamedTuple):
 
 
 class Shape:
-    """An arbitrary shape."""
+    """An arbitrary shape defined by a sequence of regions.
 
-    __slots__ = ["_regions", "_bounds"]
+    This class currently exists to filter widgets within a shape defined when the user is slecting text.
 
-    def __init__(self, regions: Sequence[Region]):
-        self._regions = regions
-        self._bounds = Region.from_union(regions) if regions else NULL_REGION
+    """
+
+    __slots__ = [
+        "_regions",
+        "_bounds",
+    ]
+
+    def __init__(self, regions: Iterable[Region]):
+        """
+
+        Args:
+            regions: Regions which will define the shape.
+        """
+        self._regions = tuple(regions)
+        self._bounds = Region.from_union(self._regions) if regions else NULL_REGION
 
     def __bool__(self) -> bool:
         return bool(self._bounds)
@@ -1357,7 +1368,7 @@ class Shape:
             end: The end offset.
 
         Returns:
-            A new shape.
+            A new shape covering the selection bounds.
         """
         if start.transpose > end.transpose:
             end, start = start, end
@@ -1373,25 +1384,49 @@ class Shape:
             # Special case where start and end offsets are on the edges, and the shape
             # becomes a single region
             if start_x == 0 and end_x == container.width:
-                yield Region(0, start_y, container.width, end_y - start_y)
+                yield Region(
+                    0,
+                    start_y,
+                    container.width,
+                    end_y - start_y,
+                )
 
             # Simple case: all on one line
             elif start.y == end.y:
-                yield Region(start_x, start_y, end_x - start_x, 1)
+                yield Region(
+                    start_x,
+                    start_y,
+                    end_x - start_x,
+                    1,
+                )
 
             # Shape is on two or more lines
             else:
                 # top
-                yield Region(start_x, start_y, container.width - start_x, 1)
+                yield Region(
+                    start_x,
+                    start_y,
+                    container.width - start_x,
+                    1,
+                )
                 # middle
                 if end.y - start.y > 1:
                     # We need a middle region between the top and the bottom
-                    yield Region(0, start_y + 1, container.width, end_y - start_y - 1)
+                    yield Region(
+                        0,
+                        start_y + 1,
+                        container.width,
+                        end_y - start_y - 1,
+                    )
                 # bottom
-                yield Region(container.x, end_y, container.width - container.x, 1)
+                yield Region(
+                    container.x,
+                    end_y,
+                    container.width - container.x,
+                    1,
+                )
 
-        regions = list(get_regions())
-        return Shape(regions)
+        return Shape(get_regions())
 
     def overlaps_region(self, region: Region) -> bool:
         """Does a region overlap this shape?
@@ -1402,8 +1437,6 @@ class Shape:
         Returns:
             `True` if any part of the shape overlaps the region, `False` if there is no overlap.
         """
-        if not self._bounds:
-            return False
         return self._bounds.overlaps(region) and any(
             shape_region.overlaps(region) for shape_region in self._regions
         )
@@ -1415,7 +1448,7 @@ class Shape:
             offset: An offset.
 
         Returns:
-            `True` if a point is anywhere within the shape, otherwise `False`.
+            `True` if the given offset is anywhere within the shape, otherwise `False`.
         """
         return self._bounds.contains_point(offset) and any(
             region.contains_point(offset) for region in self._regions
