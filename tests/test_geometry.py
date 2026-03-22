@@ -2,7 +2,7 @@ from typing import Literal
 
 import pytest
 
-from textual.geometry import Offset, Region, Size, Spacing, clamp
+from textual.geometry import Offset, Region, Shape, Size, Spacing, clamp
 
 
 def test_dimensions_region():
@@ -580,3 +580,151 @@ def test_constrain(
     expected: Region,
 ) -> None:
     assert region.constrain(constrain_x, constrain_y, margin, container) == expected
+
+
+def test_shape_null():
+    """Test a null shape (shape with no regions)."""
+    null_shape = Shape([])
+    assert isinstance(repr(null_shape), str)
+    assert not null_shape
+    assert not null_shape.contains_point(Offset())
+
+
+@pytest.mark.parametrize(
+    "shape,point,expected",
+    [
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(0, 0),
+            False,
+        ),
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(10, 0),
+            False,
+        ),
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(10, 1),
+            False,
+        ),
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(10, 10),
+            True,
+        ),
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(14, 10),
+            True,
+        ),
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(14, 14),
+            True,
+        ),
+        (
+            Shape([Region(10, 10, 5, 5)]),
+            Offset(15, 10),
+            False,
+        ),
+    ],
+)
+def test_shape_contains_point_simple(
+    shape: Shape, point: Offset, expected: bool
+) -> None:
+    """Test shape.contains_point"""
+    assert isinstance(repr(shape), str)
+    assert shape.contains_point(point) == expected
+
+
+def build_grid_snapshot(shape: Shape) -> str:
+    """Build a string with a 2D grid of results from §contains_point§"""
+    width = shape.bounds.right + 2
+    height = shape.bounds.bottom + 2
+
+    map: list[list[str]] = []
+    for y in range(height):
+        map.append([".X"[shape.contains_point(Offset(x, y))] for x in range(width)])
+
+    return "\n".join("".join(line) for line in map)
+
+
+def test_shape_contains_point():
+    """Test contains_point with multi region shape"""
+    shape = Shape(
+        [
+            Region(2, 2, 4, 4),
+            Region(3, 5, 5, 3),
+        ]
+    )
+    expected = """\
+..........
+..........
+..XXXX....
+..XXXX....
+..XXXX....
+..XXXXXX..
+...XXXXX..
+...XXXXX..
+..........
+.........."""
+    result = build_grid_snapshot(shape)
+    print(repr(result))
+    assert result == expected
+
+
+def test_selection_bounds_contains_point():
+    """Test selection bounds shape and contains_point"""
+
+    shape = Shape.selection_bounds(
+        Region(0, 0, 10, 8),
+        Offset(4, 1),
+        Offset(6, 4),
+    )
+    expected = """\
+............
+....XXXXXX..
+XXXXXXXXXX..
+XXXXXXXXXX..
+XXXXXX......
+............
+............"""
+    result = build_grid_snapshot(shape)
+    print(result)
+    assert result == expected
+
+
+def test_selection_bounds_contains_point_single_line():
+    """Test selection bonds shape and single point where the offsets are on the same line"""
+    shape = Shape.selection_bounds(
+        Region(0, 0, 10, 8),
+        Offset(2, 1),
+        Offset(6, 1),
+    )
+    expected = """\
+........
+..XXXX..
+........
+........"""
+    result = build_grid_snapshot(shape)
+    print(result)
+    assert result == expected
+
+
+def test_selection_bounds_contains_point_two_lines():
+    """Test selection bonds shape and single point where the offsets are over two lines"""
+    shape = Shape.selection_bounds(
+        Region(0, 0, 10, 8),
+        Offset(2, 1),
+        Offset(6, 2),
+    )
+    expected = """\
+............
+..XXXXXXXX..
+XXXXXX......
+............
+............"""
+    result = build_grid_snapshot(shape)
+    print(result)
+    assert result == expected

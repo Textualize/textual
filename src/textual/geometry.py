@@ -1348,6 +1348,11 @@ class Shape:
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._regions
 
+    @property
+    def bounds(self) -> Region:
+        """A region that encloses the shape."""
+        return self._bounds
+
     @classmethod
     def selection_bounds(cls, container: Region, start: Offset, end: Offset) -> Shape:
         """Get a shape that would be constructed by a user selecting text between two points.
@@ -1422,7 +1427,7 @@ class Shape:
                 yield Region(
                     container.x,
                     end_y,
-                    container.width - container.x,
+                    end_x,
                     1,
                 )
 
@@ -1437,6 +1442,8 @@ class Shape:
         Returns:
             `True` if any part of the shape overlaps the region, `False` if there is no overlap.
         """
+        if not self._regions:
+            return False
         return self._bounds.overlaps(region) and any(
             shape_region.overlaps(region) for shape_region in self._regions
         )
@@ -1450,6 +1457,8 @@ class Shape:
         Returns:
             `True` if the given offset is anywhere within the shape, otherwise `False`.
         """
+        if not self._regions:
+            return False
         return self._bounds.contains_point(offset) and any(
             region.contains_point(offset) for region in self._regions
         )
