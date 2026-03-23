@@ -1358,6 +1358,12 @@ class Shape:
         """A region that encloses the shape."""
         return self._bounds
 
+    @property
+    def area(self) -> int:
+        """Cells covered by the shape."""
+        # TODO: Currently doesn't handle overlapping regions
+        return sum(region.area for region in self._regions)
+
     @classmethod
     def selection_bounds(cls, container: Region, start: Offset, end: Offset) -> Shape:
         """Get a shape that would be constructed by a user selecting text between two points.
@@ -1438,7 +1444,7 @@ class Shape:
 
         return Shape(get_regions())
 
-    def overlaps_region(self, region: Region) -> bool:
+    def overlaps(self, region: Region) -> bool:
         """Does a region overlap this shape?
 
         Args:
@@ -1447,11 +1453,7 @@ class Shape:
         Returns:
             `True` if any part of the shape overlaps the region, `False` if there is no overlap.
         """
-        if not self._regions:
-            return False
-        return self._bounds.overlaps(region) and any(
-            shape_region.overlaps(region) for shape_region in self._regions
-        )
+        return any(shape_region.overlaps(region) for shape_region in self._regions)
 
     def contains_point(self, offset: Offset) -> bool:
         """Check if the given offset is within the shape.
@@ -1462,11 +1464,7 @@ class Shape:
         Returns:
             `True` if the given offset is anywhere within the shape, otherwise `False`.
         """
-        if not self._regions:
-            return False
-        return self._bounds.contains_point(offset) and any(
-            region.contains_point(offset) for region in self._regions
-        )
+        return any(region.contains_point(offset) for region in self._regions)
 
 
 if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":

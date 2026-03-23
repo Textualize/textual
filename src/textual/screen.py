@@ -53,7 +53,7 @@ from textual.css.query import NoMatches, QueryType
 from textual.css.styles import PointerShape
 from textual.dom import DOMNode
 from textual.errors import NoWidget
-from textual.geometry import NULL_OFFSET, Offset, Region, Size
+from textual.geometry import NULL_OFFSET, Offset, Region, Shape, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
@@ -1992,7 +1992,8 @@ class Screen(Generic[ScreenResultType], Widget):
             # Nothing to select
             return
 
-        start_widget, _screen_start, start_offset = self._select_start
+        start_widget, screen_start, start_offset = self._select_start
+
         end_widget, screen_end, end_offset = select_end
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
@@ -2004,23 +2005,36 @@ class Screen(Generic[ScreenResultType], Widget):
             }
             return
 
-        select_start, select_end = sorted(
-            [self._select_start, select_end],
-            key=lambda select: select[1].transpose,
+        print(select_end)
+        # The start selection may have been scrolled since it was saved
+        # We need to adjust to the new screen-space position
+        select_start = (start_widget, start_widget.region.offset, start_offset)
+
+        bounds_start, bounds_end = sorted(
+            [select_start[1] + select_start[2], self.app.mouse_position],
+            key=lambda bounds: bounds.transpose,
         )
 
-        print("START", select_start)
-        print("END  ", select_end)
-        print("--")
+        selection_bounds = Shape.selection_bounds(
+            self.size.region,
+            bounds_start,
+            bounds_end,
+        )
+
+        select_all = SELECT_ALL
+
+        selections: dict[Widget, Selection] = {}
+        for widget, map_geometry in self._compositor.full_map.items():
+            if selection_bounds.overlaps(map_geometry.visible_region):
+                selections[widget] = select_all
+
+        self.selections = selections
 
         # start_widget, end_widget = sorted(
         #     [start_widget, end_widget],
         #     key=lambda widget: widget.region.offset.transpose,
         # )
 
-        self.log(self._select_start)
-        self.log(self._select_end)
-        self.log("---")
         return
 
         mouse_position = self.app.mouse_position
