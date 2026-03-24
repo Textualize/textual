@@ -62,6 +62,7 @@ from textual.renderables.blank import Blank
 from textual.selection import SELECT_ALL, Selection
 from textual.signal import Signal
 from textual.timer import Timer
+from textual.walk import walk_selectable_widgets
 from textual.widget import Widget
 from textual.widgets import Tooltip
 from textual.widgets._toast import ToastRack
@@ -1951,33 +1952,44 @@ class Screen(Generic[ScreenResultType], Widget):
 
     @classmethod
     def _collect_select_widgets(
-        cls, selection_region: Region, widgets: Iterable[Widget]
+        cls,
+        selection_bounds: Shape,
+        container: Widget,
+        start_widget: Widget,
+        end_widget: Widget,
     ) -> list[Widget]:
-        """Collect widgets within a selection region.
+        """Get widgets between two widgets (inclusive).
 
         Args:
-            selection_region: A screenspace bounding box to include widgets.
-            widgets: Widgets to consider.
+            container: A parent widgets.
+            start_widget: First widget.
+            end_widget: Second widget.
 
         Returns:
-            Widgets within selection region.
+            Widgets between start and end, in select sort order.
         """
-        results: list[Widget] = []
 
-        def _recurse_node(node: Widget) -> None:
-            if not node.is_container:
-                if selection_region.overlaps(node.region):
-                    results.append(node)
-                return
-            if node.region in selection_region:
-                results.extend(node.query("*"))
-            else:
-                for child in node.displayed_and_visible_children:
-                    _recurse_node(child)
+        widgets = list(
+            walk_selectable_widgets(
+                container,
+                selection_bounds,
+                {start_widget, end_widget},
+            )
+        )
 
-        for node in widgets:
-            _recurse_node(node)
+        index1: int | None = None
+        index2: int | None = None
+        try:
+            index1 = widgets.index(start_widget)
+        except ValueError:
+            pass
 
+        try:
+            index2 = widgets.index(end_widget) + 1
+        except ValueError:
+            pass
+
+        results = widgets[index1:index2]
         return results
 
     def _watch__select_end(
@@ -1988,6 +2000,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             select_end: The end selection.
         """
+
         if select_end is None or self._select_start is None:
             # Nothing to select
             return
@@ -2005,7 +2018,6 @@ class Screen(Generic[ScreenResultType], Widget):
             }
             return
 
-        print(select_end)
         # The start selection may have been scrolled since it was saved
         # We need to adjust to the new screen-space position
         select_start = (start_widget, start_widget.region.offset, start_offset)
@@ -2016,19 +2028,28 @@ class Screen(Generic[ScreenResultType], Widget):
         )
 
         selection_bounds = Shape.selection_bounds(
-            self.size.region,
-            bounds_start,
-            bounds_end,
+            self.size.region, bounds_start, bounds_end
+        )
+
+        if start_widget.region.offset.transpose > end_widget.region.offset.transpose:
+            start_widget, end_widget = end_widget, start_widget
+
+        container_widget = Widget.get_common_ancestor(start_widget, end_widget)
+
+        select_widgets = self._collect_select_widgets(
+            selection_bounds, container_widget, start_widget, end_widget
         )
 
         select_all = SELECT_ALL
 
-        selections: dict[Widget, Selection] = {}
-        for widget, map_geometry in self._compositor.full_map.items():
-            if selection_bounds.overlaps(map_geometry.visible_region):
-                selections[widget] = select_all
+        self.selections = {widget: SELECT_ALL for widget in select_widgets}
 
-        self.selections = selections
+        # selections: dict[Widget, Selection] = {}
+        # for widget, map_geometry in self._compositor.full_map.items():
+        #     if selection_bounds.overlaps(map_geometry.region):
+        #         selections[widget] = select_all
+
+        # self.selections = selections
 
         # start_widget, end_widget = sorted(
         #     [start_widget, end_widget],

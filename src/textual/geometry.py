@@ -1466,6 +1466,33 @@ class Shape:
         """
         return any(region.contains_point(offset) for region in self._regions)
 
+    def intersection(self, clip: Region) -> Shape:
+        """Return a shape that is the intersection of this shape with a region.
+
+        Args:
+            clip: A region.
+
+        Returns:
+            A new shape.
+        """
+        regions = [
+            clipped_region
+            for region in self.regions
+            if (clipped_region := clip.intersection(region))
+        ]
+        return Shape(regions)
+
+    def contains_region(self, region: Region) -> bool:
+        """Check if the given region fits within this shape.
+
+        Args:
+            region: A region.
+
+        Returns:
+            `True` if the region fits within the shape without clipping, otherwise `False`.
+        """
+        return self.intersection(region).area == self.area
+
 
 if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":
     try:
@@ -1475,7 +1502,7 @@ if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":
 
 
 NULL_OFFSET: Final = Offset(0, 0)
-"""An [offset][textual.geometry.Offset] constant for (0, 0)."""
+"""An [Offset][textual.geometry.Offset] constant for (0, 0)."""
 
 NULL_REGION: Final = Region(0, 0, 0, 0)
 """A [Region][textual.geometry.Region] constant for a null region (at the origin, with both width and height set to zero)."""

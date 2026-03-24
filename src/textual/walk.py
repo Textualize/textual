@@ -11,8 +11,11 @@ from __future__ import annotations
 from collections import deque
 from typing import TYPE_CHECKING, Iterable, Iterator, TypeVar, overload
 
+from textual.geometry import Shape
+
 if TYPE_CHECKING:
     from textual.dom import DOMNode
+    from textual.widget import Widget
 
     WalkType = TypeVar("WalkType", bound=DOMNode)
 
@@ -167,3 +170,49 @@ def walk_breadth_search_id(
             return found_node
         queue.extend(node._nodes)
     return None
+
+
+def walk_selectable_widgets(
+    root: DOMNode, bounds: Shape, bounded: set[DOMNode]
+) -> Iterable[Widget]:
+    """Walk the tree depth first in select order (top to bottom, then left to right).
+
+    Args:
+        root: The root note (starting point).
+        bounds: A Shape object that defines the selection bounds.
+        bounded: Container widgets that require a bounds check.
+
+    Returns:
+        An iterable of DOMNodes.
+    """
+    stack: list[Iterator[Widget]] = [iter(root.children)]
+    pop = stack.pop
+    push = stack.append
+
+    def get_children(node: DOMNode) -> list[Widget]:
+        """Get children, sorted in selection order, and potentially filtered by selection bounds.
+
+        Args:
+            node: A root node.
+
+        Returns:
+            A list of child widgets.
+        """
+        children = sorted(
+            node.displayed_and_visible_children,
+            key=lambda node: node.region.offset.transpose,
+        )
+        if node in bounded:
+            children = [child for child in children if bounds.overlaps(child.region)]
+        return children
+
+    children = get_children(root)
+
+    while stack:
+        if (node := next(stack[-1], None)) is None:
+            pop()
+        else:
+            yield node
+            children = get_children(node)
+            if children:
+                push(iter(children))

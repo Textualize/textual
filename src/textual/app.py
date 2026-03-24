@@ -517,7 +517,7 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_SELECT_AUTO_SCROLL: ClassVar[bool] = True
     """Enable automatic scrolling if selecting and the mouse is at the top or bottom of the widget?"""
 
-    SELECT_AUTO_SCROLL_LINES: ClassVar[int] = 3
+    SELECT_AUTO_SCROLL_LINES: ClassVar[int] = 2
     """Number of lines in auto-scrolling regions at the top and bottom of a widget."""
 
     SELECT_AUTO_SCROLL_SPEED: ClassVar[float] = 45.0
