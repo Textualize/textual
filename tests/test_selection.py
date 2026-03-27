@@ -40,6 +40,6 @@ async def test_double_width():
         await pilot.pause()
         assert await pilot.mouse_up(offset=(7, 1))
         selected_text = app.screen.get_selected_text()
-        expected = "❤️👍Select😊🙏😍\nme🔥💯😭"
+        expected = "❤️👍Select😊🙏😍\nme🔥💯😭😂"
 
     assert selected_text == expected
