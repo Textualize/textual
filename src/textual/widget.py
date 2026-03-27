@@ -2675,19 +2675,6 @@ class Widget(DOMNode):
                 return widget
         return container
 
-    @property
-    def select_scroll_container(self) -> Widget:
-        """The widget's container used when selecting text..
-
-        Returns:
-            A widget which contains this widget.
-        """
-
-        for widget in self.select_container.ancestors_with_self:
-            if isinstance(widget, Widget) and widget.allow_vertical_scroll:
-                return widget
-        return self.screen
-
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
 
