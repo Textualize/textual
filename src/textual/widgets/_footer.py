@@ -203,7 +203,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             }
             .footer-key--description {
                 background: ansi_default;
-                color: ansi_default;
+                color: ansi_magenta;
             }
             FooterKey:hover {
                 text-style: underline;
