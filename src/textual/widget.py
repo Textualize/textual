@@ -2878,7 +2878,7 @@ class Widget(DOMNode):
         Returns:
             `True` if the widget supports text selection, otherwise `False`.
         """
-        return self.ALLOW_SELECT and not self.is_container
+        return self.ALLOW_SELECT
 
     def pre_layout(self, layout: Layout) -> None:
         """This method id called prior to a layout operation.

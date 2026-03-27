@@ -211,8 +211,7 @@ def walk_selectable_widgets(
     while stack:
         if (node := next(stack[-1], None)) is None:
             pop()
-        else:
+        elif node.allow_select:
             yield node
-            children = get_children(node)
-            if children:
+            if children := get_children(node):
                 push(iter(children))
