@@ -190,6 +190,8 @@ def walk_selectable_widgets(
     pop = stack.pop
     push = stack.append
 
+    get_selection_order = attrgetter("_selection_order")
+
     def get_children(node: DOMNode) -> list[Widget]:
         """Get children, sorted in selection order, and potentially filtered by selection bounds.
 
@@ -200,7 +202,8 @@ def walk_selectable_widgets(
             A list of child widgets.
         """
         children = sorted(
-            node.displayed_and_visible_children, key=attrgetter("_selection_order")
+            node.displayed_and_visible_children,
+            key=get_selection_order,
         )
         if node in bounded:
             children = [child for child in children if bounds.overlaps(child.region)]
