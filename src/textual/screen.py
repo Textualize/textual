@@ -42,7 +42,6 @@ from textual._path import (
     _css_path_type_as_list,
     _make_path_object_relative,
 )
-from textual._spatial_map import SpatialMap
 from textual._types import CallbackType
 from textual.actions import SkipAction
 from textual.await_complete import AwaitComplete
@@ -53,7 +52,7 @@ from textual.css.query import NoMatches, QueryType
 from textual.css.styles import PointerShape
 from textual.dom import DOMNode
 from textual.errors import NoWidget
-from textual.geometry import NULL_OFFSET, Offset, Region, Shape, Size
+from textual.geometry import Offset, Region, Shape, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
@@ -1739,7 +1738,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self._auto_select_scroll_timer = None
 
     def _check_auto_scroll(
-        self, select_widget: Widget, mouse_coordinate: Offset
+        self, select_widget: Widget, mouse_coordinate: tuple[float, float]
     ) -> None:
         """Check auto-scrolling when selecting.
 
@@ -1753,6 +1752,9 @@ class Screen(Generic[ScreenResultType], Widget):
         if not self.app.ENABLE_SELECT_AUTO_SCROLL:
             # Disabled by app
             return
+
+        mouse_x, mouse_y = mouse_coordinate
+        mouse_offset = Offset(int(mouse_x), int(mouse_y))
 
         # We want to find any scrollable regions further up the DOM,
         # and apply auto scrolling if we are in a region at the top or bottom
@@ -1768,23 +1770,23 @@ class Screen(Generic[ScreenResultType], Widget):
                 ancestor_region,
                 auto_scroll_lines=scroll_lines,
             )
-            if mouse_coordinate in up_region:
+            if mouse_offset in up_region:
                 # Mouse is in the up region
                 if ancestor.scroll_y > 0:
                     # And there is room to scroll
                     # Speed increases the closer we are to the edge
-                    speed = (
-                        (scroll_lines - (mouse_coordinate.y - up_region.y))
-                    ) / scroll_lines
-                    self._start_auto_scroll(ancestor, -1, speed)
-                    return
-            elif mouse_coordinate in down_region:
+                    speed = (scroll_lines - (mouse_y - up_region.y)) / scroll_lines
+                    if speed:
+                        self._start_auto_scroll(ancestor, -1, speed)
+                        return
+            elif mouse_offset in down_region:
                 # Mouse is in the down region
                 if ancestor.scroll_y < ancestor.max_scroll_y:
                     # And there is room to scroll
-                    speed = (mouse_coordinate.y - down_region.y + 1) / scroll_lines
-                    self._start_auto_scroll(ancestor, +1, speed)
-                    return
+                    speed = (mouse_y - down_region.y) / scroll_lines
+                    if speed:
+                        self._start_auto_scroll(ancestor, +1, speed)
+                        return
         # Nothing to auto scroll, so stop the timer
         self._stop_auto_scroll()
 
@@ -1866,7 +1868,9 @@ class Screen(Generic[ScreenResultType], Widget):
                     )
 
                 if select_widget is not None:
-                    self._check_auto_scroll(select_widget, event.screen_offset)
+                    self._check_auto_scroll(
+                        select_widget, (event.pointer_screen_x, event.pointer_screen_y)
+                    )
                 else:
                     print("select widget is None")
                     self._stop_auto_scroll()
@@ -1978,14 +1982,14 @@ class Screen(Generic[ScreenResultType], Widget):
         )
 
         index1: int | None = None
-        index2: int | None = None
         try:
-            index1 = widgets.index(start_widget)
+            index1 = widgets.index(start_widget) + 1
         except ValueError:
             pass
 
+        index2: int | None = None
         try:
-            index2 = widgets.index(end_widget) + 1
+            index2 = widgets.index(end_widget)
         except ValueError:
             pass
 
@@ -2006,8 +2010,8 @@ class Screen(Generic[ScreenResultType], Widget):
             return
 
         start_widget, screen_start, start_offset = self._select_start
-
         end_widget, screen_end, end_offset = select_end
+
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
             self.selections = {
@@ -2022,201 +2026,41 @@ class Screen(Generic[ScreenResultType], Widget):
         # We need to adjust to the new screen-space position
         select_start = (start_widget, start_widget.region.offset, start_offset)
 
-        bounds_start, bounds_end = sorted(
-            [select_start[1] + select_start[2], self.app.mouse_position],
-            key=lambda bounds: bounds.transpose,
-        )
+        if select_start[0]._selection_order > select_end[0]._selection_order:
+            select_start, select_end = select_end, select_start
 
-        selection_bounds = Shape.selection_bounds(
-            self.size.region, bounds_start, bounds_end
-        )
+        start_widget, screen_start, start_offset = select_start
+        end_widget, screen_end, end_offset = select_end
 
-        if start_widget.region.offset.transpose > end_widget.region.offset.transpose:
+        if (screen_start + start_offset).transpose > (
+            screen_end + end_offset
+        ).transpose:
             start_widget, end_widget = end_widget, start_widget
 
         container_widget = Widget.get_common_ancestor(start_widget, end_widget)
 
+        bounds_start = select_start[1] + select_start[2]
+        bounds_end = self.app.mouse_position
+        if bounds_end.transpose < bounds_start.transpose:
+            bounds_end, bounds_start = bounds_start, bounds_end
+
+        selection_bounds = Shape.selection_bounds(
+            container_widget.region, bounds_start, bounds_end
+        )
+
         select_widgets = self._collect_select_widgets(
-            selection_bounds, container_widget, start_widget, end_widget
+            selection_bounds,
+            container_widget,
+            start_widget,
+            end_widget,
         )
-
-        select_all = SELECT_ALL
-
-        self.selections = {widget: SELECT_ALL for widget in select_widgets}
-
-        # selections: dict[Widget, Selection] = {}
-        # for widget, map_geometry in self._compositor.full_map.items():
-        #     if selection_bounds.overlaps(map_geometry.region):
-        #         selections[widget] = select_all
-
-        # self.selections = selections
-
-        # start_widget, end_widget = sorted(
-        #     [start_widget, end_widget],
-        #     key=lambda widget: widget.region.offset.transpose,
-        # )
-
-        return
-
-        mouse_position = self.app.mouse_position
-        selection_start_offset = start_widget.region.offset + start_offset
-        selection_end_offset = mouse_position
-
-        (start_widget, selection_start_offset), (end_widget, selection_end_offset) = (
-            sorted(
-                [
-                    (start_widget, selection_start_offset),
-                    (end_widget, selection_end_offset),
-                ],
-                key=lambda widget_offset: widget_offset[1].transpose,
-            )
-        )
-
-        # print(selection_start_offset, selection_end_offset)
-        # select_region = Region.from_corners(
-        #     *selection_start_offset, *selection_end_offset
-        # )
-
-        select_container = start_widget.select_container
-        select_region = Region(
-            0,
-            selection_start_offset.y,
-            select_container.region.width,
-            selection_end_offset.y - selection_start_offset.y,
-        )
-
-        parent_select_widgets = select_container.filter_children_overlapping_region(
-            select_region
-        )
-
-        select_widgets = set(
-            self._collect_select_widgets(select_region, parent_select_widgets)
-        )
-        select_widgets -= {self, start_widget, end_widget}
-
-        select_all = SELECT_ALL
-
-        self.selections = {
-            start_widget: Selection(start_offset, None),
-            **{
-                widget: select_all
-                for widget in sorted(
-                    select_widgets,
-                    key=lambda widget: widget.content_region.offset.transpose,
-                )
-            },
-            end_widget: Selection(None, end_offset),
-        }
-
-        return
-
-        screen_start = start_widget.region.offset
-        print("START", screen_start)
-
-        select_container = start_widget.select_container
-
-        # select_container.region.intersection(
-        #     Region.from_corners(select_container)
-        # )
-
-        screen_start, screen_end = sorted(
-            [screen_start, screen_end],
-            key=lambda offset: offset.transpose,
-        )
-        print(start_offset, end_offset)
-        select_region = Region.from_corners(*start_offset, *end_offset)
-
-        print(select_region)
-        # select_widgets:list[Widget] = []
-        # for widget in self.filter_children_overlapping_region(select_container.region):
-
-        # select_container = start_widget.select_container
-
-        # for widget in select_container:
-
-        return
-        select_start, select_end = sorted(
-            [select_start, select_end],
-            key=lambda selection: (selection[0].region.offset.transpose),
-        )
-
-        start_widget, _screen_start, start_offset = select_start
-        end_widget, _screen_end, end_offset = select_end
-        end_offset += (1, 0)
-
-        select_regions: list[Region] = []
-        start_region = start_widget.content_region
-        end_region = end_widget.content_region
-        if end_region.y <= start_region.bottom or self._box_select:
-            select_regions.append(Region.union(start_region, end_region))
-        else:
-            try:
-                container_region = Region.from_union(
-                    [
-                        start_widget.select_container.content_region,
-                        end_widget.select_container.content_region,
-                    ]
-                )
-            except NoMatches:
-                return
-
-            start_region = Region.from_corners(
-                start_region.x,
-                start_region.y,
-                container_region.right,
-                start_region.bottom,
-            )
-            end_region = Region.from_corners(
-                container_region.x,
-                end_region.y,
-                end_region.right,
-                end_region.bottom,
-            )
-            select_regions.append(start_region)
-            select_regions.append(end_region)
-            mid_height = end_region.y - start_region.bottom
-            if mid_height > 0:
-                mid_region = Region.from_corners(
-                    container_region.x,
-                    start_region.bottom,
-                    container_region.right,
-                    start_region.bottom + mid_height,
-                )
-                select_regions.append(mid_region)
-
-        scroll_container = self._get_scroll_container(start_widget)
-        print("scroll_container", scroll_container)
-        widgets = list(scroll_container.query("*"))
-
-        spatial_map: SpatialMap[Widget] = SpatialMap()
-        spatial_map.insert(
-            [(widget.region, NULL_OFFSET, False, False, widget) for widget in widgets]
-        )
-
-        highlighted_widgets: set[Widget] = set()
-        for region in select_regions:
-            covered_widgets = spatial_map.get_values_in_region(region)
-            covered_widgets = [
-                widget
-                for widget in covered_widgets
-                if region.overlaps(widget.content_region)
-            ]
-            highlighted_widgets.update(covered_widgets)
-        highlighted_widgets -= {self, start_widget, end_widget}
 
         select_all = SELECT_ALL
         self.selections = {
             start_widget: Selection(start_offset, None),
-            **{
-                widget: select_all
-                for widget in sorted(
-                    highlighted_widgets,
-                    key=lambda widget: widget.content_region.offset.transpose,
-                )
-            },
-            end_widget: Selection(None, end_offset),
+            **{widget: select_all for widget in select_widgets},
+            end_widget: Selection(None, end_offset + (1, 0)),
         }
-        self.log(self.selections)
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.

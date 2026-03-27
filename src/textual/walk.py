@@ -9,6 +9,7 @@ Functions for *walking* the DOM.
 from __future__ import annotations
 
 from collections import deque
+from operator import attrgetter
 from typing import TYPE_CHECKING, Iterable, Iterator, TypeVar, overload
 
 from textual.geometry import Shape
@@ -199,8 +200,7 @@ def walk_selectable_widgets(
             A list of child widgets.
         """
         children = sorted(
-            node.displayed_and_visible_children,
-            key=lambda node: node.region.offset.transpose,
+            node.displayed_and_visible_children, key=attrgetter("_selection_order")
         )
         if node in bounded:
             children = [child for child in children if bounds.overlaps(child.region)]

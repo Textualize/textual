@@ -2268,6 +2268,15 @@ class Widget(DOMNode):
         return self.region.shrink(self.styles.gutter).size
 
     @property
+    def _selection_order(self) -> tuple[int, int]:
+        """A tuple of integers used to sort widgets in selection order."""
+        try:
+            x, y, _width, _height = self.screen.find_widget(self).region
+        except (NoScreen, errors.NoWidget):
+            return (0, 0)
+        return y, x
+
+    @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen.
 
@@ -4252,6 +4261,11 @@ class Widget(DOMNode):
 
     def get_selection(self, selection: Selection) -> tuple[str, str] | None:
         """Get the text under the selection.
+
+        !!! note
+            Implement this method if are building custom widget. If you just want to get the currently
+            selected text, then see [`Screen.get_selected_text`](textual.screen.Screen.get_selected_text)
+
 
         Args:
             selection: Selection information.

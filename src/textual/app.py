@@ -517,10 +517,10 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_SELECT_AUTO_SCROLL: ClassVar[bool] = True
     """Enable automatic scrolling if selecting and the mouse is at the top or bottom of the widget?"""
 
-    SELECT_AUTO_SCROLL_LINES: ClassVar[int] = 2
+    SELECT_AUTO_SCROLL_LINES: ClassVar[int] = 3
     """Number of lines in auto-scrolling regions at the top and bottom of a widget."""
 
-    SELECT_AUTO_SCROLL_SPEED: ClassVar[float] = 45.0
+    SELECT_AUTO_SCROLL_SPEED: ClassVar[float] = 60.0
     """Maximum speed of select auto-scroll in lines per second."""
 
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {
@@ -640,7 +640,12 @@ class App(Generic[ReturnType], DOMNode):
         self._action_targets = {"app", "screen", "focused"}
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
+
         self.mouse_position = Offset(0, 0)
+        """The current screen-space mouse position."""
+
+        self.mouse_position_high_resolution: tuple[float, float] = (0.0, 0.0)
+        """A high resolution (floating point) mouse position. If supported by the terminal, this may be more granular than `mouse_position`"""
 
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
@@ -4028,6 +4033,7 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
+                self.mouse_position_high_resolution = (event.screen_x, event.screen_y)
                 if isinstance(event, events.MouseDown):
                     try:
                         self._mouse_down_widget, _ = self.get_widget_at(
