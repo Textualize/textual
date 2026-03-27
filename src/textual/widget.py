@@ -689,6 +689,28 @@ class Widget(DOMNode):
         """Text selection information, or `None` if no text is selected in this widget."""
         return self.screen.selections.get(self, None)
 
+    @classmethod
+    def get_common_ancestor(cls, widget1: Widget, widget2: Widget) -> Widget:
+        """Get a common ancestors to both widgets.
+
+        Raises:
+            ValueError: If there is not common ancestor (will not occur if both widgets are attached to the same DOM).
+
+        Args:
+            widget1: A Widget.
+            widget2: A second widgets.
+
+        Returns:
+            A common ancestor widgets.
+        """
+        ancestors1 = widget1.ancestors
+        ancestors2 = set(widget2.ancestors)
+        for node in ancestors1:
+            if node in ancestors2:
+                assert isinstance(node, Widget)
+                return node
+        raise ValueError("No common ancestor found")
+
     def focus_on_click(self) -> bool:
         """Automatically focus the widget on click?
 
@@ -2246,6 +2268,15 @@ class Widget(DOMNode):
         return self.region.shrink(self.styles.gutter).size
 
     @property
+    def _selection_order(self) -> tuple[int, int]:
+        """A tuple of integers used to sort widgets in selection order."""
+        try:
+            x, y, _width, _height = self.screen.find_widget(self).region
+        except (NoScreen, errors.NoWidget):
+            return (0, 0)
+        return y, x
+
+    @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen.
 
@@ -2791,7 +2822,7 @@ class Widget(DOMNode):
         Returns:
             `True` if the widget supports text selection, otherwise `False`.
         """
-        return self.ALLOW_SELECT and not self.is_container
+        return self.ALLOW_SELECT
 
     def pre_layout(self, layout: Layout) -> None:
         """This method id called prior to a layout operation.
@@ -4174,6 +4205,11 @@ class Widget(DOMNode):
 
     def get_selection(self, selection: Selection) -> tuple[str, str] | None:
         """Get the text under the selection.
+
+        !!! note
+            Implement this method if are building custom widget. If you just want to get the currently
+            selected text, then see [`Screen.get_selected_text`](textual.screen.Screen.get_selected_text)
+
 
         Args:
             selection: Selection information.

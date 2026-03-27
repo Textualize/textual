@@ -12,6 +12,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Collection,
+    Iterable,
     Literal,
     NamedTuple,
     Tuple,
@@ -25,6 +26,7 @@ from typing_extensions import Final
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
+import rich.repr
 
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
@@ -1316,6 +1318,155 @@ class Spacing(NamedTuple):
         )
 
 
+class Shape:
+    """An arbitrary shape defined by a sequence of regions.
+
+    This class currently exists to filter widgets within a shape defined when the user is slecting text.
+
+    """
+
+    __slots__ = [
+        "_regions",
+        "_bounds",
+    ]
+
+    def __init__(self, regions: Iterable[Region]):
+        """
+
+        Args:
+            regions: Regions which will define the shape.
+        """
+        self._regions = tuple(regions)
+        self._bounds = Region.from_union(self._regions) if regions else NULL_REGION
+
+    def __bool__(self) -> bool:
+        return bool(self._bounds)
+
+    def __hash__(self) -> int:
+        return hash(self._regions)
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._regions
+
+    @property
+    def regions(self) -> tuple[Region, ...]:
+        """The regions in the shape."""
+        return self._regions
+
+    @property
+    def bounds(self) -> Region:
+        """A region that encloses the shape."""
+        return self._bounds
+
+    @property
+    def area(self) -> int:
+        """Cells covered by the shape."""
+        # TODO: Currently doesn't handle overlapping regions
+        return sum(region.area for region in self._regions)
+
+    @classmethod
+    def selection_bounds(cls, container: Region, start: Offset, end: Offset) -> Shape:
+        """Get a shape that would be constructed by a user selecting text between two points.
+
+        The shape would look something like this:
+
+        ```
+            XXXXXXXXXX <- top
+        XXXXXXXXXXXXXX
+        XXXXXXXXXXXXXX <- middle
+        XXXXXXXXXXXXXX
+        XXXXXXXXX      <- bottom
+        ```
+
+        Args:
+            container: The container region for the selection.
+            start: The start offset.
+            end: The end offset.
+
+        Returns:
+            A new shape covering the selection bounds.
+        """
+        if start.transpose > end.transpose:
+            end, start = start, end
+        start_x, start_y = start
+        end_x, end_y = end
+
+        def get_regions() -> Iterable[Region]:
+            """Get regions to cover selection bounds.
+
+            Yields:
+                Regions to cover bounds.
+            """
+            # Special case where start and end offsets are on the edges, and the shape
+            # becomes a single region
+            if start_x == 0 and end_x == container.width:
+                yield Region(
+                    0,
+                    start_y,
+                    container.width,
+                    end_y - start_y,
+                )
+
+            # Simple case: all on one line
+            elif start.y == end.y:
+                yield Region(
+                    start_x,
+                    start_y,
+                    end_x - start_x,
+                    1,
+                )
+
+            # Shape is on two or more lines
+            else:
+                # top
+                yield Region(
+                    start_x,
+                    start_y,
+                    container.width - start_x,
+                    1,
+                )
+                # middle
+                if end.y - start.y > 2:
+                    # We need a middle region between the top and the bottom
+                    yield Region(
+                        0,
+                        start_y + 1,
+                        container.width,
+                        end_y - start_y - 1,
+                    )
+                # bottom
+                yield Region(
+                    container.x,
+                    end_y,
+                    end_x,
+                    1,
+                )
+
+        return Shape(get_regions())
+
+    def overlaps(self, region: Region) -> bool:
+        """Does a region overlap this shape?
+
+        Args:
+            region: A Region to check.
+
+        Returns:
+            `True` if any part of the shape overlaps the region, `False` if there is no overlap.
+        """
+        return any(shape_region.overlaps(region) for shape_region in self._regions)
+
+    def contains_point(self, offset: Offset) -> bool:
+        """Check if the given offset is within the shape.
+
+        Args:
+            offset: An offset.
+
+        Returns:
+            `True` if the given offset is anywhere within the shape, otherwise `False`.
+        """
+        return any(region.contains_point(offset) for region in self._regions)
+
+
 if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":
     try:
         from textual_speedups import Offset, Region, Size, Spacing
@@ -1324,7 +1475,7 @@ if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":
 
 
 NULL_OFFSET: Final = Offset(0, 0)
-"""An [offset][textual.geometry.Offset] constant for (0, 0)."""
+"""An [Offset][textual.geometry.Offset] constant for (0, 0)."""
 
 NULL_REGION: Final = Region(0, 0, 0, 0)
 """A [Region][textual.geometry.Region] constant for a null region (at the origin, with both width and height set to zero)."""
