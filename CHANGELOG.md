@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added 
 
-- Auto-scrolling on select
-- Selecting over containers
+- Auto-scrolling on select https://github.com/Textualize/textual/pull/6440
+- Selecting over containers https://github.com/Textualize/textual/pull/6440
+- Added `App.ENABLE_SELECT_AUTO_SCROLL`, `App.SELECT_AUTO_SCROLL_LINES`, `App.SELECT_AUTO_SCROLL_SPEED` to tweak auto scrolling behavior https://github.com/Textualize/textual/pull/6440
 
 ## [8.1.1] - 2026-03-10
 
