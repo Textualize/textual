@@ -2289,19 +2289,6 @@ class Widget(DOMNode):
             return NULL_REGION
 
     @property
-    def clip_region(self) -> Region:
-        """The widget region intersection with its clip region (as you would expect from a scrollable widget)
-
-        Returns:
-            A a screen-space region.
-        """
-        try:
-            map_geometry = self.screen.find_widget(self)
-        except (NoScreen, errors.NoWidget):
-            return NULL_REGION
-        return map_geometry.visible_region
-
-    @property
     def dock_gutter(self) -> Spacing:
         """Space allocated to docks in the parent.
 
@@ -2462,36 +2449,6 @@ class Widget(DOMNode):
         except (NoScreen, errors.NoWidget):
             return False
         return True
-
-    def filter_children_overlapping_region(self, region: Region) -> list[Widget]:
-        """Filter all children that overlap a given region (in screen space).
-
-        Args:
-            region: A region in screen space.
-
-        Returns:
-            A list of widgets.
-        """
-        return [
-            widget
-            for widget in self.displayed_and_visible_children
-            if region.overlaps(widget.region)
-        ]
-
-    def filter_children_within_region(self, region: Region) -> list[Widget]:
-        """Filter children that are contained within a given region.
-
-        Args:
-            region: a region in screen space.
-
-        Returns:
-            A list of the children contained within the region.
-        """
-        return [
-            widget
-            for widget in self.displayed_and_visible_children
-            if widget.region in region
-        ]
 
     def _resolve_extrema(
         self,
