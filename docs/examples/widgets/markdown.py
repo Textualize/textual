@@ -52,7 +52,6 @@ class MarkdownExampleApp(App):
 
     def compose(self) -> ComposeResult:
         markdown = Markdown(EXAMPLE_MARKDOWN)
-        markdown.code_indent_guides = False
         yield markdown
 
 
