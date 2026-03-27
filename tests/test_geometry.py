@@ -752,3 +752,80 @@ XXXXXX......
     result = build_grid_snapshot(shape)
     print(result)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "bounds,area",
+    [
+        # Simple case, selection defines a box
+        (
+            Shape.selection_bounds(
+                Region(0, 0, 10, 8),
+                Offset(0, 0),
+                Offset(10, 2),
+            ),
+            20,
+        ),
+        # Start of selection is inse7
+        (
+            Shape.selection_bounds(
+                Region(0, 0, 10, 8),
+                Offset(1, 0),
+                Offset(10, 2),
+            ),
+            19,
+        ),
+        # End of selection is inset
+        (
+            Shape.selection_bounds(
+                Region(0, 0, 10, 8),
+                Offset(1, 0),
+                Offset(9, 2),
+            ),
+            18,
+        ),
+    ],
+)
+def test_shape_area(bounds, area):
+    assert bounds.area == area
+
+
+@pytest.mark.parametrize(
+    "bounds,region,expected",
+    [
+        # Simple case
+        (
+            Shape.selection_bounds(
+                Region(0, 0, 10, 8),
+                Offset(0, 0),
+                Offset(0, 6),
+            ),
+            Region(0, 0, 1, 1),
+            True,
+        ),
+        # Outside first line
+        (
+            Shape.selection_bounds(
+                Region(0, 0, 10, 8),
+                Offset(2, 0),
+                Offset(0, 6),
+            ),
+            Region(0, 0, 1, 1),
+            False,
+        ),
+        # Point inside first line
+        (
+            Shape.selection_bounds(
+                Region(0, 0, 10, 8),
+                Offset(2, 0),
+                Offset(0, 6),
+            ),
+            Region(2, 0, 1, 1),
+            True,
+        ),
+    ],
+)
+def test_selection_bounds_overlaps(bounds: Shape, region: Region, expected: bool):
+    overlaps = bounds.overlaps(region)
+    print(overlaps)
+    assert overlaps is expected

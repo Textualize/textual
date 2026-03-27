@@ -1426,7 +1426,7 @@ class Shape:
                     1,
                 )
                 # middle
-                if end.y - start.y > 1:
+                if end.y - start.y > 2:
                     # We need a middle region between the top and the bottom
                     yield Region(
                         0,
@@ -1465,33 +1465,6 @@ class Shape:
             `True` if the given offset is anywhere within the shape, otherwise `False`.
         """
         return any(region.contains_point(offset) for region in self._regions)
-
-    def intersection(self, clip: Region) -> Shape:
-        """Return a shape that is the intersection of this shape with a region.
-
-        Args:
-            clip: A region.
-
-        Returns:
-            A new shape.
-        """
-        regions = [
-            clipped_region
-            for region in self.regions
-            if (clipped_region := clip.intersection(region))
-        ]
-        return Shape(regions)
-
-    def contains_region(self, region: Region) -> bool:
-        """Check if the given region fits within this shape.
-
-        Args:
-            region: A region.
-
-        Returns:
-            `True` if the region fits within the shape without clipping, otherwise `False`.
-        """
-        return self.intersection(region).area == self.area
 
 
 if not TYPE_CHECKING and os.environ.get("TEXTUAL_SPEEDUPS", "1") == "1":
