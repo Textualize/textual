@@ -1738,7 +1738,9 @@ class Screen(Generic[ScreenResultType], Widget):
             self._auto_select_scroll_timer = None
 
     def _check_auto_scroll(
-        self, select_widget: Widget, mouse_coordinate: tuple[float, float]
+        self,
+        select_widget: Widget,
+        mouse_coordinate: tuple[float, float],
     ) -> None:
         """Check auto-scrolling when selecting.
 
@@ -1962,7 +1964,7 @@ class Screen(Generic[ScreenResultType], Widget):
         start_widget: Widget,
         end_widget: Widget,
     ) -> list[Widget]:
-        """Get widgets between two widgets (inclusive).
+        """Get widgets between two widgets in select order.
 
         Args:
             container: A parent widgets.
@@ -2014,6 +2016,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
+            if end_offset.transpose < start_offset.transpose:
+                start_offset, end_offset = end_offset, start_offset
             self.selections = {
                 start_widget: Selection.from_offsets(
                     start_offset,
@@ -2025,7 +2029,7 @@ class Screen(Generic[ScreenResultType], Widget):
         # The start selection may have been scrolled since it was saved
         # We need to adjust to the new screen-space position
         select_start = (start_widget, start_widget.region.offset, start_offset)
-
+        # Ensure select_start is < select_end in selection order
         if select_start[0]._selection_order > select_end[0]._selection_order:
             select_start, select_end = select_end, select_start
 
@@ -2037,17 +2041,17 @@ class Screen(Generic[ScreenResultType], Widget):
         ).transpose:
             start_widget, end_widget = end_widget, start_widget
 
+        # Get a widget which contains both widgets
         container_widget = Widget.get_common_ancestor(start_widget, end_widget)
 
-        bounds_start = select_start[1] + select_start[2]
-        bounds_end = self.app.mouse_position
-        if bounds_end.transpose < bounds_start.transpose:
-            bounds_end, bounds_start = bounds_start, bounds_end
-
+        # Get a selection bounds shape
         selection_bounds = Shape.selection_bounds(
-            container_widget.region, bounds_start, bounds_end
+            container_widget.region,
+            select_start[1] + select_start[2],
+            self.app.mouse_position,
         )
 
+        # Get widgets bounded by the selection bounds
         select_widgets = self._collect_select_widgets(
             selection_bounds,
             container_widget,
@@ -2055,6 +2059,7 @@ class Screen(Generic[ScreenResultType], Widget):
             end_widget,
         )
 
+        # Build the selection
         select_all = SELECT_ALL
         self.selections = {
             start_widget: Selection(start_offset, None),
