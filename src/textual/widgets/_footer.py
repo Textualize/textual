@@ -27,6 +27,15 @@ class KeyGroup(HorizontalGroup):
     }
     """
 
+    def __init__(
+        self,
+        id: str | None = None,
+        classes: str | None = None,
+        order_group: str = "default",
+    ):
+        self.order_group = order_group
+        super().__init__(id=id, classes=classes)
+
 
 @rich.repr.auto
 class FooterKey(Widget):
@@ -87,11 +96,13 @@ class FooterKey(Widget):
         disabled: bool = False,
         tooltip: str = "",
         classes="",
+        order_group: str = "default",
     ) -> None:
         self.key = key
         self.key_display = key_display
         self.description = description
         self.action = action
+        self.order_group = order_group
         self._disabled = disabled
         if disabled:
             classes += " -disabled"
@@ -285,7 +296,12 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         ):
             multi_bindings = list(multi_bindings_iterable)
             if group is not None and len(multi_bindings) > 1:
-                with KeyGroup(classes="-compact" if group.compact else ""):
+                with KeyGroup(
+                    classes="-compact" if group.compact else "",
+                    order_group=(
+                        "default" if group.order_group is None else group.order_group
+                    ),
+                ):
                     for multi_bindings in multi_bindings:
                         binding, enabled, tooltip = multi_bindings[0]
                         yield FooterKey(
@@ -297,7 +313,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                             tooltip=tooltip or binding.description,
                             classes="-grouped",
                         ).data_bind(compact=Footer.compact)
-                yield FooterLabel(group.description)
+                    yield FooterLabel(group.description)
             else:
                 for multi_bindings in multi_bindings:
                     binding, enabled, tooltip = multi_bindings[0]
@@ -308,6 +324,11 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                         binding.action,
                         disabled=not enabled,
                         tooltip=tooltip,
+                        order_group=(
+                            "default"
+                            if binding.order_group is None
+                            else binding.order_group
+                        ),
                     ).data_bind(compact=Footer.compact)
         if self.show_command_palette and self.app.ENABLE_COMMAND_PALETTE:
             try:
@@ -325,7 +346,20 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                     classes="-command-palette",
                     disabled=not enabled,
                     tooltip=binding.tooltip or binding.description,
+                    order_group=(
+                        "default"
+                        if binding.order_group is None
+                        else binding.order_group
+                    ),
                 )
+
+        sort_order = {
+            group: index
+            for index, group in enumerate(self.screen.get_binding_sort_order())
+        }
+        self.sort_children(
+            key=lambda widget: sort_order.get(sort_order.get(widget.order_group, 0))
+        )
 
     def bindings_changed(self, screen: Screen) -> None:
         self._bindings_ready = True
