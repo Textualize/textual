@@ -1,0 +1,69 @@
+name: PR Quality
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+jobs:
+  pr-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: peakoss/anti-slop@v0.2.1
+        with:
+          # General Settings
+          max-failures: 2
+
+          # User Checks
+          min-account-age: 30
+          max-daily-forks: 7
+
+          # Merge Checks
+          min-global-merge-ratio: 30
+
+          # PR Description Checks
+          require-linked-issue: true
+
+          # PR Template Checks
+          # require-pr-template: false
+          # strict-pr-template-sections: ""
+          # optional-pr-template-sections: ""
+          # max-additional-pr-template-sections: 0
+
+          # PR Failure Actions
+          failure-pr-message: "https://github.com/Textualize/textual/blob/main/AI_POLICY.md"
+          close-pr: true
+
+          #########################
+          # DISABLE OTHER DEFAULTS
+          #########################
+
+          # PR Branch Checks
+          blocked-source-branches: ""
+
+          # PR Quality Checks
+          require-maintainer-can-modify: false
+
+          # PR Description Checks
+          require-description: false
+          max-description-length: 0
+          max-emoji-count: 0
+          max-code-references: 0
+
+          # Commit Message Checks
+          max-commit-message-length: 0
+          require-commit-author-match: false
+          blocked-commit-authors: ""
+
+          # File Checks
+          blocked-paths: ""
+          require-final-newline: false
+          max-added-comments: 0
+
+          # User Checks
+          detect-spam-usernames: false
+          min-profile-completeness: 0
