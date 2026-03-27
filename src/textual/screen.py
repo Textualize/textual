@@ -1741,6 +1741,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         select_widget: Widget,
         mouse_coordinate: tuple[float, float],
+        delta_y: float,
     ) -> None:
         """Check auto-scrolling when selecting.
 
@@ -1749,10 +1750,15 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             select_widget: The widget under the mouise pointer.
             mouse_coordinate: The screen-space mouse pointer.
+            delta_y: Change in mouse y since previous mouse move.
         """
 
         if not self.app.ENABLE_SELECT_AUTO_SCROLL:
             # Disabled by app
+            return
+
+        if self._auto_select_scroll_timer is None and abs(delta_y) < 1:
+            # Mouse has moved horizontally, not vertically, so we assume the user doesn't want to scroll
             return
 
         mouse_x, mouse_y = mouse_coordinate
@@ -1871,10 +1877,11 @@ class Screen(Generic[ScreenResultType], Widget):
 
                 if select_widget is not None:
                     self._check_auto_scroll(
-                        select_widget, (event.pointer_screen_x, event.pointer_screen_y)
+                        select_widget,
+                        (event.pointer_screen_x, event.pointer_screen_y),
+                        event.delta_y,
                     )
                 else:
-                    print("select widget is None")
                     self._stop_auto_scroll()
 
         elif isinstance(event, events.MouseEvent):
