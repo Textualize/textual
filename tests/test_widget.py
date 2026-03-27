@@ -5,7 +5,7 @@ import pytest
 from textual import events
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
-from textual.containers import Container
+from textual.containers import Container, Vertical
 from textual.content import Content
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
@@ -693,3 +693,26 @@ async def test_click_line_api_border():
     async with app.run_test() as pilot:
         await pilot.pause()
         await pilot.click("Log", (10, 0))
+
+
+async def test_get_common_ancestor():
+    """Test the Widget.get_common_ancestor classmethod"""
+
+    class AncestorApp(App):
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="v1"):
+                with Vertical(id="v2"):
+                    yield Label(id="label1")
+                with Vertical(id="v3"):
+                    with Vertical(id="v4"):
+                        yield Label(id="label2")
+                        yield Label(id="label3")
+
+    app = AncestorApp()
+    async with app.run_test():
+        label1 = app.query_one("#label1")
+        label2 = app.query_one("#label2")
+        label3 = app.query_one("#label3")
+        assert Widget.get_common_ancestor(label2, label3).id == "v4"
+        assert Widget.get_common_ancestor(label2, label1).id == "v1"
