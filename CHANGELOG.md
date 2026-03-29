@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [8.2.1] - 2026-03-29
+
+### Fixed
+
+- Fix crash when a widget disapears between selections https://github.com/Textualize/textual/pull/6455
+
 ## [8.2.0] - 2026-03-27
 
 ### Added 
@@ -3395,6 +3402,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[8.2.1]: https://github.com/Textualize/textual/compare/v8.2.0...v8.2.1
+[8.2.0]: https://github.com/Textualize/textual/compare/v8.1.1...v8.2.0
 [8.1.1]: https://github.com/Textualize/textual/compare/v8.1.0...v8.1.1
 [8.1.0]: https://github.com/Textualize/textual/compare/v8.0.2...v8.1.0
 [8.0.2]: https://github.com/Textualize/textual/compare/v8.0.1...v8.0.2

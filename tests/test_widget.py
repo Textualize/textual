@@ -23,6 +23,7 @@ from textual.widgets import (
     Log,
     OptionList,
     RichLog,
+    Static,
     Switch,
     TextArea,
 )
@@ -714,5 +715,54 @@ async def test_get_common_ancestor():
         label1 = app.query_one("#label1")
         label2 = app.query_one("#label2")
         label3 = app.query_one("#label3")
+
+        # Successful operations
         assert Widget.get_common_ancestor(label2, label3).id == "v4"
         assert Widget.get_common_ancestor(label2, label1).id == "v1"
+
+        with pytest.raises(ValueError):
+            # No common ancestor, throws a Value Error
+            Widget.get_common_ancestor(label1, Label("unattached"))
+
+        # No common ancestor with default
+        assert (
+            Widget.get_common_ancestor(label1, Label("unattached"), default=app.screen)
+            is app.screen
+        )
+
+
+async def test_select_remove():
+    """Test selecting text after a widget is removed.
+
+    Regression test for https://github.com/Textualize/textual/issues/6452
+
+    """
+
+    top_text = "Hello, World " * 20
+    vanish_text = "This will vanish " * 10
+
+    class SelApp(App):
+
+        BINDINGS = [("space", "vanish")]
+
+        def compose(self) -> ComposeResult:
+            yield Static(top_text)
+            yield Static(vanish_text, id="vanish")
+
+        def action_vanish(self) -> None:
+            self.query_one("#vanish").remove()
+
+    app = SelApp()
+    # Simulate mouse down, move to second widget, remove second widget, move mouse, mouse up
+    # Prior to the fix this would result in an error as the second widget was no longer attached
+    # Post fix, there should be no error, and the selected text should be from the first widget.
+    async with app.run_test() as pilot:
+        await pilot.mouse_down(offset=(5, 2))
+        await pilot.hover(offset=(20, 5))
+        await app.query_one("#vanish").remove()
+        await pilot.hover(offset=(25, 6))
+        await pilot.mouse_up(offset=(30, 5))
+        selected_text = app.screen.get_selected_text()
+        expected = ", World Hello, World Hello, World Hello, World Hello, World Hello, World Hello, World Hello, World "
+        print(repr(selected_text))
+        assert selected_text == expected

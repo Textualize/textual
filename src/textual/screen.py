@@ -973,8 +973,12 @@ class Screen(Generic[ScreenResultType], Widget):
 
         widget_text: list[str] = []
         for widget, selection in self.selections.items():
-            selected_text_in_widget = widget.get_selection(selection)
-            if selected_text_in_widget is not None:
+            # Filter out widgets that may have been removed since the text was selected
+            if (
+                widget.is_attached
+                and (selected_text_in_widget := widget.get_selection(selection))
+                is not None
+            ):
                 widget_text.extend(selected_text_in_widget)
 
         selected_text = "".join(widget_text).rstrip("\n")
@@ -2021,6 +2025,10 @@ class Screen(Generic[ScreenResultType], Widget):
         start_widget, screen_start, start_offset = self._select_start
         end_widget, screen_end, end_offset = select_end
 
+        if not start_widget.is_attached or not end_widget.is_attached:
+            # Widgets may have been removed since selection started
+            return
+
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
             if end_offset.transpose < start_offset.transpose:
@@ -2049,7 +2057,9 @@ class Screen(Generic[ScreenResultType], Widget):
             start_widget, end_widget = end_widget, start_widget
 
         # Get a widget which contains both widgets
-        container_widget = Widget.get_common_ancestor(start_widget, end_widget)
+        container_widget = Widget.get_common_ancestor(
+            start_widget, end_widget, default=self
+        )
 
         # Get a selection bounds shape
         selection_bounds = Shape.selection_bounds(
