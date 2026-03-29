@@ -973,8 +973,12 @@ class Screen(Generic[ScreenResultType], Widget):
 
         widget_text: list[str] = []
         for widget, selection in self.selections.items():
-            selected_text_in_widget = widget.get_selection(selection)
-            if selected_text_in_widget is not None:
+            # Filter out widgets that may have been removed since the text was selected
+            if (
+                widget.is_attached
+                and (selected_text_in_widget := widget.get_selection(selection))
+                is not None
+            ):
                 widget_text.extend(selected_text_in_widget)
 
         selected_text = "".join(widget_text).rstrip("\n")
