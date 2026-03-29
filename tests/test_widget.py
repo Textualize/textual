@@ -714,5 +714,17 @@ async def test_get_common_ancestor():
         label1 = app.query_one("#label1")
         label2 = app.query_one("#label2")
         label3 = app.query_one("#label3")
+
+        # Successful operations
         assert Widget.get_common_ancestor(label2, label3).id == "v4"
         assert Widget.get_common_ancestor(label2, label1).id == "v1"
+
+        with pytest.raises(ValueError):
+            # No common ancestor, throws a Value Error
+            Widget.get_common_ancestor(label1, Label("unattached"))
+
+        # No common ancestor with default
+        assert (
+            Widget.get_common_ancestor(label1, Label("unattached"), default=app.screen)
+            is app.screen
+        )

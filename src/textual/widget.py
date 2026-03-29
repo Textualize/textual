@@ -690,15 +690,18 @@ class Widget(DOMNode):
         return self.screen.selections.get(self, None)
 
     @classmethod
-    def get_common_ancestor(cls, widget1: Widget, widget2: Widget) -> Widget:
+    def get_common_ancestor(
+        cls, widget1: Widget, widget2: Widget, *, default: Widget | None = None
+    ) -> Widget:
         """Get a common ancestors to both widgets.
 
         Raises:
-            ValueError: If there is not common ancestor (will not occur if both widgets are attached to the same DOM).
+            ValueError: If there is no common ancestor and `default` is not provided (will not occur if both widgets are attached to the same DOM).
 
         Args:
             widget1: A Widget.
             widget2: A second widgets.
+            default: A widget to return if no common ancestor is found.
 
         Returns:
             A common ancestor widgets.
@@ -709,6 +712,8 @@ class Widget(DOMNode):
             if node in ancestors2:
                 assert isinstance(node, Widget)
                 return node
+        if default is not None:
+            return default
         raise ValueError("No common ancestor found")
 
     def focus_on_click(self) -> bool:
