@@ -175,7 +175,7 @@ class DOMNode(MessagePump):
 
     _reactives: ClassVar[dict[str, Reactive]]
 
-    _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
+    _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None, type | None]]]
 
     # Names of potential computed reactives
     _computes: ClassVar[frozenset[str]]

@@ -378,3 +378,42 @@ async def test_on_with_enter_and_leave_events():
         await pilot.hover(Button, offset=(0, 20))
         expected_messages.append("Leave")
         assert app.messages == expected_messages
+
+
+async def test_on_widget_subclass_does_not_match_parent() -> None:
+    """@on(MyButton.Pressed) must NOT fire when a plain Button is pressed.
+
+    Regression test for https://github.com/Textualize/textual/issues/4968.
+    """
+    pressed: list[str] = []
+
+    class MyButton(Button):
+        pass
+
+    class SubclassOnApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Button("Base", id="base")
+            yield MyButton("Sub", id="sub")
+
+        @on(MyButton.Pressed)
+        def only_my_button(self) -> None:
+            pressed.append("my_button")
+
+        @on(Button.Pressed)
+        def any_button(self) -> None:
+            pressed.append("any_button")
+
+    app = SubclassOnApp()
+    async with app.run_test() as pilot:
+        # Press the plain Button — only the @on(Button.Pressed) handler should fire.
+        await pilot.click("#base")
+        assert pressed == ["any_button"], (
+            "@on(MyButton.Pressed) should not fire for a plain Button press"
+        )
+
+        pressed.clear()
+        # Press MyButton — both handlers should fire.
+        await pilot.click("#sub")
+        assert pressed == ["my_button", "any_button"], (
+            "Both @on(MyButton.Pressed) and @on(Button.Pressed) should fire for a MyButton press"
+        )

@@ -278,6 +278,42 @@ class BadWidgetName(Exception):
     """Raised when widget class names do not satisfy the required restrictions."""
 
 
+def _install_message_class_descriptors(widget_class: type) -> None:
+    """Install :class:`~textual._on._MessageClassDescriptor` descriptors on a widget
+    subclass for every message class it inherits but does not directly define.
+
+    This makes ``MyButton.Pressed`` return a
+    :class:`~textual._on._NamespacedMessage` wrapper rather than the raw
+    ``Button.Pressed`` class, which lets the ``@on`` decorator add an implicit
+    widget-type constraint to the handler.
+    """
+    from textual._on import _MessageClassDescriptor
+    from textual.message import Message
+
+    # Walk base classes (skip the class itself) and collect message classes that
+    # are not already present in the new subclass's own __dict__.
+    seen_names: set[str] = set()
+    for base in widget_class.__mro__[1:]:
+        for name, value in base.__dict__.items():
+            if name in seen_names or name in widget_class.__dict__:
+                seen_names.add(name)
+                continue
+            message_class: type[Message] | None = None
+            if isinstance(value, type) and issubclass(value, Message):
+                message_class = value
+            elif isinstance(value, _MessageClassDescriptor):
+                # Already a descriptor installed by a parent's __init_subclass__;
+                # carry the underlying message class forward.
+                message_class = value._message_class
+            if message_class is not None:
+                setattr(
+                    widget_class,
+                    name,
+                    _MessageClassDescriptor(message_class, widget_class),
+                )
+                seen_names.add(name)
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -3897,6 +3933,12 @@ class Widget(DOMNode):
                 if can_focus_children is None
                 else can_focus_children
             )
+
+        # Install descriptors for inherited message classes so that accessing
+        # e.g. ``MyButton.Pressed`` returns a _NamespacedMessage wrapper that
+        # causes ``@on(MyButton.Pressed)`` to implicitly constrain the handler
+        # to events whose control is an instance of ``MyButton``.
+        _install_message_class_descriptors(cls)
 
     def __rich_repr__(self) -> rich.repr.Result:
         try:
