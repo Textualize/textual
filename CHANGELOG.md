@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [8.2.2] - 2026-04-03
+
+### Fixed
+
+- Fixed Pointless style updates when resizing https://github.com/Textualize/textual/pull/6464
 
 ## [8.2.1] - 2026-03-29
 
@@ -3402,6 +3407,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[8.2.2]: https://github.com/Textualize/textual/compare/v8.2.1...v8.2.2
 [8.2.1]: https://github.com/Textualize/textual/compare/v8.2.0...v8.2.1
 [8.2.0]: https://github.com/Textualize/textual/compare/v8.1.1...v8.2.0
 [8.1.1]: https://github.com/Textualize/textual/compare/v8.1.0...v8.1.1

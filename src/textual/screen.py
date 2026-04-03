@@ -1528,27 +1528,52 @@ class Screen(Generic[ScreenResultType], Widget):
         ) or []
 
         width, height = event.size
-        if horizontal_breakpoints:
-            self._set_breakpoints(width, horizontal_breakpoints)
-        if vertical_breakpoints:
-            self._set_breakpoints(height, vertical_breakpoints)
 
-    def _set_breakpoints(
+        if horizontal_breakpoints or vertical_breakpoints:
+
+            remove_breakpoint_classes = {
+                breakpoint for _, breakpoint in horizontal_breakpoints
+            } | {breakpoint for _, breakpoint in vertical_breakpoints}
+            remove_breakpoint_classes = self._classes.intersection(
+                remove_breakpoint_classes
+            )
+
+            breakpoint_classes: set[str] = set()
+
+            if horizontal_breakpoints:
+                breakpoint_classes |= self._get_breakpoint_classes(
+                    width, horizontal_breakpoints
+                )
+            if vertical_breakpoints:
+                breakpoint_classes |= self._get_breakpoint_classes(
+                    height, vertical_breakpoints
+                )
+
+            remove_breakpoint_classes -= breakpoint_classes
+            classes = self._classes.copy()
+            if remove_breakpoint_classes:
+                self._classes.difference_update(remove_breakpoint_classes)
+            if breakpoint_classes:
+                self._classes.update(breakpoint_classes)
+            if self._classes != classes:
+                self.update_node_styles(animate=False)
+
+    def _get_breakpoint_classes(
         self, dimension: int, breakpoints: list[tuple[int, str]]
-    ) -> None:
-        """Set horizontal or vertical breakpoints.
+    ) -> set[str]:
+        """Get breakpoint classes for given dimension.
 
         Args:
-            dimension: Either the width or the height.
-            breakpoints: A list of breakpoints.
+            dimension: Size in cells.
+            breakpoints: Associated breakpoints.
 
+        Returns:
+            A set containing a breakpoint, or an empty set if none apply.
         """
-        class_names = [class_name for _breakpoint, class_name in breakpoints]
-        self.remove_class(*class_names)
         for breakpoint, class_name in sorted(breakpoints, reverse=True):
             if dimension >= breakpoint:
-                self.add_class(class_name)
-                return
+                return {class_name}
+        return set()
 
     def _update_tooltip(self, widget: Widget) -> None:
         """Update the content of the tooltip."""
