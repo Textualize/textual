@@ -1556,7 +1556,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if breakpoint_classes:
                 self._classes.update(breakpoint_classes)
             if self._classes != classes:
-                self.update_node_styles()
+                self.update_node_styles(animate=False)
 
     def _get_breakpoint_classes(
         self, dimension: int, breakpoints: list[tuple[int, str]]
