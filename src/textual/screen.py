@@ -58,7 +58,7 @@ from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
-from textual.selection import SELECT_ALL, Selection
+from textual.selection import SELECT_ALL, Selection, SelectionMode
 from textual.signal import Signal
 from textual.timer import Timer
 from textual.walk import walk_selectable_widgets
@@ -251,6 +251,24 @@ class Screen(Generic[ScreenResultType], Widget):
     """Map of widgets and selected ranges."""
 
     _selecting = var(False)
+    _select_granularity: str = "char"
+    """Selection granularity: 'char', 'word', or 'line'."""
+    _select_anchor_start: Offset | None = None
+    """Start offset of the initially selected word/line (anchor)."""
+    _select_anchor_end: Offset | None = None
+    """End offset of the initially selected word/line (anchor)."""
+    _select_anchor_widget: Widget | None = None
+    """The widget where the initial word/line was selected."""
+    _last_mouse_down_time: float = 0.0
+    """Timestamp of the last mouse down event, for click chain detection."""
+    _last_mouse_down_position: Offset | None = None
+    """Screen offset of the last mouse down, for click chain detection."""
+    _mouse_down_chain: int = 0
+    """Current click chain count (1=single, 2=double, 3=triple).
+
+    Note: This duplicates App._chained_clicks, but is needed because App
+    computes the chain on MouseUp (to produce Click events), while Screen
+    needs it on MouseDown (to set selection granularity and anchor)."""
     """Indicates mouse selection is in progress."""
 
     _box_select = var(False)
@@ -757,6 +775,14 @@ class Screen(Generic[ScreenResultType], Widget):
         self.selections = {}
         self._select_start = None
         self._select_end = None
+        # Don't reset _select_granularity here — it's set during MouseDown
+        # processing based on click chain detection. External clear_selection
+        # calls (e.g. from TextArea._watch_selection when focus changes) must
+        # not interfere with the click chain state, which spans multiple
+        # MouseDown/MouseUp cycles.
+        self._select_anchor_start = None
+        self._select_anchor_end = None
+        self._select_anchor_widget = None
 
     def _select_all_in_widget(self, widget: Widget) -> None:
         """Select a widget and all its children.
@@ -1893,8 +1919,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 if (
                     self._mouse_down_offset is not None
                     and self._mouse_down_offset == event.screen_offset
+                    and self._select_granularity == "char"
                 ):
-                    # A click elsewhere should clear the selection
+                    # A click elsewhere should clear the selection, but not
+                    # for word/line granularity where mouse-up at the same
+                    # position as mouse-down is expected (double/triple click).
                     select_widget, select_offset = self.get_widget_and_offset_at(
                         event.x, event.y
                     )
@@ -1914,6 +1943,25 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
                 )
+
+                # Detect click chain (double/triple click) based on timing
+                # and proximity to the previous mouse-down.
+                same_offset = (
+                    self._last_mouse_down_position is not None
+                    and self._last_mouse_down_position == event.screen_offset
+                )
+                within_time = (
+                    self._last_mouse_down_time > 0
+                    and (event.time - self._last_mouse_down_time)
+                    <= self.app.CLICK_CHAIN_TIME_THRESHOLD
+                )
+                if same_offset and within_time:
+                    self._mouse_down_chain = min(self._mouse_down_chain + 1, 3)
+                else:
+                    self._mouse_down_chain = 1
+                self._last_mouse_down_time = event.time
+                self._last_mouse_down_position = event.screen_offset
+
                 if (
                     select_widget is not None
                     and select_widget.allow_select
@@ -1921,13 +1969,83 @@ class Screen(Generic[ScreenResultType], Widget):
                     and self.app.ALLOW_SELECT
                 ):
                     self._selecting = True
+
+                    # Set selection granularity based on click chain
+                    if self.app.SELECTION_MODE == SelectionMode.STANDARD:
+                        if self._mouse_down_chain == 2:
+                            self._select_granularity = "word"
+                        elif self._mouse_down_chain >= 3:
+                            self._select_granularity = "line"
+                        else:
+                            self._select_granularity = "char"
+                    else:
+                        self._select_granularity = "char"
+
                     if select_widget is not None and select_offset is not None:
                         self.text_selection_started_signal.publish(self)
-                        self._select_start = (
-                            select_widget,
-                            event.screen_offset,
-                            select_offset,
-                        )
+
+                        # For word/line granularity, compute the anchor boundaries
+                        if self._select_granularity == "word":
+                            word_bounds = select_widget.word_at_offset(select_offset)
+                            if word_bounds is not None:
+                                anchor_start, anchor_end = word_bounds
+                                self._select_anchor_start = anchor_start
+                                self._select_anchor_end = anchor_end
+                                self._select_anchor_widget = select_widget
+                                self._select_start = (
+                                    select_widget,
+                                    event.screen_offset,
+                                    anchor_start,
+                                )
+                                # Set _select_end so the initial word is
+                                # selected immediately (triggers _watch__select_end)
+                                self._select_end = (
+                                    select_widget,
+                                    event.screen_offset,
+                                    anchor_end,
+                                )
+                            else:
+                                self._select_granularity = "char"
+                                self._select_start = (
+                                    select_widget,
+                                    event.screen_offset,
+                                    select_offset,
+                                )
+                        elif self._select_granularity == "line":
+                            line_bounds = select_widget.line_at_offset(select_offset)
+                            if line_bounds is not None:
+                                anchor_start, anchor_end = line_bounds
+                                self._select_anchor_start = anchor_start
+                                self._select_anchor_end = anchor_end
+                                self._select_anchor_widget = select_widget
+                                self._select_start = (
+                                    select_widget,
+                                    event.screen_offset,
+                                    anchor_start,
+                                )
+                                # Set _select_end so the initial line is
+                                # selected immediately (triggers _watch__select_end)
+                                self._select_end = (
+                                    select_widget,
+                                    event.screen_offset,
+                                    anchor_end,
+                                )
+                            else:
+                                self._select_granularity = "char"
+                                self._select_start = (
+                                    select_widget,
+                                    event.screen_offset,
+                                    select_offset,
+                                )
+                        else:
+                            self._select_anchor_start = None
+                            self._select_anchor_end = None
+                            self._select_anchor_widget = None
+                            self._select_start = (
+                                select_widget,
+                                event.screen_offset,
+                                select_offset,
+                            )
                 else:
                     self._selecting = False
 
@@ -2009,6 +2127,32 @@ class Screen(Generic[ScreenResultType], Widget):
         results = widgets[index1:index2]
         return results
 
+    def _snap_offset_to_granularity(
+        self,
+        widget: Widget,
+        offset: Offset,
+        prefer_end: bool = False,
+    ) -> Offset:
+        """Snap an offset to word or line boundaries based on current granularity.
+
+        Args:
+            widget: The widget containing the offset.
+            offset: The raw character offset.
+            prefer_end: If True, return the end of the word/line; otherwise the start.
+
+        Returns:
+            The snapped offset.
+        """
+        if self._select_granularity == "word":
+            bounds = widget.word_at_offset(offset)
+            if bounds is not None:
+                return bounds[1] if prefer_end else bounds[0]
+        elif self._select_granularity == "line":
+            bounds = widget.line_at_offset(offset)
+            if bounds is not None:
+                return bounds[1] if prefer_end else bounds[0]
+        return offset
+
     def _watch__select_end(
         self, select_end: tuple[Widget, Offset, Offset] | None
     ) -> None:
@@ -2028,6 +2172,36 @@ class Screen(Generic[ScreenResultType], Widget):
         if not start_widget.is_attached or not end_widget.is_attached:
             # Widgets may have been removed since selection started
             return
+
+        if start_widget is end_widget and self._select_granularity != "char":
+            # Word/line selection within the same widget.
+            # Determine drag direction relative to anchor, then snap.
+            anchor_start = self._select_anchor_start
+            anchor_end = self._select_anchor_end
+            if anchor_start is not None and anchor_end is not None:
+                snapped_end_start = self._snap_offset_to_granularity(end_widget, end_offset, prefer_end=False)
+                snapped_end_end = self._snap_offset_to_granularity(end_widget, end_offset, prefer_end=True)
+
+                # Determine if drag is forward or backward from anchor
+                if end_offset.transpose >= anchor_start.transpose:
+                    # Dragging forward: start at anchor start, end at snapped end
+                    sel_start = anchor_start
+                    sel_end = snapped_end_end
+                else:
+                    # Dragging backward: start at snapped start, end at anchor end
+                    sel_start = snapped_end_start
+                    sel_end = anchor_end
+
+                # word_at_offset / line_at_offset return exclusive end boundaries,
+                # so we do NOT add (1, 0) here (unlike char-level selection where
+                # end_offset points to the last selected character).
+                self.selections = {
+                    start_widget: Selection.from_offsets(
+                        sel_start,
+                        sel_end,
+                    )
+                }
+                return
 
         if start_widget is end_widget:
             # Simplest case, selection starts and ends on the same widget
@@ -2076,13 +2250,45 @@ class Screen(Generic[ScreenResultType], Widget):
             end_widget,
         )
 
-        # Build the selection
+        # Build the selection, snapping to word/line boundaries if needed
         select_all = SELECT_ALL
-        self.selections = {
-            start_widget: Selection(start_offset, None),
-            **{widget: select_all for widget in select_widgets},
-            end_widget: Selection(None, end_offset + (1, 0)),
-        }
+        if self._select_granularity != "char":
+            # For word/line granularity in cross-widget selection:
+            # - The anchor widget's anchor boundary is always fully included
+            # - The end widget's offset is snapped to the nearest word/line boundary
+            anchor_widget = self._select_anchor_widget
+            anchor_start = self._select_anchor_start
+            anchor_end = self._select_anchor_end
+
+            if anchor_widget is start_widget and anchor_start is not None:
+                # Dragging forward from anchor
+                snapped_end = self._snap_offset_to_granularity(end_widget, end_offset, prefer_end=True)
+                self.selections = {
+                    start_widget: Selection(anchor_start, None),
+                    **{widget: select_all for widget in select_widgets},
+                    end_widget: Selection(None, snapped_end),
+                }
+            elif anchor_widget is end_widget and anchor_end is not None:
+                # Dragging backward from anchor
+                snapped_start = self._snap_offset_to_granularity(start_widget, start_offset, prefer_end=False)
+                self.selections = {
+                    start_widget: Selection(snapped_start, None),
+                    **{widget: select_all for widget in select_widgets},
+                    end_widget: Selection(None, anchor_end),
+                }
+            else:
+                # Fallback
+                self.selections = {
+                    start_widget: Selection(start_offset, None),
+                    **{widget: select_all for widget in select_widgets},
+                    end_widget: Selection(None, end_offset + (1, 0)),
+                }
+        else:
+            self.selections = {
+                start_widget: Selection(start_offset, None),
+                **{widget: select_all for widget in select_widgets},
+                end_widget: Selection(None, end_offset + (1, 0)),
+            }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.

@@ -1,8 +1,25 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import NamedTuple
 
 from textual.geometry import Offset
+
+
+class SelectionMode(Enum):
+    """Controls how double-click and triple-click text selection behaves.
+
+    Attributes:
+        LEGACY: Double-click selects the entire widget, triple-click selects the
+            container. This was the default behavior in Textual 8.2 and earlier.
+        STANDARD: Double-click selects a word, triple-click selects a line.
+            Dragging after double-click extends selection word-by-word, and
+            dragging after triple-click extends line-by-line. This matches
+            standard terminal and browser text selection behavior.
+    """
+
+    LEGACY = "legacy"
+    STANDARD = "standard"
 
 
 class Selection(NamedTuple):

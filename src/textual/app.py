@@ -117,6 +117,7 @@ from textual.messages import CallbackType, Prune
 from textual.notifications import Notification, Notifications, Notify, SeverityLevel
 from textual.reactive import Reactive
 from textual.renderables.blank import Blank
+from textual.selection import SelectionMode
 from textual.screen import (
     ActiveBinding,
     Screen,
@@ -521,6 +522,16 @@ class App(Generic[ReturnType], DOMNode):
     """Number of lines in auto-scrolling regions at the top and bottom of a widget."""
 
     SELECT_AUTO_SCROLL_SPEED: ClassVar[float] = 60.0
+
+    SELECTION_MODE: ClassVar[SelectionMode] = SelectionMode.LEGACY
+    """Controls double-click and triple-click text selection behavior.
+
+    - `SelectionMode.LEGACY` (default): Double-click selects the entire widget and
+      triple-click selects the container (Textual 8.2 and earlier behavior).
+    - `SelectionMode.STANDARD`: Double-click selects a word and triple-click selects
+      a line, matching standard terminal behavior. Dragging after double-click extends
+      word-by-word, and dragging after triple-click extends line-by-line.
+    """
     """Maximum speed of select auto-scroll in lines per second."""
 
     _PSEUDO_CLASSES: ClassVar[dict[str, Callable[[App[Any]], bool]]] = {

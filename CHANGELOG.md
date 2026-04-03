@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [8.3.0] - Unreleased
+
+### Added
+
+- Added `App.SELECTION_MODE` with `SelectionMode.LEGACY` (default, preserves existing behavior) and `SelectionMode.STANDARD` (word/line selection)
+  - Standard: double-click selects a word, triple-click selects a line (standard terminal behavior), and dragging after a double/triple click extends the selection by word/line
+- Added `Widget.word_at_offset()` and `Widget.line_at_offset()` — overridable methods for custom word/line boundary detection
+
+
 ## [8.2.1] - 2026-03-29
 
 ### Fixed
