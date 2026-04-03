@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed Pointless style updates when resizing
+- Fixed Pointless style updates when resizing https://github.com/Textualize/textual/pull/6464
 
 ## [8.2.1] - 2026-03-29
 
