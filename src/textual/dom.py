@@ -125,8 +125,9 @@ class _ClassesDescriptor:
         else:
             class_names = set(classes)
         check_identifiers("class name", *class_names)
-        obj._classes = class_names
-        obj.update_node_styles()
+        if obj._classes != class_names:
+            obj._classes = class_names
+            obj.update_node_styles()
 
 
 @rich.repr.auto
@@ -1795,10 +1796,9 @@ class DOMNode(MessagePump):
             Self.
         """
         check_identifiers("class name", *class_names)
-        old_classes = self._classes.copy()
-        self._classes.update(class_names)
-        if old_classes == self._classes:
+        if self._classes.issuperset(class_names):
             return self
+        self._classes.update(class_names)
         if update:
             self.update_node_styles()
         return self
@@ -1814,10 +1814,9 @@ class DOMNode(MessagePump):
             Self.
         """
         check_identifiers("class name", *class_names)
-        old_classes = self._classes.copy()
-        self._classes.difference_update(class_names)
-        if old_classes == self._classes:
+        if self._classes.isdisjoint(class_names):
             return self
+        self._classes.difference_update(class_names)
         if update:
             self.update_node_styles()
         return self

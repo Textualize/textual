@@ -1630,6 +1630,7 @@ class App(Generic[ReturnType], DOMNode):
             width, height = self._driver._size
         else:
             width, height = self.console.size
+            self._driver._size = (width, height)
         return Size(width, height)
 
     @property
