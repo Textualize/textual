@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [8.2.3] - Unreleased
+## [8.2.3] - 2026-04-05 
 
 ### Changed
 
-- Reduce lag when resizing window, by moving resize from idle to a timer
+- Reduce lag when resizing window, by moving resize from idle to a timer https://github.com/Textualize/textual/pull/6471
 
 ## [8.2.2] - 2026-04-03
 
@@ -3413,6 +3413,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[8.2.3]: https://github.com/Textualize/textual/compare/v8.2.2...v8.2.3
 [8.2.2]: https://github.com/Textualize/textual/compare/v8.2.1...v8.2.2
 [8.2.1]: https://github.com/Textualize/textual/compare/v8.2.0...v8.2.1
 [8.2.0]: https://github.com/Textualize/textual/compare/v8.1.1...v8.2.0
