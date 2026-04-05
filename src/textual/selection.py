@@ -40,10 +40,10 @@ class Selection(NamedTuple):
         if not lines:
             return ""
         if self.start is None:
-            start_line = 0
+            start_line_index = 0
             start_offset = 0
         else:
-            start_line, start_offset = self.start.transpose
+            start_line_index, start_offset = self.start.transpose
 
         if self.end is None:
             end_line = len(lines)
@@ -52,18 +52,21 @@ class Selection(NamedTuple):
             end_line, end_offset = self.end.transpose
         end_line = min(len(lines), end_line)
 
-        if start_line == end_line:
-            return lines[start_line][start_offset:end_offset]
+        if start_line_index == end_line:
+            return lines[start_line_index][start_offset:end_offset]
 
         selection: list[str] = []
-        selected_lines = lines[start_line : end_line + 1]
+        selected_lines = lines[start_line_index : end_line + 1]
         if len(selected_lines) >= 2:
             first_line, *mid_lines, last_line = selected_lines
             selection.append(first_line[start_offset:])
             selection.extend(mid_lines)
             selection.append(last_line[:end_offset])
         else:
-            return lines[start_line][start_offset:end_offset]
+            try:
+                selection.append(lines[start_line_index][start_offset:end_offset])
+            except IndexError:
+                pass
         return "\n".join(selection)
 
     def get_span(self, y: int) -> tuple[int, int] | None:
