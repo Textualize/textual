@@ -876,6 +876,9 @@ class App(Generic[ReturnType], DOMNode):
                     )
                 )
 
+        self._resize_timer: Timer | None = None
+        """Timer used to invoke screen resize."""
+
     def get_line_filters(self) -> Sequence[LineFilter]:
         """Get currently enabled line filters.
 
@@ -4310,8 +4313,16 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self._size = event.size
         self._resize_event = event
+        if self._size is None:
+            self._size = event.size
+            self._check_resize()
+            return
+        if self._size == event.size:
+            return
+        self._size = event.size
+        if self._resize_timer is None:
+            self._resize_timer = self.set_timer(1 / 120, self._check_resize)
 
     async def _on_app_focus(self, event: events.AppFocus) -> None:
         """App has focus."""
@@ -4978,9 +4989,20 @@ class App(Generic[ReturnType], DOMNode):
         self.log.debug(message)
 
     def _on_idle(self) -> None:
-        """Send app resize events on idle, so we don't do more resizing that necessary."""
+        if self._resize_event is not None and self._resize_timer is None:
+            self._check_resize()
+
+    def _check_resize(self) -> None:
+        """Send a resize event to screen(s) (invoked from `self._resize_timer`)."""
         event = self._resize_event
+        if self._resize_timer is not None:
+            self._resize_timer.stop()
+            self._resize_timer = None
         if event is not None:
+            try:
+                self.screen
+            except ScreenError:
+                return
             self._resize_event = None
             self.screen.post_message(event)
             for screen in self._background_screens:
