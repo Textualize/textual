@@ -877,6 +877,7 @@ class App(Generic[ReturnType], DOMNode):
                 )
 
         self._resize_timer: Timer | None = None
+        """Timer used to invoke screen resize."""
 
     def get_line_filters(self) -> Sequence[LineFilter]:
         """Get currently enabled line filters.
