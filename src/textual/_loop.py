@@ -1,3 +1,5 @@
+"""Utility functions for iterating with positional awareness (first/last flags)."""
+
 from __future__ import annotations
 
 from typing import Iterable, Literal, Sequence, TypeVar
@@ -6,7 +8,15 @@ T = TypeVar("T")
 
 
 def loop_first(values: Iterable[T]) -> Iterable[tuple[bool, T]]:
-    """Iterate and generate a tuple with a flag for first value."""
+    """Iterate and generate a tuple with a flag for first value.
+
+    Args:
+        values: An iterable of values to loop over.
+
+    Yields:
+        A tuple of (is_first, value) where is_first is True only for the
+            first item yielded.
+    """
     iter_values = iter(values)
     try:
         value = next(iter_values)
@@ -18,7 +28,15 @@ def loop_first(values: Iterable[T]) -> Iterable[tuple[bool, T]]:
 
 
 def loop_last(values: Iterable[T]) -> Iterable[tuple[bool, T]]:
-    """Iterate and generate a tuple with a flag for last value."""
+    """Iterate and generate a tuple with a flag for last value.
+
+    Args:
+        values: An iterable of values to loop over.
+
+    Yields:
+        A tuple of (is_last, value) where is_last is True only for the
+            last item yielded.
+    """
     iter_values = iter(values)
     try:
         previous_value = next(iter_values)
@@ -31,7 +49,15 @@ def loop_last(values: Iterable[T]) -> Iterable[tuple[bool, T]]:
 
 
 def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
-    """Iterate and generate a tuple with a flag for first and last value."""
+    """Iterate and generate a tuple with a flag for first and last value.
+
+    Args:
+        values: An iterable of values to loop over.
+
+    Yields:
+        A tuple of (is_first, is_last, value) where is_first is True only
+            for the first item and is_last is True only for the last item.
+    """
     iter_values = iter(values)
     try:
         previous_value = next(iter_values)

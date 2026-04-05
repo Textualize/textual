@@ -15,21 +15,46 @@ class TwoWayDict(Generic[Key, Value]):
     """
 
     def __init__(self, initial: dict[Key, Value]) -> None:
+        """Initialise the TwoWayDict from an existing dictionary.
+
+        Args:
+            initial: A dictionary whose key-value pairs populate both the
+                forward and reverse mappings.
+        """
         self._forward: dict[Key, Value] = initial
         self._reverse: dict[Value, Key] = {value: key for key, value in initial.items()}
 
     def __setitem__(self, key: Key, value: Value) -> None:
+        """Set a key-value pair in both the forward and reverse mappings.
+
+        Args:
+            key: The key to set.
+            value: The value to associate with the key.
+        """
         # TODO: Duplicate values need to be managed to ensure consistency,
         #  decide on best approach.
         self._forward.__setitem__(key, value)
         self._reverse.__setitem__(value, key)
 
     def __delitem__(self, key: Key) -> None:
+        """Delete a key and its associated value from both mappings.
+
+        Args:
+            key: The key to delete.
+
+        Raises:
+            KeyError: If the key is not present in the mapping.
+        """
         value = self._forward[key]
         self._forward.__delitem__(key)
         self._reverse.__delitem__(value)
 
     def __iter__(self):
+        """Iterate over keys in the forward mapping.
+
+        Yields:
+            Each key in insertion order.
+        """
         return iter(self._forward)
 
     def get(self, key: Key) -> Value | None:
@@ -66,7 +91,20 @@ class TwoWayDict(Generic[Key, Value]):
         return value in self._reverse
 
     def __len__(self):
+        """Return the number of key-value pairs in the mapping.
+
+        Returns:
+            The number of entries.
+        """
         return len(self._forward)
 
     def __contains__(self, item: Key) -> bool:
+        """Check if a key is present in the forward mapping.
+
+        Args:
+            item: The key to check.
+
+        Returns:
+            True if the key exists in the mapping.
+        """
         return item in self._forward
