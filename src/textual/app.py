@@ -876,6 +876,8 @@ class App(Generic[ReturnType], DOMNode):
                     )
                 )
 
+        self._resize_timer: Timer | None = None
+
     def get_line_filters(self) -> Sequence[LineFilter]:
         """Get currently enabled line filters.
 
@@ -4312,6 +4314,8 @@ class App(Generic[ReturnType], DOMNode):
         event.stop()
         self._size = event.size
         self._resize_event = event
+        if self._resize_timer is None:
+            self._resize_timer = self.set_timer(1 / 120, self._check_resize)
 
     async def _on_app_focus(self, event: events.AppFocus) -> None:
         """App has focus."""
@@ -4977,9 +4981,12 @@ class App(Generic[ReturnType], DOMNode):
         self.supports_smooth_scrolling = message.enabled
         self.log.debug(message)
 
-    def _on_idle(self) -> None:
+    def _check_resize(self) -> None:
         """Send app resize events on idle, so we don't do more resizing that necessary."""
         event = self._resize_event
+        if self._resize_timer is not None:
+            self._resize_timer.stop()
+            self._resize_timer = None
         if event is not None:
             self._resize_event = None
             self.screen.post_message(event)
