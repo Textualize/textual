@@ -4982,7 +4982,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log.debug(message)
 
     def _check_resize(self) -> None:
-        """Send app resize events on idle, so we don't do more resizing that necessary."""
+        """Send a resize event to screen(s) (invoked from `self._resize_timer`)."""
         event = self._resize_event
         if self._resize_timer is not None:
             self._resize_timer.stop()
