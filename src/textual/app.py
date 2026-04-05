@@ -4983,7 +4983,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log.debug(message)
 
     def _on_idle(self) -> None:
-        if self._resize_event is not None:
+        if self._resize_event is not None and self._resize_timer is None:
             self._check_resize()
 
     def _check_resize(self) -> None:
