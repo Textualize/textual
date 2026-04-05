@@ -4313,10 +4313,14 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        if self._size is not None and self._size == event.size:
+        self._resize_event = event
+        if self._size is None:
+            self._size = event.size
+            self._check_resize()
+            return
+        if self._size == event.size:
             return
         self._size = event.size
-        self._resize_event = event
         if self._resize_timer is None:
             self._resize_timer = self.set_timer(1 / 120, self._check_resize)
 
@@ -4995,7 +4999,6 @@ class App(Generic[ReturnType], DOMNode):
             self._resize_timer.stop()
             self._resize_timer = None
         if event is not None:
-
             try:
                 self.screen
             except ScreenError:
