@@ -4313,6 +4313,8 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
+        if self._size is not None and self._size == event.size:
+            return
         self._size = event.size
         self._resize_event = event
         if self._resize_timer is None:
