@@ -4982,10 +4982,6 @@ class App(Generic[ReturnType], DOMNode):
         self.supports_smooth_scrolling = message.enabled
         self.log.debug(message)
 
-    def _on_idle(self) -> None:
-        if self._resize_event is not None:
-            self._check_resize()
-
     def _check_resize(self) -> None:
         """Send a resize event to screen(s) (invoked from `self._resize_timer`)."""
         event = self._resize_event
@@ -4993,6 +4989,11 @@ class App(Generic[ReturnType], DOMNode):
             self._resize_timer.stop()
             self._resize_timer = None
         if event is not None:
+
+            try:
+                self.screen
+            except ScreenError:
+                return
             self._resize_event = None
             self.screen.post_message(event)
             for screen in self._background_screens:
