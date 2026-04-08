@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `DOM.update_classes`
+- Added `DOM.update_classes` https://github.com/Textualize/textual/pull/6478
 
 ## [8.2.3] - 2026-04-05 
 
