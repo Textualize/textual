@@ -1777,9 +1777,9 @@ class DOMNode(MessagePump):
 
         add_classes: set[str] = set()
         remove_classes: set[str] = set()
-        appends = (remove_classes.add, add_classes.add)
+        adds = (remove_classes.add, add_classes.add)
         for class_name, add in classes.items():
-            appends[add](class_name)
+            adds[add](class_name)
 
         new_classes = (self._classes | add_classes) - remove_classes
         if self._classes != new_classes:
