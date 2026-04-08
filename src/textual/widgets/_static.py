@@ -59,7 +59,11 @@ class Static(Widget, inherit_bindings=False):
 
         """
         if self.__visual is None:
-            self.__visual = visualize(self, self.__content, markup=self._render_markup)
+            content = self.__content
+            if isinstance(content, str):
+                tab_size = self.app.console.tab_size if self.is_attached else 8
+                content = content.expandtabs(tab_size)
+            self.__visual = visualize(self, content, markup=self._render_markup)
         return self.__visual
 
     @property
@@ -70,6 +74,10 @@ class Static(Widget, inherit_bindings=False):
     @content.setter
     def content(self, content: VisualType) -> None:
         self.__content = content
+        render_content = content
+        if isinstance(render_content, str):
+            tab_size = self.app.console.tab_size if self.is_attached else 8
+            render_content = render_content.expandtabs(tab_size)
         self.__visual = visualize(self, content, markup=self._render_markup)
         self.clear_cached_dimensions()
         self.refresh(layout=True)
@@ -91,5 +99,9 @@ class Static(Widget, inherit_bindings=False):
         """
 
         self.__content = content
+        render_content = content
+        if isinstance(render_content, str):
+            tab_size = self.app.console.tab_size if self.is_attached else 8
+            render_content = render_content.expandtabs(tab_size)
         self.__visual = visualize(self, content, markup=self._render_markup)
         self.refresh(layout=layout)
