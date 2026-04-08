@@ -1774,19 +1774,16 @@ class DOMNode(MessagePump):
         Returns:
             Self
         """
-        check_identifiers("class name", *classes.keys())
-        changed = False
-        current_classes = self._classes.copy()
+
+        add_classes: set[str] = set()
+        remove_classes: set[str] = set()
+        appends = (remove_classes.add, add_classes.add)
         for class_name, add in classes.items():
-            if add:
-                if class_name not in current_classes:
-                    changed = True
-                    self._classes.add(class_name)
-            else:
-                if class_name in current_classes:
-                    changed = True
-                    self._classes.discard(class_name)
-        if changed:
+            appends[add](class_name)
+
+        new_classes = (self._classes | add_classes) - remove_classes
+        if self._classes != new_classes:
+            self._classes = new_classes
             self.update_node_styles(animate=animate)
         return self
 
