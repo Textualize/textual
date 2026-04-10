@@ -239,7 +239,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
     if TYPE_CHECKING:
         from textual import getters
 
-        app = getters.app(App)
+        app = getters.app(App[object])
     else:
 
         @property
