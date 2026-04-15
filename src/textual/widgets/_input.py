@@ -252,7 +252,7 @@ class Input(ScrollView):
         """Set the current position of the cursor."""
         self.selection = Selection.cursor(position)
 
-    selection: Reactive[Selection] = reactive(Selection.cursor(0))
+    selection: Reactive[Selection] = reactive(Selection.cursor(0), init=False)
     """The currently selected range of text."""
 
     placeholder = reactive("")
@@ -505,6 +505,9 @@ class Input(ScrollView):
         return Selection(clamp(start, 0, value_length), clamp(end, 0, value_length))
 
     def _watch_selection(self, selection: Selection) -> None:
+        if not self.is_mounted:
+            return
+
         self.app.clear_selection()
         self.app.cursor_position = self.cursor_screen_offset
         if not self._initial_value:
