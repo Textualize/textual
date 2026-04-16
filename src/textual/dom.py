@@ -16,6 +16,7 @@ from typing import (
     Callable,
     ClassVar,
     Iterable,
+    Mapping,
     Sequence,
     Type,
     TypeVar,
@@ -1760,6 +1761,34 @@ class DOMNode(MessagePump):
             self.add_class(*class_names, update=update)
         else:
             self.remove_class(*class_names, update=update)
+        return self
+
+    def update_classes(
+        self, classes: Mapping[str, bool], update: bool = True, animate: bool = True
+    ) -> Self:
+        """Update classes in an atomic batch.
+
+        Args:
+            classes: A mapping of class name on to a boolean where `True` adds
+                to the current classes, and `False` removes.
+            update: Also update styles.
+            animate: Enable any CSS animation?
+
+        Returns:
+            Self
+        """
+
+        add_classes: set[str] = set()
+        remove_classes: set[str] = set()
+        adds = (remove_classes.add, add_classes.add)
+        for class_name, add in classes.items():
+            adds[add](class_name)
+
+        new_classes = (self._classes | add_classes) - remove_classes
+        if self._classes != new_classes:
+            self._classes = new_classes
+            if update:
+                self.update_node_styles(animate=animate)
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> Self:

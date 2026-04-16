@@ -1527,36 +1527,24 @@ class Screen(Generic[ScreenResultType], Widget):
             else self.VERTICAL_BREAKPOINTS
         ) or []
 
-        width, height = event.size
-
         if horizontal_breakpoints or vertical_breakpoints:
+            width, height = event.size
+            breakpoints = {
+                breakpoint: False
+                for _, breakpoint in (horizontal_breakpoints + vertical_breakpoints)
+            }
 
-            remove_breakpoint_classes = {
-                breakpoint for _, breakpoint in horizontal_breakpoints
-            } | {breakpoint for _, breakpoint in vertical_breakpoints}
-            remove_breakpoint_classes = self._classes.intersection(
-                remove_breakpoint_classes
-            )
+            for breakpoint in self._get_breakpoint_classes(
+                width, horizontal_breakpoints
+            ):
+                breakpoints[breakpoint] = True
 
-            breakpoint_classes: set[str] = set()
+            for breakpoint in self._get_breakpoint_classes(
+                height, vertical_breakpoints
+            ):
+                breakpoints[breakpoint] = True
 
-            if horizontal_breakpoints:
-                breakpoint_classes |= self._get_breakpoint_classes(
-                    width, horizontal_breakpoints
-                )
-            if vertical_breakpoints:
-                breakpoint_classes |= self._get_breakpoint_classes(
-                    height, vertical_breakpoints
-                )
-
-            remove_breakpoint_classes -= breakpoint_classes
-            classes = self._classes.copy()
-            if remove_breakpoint_classes:
-                self._classes.difference_update(remove_breakpoint_classes)
-            if breakpoint_classes:
-                self._classes.update(breakpoint_classes)
-            if self._classes != classes:
-                self.update_node_styles(animate=False)
+            self.update_classes(breakpoints, animate=False)
 
     def _get_breakpoint_classes(
         self, dimension: int, breakpoints: list[tuple[int, str]]
