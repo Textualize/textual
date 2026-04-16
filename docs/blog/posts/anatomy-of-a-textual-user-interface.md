@@ -125,7 +125,7 @@ self.styles.color = "red"
 self.styles.margin = 8
 ```
 
-Which is fine, but CSS shines when the UI get's more complex.
+Which is fine, but CSS shines when the UI gets more complex.
 
 ## Look, man. I only need to know one thing: where they are.
 
