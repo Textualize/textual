@@ -68,7 +68,7 @@ This will prevent the user from typing any more characters when the maximum has 
 You can supply one or more *[validators][textual.validation.Validator]* to the `Input` widget to validate the value.
 
 All the supplied validators will run when the value changes, the `Input` is submitted, or focus moves _out_ of the `Input`.
-The values `"changed"`, `"submitted"`, and `"blur"`, can be passed as an iterable to the `Input` parameter `validate_on` to request that validation occur only on the respective mesages.
+The values `"changed"`, `"submitted"`, and `"blur"`, can be passed as an iterable to the `Input` parameter `validate_on` to request that validation occur only on the respective messages.
 (See [`InputValidationOn`][textual.widgets._input.InputValidationOn] and [`Input.validate_on`][textual.widgets.Input.validate_on].)
 For example, the code below creates an `Input` widget that only gets validated when the value is submitted explicitly:
 
