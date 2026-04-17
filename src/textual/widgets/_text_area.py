@@ -1101,9 +1101,18 @@ TextArea {
         return 0
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
-        self.wrapped_document.wrap(self.wrap_width, tab_width=self.indent_width)
+        width_before = self.wrap_width
+        self.wrapped_document.wrap(width_before, tab_width=self.indent_width)
         self._line_cache.clear()
         self._refresh_size()
+
+        # If a scrollbar appeared or disappeared as a result of the wrap,
+        # the wrap_width will have changed. We must wrap again to prevent a flicker.
+        width_after = self.wrap_width
+        if width_after != width_before:
+            self.wrapped_document.wrap(width_after, tab_width=self.indent_width)
+            self._line_cache.clear()
+            self._refresh_size()
 
     @property
     def is_syntax_aware(self) -> bool:
