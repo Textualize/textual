@@ -2746,6 +2746,7 @@ class Widget(DOMNode):
         Returns:
             `True` if the scroll position changed, otherwise `False`.
         """
+
         if release_anchor:
             self.release_anchor()
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
@@ -3305,6 +3306,7 @@ class Widget(DOMNode):
             force=force,
             on_complete=on_complete,
             level=level,
+            release_anchor=False,
         )
 
     def scroll_up(
