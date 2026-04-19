@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DOM.update_classes` https://github.com/Textualize/textual/pull/6478
 
+### Fixed
+
+- Fixed anchor released when scrolling down with the tracpad
+
 ## [8.2.3] - 2026-04-05 
 
 ### Changed
