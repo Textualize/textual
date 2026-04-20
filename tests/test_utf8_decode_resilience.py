@@ -3,30 +3,61 @@
 Verify that the UTF-8 incremental decoders used in drivers are configured
 with ``errors="replace"`` so that invalid byte sequences produce U+FFFD
 instead of raising ``UnicodeDecodeError`` and crashing the input thread.
+
+This test inspects the driver source code to ensure the fix is in place.
+Without errors="replace", invalid UTF-8 input would crash the input thread.
 """
 
-from codecs import getincrementaldecoder
+import re
+from pathlib import Path
 
 
-def test_utf8_decoder_replace_mode() -> None:
-    """The decoder must not raise on invalid UTF-8 bytes."""
-    decoder = getincrementaldecoder("utf-8")(errors="replace")
-    # 0xFF is never valid in UTF-8
-    result = decoder.decode(b"\xff")
-    assert result == "\ufffd"
+def _get_driver_files() -> dict[str, Path]:
+    """Get the paths to the three drivers that were modified."""
+    drivers_dir = Path(__file__).parent.parent / "src" / "textual" / "drivers"
+    return {
+        "linux_driver": drivers_dir / "linux_driver.py",
+        "linux_inline_driver": drivers_dir / "linux_inline_driver.py",
+        "web_driver": drivers_dir / "web_driver.py",
+    }
 
 
-def test_utf8_decoder_replace_mixed() -> None:
-    """Valid bytes surrounding an invalid byte must decode correctly."""
-    decoder = getincrementaldecoder("utf-8")(errors="replace")
-    result = decoder.decode(b"hello\xffworld")
-    assert result == "hello\ufffdworld"
+def _check_driver_decoder_config(driver_path: Path) -> bool:
+    """Check if driver uses getincrementaldecoder with errors='replace'."""
+    if not driver_path.exists():
+        raise FileNotFoundError(f"Driver file not found: {driver_path}")
+    
+    source = driver_path.read_text(encoding="utf-8")
+    
+    # Look for the pattern: getincrementaldecoder("utf-8")(errors="replace")
+    # This regex matches the decoder instantiation with the replace error handler
+    pattern = r'getincrementaldecoder\s*\(\s*["\']utf-8["\']\s*\)\s*\(\s*errors\s*=\s*["\']replace["\']\s*\)'
+    
+    return bool(re.search(pattern, source))
 
 
-def test_utf8_decoder_replace_truncated_multibyte() -> None:
-    """A truncated multi-byte sequence at end of chunk must not raise."""
-    decoder = getincrementaldecoder("utf-8")(errors="replace")
-    # \xc3 is the start of a 2-byte sequence; passing final=True forces
-    # the decoder to flush, which would raise under strict mode.
-    result = decoder.decode(b"\xc3", final=True)
-    assert result == "\ufffd"
+def test_linux_driver_uses_replace_errors() -> None:
+    """Linux driver must use errors='replace' for UTF-8 decoder."""
+    drivers = _get_driver_files()
+    assert _check_driver_decoder_config(drivers["linux_driver"]), (
+        "linux_driver.py must use getincrementaldecoder('utf-8')(errors='replace'). "
+        "Without this, invalid UTF-8 bytes will crash the input thread."
+    )
+
+
+def test_linux_inline_driver_uses_replace_errors() -> None:
+    """Linux inline driver must use errors='replace' for UTF-8 decoder."""
+    drivers = _get_driver_files()
+    assert _check_driver_decoder_config(drivers["linux_inline_driver"]), (
+        "linux_inline_driver.py must use getincrementaldecoder('utf-8')(errors='replace'). "
+        "Without this, invalid UTF-8 bytes will crash the input thread."
+    )
+
+
+def test_web_driver_uses_replace_errors() -> None:
+    """Web driver must use errors='replace' for UTF-8 decoder."""
+    drivers = _get_driver_files()
+    assert _check_driver_decoder_config(drivers["web_driver"]), (
+        "web_driver.py must use getincrementaldecoder('utf-8')(errors='replace'). "
+        "Without this, invalid UTF-8 bytes will crash the input thread."
+    )
