@@ -28,7 +28,7 @@ Textual will live on as an Open Source project. In the near term, nothing much w
 
 ## Thanks!
 
-I'd like to thank the awesome devs I worked with at Textualize, and the many developers that followed along, contributing and building apps. Wether you were an early adopter or you just discovered Textual, you made Textual what it is today.
+I'd like to thank the awesome devs I worked with at Textualize, and the many developers that followed along, contributing and building apps. Whether you were an early adopter or you just discovered Textual, you made Textual what it is today.
 
 ## Get in touch
 
