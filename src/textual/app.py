@@ -529,7 +529,7 @@ class App(Generic[ReturnType], DOMNode):
         "dark": lambda app: app.current_theme.dark,
         "light": lambda app: not app.current_theme.dark,
         "inline": lambda app: app.is_inline,
-        "ansi": lambda app: app.ansi_color,
+        "ansi": lambda app: app.native_ansi_color,
         "nocolor": lambda app: app.no_color,
     }
 
@@ -554,7 +554,7 @@ class App(Generic[ReturnType], DOMNode):
     ansi_theme_light = Reactive(ALABASTER, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while using a light theme."""
 
-    ansi_color = Reactive(False)
+    ansi_color: Reactive[bool | None] = Reactive(None)
     """Allow ANSI colors in UI?"""
 
     def __init__(
@@ -562,7 +562,7 @@ class App(Generic[ReturnType], DOMNode):
         driver_class: Type[Driver] | None = None,
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
-        ansi_color: bool = False,
+        ansi_color: bool | None = None,
     ):
         """Create an instance of an app.
 
@@ -574,7 +574,7 @@ class App(Generic[ReturnType], DOMNode):
                 will be loaded in order.
             watch_css: Reload CSS if the files changed. This is set automatically if
                 you are using `textual run` with the `dev` switch.
-            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to RGB if `False`.
+            ansi_color: Allow ANSI colors if `True`, or convert ANSI colors to RGB if `False`, `None` to use "ansi" parameter from themes.
 
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -596,12 +596,12 @@ class App(Generic[ReturnType], DOMNode):
         )
         self.set_reactive(App.ansi_color, ansi_color)
         self._filters: list[LineFilter] = [
-            ANSIToTruecolor(ansi_theme, enabled=not ansi_color)
+            ANSIToTruecolor(ansi_theme, enabled=not self.native_ansi_color)
         ]
         environ = dict(os.environ)
         self.no_color = environ.pop("NO_COLOR", None) is not None
         if self.no_color:
-            self._filters.append(NoColor() if self.ansi_color else Monochrome())
+            self._filters.append(NoColor() if self.native_ansi_color else Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
@@ -1095,8 +1095,12 @@ class App(Generic[ReturnType], DOMNode):
             active_message_pump.reset(message_pump_reset_token)
             active_app.reset(app_reset_token)
 
-    def _watch_ansi_color(self, ansi_color: bool) -> None:
+    def _watch_ansi_color(self, ansi_color: bool | None) -> None:
         """Enable or disable the truecolor filter when the reactive changes"""
+        if ansi_color is None:
+            if (theme := self.get_theme(self.theme)) is not None:
+                ansi_color = theme.ansi
+
         for filter in self._filters:
             if isinstance(filter, ANSIToTruecolor):
                 filter.enabled = not ansi_color
@@ -1320,12 +1324,11 @@ class App(Generic[ReturnType], DOMNode):
         Yields:
             [SystemCommand][textual.app.SystemCommand] instances.
         """
-        if not self.ansi_color:
-            yield SystemCommand(
-                "Theme",
-                "Change the current theme",
-                self.action_change_theme,
-            )
+        yield SystemCommand(
+            "Theme",
+            "Change the current theme",
+            self.action_change_theme,
+        )
         yield SystemCommand(
             "Quit",
             "Quit the application as soon as possible",
@@ -1492,9 +1495,14 @@ class App(Generic[ReturnType], DOMNode):
         """
         theme = self.current_theme
         dark = theme.dark
-        self.ansi_color = theme_name == "textual-ansi"
-        self.set_class(dark, "-dark-mode", update=False)
-        self.set_class(not dark, "-light-mode", update=False)
+        # Setting the theme adds class "-theme-<THEME NAME>" to the App
+        classes = {name: False for name in self.classes if name.startswith("-theme-")}
+        classes[f"-theme-{self.current_theme.name}"] = True
+        classes["-dark-mode"] = dark
+        classes["-light-mode"] = not dark
+
+        self.update_classes(classes, update=False)
+
         self._refresh_truecolor_filter(self.ansi_theme)
         self._invalidate_css()
         self.call_next(partial(self.refresh_css, animate=False))
@@ -1527,6 +1535,16 @@ class App(Generic[ReturnType], DOMNode):
             self.ansi_theme_dark if self.current_theme.dark else self.ansi_theme_light
         )
 
+    @property
+    def native_ansi_color(self) -> bool:
+        """Use native ANSI colors?
+
+        This will return `self.current_theme.ansi` if `self.ansi_color` is `None`,
+        otherwise it will return `self.ansi_color`.
+        """
+        ansi = self.current_theme.ansi if self.ansi_color is None else self.ansi_color
+        return ansi
+
     def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
         """Update the ANSI to Truecolor filter, if available, with a new theme mapping.
 
@@ -1534,9 +1552,10 @@ class App(Generic[ReturnType], DOMNode):
             theme: The new terminal theme to use for mapping ANSI to truecolor.
         """
         filters = self._filters
+        ansi_color = self.native_ansi_color
         for index, filter in enumerate(filters):
             if isinstance(filter, ANSIToTruecolor):
-                filters[index] = ANSIToTruecolor(theme, enabled=not self.ansi_color)
+                filters[index] = ANSIToTruecolor(theme, enabled=not ansi_color)
                 return
 
     def get_driver_class(self) -> Type[Driver]:

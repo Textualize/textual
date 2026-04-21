@@ -399,7 +399,7 @@ class Widget(DOMNode):
         "light": lambda widget: not widget.app.current_theme.dark,
         "focus-within": lambda widget: widget.has_focus_within,
         "inline": lambda widget: widget.app.is_inline,
-        "ansi": lambda widget: widget.app.ansi_color,
+        "ansi": lambda widget: widget.app.native_ansi_color,
         "nocolor": lambda widget: widget.app.no_color,
         "first-of-type": lambda widget: widget.first_of_type,
         "last-of-type": lambda widget: widget.last_of_type,

@@ -367,7 +367,7 @@ class Style:
             (
                 None
                 if rich_style.bgcolor is None
-                else Color.from_rich_color(rich_style.bgcolor, theme)
+                else Color.from_rich_color(rich_style.bgcolor, theme, foreground=False)
             ),
             (
                 None

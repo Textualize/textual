@@ -8,7 +8,7 @@ from rich.padding import Padding
 from rich.table import Table
 from rich.text import Text
 
-from textual.color import WHITE, Color
+from textual.color import TRANSPARENT, WHITE, Color
 
 NUMBER_OF_SHADES = 3
 
@@ -127,23 +127,36 @@ class ColorSystem:
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
 
         foreground = self.foreground or (background.inverse)
-        contrast_text = background.get_contrast_text(1.0)
-        boost = self.boost or contrast_text.with_alpha(0.04)
 
+        boost: Color = TRANSPARENT
         # Colored text
-        colors["text-primary"] = contrast_text.tint(primary.with_alpha(0.66)).hex
-        colors["text-secondary"] = contrast_text.tint(secondary.with_alpha(0.66)).hex
-        colors["text-warning"] = contrast_text.tint(warning.with_alpha(0.66)).hex
-        colors["text-error"] = contrast_text.tint(error.with_alpha(0.66)).hex
-        colors["text-success"] = contrast_text.tint(success.with_alpha(0.66)).hex
-        colors["text-accent"] = contrast_text.tint(accent.with_alpha(0.66)).hex
+        if background.ansi is not None:
+            colors["text-primary"] = "ansi_default"
+            colors["text-secondary"] = "ansi_default"
+            colors["text-warning"] = "ansi_default"
+            colors["text-error"] = "ansi_default"
+            colors["text-success"] = "ansi_default"
+            colors["text-accent"] = "ansi_default"
 
-        if self.panel is None:
-            panel = surface.blend(primary, 0.1, alpha=1)
-            if dark:
-                panel += boost
+            panel = TRANSPARENT if self.panel is None else self.panel
         else:
-            panel = self.panel
+            contrast_text = background.get_contrast_text(1.0)
+            colors["text-primary"] = contrast_text.tint(primary.with_alpha(0.66)).hex
+            colors["text-secondary"] = contrast_text.tint(
+                secondary.with_alpha(0.66)
+            ).hex
+            colors["text-warning"] = contrast_text.tint(warning.with_alpha(0.66)).hex
+            colors["text-error"] = contrast_text.tint(error.with_alpha(0.66)).hex
+            colors["text-success"] = contrast_text.tint(success.with_alpha(0.66)).hex
+            colors["text-accent"] = contrast_text.tint(accent.with_alpha(0.66)).hex
+
+            if self.panel is None:
+                panel = surface.blend(primary, 0.1, alpha=1)
+                if dark:
+                    boost = self.boost or contrast_text.with_alpha(0.04)
+                    panel += boost
+            else:
+                panel = self.panel
 
         def luminosity_range(spread: float) -> Iterable[tuple[str, float]]:
             """Get the range of shades from darken2 to lighten2.
@@ -356,6 +369,11 @@ class ColorSystem:
             "button-color-foreground", colors["text"]
         )
         colors["button-focus-text-style"] = get("button-focus-text-style", "b reverse")
+
+        from textual import log
+
+        log(self)
+        log(colors)
 
         return colors
 

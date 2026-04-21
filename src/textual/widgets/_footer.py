@@ -56,8 +56,9 @@ class FooterKey(Widget):
         }
 
         &:hover {
+            pointer: pointer;
             color: $footer-key-foreground;
-            background: $block-hover-background;
+            background: $block-hover-background;            
         }
 
         &.-disabled {
@@ -195,29 +196,29 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             background: $footer-description-background;
         }
 
-        &:ansi {
-            background: ansi_default;
-            .footer-key--key {
-                background: ansi_default;
-                color: ansi_magenta;
-            }
-            .footer-key--description {
-                background: ansi_default;
-                color: ansi_default;
-            }
-            FooterKey:hover {
-                text-style: underline;
-                background: ansi_default;
-                color: ansi_default;
-                .footer-key--key {
-                    background: ansi_default;
-                }
-            }
-            FooterKey.-command-palette {
-                background: ansi_default;
-                border-left: vkey ansi_black;
-            }
-        }
+        # &:ansi {
+        #     background: ansi_default;
+        #     .footer-key--key {
+        #         background: ansi_default;
+        #         color: ansi_magenta;
+        #     }
+        #     .footer-key--description {
+        #         background: ansi_default;
+        #         color: ansi_default;
+        #     }
+        #     FooterKey:hover {
+        #         text-style: underline;
+        #         background: ansi_default;
+        #         color: ansi_default;
+        #         .footer-key--key {
+        #             background: ansi_default;
+        #         }
+        #     }
+        #     FooterKey.-command-palette {
+        #         background: ansi_default;
+        #         border-left: vkey ansi_black;
+        #     }
+        # }
         
     }
     """

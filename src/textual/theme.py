@@ -37,6 +37,9 @@ class Theme:
     text_alpha: float = 0.95
     variables: dict[str, str] = field(default_factory=dict)
 
+    ansi: bool = False
+    """False` to disable native ansi colors, `True` to enable native ansi"""
+
     def to_color_system(self) -> ColorSystem:
         """
         Create a ColorSystem instance from this Theme.
@@ -152,30 +155,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-foreground": "#1e1e2e",
             "block-cursor-text-style": "none",
             "button-color-foreground": "#181825",
-        },
-    ),
-    "textual-ansi": Theme(
-        name="textual-ansi",
-        primary="ansi_blue",
-        secondary="ansi_cyan",
-        warning="ansi_yellow",
-        error="ansi_red",
-        success="ansi_green",
-        accent="ansi_bright_blue",
-        foreground="ansi_default",
-        background="ansi_default",
-        surface="ansi_default",
-        panel="ansi_default",
-        boost="ansi_default",
-        dark=False,
-        variables={
-            "block-cursor-text-style": "b",
-            "block-cursor-blurred-text-style": "i",
-            "input-selection-background": "ansi_blue",
-            "input-cursor-text-style": "reverse",
-            "scrollbar": "ansi_blue",
-            "border-blurred": "ansi_blue",
-            "border": "ansi_bright_blue",
         },
     ),
     "dracula": Theme(
@@ -461,6 +440,32 @@ BUILTIN_THEMES: dict[str, Theme] = {
         luminosity_spread=0.15,
         text_alpha=0.95,
     ),
+    "ansi-dark": Theme(
+        name="ansi-dark",
+        ansi=True,
+        primary="ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_yellow",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_bright_blue",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+        dark=True,
+        variables={
+            "block-hover-background": "ansi_black",
+            "block-cursor-text-style": "b",
+            "block-cursor-blurred-text-style": "i",
+            "input-selection-background": "ansi_blue",
+            "input-cursor-text-style": "reverse",
+            "scrollbar": "ansi_blue",
+            "border-blurred": "ansi_blue",
+            "border": "ansi_bright_blue",
+        },
+    ),
 }
 
 
@@ -477,7 +482,6 @@ class ThemeProvider(Provider):
         return [
             (theme.name, partial(set_app_theme, theme.name))
             for theme in sorted(themes.values(), key=attrgetter("name"))
-            if theme.name != "textual-ansi"
         ]
 
     async def discover(self) -> Hits:

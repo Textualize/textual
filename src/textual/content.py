@@ -345,6 +345,7 @@ class Content(Visual):
                 )
                 for start, end, style in text._spans
             ]
+
         else:
             spans = []
 
