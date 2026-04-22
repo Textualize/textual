@@ -162,6 +162,11 @@ class StarCount(Vertical):
         Label { margin-right: 1; }
         align: center top;
         &>Horizontal { max-width: 100;} 
+        &:ansi {
+            color: $accent;
+            border-bottom: hkey $accent;
+            border-top: hkey $accent;
+        }
     }
     """
     stars = reactive(34455, recompose=True)
@@ -224,25 +229,36 @@ class HomeScreen(PageScreen):
         
         Content {
             align-horizontal: center;
-            & > * {
-                max-width: 100;
-            }      
+            # & > * {
+            #     max-width: 100;
+            # }      
             margin: 0 1;          
             overflow-y: auto;
             height: 1fr;
-            scrollbar-gutter: stable;
+            # scrollbar-gutter: stable;
             MarkdownFence {
                 height: auto;
                 max-height: initial;
             }
             Collapsible {
-                padding-right: 0;               
-                &.-collapsed { padding-bottom: 1; }
+                margin: 0 2;
+                # padding: 0;               
+                # &.-collapsed { padding-bottom: 1; }
+                Contents {
+                    padding: 1 0 0 1;
+                }
             }
-            Markdown {
+            Markdown{
                 margin-right: 1;
-                padding-right: 1;
+                # padding-right: 1;                
                 background: transparent;
+                & > MarkdownBlock:first-of-type {
+                    margin-top: 1;
+                }
+                &>MarkdownBlock {
+                    padding: 0 0;
+                    
+                }
             }
         }
     }

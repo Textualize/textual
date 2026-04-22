@@ -303,7 +303,7 @@ And a RichLog widget to display Rich renderables.
             height: 20;
             padding: 1;
             overflow-x: auto;
-            border: wide transparent;
+            border: wide $border-blurred;
             &:focus {
                 border: wide $border;
             }
@@ -415,7 +415,7 @@ class Markdowns(containers.VerticalGroup):
     Markdowns {
         #container {
             background: $boost;
-            border: tall transparent;   
+            border: tall $border-blurred;   
             height: 16;
             padding: 0 1;
             &:focus { border: tall $border; }

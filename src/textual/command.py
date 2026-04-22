@@ -466,7 +466,12 @@ class CommandList(OptionList, can_focus=False):
     CommandList > .option-list--option-highlighted {
         color: $block-cursor-blurred-foreground;
         background: $block-cursor-blurred-background;
-        text-style: $block-cursor-blurred-text-style;
+        text-style: $block-cursor-blurred-text-style;        
+    }
+    CommandList:ansi > .option-list--option-highlighted {
+        color: $block-cursor-foreground;
+        background: $block-cursor-background;
+        text-style: $block-cursor-text-style;
     }
 
     CommandList:nocolor > .option-list--option-highlighted {       

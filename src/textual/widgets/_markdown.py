@@ -919,6 +919,12 @@ class Markdown(Widget):
         color: $foreground;
         overflow-y: hidden;
 
+        &:ansi {
+            MarkdownBlock > .code_inline {
+                background: ansi_default !important;
+            }
+        }
+        
         MarkdownBlock {
             &:dark > .code_inline {
                 background: $warning 10%;
@@ -927,7 +933,7 @@ class Markdown(Widget):
             &:light > .code_inline {
                 background: $error 5%;
                 color: $text-error 95%;
-            }
+            }           
             & > .em {
                 text-style: italic;
             }

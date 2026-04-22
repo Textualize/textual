@@ -63,6 +63,7 @@ class Theme:
             luminosity_spread=self.luminosity_spread,
             text_alpha=self.text_alpha,
             variables=self.variables,
+            ansi=self.ansi,
         )
 
 
@@ -455,16 +456,16 @@ BUILTIN_THEMES: dict[str, Theme] = {
         panel="ansi_default",
         boost="ansi_default",
         dark=True,
-        variables={
-            "block-hover-background": "ansi_black",
-            "block-cursor-text-style": "b",
-            "block-cursor-blurred-text-style": "i",
-            "input-selection-background": "ansi_blue",
-            "input-cursor-text-style": "reverse",
-            "scrollbar": "ansi_blue",
-            "border-blurred": "ansi_blue",
-            "border": "ansi_bright_blue",
-        },
+        # variables={
+        #     "block-hover-background": "ansi_black",
+        #     "block-cursor-text-style": "b",
+        #     "block-cursor-blurred-text-style": "i",
+        #     "input-selection-background": "ansi_blue",
+        #     "input-cursor-text-style": "reverse",
+        #     "scrollbar": "ansi_blue",
+        #     "border-blurred": "ansi_blue",
+        #     "border": "ansi_bright_blue",
+        # },
     ),
 }
 
