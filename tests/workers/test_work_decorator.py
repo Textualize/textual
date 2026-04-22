@@ -184,3 +184,19 @@ async def test_calling_workers_from_within_workers(call_stack: Tuple[str]):
         for _ in range(len(call_stack)):
             await app.workers.wait_for_complete()
         assert app.call_stack == []
+
+
+def test_work_decorator_return_annotation_uses_parameterized_decorator():
+    """Regression test for https://github.com/Textualize/textual/issues/3510.
+
+    The return annotation of ``work`` must reference the ``Decorator`` type
+    alias with its type parameters supplied (``Decorator[..., ReturnType]``)
+    rather than as a bare generic, so that downstream type checkers can
+    propagate the worker's return type.
+    """
+    from textual._work_decorator import work
+
+    annotation = work.__annotations__["return"]
+    assert "Decorator[..., ReturnType]" in annotation
+    assert "| Decorator]" not in annotation
+    assert not annotation.rstrip().endswith("| Decorator")
