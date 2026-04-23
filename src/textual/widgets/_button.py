@@ -45,8 +45,70 @@ class Button(Widget, can_focus=True):
     """
 
     ALLOW_SELECT = False
+    SCOPED_CSS = False
 
     DEFAULT_CSS = """
+    App:ansi {
+        Button {                
+            border: tall $border-blurred;
+            background: ansi_default;
+            
+
+            &:disabled {
+            
+                text-opacity: 1;
+                text-style: dim;
+                border: tall $border-blurred !important;
+                # color: initial;
+                background: ansi_default !important;
+                # text-style: dim;
+                pointer: not-allowed;
+                &:hover {
+                    background: ansi_default;
+                   
+                }
+            }
+
+            &:hover {
+                background: ansi_black;
+                border: tall $border;               
+            }
+
+                        
+            &.-primary {
+                color: $primary;
+                border: tall $primary;
+                background: ansi_default;
+                &:hover {
+                    background: ansi_black;            
+                }                     
+            }
+            &.-success {              
+                color: $success;      
+                border: tall $success;
+                background: ansi_default;
+                &:hover {
+                    background: ansi_black;            
+                }        
+            }
+            &.-warning {       
+                color: $warning;             
+                border: tall $warning;
+                background: ansi_default;
+                &:hover {
+                    background: ansi_black;            
+                }
+            }
+            &.-error {         
+                color: $error;           
+                border: tall $error;
+                background: ansi_default;
+                &:hover {
+                    background: ansi_black;            
+                }
+            }
+        }
+    }
     Button {
         width: auto;
         min-width: 16;
@@ -55,6 +117,7 @@ class Button(Widget, can_focus=True):
         text-align: center;
         content-align: center middle;
         pointer: pointer;
+
 
         &.-style-flat {
             text-style: bold;

@@ -31,6 +31,9 @@ class Project(Vertical, can_focus=True, can_focus_children=False):
         border: tall transparent;
         &:ansi {
             border: blank;
+            &:focus {
+                background: $panel;
+            }
         }
         box-sizing: border-box;
         &:focus {
@@ -104,6 +107,9 @@ class ProjectsScreen(PageScreen):
             grid-gutter: 1 1;
             grid-rows: auto;
             keyline:thin $foreground 30%;
+            &:ansi {
+                keyline: thin $border-blurred;
+            }
         }
         Markdown { margin: 0; padding: 0 2; max-width: 100; background: transparent; }
     }

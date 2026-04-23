@@ -197,9 +197,12 @@ class SelectCurrent(Horizontal):
         }
 
         &:ansi {
-            border: tall ansi_blue;
+            border: tall $border-blurred;
             color: ansi_default;
             background: ansi_default;
+            &:focus {
+                border: tall $border;
+            }
         }
 
         Static#label {
