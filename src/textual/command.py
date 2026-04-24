@@ -438,7 +438,20 @@ class Command(Option):
 class CommandList(OptionList, can_focus=False):
     """The command palette command list."""
 
+    SCOPED_CSS = False
+
     DEFAULT_CSS = """
+    App:ansi {
+    
+        CommandList {
+            & > .option-list--option-highlighted {             
+                color: $block-cursor-foreground;
+                background: $block-cursor-background;
+                text-style: $block-cursor-text-style;    
+            }               
+        }       
+
+    }
     CommandList {
         visibility: hidden;
         border-top: blank;
@@ -468,11 +481,7 @@ class CommandList(OptionList, can_focus=False):
         background: $block-cursor-blurred-background;
         text-style: $block-cursor-blurred-text-style;        
     }
-    CommandList:ansi > .option-list--option-highlighted {
-        color: $block-cursor-foreground;
-        background: $block-cursor-background;
-        text-style: $block-cursor-text-style;
-    }
+    
 
     CommandList:nocolor > .option-list--option-highlighted {       
         text-style: reverse;
@@ -566,10 +575,10 @@ class CommandPalette(SystemModalScreen[None]):
         }
     }
 
-    CommandPalette > .command-palette--help-text {                   
-        color: $text-muted;
-        background: transparent;
-        text-style: not bold;       
+
+    CommandPalette > .command-palette--help-text  {
+        color: transparent;
+        text-style: dim not bold;
     }
     
     CommandPalette > .command-palette--highlight {
@@ -1121,6 +1130,7 @@ class CommandPalette(SystemModalScreen[None]):
                     help_style = Style.from_styles(
                         self.get_component_styles("command-palette--help-text")
                     )
+                    self.log(help_style)
                     yield Content.from_markup(hit.help).stylize_before(help_style)
 
             prompt = Content("\n").join(build_prompt())

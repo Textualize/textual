@@ -245,20 +245,25 @@ class HomeScreen(PageScreen):
                 # padding: 0;               
                 # &.-collapsed { padding-bottom: 1; }
                 Contents {
-                    padding: 1 0 0 1;
+                    padding: 1 0 0 0;
+                    MarkdownHeader {
+                        margin: 0 0 1 0;
+                    }
                 }
+                
             }
-            Markdown{
+            Markdown{           
+               
                 margin-right: 1;
                 # padding-right: 1;                
-                background: transparent;
-                & > MarkdownBlock:first-of-type {
-                    margin-top: 1;
-                }
-                &>MarkdownBlock {
-                    padding: 0 0;
+                # background: transparent;
+                # & > MarkdownBlock:first-of-type {
+                #     margin-top: 1;
+                # }
+                # &>MarkdownBlock {
+                #     padding: 0 0;
                     
-                }
+                # }
             }
         }
     }

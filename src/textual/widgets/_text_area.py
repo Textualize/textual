@@ -160,6 +160,11 @@ TextArea {
     }
 
     &:ansi {
+        .text-area--cursor {
+            color: $input-cursor-foreground;
+            background: $input-cursor-background;
+            text-style: reverse;
+        }
         & .text-area--selection {
             background: transparent;
             text-style: reverse;

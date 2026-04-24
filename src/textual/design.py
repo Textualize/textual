@@ -195,9 +195,9 @@ class ColorSystem:
             "footer-item-background": "ansi_default",
             "input-cursor-background": "ansi_default",
             "input-cursor-foreground": "ansi_default",
-            "input-cursor-text-style": "none",
-            "input-selection-background": "cyan",
-            "markdown-h1-color": "ansi_bright_magenta",
+            "input-cursor-text-style": "reverse",
+            "input-selection-background": "ansi_cyan",
+            "markdown-h1-color": "ansi_magenta",
             "markdown-h1-background": "transparent",
             "markdown-h1-text-style": "bold",
             "markdown-h2-color": "ansi_bright_blue",
@@ -242,31 +242,6 @@ class ColorSystem:
 
         colors.update(self.variables)
         return colors
-
-        # colors["background"] = background
-        # colors["foreground"] = foreground
-        # colors["boost"] = "transparent"
-        # colors["surface"] = "transparent"
-
-        # colors["text"] = "ansi_default"
-        # colors["text-muted"] = "ansi_default 50%"
-        # colors["text-disabled"] = "ansi_default 50%"
-
-        # colors["text-primary"] = primary.hex
-        # colors["text-secondary"] = secondary.hex
-        # colors["text-warning"] = warning.hex
-        # colors["text-error"] = error.hex
-        # colors["text-success"] = success.hex
-        # colors["text-accent"] = accent.hex
-
-        # colors["panel"] = "bright_black" if self.dark else "bright_white"
-
-        # colors["primary-muted"] = f"{colors['primary']} 50%"
-        # colors["secondary-muted"] = f"{colors['secondary']} 50%"
-        # colors["warning-muted"] = f"{colors['warning']} 50%"
-        # colors["error-muted"] = f"{colors['error']} 50%"
-        # colors["success-muted"] = f"{colors['success']} 50%"
-        # colors["accent-muted"] = f"{colors['accent']} 50%"
 
     def _generate(self) -> dict[str, str]:
         """Generate a mapping of color name on to a CSS color.
@@ -537,10 +512,8 @@ class ColorSystem:
         )
         colors["button-focus-text-style"] = get("button-focus-text-style", "b reverse")
 
-        from textual import log
-
-        log(self)
-        log(colors)
+        colors["ansi-background"] = "transparent"
+        colors["ansi-foreground"] = "transparent"
 
         return colors
 

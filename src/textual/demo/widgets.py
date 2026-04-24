@@ -595,7 +595,7 @@ Functionally almost identical to a Checkbox, but displays more prominently in th
 Switches {    
     Label {
         padding: 1;
-        &:hover {text-style:underline; }
+        &:hover {text-style:underline; pointer: pointer;}
     }
 }
 """

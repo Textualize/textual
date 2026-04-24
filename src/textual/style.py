@@ -403,7 +403,7 @@ class Style:
                 else styles.color
             ),
             bold=text_style.bold,
-            dim=text_style.italic,
+            dim=text_style.dim,
             italic=text_style.italic,
             underline=text_style.underline,
             underline2=text_style.underline2,

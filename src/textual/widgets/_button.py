@@ -57,7 +57,7 @@ class Button(Widget, can_focus=True):
             &:disabled {
             
                 text-opacity: 1;
-                text-style: dim;
+                text-style: bold dim;
                 border: tall $border-blurred !important;
                 # color: initial;
                 background: ansi_default !important;
@@ -70,7 +70,7 @@ class Button(Widget, can_focus=True):
             }
 
             &:hover {
-                background: ansi_black;
+                background: $ansi-background;
                 border: tall $border;               
             }
 
@@ -80,7 +80,7 @@ class Button(Widget, can_focus=True):
                 border: tall $primary;
                 background: ansi_default;
                 &:hover {
-                    background: ansi_black;            
+                    background: $ansi-background;
                 }                     
             }
             &.-success {              
@@ -88,7 +88,7 @@ class Button(Widget, can_focus=True):
                 border: tall $success;
                 background: ansi_default;
                 &:hover {
-                    background: ansi_black;            
+                    background: $ansi-background;
                 }        
             }
             &.-warning {       
@@ -96,7 +96,7 @@ class Button(Widget, can_focus=True):
                 border: tall $warning;
                 background: ansi_default;
                 &:hover {
-                    background: ansi_black;            
+                    background: $ansi-background;
                 }
             }
             &.-error {         
@@ -104,7 +104,7 @@ class Button(Widget, can_focus=True):
                 border: tall $error;
                 background: ansi_default;
                 &:hover {
-                    background: ansi_black;            
+                    background: $ansi-background;
                 }
             }
         }
