@@ -662,8 +662,6 @@ class Content(Visual):
                 if end == -1:
                     end = len(line.plain)
                 line = line.stylize(selection_style, start, end)
-                print(repr(selection_style))
-                print(line, line.spans)
 
             line = line.expand_tabs(tab_size)
 
@@ -1409,13 +1407,11 @@ class Content(Visual):
 
         def get_current_style() -> Style:
             """Construct current style from stack."""
-            cache_key = tuple(stack)
-            cached_style = style_cache_get(cache_key)
-            if cached_style is not None:
+            cache_key = tuple(sorted(stack))
+            if (cached_style := style_cache_get(cache_key)) is not None:
                 return cached_style
             styles = [style_map[_style_id] for _style_id in cache_key]
-            current_style = combine(styles)
-            style_cache[cache_key] = current_style
+            current_style = style_cache[cache_key] = combine(styles)
             return current_style
 
         for (offset, leaving, style_id), (next_offset, _, _) in zip(spans, spans[1:]):
@@ -1809,9 +1805,6 @@ class _FormattedLine:
             else []
         )
         add_segment = segments.append
-        print(content)
-        print(content.spans)
-        print("----", get_style)
 
         for text, text_style in content.render(style, end="", parse_style=get_style):
             add_segment(

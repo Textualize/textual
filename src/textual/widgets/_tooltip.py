@@ -9,13 +9,16 @@ class Tooltip(Static, inherit_css=False):
         layer: _tooltips;
         margin: 1 0;
         padding: 1 2;
-        background: $ansi-background;
+        background: $panel;
         width: auto;
         height: auto;
         constrain: inside inflect;
         max-width: 40;
         display: none;
         offset-x: -50%;
+        &:ansi {
+            background: $ansi-background;
+        }
     }
     """
     DEFAULT_CLASSES = "-textual-system"
