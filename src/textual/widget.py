@@ -1292,24 +1292,23 @@ class Widget(DOMNode):
         """
         if isinstance(style, VisualStyle):
             return style
-        visual_style = VisualStyle.null()
+
         if style.startswith("."):
+            style_name = style[1:]
             for node in self.ancestors_with_self:
                 if not isinstance(node, Widget):
                     break
                 try:
-                    visual_style = node.get_visual_style(style[1:], partial=True)
-                    break
+                    return node.get_visual_style(style_name, partial=True)
                 except KeyError:
                     continue
             else:
                 raise KeyError(f"No matching component class found for '{style}'")
-            return visual_style
+            return VisualStyle.null()
         try:
-            visual_style = VisualStyle.parse(style)
+            return VisualStyle.parse(style)
         except Exception:
-            pass
-        return visual_style
+            return VisualStyle.null()
 
     @overload
     def render_str(self, text_content: str) -> Content: ...

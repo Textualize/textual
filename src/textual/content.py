@@ -662,6 +662,8 @@ class Content(Visual):
                 if end == -1:
                     end = len(line.plain)
                 line = line.stylize(selection_style, start, end)
+                print(repr(selection_style))
+                print(line, line.spans)
 
             line = line.expand_tabs(tab_size)
 
@@ -1346,6 +1348,7 @@ class Content(Visual):
             An iterable of string and styles, which make up the content.
 
         """
+
         if not self._spans:
             yield (self._text, base_style)
             if end:
@@ -1368,7 +1371,15 @@ class Content(Visual):
             get_style = _get_style
 
         else:
-            get_style = parse_style
+            _parse_style_cache = {}
+
+            def _get_style(style: str | Style) -> Style:
+                if (cached_style := _parse_style_cache.get(style)) is not None:
+                    return cached_style
+                _parse_style_cache[style] = _style = parse_style(style)
+                return _style
+
+            get_style = _get_style
 
         enumerated_spans = list(enumerate(self._spans, 1))
         style_map = {
@@ -1798,6 +1809,10 @@ class _FormattedLine:
             else []
         )
         add_segment = segments.append
+        print(content)
+        print(content.spans)
+        print("----", get_style)
+
         for text, text_style in content.render(style, end="", parse_style=get_style):
             add_segment(
                 _Segment(text, (style + text_style).rich_style_with_offset(x, y))

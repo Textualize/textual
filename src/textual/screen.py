@@ -195,8 +195,9 @@ class Screen(Generic[ScreenResultType], Widget):
                 }
             }
         }
-        .screen--selection {
-            background: $primary 50%;            
+        & > .screen--selection {
+            background: $screen-selection-background;
+            color: $screen-selection-foreground;     
         }
     }
     """

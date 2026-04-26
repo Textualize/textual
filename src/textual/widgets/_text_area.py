@@ -141,6 +141,7 @@ TextArea {
 
     & .text-area--selection {
         background: $input-selection-background;
+        color: $input-selection-foreground;
     }
 
     & .text-area--matching-bracket {

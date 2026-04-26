@@ -438,20 +438,16 @@ class Command(Option):
 class CommandList(OptionList, can_focus=False):
     """The command palette command list."""
 
-    SCOPED_CSS = False
-
     DEFAULT_CSS = """
-    App:ansi {
     
-        CommandList {
-            & > .option-list--option-highlighted {             
-                color: $block-cursor-foreground;
-                background: $block-cursor-background;
-                text-style: $block-cursor-text-style;    
-            }               
-        }       
-
-    }
+    CommandList:ansi {
+        & > .option-list--option-highlighted {             
+            color: $block-cursor-foreground;
+            background: $block-cursor-background;
+            text-style: $block-cursor-text-style;    
+        }               
+    }       
+    
     CommandList {
         visibility: hidden;
         border-top: blank;
@@ -1130,7 +1126,6 @@ class CommandPalette(SystemModalScreen[None]):
                     help_style = Style.from_styles(
                         self.get_component_styles("command-palette--help-text")
                     )
-                    self.log(help_style)
                     yield Content.from_markup(hit.help).stylize_before(help_style)
 
             prompt = Content("\n").join(build_prompt())
