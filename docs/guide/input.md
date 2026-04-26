@@ -65,6 +65,17 @@ The `is_printable` attribute is a boolean which indicates if the key would typic
 
 Some keys or combinations of keys can produce the same event. For instance, the ++tab++ key is indistinguishable from ++ctrl+i++ in the terminal. For such keys, Textual events will contain a list of the possible keys that may have produced this event. In the case of ++tab++, the `aliases` attribute will contain `["tab", "ctrl+i"]`
 
+#### Key identifiers in bindings
+
+Bindings use the same key identifier strings that Textual uses internally for the `key` attribute.
+
+- Letters and numbers stay as-is, for example `p` or `7`.
+- Named keys use long-form identifiers, for example `enter`, `tab`, or `pageup`.
+- Punctuation keys are normalized to descriptive names such as `question_mark` or `left_square_bracket`.
+- Modifiers are joined with `+`, for example `ctrl+p`, `shift+home`, or `ctrl+question_mark`.
+
+When Textual renders a binding in the footer or key panel, it converts those identifiers back into a display form. For example, `question_mark` is shown as `?`, and `ctrl+question_mark` is shown as `^?`. If you want a different label, set `key_display` on the binding.
+
 
 ### Key methods
 
