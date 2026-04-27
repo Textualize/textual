@@ -466,6 +466,7 @@ If we decide we want to change some aspect of our design in the future, we only 
     Variables can only be used in the _values_ of a CSS declaration. You cannot, for example, refer to a variable inside a selector.
 
 Variables can refer to other variables.
+Variables that you define in a stylesheet stay scoped to that stylesheet. If your app loads multiple CSS files via `CSS_PATH`, a variable from one file is not automatically available in the files that follow it. To share values across stylesheets, define them in each file or expose them through theme variables or `App.get_theme_variable_defaults`.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
