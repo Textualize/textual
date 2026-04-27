@@ -158,6 +158,8 @@ You can work around this with the [App.call_from_thread][textual.app.App.call_fr
 
 The second difference is that you can't cancel threads in the same way as coroutines, but you *can* manually check if the worker was cancelled.
 
+Because a blocking thread keeps running until it returns control, thread workers are best kept short-lived. If you need longer-running background work, prefer async workers or split the work into smaller steps that can check for cancellation between blocking calls.
+
 Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in the standard library).
 The `urllib` module is not async aware, so we will need to use threads:
 
