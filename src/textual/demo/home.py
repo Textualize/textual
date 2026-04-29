@@ -228,14 +228,10 @@ class HomeScreen(PageScreen):
     HomeScreen {
         
         Content {
-            align-horizontal: center;
-            # & > * {
-            #     max-width: 100;
-            # }      
+            align-horizontal: center;               
             margin: 0 1;          
             overflow-y: auto;
-            height: 1fr;
-            # scrollbar-gutter: stable;
+            height: 1fr;            
             MarkdownFence {
                 height: auto;
                 max-height: initial;
@@ -252,18 +248,8 @@ class HomeScreen(PageScreen):
                 }
                 
             }
-            Markdown{           
-               
-                margin-right: 1;
-                # padding-right: 1;                
-                # background: transparent;
-                # & > MarkdownBlock:first-of-type {
-                #     margin-top: 1;
-                # }
-                # &>MarkdownBlock {
-                #     padding: 0 0;
-                    
-                # }
+            Markdown{                          
+                margin-right: 1;                
             }
         }
     }
