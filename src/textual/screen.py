@@ -197,7 +197,7 @@ class Screen(Generic[ScreenResultType], Widget):
         }
         & > .screen--selection {
             background: $screen-selection-background;
-            color: $screen-selection-foreground;     
+            color: $screen-selection-foreground;
         }
     }
     """

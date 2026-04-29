@@ -52,6 +52,84 @@ class HighlightTheme:
     }
 
 
+class ANSIDarkHighlightTheme(HighlightTheme):
+    """Contains the style definition for user with the highlight method."""
+
+    STYLES: dict[TokenType, str] = {
+        Token.Comment: "dim italic",
+        Token.Error: "ansi_red",
+        Token.Generic.Strong: "bold",
+        Token.Generic.Emph: "italic",
+        Token.Generic.Error: "ansi_red",
+        Token.Generic.Heading: "ansi_blue underline",
+        Token.Generic.Subheading: "ansi_blue",
+        Token.Keyword: "ansi_magenta",
+        Token.Keyword.Constant: "ansi_cyan",
+        Token.Keyword.Namespace: "ansi_magenta",
+        Token.Keyword.Type: "ansi_cyan",
+        Token.Literal.Number: "ansi_yellow",
+        Token.Literal.String.Backtick: "ansi_bright_black",
+        Token.Literal.String: "ansi_green",
+        Token.Literal.String.Doc: "ansi_green italic",
+        Token.Literal.String.Double: "ansi_green",
+        Token.Name: "ansi_default",
+        Token.Name.Attribute: "ansi_yelllow",
+        Token.Name.Builtin: "ansi_cyan",
+        Token.Name.Builtin.Pseudo: "italic",
+        Token.Name.Class: "ansi_yellow",
+        Token.Name.Constant: "ansi_red",
+        Token.Name.Decorator: "ansi_blue bold",
+        Token.Name.Function: "ansi_blue",
+        Token.Name.Function.Magic: "ansi_blow",
+        Token.Name.Tag: "ansi_blue bold",
+        Token.Name.Variable: "ansi_default",
+        Token.Number: "ansi_yellow",
+        Token.Operator: "ansi_default",
+        Token.Operator.Word: "ansi_magenta",
+        Token.String: "ansi_greenb",
+        Token.Whitespace: "",
+    }
+
+
+class ANSILightHighlightTheme(HighlightTheme):
+    """Contains the style definition for user with the highlight method."""
+
+    STYLES: dict[TokenType, str] = {
+        Token.Comment: "dim italic",
+        Token.Error: "ans_red",
+        Token.Generic.Strong: "bold",
+        Token.Generic.Emph: "italic",
+        Token.Generic.Error: "ansi_red",
+        Token.Generic.Heading: "ansi_blue underline",
+        Token.Generic.Subheading: "ansi_blue",
+        Token.Keyword: "ansi_magenta",
+        Token.Keyword.Constant: "ansi_cyan",
+        Token.Keyword.Namespace: "ansi_magenta",
+        Token.Keyword.Type: "ansi_cyan",
+        Token.Literal.Number: "bold ansi_blue",
+        Token.Literal.String.Backtick: "ansi_bright_black",
+        Token.Literal.String: "ansi_green",
+        Token.Literal.String.Doc: "ansi_green italic",
+        Token.Literal.String.Double: "ansi_green",
+        Token.Name: "ansi_default",
+        Token.Name.Attribute: "ansi_yelllow",
+        Token.Name.Builtin: "ansi_cyan",
+        Token.Name.Builtin.Pseudo: "italic",
+        Token.Name.Class: "bold ansi_blue",
+        Token.Name.Constant: "ansi_red",
+        Token.Name.Decorator: "ansi_blue bold",
+        Token.Name.Function: "ansi_blue",
+        Token.Name.Function.Magic: "ansi_blow",
+        Token.Name.Tag: "ansi_blue bold",
+        Token.Name.Variable: "ansi_default",
+        Token.Number: "bold ansi_blue",
+        Token.Operator: "ansi_default",
+        Token.Operator.Word: "ansi_magenta",
+        Token.String: "ansi_greenb",
+        Token.Whitespace: "",
+    }
+
+
 def guess_language(code: str, path: str | None) -> str:
     """Guess the language based on the code and path.
     The result may be used in the [highlight][textual.highlight.highlight] function.

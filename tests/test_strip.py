@@ -99,9 +99,11 @@ def test_simplify():
 
 
 def test_apply_filter():
-    strip = Strip([Segment("foo", Style.parse("red"))])
-    expected = Strip([Segment("foo", Style.parse("#1b1b1b"))])
-    assert strip.apply_filter(Monochrome(), Color(0, 0, 0)) == expected
+    strip = Strip([Segment("foo", Style.parse("#990000"))])
+    expected = Strip([Segment("foo", Style.parse("#212121"))])
+    result = strip.apply_filter(Monochrome(), Color(0, 0, 0))
+    print(repr(result))
+    assert result == expected
 
 
 def test_style_links():
