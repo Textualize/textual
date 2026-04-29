@@ -73,6 +73,11 @@ class Button(Widget, can_focus=True):
             border: tall $border;               
         }
 
+        &.-active {
+            background: $ansi-background !important;
+            border: blank $background !important;           
+            tint: transparent;
+        }
                     
         &.-primary {
             color: $primary;

@@ -194,6 +194,10 @@ class Screen(Generic[ScreenResultType], Widget):
                     text-style: not dim;
                 }
             }
+            &:inline {
+                border-top: tall $ansi-background;
+                border-bottom: tall $ansi-background;
+            }
         }
         & > .screen--selection {
             background: $screen-selection-background;
