@@ -237,9 +237,7 @@ class HomeScreen(PageScreen):
                 max-height: initial;
             }
             Collapsible {
-                margin: 0 2;
-                # padding: 0;               
-                # &.-collapsed { padding-bottom: 1; }
+                margin: 0 2;                
                 Contents {
                     padding: 1 0 0 0;
                     MarkdownHeader {

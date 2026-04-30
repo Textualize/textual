@@ -89,6 +89,7 @@ from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.selection import Selection
 from textual.strip import Strip
+from textual.style import NULL_STYLE
 from textual.style import Style as VisualStyle
 from textual.visual import Visual, VisualType, visualize
 
@@ -1304,11 +1305,11 @@ class Widget(DOMNode):
                     continue
             else:
                 raise KeyError(f"No matching component class found for '{style}'")
-            return VisualStyle.null()
+            return NULL_STYLE
         try:
             return VisualStyle.parse(style)
         except Exception:
-            return VisualStyle.null()
+            return NULL_STYLE
 
     @overload
     def render_str(self, text_content: str) -> Content: ...
@@ -2360,7 +2361,7 @@ class Widget(DOMNode):
         while isinstance(node, Widget) and not node.is_dom_root:
             if node.disabled:
                 return True
-            node = node._parent  # type:ignore[assignment]
+            node = node._parent  # type: ignore[assignment]
         return False
 
     @property
@@ -3937,7 +3938,7 @@ class Widget(DOMNode):
             scrollbar_size_vertical = styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
-            (region, _, _, _) = region.split(
+            region, _, _, _ = region.split(
                 -scrollbar_size_vertical,
                 -scrollbar_size_horizontal,
             )
