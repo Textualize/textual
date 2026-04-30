@@ -460,6 +460,8 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "ansi-background": "ansi_black",
             "ansi-foreground": "ansi_white",
             "border-blurred": "ansi_black",
+            "block-cursor-foreground": "ansi_bright_white",
+            "block-cursor-background": "ansi_magenta",
             "input-cursor-background": "ansi_black",
             "input-cursor-foreground": "ansi_bright_white",
             "input-cursor-text-style": "none",
