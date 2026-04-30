@@ -188,10 +188,8 @@ class Screen(Generic[ScreenResultType], Widget):
             color: $screen-selection-foreground;           
         }
         &:ansi {
-
             background: ansi_default;
             color: ansi_default;
-
             &.-screen-suspended {
                 text-style: dim;
                 ScrollBar {

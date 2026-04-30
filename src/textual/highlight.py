@@ -24,7 +24,7 @@ class HighlightTheme:
         Token.Generic.Error: "$text-error on $error-muted",
         Token.Generic.Heading: "$text-primary underline",
         Token.Generic.Subheading: "$text-primary",
-        Token.Keyword: "bold $text-accent",
+        Token.Keyword: "$text-accent",
         Token.Keyword.Constant: "bold $text-success 80%",
         Token.Keyword.Namespace: "$text-error",
         Token.Keyword.Type: "bold",
