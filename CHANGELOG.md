@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [8.2.5] - 2026-04-30
+
+### Added
+
+- Swappable ANSI themes
+
 ## [8.2.4] - 2026-04-19
 
 ### Added
