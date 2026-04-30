@@ -224,6 +224,9 @@ class Visual(ABC):
                     "screen--selection", default=RICH_NULL_STYLE
                 )
             )
+            selection_style = Style.from_styles(
+                widget.screen.get_component_styles("screen--selection")
+            )
         else:
             selection_style = None
 

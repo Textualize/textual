@@ -121,7 +121,6 @@ class ColorSystem:
             A mapping of color name on to a CSS-style encoded color
         """
 
-        get = self.get_or_default
         primary = self.primary
         secondary = self.secondary or primary
         warning = self.warning or primary
@@ -219,6 +218,8 @@ class ColorSystem:
             "button-foreground": "ansi_default",
             "button-color-foreground": "ansi_default",
             "button-focus-text-style": "b reverse",
+            "screen-selection-background": "ansi_cyan",
+            "screen-selection-foreground": "ansi_black",
         }
 
         SHADE_COLORS = [
@@ -523,7 +524,7 @@ class ColorSystem:
             "screen-selection-background", primary.with_alpha(0.5).hex
         )
         colors["screen-selection-foreground"] = get(
-            "screen-selection-foreground", foreground.hex
+            "screen-selection-foreground", "transparent"
         )
 
         return colors
