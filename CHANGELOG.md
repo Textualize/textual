@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Swappable ANSI themes
+- Two new themes: "ansi-dark" and "ansi-light" https://github.com/Textualize/textual/pull/6513
+- Added an `ansi` value to themes https://github.com/Textualize/textual/pull/6513
+
+### Changed
+
+- `App.ansi_color` may now be `None` to use the `ansi` value from the theme. https://github.com/Textualize/textual/pull/6513
 
 ## [8.2.4] - 2026-04-19
 
@@ -3429,6 +3434,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[8.2.5]: https://github.com/Textualize/textual/compare/v8.2.4...v8.2.5
 [8.2.4]: https://github.com/Textualize/textual/compare/v8.2.3...v8.2.4
 [8.2.3]: https://github.com/Textualize/textual/compare/v8.2.2...v8.2.3
 [8.2.2]: https://github.com/Textualize/textual/compare/v8.2.1...v8.2.2
