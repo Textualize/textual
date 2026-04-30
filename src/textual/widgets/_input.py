@@ -205,6 +205,7 @@ class Input(ScrollView):
         }
         &>.input--selection {
             background: $input-selection-background;
+            color: $input-selection-foreground;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;

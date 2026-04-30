@@ -34,9 +34,12 @@ class Underline(Widget):
         & > .underline--bar {
             color: $block-cursor-background;
             background: $foreground 10%;
-        }
-        &:ansi {
-            text-style: dim;
+        }        
+        &:ansi {            
+            & > .underline--bar {
+                color: $block-cursor-background;
+                background: $border-blurred;
+            }
         }
     }
     """
@@ -101,6 +104,14 @@ class Tab(Static):
         color: $foreground 50%;
         pointer: pointer;
 
+        &:ansi {
+            text-style: dim;
+            &.-active {
+                text-style: not dim bold;
+            }
+        }
+
+        
         &:hover {
             color: $foreground;
         }
@@ -229,27 +240,6 @@ class Tabs(Widget, can_focus=True):
             height: auto;
             min-width: 100%;
             overflow: hidden hidden;
-        }
-        &:ansi {
-            #tabs-list {
-                text-style: dim;
-            }
-            & #tabs-list > .-active {
-                text-style: not dim;
-            }
-            &:focus {
-                #tabs-list > .-active {
-                    text-style: bold not dim;
-                }
-            }
-            & .underline--bar {
-                color: ansi_bright_blue;
-                background: ansi_default;
-            }
-            & .-active {
-                color: transparent;
-                background: transparent;
-            }
         }
     }
     """

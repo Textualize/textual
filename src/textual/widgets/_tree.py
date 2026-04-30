@@ -636,17 +636,18 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             }
         }
 
-        &:ansi {
-            color: ansi_default;
-            & > .tree--guides {
-                color: ansi_green;
-            }
-            &:nocolor > .tree--cursor{
-                text-style: reverse;
-            }
-        }
-    }
 
+    }
+    Tree:ansi {
+        color: ansi_default;
+        & > .tree--guides {
+            color: $ansi-background;
+        }
+        &:nocolor > .tree--cursor{
+            text-style: reverse;
+        }        
+    }
+    
     """
 
     show_root = reactive(True)

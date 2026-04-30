@@ -345,6 +345,7 @@ class Content(Visual):
                 )
                 for start, end, style in text._spans
             ]
+
         else:
             spans = []
 
@@ -1345,6 +1346,7 @@ class Content(Visual):
             An iterable of string and styles, which make up the content.
 
         """
+
         if not self._spans:
             yield (self._text, base_style)
             if end:
@@ -1367,7 +1369,15 @@ class Content(Visual):
             get_style = _get_style
 
         else:
-            get_style = parse_style
+            _parse_style_cache = {}
+
+            def _get_style(style: str | Style) -> Style:
+                if (cached_style := _parse_style_cache.get(style)) is not None:
+                    return cached_style
+                _parse_style_cache[style] = _style = parse_style(style)
+                return _style
+
+            get_style = _get_style
 
         enumerated_spans = list(enumerate(self._spans, 1))
         style_map = {
@@ -1397,13 +1407,11 @@ class Content(Visual):
 
         def get_current_style() -> Style:
             """Construct current style from stack."""
-            cache_key = tuple(stack)
-            cached_style = style_cache_get(cache_key)
-            if cached_style is not None:
+            cache_key = tuple(sorted(stack))
+            if (cached_style := style_cache_get(cache_key)) is not None:
                 return cached_style
             styles = [style_map[_style_id] for _style_id in cache_key]
-            current_style = combine(styles)
-            style_cache[cache_key] = current_style
+            current_style = style_cache[cache_key] = combine(styles)
             return current_style
 
         for (offset, leaving, style_id), (next_offset, _, _) in zip(spans, spans[1:]):
@@ -1797,6 +1805,7 @@ class _FormattedLine:
             else []
         )
         add_segment = segments.append
+
         for text, text_style in content.render(style, end="", parse_style=get_style):
             add_segment(
                 _Segment(text, (style + text_style).rich_style_with_offset(x, y))

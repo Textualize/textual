@@ -303,7 +303,7 @@ And a RichLog widget to display Rich renderables.
             height: 20;
             padding: 1;
             overflow-x: auto;
-            border: wide transparent;
+            border: wide $border-blurred;
             &:focus {
                 border: wide $border;
             }
@@ -362,6 +362,8 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
     def on_mount(self) -> None:
         log = self.query_one(Log)
         rich_log = self.query_one(RichLog)
+        log.anchor()
+        rich_log.anchor()
         log.write("I am a Log Widget")
         rich_log.write("I am a Rich Log Widget")
         self.set_interval(0.25, self.update_log)
@@ -415,7 +417,7 @@ class Markdowns(containers.VerticalGroup):
     Markdowns {
         #container {
             background: $boost;
-            border: tall transparent;   
+            border: tall $border-blurred;   
             height: 16;
             padding: 0 1;
             &:focus { border: tall $border; }
@@ -537,7 +539,7 @@ For detailed graphs, see [textual-plotext](https://github.com/Textualize/textual
         }
         VerticalScroll {
             height: auto;
-            border: heavy transparent;
+            border: heavy $border-blurred;
             &:focus { border: heavy $border; }
         }
     }
@@ -593,7 +595,7 @@ Functionally almost identical to a Checkbox, but displays more prominently in th
 Switches {    
     Label {
         padding: 1;
-        &:hover {text-style:underline; }
+        &:hover {text-style:underline; pointer: pointer;}
     }
 }
 """
@@ -676,7 +678,7 @@ There is also the Tree widget's cousin, DirectoryTree, to navigate folders and f
             height: 16;            
             padding: 1;
             &.-maximized { height: 1fr; }    
-            border: wide transparent;            
+            border: wide $border-blurred;            
             &:focus { border: wide $border; }        
         }
         VerticalGroup {

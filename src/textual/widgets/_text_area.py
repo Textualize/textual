@@ -141,6 +141,7 @@ TextArea {
 
     & .text-area--selection {
         background: $input-selection-background;
+        color: $input-selection-foreground;
     }
 
     & .text-area--matching-bracket {
@@ -160,6 +161,11 @@ TextArea {
     }
 
     &:ansi {
+        .text-area--cursor {
+            color: $input-cursor-foreground;
+            background: $input-cursor-background;
+            text-style: reverse;
+        }
         & .text-area--selection {
             background: transparent;
             text-style: reverse;

@@ -89,6 +89,7 @@ from textual.renderables.blank import Blank
 from textual.rlock import RLock
 from textual.selection import Selection
 from textual.strip import Strip
+from textual.style import NULL_STYLE
 from textual.style import Style as VisualStyle
 from textual.visual import Visual, VisualType, visualize
 
@@ -399,7 +400,7 @@ class Widget(DOMNode):
         "light": lambda widget: not widget.app.current_theme.dark,
         "focus-within": lambda widget: widget.has_focus_within,
         "inline": lambda widget: widget.app.is_inline,
-        "ansi": lambda widget: widget.app.ansi_color,
+        "ansi": lambda widget: widget.app.native_ansi_color,
         "nocolor": lambda widget: widget.app.no_color,
         "first-of-type": lambda widget: widget.first_of_type,
         "last-of-type": lambda widget: widget.last_of_type,
@@ -1292,24 +1293,23 @@ class Widget(DOMNode):
         """
         if isinstance(style, VisualStyle):
             return style
-        visual_style = VisualStyle.null()
+
         if style.startswith("."):
+            style_name = style[1:]
             for node in self.ancestors_with_self:
                 if not isinstance(node, Widget):
                     break
                 try:
-                    visual_style = node.get_visual_style(style[1:], partial=True)
-                    break
+                    return node.get_visual_style(style_name, partial=True)
                 except KeyError:
                     continue
             else:
                 raise KeyError(f"No matching component class found for '{style}'")
-            return visual_style
+            return NULL_STYLE
         try:
-            visual_style = VisualStyle.parse(style)
+            return VisualStyle.parse(style)
         except Exception:
-            pass
-        return visual_style
+            return NULL_STYLE
 
     @overload
     def render_str(self, text_content: str) -> Content: ...
@@ -2361,7 +2361,7 @@ class Widget(DOMNode):
         while isinstance(node, Widget) and not node.is_dom_root:
             if node.disabled:
                 return True
-            node = node._parent  # type:ignore[assignment]
+            node = node._parent  # type: ignore[assignment]
         return False
 
     @property
@@ -3938,7 +3938,7 @@ class Widget(DOMNode):
             scrollbar_size_vertical = styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
-            (region, _, _, _) = region.split(
+            region, _, _, _ = region.split(
                 -scrollbar_size_vertical,
                 -scrollbar_size_horizontal,
             )

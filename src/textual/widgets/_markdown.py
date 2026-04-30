@@ -870,21 +870,57 @@ class MarkdownFence(MarkdownBlock):
             padding: 1 2;
         }
     }
+    MarkdownFence:ansi {
+        background: transparent;
+
+        margin: 0;
+        & > Label {
+            padding: 1 0;
+        }
+        
+    }
     """
 
     def __init__(self, markdown: Markdown, token: Token, code: str) -> None:
         super().__init__(markdown, token)
         self.code = code
         self.lexer = token.info
-        self._highlighted_code = self.highlight(self.code, self.lexer)
+        self._highlighted_code = self.highlight(
+            self.code,
+            self.lexer,
+            ansi=self.app.native_ansi_color,
+            dark=self.app.current_theme.dark,
+        )
+
+    def notify_style_update(self) -> None:
+        """Update highlight theme when App theme changes."""
+        self._highlighted_code = self.highlight(
+            self.code,
+            self.lexer,
+            ansi=self.app.native_ansi_color,
+            dark=self.app.current_theme.dark,
+        )
+        self.set_content(self._highlighted_code)
+        return super().notify_style_update()
 
     @property
     def allow_horizontal_scroll(self) -> bool:
         return True
 
     @classmethod
-    def highlight(cls, code: str, language: str) -> Content:
-        return highlight(code, language=language or None)
+    def highlight(
+        cls, code: str, language: str, ansi: bool = False, dark: bool = False
+    ) -> Content:
+        if ansi:
+            if dark:
+                from textual.highlight import ANSIDarkHighlightTheme as HighlightTheme
+            else:
+                from textual.highlight import ANSILightHighlightTheme as HighlightTheme
+
+        else:
+            from textual.highlight import HighlightTheme
+
+        return highlight(code, language=language or None, theme=HighlightTheme)
 
     def _copy_context(self, block: MarkdownBlock) -> None:
         if isinstance(block, MarkdownFence):
@@ -919,6 +955,12 @@ class Markdown(Widget):
         color: $foreground;
         overflow-y: hidden;
 
+        &:ansi {
+            MarkdownBlock > .code_inline {
+                background: ansi_default !important;
+            }
+        }
+        
         MarkdownBlock {
             &:dark > .code_inline {
                 background: $warning 10%;
@@ -927,7 +969,7 @@ class Markdown(Widget):
             &:light > .code_inline {
                 background: $error 5%;
                 color: $text-error 95%;
-            }
+            }           
             & > .em {
                 text-style: italic;
             }

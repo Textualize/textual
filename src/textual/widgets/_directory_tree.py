@@ -73,7 +73,7 @@ class DirectoryTree(Tree[DirEntry]):
         &:ansi {
         
             & > .tree--guides {
-               color: transparent;              
+               color: ansi_bright_black;              
             }
         
             & > .directory-tree--folder {

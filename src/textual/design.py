@@ -8,7 +8,7 @@ from rich.padding import Padding
 from rich.table import Table
 from rich.text import Text
 
-from textual.color import WHITE, Color
+from textual.color import TRANSPARENT, WHITE, Color
 
 NUMBER_OF_SHADES = 3
 
@@ -61,6 +61,7 @@ class ColorSystem:
         luminosity_spread: float = 0.15,
         text_alpha: float = 0.95,
         variables: dict[str, str] | None = None,
+        ansi: bool = False,
     ):
         def parse(color: str | None) -> Color | None:
             if color is None:
@@ -83,6 +84,8 @@ class ColorSystem:
         self.text_alpha = text_alpha
         self.variables = variables or {}
         """Overrides for specific variables."""
+        self.ansi = ansi
+        """Generate an ansi theme."""
 
     @property
     def shades(self) -> Iterable[str]:
@@ -106,7 +109,150 @@ class ColorSystem:
         Returns:
             A mapping of color name on to a CSS-style encoded color
         """
+        if self.ansi:
+            return self._generate_ansi()
+        else:
+            return self._generate()
 
+    def _generate_ansi(self) -> dict[str, str]:
+        """Generate a ANSI colors.
+
+        Returns:
+            A mapping of color name on to a CSS-style encoded color
+        """
+
+        primary = self.primary
+        secondary = self.secondary or primary
+        warning = self.warning or primary
+        error = self.error or secondary
+        success = self.success or secondary
+        accent = self.accent or primary
+
+        background = "ansi_default" if self.background is None else self.background.hex
+        foreground = "ansi_default" if self.foreground is None else self.foreground.hex
+
+        colors: dict[str, str] = {
+            "primary": primary.hex,
+            "secondary": secondary.hex,
+            "warning": warning.hex,
+            "error": error.hex,
+            "success": success.hex,
+            "accent": accent.hex,
+            "background": background,
+            "foreground": foreground,
+            "primary-background": background,
+            "secondary-background": background,
+            "boost": "transparent",
+            "surface": "transparent",
+            "text": "ansi_default",
+            "text-muted": "ansi_default 50%",
+            "text-disabled": "ansi_default 50%",
+            "text-primary": primary.hex,
+            "text-secondary": secondary.hex,
+            "text-warning": warning.hex,
+            "text-error": error.hex,
+            "text-success": success.hex,
+            "text-accent": accent.hex,
+            "panel": "transparent",
+            "primary-muted": f"{primary.hex} 50%",
+            "secondary-muted": f"{secondary.hex} 50%",
+            "warning-muted": f"{warning.hex} 50%",
+            "error-muted": f"{error.hex} 50%",
+            "success-muted": f"{success.hex} 50%",
+            "accent-muted": f"{accent.hex} 50%",
+            "foreground-muted": "ansi_default 50%",
+            "background-muted": "ansi_default 50%",
+            "block-cursor-foreground": "ansi_default",
+            "block-cursor-background": "ansi_magenta",
+            "block-cursor-text-style": "bold",
+            "block-cursor-blurred-foreground": "ansi_default",
+            "block-cursor-blurred-background": "ansi_default",
+            "block-cursor-blurred-text-style": "none",
+            "block-hover-background": "ansi_default",
+            "border": "ansi_magenta",
+            "border-blurred": "ansi_black",
+            "surface-actrive": "transparent",
+            "scrollbar": "ansi_blue",
+            "scrollbar-hover": "ansi_blue",
+            "scrollbar-active": "ansi_bright_blue",
+            "scrollbar-background": "ansi_black",
+            "scrollbar-corner-color": "ansi_default",
+            "scrollbar-background-hover": "ansi_black",
+            "scrollbar-background-active": "ansi_black",
+            "link-style": "underline",
+            "link-background": "transparent",
+            "link-background-hover": "ansi_bright_blue",
+            "link-color": "ansi_blue",
+            "link-color-hover": "ansi_bright_white",
+            "link-style-hover": "not underline",
+            "footer-foreground": "ansi_default",
+            "footer-background": "ansi_default",
+            "footer-key-foreground": "ansi_magenta",
+            "footer-key-background": "transparent",
+            "footer-description-foreground": "ansi_default",
+            "footer-description-background": "ansi_default",
+            "footer-item-background": "ansi_default",
+            "input-cursor-background": "ansi_default",
+            "input-cursor-foreground": "ansi_default",
+            "input-cursor-text-style": "reverse",
+            "input-selection-background": "ansi_cyan",
+            "input-selection-foreground": "ansi_default",
+            "markdown-h1-color": "ansi_magenta",
+            "markdown-h1-background": "transparent",
+            "markdown-h1-text-style": "bold",
+            "markdown-h2-color": "ansi_bright_blue",
+            "markdown-h2-background": "transparent",
+            "markdown-h2-text-style": "underline",
+            "markdown-h3-color": "ansi_blue",
+            "markdown-h3-background": "transparent",
+            "markdown-h3-text-style": "none",
+            "markdown-h4-color": "ansi_cyan",
+            "markdown-h4-background": "transparent",
+            "markdown-h4-text-style": "bold",
+            "markdown-h5-color": "ansi_cyan",
+            "markdown-h5-background": "transparent",
+            "markdown-h5-text-style": "none",
+            "markdown-h6-color": "ansi_cyan",
+            "markdown-h6-background": "transparent",
+            "markdown-h6-text-style": "underline",
+            "button-foreground": "ansi_default",
+            "button-color-foreground": "ansi_default",
+            "button-focus-text-style": "b reverse",
+            "screen-selection-background": "ansi_cyan",
+            "screen-selection-foreground": "ansi_black",
+        }
+
+        SHADE_COLORS = [
+            "primary",
+            "secondary",
+            "primary-background",
+            "secondary-background",
+            "background",
+            "foreground",
+            "panel",
+            "boost",
+            "surface",
+            "warning",
+            "error",
+            "success",
+            "accent",
+        ]
+        for shade in range(1, NUMBER_OF_SHADES + 1):
+            for color_name in SHADE_COLORS:
+                colors[f"{color_name}-lighten-{shade}"] = colors[color_name]
+                colors[f"{color_name}-darken-{shade}"] = colors[color_name]
+
+        colors.update(self.variables)
+        return colors
+
+    def _generate(self) -> dict[str, str]:
+        """Generate a mapping of color name on to a CSS color.
+
+        Returns:
+            A mapping of color name on to a CSS-style encoded color
+        """
+
+        get = self.get_or_default
         primary = self.primary
         secondary = self.secondary or primary
         warning = self.warning or primary
@@ -127,23 +273,36 @@ class ColorSystem:
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
 
         foreground = self.foreground or (background.inverse)
-        contrast_text = background.get_contrast_text(1.0)
-        boost = self.boost or contrast_text.with_alpha(0.04)
 
+        boost: Color = TRANSPARENT
         # Colored text
-        colors["text-primary"] = contrast_text.tint(primary.with_alpha(0.66)).hex
-        colors["text-secondary"] = contrast_text.tint(secondary.with_alpha(0.66)).hex
-        colors["text-warning"] = contrast_text.tint(warning.with_alpha(0.66)).hex
-        colors["text-error"] = contrast_text.tint(error.with_alpha(0.66)).hex
-        colors["text-success"] = contrast_text.tint(success.with_alpha(0.66)).hex
-        colors["text-accent"] = contrast_text.tint(accent.with_alpha(0.66)).hex
+        if background.ansi is not None:
+            colors["text-primary"] = primary.hex
+            colors["text-secondary"] = secondary.hex
+            colors["text-warning"] = warning.hex
+            colors["text-error"] = error.hex
+            colors["text-success"] = success.hex
+            colors["text-accent"] = accent.hex
 
-        if self.panel is None:
-            panel = surface.blend(primary, 0.1, alpha=1)
-            if dark:
-                panel += boost
+            panel = TRANSPARENT if self.panel is None else self.panel
         else:
-            panel = self.panel
+            contrast_text = background.get_contrast_text(1.0)
+            colors["text-primary"] = contrast_text.tint(primary.with_alpha(0.66)).hex
+            colors["text-secondary"] = contrast_text.tint(
+                secondary.with_alpha(0.66)
+            ).hex
+            colors["text-warning"] = contrast_text.tint(warning.with_alpha(0.66)).hex
+            colors["text-error"] = contrast_text.tint(error.with_alpha(0.66)).hex
+            colors["text-success"] = contrast_text.tint(success.with_alpha(0.66)).hex
+            colors["text-accent"] = contrast_text.tint(accent.with_alpha(0.66)).hex
+
+            if self.panel is None:
+                panel = surface.blend(primary, 0.1, alpha=1)
+                if dark:
+                    boost = self.boost or contrast_text.with_alpha(0.04)
+                    panel += boost
+            else:
+                panel = self.panel
 
         def luminosity_range(spread: float) -> Iterable[tuple[str, float]]:
             """Get the range of shades from darken2 to lighten2.
@@ -180,8 +339,6 @@ class ColorSystem:
 
         # Colors names that have a dark variant
         DARK_SHADES = {"primary-background", "secondary-background"}
-
-        get = self.get_or_default
 
         for name, color in COLORS:
             is_dark_shade = dark and name in DARK_SHADES
@@ -321,6 +478,9 @@ class ColorSystem:
             "input-selection-background",
             Color.parse(colors["primary-lighten-1"]).with_alpha(0.4).hex,
         )
+        colors["input-selection-foreground"] = get(
+            "input-selection-foreground", foreground.hex
+        )
 
         # Markdown header styles
         colors["markdown-h1-color"] = get("markdown-h1-color", primary.hex)
@@ -356,6 +516,16 @@ class ColorSystem:
             "button-color-foreground", colors["text"]
         )
         colors["button-focus-text-style"] = get("button-focus-text-style", "b reverse")
+
+        colors["ansi-background"] = "transparent"
+        colors["ansi-foreground"] = "transparent"
+
+        colors["screen-selection-background"] = get(
+            "screen-selection-background", primary.with_alpha(0.5).hex
+        )
+        colors["screen-selection-foreground"] = get(
+            "screen-selection-foreground", "transparent"
+        )
 
         return colors
 

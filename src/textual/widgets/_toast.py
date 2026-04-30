@@ -48,6 +48,10 @@ class Toast(Static, inherit_css=False):
         link-background-hover: $primary;
         link-color-hover: $foreground;
         link-style-hover: bold not underline;
+
+        &:ansi {
+            background: $ansi-background;
+        }
     }
 
     .toast--title {

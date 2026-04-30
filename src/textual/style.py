@@ -367,7 +367,7 @@ class Style:
             (
                 None
                 if rich_style.bgcolor is None
-                else Color.from_rich_color(rich_style.bgcolor, theme)
+                else Color.from_rich_color(rich_style.bgcolor, theme, foreground=False)
             ),
             (
                 None
@@ -403,7 +403,7 @@ class Style:
                 else styles.color
             ),
             bold=text_style.bold,
-            dim=text_style.italic,
+            dim=text_style.dim,
             italic=text_style.italic,
             underline=text_style.underline,
             underline2=text_style.underline2,

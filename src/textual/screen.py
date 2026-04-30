@@ -183,22 +183,26 @@ class Screen(Generic[ScreenResultType], Widget):
             border-top: tall $background;
             border-bottom: tall $background;
         }
-
+        & > .screen--selection {
+            background: $screen-selection-background;
+            color: $screen-selection-foreground;           
+        }
         &:ansi {
             background: ansi_default;
             color: ansi_default;
-
-            &.-screen-suspended {                                            
+            &.-screen-suspended {
                 text-style: dim;
                 ScrollBar {
                     text-style: not dim;
                 }
             }
-        }
-        .screen--selection {
-            background: $primary 50%;            
+            &:inline {
+                border-top: tall $ansi-background;
+                border-bottom: tall $ansi-background;
+            }
         }
     }
+    
     """
 
     TITLE: ClassVar[str | None] = None

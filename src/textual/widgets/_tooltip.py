@@ -16,6 +16,9 @@ class Tooltip(Static, inherit_css=False):
         max-width: 40;
         display: none;
         offset-x: -50%;
+        &:ansi {
+            background: $ansi-background;
+        }
     }
     """
     DEFAULT_CLASSES = "-textual-system"
