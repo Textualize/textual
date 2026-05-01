@@ -929,6 +929,8 @@ class MarkdownFence(MarkdownBlock):
 
     async def _update_from_block(self, block: MarkdownBlock):
         if isinstance(block, MarkdownFence):
+            self.code = block.code
+            self._highlighted_code = block._highlighted_code
             self.set_content(block._highlighted_code)
             self._copy_context(block)
         else:
