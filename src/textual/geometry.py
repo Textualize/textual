@@ -1346,7 +1346,7 @@ class Shape:
         return hash(self._regions)
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._regions
+        yield None, self._regions
 
     @property
     def regions(self) -> tuple[Region, ...]:
@@ -1363,6 +1363,15 @@ class Shape:
         """Cells covered by the shape."""
         # TODO: Currently doesn't handle overlapping regions
         return sum(region.area for region in self._regions)
+
+    @classmethod
+    def from_region(cls, region: Region) -> Shape:
+        """Get a single-region Shape.
+
+        Args:
+            region: Region to define shape.
+        """
+        return Shape([region])
 
     @classmethod
     def selection_bounds(cls, container: Region, start: Offset, end: Offset) -> Shape:

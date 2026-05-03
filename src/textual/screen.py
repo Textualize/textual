@@ -25,6 +25,7 @@ from typing import (
     Optional,
     TypeVar,
     Union,
+    cast,
 )
 
 import rich.repr
@@ -52,7 +53,7 @@ from textual.css.query import NoMatches, QueryType
 from textual.css.styles import PointerShape
 from textual.dom import DOMNode
 from textual.errors import NoWidget
-from textual.geometry import Offset, Region, Shape, Size
+from textual.geometry import NULL_OFFSET, Offset, Region, Shape, Size
 from textual.keys import key_to_character
 from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
@@ -260,9 +261,11 @@ class Screen(Generic[ScreenResultType], Widget):
     _box_select = var(False)
     """Should text selection be limited to a box?"""
 
-    _select_start: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
+    _select_start: Reactive[tuple[Widget, Offset, Offset | None] | None] = Reactive(
+        None
+    )
     """Tuple of (widget, screen offset, text offset) where selection started."""
-    _select_end: Reactive[tuple[Widget, Offset, Offset] | None] = Reactive(None)
+    _select_end: Reactive[tuple[Widget, Offset, Offset | None] | None] = Reactive(None)
     """Tuple of (widget, screen offset, text offset) where selection ends."""
 
     _mouse_down_offset: var[Offset | None] = var(None)
@@ -1822,7 +1825,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _update_select(self, screen_offset: Offset) -> None:
         """Update select for a screen-space offset (typically the mouse position).
 
-        This updates the `_select_end` reactrive, which will trigger the watch method `watch__select_end`.
+        This updates the `_select_end` reactive, which will trigger the watch method `watch__select_end`.
 
         Args:
             screen_offset: Screen-space position (i.e. mouse position).
@@ -1854,6 +1857,44 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_offset,
             )
 
+    def _get_nearest_selectable_widget(
+        self, y: int, direction: Literal[-1, +1] = +1
+    ) -> Widget | None:
+        """Get the nearset selectable widget in a given direction.
+
+        Args:
+            y: Y screen offset (typically mouse y).
+            direction: Direction to look for widget `-1` for up, `+1` for down. Defaults to +1.
+
+        Returns:
+            A widget if one was found, or `None` if no widget was found.
+        """
+        children: list[Widget] = cast(list[Widget], self.walk_children())
+        if direction == +1:
+            selectable_widgets = [
+                child
+                for child in children
+                if child.allow_select and child.region.offset.y >= y
+            ]
+            if selectable_widgets:
+                return min(
+                    selectable_widgets,
+                    key=lambda widget: widget._selection_order,
+                )
+        else:
+            selectable_widgets = [
+                child
+                for child in children
+                if child.allow_select and child.region.offset.y <= y
+            ]
+            if selectable_widgets:
+                return max(
+                    selectable_widgets,
+                    key=lambda widget: widget._selection_order,
+                )
+
+        return None
+
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
             return
@@ -1872,29 +1913,20 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
-                if (
-                    self._select_end is not None
-                    and select_offset is None
-                    and event.y > self._select_end[1].y
-                ):
-                    end_widget = self._select_end[0]
-                    select_offset = end_widget.content_region.bottom_right_inclusive
-                    self._select_end = (
-                        end_widget,
-                        event.screen_offset,
-                        select_offset,
-                    )
+                if select_offset is None:
+                    if nearest_widget := self._get_nearest_selectable_widget(event.y):
+                        select_widget = nearest_widget
+                        select_offset = NULL_OFFSET
 
-                elif (
-                    select_widget is not None
-                    and select_widget.allow_select
-                    and select_offset is not None
-                ):
-                    self._select_end = (
-                        select_widget,
-                        event.screen_offset,
-                        select_offset,
-                    )
+                if select_widget is None:
+                    self._stop_auto_scroll()
+                    return
+
+                self._select_end = (
+                    select_widget,
+                    event.screen_offset,
+                    select_offset,
+                )
 
                 if select_widget is not None:
                     self._check_auto_scroll(
@@ -1928,9 +1960,14 @@ class Screen(Generic[ScreenResultType], Widget):
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
                 self._box_select = event.shift
                 self._mouse_down_offset = event.screen_offset
+
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
                 )
+                if select_offset is None:
+                    if nearest_widget := self._get_nearest_selectable_widget(event.y):
+                        select_widget = nearest_widget
+                        select_offset = NULL_OFFSET
                 if (
                     select_widget is not None
                     and select_widget.allow_select
@@ -1938,13 +1975,12 @@ class Screen(Generic[ScreenResultType], Widget):
                     and self.app.ALLOW_SELECT
                 ):
                     self._selecting = True
-                    if select_widget is not None and select_offset is not None:
-                        self.text_selection_started_signal.publish(self)
-                        self._select_start = (
-                            select_widget,
-                            event.screen_offset,
-                            select_offset,
-                        )
+                    self._select_start = (
+                        select_widget,
+                        event.screen_offset,
+                        select_offset,
+                    )
+                    self.text_selection_started_signal.publish(self)
                 else:
                     self._selecting = False
 
@@ -2010,6 +2046,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 {start_widget, end_widget},
             )
         )
+        print("selectable", widgets)
 
         index1: int | None = None
         try:
@@ -2027,14 +2064,13 @@ class Screen(Generic[ScreenResultType], Widget):
         return results
 
     def _watch__select_end(
-        self, select_end: tuple[Widget, Offset, Offset] | None
+        self, select_end: tuple[Widget, Offset, Offset | None] | None
     ) -> None:
         """When select_end changes, we need to compute which widgets and regions are selected.
 
         Args:
             select_end: The end selection.
         """
-
         if select_end is None or self._select_start is None:
             # Nothing to select
             return
@@ -2046,14 +2082,18 @@ class Screen(Generic[ScreenResultType], Widget):
             # Widgets may have been removed since selection started
             return
 
-        if start_widget is end_widget:
+        if (
+            start_widget is end_widget
+            and start_offset is not None
+            and end_offset is not None
+        ):
             # Simplest case, selection starts and ends on the same widget
             if end_offset.transpose < start_offset.transpose:
                 start_offset, end_offset = end_offset, start_offset
             self.selections = {
                 start_widget: Selection.from_offsets(
                     start_offset,
-                    end_offset + (1, 0),
+                    end_offset,
                 )
             }
             return
@@ -2068,38 +2108,74 @@ class Screen(Generic[ScreenResultType], Widget):
         start_widget, screen_start, start_offset = select_start
         end_widget, screen_end, end_offset = select_end
 
-        if (screen_start + start_offset).transpose > (
-            screen_end + end_offset
-        ).transpose:
-            start_widget, end_widget = end_widget, start_widget
-
         # Get a widget which contains both widgets
         container_widget = Widget.get_common_ancestor(
             start_widget, end_widget, default=self
         )
 
-        # Get a selection bounds shape
-        selection_bounds = Shape.selection_bounds(
-            container_widget.region,
-            select_start[1] + select_start[2],
-            self.app.mouse_position,
-        )
-
-        # Get widgets bounded by the selection bounds
-        select_widgets = self._collect_select_widgets(
-            selection_bounds,
-            container_widget,
-            start_widget,
-            end_widget,
-        )
-
-        # Build the selection
         select_all = SELECT_ALL
-        self.selections = {
-            start_widget: Selection(start_offset, None),
-            **{widget: select_all for widget in select_widgets},
-            end_widget: Selection(None, end_offset + (1, 0)),
-        }
+        if start_offset is not None and end_offset is not None:
+            # Get a selection bounds shape
+            selection_bounds = Shape.selection_bounds(
+                container_widget.region,
+                select_start[1] + select_start[2],
+                self.app.mouse_position,
+            )
+
+            # Get widgets bounded by the selection bounds
+            select_widgets = self._collect_select_widgets(
+                selection_bounds,
+                container_widget,
+                start_widget,
+                end_widget,
+            )
+
+            # Build the selection
+            self.selections = {
+                start_widget: Selection(start_offset, None),
+                **{widget: select_all for widget in select_widgets},
+                end_widget: Selection(None, end_offset),
+            }
+
+        elif start_offset is None and end_offset is None:
+            selection_bounds = Shape.from_region(
+                Region.from_corners(*screen_start, *screen_end)
+            )
+            self.log(selection_bounds)
+            select_widgets = walk_selectable_widgets(container_widget, selection_bounds)
+
+            self.selections = {
+                widget: select_all
+                for widget in select_widgets
+                if not widget.is_container
+            }
+
+            # selection_bounds = Shape.selection_bounds(
+            #     container_widget.region,
+            #     screen_start,
+            #     screen_end,
+
+        # elif start_offset is None and end_offset is None:
+        #     print("NO CONTENT OFFSETS")
+
+        #     print(start_widget, end_widget)
+
+        #     selection_bounds = Shape.selection_bounds(
+        #         container_widget.region,
+        #         screen_start,
+        #         screen_end,
+        #     )
+        #     self.log(selection_bounds)
+        #     # Get widgets bounded by the selection bounds
+        #     select_widgets = list(
+        #         walk_selectable_widgets(container_widget, selection_bounds, set())
+        #     )
+
+        #     self.selections = {
+        #         start_widget: select_all,
+        #         **{widget: select_all for widget in select_widgets},
+        #         end_widget: select_all,
+        #     }
 
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.

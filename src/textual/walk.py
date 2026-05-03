@@ -174,7 +174,7 @@ def walk_breadth_search_id(
 
 
 def walk_selectable_widgets(
-    root: DOMNode, bounds: Shape, bounded: set[DOMNode]
+    root: DOMNode, bounds: Shape, bounded: set[DOMNode] | None = None
 ) -> Iterable[Widget]:
     """Walk the tree depth first in select order (top to bottom, then left to right).
 
@@ -205,7 +205,7 @@ def walk_selectable_widgets(
             node.displayed_and_visible_children,
             key=get_selection_order,
         )
-        if node in bounded:
+        if bounded and node in bounded:
             children = [child for child in children if bounds.overlaps(child.region)]
         return children
 
