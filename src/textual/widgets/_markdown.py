@@ -860,9 +860,10 @@ class MarkdownFence(MarkdownBlock):
         scrollbar-size-horizontal: 0;
         scrollbar-size-vertical: 0;
         width: 1fr;
+        
         height: auto;
         color: rgb(210,210,210);
-        background: black 10%;
+        background: black 10%;       
         &:light {
             background: white 30%;
         }
