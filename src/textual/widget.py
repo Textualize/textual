@@ -87,7 +87,7 @@ from textual.notifications import SeverityLevel
 from textual.reactive import Reactive
 from textual.renderables.blank import Blank
 from textual.rlock import RLock
-from textual.selection import Selection
+from textual.selection import Selection, SelectionMode
 from textual.strip import Strip
 from textual.style import NULL_STYLE
 from textual.style import Style as VisualStyle
@@ -4633,6 +4633,73 @@ class Widget(DOMNode):
         """Select the entire widget."""
         self.screen._select_all_in_widget(self)
 
+    def word_at_offset(self, offset: Offset) -> tuple[Offset, Offset] | None:
+        """Get the word boundaries at the given cell offset within the widget.
+
+        The default implementation uses the rendered content to find word boundaries
+        using whitespace and common punctuation as delimiters.
+
+        Override this method to provide custom word boundary detection (e.g. for
+        markdown blocks or code editors that need language-aware word selection).
+
+        Args:
+            offset: The cell offset within the widget content.
+
+        Returns:
+            A tuple of (start, end) offsets defining the word, or `None` if no word
+            could be found at the given offset.
+        """
+        visual = self._render()
+        if visual is None:
+            return None
+        text = str(visual)
+        lines = text.splitlines()
+        if not lines or offset.y < 0 or offset.y >= len(lines):
+            return None
+        line = lines[offset.y]
+        if offset.x < 0 or offset.x >= len(line):
+            return None
+        # Walk backwards to find word start
+        word_boundary_chars = " \t\n\r.,;:!?'\"()[]{}/<>@#$%^&*-+=~`|\\\u200b"
+        # If the character at the offset is itself a boundary, no word here
+        if line[offset.x] in word_boundary_chars:
+            return None
+        start_x = offset.x
+        while start_x > 0 and line[start_x - 1] not in word_boundary_chars:
+            start_x -= 1
+        # Walk forwards to find word end
+        end_x = offset.x
+        while end_x < len(line) and line[end_x] not in word_boundary_chars:
+            end_x += 1
+        if start_x == end_x:
+            return None
+        return (Offset(start_x, offset.y), Offset(end_x, offset.y))
+
+    def line_at_offset(self, offset: Offset) -> tuple[Offset, Offset] | None:
+        """Get the line boundaries at the given cell offset within the widget.
+
+        The default implementation returns the full visual line at the given y offset.
+
+        Override this method to provide custom line boundary detection (e.g. for
+        widgets that wrap long logical lines across multiple visual lines).
+
+        Args:
+            offset: The cell offset within the widget content.
+
+        Returns:
+            A tuple of (start, end) offsets defining the line, or `None` if no line
+            could be found at the given offset.
+        """
+        visual = self._render()
+        if visual is None:
+            return None
+        text = str(visual)
+        lines = text.splitlines()
+        if not lines or offset.y < 0 or offset.y >= len(lines):
+            return None
+        line = lines[offset.y]
+        return (Offset(0, offset.y), Offset(len(line), offset.y))
+
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
@@ -4695,10 +4762,11 @@ class Widget(DOMNode):
     async def _on_click(self, event: events.Click) -> None:
         if event.widget is self:
             if self.allow_select and self.screen.allow_select and self.app.ALLOW_SELECT:
-                if event.chain == 2:
-                    self.text_select_all()
-                elif event.chain == 3 and self.parent is not None:
-                    self.select_container.text_select_all()
+                if self.app.SELECTION_MODE == SelectionMode.LEGACY:
+                    if event.chain == 2:
+                        self.text_select_all()
+                    elif event.chain == 3 and self.parent is not None:
+                        self.select_container.text_select_all()
 
         await self.broker_event("click", event)
 
