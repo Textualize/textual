@@ -937,13 +937,16 @@ class Compositor:
 
         from rich.cells import get_character_cell_size
 
+        offset: Offset | None = None
         for segment in line:
             end += segment.cell_length
             style = segment.style
             if style is not None and style._meta is not None:
                 meta = style.meta
                 if "offset" in meta:
-                    offset_x, offset_y = style.meta["offset"]
+                    offset_x, offset_y = meta["offset"]
+                    if offset_y is None:
+                        continue
                     offset_x2 = offset_x + len(segment.text)
 
                     if x < end and x >= start:
@@ -955,14 +958,14 @@ class Compositor:
                                 break
                             segment_cell_length += get_character_cell_size(character)
                             segment_offset += 1
-                        return widget, (
-                            None
-                            if offset_y is None
-                            else Offset(offset_x + segment_offset, offset_y)
-                        )
+
+                        offset = Offset(offset_x + segment_offset, offset_y)
+                        break
             start = end
 
-        return widget, (None if offset_y is None else Offset(offset_x2, offset_y))
+        if offset is None and offset_y is not None:
+            offset = Offset(offset_x2, offset_y)
+        return widget, offset
 
     def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.

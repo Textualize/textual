@@ -940,7 +940,7 @@ class MarkdownFence(MarkdownBlock):
             self.query_one("#code-content", Label).update(content)
 
     def compose(self) -> ComposeResult:
-        yield Label(self._highlighted_code, id="code-content")
+        yield Label(self._highlighted_code, id="code-content", expand=True)
 
 
 NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
