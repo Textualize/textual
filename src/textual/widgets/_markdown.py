@@ -691,7 +691,9 @@ class MarkdownTableContent(Widget):
         for row_index, row in enumerate(updated_rows, self.last_row):
             for cell in row:
                 new_cells.append(
-                    Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+                    Static(
+                        cell, classes=f"row{row_index} cell", expand=True
+                    ).with_tooltip(cell)
                 )
         self.last_row = row_index
         await self.mount_all(new_cells)

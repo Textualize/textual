@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-from textual.geometry import Offset
+if TYPE_CHECKING:
+    from textual.geometry import Offset
+    from textual.widget import Widget
 
 
 class Selection(NamedTuple):
@@ -115,3 +117,52 @@ class Selection(NamedTuple):
 
 
 SELECT_ALL = Selection(None, None)
+
+
+class SelectState(NamedTuple):
+    """An object which describes the current select state."""
+
+    pointer_offset: Offset
+    """The current mouse position, in screen space."""
+
+    start_widget: Widget
+    """The widget under the mouse when selection started."""
+
+    select_container: Widget | None = None
+    """The scrolling container from the initial MouseDown"""
+
+    start_widget_offset: Offset | None = None
+    """The offset of the widget when the selection started"""
+
+    start_content_offset: Offset | None = None
+    """The offset within the start widget content."""
+
+    end_widget: Widget | None = None
+    """The widget currently under the mouse."""
+
+    end_content_offset: Offset | None = None
+    """The offset within the end_widget content."""
+
+    @property
+    def content_offsets(self) -> tuple[Offset, Offset]:
+        """Get the content offset in select order."""
+        start_offset = self.start_content_offset
+        end_offset = self.end_content_offset
+        assert start_offset is not None
+        assert end_offset is not None
+        if end_offset.transpose < start_offset.transpose:
+            start_offset, end_offset = end_offset, start_offset
+        return start_offset, end_offset
+
+    @property
+    def is_single_widget(self) -> bool:
+        """Is the select within a single widget?"""
+        return self.start_widget is not None and self.start_widget is self.end_widget
+
+    @property
+    def has_content_offsets(self) -> bool:
+        """Are both content offsets present?"""
+        return (
+            self.start_content_offset is not None
+            and self.end_content_offset is not None
+        )
