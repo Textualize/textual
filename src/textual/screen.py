@@ -1873,11 +1873,18 @@ class Screen(Generic[ScreenResultType], Widget):
                 )
 
                 select_state = self._select_state
+                if select_widget is None:
+                    select_container = self
+                else:
+                    select_container = Widget.get_common_ancestor(
+                        select_state.start_widget, select_widget, default=self
+                    )
                 self._select_state = SelectState(
                     event.screen_offset,
                     select_state.start_widget,
-                    select_container=select_state.select_container,
-                    start_widget_offset=select_state.start_widget_offset,
+                    select_state.start_widget_offset,
+                    event.screen_offset,
+                    select_container=select_container,
                     start_content_offset=select_state.start_content_offset,
                     end_widget=select_widget,
                     end_content_offset=select_offset,
@@ -1947,7 +1954,8 @@ class Screen(Generic[ScreenResultType], Widget):
                     self._select_state = SelectState(
                         event.screen_offset,
                         select_widget,
-                        start_widget_offset=select_widget.region.offset,
+                        select_widget.region.offset,
+                        event.screen_offset,
                         start_content_offset=select_offset,
                     )
                 else:
@@ -2052,9 +2060,15 @@ class Screen(Generic[ScreenResultType], Widget):
         return results
 
     def _watch__select_state(self, select_state: SelectState | None) -> None:
+        self.log(select_state)
         if select_state is None:
             # Nothing selected so nothing todo
             self._selecting = False
+            return
+
+        self._selecting = True
+
+        if select_state.select_container is None:
             return
 
         if select_state.is_single_widget and select_state.has_content_offsets:
@@ -2066,6 +2080,30 @@ class Screen(Generic[ScreenResultType], Widget):
                 )
             }
             return
+
+        selection_bounds = Shape.selection_bounds(
+            select_state.select_container.region,
+            select_state.start_widget_offset,
+            select_state.start_screen_offset,
+        )
+
+        select_container = select_state.select_container
+        if select_container is None:
+            select_container = self
+
+        select_widgets = [
+            widget
+            for widget in select_container.walk_children(Widget)
+            if selection_bounds.overlaps(widget.scrollable_content_region)
+            if widget.allow_select
+        ]
+
+        # select_widgets = walk_selectable_widgets(
+        #     select_container, selection_bounds, set()
+        # )
+        select_all = SELECT_ALL
+        selections = {widget: select_all for widget in select_widgets}
+        self.selections = selections
 
     # def _watch__select_end(
     #     self, select_end: tuple[Widget, Offset, Offset] | None

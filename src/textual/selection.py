@@ -122,17 +122,20 @@ SELECT_ALL = Selection(None, None)
 class SelectState(NamedTuple):
     """An object which describes the current select state."""
 
-    pointer_offset: Offset
+    start_screen_offset: Offset
     """The current mouse position, in screen space."""
 
     start_widget: Widget
     """The widget under the mouse when selection started."""
 
+    start_widget_offset: Offset
+    """The offset of the widget when the selection started"""
+
+    end_screen_offset: Offset
+    """The offset of the selection end in screen space."""
+
     select_container: Widget | None = None
     """The scrolling container from the initial MouseDown"""
-
-    start_widget_offset: Offset | None = None
-    """The offset of the widget when the selection started"""
 
     start_content_offset: Offset | None = None
     """The offset within the start widget content."""
@@ -166,3 +169,8 @@ class SelectState(NamedTuple):
             self.start_content_offset is not None
             and self.end_content_offset is not None
         )
+
+    @property
+    def start_scroll_offsett(self) -> Offset:
+        """Return scroll delta since select start."""
+        return self.start_widget.region.offset - self.start_widget_offset
