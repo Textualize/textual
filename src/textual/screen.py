@@ -1827,6 +1827,8 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             screen_offset: Screen-space position (i.e. mouse position).
         """
+        # TODO
+        return
         select_widget, select_offset = self.get_widget_and_offset_at(
             screen_offset.x, screen_offset.y
         )
@@ -1950,7 +1952,12 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
                 )
-                if select_widget is not None:
+                if (
+                    select_widget is not None
+                    and select_widget.allow_select
+                    and self.screen.allow_select
+                    and self.app.ALLOW_SELECT
+                ):
                     self._select_state = SelectState(
                         event.screen_offset,
                         select_widget,
@@ -2084,7 +2091,7 @@ class Screen(Generic[ScreenResultType], Widget):
         selection_bounds = Shape.selection_bounds(
             select_state.select_container.region,
             select_state.start_widget_offset,
-            select_state.start_screen_offset,
+            select_state.screen_offset,
         )
 
         select_container = select_state.select_container
@@ -2098,11 +2105,44 @@ class Screen(Generic[ScreenResultType], Widget):
             if widget.allow_select
         ]
 
+        # select_all = SELECT_ALL
+        # self.selections = {
+        #     start_widget: Selection(start_offset, None),
+        #     **{widget: select_all for widget in select_widgets},
+        #     end_widget: Selection(None, end_offset + (1, 0)),
+        # }
+
         # select_widgets = walk_selectable_widgets(
         #     select_container, selection_bounds, set()
         # )
         select_all = SELECT_ALL
         selections = {widget: select_all for widget in select_widgets}
+
+        start_widget = select_state.start_widget
+        start_content_offset = select_state.start_content_offset
+        start_offset = (
+            select_state.start_widget_offset + select_state.start_scroll_offset
+        )
+        end_widget = select_state.end_widget
+        end_content_offset = select_state.end_content_offset
+        end_offset = select_state.end_screen_offset
+
+        if end_offset.transpose < start_offset.transpose:
+            start_widget, end_widget = end_widget, start_widget
+            start_content_offset, end_content_offset = (
+                end_content_offset,
+                start_content_offset,
+            )
+            start_offset, end_offset = (
+                end_offset,
+                start_offset,
+            )
+
+        if start_widget is not None and start_content_offset is not None:
+            selections[start_widget] = Selection(start_content_offset, None)
+        if end_widget is not None and end_content_offset is not None:
+            selections[end_widget] = Selection(None, end_content_offset + (1, 0))
+
         self.selections = selections
 
     # def _watch__select_end(

@@ -122,7 +122,7 @@ SELECT_ALL = Selection(None, None)
 class SelectState(NamedTuple):
     """An object which describes the current select state."""
 
-    start_screen_offset: Offset
+    screen_offset: Offset
     """The current mouse position, in screen space."""
 
     start_widget: Widget
@@ -171,6 +171,6 @@ class SelectState(NamedTuple):
         )
 
     @property
-    def start_scroll_offsett(self) -> Offset:
+    def start_scroll_offset(self) -> Offset:
         """Return scroll delta since select start."""
         return self.start_widget.region.offset - self.start_widget_offset
