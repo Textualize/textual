@@ -222,7 +222,11 @@ class MarkdownBlock(Static):
         )
 
         super().__init__(
-            *args, name=token.type, classes=f"level-{token.level}", **kwargs
+            *args,
+            name=token.type,
+            classes=f"level-{token.level}",
+            expand=True,
+            **kwargs,
         )
 
     @property

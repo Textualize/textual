@@ -16,6 +16,7 @@ from textual.geometry import Shape
 
 if TYPE_CHECKING:
     from textual.dom import DOMNode
+    from textual.geometry import Offset
     from textual.widget import Widget
 
     WalkType = TypeVar("WalkType", bound=DOMNode)
@@ -206,7 +207,49 @@ def walk_selectable_widgets(
             key=get_selection_order,
         )
         if node in bounded:
-            children = [child for child in children if bounds.overlaps(child.region)]
+            children = [
+                child for child in children if bounds.overlaps(child.content_region)
+            ]
+        return children
+
+    children = get_children(root)
+
+    while stack:
+        if (node := next(stack[-1], None)) is None:
+            pop()
+        elif node.allow_select:
+            yield node
+            if children := get_children(node):
+                push(iter(children))
+
+
+def _walk_point_select_widgets(
+    root: Widget, bounds: Shape, offset1: Offset, offset2: Offset
+) -> Iterable[Widget]:
+    stack: list[Iterator[Widget]] = [iter([root])]
+    pop = stack.pop
+    push = stack.append
+
+    get_selection_order = attrgetter("_selection_order")
+    from textual.widget import Widget
+
+    def get_children(node: Widget) -> list[Widget]:
+        """Get children, sorted in selection order, and potentially filtered by selection bounds.
+
+        Args:
+            node: A root node.
+
+        Returns:
+            A list of child widgets.
+        """
+        children = sorted(
+            node.displayed_and_visible_children,
+            key=get_selection_order,
+        )
+
+        children = [
+            child for child in children if bounds.overlaps(child.content_region)
+        ]
         return children
 
     children = get_children(root)

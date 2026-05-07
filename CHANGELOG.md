@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed selection to the right of code fence blocks (may break some snapshots)
 
+### Added
+
+- Added ability to select outside of text, so the user doesn't need to be quite so precise https://github.com/Textualize/textual/pull/6523
+
 ## [8.2.5] - 2026-04-30
 
 ### Added
