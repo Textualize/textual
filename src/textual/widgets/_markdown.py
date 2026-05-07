@@ -897,6 +897,8 @@ class MarkdownFence(MarkdownBlock):
             ansi=self.app.native_ansi_color,
             dark=self.app.current_theme.dark,
         )
+        # No links required in code
+        self.auto_links = False
 
     def notify_style_update(self) -> None:
         """Update highlight theme when App theme changes."""
