@@ -1892,6 +1892,14 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
                 )
+                if select_widget is None:
+                    # No widget with offset, so lets just pick the first widget
+                    try:
+                        select_widget, _ = self.get_widget_at(
+                            event.screen_x, event.screen_y
+                        )
+                    except NoWidget:
+                        pass
                 if (
                     select_widget is not None
                     and select_widget.allow_select
