@@ -1886,9 +1886,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.post_message(events.TextSelected())
 
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
-
                 self._mouse_down_offset = event.screen_offset
-
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.screen_x, event.screen_y
                 )
@@ -1996,10 +1994,11 @@ class Screen(Generic[ScreenResultType], Widget):
         return results
 
     def _watch__select_state(self, select_state: SelectState | None) -> None:
-        self.log(select_state)
+
         if select_state is None:
             # Nothing selected so nothing todo
             self._selecting = False
+            self.refresh()
             return
 
         self._selecting = True

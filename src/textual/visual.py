@@ -235,8 +235,11 @@ class Visual(ABC):
                 selection_style,
             ),
         )
-        if widget.auto_links and not widget.is_container:
-            # TODO: This is suprisingly expensive (why?)
+        if (
+            widget.auto_links
+            and not widget.is_container
+            and not widget.screen._selecting
+        ):
             link_style = widget.link_style
             strips = [strip._apply_link_style(link_style) for strip in strips]
 
