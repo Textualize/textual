@@ -643,8 +643,8 @@ class Strip:
                     text,
                     (
                         style
-                        if style._meta is None or b"@click" not in style._meta
-                        else style + link_style
+                        if style._meta is None
+                        else (style + link_style if "@click" in style.meta else style)
                     ),
                     control,
                 )
