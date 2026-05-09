@@ -2049,16 +2049,6 @@ class Screen(Generic[ScreenResultType], Widget):
             self.selections = {}
             return
 
-        # It's not enough to return the widgets within the bounds
-        # If we select accross a scrollable area, we want to select
-        # its contents which may be outside of the bounds.
-        select_widgets = self._collect_select_widgets(
-            selection_bounds,
-            select_state.select_container,
-            select_widgets[0],
-            select_widgets[-1],
-        )
-
         # The start and end widgets (widgets under mouse pointer at start and end) are special
         # These have to render partial selections
         start_widget = select_state.start_widget
@@ -2084,6 +2074,16 @@ class Screen(Generic[ScreenResultType], Widget):
                 end_offset,
                 start_offset,
             )
+
+        # It's not enough to return the widgets within the bounds
+        # If we select accross a scrollable area, we want to select
+        # its contents which may be outside of the bounds.
+        select_widgets = self._collect_select_widgets(
+            selection_bounds,
+            select_state.select_container,
+            select_widgets[0] if start_content_offset is None else start_widget,
+            select_widgets[-1] if end_content_offset is None else end_widget,
+        )
 
         # Select all the widgets
         select_all = SELECT_ALL
