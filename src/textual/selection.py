@@ -131,6 +131,9 @@ class SelectState(NamedTuple):
     start_widget_offset: Offset
     """The offset of the widget when the selection started"""
 
+    start_widget_pointer_offset: Offset
+    """Offset of pointer, relative to the `start_widget`."""
+
     end_screen_offset: Offset
     """The offset of the selection end in screen space."""
 
@@ -174,3 +177,12 @@ class SelectState(NamedTuple):
     def start_scroll_offset(self) -> Offset:
         """Return scroll delta since select start."""
         return self.start_widget.region.offset - self.start_widget_offset
+
+    @property
+    def start_screen_offset(self) -> Offset:
+        """The offset of selection start after scroll."""
+        return (
+            self.start_widget.region.offset
+            + self.start_widget_pointer_offset
+            - self.start_widget_offset
+        )

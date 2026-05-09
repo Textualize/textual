@@ -671,9 +671,12 @@ class MarkdownTableContent(Widget):
                 header, classes="header", expand=True
             ).with_tooltip(header)
         for row_index, row in enumerate(self.rows, 1):
-            for cell in row:
+            for cell_index, cell in enumerate(row, 1):
                 yield MarkdownTableCellContents(
-                    cell, classes=f"row{row_index} cell", expand=True
+                    cell,
+                    classes=f"row{row_index} cell",
+                    name=f"cell{row_index}.{cell_index}",
+                    expand=True,
                 ).with_tooltip(cell.plain)
             self.last_row = row_index
 

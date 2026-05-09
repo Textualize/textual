@@ -926,6 +926,9 @@ class Compositor:
         if y < 0:
             return None, None
 
+        if x < 0:
+            return widget, Offset(0, y)
+
         visible_screen_stack.set(widget.app._background_screens)
         line = widget.render_line(y)
 
