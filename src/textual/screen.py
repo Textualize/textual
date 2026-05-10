@@ -1591,7 +1591,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def _maybe_clear_tooltip(self, _) -> None:
         """Check if the widget under the mouse cursor still pertains to the tooltip.
 
-        If they differ, the tooltip will be removed.
+        If they differ, the tooltip will be removed. Hit-testing may return the Tooltip
+        overlay when it covers the cursor; that must not count as leaving the source widget.
         """
         # If there's a widget associated with the tooltip at all...
         if self._tooltip_widget is not None:
@@ -1601,9 +1602,10 @@ class Screen(Generic[ScreenResultType], Widget):
             except NoWidget:
                 pass
             else:
-                # If it's not the same widget...
-                if under_mouse is not self._tooltip_widget:
-                    # ...clear the tooltip.
+                if (
+                    under_mouse is not self._tooltip_widget
+                    and not isinstance(under_mouse, Tooltip)
+                ):
                     self._clear_tooltip()
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
@@ -1669,18 +1671,19 @@ class Screen(Generic[ScreenResultType], Widget):
                 except NoMatches:
                     pass
                 else:
-                    if self._tooltip_widget != widget or not tooltip.display:
-                        self._tooltip_widget = widget
-                        if self._tooltip_timer is not None:
-                            self._tooltip_timer.stop()
+                    if not isinstance(widget, Tooltip):
+                        if self._tooltip_widget != widget or not tooltip.display:
+                            self._tooltip_widget = widget
+                            if self._tooltip_timer is not None:
+                                self._tooltip_timer.stop()
 
-                        self._tooltip_timer = self.set_timer(
-                            self.app.TOOLTIP_DELAY,
-                            partial(self._handle_tooltip_timer, widget),
-                            name="tooltip-timer",
-                        )
-                    else:
-                        tooltip.display = False
+                            self._tooltip_timer = self.set_timer(
+                                self.app.TOOLTIP_DELAY,
+                                partial(self._handle_tooltip_timer, widget),
+                                name="tooltip-timer",
+                            )
+                        else:
+                            tooltip.display = False
         self.screen.update_pointer_shape()
 
     @staticmethod
