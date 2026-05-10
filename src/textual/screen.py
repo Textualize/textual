@@ -58,7 +58,7 @@ from textual.layout import DockArrangeResult
 from textual.reactive import Reactive, var
 from textual.renderables.background_screen import BackgroundScreen
 from textual.renderables.blank import Blank
-from textual.selection import SELECT_ALL, Selection, SelectState
+from textual.selection import SELECT_ALL, SelectEnd, Selection, SelectStart, SelectState
 from textual.signal import Signal
 from textual.timer import Timer
 from textual.walk import walk_selectable_widgets
@@ -1830,31 +1830,52 @@ class Screen(Generic[ScreenResultType], Widget):
             self._handle_mouse_move(event)
 
             if self._selecting and self._select_state is not None:
+
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
-                select_state = self._select_state
-                if (
-                    select_widget is None
-                    or select_widget is self
-                    or select_state.start_widget is self
-                ):
-                    select_container = self
-                else:
-                    select_container = Widget.get_common_ancestor(
-                        select_state.start_widget, select_widget, default=self
+                if select_widget is not None:
+                    if select_offset is not None:
+                        content_widget = select_widget
+                        content_offset = select_offset
+                        assert isinstance(content_widget.parent, Widget)
+                        container = content_widget.parent
+                    else:
+                        content_widget = None
+                        container = select_widget
+                        content_offset = None
+
+                    self._select_state = self._select_state.update_end(
+                        event.screen_offset,
+                        SelectEnd(container, content_widget, content_offset),
                     )
-                self._select_state = SelectState(
-                    event.screen_offset,
-                    select_state.start_widget,
-                    select_state.start_widget_offset,
-                    select_state.start_widget_pointer_offset,
-                    event.screen_offset,
-                    select_container=select_container,
-                    start_content_offset=select_state.start_content_offset,
-                    end_widget=select_widget,
-                    end_content_offset=select_offset,
-                )
+
+                # select_state = self._select_state
+                # if (
+                #     select_widget is None
+                #     or select_widget is self
+                #     or select_state.start_widget is self
+                # ):
+                #     select_container = self
+                # else:
+                #     select_container = Widget.get_common_ancestor(
+                #         select_state.start_widget, select_widget, default=self
+                #     )
+                # self._select_state = SelectState(
+                #     event.screen_offset,
+                #     select_state.start_widget,
+                #     select_state.start_widget_offset,
+                #     select_state.start_widget_pointer_offset,
+                #     event.screen_offset,
+                #     select_container=select_container,
+                #     start_content_offset=select_state.start_content_offset,
+                #     end_widget=select_widget,
+                #     end_content_offset=select_offset,
+                # )
+
+                # self._select_state = SelectState(
+                #     event.screen_offset, start=SelectStart()
+                # )
 
                 if select_widget is not None:
                     self._check_auto_scroll(
@@ -1888,29 +1909,30 @@ class Screen(Generic[ScreenResultType], Widget):
             elif isinstance(event, events.MouseDown) and not self.app.mouse_captured:
                 self._mouse_down_offset = event.screen_offset
                 select_widget, select_offset = self.get_widget_and_offset_at(
-                    event.screen_x, event.screen_y
+                    event.x, event.y
                 )
-                if select_widget is None:
-                    # No widget with offset, so lets just pick the first widget
-                    try:
-                        select_widget, _ = self.get_widget_at(
-                            event.screen_x, event.screen_y
-                        )
-                    except NoWidget:
-                        pass
-                if (
-                    select_widget is not None
-                    and select_widget.allow_select
-                    and self.screen.allow_select
-                    and self.app.ALLOW_SELECT
-                ):
+                # Mouse start select
+                if select_widget is not None:
+                    if select_offset is not None:
+                        content_widget = select_widget
+                        content_offset = select_offset
+                        assert isinstance(content_widget.parent, Widget)
+                        container = content_widget.parent
+                    else:
+                        content_widget = None
+                        container = select_widget
+                        content_offset = None
+
                     self._select_state = SelectState(
                         event.screen_offset,
-                        select_widget,
-                        select_widget.region.offset,
-                        event.screen_offset,
-                        event.screen_offset - select_widget.region.offset,
-                        start_content_offset=select_offset,
+                        start=SelectStart(
+                            container,
+                            event.screen_offset - container.region.offset,
+                            container.region.offset,
+                            container.scroll_offset,
+                            content_widget=content_widget,
+                            content_offset=content_offset,
+                        ),
                     )
                 else:
                     self._select_state = None
@@ -2001,17 +2023,24 @@ class Screen(Generic[ScreenResultType], Widget):
             self._selecting = False
             self.refresh()
             return
+        else:
+            self._selecting = True
 
-        self._selecting = True
-        if select_state.select_container is None or select_state.end_widget is None:
+        if select_state.end is None:
             # Pointer hasn't yet moved
             return
 
+        if not select_state.is_attached_to_dom:
+            # Widgets may have been removed in the interim
+            self._select_state = None
+            return
+
         # Simple case where select starts and ends on the same widgets
-        if select_state.is_single_widget and select_state.has_content_offsets:
+        if select_state.is_single_content_widget:
             start_index, end_offset = select_state.content_offsets
+            assert select_state.start.content_widget is not None
             self.selections = {
-                select_state.start_widget: Selection.from_offsets(
+                select_state.start.content_widget: Selection.from_offsets(
                     start_index,
                     end_offset + (1, 0),
                 )
@@ -2024,11 +2053,8 @@ class Screen(Generic[ScreenResultType], Widget):
         # XXXXXXXXXXXXXX
         # XXXXXXXXXXXXXX
         # XXXXXXXXX
-        selection_bounds = Shape.selection_bounds(
-            select_state.select_container.region,
-            select_state.start_screen_offset,
-            select_state.screen_offset,
-        )
+        selection_bounds = select_state.selection_bounds
+        print(selection_bounds.draw(self.size))
 
         # Get all the widgets that overlap the selection bounds
         # Sort by selection order (important later)
@@ -2044,6 +2070,7 @@ class Screen(Generic[ScreenResultType], Widget):
             ],
             key=attrgetter("_selection_order"),
         )
+
         if not select_widgets:
             # Nothing selected, so we can bail early
             self.selections = {}
@@ -2078,12 +2105,12 @@ class Screen(Generic[ScreenResultType], Widget):
         # It's not enough to return the widgets within the bounds
         # If we select accross a scrollable area, we want to select
         # its contents which may be outside of the bounds.
-        select_widgets = self._collect_select_widgets(
-            selection_bounds,
-            select_state.select_container,
-            select_widgets[0] if start_content_offset is None else start_widget,
-            select_widgets[-1] if end_content_offset is None else end_widget,
-        )
+        # select_widgets = self._collect_select_widgets(
+        #     selection_bounds,
+        #     select_state.select_container,
+        #     select_widgets[0] if start_content_offset is None else start_widget,
+        #     select_widgets[-1] if end_content_offset is None else end_widget,
+        # )
 
         # Select all the widgets
         select_all = SELECT_ALL

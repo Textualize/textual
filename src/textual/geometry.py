@@ -1351,7 +1351,7 @@ class Shape:
     def draw(self, size: Size) -> str:
         """Build a string with a 2D grid of results from contains_point.
 
-        This is a debugging aid.
+        This is a debugging aid (do not use in production).
         """
         width, height = size
         map: list[list[str]] = []

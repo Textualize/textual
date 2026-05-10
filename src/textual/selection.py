@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, NamedTuple
 
 if TYPE_CHECKING:
-    from textual.geometry import Offset
+    from textual.geometry import Offset, Shape
     from textual.widget import Widget
 
 
@@ -119,41 +119,82 @@ class Selection(NamedTuple):
 SELECT_ALL = Selection(None, None)
 
 
+class SelectStart(NamedTuple):
+    """Describes the start of a select."""
+
+    container: Widget
+    """The container under the cursor."""
+    container_pointer_delta: Offset
+    """The delta between the initial container offset and pointer."""
+    container_initial_offset: Offset
+    """The initial offset of the container."""
+    container_initial_scroll_offset: Offset
+    """The initial scroll offset of the container."""
+    content_widget: Widget | None
+    """The content widget under the pointer (if any)."""
+    content_offset: Offset | None
+    """The content offset of the widget under the pointer (if appropriate)."""
+
+    @property
+    def pointer_start_offset(self) -> Offset:
+        """The pointer start offset adjusted for scroll."""
+        return (
+            self.container.region.offset
+            + self.container_pointer_delta
+            + self.container_initial_scroll_offset
+            - self.container.scroll_offset
+        )
+
+
+class SelectEnd(NamedTuple):
+    """The end of a select."""
+
+    container: Widget
+    """The container widget under the pointer."""
+    content_widget: Widget | None
+    """The content widget under the pointer (if any)."""
+    content_offset: Offset | None
+    """The content offset of the widget under the pointer."""
+
+
 class SelectState(NamedTuple):
     """An object which describes the current select state."""
 
     screen_offset: Offset
     """The current mouse position, in screen space."""
+    start: SelectStart
+    """Describes the select start."""
+    end: SelectEnd | None = None
+    """Describes the select end."""
 
-    start_widget: Widget
-    """The widget under the mouse when selection started."""
+    def is_attached_to_dom(self) -> bool:
+        """Are the widgets involved attached to the DOM?"""
+        # This may return False if the widgets have been removed since selection started
+        if not self.start.container.is_attached:
+            return False
+        if self.end is not None and not self.end.container.is_attached:
+            return False
+        return True
 
-    start_widget_offset: Offset
-    """The offset of the widget when the selection started"""
-
-    start_widget_pointer_offset: Offset
-    """Offset of pointer, relative to the `start_widget`."""
-
-    end_screen_offset: Offset
-    """The offset of the selection end in screen space."""
-
-    select_container: Widget | None = None
-    """The scrolling container from the initial MouseDown"""
-
-    start_content_offset: Offset | None = None
-    """The offset within the start widget content."""
-
-    end_widget: Widget | None = None
-    """The widget currently under the mouse."""
-
-    end_content_offset: Offset | None = None
-    """The offset within the end_widget content."""
+    @property
+    def is_single_content_widget(self) -> bool:
+        """Does the start and end fall on the same widget?"""
+        assert self.end is not None
+        return (
+            self.start.content_widget is not None
+            and self.start.content_widget is self.end.content_widget
+            and self.start.content_offset is not None
+            and self.end.content_offset is not None
+        )
 
     @property
     def content_offsets(self) -> tuple[Offset, Offset]:
         """Get the content offset in select order."""
-        start_offset = self.start_content_offset
-        end_offset = self.end_content_offset
+        assert (
+            self.end is not None
+        ), "Unavailable until there is an end point to the selection"
+        start_offset = self.start.content_offset
+        end_offset = self.end.content_offset
         assert start_offset is not None
         assert end_offset is not None
         if end_offset.transpose < start_offset.transpose:
@@ -161,28 +202,50 @@ class SelectState(NamedTuple):
         return start_offset, end_offset
 
     @property
-    def is_single_widget(self) -> bool:
-        """Is the select within a single widget?"""
-        return self.start_widget is not None and self.start_widget is self.end_widget
+    def select_container(self) -> Widget:
+        """A widget that contains both ends of the select."""
+        from textual.widget import Widget
+
+        widgets = [
+            (
+                self.start.content_widget
+                if self.start.content_widget is not None
+                else self.start.container
+            )
+        ]
+        if self.end is not None:
+            widgets.append(
+                self.end.content_widget
+                if self.end.content_widget is not None
+                else self.end.container
+            )
+
+        if len(widgets) == 2:
+            widget1, widget2 = widgets
+            try:
+                return Widget.get_common_ancestor(widget1, widget2)
+            except ValueError:
+                return widget1
+        else:
+            return widgets[0]
 
     @property
-    def has_content_offsets(self) -> bool:
-        """Are both content offsets present?"""
-        return (
-            self.start_content_offset is not None
-            and self.end_content_offset is not None
+    def selection_bounds(self) -> Shape:
+        """A shape which overlays the area of selected text."""
+        from textual.geometry import Shape
+
+        selection_bounds = Shape.selection_bounds(
+            self.select_container.region,
+            self.start.pointer_start_offset,
+            self.screen_offset,
         )
+        return selection_bounds
 
-    @property
-    def start_scroll_offset(self) -> Offset:
-        """Return scroll delta since select start."""
-        return self.start_widget.region.offset - self.start_widget_offset
+    def update_end(self, pointer_offset: Offset, select_end: SelectEnd) -> SelectState:
+        """Update the state with the selction end.
 
-    @property
-    def start_screen_offset(self) -> Offset:
-        """The offset of selection start after scroll."""
-        return (
-            self.start_widget.region.offset
-            + self.start_widget_pointer_offset
-            - self.start_widget_offset
-        )
+        Args:
+            pointer_offset: Current mosue position.
+            select_end: Selection end.
+        """
+        return SelectState(pointer_offset, self.start, select_end)
