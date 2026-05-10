@@ -5,6 +5,7 @@ from rich.text import Text
 
 from textual.color import Color
 from textual.content import Content, Span
+from textual.markup import escape
 from textual.style import Style
 from textual.visual import RenderOptions
 from textual.widget import Widget
@@ -243,6 +244,8 @@ def test_assemble():
         ("\\[", "["),
         ("\\[foo", "[foo"),
         ("\\[foo]", "[foo]"),
+        ("\\[FOO", "[FOO"),
+        ("\\[FOO]", "[FOO]"),
         ("\\[/foo", "[/foo"),
         ("\\[/foo]", "[/foo]"),
         ("\\[]", "[]"),
@@ -253,6 +256,14 @@ def test_escape(markup: str, plain: str) -> None:
     """Test that escaping the first square bracket."""
     content = Content.from_markup(markup)
     assert content.plain == plain
+    assert content.spans == []
+
+
+def test_escape_uppercase_markup_tag() -> None:
+    """Regression test for uppercase tags being treated as markup."""
+    escaped = escape("[RED] literal uppercase tag")
+    content = Content.from_markup(escaped)
+    assert content.plain == "[RED] literal uppercase tag"
     assert content.spans == []
 
 

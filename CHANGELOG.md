@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed selection to the right of code fence blocks (may break some snapshots)
+- Fixed `textual.markup.escape()` so uppercase bracketed text like `[RED]` is escaped correctly
 
 ## [8.2.5] - 2026-04-30
 
