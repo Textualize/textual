@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, NamedTuple
+from operator import attrgetter
+from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
 from textual.geometry import Offset, Shape
 
@@ -237,7 +238,6 @@ class SelectState(NamedTuple):
     @property
     def selection_bounds(self) -> Shape:
         """A shape which overlays the area of selected text."""
-        from textual.geometry import Shape
 
         selection_bounds = Shape.selection_bounds(
             self.select_container.region,
@@ -290,16 +290,123 @@ class SelectState(NamedTuple):
         if end_widget is not None and end_content_offset is not None:
             selections[end_widget] = Selection(None, end_content_offset)
 
-    def _walk_selected_widgets(self) -> Iterable[Widget]:
-        from textual.widget import Widget
-
+    def _walk_selected_widgets(self) -> list[Widget]:
         assert (
             self.end is not None
         ), "Unavailable until there is an end point to the selection"
 
         selection_bounds = self.selection_bounds
-        return [
-            child
-            for child in self.select_container.walk_children(Widget)
-            if selection_bounds.overlaps(child.content_region)
-        ]
+        select_container = self.select_container
+
+        # Endpoints sorted by screen position.
+        ordered_start, ordered_end = self.ordered_offsets
+        start_y = ordered_start.y
+        end_y = ordered_end.y
+
+        # Identify the content widgets at each end of the selection, in
+        # selection order. Either may be `None` if the pointer was not over a
+        # content widget at that end.
+        if self.start.pointer_start_offset.transpose <= self.screen_offset.transpose:
+            first_content_widget = self.start.content_widget
+            last_content_widget = self.end.content_widget
+        else:
+            first_content_widget = self.end.content_widget
+            last_content_widget = self.start.content_widget
+
+        get_selection_order = attrgetter("_selection_order")
+        selected: list[Widget] = []
+
+        def walk_in_select_order(root: Widget) -> Iterable[Widget]:
+            """Walk descendants of `root` depth-first in selection order."""
+            stack: list[Iterator[Widget]] = [
+                iter(
+                    sorted(
+                        root.displayed_and_visible_children,
+                        key=get_selection_order,
+                    )
+                )
+            ]
+            while stack:
+                widget = next(stack[-1], None)
+                if widget is None:
+                    stack.pop()
+                    continue
+                yield widget
+                children = widget.displayed_and_visible_children
+                if children:
+                    stack.append(iter(sorted(children, key=get_selection_order)))
+
+        def collect_range(
+            container: Widget,
+            from_widget: Widget | None,
+            to_widget: Widget | None,
+        ) -> None:
+            """Collect selectable descendants between two content widgets.
+
+            Walks `container` in selection order, including selectable
+            non-container descendants. `from_widget=None` means start at the
+            first descendant; `to_widget=None` means continue to the last.
+            """
+            started = from_widget is None
+            for descendant in walk_in_select_order(container):
+                if descendant.is_container or not descendant.allow_select:
+                    continue
+                if not started:
+                    if descendant is from_widget:
+                        started = True
+                    else:
+                        continue
+                selected.append(descendant)
+                if to_widget is not None and descendant is to_widget:
+                    return
+
+        def visit(parent: Widget) -> None:
+            """Walk children of `parent`, deciding inclusion per child."""
+            for child in sorted(
+                parent.displayed_and_visible_children,
+                key=get_selection_order,
+            ):
+                if child.is_container:
+                    child_region = child.region
+                    if not child_region:
+                        continue
+                    if not selection_bounds.overlaps(child_region):
+                        continue
+
+                    has_hidden_content = child.is_scrollable and (
+                        child.max_scroll_y > 0 or child.max_scroll_x > 0
+                    )
+
+                    if has_hidden_content:
+                        child_top = child_region.y
+                        child_bottom = child_region.bottom
+                        extends_above = start_y < child_top
+                        extends_below = end_y >= child_bottom
+
+                        if extends_above and extends_below:
+                            # Selection passes through this container; select
+                            # everything inside it.
+                            collect_range(child, None, None)
+                            continue
+                        if extends_above:
+                            # Selection enters this container from above;
+                            # select from top down to the end content widget.
+                            collect_range(child, None, last_content_widget)
+                            continue
+                        if extends_below:
+                            # Selection exits this container below; select
+                            # from the start content widget down to the end.
+                            collect_range(child, first_content_widget, None)
+                            continue
+
+                    # Both endpoints inside this child, or nothing scrolled
+                    # out; fall back to the standard visual walk.
+                    visit(child)
+                else:
+                    if child.allow_select and selection_bounds.overlaps(
+                        child.content_region
+                    ):
+                        selected.append(child)
+
+        visit(select_container)
+        return selected

@@ -1999,7 +1999,11 @@ class Screen(Generic[ScreenResultType], Widget):
         return results
 
     def _watch__select_state(self, select_state: SelectState | None) -> None:
+        """Respond to user-initiated selection change.
 
+        Args:
+            select_state: Current selection state.
+        """
         if select_state is None:
             # Nothing selected so nothing todo
             self._selecting = False
@@ -2029,11 +2033,11 @@ class Screen(Generic[ScreenResultType], Widget):
             }
             return
 
-        select_widgets = select_state._walk_selected_widgets()
-
         # Select all the widgets
         select_all = SELECT_ALL
-        selections = {widget: select_all for widget in select_widgets}
+        selections = {
+            widget: select_all for widget in select_state._walk_selected_widgets()
+        }
         select_state._apply_content_selections(selections)
 
         # Update selections
