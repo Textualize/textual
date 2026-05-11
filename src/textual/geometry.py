@@ -1444,7 +1444,7 @@ class Shape:
                 yield Region(
                     container.x,
                     end_y,
-                    end_x - 1,
+                    end_x - container.x,
                     1,
                 )
 

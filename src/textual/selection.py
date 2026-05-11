@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Iterable, NamedTuple
 
 if TYPE_CHECKING:
     from textual.geometry import Offset, Shape
@@ -141,8 +141,7 @@ class SelectStart(NamedTuple):
         return (
             self.container.region.offset
             + self.container_pointer_delta
-            + self.container_initial_scroll_offset
-            - self.container.scroll_offset
+            + (self.container.scroll_offset - self.container_initial_scroll_offset)
         )
 
 
@@ -204,6 +203,7 @@ class SelectState(NamedTuple):
     @property
     def select_container(self) -> Widget:
         """A widget that contains both ends of the select."""
+        from textual.screen import Screen
         from textual.widget import Widget
 
         widgets = [
@@ -222,6 +222,10 @@ class SelectState(NamedTuple):
 
         if len(widgets) == 2:
             widget1, widget2 = widgets
+            if isinstance(widget1, Screen):
+                return widget1
+            if isinstance(widget2, Screen):
+                return widget2
             try:
                 return Widget.get_common_ancestor(widget1, widget2)
             except ValueError:
@@ -249,3 +253,45 @@ class SelectState(NamedTuple):
             select_end: Selection end.
         """
         return SelectState(pointer_offset, self.start, select_end)
+
+    def _apply_content_selections(self, selections: dict[Widget, Selection]):
+        assert (
+            self.end is not None
+        ), "Unavailable until there is an end point to the selection"
+        start_widget = self.start.content_widget
+        start_content_offset = self.start.content_offset
+        start_offset = self.start.pointer_start_offset
+
+        end_widget = self.end.content_widget
+        end_content_offset = self.end.content_offset
+        end_offset = self.screen_offset
+
+        if end_offset.transpose < start_offset.transpose:
+            start_widget, end_widget = end_widget, start_widget
+            start_content_offset, end_content_offset = (
+                end_content_offset,
+                start_content_offset,
+            )
+
+        if start_widget is not None and start_content_offset is not None:
+            selections[start_widget] = Selection(start_content_offset, None)
+        if end_widget is not None and end_content_offset is not None:
+            selections[end_widget] = Selection(None, end_content_offset)
+
+    def _walk_selected_widgets(self) -> Iterable[Widget]:
+        from textual.widget import Widget
+
+        assert (
+            self.end is not None
+        ), "Unavailable until there is an end point to the selection"
+
+        selection_bounds = self.selection_bounds
+        select_widgets = [
+            widget
+            for widget in self.select_container.walk_children(Widget)
+            if (
+                widget.allow_select and selection_bounds.overlaps(widget.content_region)
+            )
+        ]
+
+        yield from select_widgets
