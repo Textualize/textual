@@ -667,16 +667,15 @@ class MarkdownTableContent(Widget):
 
     def compose(self) -> ComposeResult:
         for header in self.headers:
-            yield MarkdownTableCellContents(
-                header, classes="header", expand=True
-            ).with_tooltip(header)
+            yield MarkdownTableCellContents(header, classes="header").with_tooltip(
+                header
+            )
         for row_index, row in enumerate(self.rows, 1):
             for cell_index, cell in enumerate(row, 1):
                 yield MarkdownTableCellContents(
                     cell,
                     classes=f"row{row_index} cell",
                     name=f"cell{row_index}.{cell_index}",
-                    expand=True,
                 ).with_tooltip(cell.plain)
             self.last_row = row_index
 
