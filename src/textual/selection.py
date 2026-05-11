@@ -340,22 +340,41 @@ class SelectState(NamedTuple):
             container: Widget,
             from_widget: Widget | None,
             to_widget: Widget | None,
+            *,
+            from_y: int | None = None,
+            to_y: int | None = None,
         ) -> None:
             """Collect selectable descendants between two content widgets.
 
             Walks `container` in selection order, including selectable
             non-container descendants. `from_widget=None` means start at the
             first descendant; `to_widget=None` means continue to the last.
+
+            When the start or end pointer lands on a gap (no content widget),
+            `from_y` / `to_y` fall back to a vertical bound on the widget's
+            `content_region.y` so the selection grows continuously as the
+            pointer moves, rather than snapping to the whole container.
             """
-            started = from_widget is None
+            started = from_widget is None and from_y is None
             for descendant in walk_in_select_order(container):
                 if descendant.is_container or not descendant.allow_select:
                     continue
+                widget_y = descendant.content_region.y
                 if not started:
-                    if descendant is from_widget:
-                        started = True
+                    if from_widget is not None:
+                        if descendant is from_widget:
+                            started = True
+                        else:
+                            continue
                     else:
-                        continue
+                        # from_y bound is active.
+                        assert from_y is not None
+                        if widget_y >= from_y:
+                            started = True
+                        else:
+                            continue
+                if to_widget is None and to_y is not None and widget_y > to_y:
+                    return
                 selected.append(descendant)
                 if to_widget is not None and descendant is to_widget:
                     return
@@ -390,13 +409,21 @@ class SelectState(NamedTuple):
                             continue
                         if extends_above:
                             # Selection enters this container from above;
-                            # select from top down to the end content widget.
-                            collect_range(child, None, last_content_widget)
+                            # select from top down to the end content widget,
+                            # or to the pointer y if the pointer is on a gap.
+                            if last_content_widget is not None:
+                                collect_range(child, None, last_content_widget)
+                            else:
+                                collect_range(child, None, None, to_y=end_y)
                             continue
                         if extends_below:
                             # Selection exits this container below; select
-                            # from the start content widget down to the end.
-                            collect_range(child, first_content_widget, None)
+                            # from the start content widget (or the pointer y
+                            # if on a gap) down to the end.
+                            if first_content_widget is not None:
+                                collect_range(child, first_content_widget, None)
+                            else:
+                                collect_range(child, None, None, from_y=start_y)
                             continue
 
                     # Both endpoints inside this child, or nothing scrolled
