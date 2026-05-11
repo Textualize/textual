@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable, NamedTuple
 
+from textual.geometry import Offset, Shape
+
 if TYPE_CHECKING:
-    from textual.geometry import Offset, Shape
     from textual.widget import Widget
 
 
@@ -245,6 +246,17 @@ class SelectState(NamedTuple):
         )
         return selection_bounds
 
+    @property
+    def ordered_offsets(self) -> tuple[Offset, Offset]:
+        """Offsets used in selection bounds, in selection order."""
+        start_offset = self.start.pointer_start_offset
+        end_offset = self.screen_offset
+
+        if start_offset.transpose > end_offset.transpose:
+            start_offset, end_offset = end_offset, start_offset
+
+        return start_offset, end_offset
+
     def update_end(self, pointer_offset: Offset, select_end: SelectEnd) -> SelectState:
         """Update the state with the selction end.
 
@@ -286,12 +298,8 @@ class SelectState(NamedTuple):
         ), "Unavailable until there is an end point to the selection"
 
         selection_bounds = self.selection_bounds
-        select_widgets = [
-            widget
-            for widget in self.select_container.walk_children(Widget)
-            if (
-                widget.allow_select and selection_bounds.overlaps(widget.content_region)
-            )
+        return [
+            child
+            for child in self.select_container.walk_children(Widget)
+            if selection_bounds.overlaps(child.content_region)
         ]
-
-        yield from select_widgets

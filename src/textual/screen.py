@@ -2029,62 +2029,12 @@ class Screen(Generic[ScreenResultType], Widget):
             }
             return
 
-        # Selection bounds is a shape the defines the area the user wants to select.
-        # It looks something like this:
-        #     XXXXXXXXXX
-        # XXXXXXXXXXXXXX
-        # XXXXXXXXXXXXXX
-        # XXXXXXXXX
-        selection_bounds = select_state.selection_bounds
-        print(selection_bounds.draw(self.size))
-
-        # Get all the widgets that overlap the selection bounds
-        # Sort by selection order (important later)
-        # select_widgets = [
-        #     widget
-        #     for widget in select_state.select_container.walk_children(Widget)
-        #     if (
-        #         widget.allow_select
-        #         and not widget.is_container
-        #         and selection_bounds.overlaps(widget.content_region)
-        #     )
-        # ]
-
         select_widgets = select_state._walk_selected_widgets()
-
-        # if not select_widgets:
-        #     # Nothing selected, so we can bail early
-        #     self.selections = {}
-        #     return
-
-        # print(select_state.start.container)
-        # print(select_state.end.container)
-        # select_widgets = walk_selectable_widgets(
-        #     select_state.select_container,
-        #     selection_bounds,
-        #     {select_state.start.container, select_state.end.container},
-        # )
-
-        # # It's not enough to return the widgets within the bounds
-        # # If we select accross a scrollable area, we want to select
-        # # its contents which may be outside of the bounds.
-        # select_widgets = self._collect_select_widgets(
-        #     selection_bounds,
-        #     select_state.select_container,
-        #     select_widgets[0] if start_content_offset is None else start_widget,
-        #     select_widgets[-1] if end_content_offset is None else end_widget,
-        # )
 
         # Select all the widgets
         select_all = SELECT_ALL
         selections = {widget: select_all for widget in select_widgets}
         select_state._apply_content_selections(selections)
-
-        # # Set special selection within the widget's contents, if neccesary
-        # if start_content_offset is not None:
-        #     selections[start_widget] = Selection(start_content_offset, None)
-        # if end_content_offset is not None:
-        #     selections[end_widget] = Selection(None, end_content_offset)
 
         # Update selections
         self.selections = selections
