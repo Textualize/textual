@@ -1337,7 +1337,9 @@ class Shape:
             regions: Regions which will define the shape.
         """
         self._regions = tuple(regions)
-        self._bounds = Region.from_union(self._regions) if regions else NULL_REGION
+        self._bounds = (
+            Region.from_union(self._regions) if self._regions else NULL_REGION
+        )
 
     def __bool__(self) -> bool:
         return bool(self._bounds)
@@ -1410,8 +1412,13 @@ class Shape:
             """
             # Special case where start and end offsets are on the edges, and the shape
             # becomes a single region
-            if start_x == 0 and end_x == container.width:
-                yield Region.from_corners(container.x, start_y, container.right, end_y)
+            if start_x == container.x and end_x == container.right:
+                yield Region(
+                    container.x,
+                    start_y,
+                    container.width,
+                    end_y - start_y + 1,
+                )
 
             # Simple case: all on one line
             elif start.y == end.y:
