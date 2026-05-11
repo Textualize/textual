@@ -1884,11 +1884,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
-                #  and select_widget.allow_select
-                #     and self.screen.allow_select
-                #     and self.app.ALLOW_SELECT
-                # Mouse start select
-
                 if (
                     select_widget is not None
                     and select_widget.allow_select
