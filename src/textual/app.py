@@ -488,11 +488,11 @@ class App(Generic[ReturnType], DOMNode):
     HORIZONTAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
     """List of horizontal breakpoints for responsive classes.
 
-    This will automatically set TCSS classes on your Screen according to the width of the terminal.
-    For instance, you might want to show less information or fewer columns on a narrow display -- or more information when the terminal is sized wider than usual.
-    
+    Setting this classvar on `App` (or `Screen`) will automatically apply TCSS classes to your Screen according to the terminal width.
+    You can then use these classes to adjust the UI to better fit your content to the current terminal dimensions.
+
     A breakpoint consists of a tuple containing the minimum width where the class should be applied, and the name of the class to set.
-    Only a single class name is set, and you should avoid having more than one breakpoint set for the same size.
+    Only a single class name may be given, and you should avoid having more than one breakpoint for the same size.
 
     Set `HORIZONTAL_BREAKPOINTS` on your app or screen as follows: 
 
