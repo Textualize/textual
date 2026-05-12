@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed TextArea inside ModalScreen crashing with KeyError 'text-area--gutter' https://github.com/Textualize/textual/issues/6528
 - Fixed selection to the right of code fence blocks (may break some snapshots)
 
 ## [8.2.5] - 2026-04-30
