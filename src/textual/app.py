@@ -488,20 +488,32 @@ class App(Generic[ReturnType], DOMNode):
     HORIZONTAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
     """List of horizontal breakpoints for responsive classes.
 
-    This allows for styles to be responsive to the dimensions of the terminal.
-    For instance, you might want to show less information, or fewer columns on a narrow displays -- or more information when the terminal is sized wider than usual.
+    This will automatically set TCSS classes on your Screen according to the width of the terminal.
+    For instance, you might want to show less information or fewer columns on a narrow display -- or more information when the terminal is sized wider than usual.
     
-    A breakpoint consists of a tuple containing the minimum width where the class should applied, and the name of the class to set.
+    A breakpoint consists of a tuple containing the minimum width where the class should be applied, and the name of the class to set.
+    Only a single class name is set, and you should avoid having more than one breakpoint set for the same size.
 
-    Note that only one class name is set, and you should avoid having more than one breakpoint set for the same size.
+    Set `HORIZONTAL_BREAKPOINTS` on your app or screen as follows: 
 
-    Example:
-        ```python
-        # Up to 80 cells wide, the app has the class "-normal"
-        # 80 - 119 cells wide, the app has the class "-wide"
-        # 120 cells or wider, the app has the class "-very-wide"
+    ```python
+    class MyApp(App):
+        # Up to 80 cells wide, the screen has the class "-normal"
+        # 80 - 119 cells wide, the screen has the class "-wide"
+        # 120 cells or wider, the screen has the class "-very-wide"
         HORIZONTAL_BREAKPOINTS = [(0, "-normal"), (80, "-wide"), (120, "-very-wide")]
-        ```
+    ```
+
+    You can then appliy specfific rules for breakpoints with a rule that targets your screen with the given breakpoint:
+    
+    ```
+    Screen.-wide {
+        # Rules for wide terminals here.
+    }
+    Screen.-very-wide {
+        # Rules for very wide terminals
+    }
+    ```
     
     """
     VERTICAL_BREAKPOINTS: ClassVar[list[tuple[int, str]]] | None = []
