@@ -1321,7 +1321,7 @@ class Spacing(NamedTuple):
 class Shape:
     """An arbitrary shape defined by a sequence of regions.
 
-    This class currently exists to filter widgets within a shape defined when the user is slecting text.
+    This class currently exists to filter widgets within a shape defined when the user is selecting text.
 
     """
 
