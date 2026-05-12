@@ -432,7 +432,7 @@ class Button(Widget, can_focus=True):
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
         if self.action is None:
-            self.post_message(Button.Pressed(self))
+            self.post_message(type(self).Pressed(self))
         else:
             self.call_later(
                 self.app.run_action, self.action, default_namespace=self._parent
