@@ -198,7 +198,7 @@ Let's look at an example. We will create two widgets, one with a height of `"2fr
 ```
 
 The total `fr` units for height is 3.
-The first widget has a height ot `2fr`, which results in the height being two thirds of the total height.
+The first widget has a height of `2fr`, which results in the height being two thirds of the total height.
 The second widget has a height of `1fr` which makes it take up the remaining third of the height.
 Here's what that looks like.
 

@@ -147,7 +147,7 @@ class Visual(ABC):
     def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
         """Get optimal width of the Visual to display its content.
 
-        The exact definition of "optimal width" is dependant on the Visual, but
+        The exact definition of "optimal width" is dependent on the Visual, but
         will typically be wide enough to display output without cropping or wrapping,
         and without superfluous space.
 
@@ -236,7 +236,7 @@ class Visual(ABC):
             ),
         )
         if widget.auto_links and not widget.is_container:
-            # TODO: This is suprisingly expensive (why?)
+            # TODO: This is surprisingly expensive (why?)
             link_style = widget.link_style
             strips = [strip._apply_link_style(link_style) for strip in strips]
 
