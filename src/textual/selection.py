@@ -263,6 +263,10 @@ class SelectState(NamedTuple):
         Args:
             pointer_offset: Current mosue position.
             select_end: Selection end.
+
+        Returns:
+            SelectState: New select state.
+
         """
         return SelectState(pointer_offset, self.start, select_end)
 
@@ -334,7 +338,14 @@ class SelectState(NamedTuple):
                 yield widget
                 children = widget.displayed_and_visible_children
                 if children:
-                    stack.append(iter(sorted(children, key=get_selection_order)))
+                    stack.append(
+                        iter(
+                            sorted(
+                                children,
+                                key=get_selection_order,
+                            )
+                        )
+                    )
 
         def collect_range(
             container: Widget,
@@ -347,13 +358,20 @@ class SelectState(NamedTuple):
             """Collect selectable descendants between two content widgets.
 
             Walks `container` in selection order, including selectable
-            non-container descendants. `from_widget=None` means start at the
-            first descendant; `to_widget=None` means continue to the last.
+            non-container descendants.
 
             When the start or end pointer lands on a gap (no content widget),
             `from_y` / `to_y` fall back to a vertical bound on the widget's
             `content_region.y` so the selection grows continuously as the
             pointer moves, rather than snapping to the whole container.
+
+            Args:
+                container: Top level widget, that is parent of `from_widget` and `to_widget.
+                from_widget: First widget in sslection order or first in selection order.
+                to_widget: Last widget in selection order or `None` for end of container.
+
+                from_y: Start `y` of selection, or `None` for top.
+                to_y: End `y` of selection, or `None` for end.
             """
             started = from_widget is None and from_y is None
             for descendant in walk_in_select_order(container):
@@ -379,10 +397,14 @@ class SelectState(NamedTuple):
                 if to_widget is not None and descendant is to_widget:
                     return
 
-        def visit(parent: Widget) -> None:
-            """Walk children of `parent`, deciding inclusion per child."""
+        def visit(root: Widget) -> None:
+            """Walk children of `parent`, deciding inclusion per child.
+
+            Args:
+                root: Initial node to walk from.
+            """
             for child in sorted(
-                parent.displayed_and_visible_children,
+                root.displayed_and_visible_children,
                 key=get_selection_order,
             ):
                 if child.is_container:
