@@ -4903,11 +4903,7 @@ How's that?
         def compose(self) -> ComposeResult:
             yield Markdown()
 
-        def on_mount(self) -> None:
-            self.stream_markdown()
-
-        @work
-        async def stream_markdown(self) -> None:
+        async def on_mount(self) -> None:
             markdown = self.query_one(Markdown)
             stream = Markdown.get_stream(markdown)
             for line in MD.splitlines(keepends=True):
