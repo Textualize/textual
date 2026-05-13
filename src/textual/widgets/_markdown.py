@@ -222,7 +222,11 @@ class MarkdownBlock(Static):
         )
 
         super().__init__(
-            *args, name=token.type, classes=f"level-{token.level}", **kwargs
+            *args,
+            name=token.type,
+            classes=f"level-{token.level}",
+            expand=True,
+            **kwargs,
         )
 
     @property
@@ -667,9 +671,11 @@ class MarkdownTableContent(Widget):
                 header
             )
         for row_index, row in enumerate(self.rows, 1):
-            for cell in row:
+            for cell_index, cell in enumerate(row, 1):
                 yield MarkdownTableCellContents(
-                    cell, classes=f"row{row_index} cell"
+                    cell,
+                    classes=f"row{row_index} cell",
+                    name=f"cell{row_index}.{cell_index}",
                 ).with_tooltip(cell.plain)
             self.last_row = row_index
 
@@ -691,7 +697,9 @@ class MarkdownTableContent(Widget):
         for row_index, row in enumerate(updated_rows, self.last_row):
             for cell in row:
                 new_cells.append(
-                    Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+                    Static(
+                        cell, classes=f"row{row_index} cell", expand=True
+                    ).with_tooltip(cell)
                 )
         self.last_row = row_index
         await self.mount_all(new_cells)
@@ -891,6 +899,8 @@ class MarkdownFence(MarkdownBlock):
             ansi=self.app.native_ansi_color,
             dark=self.app.current_theme.dark,
         )
+        # No links required in code
+        self.auto_links = False
 
     def notify_style_update(self) -> None:
         """Update highlight theme when App theme changes."""

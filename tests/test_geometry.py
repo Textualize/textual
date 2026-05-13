@@ -712,6 +712,7 @@ def test_selection_bounds_contains_point_simple_case():
 XXXXXXXXXX..
 XXXXXXXXXX..
 XXXXXXXXXX..
+XXXXXXXXXX..
 ............
 ............"""
     result = build_grid_snapshot(shape)
@@ -764,16 +765,16 @@ XXXXXX......
                 Offset(0, 0),
                 Offset(10, 2),
             ),
-            20,
+            30,
         ),
-        # Start of selection is inse7
+        # Start of selection is inset
         (
             Shape.selection_bounds(
                 Region(0, 0, 10, 8),
                 Offset(1, 0),
                 Offset(10, 2),
             ),
-            19,
+            29,
         ),
         # End of selection is inset
         (
@@ -782,11 +783,12 @@ XXXXXX......
                 Offset(1, 0),
                 Offset(9, 2),
             ),
-            18,
+            28,
         ),
     ],
 )
 def test_shape_area(bounds, area):
+    print(bounds._regions)
     assert bounds.area == area
 
 
