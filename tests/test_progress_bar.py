@@ -9,6 +9,7 @@ from textual.css.query import NoMatches
 from textual.renderables.bar import _apply_gradient
 from textual.widget import Widget
 from textual.widgets import ProgressBar
+from textual.widgets._progress_bar import PercentageStatus
 
 
 async def test_initial_status():
@@ -63,6 +64,15 @@ async def test_progress_underflow():
 
     pb.advance(-999_999)
     assert pb.percentage == 0
+
+
+def test_percentage_status_rounding():
+    status = PercentageStatus()
+    status.percentage = 0.9995
+    assert status.render() == "100%"
+
+    status.percentage_rounding = "floor"
+    assert status.render() == "99%"
 
 
 async def test_non_negative_total():

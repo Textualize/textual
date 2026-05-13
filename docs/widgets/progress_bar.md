@@ -149,6 +149,7 @@ The progress bar is composed of three sub-widgets that can be styled independent
 | `percentage` | `float  | None`   | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
 | `progress`   | `float` | `0`     | The number of steps of progress already made.                                                           |
 | `total`      | `float  | None`   | The total number of steps that we are keeping track of.                                                 |
+| `percentage_rounding` | `str` | `round` | How the percentage label is rounded (`round` or `floor`). |
 
 ## Messages
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import Optional, Type
 
 from rich.style import Style
@@ -156,14 +157,30 @@ class PercentageStatus(Label):
     }
     """
 
-    percentage: reactive[int | None] = reactive[Optional[int]](None)
+    percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
 
-    def _validate_percentage(self, percentage: float | None) -> int | None:
-        return None if percentage is None else round(percentage * 100)
+    percentage_rounding: reactive[str] = reactive("round")
+    """How to round the displayed percentage, either 'round' or 'floor'."""
+
+    def _validate_percentage_rounding(self, percentage_rounding: str) -> str:
+        if percentage_rounding not in {"round", "floor"}:
+            raise ValueError("percentage_rounding must be 'round' or 'floor'")
+        return percentage_rounding
+
+    def watch_percentage_rounding(self, percentage_rounding: str) -> None:
+        self.refresh()
 
     def render(self) -> RenderResult:
-        return "--%" if self.percentage is None else f"{self.percentage}%"
+        if self.percentage is None:
+            return "--%"
+
+        percentage = self.percentage * 100
+        if self.percentage_rounding == "floor":
+            value = math.floor(percentage)
+        else:
+            value = round(percentage)
+        return f"{value}%"
 
 
 class ETAStatus(Label):
@@ -242,6 +259,7 @@ class ProgressBar(Widget, can_focus=False):
         show_bar: bool = True,
         show_percentage: bool = True,
         show_eta: bool = True,
+        percentage_rounding: str = "round",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -268,6 +286,8 @@ class ProgressBar(Widget, can_focus=False):
             show_bar: Whether to show the bar portion of the progress bar.
             show_percentage: Whether to show the percentage status of the bar.
             show_eta: Whether to show the ETA countdown of the progress bar.
+            percentage_rounding: How the percentage label should be rounded; use
+                'floor' to avoid showing 100% before completion.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
@@ -282,7 +302,15 @@ class ProgressBar(Widget, can_focus=False):
         self.show_bar = show_bar
         self.show_percentage = show_percentage
         self.show_eta = show_eta
+        self.percentage_rounding = self._validate_percentage_rounding(
+            percentage_rounding
+        )
         self.set_reactive(ProgressBar.gradient, gradient)
+
+    def _validate_percentage_rounding(self, percentage_rounding: str) -> str:
+        if percentage_rounding not in {"round", "floor"}:
+            raise ValueError("percentage_rounding must be 'round' or 'floor'")
+        return percentage_rounding
 
     def on_mount(self) -> None:
         self.update()
@@ -297,7 +325,9 @@ class ProgressBar(Widget, can_focus=False):
                 .data_bind(ProgressBar.gradient)
             )
         if self.show_percentage:
-            yield PercentageStatus(id="percentage").data_bind(ProgressBar.percentage)
+            yield PercentageStatus(id="percentage").data_bind(
+                ProgressBar.percentage
+            ).data_bind(percentage_rounding=ProgressBar.percentage_rounding)
         if self.show_eta:
             yield ETAStatus(id="eta").data_bind(eta=ProgressBar._display_eta)
 
