@@ -15443,7 +15443,7 @@ The default will return the classvar <code>FOCUS_ON_CLICK</code>.</p>
   </span>
 
 <a href="#textual.widget.Widget.get_common_ancestor" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">get_common_ancestor</span><span class="p">(</span><span class="n">widget1</span><span class="p">,</span> <span class="n">widget2</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">get_common_ancestor</span><span class="p">(</span><span class="n">widget1</span><span class="p">,</span> <span class="n">widget2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15467,7 +15467,7 @@ The default will return the classvar <code>FOCUS_ON_CLICK</code>.</p>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>If there is not common ancestor (will not occur if both widgets are attached to the same DOM).</p>
+              <p>If there is no common ancestor and <code>default</code> is not provided (will not occur if both widgets are attached to the same DOM).</p>
             </div>
           </td>
         </tr>
@@ -15513,6 +15513,20 @@ The default will return the classvar <code>FOCUS_ON_CLICK</code>.</p>
           </td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>default</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="#textual.widget.Widget">Widget</a> | None</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A widget to return if no common ancestor is found.</p>
+            </div>
+          </td>
+          <td>
+                <code>None</code>
           </td>
         </tr>
     </tbody>

@@ -6500,6 +6500,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.update_classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_classes()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.update_node_styles" class="md-nav__link">
     <span class="md-ellipsis">
       update_node_styles()
@@ -8644,6 +8653,15 @@ window.onload = async (event) => {
   <a href="#textual.dom.DOMNode.trap_focus" class="md-nav__link">
     <span class="md-ellipsis">
       trap_focus()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.update_classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      update_classes()
     </span>
   </a>
   
@@ -12477,6 +12495,110 @@ the user to the controls within the dialog.</p>
           </td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.dom.DOMNode.update_classes" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">update_classes</span>
+
+
+<a href="#textual.dom.DOMNode.update_classes" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">update_classes</span><span class="p">(</span><span class="n">classes</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Update classes in an atomic batch.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>classes</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Mapping" href="https://docs.python.org/3/library/typing.html#typing.Mapping">Mapping</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A mapping of class name on to a boolean where <code>True</code> adds
+to the current classes, and <code>False</code> removes.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>update</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Also update styles.</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>animate</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Enable any CSS animation?</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Self</p>
+            </div>
           </td>
         </tr>
     </tbody>

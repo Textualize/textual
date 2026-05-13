@@ -6197,6 +6197,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.native_ansi_color" class="md-nav__link">
+    <span class="md-ellipsis">
+      native_ansi_color
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.return_code" class="md-nav__link">
     <span class="md-ellipsis">
       return_code
@@ -9709,6 +9718,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.native_ansi_color" class="md-nav__link">
+    <span class="md-ellipsis">
+      native_ansi_color
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.return_code" class="md-nav__link">
     <span class="md-ellipsis">
       return_code
@@ -11069,7 +11087,7 @@ window.onload = async (event) => {
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">driver_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">css_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">watch_css</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">ansi_color</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">ansi_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
 </code></pre></div>
 
@@ -11143,15 +11161,15 @@ you are using <code>textual run</code> with the <code>dev</code> switch.</p>
         <tr>
           <td><code>ansi_color</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
           </td>
           <td>
             <div class="doc-md-description">
-              <p>Allow ANSI colors if <code>True</code>, or convert ANSI colors to RGB if <code>False</code>.</p>
+              <p>Allow ANSI colors if <code>True</code>, or convert ANSI colors to RGB if <code>False</code>, <code>None</code> to use "ansi" parameter from themes.</p>
             </div>
           </td>
           <td>
-                <code>False</code>
+                <code>None</code>
           </td>
         </tr>
     </tbody>
@@ -11603,19 +11621,26 @@ and therefore takes priority in the event of a specificity clash.</p>
   <div class="doc doc-contents ">
   
       <p>List of horizontal breakpoints for responsive classes.</p>
-<p>This allows for styles to be responsive to the dimensions of the terminal.
-For instance, you might want to show less information, or fewer columns on a narrow displays -- or more information when the terminal is sized wider than usual.</p>
-<p>A breakpoint consists of a tuple containing the minimum width where the class should applied, and the name of the class to set.</p>
-<p>Note that only one class name is set, and you should avoid having more than one breakpoint set for the same size.</p>
-
-<details class="example" open>
-  <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Up to 80 cells wide, the app has the class &quot;-normal&quot;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># 80 - 119 cells wide, the app has the class &quot;-wide&quot;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># 120 cells or wider, the app has the class &quot;-very-wide&quot;</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">HORIZONTAL_BREAKPOINTS</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;-normal&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s2">&quot;-wide&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;-very-wide&quot;</span><span class="p">)]</span>
+<p>Setting this classvar on <code>App</code> or <code>Screen</code> will automatically apply TCSS classes to your Screen according to the terminal width.
+You can then use these classes to adjust the UI to better fit your content to the current terminal dimensions.</p>
+<p>A breakpoint consists of a tuple containing the minimum width where the class should be applied, and the name of the class to set.
+Only a single class name may be given, and you should avoid having more than one breakpoint for the same size.</p>
+<p>Set <code>HORIZONTAL_BREAKPOINTS</code> on your app or screen as follows: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Up to 80 cells wide, the screen has the class &quot;-normal&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="c1"># 80 - 119 cells wide, the screen has the class &quot;-wide&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="c1"># 120 cells or wider, the screen has the class &quot;-very-wide&quot;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">HORIZONTAL_BREAKPOINTS</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;-normal&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s2">&quot;-wide&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="s2">&quot;-very-wide&quot;</span><span class="p">)]</span>
 </code></pre></div>
-</details>  </div>
+<p>You can then appliy specfific rules for breakpoints with a rule that targets your screen with the given breakpoint:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Screen.-wide {
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    # Rules for wide terminals here.
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>}
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>Screen.-very-wide {
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    # Rules for very wide terminals.
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>}
+</code></pre></div>
+  </div>
 
 </div>
 
@@ -12044,7 +12069,7 @@ If a widget is focused, then any bindings present in the active screen and app a
   </span>
 
 <a href="#textual.app.App.ansi_color" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ansi_color</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ansi_color</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -12810,6 +12835,31 @@ If the classvar on the screen is <em>not</em> set (and left as <code>None</code>
   <div class="doc doc-contents ">
   
       <p>A high resolution (floating point) mouse position. If supported by the terminal, this may be more granular than <code>mouse_position</code></p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.native_ansi_color" class="doc doc-heading">
+          <span class="doc doc-object-name doc-attribute-name">native_ansi_color</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.native_ansi_color" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">native_ansi_color</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Use native ANSI colors?</p>
+<p>This will return <code>self.current_theme.ansi</code> if <code>self.ansi_color</code> is <code>None</code>,
+otherwise it will return <code>self.ansi_color</code>.</p>
   </div>
 
 </div>

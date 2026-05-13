@@ -10377,7 +10377,9 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   </span>
 
 <a href="#textual.color.Color.from_rich_color" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">from_rich_color</span><span class="p">(</span><span class="n">rich_color</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">from_rich_color</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">rich_color</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">foreground</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ansi</span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10423,6 +10425,34 @@ A value of <code>gradient</code> between the two extremes produces a color somew
           </td>
           <td>
                 <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>foreground</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Is the color a foreground color (<code>False</code>) or a background color (<code>True</code>)?</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>ansi</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Return ANSI colors if <code>True</code>, or attempt to convert to RGV if <code>False</code>.</p>
+            </div>
+          </td>
+          <td>
+                <code>True</code>
           </td>
         </tr>
     </tbody>
