@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed selection to the right of code fence blocks (may break some snapshots)
+- Fixed Markdown code fences losing content when switching themes https://github.com/Textualize/textual/pull/6537
 
 ### Added
 

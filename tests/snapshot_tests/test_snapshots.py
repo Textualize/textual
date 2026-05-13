@@ -4874,7 +4874,7 @@ Input {
     assert snap_compare(WatchApp(), run_before=run_before)
 
 
-def test_markdown_stream_switch_theme(snap_compare):
+def test_markdown_stream_switch_theme(snap_compare) -> None:
     """Regression test for https://github.com/Textualize/textual/issues/6518
 
     You should see Markdown with a title, a code fence containing a full generate_fibonacci function, and another line.
@@ -4888,7 +4888,7 @@ def test_markdown_stream_switch_theme(snap_compare):
 # Some Python code
 
 ```python
-def generate_fibonacci(n):
+def generate_fibonacci(n: int):
     sequence = [0, 1]
     while len(sequence) < n:
         next_number = sequence[-1] + sequence[-2]
