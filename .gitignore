@@ -133,4 +133,4 @@ sandbox/
 .cache
 
 # Snapshot tests output
-__snapshots__/
+#__snapshots__/
