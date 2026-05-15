@@ -274,7 +274,7 @@ class LinuxDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
-        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.write("\x1b[>8u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
 
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread, name="textual-input")

@@ -8,7 +8,7 @@ from typing_extensions import Final
 
 from textual import constants, events, messages
 from textual._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
-from textual._keyboard_protocol import FUNCTIONAL_KEYS
+from textual._keyboard_protocol import FUNCTIONAL_KEYS, MODIFIER_FUNCTIONAL_KEYS
 from textual._parser import ParseEOF, Parser, ParseTimeout, Peek1, Read1, TokenCallback
 from textual.keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 from textual.message import Message
@@ -344,8 +344,9 @@ class XTermParser(Parser[Message]):
                     key = _character_to_key(chr(int(number)))
                 except Exception:
                     key = chr(int(number))
+
             key_tokens: list[str] = []
-            if modifiers:
+            if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS:
                 modifier_bits = int(modifiers) - 1
                 # Not convinced of the utility in reporting caps_lock and num_lock
                 MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
