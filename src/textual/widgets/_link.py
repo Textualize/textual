@@ -62,6 +62,12 @@ class Link(Static, can_focus=True):
 
     def watch_text(self, text: str) -> None:
         self.update(text)
+        if not self.url:
+            self.url = text
+
+    def watch_url(self, url: str) -> None:
+        if not self.text:
+            self.text = url
 
     def on_click(self) -> None:
         self.action_open_link()
