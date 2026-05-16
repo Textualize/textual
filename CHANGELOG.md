@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased 
+
+### Added
+
+- Added support for Kitty key protocl "Report all keys as escape codes" which enabled alt+backspace on Warp
+- Added support for detecting separate modifier keys for terminals that support the Kitty key protocol
+
 ## [8.2.6] - 2026-04-13
 
 ### Fixed

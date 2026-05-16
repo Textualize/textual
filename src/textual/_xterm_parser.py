@@ -8,7 +8,7 @@ from typing_extensions import Final
 
 from textual import constants, events, messages
 from textual._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
-from textual._keyboard_protocol import FUNCTIONAL_KEYS
+from textual._keyboard_protocol import FUNCTIONAL_KEYS, MODIFIER_FUNCTIONAL_KEYS
 from textual._parser import ParseEOF, Parser, ParseTimeout, Peek1, Read1, TokenCallback
 from textual.keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 from textual.message import Message
@@ -37,8 +37,10 @@ FOCUSOUT: Final[str] = "\x1b[O"
 SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSOUT}
 """Set of special sequences."""
 
-_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
-_re_in_band_window_resize: Final = re.compile(
+_re_extended_key: Final[re.Pattern[str]] = re.compile(
+    r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])"
+)
+_re_in_band_window_resize: Final[re.Pattern[str]] = re.compile(
     r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
 )
 
@@ -333,19 +335,25 @@ class XTermParser(Parser[Message]):
             sequence: Sequence of code points.
 
         Returns:
-            Keys
+            Iterable of key events.
         """
 
         if (match := _re_extended_key.fullmatch(sequence)) is not None:
-            number, modifiers, end = match.groups()
-            number = number or 1
-            if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
-                try:
-                    key = _character_to_key(chr(int(number)))
-                except Exception:
-                    key = chr(int(number))
+            number, modifiers, end = match.groups(default="")
+            number = number or "1"
+
+            character_sequence = sequence
+            if (
+                not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", ""))
+                and number.isalnum()
+            ):
+                ordinal = int(number)
+                character_sequence = chr(ordinal)
+                key = _character_to_key(character_sequence)
+
             key_tokens: list[str] = []
-            if modifiers:
+            # The modifier is redundant on a modifier key
+            if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS:
                 modifier_bits = int(modifiers) - 1
                 # Not convinced of the utility in reporting caps_lock and num_lock
                 MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
@@ -357,7 +365,8 @@ class XTermParser(Parser[Message]):
             key_tokens.sort()
             key_tokens.append(key.lower())
             yield events.Key(
-                "+".join(key_tokens), sequence if len(sequence) == 1 else None
+                "+".join(key_tokens),
+                character_sequence if len(character_sequence) == 1 else None,
             )
             return
 
@@ -383,6 +392,7 @@ class XTermParser(Parser[Message]):
             sequence = keys
         # If the sequence is a single character, attempt to process it as a
         # key.
+
         if len(sequence) == 1:
             try:
                 if not sequence.isalnum():
