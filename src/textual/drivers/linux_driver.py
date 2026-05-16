@@ -115,7 +115,7 @@ class LinuxDriver(Driver):
         import shutil
 
         try:
-            width, height = shutil.get_terminal_size()
+            width, height = os.get_terminal_size()
         except (AttributeError, ValueError, OSError):
             try:
                 width, height = shutil.get_terminal_size()
