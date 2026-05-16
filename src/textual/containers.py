@@ -1,8 +1,10 @@
 """
 Container widgets for quick styling.
 
-With the exception of `Center` and `Middle` containers will fill all of the space in the parent widget.
-
+- [`Horizontal`][textual.containers.Horizontal] and [`Vertical`][textual.containers.Vertical] containers stretch to fill available space.
+- [`HorizontalGroup`][textual.containers.HorizontalGroup] and [`VerticalGroup`][textual.containers.VerticalGroup] fit to the height of their contents.
+- [`HorizontalScroll`][textual.containers.HorizontalScroll] and [`VerticalScroll`][textual.containers.VerticalScroll] add automatic scrollbars.
+- [`Center`][textual.containers.Center], [`Right`][textual.containers.Right], and [`Middle`][textual.containers.Middle] set alignment.
 """
 
 from __future__ import annotations
