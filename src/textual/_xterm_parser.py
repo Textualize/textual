@@ -37,8 +37,11 @@ FOCUSOUT: Final[str] = "\x1b[O"
 SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSOUT}
 """Set of special sequences."""
 
+# _re_extended_key: Final[re.Pattern[str]] = re.compile(
+#     r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])"
+# )
 _re_extended_key: Final[re.Pattern[str]] = re.compile(
-    r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])"
+    r"\x1b\[((?:\d*;?){2,3})([u~ABCDEFHPQRS])"
 )
 _re_in_band_window_resize: Final[re.Pattern[str]] = re.compile(
     r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
@@ -339,35 +342,37 @@ class XTermParser(Parser[Message]):
         """
 
         if (match := _re_extended_key.fullmatch(sequence)) is not None:
-            number, modifiers, end = match.groups(default="")
-            number = number or "1"
+            codes, end = match.groups(default="")
+            codepoint_str, modifiers_str, text_str, *_ = codes.split(";") + ["", "", ""]
 
-            character_sequence = sequence
-            if (
-                not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", ""))
-                and number.isalnum()
-            ):
-                ordinal = int(number)
-                character_sequence = chr(ordinal)
-                key = _character_to_key(character_sequence)
+            codepoint = int(codepoint_str or "1")
+            modifiers = int(modifiers_str or "0")
+            text = chr(int(text_str)) if text_str else None
+
+            if not (key := FUNCTIONAL_KEYS.get(f"{codepoint}{end}", "")):
+                key = _character_to_key(text if text else chr(codepoint))
 
             key_tokens: list[str] = []
             # The modifier is redundant on a modifier key
             if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS:
                 modifier_bits = int(modifiers) - 1
                 # Not convinced of the utility in reporting caps_lock and num_lock
-                MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
+                MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
                 # Ignore caps_lock and num_lock modifiers
-                for bit, modifier in enumerate(MODIFIERS):
+                # If the shift changes the case, then we want "shift+" in the key
+                # If the key does not simply change the case (i.e. shift+1) we do *not* want the modifier
+                if modifier_bits & 1 and (
+                    text is None or chr(codepoint).casefold() == text.casefold()
+                ):
+                    key_tokens.append("shift")
+                for bit, modifier in enumerate(MODIFIERS, 1):
                     if modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
 
             key_tokens.sort()
-            key_tokens.append(key.lower())
-            yield events.Key(
-                "+".join(key_tokens),
-                character_sequence if len(character_sequence) == 1 else None,
-            )
+            if key is not None:
+                key_tokens.append(key.lower())
+            yield events.Key("+".join(key_tokens), text)
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)

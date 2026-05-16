@@ -283,7 +283,11 @@ class LinuxDriver(Driver):
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
 
         # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-        KITTY_PROTOCOL_FLAG = KITTY_DISAMBIGUATE_ESCAPE_CODES | KITTY_REPORT_ALL_KEYS
+        KITTY_PROTOCOL_FLAG = (
+            KITTY_DISAMBIGUATE_ESCAPE_CODES
+            | KITTY_REPORT_ALL_KEYS
+            | KITTY_REPORT_ASSOCIATED_TEXT
+        )
         self.write(f"\x1b[>{KITTY_PROTOCOL_FLAG}u")
 
         self.flush()
