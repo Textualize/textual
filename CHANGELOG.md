@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [8.2.4] - 2026-04-19
 
+### Fixed
+
+- Fix crash when using Input in a DEFAULT_MODE screen https://github.com/Textualize/textual/pull/6492
+
 ### Added
 
 - Added `DOM.update_classes` https://github.com/Textualize/textual/pull/6478
