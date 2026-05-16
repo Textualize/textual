@@ -102,7 +102,7 @@ class TextAreaLanguage:
     name: str
     """The name of the language"""
 
-    language: "Language" | None
+    language: "Language | None"
     """The tree-sitter language object if that has been overridden, or None if it is a built-in language."""
 
     highlight_query: str
