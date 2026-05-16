@@ -335,7 +335,7 @@ class XTermParser(Parser[Message]):
             sequence: Sequence of code points.
 
         Returns:
-            Keys
+            Iterable of key events.
         """
 
         if (match := _re_extended_key.fullmatch(sequence)) is not None:
@@ -343,11 +343,13 @@ class XTermParser(Parser[Message]):
             number = number or "1"
 
             character_sequence = sequence
-            if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
-                if number.isalnum():
-                    ordinal = int(number)
-                    character_sequence = chr(ordinal)
-                    key = _character_to_key(character_sequence)
+            if (
+                not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", ""))
+                and number.isalnum()
+            ):
+                ordinal = int(number)
+                character_sequence = chr(ordinal)
+                key = _character_to_key(character_sequence)
 
             key_tokens: list[str] = []
             # The modifier is redundant on a modifier key

@@ -308,7 +308,7 @@ async def test_pilot_target_on_widget_that_is_not_visible_errors(method, target)
     """Make sure that clicking a widget that is not scrolled into view raises an error."""
     app = ManyLabelsApp()
     async with app.run_test(size=(80, 5)) as pilot:
-        app.query_one("#label50").scroll_visible(animate=False)
+        app.query_one("#label50").scroll_visible(immediate=True, animate=False)
         await pilot.pause()
 
         pilot_method = getattr(pilot, method)
