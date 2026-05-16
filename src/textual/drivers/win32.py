@@ -12,6 +12,7 @@ from typing import IO, TYPE_CHECKING, Callable, List, Optional
 from textual import constants
 from textual._xterm_parser import XTermParser
 from textual.events import Event, Resize
+from textual.message import Message
 from textual.geometry import Size
 
 if TYPE_CHECKING:
@@ -162,6 +163,8 @@ def enable_application_mode() -> Callable[[], None]:
         A callable that will restore terminal to previous state.
     """
 
+    assert sys.__stdin__ is not None
+    assert sys.__stdout__ is not None
     terminal_in = sys.__stdin__
     terminal_out = sys.__stdout__
 
@@ -217,7 +220,7 @@ class EventMonitor(threading.Thread):
         loop: AbstractEventLoop,
         app: App,
         exit_event: threading.Event,
-        process_event: Callable[[Event], None],
+        process_event: Callable[[Message], None],
     ) -> None:
         self.loop = loop
         self.app = app
