@@ -2668,9 +2668,19 @@ TextArea {
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
-        from_location = self.selection.end
-        to_location = self.get_cursor_line_start_location()
-        self._delete_via_keyboard(from_location, to_location)
+        if self.read_only:
+            return
+
+        if self.cursor_at_start_of_line:
+            selection = self.selection
+            start, end = selection
+            if selection.is_empty:
+                end = self.get_cursor_left_location()
+            self._delete_via_keyboard(start, end)
+        else:
+            from_location = self.selection.end
+            to_location = self.get_cursor_line_start_location()
+            self._delete_via_keyboard(from_location, to_location)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
