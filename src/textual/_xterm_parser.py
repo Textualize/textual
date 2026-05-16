@@ -343,20 +343,14 @@ class XTermParser(Parser[Message]):
 
         if (match := _re_extended_key.fullmatch(sequence)) is not None:
             codes, end = match.groups(default="")
-            number_ordinal, modifiers_ordinal, text_ordinal = (
-                codes.split(";") + [""] * 3
-            )[:3]
+            codepoint_str, modifiers_str, text_str, *_ = codes.split(";") + ["", "", ""]
 
-            number = int(number_ordinal or "1")
-            modifiers = int(modifiers_ordinal or "0")
-            text = chr(int(text_ordinal or "0")) if text_ordinal else None
+            codepoint = int(codepoint_str or "1")
+            modifiers = int(modifiers_str or "0")
+            text = chr(int(text_str)) if text_str else None
 
-            if key := FUNCTIONAL_KEYS.get(f"{number}{end}", ""):
-                text = None
-            else:
-                key = (
-                    _character_to_key(text) if text else _character_to_key(chr(number))
-                )
+            if not (key := FUNCTIONAL_KEYS.get(f"{codepoint}{end}", "")):
+                key = _character_to_key(text if text else chr(codepoint))
 
             key_tokens: list[str] = []
             # The modifier is redundant on a modifier key
@@ -365,7 +359,11 @@ class XTermParser(Parser[Message]):
                 # Not convinced of the utility in reporting caps_lock and num_lock
                 MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
                 # Ignore caps_lock and num_lock modifiers
-                if modifier_bits & 1:
+                # If the shift changes the case, then we want "shift+" in the key
+                # If the key does not simply change the case (i.e. shift+1) we do *not* want the modifier
+                if modifier_bits & 1 and (
+                    text is None or chr(codepoint).casefold() == text.casefold()
+                ):
                     key_tokens.append("shift")
                 for bit, modifier in enumerate(MODIFIERS, 1):
                     if modifier_bits & (1 << bit):
