@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added support for Kitty key protocl "Report all keys as escape codes" which enabled alt+backspace on Warp
 - Added support for detecting separate modifier keys for terminals that support the Kitty key protocol
+- Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid).
 
 ## [8.2.6] - 2026-04-13
 

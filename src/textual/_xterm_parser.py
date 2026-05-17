@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+from functools import lru_cache
 from typing import Any, Generator, Iterable
 
 from typing_extensions import Final
@@ -38,7 +39,7 @@ SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSO
 """Set of special sequences."""
 
 _re_extended_key: Final[re.Pattern[str]] = re.compile(
-    r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])"
+    r"\x1b\[((?:\d*;?){2,3})([u~ABCDEFHPQRS])"
 )
 _re_in_band_window_resize: Final[re.Pattern[str]] = re.compile(
     r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
@@ -49,6 +50,13 @@ IS_ITERM = (
     os.environ.get("LC_TERMINAL", "") == "iTerm2"
     or os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
 )
+
+SPECIAL_KEY_TO_CHARACTER: Final = {
+    "backspace": "\x7f",
+    "enter": "\r",
+    "tab": "\t",
+}
+"""Explcit characters for keys, used in Kitty protocol parsing"""
 
 
 class XTermParser(Parser[Message]):
@@ -326,6 +334,53 @@ class XTermParser(Parser[Message]):
             self._debug_log_file.close()
             self._debug_log_file = None
 
+    @lru_cache(maxsize=1024)
+    def _parse_extended_key(self, sequence: str) -> events.Key | None:
+        """Parse a Kitty sequence.
+
+        Args:
+            sequence: Input sequence
+
+        Returns:
+            Key event, or `None` of none could be parsed.
+        """
+
+        if (match := _re_extended_key.fullmatch(sequence)) is None:
+            return None
+
+        codes, end = match.groups(default="")
+        codepoint_str, modifiers_str, text_str, *_ = codes.split(";") + ["", "", ""]
+
+        codepoint = int(codepoint_str or "1")
+        modifiers = int(modifiers_str or "0")
+        text = chr(int(text_str)) if text_str else None
+
+        if not (key := FUNCTIONAL_KEYS.get(f"{codepoint}{end}", "")):
+            key = _character_to_key(text if text else chr(codepoint))
+
+        key_tokens: list[str] = []
+        # The modifier is redundant on a modifier key
+        if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS and text_str is not None:
+            modifier_bits = int(modifiers) - 1
+            # Not convinced of the utility in reporting caps_lock and num_lock
+            MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
+            # Ignore caps_lock and num_lock modifiers
+            if modifier_bits & 1 and (text is None or text.isspace()):
+                key_tokens.append("shift")
+            for bit, modifier in enumerate(MODIFIERS, 1):
+                if modifier == "alt" and text is not None:
+                    continue
+                if modifier_bits & (1 << bit):
+                    key_tokens.append(modifier)
+
+        key_tokens.sort()
+        if key is not None:
+            key_tokens.append(key)
+        return events.Key(
+            "+".join(key_tokens),
+            text or (None if modifiers else SPECIAL_KEY_TO_CHARACTER.get(key, None)),
+        )
+
     def _sequence_to_key_events(
         self, sequence: str, alt: bool = False
     ) -> Iterable[events.Key]:
@@ -338,36 +393,11 @@ class XTermParser(Parser[Message]):
             Iterable of key events.
         """
 
-        if (match := _re_extended_key.fullmatch(sequence)) is not None:
-            number, modifiers, end = match.groups(default="")
-            number = number or "1"
-
-            character_sequence = sequence
-            if (
-                not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", ""))
-                and number.isalnum()
-            ):
-                ordinal = int(number)
-                character_sequence = chr(ordinal)
-                key = _character_to_key(character_sequence)
-
-            key_tokens: list[str] = []
-            # The modifier is redundant on a modifier key
-            if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS:
-                modifier_bits = int(modifiers) - 1
-                # Not convinced of the utility in reporting caps_lock and num_lock
-                MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
-                # Ignore caps_lock and num_lock modifiers
-                for bit, modifier in enumerate(MODIFIERS):
-                    if modifier_bits & (1 << bit):
-                        key_tokens.append(modifier)
-
-            key_tokens.sort()
-            key_tokens.append(key.lower())
-            yield events.Key(
-                "+".join(key_tokens),
-                character_sequence if len(character_sequence) == 1 else None,
-            )
+        if (
+            not constants.DISABLE_KITTY_KEY
+            and (key := self._parse_extended_key(sequence)) is not None
+        ):
+            yield key.copy()
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
