@@ -190,7 +190,7 @@ def test_double_escape(parser):
         ("\x1b[97;2;65u", "A"),
         ("\x1ba", "alt+a"),
         ("\x1b[97;3u", "alt+a"),
-        ("\x1b[65;4u", "alt+shift+a"),
+        ("\x1b[97;4u", "alt+shift+a"),
         ("\x1bA", "alt+shift+a"),
         ("\x1b[120;7u", "alt+ctrl+x"),
         ("\x1b[57443;3u", "left_alt"),
