@@ -563,3 +563,37 @@ async def test_paste_read_only_does_nothing():
         await pilot.pause()
 
         assert text_area.text == TEXT  # No change
+
+
+async def test_delete_to_start_of_line_deletes_newline():
+    """Test that default ctrl+u deletes newline when the cursor is at the start"""
+
+    class TextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            text_area = TextArea.code_editor()
+            text_area.insert("Hello\nWorld")
+
+            yield text_area
+
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+
+        # Two lines to start
+        assert text_area.text == "Hello\nWorld"
+
+        # Delete the line
+        await pilot.press("ctrl+u")
+        assert text_area.text == "Hello\n"
+
+        # Delete at start, deletes the \n
+        await pilot.press("ctrl+u")
+        assert text_area.text == "Hello"
+
+        # Delete the line
+        await pilot.press("ctrl+u")
+        assert text_area.text == ""
+
+        # Delete empty is a NOOP
+        await pilot.press("ctrl+u")
+        assert text_area.text == ""
