@@ -113,6 +113,9 @@ DEBUG: Final[bool] = _get_environ_bool("TEXTUAL_DEBUG")
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
 """Import for replacement driver."""
 
+DISABLE_KITTY_KEY: Final[bool] = _get_environ_bool("TEXTUAL_DISABLE_KITTY_KEY")
+"""Disable kitty key protocol."""
+
 FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
 """A list of filters to apply to renderables."""
 

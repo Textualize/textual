@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any, Final
 
 import rich.repr
 
-from textual import events
+from textual import constants, events
 from textual._loop import loop_last
 from textual._parser import ParseError
 from textual._xterm_parser import XTermParser
@@ -282,13 +282,14 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
 
-        # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-        KITTY_PROTOCOL_FLAG = (
-            KITTY_DISAMBIGUATE_ESCAPE_CODES
-            | KITTY_REPORT_ALL_KEYS
-            | KITTY_REPORT_ASSOCIATED_TEXT
-        )
-        self.write(f"\x1b[>{KITTY_PROTOCOL_FLAG}u")
+        if not constants.DISABLE_KITTY_KEY:
+            # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+            KITTY_PROTOCOL_FLAG = (
+                KITTY_DISAMBIGUATE_ESCAPE_CODES
+                | KITTY_REPORT_ALL_KEYS
+                | KITTY_REPORT_ASSOCIATED_TEXT
+            )
+            self.write(f"\x1b[>{KITTY_PROTOCOL_FLAG}u")
 
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread, name="textual-input")
