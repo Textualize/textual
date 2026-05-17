@@ -186,6 +186,8 @@ def test_double_escape(parser):
     [
         ("a", "a"),
         ("B", "B"),
+        ("\x1b[97;;97u", "a"),
+        ("\x1b[97;2;65u", "A"),
         ("\x1ba", "alt+a"),
         ("\x1b[97;3u", "alt+a"),
         ("\x1b[65;4u", "alt+shift+a"),
@@ -194,6 +196,8 @@ def test_double_escape(parser):
         ("\x1b[57443;3u", "left_alt"),
         ("\x1b[127;3u", "alt+backspace"),
         ("\x1b[27u", "escape"),
+        ("\x1b[32;;32u", "space"),
+        ("\x1b[32;2;32u", "shift+space"),
     ],
 )
 def test_keys(parser, sequence: str, key: str) -> None:

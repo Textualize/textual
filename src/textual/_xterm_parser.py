@@ -37,9 +37,6 @@ FOCUSOUT: Final[str] = "\x1b[O"
 SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSOUT}
 """Set of special sequences."""
 
-# _re_extended_key: Final[re.Pattern[str]] = re.compile(
-#     r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])"
-# )
 _re_extended_key: Final[re.Pattern[str]] = re.compile(
     r"\x1b\[((?:\d*;?){2,3})([u~ABCDEFHPQRS])"
 )
@@ -52,6 +49,12 @@ IS_ITERM = (
     os.environ.get("LC_TERMINAL", "") == "iTerm2"
     or os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
 )
+
+SPECIAL_KEY_TO_CHARACTER: Final = {
+    "backspace": "\x7f",
+    "enter": "\r",
+}
+"""Explcit characters for keys, used in Kitty protocol parsing"""
 
 
 class XTermParser(Parser[Message]):
@@ -354,25 +357,31 @@ class XTermParser(Parser[Message]):
 
             key_tokens: list[str] = []
             # The modifier is redundant on a modifier key
-            if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS:
+            if (
+                modifiers
+                and key not in MODIFIER_FUNCTIONAL_KEYS
+                and text_str is not None
+            ):
                 modifier_bits = int(modifiers) - 1
                 # Not convinced of the utility in reporting caps_lock and num_lock
                 MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
                 # Ignore caps_lock and num_lock modifiers
-                # If the shift changes the case, then we want "shift+" in the key
-                # If the key does not simply change the case (i.e. shift+1) we do *not* want the modifier
-                if modifier_bits & 1 and (
-                    text is None or chr(codepoint).casefold() == text.casefold()
-                ):
+                if modifier_bits & 1 and (text is None or text.isspace()):
                     key_tokens.append("shift")
                 for bit, modifier in enumerate(MODIFIERS, 1):
+                    if modifier == "alt" and text is not None:
+                        continue
                     if modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
 
             key_tokens.sort()
             if key is not None:
-                key_tokens.append(key.lower())
-            yield events.Key("+".join(key_tokens), text)
+                key_tokens.append(
+                    key if (text is not None and len(text) == 1) else key.lower()
+                )
+            yield events.Key(
+                "+".join(key_tokens), text or SPECIAL_KEY_TO_CHARACTER.get(key, None)
+            )
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
