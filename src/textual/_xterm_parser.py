@@ -397,7 +397,7 @@ class XTermParser(Parser[Message]):
             not constants.DISABLE_KITTY_KEY
             and (key := self._parse_extended_key(sequence)) is not None
         ):
-            yield key
+            yield key.copy()
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
