@@ -376,9 +376,7 @@ class XTermParser(Parser[Message]):
 
             key_tokens.sort()
             if key is not None:
-                key_tokens.append(
-                    key if (text is not None and len(text) == 1) else key.lower()
-                )
+                key_tokens.append(key)
             yield events.Key(
                 "+".join(key_tokens), text or SPECIAL_KEY_TO_CHARACTER.get(key, None)
             )
