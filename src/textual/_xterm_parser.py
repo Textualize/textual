@@ -378,7 +378,9 @@ class XTermParser(Parser[Message]):
             if key is not None:
                 key_tokens.append(key)
             yield events.Key(
-                "+".join(key_tokens), text or SPECIAL_KEY_TO_CHARACTER.get(key, None)
+                "+".join(key_tokens),
+                text
+                or (None if modifiers else SPECIAL_KEY_TO_CHARACTER.get(key, None)),
             )
             return
 
