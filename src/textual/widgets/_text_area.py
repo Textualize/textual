@@ -366,7 +366,7 @@ TextArea {
             show=False,
         ),
         Binding(
-            "ctrl+delete",
+            "alt+delete",
             "delete_word_right",
             "Delete right to start of word",
             show=False,
@@ -444,7 +444,7 @@ TextArea {
     | backspace              | Delete character to the left of cursor.      |
     | ctrl+w,ctrl+backspace  | Delete from cursor to start of the word.     |
     | delete,ctrl+d          | Delete character to the right of cursor.     |
-    | ctrl+f                 | Delete from cursor to end of the word.       |
+    | alt+delete             | Delete from cursor to end of the word.       |
     | ctrl+shift+k           | Delete the current line.                     |
     | ctrl+u                 | Delete from cursor to the start of the line. |
     | ctrl+k                 | Delete from cursor to the end of the line.   |
@@ -2742,7 +2742,7 @@ TextArea {
 
         # Check the current line for a word boundary
         line = self.document[cursor_row][cursor_column:]
-        matches = list(re.finditer(self._word_pattern, line))
+        matches = list(re.finditer(r"\s*\w+", line))
 
         current_row_length = len(self.document[cursor_row])
         if matches:

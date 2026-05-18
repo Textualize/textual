@@ -436,11 +436,11 @@ async def test_delete_word_left_at_line_start():
 @pytest.mark.parametrize(
     "selection,expected_result,final_selection",
     [
-        (Selection.cursor((0, 0)), "012 345 6789", Selection.cursor((0, 0))),
+        (Selection.cursor((0, 0)), " 345 6789", Selection.cursor((0, 0))),
         (Selection.cursor((0, 4)), "  01 345 6789", Selection.cursor((0, 4))),
-        (Selection.cursor((0, 5)), "  012345 6789", Selection.cursor((0, 5))),
+        (Selection.cursor((0, 5)), "  012 6789", Selection.cursor((0, 5))),
         (Selection.cursor((0, 14)), "  012 345 6789", Selection.cursor((0, 14))),
-        # When non-empty selection, "delete word right" just deletes the selection
+        # # When non-empty selection, "delete word right" just deletes the selection
         (Selection((0, 4), (0, 11)), "  01789", Selection.cursor((0, 4))),
     ],
 )
@@ -451,9 +451,10 @@ async def test_delete_word_right(selection, expected_result, final_selection):
         text_area.load_text("  012 345 6789")
         text_area.selection = selection
 
-        await pilot.press("ctrl+delete")
+        await pilot.press("alt+delete")
 
         assert text_area.text == expected_result
+        print(final_selection)
         assert text_area.selection == final_selection
 
 
@@ -464,7 +465,7 @@ async def test_delete_word_right_delete_to_end_of_line():
         text_area.load_text("01234\n56789")
         text_area.selection = Selection.cursor((0, 3))
 
-        await pilot.press("ctrl+delete")
+        await pilot.press("alt+delete")
 
         assert text_area.text == "012\n56789"
         assert text_area.selection == Selection.cursor((0, 3))
@@ -477,7 +478,7 @@ async def test_delete_word_right_at_end_of_line():
         text_area.load_text("01234\n56789")
         text_area.selection = Selection.cursor((0, 5))
 
-        await pilot.press("ctrl+delete")
+        await pilot.press("alt+delete")
 
         assert text_area.text == "0123456789"
         assert text_area.selection == Selection.cursor((0, 5))
