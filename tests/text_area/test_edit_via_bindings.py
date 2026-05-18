@@ -361,6 +361,17 @@ async def test_delete_word_left(selection, expected_result, final_selection):
         assert text_area.text == expected_result
         assert text_area.selection == final_selection
 
+    # Repeat with ctrl+backspace binding
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("  012 345 6789")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+backspace")
+
+        assert text_area.text == expected_result
+        assert text_area.selection == final_selection
+
 
 @pytest.mark.parametrize(
     "selection,expected_result,final_selection",

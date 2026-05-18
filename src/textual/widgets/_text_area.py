@@ -354,7 +354,7 @@ TextArea {
             show=False,
         ),
         Binding(
-            "ctrl+w",
+            "ctrl+w,ctrl+backspace",
             "delete_word_left",
             "Delete left to start of word",
             show=False,
@@ -442,7 +442,7 @@ TextArea {
     | shift+left             | Select while moving the cursor left.         |
     | shift+right            | Select while moving the cursor right.        |
     | backspace              | Delete character to the left of cursor.      |
-    | ctrl+w                 | Delete from cursor to start of the word.     |
+    | ctrl+w,ctrl+backspace  | Delete from cursor to start of the word.     |
     | delete,ctrl+d          | Delete character to the right of cursor.     |
     | ctrl+f                 | Delete from cursor to end of the word.       |
     | ctrl+shift+k           | Delete the current line.                     |
