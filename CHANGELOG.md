@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Undo/redo/copy/cut/paste in TextArea will now work with cmd+ on supported terminals
 - In TextArea, ctrl+u will now delete a newline if the cursor is at the start
+- in TextArea ctrl+delete is now bound to delete word right
 
 ## [8.2.6] - 2026-04-13
 

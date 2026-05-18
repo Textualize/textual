@@ -362,6 +362,7 @@ async def test_delete_word_left(selection, expected_result, final_selection):
         assert text_area.selection == final_selection
 
     # Repeat with ctrl+backspace binding
+    app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.load_text("  012 345 6789")
@@ -450,7 +451,7 @@ async def test_delete_word_right(selection, expected_result, final_selection):
         text_area.load_text("  012 345 6789")
         text_area.selection = selection
 
-        await pilot.press("ctrl+f")
+        await pilot.press("ctrl+delete")
 
         assert text_area.text == expected_result
         assert text_area.selection == final_selection
@@ -463,7 +464,7 @@ async def test_delete_word_right_delete_to_end_of_line():
         text_area.load_text("01234\n56789")
         text_area.selection = Selection.cursor((0, 3))
 
-        await pilot.press("ctrl+f")
+        await pilot.press("ctrl+delete")
 
         assert text_area.text == "012\n56789"
         assert text_area.selection == Selection.cursor((0, 3))
@@ -476,7 +477,7 @@ async def test_delete_word_right_at_end_of_line():
         text_area.load_text("01234\n56789")
         text_area.selection = Selection.cursor((0, 5))
 
-        await pilot.press("ctrl+f")
+        await pilot.press("ctrl+delete")
 
         assert text_area.text == "0123456789"
         assert text_area.selection == Selection.cursor((0, 5))
@@ -488,7 +489,7 @@ async def test_delete_word_right_at_end_of_line():
         "enter",
         "backspace",
         "ctrl+u",
-        "ctrl+f",
+        "ctrl+delete",
         "ctrl+w",
         "ctrl+k",
         "ctrl+x",

@@ -366,7 +366,7 @@ TextArea {
             show=False,
         ),
         Binding(
-            "ctrl+f",
+            "ctrl+delete",
             "delete_word_right",
             "Delete right to start of word",
             show=False,
