@@ -161,6 +161,25 @@ Note how the footer displays bindings and makes them clickable.
     Multiple keys can be bound to a single action by comma-separating them.
     For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar('red')`.
 
+### Key identifiers
+
+The first value in a binding uses the same key identifier strings as the `key` attribute of a [Key][textual.events.Key] event.
+
+Use a single character for letters and numbers, such as `a`, `z`, or `1`.
+For printable symbols other than whitespace and the comma separator, you can use the symbol itself in `BINDINGS` and Textual will normalize it to a key name.
+For example, `?` becomes `question_mark` and `$` becomes `dollar_sign`.
+Write the space key as `space`, and the comma key as `comma`.
+These names are generally based on the Unicode character name, in lower case, with spaces and hyphens replaced by underscores.
+
+Keys that don't produce a printable character use names such as `enter`, `escape`, `tab`, `backspace`, `delete`, `insert`, `home`, `end`, `pageup`, `pagedown`, `up`, `down`, `left`, `right`, and function keys such as `f1` and `f2`.
+Combine modifiers and a key with `+`, such as `ctrl+s`, `shift+tab`, `alt+delete`, or `ctrl+shift+p`.
+Terminal and operating system support for some key combinations may vary; run `textual keys` if you need to check the identifier produced by a particular key press.
+
+The footer and key panel convert key identifiers to display text with [App.get_key_display][textual.app.App.get_key_display].
+This converts named symbols to their character when possible, such as `question_mark` to `?`, applies short display aliases such as `delete` to `del` and `pageup` to `pgup`, and displays `ctrl` as a caret, such as `ctrl+p` to `^p`.
+Other modifiers remain joined with `+`, such as `shift+tab` or `alt+delete`.
+If you need different display text for a binding, set `key_display` on [Binding][textual.binding.Binding] or override `get_key_display` on your app.
+
 When you press a key, Textual will first check for a matching binding in the `BINDINGS` list of the currently focused widget.
 If no match is found, it will search upwards through the DOM all the way up to the `App` looking for a match.
 
