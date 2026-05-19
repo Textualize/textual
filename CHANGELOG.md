@@ -9,9 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added support for Kitty key protocl "Report all keys as escape codes" which enabled alt+backspace on Warp
+- Added support for Kitty key protocol "Report all keys as escape codes" which enabled alt+backspace on Warp
 - Added support for detecting separate modifier keys for terminals that support the Kitty key protocol
 - Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid).
+
+### Changed
+
+- Undo/redo/copy/cut/paste in TextArea will now work with cmd+ on supported terminals
+- In TextArea, ctrl+u will now delete a newline if the cursor is at the start
+- in TextArea alt+delete is now bound to delete word right
 
 ## [8.2.6] - 2026-04-13
 
