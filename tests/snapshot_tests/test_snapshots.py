@@ -4913,3 +4913,26 @@ How's that?
             self.theme = "dracula"
 
     assert snap_compare(MDApp())
+
+
+def test_text_opacity_native_ansi(snap_compare) -> None:
+    """Test that text-opacity with ansi themes doesn't produce RGB colors.
+
+    Textual can't calculate text opacity with ANSI colors. As a compromize a text-opacity of 50% or less
+    sets the dim attribute on the style.
+
+    You should see 10 labels for wach level of opacity. For opacity 50% and under, the labels
+    should be dimmed.
+    """
+
+    class TApp(App):
+
+        def on_load(self) -> None:
+            self.theme = "ansi-dark"
+
+        def compose(self) -> ComposeResult:
+            for n in range(11):
+                yield (label := Label(f"Text Opacity {n*10}%"))
+                label.styles.text_opacity = f"{n * 10}%"
+
+    assert snap_compare(TApp())
