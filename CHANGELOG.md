@@ -9,20 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added support for Kitty key protocol "Report all keys as escape codes" which enabled alt+backspace on Warp
-- Added support for detecting separate modifier keys for terminals that support the Kitty key protocol
-- Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid).
+- Added support for Kitty key protocol "Report all keys as escape codes" which enabled alt+backspace on Warp https://github.com/Textualize/textual/pull/6544
+- Added support for detecting separate modifier keys for terminals that support the Kitty key protocol https://github.com/Textualize/textual/pull/6544
+- Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid). https://github.com/Textualize/textual/pull/6544
 
 ### Changed
 
-- Undo/redo/copy/cut/paste in TextArea will now work with cmd+ on supported terminals
-- In TextArea, ctrl+u will now delete a newline if the cursor is at the start
-- in TextArea alt+delete is now bound to delete word right
-- Text opacity applied to an ansi theme will now set the dim attribute if the opacity is < 50%
+- Undo/redo/copy/cut/paste in TextArea will now work with cmd+ on supported terminals https://github.com/Textualize/textual/pull/6543
+- In TextArea, ctrl+u will now delete a newline if the cursor is at the start https://github.com/Textualize/textual/pull/6543
+- in TextArea alt+delete is now bound to delete word right https://github.com/Textualize/textual/pull/6543
+- Text opacity applied to an ansi theme will now set the dim attribute if the opacity is < 50% https://github.com/Textualize/textual/pull/6546
 
 ### Fixed
 
-- Fixed text opacity with ANSI themes creating RGB colors.  
+- Fixed text opacity with ANSI themes creating RGB colors.  https://github.com/Textualize/textual/pull/6546
 
 ## [8.2.6] - 2026-04-13
 
