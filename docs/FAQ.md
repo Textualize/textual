@@ -295,7 +295,7 @@ We recommend any of the following terminals:
 <a name="why-doesnt-textual-support-ansi-themes"></a>
 ## Why doesn't Textual support ANSI themes?
 
-Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
+By default, Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
 
 This is an intentional design decision we took for the following reasons:
 
