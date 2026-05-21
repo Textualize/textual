@@ -21,6 +21,10 @@ class TwoWayDict(Generic[Key, Value]):
     def __setitem__(self, key: Key, value: Value) -> None:
         # TODO: Duplicate values need to be managed to ensure consistency,
         #  decide on best approach.
+        if key in self._forward:
+            # Reassigning an existing key: drop its old value from the
+            # reverse map, otherwise that value keeps pointing back here.
+            self._reverse.__delitem__(self._forward[key])
         self._forward.__setitem__(key, value)
         self._reverse.__setitem__(value, key)
 

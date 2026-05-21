@@ -28,6 +28,18 @@ def test_set_item(two_way_dict):
     assert two_way_dict.get_key(400) == 40
 
 
+def test_set_item_reassigning_key_clears_old_reverse_entry(two_way_dict):
+    # Reassigning an existing key must not leave its old value behind in the
+    # reverse mapping.
+    assert two_way_dict.get_key(10) == 1
+    two_way_dict[1] = 999
+    assert two_way_dict.get(1) == 999
+    assert two_way_dict.get_key(999) == 1
+    assert two_way_dict.get_key(10) is None
+    assert not two_way_dict.contains_value(10)
+    assert len(two_way_dict) == 3
+
+
 def test_len(two_way_dict):
     assert len(two_way_dict) == 3
 
