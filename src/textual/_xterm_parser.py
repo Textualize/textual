@@ -18,7 +18,7 @@ from textual.message import Message
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-_MAX_SEQUENCE_SEARCH_THRESHOLD = 32 * 4
+_MAX_SEQUENCE_SEARCH_THRESHOLD = 32
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
@@ -289,18 +289,26 @@ class XTermParser(Parser[Message]):
 
                 if sequence == "\x1b]":
                     while True:
-                        sequence += yield read1(constants.ESCAPE_DELAY)
+                        try:
+                            sequence += yield read1(constants.ESCAPE_DELAY)
+                        except (ParseTimeout, ParseEOF):
+                            break
+
                         if (match := _re_osc.fullmatch(sequence)) is not None:
                             code, _, params = match.group("payload").partition(";")
                             if code == "4":
                                 index, partition, color = params.partition(";")
-                                palette_index = int(index)
-                                if (
-                                    palette_index < 16
-                                    and (triplet := self._parse_osc_color(color))
-                                    is not None
-                                ):
-                                    self._palette[palette_index] = triplet
+                                if partition:
+                                    try:
+                                        palette_index = int(index)
+                                    except TypeError:
+                                        break
+                                    if (
+                                        palette_index < 16
+                                        and (triplet := self._parse_osc_color(color))
+                                        is not None
+                                    ):
+                                        self._palette[palette_index] = triplet
                             elif code == "10":
                                 if (
                                     triplet := self._parse_osc_color(params)
