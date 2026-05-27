@@ -3,8 +3,9 @@ from __future__ import annotations
 import os
 import re
 from functools import lru_cache
-from typing import Any, Generator, Iterable
+from typing import Any, Generator, Iterable, cast
 
+from rich.terminal_theme import TerminalTheme
 from typing_extensions import Final
 
 from textual import constants, events, messages
@@ -17,7 +18,7 @@ from textual.message import Message
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-_MAX_SEQUENCE_SEARCH_THRESHOLD = 32
+_MAX_SEQUENCE_SEARCH_THRESHOLD = 32 * 4
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
@@ -25,6 +26,7 @@ _re_terminal_mode_response = re.compile(
 )
 
 _re_cursor_position = re.compile(r"\x1b\[(?P<row>\d+);(?P<col>\d+)R")
+_re_osc = re.compile(r"\x1b\](?P<payload>.*?)(?:\x07|\x1b\\)", re.DOTALL)
 
 BRACKETED_PASTE_START: Final[str] = "\x1b[200~"
 """Sequence received when a bracketed paste event starts."""
@@ -69,6 +71,9 @@ class XTermParser(Parser[Message]):
         self.terminal_size: tuple[int, int] | None = None
         self.terminal_pixel_size: tuple[int, int] | None = None
         self._debug_log_file = open("keys.log", "at") if debug else None
+        self._palette: list[tuple[int, int, int] | None] = [None] * 16
+        self._palette_foreground: tuple[int, int, int] | None = None
+        self._palette_background: tuple[int, int, int] | None = None
         super().__init__()
         self.debug_log("---")
 
@@ -141,6 +146,31 @@ class XTermParser(Parser[Message]):
             )
             return event
         return None
+
+    def _parse_osc_color(self, color: str) -> tuple[int, int, int] | None:
+        """Parse a color returned in an OSC query, or `None` if color format is invalid.
+
+        Args:
+            color: String containing color from response.
+
+        Returns:
+            A RGB tuple, or `None`
+        """
+        if not color.startswith("rgb:"):
+            return None
+        color = color[4:]
+        parts = color.split("/")
+        if len(parts) != 3:
+            return None
+        try:
+            triplet = tuple(
+                int(part, 16) * 255 // (16 ** len(part) - 1) for part in parts
+            )
+        except TypeError:
+            return None
+        if len(triplet) != 3:
+            return None
+        return triplet
 
     def parse(
         self, token_callback: TokenCallback
@@ -257,6 +287,49 @@ class XTermParser(Parser[Message]):
                         reissue_sequence_as_keys(sequence)
                         break
 
+                if sequence == "\x1b]":
+                    while True:
+                        sequence += yield read1(constants.ESCAPE_DELAY)
+                        if (match := _re_osc.fullmatch(sequence)) is not None:
+                            code, _, params = match.group("payload").partition(";")
+                            if code == "4":
+                                index, partition, color = params.partition(";")
+                                palette_index = int(index)
+                                if (
+                                    palette_index < 16
+                                    and (triplet := self._parse_osc_color(color))
+                                    is not None
+                                ):
+                                    self._palette[palette_index] = triplet
+                            elif code == "10":
+                                if (
+                                    triplet := self._parse_osc_color(params)
+                                ) is not None:
+                                    self._palette_foreground = triplet
+                            elif code == "11":
+                                if (
+                                    triplet := self._parse_osc_color(params)
+                                ) is not None:
+                                    self._palette_background = triplet
+
+                            if (
+                                all(self._palette)
+                                and self._palette_foreground is not None
+                                and self._palette_background is not None
+                            ):
+                                palette = cast(
+                                    list[tuple[int, int, int]], self._palette
+                                )
+                                terminal_theme = TerminalTheme(
+                                    self._palette_background,
+                                    self._palette_foreground,
+                                    palette[:16],
+                                    palette[16:],
+                                )
+                                on_token(messages.TerminalThemeReport(terminal_theme))
+                            break
+                    break
+
                 self.debug_log(f"sequence={sequence!r}")
                 if sequence in SPECIAL_SEQUENCES:
                     if sequence == FOCUSIN:
@@ -285,6 +358,7 @@ class XTermParser(Parser[Message]):
 
                 if not bracketed_paste:
                     # Check cursor position report
+
                     cursor_position_match = _re_cursor_position.match(sequence)
                     if cursor_position_match is not None:
                         row, column = map(int, cursor_position_match.groups())

@@ -184,6 +184,12 @@ class LinuxDriver(Driver):
         write("\x1b[?1006l")
         self.flush()
 
+    def _query_theme(self) -> None:
+        """Query the terminal theme colors."""
+        queries = "".join(f"\x1b]4;{index};?\x1b\\" for index in range(16))
+        queries += "\x1b]10;?\x1b\\" + "\x1b]11;?\x1b\\"
+        self.write(queries)
+
     def write(self, data: str) -> None:
         """Write data to the output device.
 
@@ -253,6 +259,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?1049h")  # Alt screen
 
         self._enable_mouse_support()
+        self._query_theme()
         try:
             self.attrs_before = termios.tcgetattr(self.fileno)
         except termios.error:

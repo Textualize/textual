@@ -9,6 +9,8 @@ from textual.geometry import Region
 from textual.message import Message
 
 if TYPE_CHECKING:
+    from rich.terminal_theme import TerminalTheme
+
     from textual.widget import Widget
 
 
@@ -138,3 +140,11 @@ class InBandWindowResize(Message):
         supported = setting_parameter not in (0, 4)
         enabled = setting_parameter in (1, 3)
         return InBandWindowResize(supported, enabled)
+
+
+@rich.repr.auto
+class TerminalThemeReport(Message):
+    """The result of querying the current terminal theme, if supported by the terminal."""
+
+    def __init__(self, terminal_theme: TerminalTheme) -> None:
+        self.theme = terminal_theme
