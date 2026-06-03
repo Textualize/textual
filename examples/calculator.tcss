@@ -1,38 +1,62 @@
 Screen {
-    overflow: auto;
+    align: center middle;
+}
+
+#top-bar {
+    width: 72;
+    height: 3;
+    align: center middle;
+    margin-bottom: 1;
+}
+
+#top-bar Button {
+    margin: 0 1;
+    min-width: 15;
 }
 
 #calculator {
     layout: grid;
     grid-size: 4;
     grid-gutter: 1 2;
-    grid-columns: 1fr;
-    grid-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
-    margin: 1 2;
-    min-height: 25;
-    min-width: 26;
-    height: 100%;
-
-    &:inline {
-        margin: 0 2;
-    }
+    width: 72;
+    height: auto;
+    padding: 2 3;
 }
 
-Button {
+#calculator Button {
     width: 100%;
-    height: 100%;
+    height: 3;
 }
 
-#numbers {
+/* DEV EKRAN: Bozulmayı önleyen en kararlı yükseklik ve hizalama */
+#dev-ekran {
     column-span: 4;
-    padding: 0 1;
-    height: 100%;
-    background: $panel;
-    color: $text;
-    content-align: center middle;
-    text-align: right;
+    width: 100%;
+    height: 3; 
+    content-align: right middle;
+    padding: 0 2;
+    text-style: bold;
+    margin-bottom: 1;
 }
 
-#number-0 {
-    column-span: 2;
-}
+/* ----------------------------------------- */
+/* KOYU TEMA (DARK MODE) */
+/* ----------------------------------------- */
+.dark-theme Screen { background: #111111; }
+.dark-theme #calculator { background: #1E1E1E; border: tall #333333; }
+.dark-theme #dev-ekran { background: #000000; color: #00FF41; border: solid #333333; }
+.dark-theme Button.number { background: #333333; color: #FFFFFF; }
+.dark-theme Button.-warning { background: #D97706; }
+.dark-theme Button.-success { background: #047857; }
+
+/* ----------------------------------------- */
+/* AÇIK TEMA (LIGHT MODE) */
+/* ----------------------------------------- */
+.light-theme Screen { background: #F3F4F6; }
+.light-theme #calculator { background: #FFFFFF; border: tall #D1D5DB; }
+.light-theme #dev-ekran { background: #E5E7EB; color: #111827; border: solid #9CA3AF; }
+.light-theme Button { background: #E5E7EB; color: #000000; }
+.light-theme Button.number { background: #F9FAFB; color: #000000; border: solid #E5E7EB; }
+.light-theme Button.-warning { background: #FBBF24; color: #000000; }
+.light-theme Button.-primary { background: #60A5FA; color: #000000; }
+.light-theme Button.-success { background: #34D399; color: #000000; }
