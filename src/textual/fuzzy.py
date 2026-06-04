@@ -9,7 +9,8 @@ from __future__ import annotations
 
 from functools import lru_cache
 from operator import itemgetter
-from re import finditer
+from re import finditer, search
+import re
 from typing import Iterable, Sequence
 
 import rich.repr
@@ -101,6 +102,32 @@ class FuzzySearch:
             candidate = candidate.lower()
             query = query.lower()
         score = self.score
+
+        # Build regex flags based on case sensitivity
+        flags = 0 if self.case_sensitive else re.IGNORECASE
+
+        # Check for exact match first (HIGHEST PRIORITY - 4.0x boost)
+        if candidate == query:
+            offsets = list(range(len(query)))
+            yield (score(candidate, offsets) * 4.0, offsets)
+            return
+
+        # Check whole-word match (\bword\b) - HIGH PRIORITY
+        whole_word_pattern = rf"\b{re.escape(query)}\b"
+        if re.search(whole_word_pattern, candidate, flags):
+            query_location = candidate.find(query)
+            offsets = list(range(query_location, query_location + len(query)))
+            yield (score(candidate, offsets) * 3.5, offsets)
+            return
+
+        # Check word-start match (\bword) - MEDIUM PRIORITY
+        word_start_pattern = rf"\b{re.escape(query)}"
+        if re.search(word_start_pattern, candidate, flags):
+            query_location = candidate.find(query)
+            offsets = list(range(query_location, query_location + len(query)))
+            yield (score(candidate, offsets) * 2.5, offsets)
+            return
+
         if query in candidate:
             # Quick exit when the query exists as a substring
             query_location = candidate.find(query)
@@ -172,7 +199,7 @@ class Matcher:
         self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
         self._case_sensitive = case_sensitive
-        self.fuzzy_search = FuzzySearch()
+        self.fuzzy_search = FuzzySearch(case_sensitive=case_sensitive)
 
     @property
     def query(self) -> str:
