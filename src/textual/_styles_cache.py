@@ -322,6 +322,13 @@ class StylesCache:
             (outline_left, outline_left_color),
         ) = styles.outline
 
+        # The simple-strip cache assumes every padding row is identical. A top
+        # or bottom outline is drawn on a single padding row (the first or last),
+        # so the cache can't be used when an outline coincides with that padding.
+        reuse_simple_strip = not (
+            (outline_top and pad_top) or (outline_bottom and pad_bottom)
+        )
+
         from_color = RichStyle.from_color
         inner, outer = self.get_inner_outer(base_background, background)
 
@@ -427,9 +434,10 @@ class StylesCache:
         elif (pad_top and y < gutter.top) or (
             pad_bottom and y >= height - gutter.bottom
         ):
-            if self._simple_strip is not None:
-                return self._simple_strip
-            cache_simple_strip = True
+            if reuse_simple_strip:
+                if self._simple_strip is not None:
+                    return self._simple_strip
+                cache_simple_strip = True
             background_rich_style = inner.rich_style
             left_style = Style(
                 foreground=base_background + border_left_color.multiply_alpha(opacity)

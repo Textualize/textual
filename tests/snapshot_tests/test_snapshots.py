@@ -4936,3 +4936,30 @@ def test_text_opacity_native_ansi(snap_compare) -> None:
                 label.styles.text_opacity = f"{n * 10}%"
 
     assert snap_compare(TApp())
+
+
+def test_outline_with_padding(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/6558
+
+    An outline combined with padding should draw the outline top edge only on
+    the first row and the bottom edge only on the last row. The padding rows in
+    between should not repeat the outline's top edge. You should see widgets
+    with a complete rectangular outline, not a horizontal line in each padded
+    section.
+    """
+
+    class OutlineApp(App[None]):
+        CSS = """
+        Static {
+            height: 9;
+            padding-top: 3;
+            padding-bottom: 3;
+            outline: blue heavy;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            for _ in range(2):
+                yield Static("Lipsum")
+
+    assert snap_compare(OutlineApp())
