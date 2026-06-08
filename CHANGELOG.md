@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed top/bottom `outline` being repeated on padding rows due to the simple strip cache https://github.com/Textualize/textual/issues/6558
+
 ## [8.2.7] - 2026-05-19 
 
 ### Added
