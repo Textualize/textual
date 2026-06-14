@@ -311,6 +311,8 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str | IgnoredSequence] = {
     "\x1b[1;8D": (Keys.Escape, Keys.ControlShiftLeft),
     "\x1b[1;8F": (Keys.Escape, Keys.ControlShiftEnd),
     "\x1b[1;8H": (Keys.Escape, Keys.ControlShiftHome),
+    # Alt + Enter
+    "\x1b\r": (Keys.AltEnter,),  # Left Alt key + Enter
     # Meta + arrow on (some?) Macs when using iTerm defaults (see issue #483).
     "\x1b[1;9A": (Keys.Escape, Keys.Up),
     "\x1b[1;9B": (Keys.Escape, Keys.Down),
