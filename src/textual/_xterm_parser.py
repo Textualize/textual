@@ -19,7 +19,7 @@ from textual.message import Message
 # to be unsuccessful?
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 32
 
-_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[-\d;]+[mM]|M...)\Z")
+_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[^;]*;[^;]*;[^;]*[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
