@@ -10,8 +10,10 @@ from rich.text import Text
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events
 from textual._on import on
+from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.color import Color, ColorParseError
 from textual.command import SimpleCommand
 from textual.containers import (
     Center,
@@ -26,7 +28,7 @@ from textual.containers import (
 )
 from textual.content import Content
 from textual.pilot import Pilot
-from textual.reactive import var
+from textual.reactive import reactive, var
 from textual.renderables.gradient import LinearGradient
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (
@@ -4804,3 +4806,133 @@ def test_text_area_paste(snap_compare) -> None:
         await pilot.press("ctrl+v")
 
     assert snap_compare(TextAreaApp(), run_before=run_before)
+
+
+def test_visual_style_caching(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6322
+
+    Check that `visual_style` isn't cached when it shouldn't be.
+
+    You should see a solid red panel on the left, and a solid green panel on the right.
+
+    """
+
+    class WatchApp(App):
+        CSS = """
+Input {
+    dock: top;
+    margin-top: 1;
+}
+
+#colors {
+    grid-size: 2 1;
+    grid-gutter: 2 4;
+    grid-columns: 1fr;
+    margin: 0 1;
+}
+
+#old {
+    height: 100%;
+    border: wide $secondary;
+}
+
+#new {
+    height: 100%;
+    border: wide $secondary;
+}
+
+"""
+
+        color = reactive(Color.parse("transparent"))
+
+        def compose(self) -> ComposeResult:
+            yield Input(placeholder="Enter a color")
+            yield Grid(Static(id="old"), Static(id="new"), id="colors")
+
+        def watch_color(self, old_color: Color, new_color: Color) -> None:
+            self.query_one("#old").styles.background = old_color
+            self.query_one("#new").styles.background = new_color
+
+        def on_input_submitted(self, event: Input.Submitted) -> None:
+            try:
+                input_color = Color.parse(event.value)
+            except ColorParseError:
+                pass
+            else:
+                self.query_one(Input).value = ""
+                self.color = input_color
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.pause()
+        await pilot.press(*"red")
+        await pilot.pause()
+        await pilot.press("enter")
+        await pilot.pause()
+        await pilot.press(*"green")
+        await pilot.press("enter")
+
+    assert snap_compare(WatchApp(), run_before=run_before)
+
+
+def test_markdown_stream_switch_theme(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6518
+
+    You should see Markdown with a title, a code fence containing a full generate_fibonacci function, and another line.
+    The theme should be "dracula" (purple-ish).
+
+    Original issue results in a missing code fence.
+
+    """
+
+    MD = """\
+# Some Python code
+
+```python
+def generate_fibonacci(n: int):
+    sequence = [0, 1]
+    while len(sequence) < n:
+        next_number = sequence[-1] + sequence[-2]
+        sequence.append(next_number)
+    return sequence[:n]
+```
+
+How's that?
+"""
+
+    class MDApp(App):
+        def compose(self) -> ComposeResult:
+            yield Markdown()
+
+        async def on_mount(self) -> None:
+            markdown = self.query_one(Markdown)
+            stream = Markdown.get_stream(markdown)
+            for line in MD.splitlines(keepends=True):
+                await asyncio.sleep(0.02)
+                await stream.write(line)
+            await stream.stop()
+            self.theme = "dracula"
+
+    assert snap_compare(MDApp())
+
+
+def test_text_opacity_native_ansi(snap_compare) -> None:
+    """Test that text-opacity with ansi themes doesn't produce RGB colors.
+
+    Textual can't calculate text opacity with ANSI colors. As a compromize a text-opacity of 50% or less
+    sets the dim attribute on the style.
+
+    You should see 10 labels for wach level of opacity. For opacity 50% and under, the labels
+    should be dimmed.
+    """
+
+    class TApp(App):
+
+        def on_load(self) -> None:
+            self.theme = "ansi-dark"
+
+        def compose(self) -> ComposeResult:
+            for n in range(11):
+                yield (label := Label(f"Text Opacity {n*10}%"))
+                label.styles.text_opacity = f"{n * 10}%"
+
+    assert snap_compare(TApp())

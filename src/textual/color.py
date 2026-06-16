@@ -179,20 +179,35 @@ class Color(NamedTuple):
     @classmethod
     @lru_cache(maxsize=1024)
     def from_rich_color(
-        cls, rich_color: RichColor | None, theme: TerminalTheme | None = None
+        cls,
+        rich_color: RichColor | None,
+        theme: TerminalTheme | None = None,
+        foreground: bool = True,
+        ansi: bool = True,
     ) -> Color:
         """Create a new color from Rich's Color class.
 
         Args:
             rich_color: An instance of [Rich color][rich.color.Color].
             theme: Optional Rich [terminal theme][rich.terminal_theme.TerminalTheme].
+            foreground: Is the color a foreground color (`False`) or a background color (`True`)?
+            ansi: Return ANSI colors if `True`, or attempt to convert to RGV if `False`.
 
         Returns:
             A new Color instance.
         """
         if rich_color is None:
             return TRANSPARENT
-        r, g, b = rich_color.get_truecolor(theme)
+        if ansi:
+            if rich_color.triplet is not None:
+                r, g, b = rich_color.triplet
+            else:
+                r, g, b = 0, 0, 0
+            if rich_color.type == ColorType.DEFAULT:
+                return Color(r, g, b, ansi=-1)
+            elif rich_color.type == ColorType.STANDARD:
+                return Color(r, g, b, ansi=rich_color.number)
+        r, g, b = rich_color.get_truecolor(theme, foreground=foreground)
         return cls(
             r, g, b, ansi=rich_color.number if rich_color.is_system_defined else None
         )

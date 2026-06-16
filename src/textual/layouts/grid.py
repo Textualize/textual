@@ -318,6 +318,8 @@ class GridLayout(Layout):
         max_column = len(columns) - 1
         max_row = len(rows) - 1
 
+        stretch_height = self.stretch_height and len(children) > 1
+
         for widget, (column, row, column_span, row_span) in cell_size_map.items():
             x = columns[column][0]
             if row > max_row:
@@ -336,9 +338,8 @@ class GridLayout(Layout):
                 greedy=greedy,
             )
 
-            if self.stretch_height and len(children) > 1:
-                if box_height <= cell_size.height:
-                    box_height = Fraction(cell_size.height)
+            if stretch_height and box_height <= cell_size.height:
+                box_height = Fraction(cell_size.height)
 
             region = (
                 Region(

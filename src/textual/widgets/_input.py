@@ -124,7 +124,10 @@ class Input(ScrollView):
         ),
         Binding("ctrl+u", "delete_left_all", "Delete all to the left", show=False),
         Binding(
-            "ctrl+f", "delete_right_word", "Delete right to start of word", show=False
+            "ctrl+backspace",
+            "delete_right_word",
+            "Delete right to start of word",
+            show=False,
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
         Binding("ctrl+x", "cut", "Cut selected text", show=False),
@@ -205,6 +208,7 @@ class Input(ScrollView):
         }
         &>.input--selection {
             background: $input-selection-background;
+            color: $input-selection-foreground;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;

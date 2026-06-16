@@ -123,19 +123,19 @@ Textual will attempt to generate the other base colors if they're not supplied.
 
 The following table lists each of 11 base colors (as used in CSS) and a description of where they are used by default.
 
-| Color                   | Description                                                                                                                                         |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$primary`              | The primary color, can be considered the *branding* color. Typically used for titles, and backgrounds for strong emphasis.                          |
-| `$secondary`            | An alternative branding color, used for similar purposes as `$primary`, where an app needs to differentiate something from the primary color.       |
-| `$foreground`           | The default text color, which should be legible on `$background`, `$surface`, and `$panel`.                                                         |
-| `$background`           | A color used for the background, where there is no content. Used as the default background color for screens.                                       |
-| `$surface`              | The default background color of widgets, typically sitting on top of `$background`.                                                                 |
-| `$panel`                | A color used to differentiate a part of the UI form the main content. Used sparingly in Textual itself.                                             |
-| `$boost`                | A color with alpha that can be used to create *layers* on a background.                                                                             |
-| `$warning`              | Indicates a warning. Typically used as a background color. `$text-warning` can be used for foreground.                                                                                                            |
-| `$error`                | Indicates an error. Typically used as a background color. `$text-error` can be used for foreground.                                                                                                             |
-| `$success`              | Used to indicate success. Typically used as a background color. `$text-success` can be used for foreground.                                                                                                      |
-| `$accent`               | Used sparingly to draw attention. Typically contrasts with `$primary` and `$secondary`.                                                                 |
+| Color         | Description                                                                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `$primary`    | The primary color, can be considered the *branding* color. Typically used for titles, and backgrounds for strong emphasis.                    |
+| `$secondary`  | An alternative branding color, used for similar purposes as `$primary`, where an app needs to differentiate something from the primary color. |
+| `$foreground` | The default text color, which should be legible on `$background`, `$surface`, and `$panel`.                                                   |
+| `$background` | A color used for the background, where there is no content. Used as the default background color for screens.                                 |
+| `$surface`    | The default background color of widgets, typically sitting on top of `$background`.                                                           |
+| `$panel`      | A color used to differentiate a part of the UI form the main content. Used sparingly in Textual itself.                                       |
+| `$boost`      | A color with alpha that can be used to create *layers* on a background.                                                                       |
+| `$warning`    | Indicates a warning. Typically used as a background color. `$text-warning` can be used for foreground.                                        |
+| `$error`      | Indicates an error. Typically used as a background color. `$text-error` can be used for foreground.                                           |
+| `$success`    | Used to indicate success. Typically used as a background color. `$text-success` can be used for foreground.                                   |
+| `$accent`     | Used sparingly to draw attention. Typically contrasts with `$primary` and `$secondary`.                                                       |
 
 ## Shades
 
@@ -261,74 +261,74 @@ Here's a comprehensive list of these variables, their purposes, and default valu
 
 ### Border
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$border` | The border color for focused widgets with a border | `$primary` |
-| `$border-blurred` | The border color for unfocused widgets | Slightly darkened `$surface` |
+| Variable          | Purpose                                            | Default Value                |
+| ----------------- | -------------------------------------------------- | ---------------------------- |
+| `$border`         | The border color for focused widgets with a border | `$primary`                   |
+| `$border-blurred` | The border color for unfocused widgets             | Slightly darkened `$surface` |
 
 ### Cursor
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$block-cursor-foreground` | Text color for block cursor (e.g., in OptionList) | `$text` |
-| `$block-cursor-background` | Background color for block cursor | `$primary` |
-| `$block-cursor-text-style` | Text style for block cursor | `"bold"` |
-| `$block-cursor-blurred-foreground` | Text color for unfocused block cursor | `$text` |
-| `$block-cursor-blurred-background` | Background color for unfocused block cursor | `$primary` with 30% opacity |
-| `$block-cursor-blurred-text-style` | Text style for unfocused block cursor | `"none"` |
-| `$block-hover-background` | Background color when hovering over a block | `$boost` with 5% opacity |
+| Variable                           | Purpose                                           | Default Value               |
+| ---------------------------------- | ------------------------------------------------- | --------------------------- |
+| `$block-cursor-foreground`         | Text color for block cursor (e.g., in OptionList) | `$text`                     |
+| `$block-cursor-background`         | Background color for block cursor                 | `$primary`                  |
+| `$block-cursor-text-style`         | Text style for block cursor                       | `"bold"`                    |
+| `$block-cursor-blurred-foreground` | Text color for unfocused block cursor             | `$text`                     |
+| `$block-cursor-blurred-background` | Background color for unfocused block cursor       | `$primary` with 30% opacity |
+| `$block-cursor-blurred-text-style` | Text style for unfocused block cursor             | `"none"`                    |
+| `$block-hover-background`          | Background color when hovering over a block       | `$boost` with 5% opacity    |
 
 ### Input
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$input-cursor-background` | Background color of the input cursor | `$foreground` |
-| `$input-cursor-foreground` | Text color of the input cursor | `$background` |
-| `$input-cursor-text-style` | Text style of the input cursor | `"none"` |
-| `$input-selection-background` | Background color of selected text | `$primary-lighten-1` with 40% opacity |
+| Variable                      | Purpose                              | Default Value                         |
+| ----------------------------- | ------------------------------------ | ------------------------------------- |
+| `$input-cursor-background`    | Background color of the input cursor | `$foreground`                         |
+| `$input-cursor-foreground`    | Text color of the input cursor       | `$background`                         |
+| `$input-cursor-text-style`    | Text style of the input cursor       | `"none"`                              |
+| `$input-selection-background` | Background color of selected text    | `$primary-lighten-1` with 40% opacity |
 
 ### Scrollbar
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$scrollbar` | Color of the scrollbar | `$panel` |
-| `$scrollbar-hover` | Color of the scrollbar when hovered | `$panel-lighten-1` |
-| `$scrollbar-active` | Color of the scrollbar when active (being dragged) | `$panel-lighten-2` |
-| `$scrollbar-background` | Color of the scrollbar track | `$background-darken-1` |
-| `$scrollbar-corner-color` | Color of the scrollbar corner | Same as `$scrollbar-background` |
-| `$scrollbar-background-hover` | Color of the scrollbar track when hovering over the scrollbar area | Same as `$scrollbar-background` |
-| `$scrollbar-background-active` | Color of the scrollbar track when the scrollbar is active | Same as `$scrollbar-background` |
+| Variable                       | Purpose                                                            | Default Value                   |
+| ------------------------------ | ------------------------------------------------------------------ | ------------------------------- |
+| `$scrollbar`                   | Color of the scrollbar                                             | `$panel`                        |
+| `$scrollbar-hover`             | Color of the scrollbar when hovered                                | `$panel-lighten-1`              |
+| `$scrollbar-active`            | Color of the scrollbar when active (being dragged)                 | `$panel-lighten-2`              |
+| `$scrollbar-background`        | Color of the scrollbar track                                       | `$background-darken-1`          |
+| `$scrollbar-corner-color`      | Color of the scrollbar corner                                      | Same as `$scrollbar-background` |
+| `$scrollbar-background-hover`  | Color of the scrollbar track when hovering over the scrollbar area | Same as `$scrollbar-background` |
+| `$scrollbar-background-active` | Color of the scrollbar track when the scrollbar is active          | Same as `$scrollbar-background` |
 
 ### Links
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$link-background` | Background color of links | `"initial"` |
-| `$link-background-hover` | Background color of links when hovered | `$primary` |
-| `$link-color` | Text color of links | `$text` |
-| `$link-style` | Text style of links | `"underline"` |
-| `$link-color-hover` | Text color of links when hovered | `$text` |
-| `$link-style-hover` | Text style of links when hovered | `"bold not underline"` |
+| Variable                 | Purpose                                | Default Value          |
+| ------------------------ | -------------------------------------- | ---------------------- |
+| `$link-background`       | Background color of links              | `"initial"`            |
+| `$link-background-hover` | Background color of links when hovered | `$primary`             |
+| `$link-color`            | Text color of links                    | `$text`                |
+| `$link-style`            | Text style of links                    | `"underline"`          |
+| `$link-color-hover`      | Text color of links when hovered       | `$text`                |
+| `$link-style-hover`      | Text style of links when hovered       | `"bold not underline"` |
 
 ### Footer
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$footer-foreground` | Text color in the footer | `$foreground` |
-| `$footer-background` | Background color of the footer | `$panel` |
-| `$footer-key-foreground` | Text color for key bindings in the footer | `$accent` |
-| `$footer-key-background` | Background color for key bindings in the footer | `"transparent"` |
-| `$footer-description-foreground` | Text color for descriptions in the footer | `$foreground` |
+| Variable                         | Purpose                                         | Default Value   |
+| -------------------------------- | ----------------------------------------------- | --------------- |
+| `$footer-foreground`             | Text color in the footer                        | `$foreground`   |
+| `$footer-background`             | Background color of the footer                  | `$panel`        |
+| `$footer-key-foreground`         | Text color for key bindings in the footer       | `$accent`       |
+| `$footer-key-background`         | Background color for key bindings in the footer | `"transparent"` |
+| `$footer-description-foreground` | Text color for descriptions in the footer       | `$foreground`   |
 | `$footer-description-background` | Background color for descriptions in the footer | `"transparent"` |
-| `$footer-item-background` | Background color for items in the footer | `"transparent"` |
+| `$footer-item-background`        | Background color for items in the footer        | `"transparent"` |
 
 ### Button
 
-| Variable | Purpose | Default Value |
-|----------|---------|---------------|
-| `$button-foreground` | Foreground color for standard buttons | `$foreground` |
-| `$button-color-foreground` | Foreground color for colored buttons | `$text` |
-| `$button-focus-text-style` | Text style for focused buttons | `"bold reverse"` |
+| Variable                   | Purpose                               | Default Value    |
+| -------------------------- | ------------------------------------- | ---------------- |
+| `$button-foreground`       | Foreground color for standard buttons | `$foreground`    |
+| `$button-color-foreground` | Foreground color for colored buttons  | `$text`          |
+| `$button-focus-text-style` | Text style for focused buttons        | `"bold reverse"` |
 
 ## App-specific variables
 

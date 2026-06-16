@@ -56,6 +56,7 @@ class TextOpacity:
         segments: Iterable[Segment],
         opacity: float,
         ansi_theme: TerminalTheme,
+        native_ansi: bool = False,
     ) -> Iterable[Segment]:
         """Apply opacity to segments.
 
@@ -64,6 +65,7 @@ class TextOpacity:
             opacity: Opacity to apply.
             ansi_theme: Terminal theme.
             background: Color of background.
+            native_ansi: Allow ANSI colors.
 
         Returns:
             Segments with applied opacity.
@@ -82,21 +84,67 @@ class TextOpacity:
         elif opacity == 1:
             yield from segments
         else:
-            filter = ANSIToTruecolor(ansi_theme)
-            for segment in filter.apply(list(segments), TRANSPARENT):
-                # use Tuple rather than tuple so Python 3.7 doesn't complain
-                text, style, control = cast(Tuple[str, Style, object], segment)
-                if not style:
-                    yield segment
-                    continue
+            if native_ansi:
+                # Special case for native ANSI
+                # Without RGB we can't accurately calculate the foreground color
+                DIM = Style(dim=True)
+                filter = ANSIToTruecolor(ansi_theme)
+                segments_ = list(segments)
+                for original_segment, segment in zip(
+                    segments_, filter.apply(segments_, TRANSPARENT)
+                ):
+                    if original_segment.style is not None:
+                        text, style, control = original_segment
+                        if (
+                            style is not None
+                            and style.bgcolor is not None
+                            and style.bgcolor.is_default
+                        ):
+                            # If the opacity is less than or equal to 50%, then set the dim attribute
+                            if style.color is not None and opacity <= 0.5:
+                                yield Segment(text, style + DIM, control)
+                            else:
+                                yield original_segment
+                            continue
+                    # use Tuple rather than tuple so Python 3.7 doesn't complain
+                    text, style, control = segment
+                    if not style:
+                        yield segment
+                        continue
 
-                color = style.color
-                bgcolor = style.bgcolor
-                if color and color.triplet and bgcolor and bgcolor.triplet:
-                    color_style = _get_blended_style_cached(bgcolor, color, opacity)
-                    yield _Segment(text, style + color_style)
-                else:
-                    yield segment
+                    color = style.color
+                    bgcolor = style.bgcolor
+                    if (
+                        color is not None
+                        and color.triplet
+                        and bgcolor
+                        and bgcolor.triplet
+                    ):
+                        color_style = _get_blended_style_cached(bgcolor, color, opacity)
+                        yield _Segment(text, style + color_style)
+                    else:
+                        yield segment
+            else:
+                filter = ANSIToTruecolor(ansi_theme)
+                for segment in filter.apply(list(segments), TRANSPARENT):
+                    # use Tuple rather than tuple so Python 3.7 doesn't complain
+                    text, style, control = segment
+                    if not style:
+                        yield segment
+                        continue
+
+                    color = style.color
+                    bgcolor = style.bgcolor
+                    if (
+                        color is not None
+                        and color.triplet
+                        and bgcolor
+                        and bgcolor.triplet
+                    ):
+                        color_style = _get_blended_style_cached(bgcolor, color, opacity)
+                        yield _Segment(text, style + color_style)
+                    else:
+                        yield segment
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

@@ -41,8 +41,8 @@
 .terminal-r7 { fill: #6d7479 }
 .terminal-r8 { fill: #e0e0e0;font-weight: bold }
 .terminal-r9 { fill: #98e024;font-weight: bold;text-decoration: underline; }
-.terminal-r10 { fill: #9eafbd }
-.terminal-r11 { fill: #f4005f;text-decoration: underline; }
+.terminal-r10 { fill: #98a7b2 }
+.terminal-r11 { fill: #a5135d;text-decoration: underline; }
     </style>
 
     <defs>

@@ -8,6 +8,7 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.command import SimpleCommand
 from textual.pilot import Pilot, _get_mouse_message_arguments
+from textual.screen import Screen
 from textual.widgets import Button, Input, Label, Static
 
 
@@ -402,3 +403,23 @@ async def test_pointer_shape() -> None:
         assert app.screen._pointer_shape == "default"
         await pilot.hover(offset=(1, 1))
         assert app.screen._pointer_shape == "pointer"
+
+
+async def test_get_screen_stack() -> None:
+    """Test get_screen_stack"""
+
+    class ModeApp(App):
+        MODES = {"foo": lambda: Screen(id="foo")}
+
+    app = ModeApp()
+    async with app.run_test():
+        screen_stack = app.get_screen_stack()
+        assert isinstance(screen_stack, list)
+        assert len(screen_stack) == 1
+        assert screen_stack[0].id == "_default"
+        await app.switch_mode("foo")
+
+        screen_stack = app.get_screen_stack()
+        assert isinstance(screen_stack, list)
+        assert len(screen_stack) == 1
+        assert screen_stack[0].id == "foo"

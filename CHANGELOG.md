@@ -5,6 +5,142 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [8.2.7] - 2026-05-19 
+
+### Added
+
+- Added support for Kitty key protocol "Report all keys as escape codes" which enabled alt+backspace on Warp https://github.com/Textualize/textual/pull/6544
+- Added support for detecting separate modifier keys for terminals that support the Kitty key protocol https://github.com/Textualize/textual/pull/6544
+- Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid). https://github.com/Textualize/textual/pull/6544
+
+### Changed
+
+- Undo/redo/copy/cut/paste in TextArea will now work with cmd+ on supported terminals https://github.com/Textualize/textual/pull/6543
+- In TextArea, ctrl+u will now delete a newline if the cursor is at the start https://github.com/Textualize/textual/pull/6543
+- in TextArea alt+delete is now bound to delete word right https://github.com/Textualize/textual/pull/6543
+- Text opacity applied to an ansi theme will now set the dim attribute if the opacity is < 50% https://github.com/Textualize/textual/pull/6546
+
+### Fixed
+
+- Fixed text opacity with ANSI themes creating RGB colors.  https://github.com/Textualize/textual/pull/6546
+
+## [8.2.6] - 2026-05-13
+
+### Fixed
+
+- Fixed selection to the right of code fence blocks (may break some snapshots)
+- Fixed Markdown code fences losing content when switching themes https://github.com/Textualize/textual/pull/6537
+
+### Added
+
+- Added ability to select outside of text, so the user doesn't need to be quite so precise https://github.com/Textualize/textual/pull/6523
+
+## [8.2.5] - 2026-04-30
+
+### Added
+
+- Two new themes: "ansi-dark" and "ansi-light" https://github.com/Textualize/textual/pull/6513
+- Added an `ansi` value to themes https://github.com/Textualize/textual/pull/6513
+
+### Changed
+
+- `App.ansi_color` may now be `None` to use the `ansi` value from the theme. https://github.com/Textualize/textual/pull/6513
+
+## [8.2.4] - 2026-04-19
+
+### Added
+
+- Added `DOM.update_classes` https://github.com/Textualize/textual/pull/6478
+
+### Fixed
+
+- Fixed anchor released when scrolling down with the trackpad https://github.com/Textualize/textual/pull/6503
+
+## [8.2.3] - 2026-04-05 
+
+### Changed
+
+- Reduce lag when resizing window, by moving resize from idle to a timer https://github.com/Textualize/textual/pull/6471
+
+## [8.2.2] - 2026-04-03
+
+### Fixed
+
+- Fixed Pointless style updates when resizing https://github.com/Textualize/textual/pull/6464
+
+## [8.2.1] - 2026-03-29
+
+### Fixed
+
+- Fix crash when a widget disapears between selections https://github.com/Textualize/textual/pull/6455
+
+## [8.2.0] - 2026-03-27
+
+### Added 
+
+- Auto-scrolling on select https://github.com/Textualize/textual/pull/6440
+- Selecting over containers https://github.com/Textualize/textual/pull/6440
+- Added `App.ENABLE_SELECT_AUTO_SCROLL`, `App.SELECT_AUTO_SCROLL_LINES`, `App.SELECT_AUTO_SCROLL_SPEED` to tweak auto scrolling behavior https://github.com/Textualize/textual/pull/6440
+
+## [8.1.1] - 2026-03-10
+
+### Fixed
+
+- Hotfix for animation on complete https://github.com/Textualize/textual/pull/6412
+
+## [8.1.0] - 2026-03-10
+
+### Changed
+
+- Replace circuar references in DOM with weak references to improve GC times https://github.com/Textualize/textual/pull/6410
+- When animating an attribute a second time, the original `on_complete` is now called https://github.com/Textualize/textual/pull/6410
+
+### Added
+
+- Added experimental `App.PAUSE_GC_ON_SCROLL_` boolean (disabled by default) https://github.com/Textualize/textual/pull/6410
+
+## [8.0.2] - 2026-03-03
+
+### Changed
+
+- Themes are now in alphabetical order in command palette https://github.com/Textualize/textual/pull/6405
+
+### Fixed
+
+- Fixed issues with Directory Tree https://github.com/Textualize/textual/pull/6405
+
+## [8.0.1] - 2026-03-01
+
+### Fixed
+
+- `DirectoryTree` runs more operations in a thread to avoid micro-freezes 
+
+### Changes
+
+- Some tweaks to garbage collection to reduce gc time https://github.com/Textualize/textual/pull/6402
+
+## [8.0.0] - 2026-02-16
+
+### Added
+
+- Added `mode` argument to `push_screen` and `push_screen_wait` to enable pushing a screen to a non-active mode https://github.com/Textualize/textual/pull/6362
+- Added `App.mode_change_signal` and `App.screen_change_signal` https://github.com/Textualize/textual/pull/6362
+- Added `Tabs.get_tab` https://github.com/Textualize/textual/pull/6362
+- Added Catppuccin Frappe and Macchiato themes https://github.com/Textualize/textual/pull/6335
+
+### Changed
+
+- It is no longer a NOOP and warning to dismiss a non-active screen. The dismiss will still work, but the screen may not update if the current mode is not active. https://github.com/Textualize/textual/pull/6362
+- Added 50ms delay when switching screens to allow state to udpate and prevent janky flash of old content https://github.com/Textualize/textual/pull/6362
+- Breaking change: Changed `Select.BLANK` to `Select.NULL` to avoid clash with newer `Widget.BLANK` Classvar https://github.com/Textualize/textual/pull/6374
+  
+## [7.5.0] - 2026-01-30
+
+### Changed
+
+- The DataTable row cursor will extend to the full width if there is excess space https://github.com/Textualize/textual/pull/6345
+- The DataTable will send a selected event on click, only if the cell / row / column is currently highlighted https://github.com/Textualize/textual/pull/6345
+
 ## [7.4.0] - 2026-01-25
 
 ### Added
@@ -3328,6 +3464,20 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[8.2.7]: https://github.com/Textualize/textual/compare/v8.2.6...v8.2.7
+[8.2.6]: https://github.com/Textualize/textual/compare/v8.2.5...v8.2.6
+[8.2.5]: https://github.com/Textualize/textual/compare/v8.2.4...v8.2.5
+[8.2.4]: https://github.com/Textualize/textual/compare/v8.2.3...v8.2.4
+[8.2.3]: https://github.com/Textualize/textual/compare/v8.2.2...v8.2.3
+[8.2.2]: https://github.com/Textualize/textual/compare/v8.2.1...v8.2.2
+[8.2.1]: https://github.com/Textualize/textual/compare/v8.2.0...v8.2.1
+[8.2.0]: https://github.com/Textualize/textual/compare/v8.1.1...v8.2.0
+[8.1.1]: https://github.com/Textualize/textual/compare/v8.1.0...v8.1.1
+[8.1.0]: https://github.com/Textualize/textual/compare/v8.0.2...v8.1.0
+[8.0.2]: https://github.com/Textualize/textual/compare/v8.0.1...v8.0.2
+[8.0.1]: https://github.com/Textualize/textual/compare/v8.0.0...v8.0.1
+[8.0.0]: https://github.com/Textualize/textual/compare/v7.5.0...v8.0.0
+[7.5.0]: https://github.com/Textualize/textual/compare/v7.4.0...v7.5.0
 [7.4.0]: https://github.com/Textualize/textual/compare/v7.3.0...v7.4.0
 [7.3.0]: https://github.com/Textualize/textual/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/Textualize/textual/compare/v7.1.0...v7.2.0

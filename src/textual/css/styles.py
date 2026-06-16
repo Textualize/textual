@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import weakref
 from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
@@ -255,8 +256,6 @@ class StylesBase:
         "text_overflow",
         "line_pad",
     }
-
-    node: DOMNode | None = None
 
     display = StringEnumProperty(VALID_DISPLAY, "block", layout=True, display=True)
     """Set the display of the widget, defining how it's rendered.
@@ -518,6 +517,11 @@ class StylesBase:
     
     Requires terminal support for Kitty pointer shapes protocol.
     """
+
+    @property
+    def node(self) -> DOMNode | None:
+        """The DOM node the styles will be applied to, or `None` if it is not set."""
+        return None
 
     def __textual_animation__(
         self,
@@ -1331,13 +1335,21 @@ class RenderStyles(StylesBase):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
 
     def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
-        self.node = node
+        self._node = weakref.ref(node)
         self._base_styles = base
         self._inline_styles = inline_styles
         self._animate: BoundAnimator | None = None
         self._updates: int = 0
         self._rich_style: tuple[int, Style] | None = None
         self._gutter: tuple[int, Spacing] | None = None
+
+    def _update_node(self, node: DOMNode) -> None:
+        """Update the associated DOM node.
+
+        Args:
+            node: New node for the styles.
+        """
+        self._node = weakref.ref(node)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, RenderStyles):
@@ -1355,6 +1367,11 @@ class RenderStyles(StylesBase):
             An opaque integer.
         """
         return self._updates + self._base_styles._updates + self._inline_styles._updates
+
+    @property
+    def node(self) -> DOMNode | None:
+        """The DOM node the styles will be applied to, or `None` if it is not set."""
+        return self._node()
 
     @property
     def base(self) -> Styles:

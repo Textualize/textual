@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import re
+import weakref
 from contextlib import suppress
 from functools import partial
 from pathlib import Path, PurePath
@@ -210,7 +211,7 @@ class MarkdownBlock(Static):
         *args,
         **kwargs,
     ) -> None:
-        self._markdown: Markdown = markdown
+        self._markdown_ref = weakref.ref(markdown)
         """A reference to the Markdown document that contains this block."""
         self._content: Content = Content()
         self._token: Token = token
@@ -221,8 +222,19 @@ class MarkdownBlock(Static):
         )
 
         super().__init__(
-            *args, name=token.type, classes=f"level-{token.level}", **kwargs
+            *args,
+            name=token.type,
+            classes=f"level-{token.level}",
+            expand=True,
+            **kwargs,
         )
+
+    @property
+    def _markdown(self) -> Markdown:
+        """Resolve the weak ref to _markdown"""
+        markdown = self._markdown_ref()
+        assert markdown is not None
+        return markdown
 
     @property
     def select_container(self) -> Widget:
@@ -659,9 +671,11 @@ class MarkdownTableContent(Widget):
                 header
             )
         for row_index, row in enumerate(self.rows, 1):
-            for cell in row:
+            for cell_index, cell in enumerate(row, 1):
                 yield MarkdownTableCellContents(
-                    cell, classes=f"row{row_index} cell"
+                    cell,
+                    classes=f"row{row_index} cell",
+                    name=f"cell{row_index}.{cell_index}",
                 ).with_tooltip(cell.plain)
             self.last_row = row_index
 
@@ -683,7 +697,10 @@ class MarkdownTableContent(Widget):
         for row_index, row in enumerate(updated_rows, self.last_row):
             for cell in row:
                 new_cells.append(
-                    Static(cell, classes=f"row{row_index} cell").with_tooltip(cell)
+                    Static(
+                        cell,
+                        classes=f"row{row_index} cell",
+                    ).with_tooltip(cell)
                 )
         self.last_row = row_index
         await self.mount_all(new_cells)
@@ -862,31 +879,71 @@ class MarkdownFence(MarkdownBlock):
             padding: 1 2;
         }
     }
+    MarkdownFence:ansi {
+        background: transparent;
+
+        margin: 0;
+        & > Label {
+            padding: 1 0;
+        }
+        
+    }
     """
 
     def __init__(self, markdown: Markdown, token: Token, code: str) -> None:
         super().__init__(markdown, token)
         self.code = code
         self.lexer = token.info
-        self._highlighted_code = self.highlight(self.code, self.lexer)
+        self._highlighted_code = self.highlight(
+            self.code,
+            self.lexer,
+            ansi=self.app.native_ansi_color,
+            dark=self.app.current_theme.dark,
+        )
+        # No links required in code
+        self.auto_links = False
+
+    def notify_style_update(self) -> None:
+        """Update highlight theme when App theme changes."""
+        self._highlighted_code = self.highlight(
+            self.code,
+            self.lexer,
+            ansi=self.app.native_ansi_color,
+            dark=self.app.current_theme.dark,
+        )
+        self.set_content(self._highlighted_code)
+        return super().notify_style_update()
 
     @property
     def allow_horizontal_scroll(self) -> bool:
         return True
 
     @classmethod
-    def highlight(cls, code: str, language: str) -> Content:
-        return highlight(code, language=language or None)
+    def highlight(
+        cls, code: str, language: str, ansi: bool = False, dark: bool = False
+    ) -> Content:
+        if ansi:
+            if dark:
+                from textual.highlight import ANSIDarkHighlightTheme as HighlightTheme
+            else:
+                from textual.highlight import ANSILightHighlightTheme as HighlightTheme
+
+        else:
+            from textual.highlight import HighlightTheme
+
+        return highlight(code, language=language or None, theme=HighlightTheme)
 
     def _copy_context(self, block: MarkdownBlock) -> None:
         if isinstance(block, MarkdownFence):
+            self.code = block.code
             self.lexer = block.lexer
-            self._token = block._token
+            self._highlighted_code = block._highlighted_code
+        super()._copy_context(block)
 
     async def _update_from_block(self, block: MarkdownBlock):
         if isinstance(block, MarkdownFence):
-            self.set_content(block._highlighted_code)
             self._copy_context(block)
+            self.set_content(block._highlighted_code)
         else:
             await super()._update_from_block(block)
 
@@ -896,7 +953,7 @@ class MarkdownFence(MarkdownBlock):
             self.query_one("#code-content", Label).update(content)
 
     def compose(self) -> ComposeResult:
-        yield Label(self._highlighted_code, id="code-content")
+        yield Label(self._highlighted_code, id="code-content", expand=True)
 
 
 NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
@@ -911,6 +968,12 @@ class Markdown(Widget):
         color: $foreground;
         overflow-y: hidden;
 
+        &:ansi {
+            MarkdownBlock > .code_inline {
+                background: ansi_default !important;
+            }
+        }
+        
         MarkdownBlock {
             &:dark > .code_inline {
                 background: $warning 10%;
@@ -919,7 +982,7 @@ class Markdown(Widget):
             &:light > .code_inline {
                 background: $error 5%;
                 color: $text-error 95%;
-            }
+            }           
             & > .em {
                 text-style: italic;
             }

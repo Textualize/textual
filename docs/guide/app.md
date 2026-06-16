@@ -249,7 +249,7 @@ To exit the app with a return code, you should call `sys.exit`.
 Here's how you might do that:
 
 ```python
-if __name__ == "__main__"
+if __name__ == "__main__":
     app = MyApp()
     app.run()
     import sys

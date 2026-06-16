@@ -119,6 +119,10 @@ class Collapsible(Widget):
         &.-collapsed > Contents {
             display: none;   
         }
+        &:ansi {
+            border-top: hkey ansi_blue;
+            background: $panel;
+        }
     }
     """
 

@@ -55,8 +55,8 @@ def test_from_rich_text():
     assert content.plain == "Hello World"
     print(content.spans)
     assert content.spans == [
-        Span(0, 5, style=Style(foreground=Color(128, 0, 0, ansi=1))),
-        Span(6, 11, style=Style(foreground=Color(0, 0, 128, ansi=4))),
+        Span(0, 5, style=Style(foreground=Color(0, 0, 0, ansi=1))),
+        Span(6, 11, style=Style(foreground=Color(0, 0, 0, ansi=4))),
     ]
 
 

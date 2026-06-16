@@ -16,6 +16,7 @@ from typing import (
     Callable,
     ClassVar,
     Iterable,
+    Mapping,
     Sequence,
     Type,
     TypeVar,
@@ -125,8 +126,9 @@ class _ClassesDescriptor:
         else:
             class_names = set(classes)
         check_identifiers("class name", *class_names)
-        obj._classes = class_names
-        obj.update_node_styles()
+        if obj._classes != class_names:
+            obj._classes = class_names
+            obj.update_node_styles()
 
 
 @rich.repr.auto
@@ -615,7 +617,8 @@ class DOMNode(MessagePump):
             if name not in self._component_styles:
                 raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
             component_styles = self._component_styles[name]
-            styles.node = component_styles.node
+            assert component_styles.node is not None
+            styles._update_node(component_styles.node)
             styles.base.merge(component_styles.base)
             styles.inline.merge(component_styles.inline)
             styles._updates += 1
@@ -1760,6 +1763,34 @@ class DOMNode(MessagePump):
             self.remove_class(*class_names, update=update)
         return self
 
+    def update_classes(
+        self, classes: Mapping[str, bool], update: bool = True, animate: bool = True
+    ) -> Self:
+        """Update classes in an atomic batch.
+
+        Args:
+            classes: A mapping of class name on to a boolean where `True` adds
+                to the current classes, and `False` removes.
+            update: Also update styles.
+            animate: Enable any CSS animation?
+
+        Returns:
+            Self
+        """
+
+        add_classes: set[str] = set()
+        remove_classes: set[str] = set()
+        adds = (remove_classes.add, add_classes.add)
+        for class_name, add in classes.items():
+            adds[add](class_name)
+
+        new_classes = (self._classes | add_classes) - remove_classes
+        if self._classes != new_classes:
+            self._classes = new_classes
+            if update:
+                self.update_node_styles(animate=animate)
+        return self
+
     def set_classes(self, classes: str | Iterable[str]) -> Self:
         """Replace all classes.
 
@@ -1794,10 +1825,9 @@ class DOMNode(MessagePump):
             Self.
         """
         check_identifiers("class name", *class_names)
-        old_classes = self._classes.copy()
-        self._classes.update(class_names)
-        if old_classes == self._classes:
+        if self._classes.issuperset(class_names):
             return self
+        self._classes.update(class_names)
         if update:
             self.update_node_styles()
         return self
@@ -1813,10 +1843,9 @@ class DOMNode(MessagePump):
             Self.
         """
         check_identifiers("class name", *class_names)
-        old_classes = self._classes.copy()
-        self._classes.difference_update(class_names)
-        if old_classes == self._classes:
+        if self._classes.isdisjoint(class_names):
             return self
+        self._classes.difference_update(class_names)
         if update:
             self.update_node_styles()
         return self
