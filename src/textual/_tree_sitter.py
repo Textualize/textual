@@ -16,7 +16,7 @@ except ImportError:
 else:
     _tree_sitter = True
     try:
-        import tree_sitter_language_pack as tslp
+        import tree_sitter_language_pack
 
     except ImportError:
         _LANGUAGE_CACHE: dict[str, Language] = {}
@@ -48,7 +48,7 @@ else:
 
         def get_language(language_name: str) -> Language | None:
             try:
-                return tslp.get_language(language_name)
+                return tree_sitter_language_pack.get_language(language_name)
             except LookupError:
                 log.warning(f"Could not load language {language_name!r}.")
                 return None
