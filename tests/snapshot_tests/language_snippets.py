@@ -938,6 +938,123 @@ XML = """\
 </library>
 """
 
+KOTLIN = """\
+package com.example.demo
+
+import kotlin.math.PI
+
+// Data class
+data class User(
+    val name: String,
+    val age: Int?,
+)
+
+// Enum
+enum class Status {
+    ACTIVE,
+    INACTIVE,
+}
+
+fun User.displayName(): String =
+    "${name.uppercase()} (${age ?: 0})"
+
+fun main() {
+    val user = User("Alice", 30)
+
+    val status = Status.ACTIVE
+
+    val area = { radius: Double ->
+        PI * radius * radius
+    }
+
+    when (status) {
+        Status.ACTIVE -> println(user.displayName())
+        Status.INACTIVE -> println("Inactive")
+    }
+
+    println("Area: ${area(5.0)}")
+}
+"""
+
+C = """\
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_USERS 10
+
+typedef enum {
+    STATUS_ACTIVE,
+    STATUS_INACTIVE
+} Status;
+
+typedef struct {
+    const char *name;
+    int age;
+    Status status;
+} User;
+
+void greet(const User *user);
+
+int main(void) {
+    User user = {
+        .name = "Alice",
+        .age = 30,
+        .status = STATUS_ACTIVE
+    };
+
+    greet(&user);
+
+    for (int i = 0; i < 3; i++) {
+        printf("Counter: %d\n", i);
+    }
+
+    switch (user.status) {
+        case STATUS_ACTIVE:
+            puts("Active");
+            break;
+        case STATUS_INACTIVE:
+            puts("Inactive");
+            break;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+void greet(const User *user) {
+    printf("Hello %s (%d)\n", user->name, user->age);
+}
+"""
+
+INI = """\
+; Application configuration
+
+[app]
+name = "samplefile-api"
+version = 1.2.3
+debug = false
+
+[server]
+host = localhost
+port = 8080
+base_url = https://api.example.com
+
+[database]
+driver = postgres
+host = db.internal
+port = 5432
+username = admin
+password = secret
+
+[logging]
+level = info
+file = /var/log/samplefile.log
+
+[features]
+cache = true
+metrics = true
+experimental = false
+"""
+
 SNIPPETS = {
     "python": PYTHON,
     "markdown": MARKDOWN,
@@ -954,4 +1071,7 @@ SNIPPETS = {
     "rust": RUST,
     "java": JAVA,
     "xml": XML,
+    "kotlin": KOTLIN,
+    "c": C,
+    "ini": INI,
 }
