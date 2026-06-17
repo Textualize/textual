@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased 
+
+### Added
+
+- Added suport for tree-sitter-language-pack as an optional dependency for syntax highlighting
+
 ## [8.2.7] - 2026-05-19 
 
 ### Added
