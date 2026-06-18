@@ -292,6 +292,10 @@ def test_datatable_row_cursor_render(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_cursor.py", press=press)
 
 
+def test_datatable_row_selection_render(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_selection.py")
+
+
 def test_datatable_column_cursor_render(snap_compare):
     press = ["left", "up", "down", "right", "right"]
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_column_cursor.py", press=press)

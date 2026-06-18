@@ -42,13 +42,13 @@ from textual.strip import Strip
 from textual.widget import PseudoClasses
 
 CellCacheKey: TypeAlias = (
-    "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
+    "tuple[RowKey, ColumnKey, Style, bool, bool, bool, bool, int, PseudoClasses]"
 )
 LineCacheKey: TypeAlias = (
     "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
 )
 RowCacheKey: TypeAlias = (
-    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
+    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, bool, int, PseudoClasses]"
 )
 CursorType = Literal["cell", "row", "column", "none"]
 """The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
@@ -272,6 +272,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
+        Binding("space", "toggle_row", "Toggle row", show=False),
         Binding("up", "cursor_up", "Cursor up", show=False),
         Binding("down", "cursor_down", "Cursor down", show=False),
         Binding("right", "cursor_right", "Cursor right", show=False),
@@ -307,6 +308,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--header",
         "datatable--header-cursor",
         "datatable--header-hover",
+        "datatable--selected",
         "datatable--odd-row",
         "datatable--even-row",
     }
@@ -320,6 +322,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | `datatable--header` | Target the header of the data table. |
     | `datatable--header-cursor` | Target cells highlighted by the cursor. |
     | `datatable--header-hover` | Target hovered header or row label cells. |
+    | `datatable--selected` | Target selected rows. |
     | `datatable--even-row` | Target even rows (row indices start at 0) if zebra_stripes. |
     | `datatable--odd-row` | Target odd rows (row indices start at 0) if zebra_stripes. |
     """
@@ -403,6 +406,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         & > .datatable--hover {
             background: $block-hover-background;
+        }
+
+        & > .datatable--selected {
+            background: $accent 20%;
         }
     }
     """
@@ -556,6 +563,36 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         def __rich_repr__(self) -> rich.repr.Result:
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
+
+    class RowSelectionChanged(Message):
+        """Posted when the set of selected rows changes.
+
+        This message is independent from the cursor and from
+        [`DataTable.RowSelected`][textual.widgets.DataTable.RowSelected]. It is posted
+        when row selection is changed through methods such as
+        [`select_row`][textual.widgets.DataTable.select_row],
+        [`toggle_row`][textual.widgets.DataTable.toggle_row], or
+        [`select_range`][textual.widgets.DataTable.select_range].
+        """
+
+        def __init__(
+            self,
+            data_table: DataTable,
+            selected_rows: frozenset[RowKey],
+        ) -> None:
+            self.data_table = data_table
+            """The data table."""
+            self.selected_rows = selected_rows
+            """The selected row keys."""
+            super().__init__()
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "selected_rows", self.selected_rows
 
         @property
         def control(self) -> DataTable:
@@ -738,6 +775,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         where each cell currently resides in space."""
 
         self.columns: dict[ColumnKey, Column] = {}
+        self._selected_rows: set[RowKey] = set()
+        self._selection_anchor: RowKey | None = None
         """Metadata about the columns of the table, indexed by their key."""
         self.rows: dict[RowKey, Row] = {}
         """Metadata about the rows of the table, indexed by their key."""
@@ -1097,6 +1136,153 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             raise ColumnDoesNotExist(f"No column exists for column_key={column_key!r}")
         return self._column_locations.get(column_key)
 
+    @property
+    def selected_rows(self) -> frozenset[RowKey]:
+        """The currently selected row keys.
+
+        Selection is independent from the cursor. The cursor tracks the current
+        row/cell location; this set tracks the rows chosen by the user or app.
+        """
+        return frozenset(self._selected_rows)
+
+    @property
+    def selection_anchor(self) -> RowKey | None:
+        """The anchor row key used for range selection, if any."""
+        return self._selection_anchor
+
+    def _coerce_row_key(self, row_key: RowKey | str) -> RowKey:
+        """Validate and normalize a row key."""
+        if row_key not in self._row_locations:
+            raise RowDoesNotExist(f"No row exists for row_key={row_key!r}")
+        return self._row_locations.get_key(self._row_locations.get(row_key))
+
+    def _row_keys_in_range(
+        self, anchor: RowKey | str, target: RowKey | str
+    ) -> list[RowKey]:
+        """Return visible row keys between two rows, inclusive."""
+        anchor_key = self._coerce_row_key(anchor)
+        target_key = self._coerce_row_key(target)
+        anchor_index = self._row_locations.get(anchor_key)
+        target_index = self._row_locations.get(target_key)
+        first, last = sorted((anchor_index, target_index))
+        return [
+            self._row_locations.get_key(row_index)
+            for row_index in range(first, last + 1)
+        ]
+
+    def _set_selected_rows(
+        self, row_keys: Iterable[RowKey | str], *, anchor: RowKey | str | None = None
+    ) -> Self:
+        """Set row selection state and refresh affected rows."""
+        old_selection = self._selected_rows
+        new_selection = {self._coerce_row_key(row_key) for row_key in row_keys}
+        new_anchor = self._coerce_row_key(anchor) if anchor is not None else None
+
+        if old_selection == new_selection:
+            self._selection_anchor = new_anchor
+            return self
+
+        changed_rows = old_selection ^ new_selection
+        self._selected_rows = new_selection
+        self._selection_anchor = new_anchor
+        self._clear_caches()
+        for row_key in changed_rows:
+            if row_key in self._row_locations:
+                self.refresh_row(self._row_locations.get(row_key))
+        self.post_message(
+            DataTable.RowSelectionChanged(self, frozenset(self._selected_rows))
+        )
+        return self
+
+    def select_row(
+        self, row_key: RowKey | str, *, replace: bool = False, anchor: bool = True
+    ) -> Self:
+        """Select a row.
+
+        Args:
+            row_key: The key of the row to select.
+            replace: Replace the current selection with this row.
+            anchor: Set this row as the range-selection anchor.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        normalized_key = self._coerce_row_key(row_key)
+        selected_rows = (
+            {normalized_key} if replace else self._selected_rows | {normalized_key}
+        )
+        selection_anchor = normalized_key if anchor else self._selection_anchor
+        return self._set_selected_rows(selected_rows, anchor=selection_anchor)
+
+    def deselect_row(self, row_key: RowKey | str) -> Self:
+        """Deselect a row.
+
+        Args:
+            row_key: The key of the row to deselect.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        normalized_key = self._coerce_row_key(row_key)
+        selected_rows = self._selected_rows - {normalized_key}
+        selection_anchor = (
+            None if self._selection_anchor == normalized_key else self._selection_anchor
+        )
+        return self._set_selected_rows(selected_rows, anchor=selection_anchor)
+
+    def toggle_row(self, row_key: RowKey | str, *, anchor: bool = True) -> Self:
+        """Toggle the selection state of a row.
+
+        Args:
+            row_key: The key of the row to toggle.
+            anchor: Set this row as the range-selection anchor.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        normalized_key = self._coerce_row_key(row_key)
+        if normalized_key in self._selected_rows:
+            return self.deselect_row(normalized_key)
+        return self.select_row(normalized_key, anchor=anchor)
+
+    def select_range(
+        self,
+        anchor: RowKey | str,
+        target: RowKey | str,
+        *,
+        replace: bool = False,
+    ) -> Self:
+        """Select all visible rows between two row keys, inclusive.
+
+        Args:
+            anchor: The first row key in the range.
+            target: The last row key in the range.
+            replace: Replace the current selection with this range.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        anchor_key = self._coerce_row_key(anchor)
+        row_keys = set(self._row_keys_in_range(anchor_key, target))
+        selected_rows = row_keys if replace else self._selected_rows | row_keys
+        return self._set_selected_rows(selected_rows, anchor=anchor_key)
+
+    def clear_selection(self) -> Self:
+        """Clear row selection.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        return self._set_selected_rows(())
+
+    def select_all_rows(self) -> Self:
+        """Select all rows.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        return self._set_selected_rows(self.rows.keys())
+
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
         self._cell_render_cache.clear()
@@ -1452,6 +1638,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_type = self.cursor_type
             cursor_location = self.cursor_coordinate
             hover_location = self.hover_coordinate
+            selected_rows = self._selected_rows
             base_style = self.rich_style
             fixed_style = self.get_component_styles(
                 "datatable--fixed"
@@ -1475,6 +1662,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                         column_index,
                         style,
                         column.get_render_width(self),
+                        selected=row.key in selected_rows,
                         cursor=should_highlight(
                             cursor_location, cell_location, cursor_type
                         ),
@@ -1589,6 +1777,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             The `DataTable` instance.
         """
         self._clear_caches()
+        selection_changed = bool(self._selected_rows)
+        self._selected_rows = set()
+        self._selection_anchor = None
         self._y_offsets.clear()
         self._data.clear()
         self.rows.clear()
@@ -1606,6 +1797,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.scroll_y = 0
         self.scroll_target_x = 0
         self.scroll_target_y = 0
+        if selection_changed:
+            self.post_message(DataTable.RowSelectionChanged(self, frozenset()))
         return self
 
     def add_column(
@@ -1801,11 +1994,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
+        removed_row_key = self._coerce_row_key(row_key)
 
         self._require_update_dimensions = True
         self.check_idle()
 
-        index_to_delete = self._row_locations.get(row_key)
+        index_to_delete = self._row_locations.get(removed_row_key)
         new_row_locations = TwoWayDict({})
         for row_location_key in self._row_locations:
             row_index = self._row_locations.get(row_location_key)
@@ -1817,17 +2011,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_locations = new_row_locations
 
         # Prevent the removed cells from triggering dimension updates
-        for column_key in self._data.get(row_key):
-            self._updated_cells.discard(CellKey(row_key, column_key))
+        for column_key in self._data.get(removed_row_key):
+            self._updated_cells.discard(CellKey(removed_row_key, column_key))
 
-        del self.rows[row_key]
-        del self._data[row_key]
+        selection_changed = removed_row_key in self._selected_rows
+        self._selected_rows.discard(removed_row_key)
+        if self._selection_anchor == removed_row_key:
+            self._selection_anchor = None
+
+        del self.rows[removed_row_key]
+        del self._data[removed_row_key]
 
         self.cursor_coordinate = self.cursor_coordinate
         self.hover_coordinate = self.hover_coordinate
 
         self._update_count += 1
         self.refresh(layout=True)
+        if selection_changed:
+            self.post_message(
+                DataTable.RowSelectionChanged(self, frozenset(self._selected_rows))
+            )
 
     def remove_column(self, column_key: ColumnKey | str) -> None:
         """Remove a column (identified by a key) from the DataTable.
@@ -2090,6 +2293,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_index: int,
         base_style: Style,
         width: int,
+        selected: bool = False,
         cursor: bool = False,
         hover: bool = False,
     ) -> SegmentLines:
@@ -2100,6 +2304,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column_index: Index of the column.
             base_style: Style to apply.
             width: Width of the cell.
+            selected: Is this cell part of a selected row?
             cursor: Is this cell affected by cursor highlighting?
             hover: Is this cell affected by hover cursor highlighting?
 
@@ -2125,6 +2330,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key,
             column_key,
             base_style,
+            selected,
             cursor,
             hover,
             self._show_hover_cursor,
@@ -2145,6 +2351,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 is_header_cell,
                 is_row_label_cell,
                 is_fixed_style_cell,
+                selected,
                 hover,
                 cursor,
                 self.show_cursor,
@@ -2192,6 +2399,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         is_header_cell: bool,
         is_row_label_cell: bool,
         is_fixed_style_cell: bool,
+        selected: bool,
         hover: bool,
         cursor: bool,
         show_cursor: bool,
@@ -2205,6 +2413,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             is_header_cell: Is this a cell from a header?
             is_row_label_cell: Is this the label of any given row?
             is_fixed_style_cell: Should this cell be styled like a fixed cell?
+            selected: Does this cell belong to a selected row?
             hover: Does this cell have the hover pseudo class?
             cursor: Is this cell covered by the cursor?
             show_cursor: Do we want to show the cursor in the data table?
@@ -2215,6 +2424,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         get_component = self.get_component_rich_style
         component_style = Style()
+
+        if selected:
+            component_style += get_component("datatable--selected")
 
         if hover and show_cursor and show_hover_cursor:
             component_style += get_component("datatable--hover")
@@ -2268,6 +2480,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         cursor_type = self.cursor_type
         show_cursor = self.show_cursor
+        selected = row_key in self._selected_rows
 
         cache_key = (
             row_key,
@@ -2278,6 +2491,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_type,
             show_cursor,
             self._show_hover_cursor,
+            selected,
             self._update_count,
             self._pseudo_class_state,
         )
@@ -2305,6 +2519,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 -1,
                 header_style,
                 width=self._row_label_column_width,
+                selected=selected,
                 cursor=should_highlight(cursor_location, cell_location, cursor_type),
                 hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
@@ -2325,6 +2540,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     column_index,
                     fixed_style,
                     column.get_render_width(self),
+                    selected=selected,
                     cursor=should_highlight(
                         cursor_location, cell_location, cursor_type
                     ),
@@ -2342,6 +2558,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column_index,
                 row_style,
                 column.get_render_width(self),
+                selected=selected,
                 cursor=should_highlight(cursor_location, cell_location, cursor_type),
                 hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
@@ -2363,6 +2580,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row_index == -1,
                 False,
                 False,
+                selected,
                 should_highlight(
                     hover_location, Coordinate(row_index or 0, 0), cursor_type
                 ),
@@ -2696,6 +2914,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_coordinate = Coordinate(row_index, column_index)
             highlight_click = new_coordinate == self.cursor_coordinate
             self.cursor_coordinate = new_coordinate
+            if self.cursor_type == "row":
+                row_key = self._row_locations.get_key(row_index)
+                if event.shift and self._selection_anchor is not None:
+                    self.select_range(self._selection_anchor, row_key)
+                elif event.ctrl or event.meta:
+                    self.toggle_row(row_key)
             if highlight_click:
                 self._post_selected_message()
             self._scroll_cursor_into_view(animate=True)
@@ -2837,6 +3061,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         if self.show_cursor and self.cursor_type != "none":
             self._post_selected_message()
+
+    def action_toggle_row(self) -> None:
+        """Toggle selection for the row under the cursor."""
+        self._set_hover_cursor(False)
+        if self.show_cursor and self.cursor_type == "row" and self.row_count:
+            row_key = self._row_locations.get_key(self.cursor_row)
+            self.toggle_row(row_key)
 
     def _post_selected_message(self):
         """Post the appropriate message for a selection based on the `cursor_type`."""

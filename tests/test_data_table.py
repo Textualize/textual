@@ -35,6 +35,7 @@ class DataTableApp(App):
         "CellSelected",
         "RowHighlighted",
         "RowSelected",
+        "RowSelectionChanged",
         "ColumnHighlighted",
         "ColumnSelected",
         "HeaderSelected",
@@ -845,6 +846,120 @@ async def test_click_row_cursor():
         row_selected: DataTable.RowSelected = app.messages[0]
         assert row_selected.row_key == row_key
         assert row_highlighted.cursor_row == 1
+
+
+async def test_row_selection_methods():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("ABC")
+        row_keys = [table.add_row(str(index)) for index in range(5)]
+
+        table.select_row(row_keys[1])
+        assert table.selected_rows == frozenset({row_keys[1]})
+        assert table.selection_anchor == row_keys[1]
+
+        table.toggle_row(row_keys[3])
+        assert table.selected_rows == frozenset({row_keys[1], row_keys[3]})
+        assert table.selection_anchor == row_keys[3]
+
+        table.select_range(row_keys[1], row_keys[3], replace=True)
+        assert table.selected_rows == frozenset(row_keys[1:4])
+        assert table.selection_anchor == row_keys[1]
+
+        table.deselect_row(row_keys[2])
+        assert table.selected_rows == frozenset({row_keys[1], row_keys[3]})
+        assert table.selection_anchor == row_keys[1]
+
+        table.clear_selection()
+        assert table.selected_rows == frozenset()
+        assert table.selection_anchor is None
+
+        table.select_all_rows()
+        assert table.selected_rows == frozenset(row_keys)
+
+
+async def test_row_selection_changed_message():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("ABC")
+        row_keys = [table.add_row(str(index)) for index in range(3)]
+        await wait_for_idle()
+        app.messages.clear()
+
+        table.select_row(row_keys[1])
+        await wait_for_idle()
+        assert app.message_names == ["RowSelectionChanged"]
+
+        selection_changed: DataTable.RowSelectionChanged = app.messages[0]
+        assert selection_changed.selected_rows == frozenset({row_keys[1]})
+
+
+async def test_row_selection_space_toggles_cursor_row():
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.cursor_type = "row"
+        table.add_column("ABC")
+        row_keys = [table.add_row(str(index)) for index in range(3)]
+        table.move_cursor(row=1)
+        await wait_for_idle()
+        app.messages.clear()
+
+        await pilot.press("space")
+        assert table.selected_rows == frozenset({row_keys[1]})
+        assert table.selection_anchor == row_keys[1]
+        assert app.message_names == ["RowSelectionChanged"]
+
+        await pilot.press("space")
+        assert table.selected_rows == frozenset()
+        assert table.selection_anchor is None
+
+
+async def test_row_selection_click_modifiers():
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.cursor_type = "row"
+        table.add_column("ABC")
+        row_keys = [table.add_row(str(index)) for index in range(6)]
+
+        # Click offsets are +1 because the header occupies the first line.
+        await pilot.click(offset=(1, 2), control=True)
+        assert table.selected_rows == frozenset({row_keys[1]})
+        assert table.selection_anchor == row_keys[1]
+
+        await pilot.click(offset=(1, 5), shift=True)
+        assert table.selected_rows == frozenset(row_keys[1:5])
+        assert table.selection_anchor == row_keys[1]
+
+        await pilot.click(offset=(1, 6), control=True)
+        assert table.selected_rows == frozenset(row_keys[1:6])
+        assert table.selection_anchor == row_keys[5]
+
+
+async def test_row_selection_updates_when_rows_are_removed_or_cleared():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("ABC")
+        row_keys = [table.add_row(str(index)) for index in range(4)]
+        table.select_all_rows()
+        await wait_for_idle()
+        app.messages.clear()
+
+        table.remove_row(row_keys[1])
+        await wait_for_idle()
+        assert table.selected_rows == frozenset({row_keys[0], row_keys[2], row_keys[3]})
+        assert app.message_names == ["RowSelectionChanged"]
+
+        app.messages.clear()
+        table.clear()
+        await wait_for_idle()
+        assert table.selected_rows == frozenset()
+        assert table.selection_anchor is None
+        assert app.message_names == ["RowSelectionChanged"]
 
 
 async def test_click_column_cursor():
