@@ -44,6 +44,33 @@ class Button(Widget, can_focus=True):
 
     """
 
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        super().__init_subclass__(**kwargs)
+        # Give each Button subclass its own Pressed message class so that
+        # `@on(MyButton.Pressed)` only matches MyButton click events, not
+        # generic Button clicks. Without this, all subclasses share the
+        # parent's nested Pressed class (Python does not inherit nested
+        # classes), so the message type distinction is lost.
+        # See https://github.com/Textualize/textual/issues/4968
+        parent_pressed = getattr(cls, "Pressed", None)
+        if parent_pressed is not None:
+            new_pressed = type(
+                "Pressed",
+                (parent_pressed,),
+                {
+                    "__qualname__": f"{cls.__name__}.Pressed",
+                    "__module__": cls.__module__,
+                },
+            )
+            new_pressed.__doc__ = parent_pressed.__doc__
+            # Keep the original handler_name so user code that wrote
+            # `def on_button_pressed(self, ...)` keeps matching. Without
+            # this, Message.__init_subclass__ would derive a new name from
+            # the qualname (e.g. "on_my_button_pressed") and silently break
+            # existing handlers.
+            new_pressed.handler_name = parent_pressed.handler_name
+            cls.Pressed = new_pressed
+
     ALLOW_SELECT = False
 
     DEFAULT_CSS = """
@@ -432,7 +459,7 @@ class Button(Widget, can_focus=True):
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
         if self.action is None:
-            self.post_message(Button.Pressed(self))
+            self.post_message(self.Pressed(self))
         else:
             self.call_later(
                 self.app.run_action, self.action, default_namespace=self._parent
