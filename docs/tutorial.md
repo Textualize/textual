@@ -435,7 +435,7 @@ Here's a summary of the changes made to `TimeDisplay`.
 - We've added a `total` reactive attribute to store the total time elapsed between clicking the start and stop buttons.
 - The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until [resume()][textual.timer.Timer.resume] is called). This is because we don't want the time to update until the user hits the start button.
 - The `update_time` method now adds `total` to the current time to account for the time between any previous clicks of the start and stop buttons.
-- We've stored the result of `set_interval` which returns a [Timer](textual.timer.Timer) object. We will use this to _resume_ the timer when we start the Stopwatch.
+- We've stored the result of `set_interval` which returns a [Timer][textual.timer.Timer] object. We will use this to _resume_ the timer when we start the Stopwatch.
 - We've added `start()`, `stop()`, and `reset()` methods.
 
 In addition, the `on_button_pressed` method on `Stopwatch` has grown some code to manage the time display when the user clicks a button. Let's look at that in detail:

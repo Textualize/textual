@@ -11,7 +11,7 @@ Textual requires Python 3.9 or later (if you have a choice, pick the most recent
 
     All Linux distros come with a terminal emulator that can run Textual apps.
 
-    If you are using the Linux console (rather than a desktop environment), see [Linux console]](./linux-console.md) for details. 
+    If you are using the Linux console (rather than a desktop environment), see [Linux console](./linux-console.md) for details.
 
     ### :material-apple: macOS
 
