@@ -341,6 +341,39 @@ async def test_remove_row():
         assert len(table.rows) == 2
 
 
+async def test_remove_row_auto_width_columns_shrink():
+    """Regression test for https://github.com/Textualize/textual/issues/3449 -
+    Auto-width columns should shrink when the widest row is removed."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table: DataTable = app.query_one(DataTable)
+        col_key = table.add_column("A")
+        short_key = table.add_row("short", key="short")
+        long_key = table.add_row("a_very_long_string_that_is_the_widest", key="long")
+        await pilot.pause()
+
+        # After adding both rows, column width should accommodate the longer string
+        column = table.columns[col_key]
+        width_with_both = column.content_width
+        assert width_with_both > len("short")
+
+        # Remove the row with the widest content
+        table.remove_row(long_key)
+        await pilot.pause()
+
+        # Column should now shrink to fit only the remaining content
+        width_after_removal = column.content_width
+        assert width_after_removal < width_with_both, (
+            f"Expected column to shrink after removing widest row, "
+            f"but content_width stayed at {width_after_removal} "
+            f"(was {width_with_both} before removal)"
+        )
+        assert width_after_removal == len("short"), (
+            f"Expected content_width to be {len('short')}, "
+            f"but got {width_after_removal}"
+        )
+
+
 async def test_remove_row_and_update():
     """Regression test for https://github.com/Textualize/textual/issues/3470 -
     Crash when attempting to remove and update the same cell."""

@@ -1362,6 +1362,44 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else 0
         )
 
+    def _recalculate_auto_width_columns(self) -> None:
+        """Recalculate content_width for all auto-width columns.
+
+        Called after removing a row, since the removed row may have contained
+        the widest cell in one or more columns. Without this, auto-width
+        columns never shrink back down when their widest content is removed.
+        """
+        console = self.app.console
+        for column_key, column in self.columns.items():
+            if not column.auto_width:
+                continue
+
+            label_width = measure(console, column.label, 1)
+
+            if not self.rows:
+                # No rows left — column width collapses to just the label
+                column.content_width = label_width
+                continue
+
+            max_cell_width = 0
+            for row_key in self.rows:
+                if column_key not in self._data.get(row_key, {}):
+                    continue
+                cell_value = self._data[row_key][column_key]
+                row = self.rows[row_key]
+                cell_width = measure(
+                    console,
+                    default_cell_formatter(
+                        cell_value,
+                        wrap=row.height != 1,
+                        height=row.height,
+                    ),
+                    1,
+                )
+                max_cell_width = max(max_cell_width, cell_width)
+
+            column.content_width = max(max_cell_width, label_width)
+
     def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
         """Update the widths of the columns based on the newly updated cell widths."""
         for row_key, column_key in updated_cells:
@@ -1822,6 +1860,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         del self.rows[row_key]
         del self._data[row_key]
+
+        # Recalculate content_width for auto-width columns, since removing
+        # the row may have removed the widest cell in a column.
+        self._recalculate_auto_width_columns()
 
         self.cursor_coordinate = self.cursor_coordinate
         self.hover_coordinate = self.hover_coordinate
