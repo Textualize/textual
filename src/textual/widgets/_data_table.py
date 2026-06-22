@@ -1592,6 +1592,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._y_offsets.clear()
         self._data.clear()
         self.rows.clear()
+        self._updated_cells.clear()
+        self._new_rows.clear()
         self._row_locations = TwoWayDict({})
         if columns:
             self.columns.clear()
