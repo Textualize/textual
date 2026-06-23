@@ -578,7 +578,14 @@ async def test_paste_read_only_does_nothing():
         assert text_area.text == TEXT  # No change
 
 
-async def test_delete_to_start_of_line_deletes_newline():
+@pytest.mark.parametrize(
+    "hotkey",
+    [
+        "ctrl+u",
+        "super+backspace",
+    ],
+)
+async def test_delete_to_start_of_line_deletes_newline(hotkey: str):
     """Test that default ctrl+u deletes newline when the cursor is at the start"""
 
     class TextAreaApp(App):
@@ -596,17 +603,17 @@ async def test_delete_to_start_of_line_deletes_newline():
         assert text_area.text == "Hello\nWorld"
 
         # Delete the line
-        await pilot.press("ctrl+u")
+        await pilot.press(hotkey)
         assert text_area.text == "Hello\n"
 
         # Delete at start, deletes the \n
-        await pilot.press("ctrl+u")
+        await pilot.press(hotkey)
         assert text_area.text == "Hello"
 
         # Delete the line
-        await pilot.press("ctrl+u")
+        await pilot.press(hotkey)
         assert text_area.text == ""
 
         # Delete empty is a NOOP
-        await pilot.press("ctrl+u")
+        await pilot.press(hotkey)
         assert text_area.text == ""
