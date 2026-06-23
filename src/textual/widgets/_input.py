@@ -124,7 +124,7 @@ class Input(ScrollView):
         ),
         Binding("ctrl+u", "delete_left_all", "Delete all to the left", show=False),
         Binding(
-            "ctrl+backspace",
+            "ctrl+backspace,alt+backspace",
             "delete_right_word",
             "Delete right to start of word",
             show=False,
