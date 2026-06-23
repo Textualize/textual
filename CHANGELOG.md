@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- super+backspace is now an alias for ctrl+u in Input and TextArea
+- super+backspace is now an alias for ctrl+u in Input and TextArea https://github.com/Textualize/textual/pull/6594
 
 ## [8.2.7] - 2026-05-19 
 
