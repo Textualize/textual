@@ -212,6 +212,26 @@ def test_keys(parser, sequence: str, key: str) -> None:
 
 
 @pytest.mark.parametrize(
+    "sequence,keys",
+    [
+        ("a", "a"),  # Sanity check
+        (
+            "\x1b[58;2;126:47u",
+            "~/",
+        ),  # press option+n folloed by forwards slash, emits ~/ on international keyboards
+    ],
+)
+def test_extended_keys(parser, sequence: str, keys: str) -> None:
+    """Test kitty key sequences that produce multiple keys."""
+    events = []
+    for event in parser.feed(sequence):
+        assert isinstance(event, Key)
+        events.append(event)
+    parsed_keys = "".join([event.character for event in events])
+    assert parsed_keys == keys
+
+
+@pytest.mark.parametrize(
     "sequence, event_type, shift, meta",
     [
         # Mouse down, with and without modifiers

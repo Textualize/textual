@@ -39,7 +39,7 @@ SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSO
 """Set of special sequences."""
 
 _re_extended_key: Final[re.Pattern[str]] = re.compile(
-    r"\x1b\[((?:\d*;?){2,3})([u~ABCDEFHPQRS])"
+    r"\x1b\[((?:[\d:]*;?){2,3})([u~ABCDEFHPQRS])"
 )
 _re_in_band_window_resize: Final[re.Pattern[str]] = re.compile(
     r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
@@ -334,8 +334,26 @@ class XTermParser(Parser[Message]):
             self._debug_log_file.close()
             self._debug_log_file = None
 
+    @classmethod
+    def _parse_colon_codepoints(cls, text_str: str) -> list[str | None]:
+        """Convert codepoints split on colons in to a list of characters.
+
+        Args:
+            text_str: String with groups of digits, separated by one or more colons.
+
+        Returns:
+            A list of characters.
+        """
+        if not text_str:
+            return [None]
+        characters: list[str | None] = [
+            chr(int(part)) if part.isdecimal() else chr(1)
+            for part in text_str.split(":")
+        ]
+        return characters
+
     @lru_cache(maxsize=1024)
-    def _parse_extended_key(self, sequence: str) -> events.Key | None:
+    def _parse_extended_key(self, sequence: str) -> list[events.Key] | None:
         """Parse a Kitty sequence.
 
         Args:
@@ -348,38 +366,50 @@ class XTermParser(Parser[Message]):
         if (match := _re_extended_key.fullmatch(sequence)) is None:
             return None
 
+        key_events: list[events.Key] = []
+
         codes, end = match.groups(default="")
         codepoint_str, modifiers_str, text_str, *_ = codes.split(";") + ["", "", ""]
 
-        codepoint = int(codepoint_str or "1")
-        modifiers = int(modifiers_str or "0")
-        text = chr(int(text_str)) if text_str else None
+        # text_codepoints = self._parse_colon_codepoints(text_str)
+        for text in self._parse_colon_codepoints(text_str):
 
-        if not (key := FUNCTIONAL_KEYS.get(f"{codepoint}{end}", "")):
-            key = _character_to_key(text if text else chr(codepoint))
+            codepoint = int(codepoint_str or "1")
+            modifiers = int(modifiers_str or "0")
 
-        key_tokens: list[str] = []
-        # The modifier is redundant on a modifier key
-        if modifiers and key not in MODIFIER_FUNCTIONAL_KEYS and text_str is not None:
-            modifier_bits = int(modifiers) - 1
-            # Not convinced of the utility in reporting caps_lock and num_lock
-            MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
-            # Ignore caps_lock and num_lock modifiers
-            if modifier_bits & 1 and (text is None or text.isspace()):
-                key_tokens.append("shift")
-            for bit, modifier in enumerate(MODIFIERS, 1):
-                if modifier == "alt" and text is not None:
-                    continue
-                if modifier_bits & (1 << bit):
-                    key_tokens.append(modifier)
+            if not (key := FUNCTIONAL_KEYS.get(f"{codepoint}{end}", "")):
+                key = _character_to_key(text if text else chr(codepoint))
 
-        key_tokens.sort()
-        if key is not None:
-            key_tokens.append(key)
-        return events.Key(
-            "+".join(key_tokens),
-            text or (None if modifiers else SPECIAL_KEY_TO_CHARACTER.get(key, None)),
-        )
+            key_tokens: list[str] = []
+            # The modifier is redundant on a modifier key
+            if (
+                modifiers
+                and key not in MODIFIER_FUNCTIONAL_KEYS
+                and text_str is not None
+            ):
+                modifier_bits = int(modifiers) - 1
+                # Not convinced of the utility in reporting caps_lock and num_lock
+                MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
+                # Ignore caps_lock and num_lock modifiers
+                if modifier_bits & 1 and (text is None or text.isspace()):
+                    key_tokens.append("shift")
+                for bit, modifier in enumerate(MODIFIERS, 1):
+                    if modifier == "alt" and text is not None:
+                        continue
+                    if modifier_bits & (1 << bit):
+                        key_tokens.append(modifier)
+
+            key_tokens.sort()
+            if key is not None:
+                key_tokens.append(key)
+            key_events.append(
+                events.Key(
+                    "+".join(key_tokens),
+                    text
+                    or (None if modifiers else SPECIAL_KEY_TO_CHARACTER.get(key, None)),
+                )
+            )
+        return key_events
 
     def _sequence_to_key_events(
         self, sequence: str, alt: bool = False
@@ -395,9 +425,10 @@ class XTermParser(Parser[Message]):
 
         if (
             not constants.DISABLE_KITTY_KEY
-            and (key := self._parse_extended_key(sequence)) is not None
+            and (keys := self._parse_extended_key(sequence)) is not None
         ):
-            yield key.copy()
+            for key in keys:
+                yield key.copy()
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
