@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed parsing Kitty extended keys with multiple codepoints
+- Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
 
 ## [8.2.7] - 2026-05-19 
 
