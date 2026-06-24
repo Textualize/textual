@@ -354,7 +354,7 @@ TextArea {
             show=False,
         ),
         Binding(
-            "ctrl+w,ctrl+backspace",
+            "ctrl+w,ctrl+backspace,alt+backspace",
             "delete_word_left",
             "Delete left to start of word",
             show=False,
@@ -390,7 +390,7 @@ TextArea {
             show=False,
         ),
         Binding(
-            "ctrl+u",
+            "ctrl+u,super+backspace",
             "delete_to_start_of_line",
             "Delete to line start",
             show=False,
@@ -446,7 +446,7 @@ TextArea {
     | delete,ctrl+d          | Delete character to the right of cursor.     |
     | alt+delete             | Delete from cursor to end of the word.       |
     | ctrl+shift+k           | Delete the current line.                     |
-    | ctrl+u                 | Delete from cursor to the start of the line. |
+    | ctrl+u,super+backspace | Delete from cursor to the start of the line. |
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
     | f7                     | Select all text in the document.             |
