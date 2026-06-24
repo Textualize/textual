@@ -12,6 +12,7 @@ from textual.widgets import Markdown, MarkdownViewer, Tree
 TEST_MARKDOWN = """\
 * [First]({{file}}#first)
 * [Second](#second)
+* [GitHub](https://github.com/textualize/textual/)
 
 # First
 
@@ -24,6 +25,7 @@ The second.
 
 
 class MarkdownFileViewerApp(App[None]):
+
     def __init__(self, markdown_file: Path) -> None:
         super().__init__()
         self.markdown_file = markdown_file
@@ -37,14 +39,14 @@ class MarkdownFileViewerApp(App[None]):
         await self.query_one(MarkdownViewer).go(self.markdown_file)
 
 
-@pytest.mark.parametrize("link", [0, 1])
+@pytest.mark.parametrize("link", [0, 1, 2])
 async def test_markdown_file_viewer_anchor_link(tmp_path, link: int) -> None:
     """Test https://github.com/Textualize/textual/issues/3094"""
     async with MarkdownFileViewerApp(Path(tmp_path) / "test.md").run_test() as pilot:
         # There's not really anything to test *for* here, but the lack of an
         # exception is the win (before the fix this is testing it would have
         # been FileNotFoundError).
-        await pilot.click(Markdown, Offset(2, link))
+        await pilot.click(Markdown, Offset(4, link))
 
 
 class MarkdownStringViewerApp(App[None]):
@@ -59,7 +61,7 @@ class MarkdownStringViewerApp(App[None]):
         self.query_one(MarkdownViewer).show_table_of_contents = False
 
 
-@pytest.mark.parametrize("link", [0, 1])
+@pytest.mark.parametrize("link", [0, 1, 2])
 async def test_markdown_string_viewer_anchor_link(link: int) -> None:
     """Test https://github.com/Textualize/textual/issues/3094
 
@@ -70,7 +72,7 @@ async def test_markdown_string_viewer_anchor_link(link: int) -> None:
         # There's not really anything to test *for* here, but the lack of an
         # exception is the win (before the fix this is testing it would have
         # been FileNotFoundError).
-        await pilot.click(Markdown, Offset(2, link))
+        await pilot.click(Markdown, Offset(4, link))
 
 
 @pytest.mark.parametrize("text", ["Hey [[/test]]", "[i]Hey there[/i]"])
