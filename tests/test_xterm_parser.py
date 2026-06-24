@@ -186,11 +186,18 @@ def test_double_escape(parser):
     [
         ("a", "a"),
         ("B", "B"),
+        ("\x1b[97;;97u", "a"),
+        ("\x1b[97;2;65u", "A"),
         ("\x1ba", "alt+a"),
         ("\x1b[97;3u", "alt+a"),
-        ("\x1b[65;4u", "alt+shift+a"),
+        ("\x1b[97;4u", "alt+shift+a"),
         ("\x1bA", "alt+shift+a"),
         ("\x1b[120;7u", "alt+ctrl+x"),
+        ("\x1b[57443;3u", "left_alt"),
+        ("\x1b[127;3u", "alt+backspace"),
+        ("\x1b[27u", "escape"),
+        ("\x1b[32;;32u", "space"),
+        ("\x1b[32;2;32u", "shift+space"),
     ],
 )
 def test_keys(parser, sequence: str, key: str) -> None:
@@ -202,6 +209,26 @@ def test_keys(parser, sequence: str, key: str) -> None:
         events.append(event)
     event = events[0]
     assert event.key == key
+
+
+@pytest.mark.parametrize(
+    "sequence,keys",
+    [
+        ("a", "a"),  # Sanity check
+        (
+            "\x1b[58;2;126:47u",
+            "~/",
+        ),  # press option+n folloed by forwards slash, emits ~/ on international keyboards
+    ],
+)
+def test_extended_keys(parser, sequence: str, keys: str) -> None:
+    """Test kitty key sequences that produce multiple keys."""
+    events = []
+    for event in parser.feed(sequence):
+        assert isinstance(event, Key)
+        events.append(event)
+    parsed_keys = "".join([event.character for event in events])
+    assert parsed_keys == keys
 
 
 @pytest.mark.parametrize(

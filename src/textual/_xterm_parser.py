@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import os
 import re
+from functools import lru_cache
 from typing import Any, Generator, Iterable
 
 from typing_extensions import Final
 
 from textual import constants, events, messages
 from textual._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
-from textual._keyboard_protocol import FUNCTIONAL_KEYS
+from textual._keyboard_protocol import FUNCTIONAL_KEYS, MODIFIER_FUNCTIONAL_KEYS
 from textual._parser import ParseEOF, Parser, ParseTimeout, Peek1, Read1, TokenCallback
 from textual.keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 from textual.message import Message
@@ -37,8 +38,10 @@ FOCUSOUT: Final[str] = "\x1b[O"
 SPECIAL_SEQUENCES = {BRACKETED_PASTE_START, BRACKETED_PASTE_END, FOCUSIN, FOCUSOUT}
 """Set of special sequences."""
 
-_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
-_re_in_band_window_resize: Final = re.compile(
+_re_extended_key: Final[re.Pattern[str]] = re.compile(
+    r"\x1b\[((?:[\d:]*;?){2,3})([u~ABCDEFHPQRS])"
+)
+_re_in_band_window_resize: Final[re.Pattern[str]] = re.compile(
     r"\x1b\[48;(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?);(\d+(?:\:.*?)?)t"
 )
 
@@ -47,6 +50,13 @@ IS_ITERM = (
     os.environ.get("LC_TERMINAL", "") == "iTerm2"
     or os.environ.get("TERM_PROGRAM", "") == "iTerm.app"
 )
+
+SPECIAL_KEY_TO_CHARACTER: Final = {
+    "backspace": "\x7f",
+    "enter": "\r",
+    "tab": "\t",
+}
+"""Explcit characters for keys, used in Kitty protocol parsing"""
 
 
 class XTermParser(Parser[Message]):
@@ -324,6 +334,80 @@ class XTermParser(Parser[Message]):
             self._debug_log_file.close()
             self._debug_log_file = None
 
+    @classmethod
+    def _parse_colon_codepoints(cls, text_str: str) -> list[str | None]:
+        """Convert codepoints split on colons in to a list of characters.
+
+        Args:
+            text_str: String with groups of digits, separated by one or more colons.
+
+        Returns:
+            A list of characters.
+        """
+        if not text_str:
+            return [None]
+        characters: list[str | None] = [
+            chr(int(part)) if part.isdecimal() else chr(1)
+            for part in text_str.split(":")
+        ]
+        return characters
+
+    @lru_cache(maxsize=1024)
+    def _parse_extended_key(self, sequence: str) -> list[events.Key] | None:
+        """Parse a Kitty sequence.
+
+        Args:
+            sequence: Input sequence
+
+        Returns:
+            Key event, or `None` of none could be parsed.
+        """
+
+        if (match := _re_extended_key.fullmatch(sequence)) is None:
+            return None
+
+        key_events: list[events.Key] = []
+
+        codes, end = match.groups(default="")
+        codepoint_str, modifiers_str, text_str, *_ = codes.split(";") + ["", "", ""]
+        codepoint = int(codepoint_str or "1")
+        modifiers = int(modifiers_str or "0")
+
+        for text in self._parse_colon_codepoints(text_str):
+            if not (key := FUNCTIONAL_KEYS.get(f"{codepoint}{end}", "")):
+                key = _character_to_key(text if text else chr(codepoint))
+
+            key_tokens: list[str] = []
+            # The modifier is redundant on a modifier key
+            if (
+                modifiers
+                and key not in MODIFIER_FUNCTIONAL_KEYS
+                and text_str is not None
+            ):
+                modifier_bits = int(modifiers) - 1
+                # Not convinced of the utility in reporting caps_lock and num_lock
+                MODIFIERS = ("alt", "ctrl", "super", "hyper", "meta")
+                # Ignore caps_lock and num_lock modifiers
+                if modifier_bits & 1 and (text is None or text.isspace()):
+                    key_tokens.append("shift")
+                for bit, modifier in enumerate(MODIFIERS, 1):
+                    if modifier == "alt" and text is not None:
+                        continue
+                    if modifier_bits & (1 << bit):
+                        key_tokens.append(modifier)
+
+            key_tokens.sort()
+            if key is not None:
+                key_tokens.append(key)
+            key_events.append(
+                events.Key(
+                    "+".join(key_tokens),
+                    text
+                    or (None if modifiers else SPECIAL_KEY_TO_CHARACTER.get(key, None)),
+                )
+            )
+        return key_events
+
     def _sequence_to_key_events(
         self, sequence: str, alt: bool = False
     ) -> Iterable[events.Key]:
@@ -333,32 +417,15 @@ class XTermParser(Parser[Message]):
             sequence: Sequence of code points.
 
         Returns:
-            Keys
+            Iterable of key events.
         """
 
-        if (match := _re_extended_key.fullmatch(sequence)) is not None:
-            number, modifiers, end = match.groups()
-            number = number or 1
-            if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
-                try:
-                    key = _character_to_key(chr(int(number)))
-                except Exception:
-                    key = chr(int(number))
-            key_tokens: list[str] = []
-            if modifiers:
-                modifier_bits = int(modifiers) - 1
-                # Not convinced of the utility in reporting caps_lock and num_lock
-                MODIFIERS = ("shift", "alt", "ctrl", "super", "hyper", "meta")
-                # Ignore caps_lock and num_lock modifiers
-                for bit, modifier in enumerate(MODIFIERS):
-                    if modifier_bits & (1 << bit):
-                        key_tokens.append(modifier)
-
-            key_tokens.sort()
-            key_tokens.append(key.lower())
-            yield events.Key(
-                "+".join(key_tokens), sequence if len(sequence) == 1 else None
-            )
+        if (
+            not constants.DISABLE_KITTY_KEY
+            and (keys := self._parse_extended_key(sequence)) is not None
+        ):
+            for key in keys:
+                yield key.copy()
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
@@ -383,6 +450,7 @@ class XTermParser(Parser[Message]):
             sequence = keys
         # If the sequence is a single character, attempt to process it as a
         # key.
+
         if len(sequence) == 1:
             try:
                 if not sequence.isalnum():

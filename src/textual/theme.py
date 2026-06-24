@@ -37,6 +37,9 @@ class Theme:
     text_alpha: float = 0.95
     variables: dict[str, str] = field(default_factory=dict)
 
+    ansi: bool = False
+    """False` to disable native ansi colors, `True` to enable native ansi"""
+
     def to_color_system(self) -> ColorSystem:
         """
         Create a ColorSystem instance from this Theme.
@@ -60,6 +63,7 @@ class Theme:
             luminosity_spread=self.luminosity_spread,
             text_alpha=self.text_alpha,
             variables=self.variables,
+            ansi=self.ansi,
         )
 
 
@@ -152,30 +156,6 @@ BUILTIN_THEMES: dict[str, Theme] = {
             "block-cursor-foreground": "#1e1e2e",
             "block-cursor-text-style": "none",
             "button-color-foreground": "#181825",
-        },
-    ),
-    "textual-ansi": Theme(
-        name="textual-ansi",
-        primary="ansi_blue",
-        secondary="ansi_cyan",
-        warning="ansi_yellow",
-        error="ansi_red",
-        success="ansi_green",
-        accent="ansi_bright_blue",
-        foreground="ansi_default",
-        background="ansi_default",
-        surface="ansi_default",
-        panel="ansi_default",
-        boost="ansi_default",
-        dark=False,
-        variables={
-            "block-cursor-text-style": "b",
-            "block-cursor-blurred-text-style": "i",
-            "input-selection-background": "ansi_blue",
-            "input-cursor-text-style": "reverse",
-            "scrollbar": "ansi_blue",
-            "border-blurred": "ansi_blue",
-            "border": "ansi_bright_blue",
         },
     ),
     "dracula": Theme(
@@ -461,6 +441,75 @@ BUILTIN_THEMES: dict[str, Theme] = {
         luminosity_spread=0.15,
         text_alpha=0.95,
     ),
+    "ansi-dark": Theme(
+        name="ansi-dark",
+        ansi=True,
+        primary="ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_yellow",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_green",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+        dark=True,
+        variables={
+            "ansi-background": "ansi_black",
+            "ansi-foreground": "ansi_white",
+            "border-blurred": "ansi_black",
+            "block-cursor-foreground": "ansi_black",
+            "block-cursor-background": "ansi_white",
+            "input-cursor-background": "ansi_black",
+            "input-cursor-foreground": "ansi_bright_white",
+            "input-cursor-text-style": "none",
+            "input-selection-background": "ansi_bright_blue",
+            "input-selection-foreground": "ansi_black",
+            "screen-selection-background": "ansi_bright_blue",
+            "screen-selection-foreground": "ansi_black",
+        },
+    ),
+    "ansi-light": Theme(
+        name="ansi-light",
+        ansi=True,
+        primary="ansi_blue",
+        secondary="ansi_cyan",
+        warning="ansi_bright_red",
+        error="ansi_red",
+        success="ansi_green",
+        accent="ansi_magenta",
+        foreground="ansi_default",
+        background="ansi_default",
+        surface="ansi_default",
+        panel="ansi_default",
+        boost="ansi_default",
+        dark=False,
+        variables={
+            "border": "ansi_blue",
+            "border-blurred": "ansi_white",
+            "block-cursor-foreground": "ansi_bright_white",
+            "block-cursor-background": "ansi_blue",
+            "ansi-background": "ansi_white",
+            "ansi-foreground": "ansi_black",
+            "input-cursor-background": "ansi_bright_white",
+            "input-cursor-foreground": "ansi_black",
+            "input-cursor-text-style": "reverse",
+            "input-selection-background": "ansi_cyan",
+            "input-selection-foreground": "ansi_white",
+            "scrollbar": "ansi_bright_blue",
+            "scrollbar-hover": "ansi_blue",
+            "scrollbar-active": "ansi_blue",
+            "scrollbar-background": "ansi_white",
+            "scrollbar-corner-color": "ansi_default",
+            "scrollbar-background-hover": "ansi_white",
+            "scrollbar-background-active": "ansi_white",
+            "block-hover-background": "ansi_white",
+            "screen-selection-background": "ansi_cyan",
+            "screen-selection-foreground": "ansi_bright_white",
+        },
+    ),
 }
 
 
@@ -477,7 +526,6 @@ class ThemeProvider(Provider):
         return [
             (theme.name, partial(set_app_theme, theme.name))
             for theme in sorted(themes.values(), key=attrgetter("name"))
-            if theme.name != "textual-ansi"
         ]
 
     async def discover(self) -> Hits:

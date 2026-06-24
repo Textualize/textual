@@ -1,5 +1,7 @@
+from typing import Final
+
 # https://sw.kovidgoyal.net/kitty/keyboard-protocol/#functional-key-definitions
-FUNCTIONAL_KEYS = {
+FUNCTIONAL_KEYS: Final = {
     "27u": "escape",
     "13u": "enter",
     "9u": "tab",
@@ -120,4 +122,22 @@ FUNCTIONAL_KEYS = {
     "57452u": "right_meta",
     "57453u": "iso_level3_shift",
     "57454u": "iso_level5_shift",
+}
+
+# A sub-set of modifier keys
+MODIFIER_FUNCTIONAL_KEYS: Final = {
+    "left_shift",
+    "left_control",
+    "left_alt",
+    "left_super",
+    "left_hyper",
+    "left_meta",
+    "right_shift",
+    "right_control",
+    "right_alt",
+    "right_super",
+    "right_hyper",
+    "right_meta",
+    "iso_level3_shift",
+    "iso_level5_shift",
 }

@@ -122,9 +122,17 @@ class Input(ScrollView):
         Binding(
             "ctrl+w", "delete_left_word", "Delete left to start of word", show=False
         ),
-        Binding("ctrl+u", "delete_left_all", "Delete all to the left", show=False),
         Binding(
-            "ctrl+f", "delete_right_word", "Delete right to start of word", show=False
+            "ctrl+u,super+backspace",
+            "delete_left_all",
+            "Delete all to the left",
+            show=False,
+        ),
+        Binding(
+            "ctrl+backspace,alt+backspace",
+            "delete_right_word",
+            "Delete right to start of word",
+            show=False,
         ),
         Binding("ctrl+k", "delete_right_all", "Delete all to the right", show=False),
         Binding("ctrl+x", "cut", "Cut selected text", show=False),
@@ -142,6 +150,7 @@ class Input(ScrollView):
     | shift+right | Move cursor right and select. |
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
+    | ctrl+backspace,alt+backspace | Delete right to start of word. |
     | ctrl+shift+right | Move cursor right a word and select. |
     | ctrl+shift+a | Select all text in the input. |
     | home,ctrl+a | Go to the beginning of the input. |
@@ -151,7 +160,7 @@ class Input(ScrollView):
     | delete,ctrl+d | Delete the character to the right of the cursor. |
     | enter | Submit the current value of the input. |
     | ctrl+w | Delete the word to the left of the cursor. |
-    | ctrl+u | Delete everything to the left of the cursor. |
+    | ctrl+u,super+backspace | Delete everything to the left of the cursor. |
     | ctrl+f | Delete the word to the right of the cursor. |
     | ctrl+k | Delete everything to the right of the cursor. |
     | ctrl+x | Cut selected text. |
@@ -205,6 +214,7 @@ class Input(ScrollView):
         }
         &>.input--selection {
             background: $input-selection-background;
+            color: $input-selection-foreground;
         }
         &>.input--placeholder, &>.input--suggestion {
             color: $text-disabled;

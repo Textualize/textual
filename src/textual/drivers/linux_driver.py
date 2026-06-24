@@ -9,11 +9,11 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 import rich.repr
 
-from textual import events
+from textual import constants, events
 from textual._loop import loop_last
 from textual._parser import ParseError
 from textual._xterm_parser import XTermParser
@@ -25,6 +25,13 @@ from textual.messages import InBandWindowResize
 
 if TYPE_CHECKING:
     from textual.app import App
+
+# https://sw.kovidgoyal.net/kitty/keyboard-protocol/#progressive-enhancement
+KITTY_DISAMBIGUATE_ESCAPE_CODES: Final = 0b00000001
+KITTY_REPORT_EVENT_TYPES: Final = 0b00000010
+KITTY_REPORT_ALTERNATE_KEYS: Final = 0b00000100
+KITTY_REPORT_ALL_KEYS: Final = 0b00001000
+KITTY_REPORT_ASSOCIATED_TEXT: Final = 0b00010000
 
 
 @rich.repr.auto(angular=True)
@@ -274,7 +281,15 @@ class LinuxDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
-        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+
+        if not constants.DISABLE_KITTY_KEY:
+            # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+            KITTY_PROTOCOL_FLAG = (
+                KITTY_DISAMBIGUATE_ESCAPE_CODES
+                | KITTY_REPORT_ALL_KEYS
+                | KITTY_REPORT_ASSOCIATED_TEXT
+            )
+            self.write(f"\x1b[>{KITTY_PROTOCOL_FLAG}u")
 
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread, name="textual-input")

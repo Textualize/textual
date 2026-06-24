@@ -41,7 +41,9 @@ async def test_arrange_dock_top():
 
 async def test_arrange_dock_left():
     container = Widget(id="container")
-    container._parent = App()
+    app = App()
+    active_app.set(app)
+    container._parent = app
     child = Widget(id="child")
     header = Widget(id="header")
     header.styles.dock = "left"

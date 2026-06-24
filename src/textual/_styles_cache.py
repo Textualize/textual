@@ -112,6 +112,7 @@ class StylesCache:
 
         base_background, background = widget.background_colors
         styles = widget.styles
+        app = widget.app
         strips = self.render(
             styles,
             widget.region.size,
@@ -139,7 +140,8 @@ class StylesCache:
             padding=styles.padding,
             crop=crop,
             opacity=widget.opacity,
-            ansi_theme=widget.app.ansi_theme,
+            ansi_theme=app.ansi_theme,
+            native_ansi=app.native_ansi_color,
         )
 
         if widget.auto_links:
@@ -173,6 +175,7 @@ class StylesCache:
         crop: Region | None = None,
         opacity: float = 1.0,
         ansi_theme: TerminalTheme = DEFAULT_TERMINAL_THEME,
+        native_ansi: bool = False,
     ) -> list[Strip]:
         """Render a widget content plus CSS styles.
 
@@ -191,6 +194,7 @@ class StylesCache:
             filters: Additional post-processing for the segments.
             opacity: Widget opacity.
             ansi_theme: Theme for ANSI colors.
+            native_ansi: Use native ANSI colors?
 
         Returns:
             Rendered lines.
@@ -227,6 +231,7 @@ class StylesCache:
                     border_subtitle,
                     opacity,
                     ansi_theme,
+                    native_ansi,
                 )
                 self._cache[y] = strip
             else:
@@ -273,6 +278,7 @@ class StylesCache:
         border_subtitle: tuple[Content, Color, Color, Style] | None,
         opacity: float,
         ansi_theme: TerminalTheme,
+        native_ansi: bool,
     ) -> Strip:
         """Render a styled line.
 
@@ -289,6 +295,8 @@ class StylesCache:
             border_title: Optional tuple of (title, color, background, style).
             border_subtitle: Optional tuple of (subtitle, color, background, style).
             opacity: Opacity of line.
+            ansi_theme: ANSI theme.
+            native_ansi: Use native ANSI colors?
 
         Returns:
             A line of segments.
@@ -450,7 +458,9 @@ class StylesCache:
                 line = Strip.blank(content_width, inner.rich_style)
 
             if (text_opacity := styles.text_opacity) != 1.0:
-                line = TextOpacity.process_segments(line, text_opacity, ansi_theme)
+                line = TextOpacity.process_segments(
+                    line, text_opacity, ansi_theme, native_ansi
+                )
             if pad_left or pad_right:
                 line = line_post(line_pad(line, pad_left, pad_right, inner.rich_style))
             else:

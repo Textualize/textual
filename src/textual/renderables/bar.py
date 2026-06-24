@@ -65,12 +65,21 @@ class Bar:
         half_start = start - int(start) > 0
         half_end = end - int(end) > 0
 
+        draw_background = (
+            background_style.color is None or not background_style.color.is_default
+        )
+        BACKGROUND_BAR = self.BAR if draw_background else " "
+        BACKGROUND_HALF_BAR_LEFT = self.HALF_BAR_LEFT if draw_background else " "
+        BACKGROUND_HALF_BAR_RIGHT = self.HALF_BAR_RIGHT if draw_background > 0 else " "
+
         # Initial non-highlighted portion of bar
         output_bar.append(
-            Text(self.BAR * (int(start - 0.5)), style=background_style, end="")
+            Text(BACKGROUND_BAR * (int(start - 0.5)), style=background_style, end="")
         )
         if not half_start and start > 0:
-            output_bar.append(Text(self.HALF_BAR_RIGHT, style=background_style, end=""))
+            output_bar.append(
+                Text(BACKGROUND_HALF_BAR_RIGHT, style=background_style, end="")
+            )
 
         highlight_bar = Text("", end="")
         # The highlighted portion
@@ -98,9 +107,15 @@ class Bar:
 
         # The non-highlighted tail
         if not half_end and end - width != 0:
-            output_bar.append(Text(self.HALF_BAR_LEFT, style=background_style, end=""))
+            output_bar.append(
+                Text(BACKGROUND_HALF_BAR_LEFT, style=background_style, end="")
+            )
         output_bar.append(
-            Text(self.BAR * (int(width) - int(end) - 1), style=background_style, end="")
+            Text(
+                BACKGROUND_BAR * (int(width) - int(end) - 1),
+                style=background_style,
+                end="",
+            )
         )
 
         # Fire actions when certain ranges are clicked (e.g. for tabs)

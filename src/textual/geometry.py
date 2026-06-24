@@ -1337,7 +1337,9 @@ class Shape:
             regions: Regions which will define the shape.
         """
         self._regions = tuple(regions)
-        self._bounds = Region.from_union(self._regions) if regions else NULL_REGION
+        self._bounds = (
+            Region.from_union(self._regions) if self._regions else NULL_REGION
+        )
 
     def __bool__(self) -> bool:
         return bool(self._bounds)
@@ -1347,6 +1349,17 @@ class Shape:
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._regions
+
+    def draw(self, size: Size) -> str:
+        """Build a string with a 2D grid of results from contains_point.
+
+        This is a debugging aid (do not use in production).
+        """
+        width, height = size
+        map: list[list[str]] = []
+        for y in range(height):
+            map.append([".X"[self.contains_point(Offset(x, y))] for x in range(width)])
+        return "\n".join("".join(line) for line in map)
 
     @property
     def regions(self) -> tuple[Region, ...]:
@@ -1399,12 +1412,12 @@ class Shape:
             """
             # Special case where start and end offsets are on the edges, and the shape
             # becomes a single region
-            if start_x == 0 and end_x == container.width:
+            if start_x == container.x and end_x == container.right:
                 yield Region(
-                    0,
+                    container.x,
                     start_y,
                     container.width,
-                    end_y - start_y,
+                    end_y - start_y + 1,
                 )
 
             # Simple case: all on one line
@@ -1422,14 +1435,14 @@ class Shape:
                 yield Region(
                     start_x,
                     start_y,
-                    container.width - start_x,
+                    container.right - start_x,
                     1,
                 )
                 # middle
-                if end.y - start.y > 2:
+                if end.y - start.y > 1:
                     # We need a middle region between the top and the bottom
                     yield Region(
-                        0,
+                        container.x,
                         start_y + 1,
                         container.width,
                         end_y - start_y - 1,
@@ -1438,7 +1451,7 @@ class Shape:
                 yield Region(
                     container.x,
                     end_y,
-                    end_x,
+                    end_x - container.x,
                     1,
                 )
 

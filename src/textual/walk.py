@@ -174,7 +174,7 @@ def walk_breadth_search_id(
 
 
 def walk_selectable_widgets(
-    root: DOMNode, bounds: Shape, bounded: set[DOMNode]
+    root: Widget, bounds: Shape, containers: set[DOMNode]
 ) -> Iterable[Widget]:
     """Walk the tree depth first in select order (top to bottom, then left to right).
 
@@ -186,7 +186,7 @@ def walk_selectable_widgets(
     Returns:
         An iterable of DOMNodes.
     """
-    stack: list[Iterator[Widget]] = [iter(root.children)]
+    stack: list[Iterator[Widget]] = [iter([root])]
     pop = stack.pop
     push = stack.append
 
@@ -205,8 +205,10 @@ def walk_selectable_widgets(
             node.displayed_and_visible_children,
             key=get_selection_order,
         )
-        if node in bounded:
-            children = [child for child in children if bounds.overlaps(child.region)]
+        if node in containers:
+            children = [
+                child for child in children if bounds.overlaps(child.content_region)
+            ]
         return children
 
     children = get_children(root)
@@ -214,7 +216,8 @@ def walk_selectable_widgets(
     while stack:
         if (node := next(stack[-1], None)) is None:
             pop()
-        elif node.allow_select:
-            yield node
+        else:
+            if not node.is_container and node.allow_select:
+                yield node
             if children := get_children(node):
                 push(iter(children))

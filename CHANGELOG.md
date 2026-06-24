@@ -10,10 +10,63 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fix crash when using Input in a DEFAULT_MODE screen https://github.com/Textualize/textual/pull/6492
+- Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
+
+### Changed
+
+- super+backspace is now an alias for ctrl+u in Input and TextArea https://github.com/Textualize/textual/pull/6594
+- alt+backspace (option+backspace on Mac) has the same effect as ctrl+backspace in Input and TextArea https://github.com/Textualize/textual/pull/6593
+
+## [8.2.7] - 2026-05-19 
+
+### Added
+
+- Added support for Kitty key protocol "Report all keys as escape codes" which enabled alt+backspace on Warp https://github.com/Textualize/textual/pull/6544
+- Added support for detecting separate modifier keys for terminals that support the Kitty key protocol https://github.com/Textualize/textual/pull/6544
+- Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid). https://github.com/Textualize/textual/pull/6544
+
+### Changed
+
+- Undo/redo/copy/cut/paste in TextArea will now work with cmd+ on supported terminals https://github.com/Textualize/textual/pull/6543
+- In TextArea, ctrl+u will now delete a newline if the cursor is at the start https://github.com/Textualize/textual/pull/6543
+- in TextArea alt+delete is now bound to delete word right https://github.com/Textualize/textual/pull/6543
+- Text opacity applied to an ansi theme will now set the dim attribute if the opacity is < 50% https://github.com/Textualize/textual/pull/6546
+
+### Fixed
+
+- Fixed text opacity with ANSI themes creating RGB colors.  https://github.com/Textualize/textual/pull/6546
+
+## [8.2.6] - 2026-05-13
+
+### Fixed
+
+- Fixed selection to the right of code fence blocks (may break some snapshots)
+- Fixed Markdown code fences losing content when switching themes https://github.com/Textualize/textual/pull/6537
+
+### Added
+
+- Added ability to select outside of text, so the user doesn't need to be quite so precise https://github.com/Textualize/textual/pull/6523
+
+## [8.2.5] - 2026-04-30
+
+### Added
+
+- Two new themes: "ansi-dark" and "ansi-light" https://github.com/Textualize/textual/pull/6513
+- Added an `ansi` value to themes https://github.com/Textualize/textual/pull/6513
+
+### Changed
+
+- `App.ansi_color` may now be `None` to use the `ansi` value from the theme. https://github.com/Textualize/textual/pull/6513
+
+## [8.2.4] - 2026-04-19
 
 ### Added
 
 - Added `DOM.update_classes` https://github.com/Textualize/textual/pull/6478
+
+### Fixed
+
+- Fixed anchor released when scrolling down with the trackpad https://github.com/Textualize/textual/pull/6503
 
 ## [8.2.3] - 2026-04-05 
 
@@ -3423,6 +3476,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[8.2.7]: https://github.com/Textualize/textual/compare/v8.2.6...v8.2.7
+[8.2.6]: https://github.com/Textualize/textual/compare/v8.2.5...v8.2.6
+[8.2.5]: https://github.com/Textualize/textual/compare/v8.2.4...v8.2.5
+[8.2.4]: https://github.com/Textualize/textual/compare/v8.2.3...v8.2.4
 [8.2.3]: https://github.com/Textualize/textual/compare/v8.2.2...v8.2.3
 [8.2.2]: https://github.com/Textualize/textual/compare/v8.2.1...v8.2.2
 [8.2.1]: https://github.com/Textualize/textual/compare/v8.2.0...v8.2.1

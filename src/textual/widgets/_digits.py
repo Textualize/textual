@@ -78,7 +78,9 @@ class Digits(Widget):
         """Render digits."""
         rich_style = self.rich_style
         if self.text_selection:
-            rich_style += self.selection_style
+            rich_style = self.screen.get_component_rich_style(
+                "screen--selection", partial=True
+            )
         digits = DigitsRenderable(self._value, rich_style)
         text_align = self.styles.text_align
         align = "left" if text_align not in {"left", "center", "right"} else text_align

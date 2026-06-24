@@ -10,6 +10,7 @@ from rich.text import Text
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events
 from textual._on import on
+from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.color import Color, ColorParseError
@@ -4871,3 +4872,67 @@ Input {
         await pilot.press("enter")
 
     assert snap_compare(WatchApp(), run_before=run_before)
+
+
+def test_markdown_stream_switch_theme(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6518
+
+    You should see Markdown with a title, a code fence containing a full generate_fibonacci function, and another line.
+    The theme should be "dracula" (purple-ish).
+
+    Original issue results in a missing code fence.
+
+    """
+
+    MD = """\
+# Some Python code
+
+```python
+def generate_fibonacci(n: int):
+    sequence = [0, 1]
+    while len(sequence) < n:
+        next_number = sequence[-1] + sequence[-2]
+        sequence.append(next_number)
+    return sequence[:n]
+```
+
+How's that?
+"""
+
+    class MDApp(App):
+        def compose(self) -> ComposeResult:
+            yield Markdown()
+
+        async def on_mount(self) -> None:
+            markdown = self.query_one(Markdown)
+            stream = Markdown.get_stream(markdown)
+            for line in MD.splitlines(keepends=True):
+                await asyncio.sleep(0.02)
+                await stream.write(line)
+            await stream.stop()
+            self.theme = "dracula"
+
+    assert snap_compare(MDApp())
+
+
+def test_text_opacity_native_ansi(snap_compare) -> None:
+    """Test that text-opacity with ansi themes doesn't produce RGB colors.
+
+    Textual can't calculate text opacity with ANSI colors. As a compromize a text-opacity of 50% or less
+    sets the dim attribute on the style.
+
+    You should see 10 labels for wach level of opacity. For opacity 50% and under, the labels
+    should be dimmed.
+    """
+
+    class TApp(App):
+
+        def on_load(self) -> None:
+            self.theme = "ansi-dark"
+
+        def compose(self) -> ComposeResult:
+            for n in range(11):
+                yield (label := Label(f"Text Opacity {n*10}%"))
+                label.styles.text_opacity = f"{n * 10}%"
+
+    assert snap_compare(TApp())

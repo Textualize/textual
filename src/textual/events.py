@@ -269,7 +269,7 @@ class Key(InputEvent):
         character: A printable character or `None` if it is not printable.
     """
 
-    __slots__ = ["key", "character", "aliases"]
+    __slots__ = ["key", "character"]
 
     def __init__(self, key: str, character: str | None) -> None:
         super().__init__()
@@ -279,8 +279,6 @@ class Key(InputEvent):
             (key if len(key) == 1 else None) if character is None else character
         )
         """A printable character or ``None`` if it is not printable."""
-        self.aliases: list[str] = _get_key_aliases(key)
-        """The aliases for the key, including the key itself."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
@@ -288,6 +286,10 @@ class Key(InputEvent):
         yield "name", self.name
         yield "is_printable", self.is_printable
         yield "aliases", self.aliases, [self.key]
+
+    def copy(self) -> Key:
+        """Get a copy of this key event."""
+        return Key(self.key, self.character)
 
     @property
     def name(self) -> str:
@@ -307,6 +309,11 @@ class Key(InputEvent):
             `True` if the key is printable.
         """
         return False if self.character is None else self.character.isprintable()
+
+    @property
+    def aliases(self) -> list[str]:
+        """The aliases for the key, including the key itself."""
+        return _get_key_aliases(self.key)
 
 
 def _key_to_identifier(key: str) -> str:
