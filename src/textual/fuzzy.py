@@ -22,7 +22,7 @@ from textual.visual import Style
 class FuzzySearch:
     """Performs a fuzzy search.
 
-    Unlike a regex solution, this will finds all possible matches.
+    Unlike a regex solution, this will find all possible matches.
     """
 
     def __init__(
