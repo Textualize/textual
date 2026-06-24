@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
+
 ### Changed
 
 - super+backspace is now an alias for ctrl+u in Input and TextArea https://github.com/Textualize/textual/pull/6594
