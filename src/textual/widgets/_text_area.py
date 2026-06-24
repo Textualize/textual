@@ -354,7 +354,7 @@ TextArea {
             show=False,
         ),
         Binding(
-            "ctrl+w,ctrl+backspace",
+            "ctrl+w,ctrl+backspace,alt+backspace",
             "delete_word_left",
             "Delete left to start of word",
             show=False,
