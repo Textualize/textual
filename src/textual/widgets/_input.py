@@ -122,7 +122,12 @@ class Input(ScrollView):
         Binding(
             "ctrl+w", "delete_left_word", "Delete left to start of word", show=False
         ),
-        Binding("ctrl+u", "delete_left_all", "Delete all to the left", show=False),
+        Binding(
+            "ctrl+u,super+backspace",
+            "delete_left_all",
+            "Delete all to the left",
+            show=False,
+        ),
         Binding(
             "ctrl+backspace,alt+backspace",
             "delete_right_word",
@@ -155,7 +160,7 @@ class Input(ScrollView):
     | delete,ctrl+d | Delete the character to the right of the cursor. |
     | enter | Submit the current value of the input. |
     | ctrl+w | Delete the word to the left of the cursor. |
-    | ctrl+u | Delete everything to the left of the cursor. |
+    | ctrl+u,super+backspace | Delete everything to the left of the cursor. |
     | ctrl+f | Delete the word to the right of the cursor. |
     | ctrl+k | Delete everything to the right of the cursor. |
     | ctrl+x | Cut selected text. |
