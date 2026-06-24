@@ -124,7 +124,7 @@ class Input(ScrollView):
         ),
         Binding("ctrl+u", "delete_left_all", "Delete all to the left", show=False),
         Binding(
-            "ctrl+backspace",
+            "ctrl+backspace,alt+backspace",
             "delete_right_word",
             "Delete right to start of word",
             show=False,
@@ -145,6 +145,7 @@ class Input(ScrollView):
     | shift+right | Move cursor right and select. |
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
+    | ctrl+backspace,alt+backspace | Delete right to start of word. |
     | ctrl+shift+right | Move cursor right a word and select. |
     | ctrl+shift+a | Select all text in the input. |
     | home,ctrl+a | Go to the beginning of the input. |

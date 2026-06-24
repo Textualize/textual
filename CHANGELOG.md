@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+- alt+backspace (option+backspace on Mac) has the same effect as ctrl+backspace in Input and TextArea https://github.com/Textualize/textual/pull/6593
+
 ## [8.2.7] - 2026-05-19 
 
 ### Added
