@@ -4976,7 +4976,7 @@ def test_screen_padding_select_move_down(snap_compare) -> None:
     You should see a selected sentence at the top of the screen.
     """
 
-    SENTENCE = "Call me Ishael"
+    SENTENCE = "Call me Ishmael"
 
     class CrashApp(App):
         # Padding on the Screen creates a 1-cell gutter at column 0 that belongs to
