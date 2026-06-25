@@ -1838,8 +1838,11 @@ class Screen(Generic[ScreenResultType], Widget):
                     if select_offset is not None:
                         content_widget = select_widget
                         content_offset = select_offset
-                        assert isinstance(content_widget.parent, Widget)
-                        container = content_widget.parent
+                        container = (
+                            content_widget
+                            if isinstance(content_widget, Screen)
+                            else content_widget.parent
+                        )
                     else:
                         content_widget = None
                         container = select_widget
@@ -1884,6 +1887,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
+
                 if (
                     select_widget is not None
                     and select_widget.allow_select
@@ -1893,8 +1897,11 @@ class Screen(Generic[ScreenResultType], Widget):
                     if select_offset is not None:
                         content_widget = select_widget
                         content_offset = select_offset
-                        assert isinstance(content_widget.parent, Widget)
-                        container = content_widget.parent
+                        container = (
+                            content_widget
+                            if isinstance(content_widget, Screen)
+                            else content_widget.parent
+                        )
                     else:
                         content_widget = None
                         container = select_widget
