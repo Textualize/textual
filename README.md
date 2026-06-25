@@ -134,6 +134,13 @@ Install Textual via pip:
 pip install textual textual-dev
 ```
 
+Install Textual via uv:
+
+```
+uv add textual
+uv add --dev textual-dev
+```
+
 See [getting started](https://textual.textualize.io/getting_started/) for details.
 
 
