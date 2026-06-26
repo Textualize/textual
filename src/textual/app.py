@@ -3186,10 +3186,12 @@ class App(Generic[ReturnType], DOMNode):
 
         if hover_widget is not None:
             hover_widget.mouse_hover = True
-            if hover_widget._has_hover_style:
+        # Only restyle when the hovered widget actually changed
+        if hover_widget is not current_hover_over:
+            if hover_widget is not None and hover_widget._has_hover_style:
                 hover_widget.update_node_styles()
-        if current_hover_over is not None and current_hover_over._has_hover_style:
-            current_hover_over.update_node_styles()
+            if current_hover_over is not None and current_hover_over._has_hover_style:
+                current_hover_over.update_node_styles()
         self.hover_over = hover_widget
 
     def _update_mouse_over(self, screen: Screen) -> None:
