@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed typing of run_worker to support async def callables under mypy strict checking (https://github.com/Textualize/textual/issues/6386)
 - Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
 
 ### Changed
