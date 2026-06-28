@@ -35,5 +35,7 @@ class ListItem(Widget, can_focus=False):
     @on(events.Enter)
     @on(events.Leave)
     def on_enter_or_leave(self, event: events.Enter | events.Leave) -> None:
+        """Remove mouse hover when dragging the scrollbar"""
         event.stop()
-        self.set_class(self.is_mouse_over, "-hovered")
+        mouse_captured = self.app.mouse_captured is not None
+        self.set_class(self.is_mouse_over and not mouse_captured, "-hovered")
