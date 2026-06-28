@@ -15,12 +15,12 @@ from typing import (
     ClassVar,
     Generic,
     Type,
-    TypeVar,
     cast,
     overload,
 )
 
 import rich.repr
+from typing_extensions import TypeVar
 
 from textual import events
 from textual._callback import count_parameters
@@ -38,7 +38,10 @@ if TYPE_CHECKING:
     Reactable = DOMNode
 
 ReactiveType = TypeVar("ReactiveType")
-ReactableType = TypeVar("ReactableType", bound="DOMNode")
+ReactableType_contra = TypeVar(
+    "ReactableType_contra", bound="DOMNode", default="DOMNode", contravariant=True
+)
+OtherReactableType = TypeVar("OtherReactableType", bound="DOMNode")
 
 
 class _Mutated:
@@ -72,10 +75,12 @@ class Initialize(Generic[ReactiveType]):
 
     """
 
-    def __init__(self, callback: Callable[[ReactableType], ReactiveType]) -> None:
+    def __init__(
+        self, callback: Callable[[ReactableType_contra], ReactiveType]
+    ) -> None:
         self.callback = callback
 
-    def __call__(self, obj: ReactableType) -> ReactiveType:
+    def __call__(self, obj: ReactableType_contra) -> ReactiveType:
         return self.callback(obj)
 
 
@@ -122,7 +127,7 @@ def invoke_watcher(
 
 
 @rich.repr.auto
-class Reactive(Generic[ReactiveType]):
+class Reactive(Generic[ReactiveType, ReactableType_contra]):
     """Reactive descriptor.
 
     Args:
@@ -278,20 +283,20 @@ class Reactive(Generic[ReactiveType]):
         @overload
         def __get__(
             self: Reactive[ReactiveType],
-            obj: ReactableType,
-            obj_type: type[ReactableType],
+            obj: ReactableType_contra,
+            obj_type: type[ReactableType_contra],
         ) -> ReactiveType: ...
 
         @overload
         def __get__(
-            self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
-        ) -> Reactive[ReactiveType]: ...
+            self: Reactive[ReactiveType], obj: None, obj_type: type[OtherReactableType]
+        ) -> Reactive[ReactiveType, OtherReactableType]: ...
 
     def __get__(
         self: Reactive[ReactiveType],
         obj: Reactable | None,
-        obj_type: type[ReactableType],
-    ) -> Reactive[ReactiveType] | ReactiveType:
+        obj_type: type[ReactableType_contra],
+    ) -> Reactive[ReactiveType, ReactableType_contra] | ReactiveType:
         _rich_traceback_omit = True
         if obj is None:
             # obj is None means we are invoking the descriptor via the class, and not the instance
@@ -434,7 +439,7 @@ class Reactive(Generic[ReactiveType]):
                 cls._check_watchers(obj, compute, current_value)
 
 
-class reactive(Reactive[ReactiveType]):
+class reactive(Reactive[ReactiveType, ReactableType_contra]):
     """Create a reactive attribute.
 
     Args:
@@ -472,7 +477,7 @@ class reactive(Reactive[ReactiveType]):
         )
 
 
-class var(Reactive[ReactiveType]):
+class var(Reactive[ReactiveType, ReactableType_contra]):
     """Create a reactive attribute (with no auto-refresh).
 
     Args:

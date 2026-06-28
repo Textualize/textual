@@ -517,6 +517,30 @@ async def test_private_compute() -> None:
         assert pilot.app.double == 10
 
 
+async def test_watch_method_reactive_attribute():
+    called = False
+
+    class Holder(Widget):
+        attr = var(None)
+
+    class MyApp(App):
+        def __init__(self):
+            super().__init__()
+            self.holder = Holder()
+
+        def on_mount(self):
+            self.watch(self.holder, Holder.attr, self.callback)
+
+        def callback(self):
+            nonlocal called
+            called = True
+
+    async with MyApp().run_test() as pilot:
+        pilot.app.holder.attr = "hello world"
+        await pilot.pause()
+        assert called
+
+
 async def test_async_reactive_watch_callbacks_go_on_the_watcher():
     """Regression test for https://github.com/Textualize/textual/issues/3036.
 
