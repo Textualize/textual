@@ -125,7 +125,7 @@ Together these styles compose the widget's *box model*. The following diagram sh
 
 Setting the width restricts the number of columns used by a widget, and setting the height restricts the number of rows. Let's look at an example which sets both dimensions.
 
-```python title="dimensions01.py" hl_lines="21-22"
+```python title="dimensions01.py" hl_lines="20-21"
 --8<-- "docs/examples/guide/styles/dimensions01.py"
 ```
 
@@ -142,7 +142,7 @@ In practice, we generally want the size of a widget to adapt to its content, whi
 
 Let's set the height to auto and see what happens.
 
-```python title="dimensions02.py" hl_lines="22"
+```python title="dimensions02.py" hl_lines="21"
 --8<-- "docs/examples/guide/styles/dimensions02.py"
 ```
 
@@ -163,7 +163,7 @@ Textual offers a few different *units* which allow you to specify dimensions rel
 
 The following example demonstrates applying percentage units:
 
-```python title="dimensions03.py" hl_lines="21-22"
+```python title="dimensions03.py" hl_lines="20-21"
 --8<-- "docs/examples/guide/styles/dimensions03.py"
 ```
 
@@ -193,7 +193,7 @@ When specifying `fr` units for a given dimension, Textual will divide the availa
 
 Let's look at an example. We will create two widgets, one with a height of `"2fr"` and one with a height of `"1fr"`.
 
-```python title="dimensions04.py" hl_lines="24-25"
+```python title="dimensions04.py" hl_lines="23-24"
 --8<-- "docs/examples/guide/styles/dimensions04.py"
 ```
 
@@ -219,7 +219,7 @@ The following styles set minimum and maximum sizes and can accept any of the val
 
 Padding adds space around your content which can aid readability. Setting [padding](../styles/padding.md) to an integer will add that number additional rows and columns around the content area. The following example sets padding to 2:
 
-```python title="padding01.py" hl_lines="22"
+```python title="padding01.py" hl_lines="21"
 --8<-- "docs/examples/guide/styles/padding01.py"
 ```
 
@@ -230,7 +230,7 @@ Notice the additional space around the text:
 
 You can also set padding to a tuple of *two* integers which will apply padding to the top/bottom and left/right edges. The following example sets padding to `(2, 4)` which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.
 
-```python title="padding02.py" hl_lines="22"
+```python title="padding02.py" hl_lines="21"
 --8<-- "docs/examples/guide/styles/padding02.py"
 ```
 
@@ -289,7 +289,7 @@ Note the addition of the titles and their alignments:
 
 [Outline](../styles/outline.md) is similar to border and is set in the same way. The difference is that outline will not change the size of the widget, and may overlap the content area. The following example sets an outline on a widget:
 
-```python title="outline01.py" hl_lines="22"
+```python title="outline01.py" hl_lines="21"
 --8<-- "docs/examples/guide/styles/outline01.py"
 ```
 
@@ -325,7 +325,7 @@ The following example creates two widgets with a width of 30, a height of 6, and
 The first widget has the default `box_sizing` (`"border-box"`).
 The second widget sets `box_sizing` to `"content-box"`.
 
-```python title="box_sizing01.py" hl_lines="32"
+```python title="box_sizing01.py" hl_lines="31"
 --8<-- "docs/examples/guide/styles/box_sizing01.py"
 ```
 
@@ -340,7 +340,7 @@ Margin is similar to padding in that it adds space, but unlike padding, [margin]
 
 The following example creates two widgets, each with a margin of 2.
 
-```python title="margin01.py" hl_lines="26-27"
+```python title="margin01.py" hl_lines="25-26"
 --8<-- "docs/examples/guide/styles/margin01.py"
 ```
 

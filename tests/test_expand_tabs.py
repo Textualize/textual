@@ -29,4 +29,9 @@ def test_get_tab_widths():
     assert get_tab_widths("\tbar") == [("", 4), ("bar", 0)]
     assert get_tab_widths("\tbar\t") == [("", 4), ("bar", 1)]
     assert get_tab_widths("\tfoo\t\t") == [("", 4), ("foo", 1), ("", 4)]
-    assert get_tab_widths("\t木foo\t木\t\t") == [("", 4), ("木foo", 3), ("木", 2), ("", 4)]
+    assert get_tab_widths("\t木foo\t木\t\t") == [
+        ("", 4),
+        ("木foo", 3),
+        ("木", 2),
+        ("", 4),
+    ]
