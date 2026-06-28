@@ -408,32 +408,46 @@ def _to_content(
 
         elif token_name == "open_closing_tag":
             tag_text = []
+
+            eof = False
             for token in iter_tokens:
                 if token.name == "end_tag":
                     break
+                elif token.name == "eof":
+                    eof = True
                 tag_text.append(token.value)
-            closing_tag = "".join(tag_text).strip()
-            normalized_closing_tag = normalize_markup_tag(closing_tag)
-            if normalized_closing_tag:
-                for index, (tag_position, tag_body, normalized_tag_body) in enumerate(
-                    reversed(style_stack), 1
-                ):
-                    if normalized_tag_body == normalized_closing_tag:
-                        style_stack.pop(-index)
-                        if tag_position != position:
-                            spans.append(Span(tag_position, position, tag_body))
-                        break
-                else:
-                    raise MarkupError(
-                        f"closing tag '[/{closing_tag}]' does not match any open tag"
-                    )
-
+            if eof:
+                # "tag" was unparsable
+                text_content = f"[/{''.join(tag_text)}"
+                text_append(text_content)
+                position += len(text_content)
             else:
-                if not style_stack:
-                    raise MarkupError("auto closing tag ('[/]') has nothing to close")
-                open_position, tag_body, _ = style_stack.pop()
-                if open_position != position:
-                    spans.append(Span(open_position, position, tag_body))
+                closing_tag = "".join(tag_text).strip()
+                normalized_closing_tag = normalize_markup_tag(closing_tag)
+                if normalized_closing_tag:
+                    for index, (
+                        tag_position,
+                        tag_body,
+                        normalized_tag_body,
+                    ) in enumerate(reversed(style_stack), 1):
+                        if normalized_tag_body == normalized_closing_tag:
+                            style_stack.pop(-index)
+                            if tag_position != position:
+                                spans.append(Span(tag_position, position, tag_body))
+                            break
+                    else:
+                        raise MarkupError(
+                            f"closing tag '[/{closing_tag}]' does not match any open tag"
+                        )
+
+                else:
+                    if not style_stack:
+                        raise MarkupError(
+                            "auto closing tag ('[/]') has nothing to close"
+                        )
+                    open_position, tag_body, _ = style_stack.pop()
+                    if open_position != position:
+                        spans.append(Span(open_position, position, tag_body))
 
     content_text = "".join(text)
     text_length = len(content_text)
