@@ -4,6 +4,7 @@ Taken from https://easings.net/ and translated from JavaScript.
 """
 
 from math import cos, pi, sin, sqrt
+from typing import Literal
 
 
 def _in_out_expo(x: float) -> float:
@@ -129,3 +130,39 @@ EASING = {
 
 DEFAULT_EASING = "in_out_cubic"
 DEFAULT_SCROLL_EASING = "out_cubic"
+
+DefaultEasingFunctions = Literal[
+    "none",
+    "round",
+    "linear",
+    "in_sine",
+    "in_out_sine",
+    "out_sine",
+    "in_quad",
+    "in_out_quad",
+    "out_quad",
+    "in_cubic",
+    "in_out_cubic",
+    "out_cubic",
+    "in_quart",
+    "in_out_quart",
+    "out_quart",
+    "in_quint",
+    "in_out_quint",
+    "out_quint",
+    "in_expo",
+    "in_out_expo",
+    "out_expo",
+    "in_circ",
+    "in_out_circ",
+    "out_circ",
+    "in_back",
+    "in_out_back",
+    "out_back",
+    "in_elastic",
+    "in_out_elastic",
+    "out_elastic",
+    "in_bounce",
+    "in_out_bounce",
+    "out_bounce",
+]
