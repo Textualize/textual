@@ -89,7 +89,11 @@ class HeaderClock(HeaderClockSpace):
     time_format: Reactive[str] = Reactive("%X")
 
     def _on_mount(self, _: Mount) -> None:
-        self.set_interval(1, callback=self.refresh, name="update header clock")
+        def check_and_refresh() -> None:
+            if self.screen is self.app.screen:
+                print("active clock ticks") #temp, REMOVE LATER
+                self.refresh()
+        self.set_interval(1,callback=check_and_refresh,name="update header clock")
 
     def render(self) -> RenderResult:
         """Render the header clock.
