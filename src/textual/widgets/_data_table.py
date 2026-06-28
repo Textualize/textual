@@ -1317,8 +1317,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _clamp_cursor_coordinate(self, coordinate: Coordinate) -> Coordinate:
         """Clamp a coordinate such that it falls within the boundaries of the table."""
         row, column = coordinate
-        row = clamp(row, 0, self.row_count - 1)
-        column = clamp(column, 0, len(self.columns) - 1)
+        row = clamp(row, 0, max(0, self.row_count - 1))
+        column = clamp(column, 0, max(0, len(self.columns) - 1))
         return Coordinate(row, column)
 
     def watch_cursor_type(self, old: str, new: str) -> None:
