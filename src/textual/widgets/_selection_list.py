@@ -713,3 +713,16 @@ class SelectionList(Generic[SelectionType], OptionList):
         self._selected.clear()
         self._values.clear()
         return super().clear_options()
+
+    def set_options(self, options: Iterable[SelectionType]) -> Self:
+        """Set options, potentially clearing existing options.
+
+        Args:
+            options: Options to set.
+
+        Returns:
+            The `SelectionList` instance
+        """
+        self._selected.clear()
+        self._values.clear()
+        return super().set_options(options)
