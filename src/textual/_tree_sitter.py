@@ -49,9 +49,10 @@ else:
         def get_language(language_name: str) -> Language | None:
             try:
                 return tree_sitter_language_pack.get_language(language_name)
-            # Need to use "Exception" because the current version of tree_sitter_language_pack doesn't have "DownloadError"
-            # Should be fixed in version 1.9, see: https://github.com/kreuzberg-dev/tree-sitter-language-pack/issues/133
-            except (tree_sitter_language_pack.LanguageNotFoundError, Exception):
+            except (
+                tree_sitter_language_pack.LanguageNotFoundError,
+                tree_sitter_language_pack.DownloadError,
+            ):
                 log.warning(f"Could not load language {language_name!r}.")
                 return None
 
