@@ -5,11 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased 
+## Unreleased
 
 ### Added
 
 - Added suport for tree-sitter-language-pack as an optional dependency for syntax highlighting
+
+### Fixed
+
+- Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
+
+### Changed
+
+- super+backspace is now an alias for ctrl+u in Input and TextArea https://github.com/Textualize/textual/pull/6594
+- alt+backspace (option+backspace on Mac) has the same effect as ctrl+backspace in Input and TextArea https://github.com/Textualize/textual/pull/6593
 
 ## [8.2.7] - 2026-05-19 
 
