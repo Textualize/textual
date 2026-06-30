@@ -122,6 +122,8 @@ class Keys(str, Enum):  # type: ignore[no-redef]
     ControlShiftPageUp = "ctrl+shift+pageup"
     ControlShiftPageDown = "ctrl+shift+pagedown"
 
+    AltEnter = "alt+enter"  # alt + enter
+
     BackTab = "shift+tab"  # shift + tab
 
     F1 = "f1"
