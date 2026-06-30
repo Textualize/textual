@@ -1139,6 +1139,36 @@ async def test_reuse_row_key_after_clear():
         assert table.get_row("ROW2") == [7, 8]
 
 
+async def test_clear_clears_updated_cells_and_new_rows():
+    """Regression test for https://github.com/Textualize/textual/issues/4900
+
+    After clear(), _updated_cells and _new_rows should be empty to prevent
+    stale RowKey references from causing KeyError on re-render.
+    """
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        cols = table.add_columns("A", "B")
+        row = table.add_row("hello", "world")
+        table.update_cell(row, cols[0], "updated", update_width=True)
+
+        # _updated_cells and _new_rows should have entries after adding/updating
+        assert len(table._updated_cells) > 0
+        assert len(table._new_rows) > 0
+
+        # clear() should remove stale references
+        table.clear()
+
+        assert len(table._updated_cells) == 0, (
+            f"_updated_cells should be empty after clear, "
+            f"got {table._updated_cells}"
+        )
+        assert len(table._new_rows) == 0, (
+            f"_new_rows should be empty after clear, "
+            f"got {table._new_rows}"
+        )
+
+
 async def test_reuse_column_key_after_clear():
     """Regression test for https://github.com/Textualize/textual/issues/1806"""
     app = DataTableApp()
