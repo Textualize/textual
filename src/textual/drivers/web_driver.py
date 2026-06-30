@@ -185,7 +185,7 @@ class WebDriver(Driver):
         """Wait for input and dispatch events."""
         input_reader = self._input_reader
         parser = XTermParser(debug=self._debug)
-        utf8_decoder = getincrementaldecoder("utf-8")().decode
+        utf8_decoder = getincrementaldecoder("utf-8")(errors="replace").decode
         decode = utf8_decoder
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
         # in band data packets.
