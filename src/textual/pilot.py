@@ -438,7 +438,7 @@ class Pilot(Generic[ReturnType]):
         )
 
         offset = Offset(message_arguments["x"], message_arguments["y"])
-        if offset not in screen.region:
+        if offset not in screen.size.region:
             raise OutOfBounds(
                 "Target offset is outside of currently-visible screen region."
             )

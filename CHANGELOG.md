@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
+- Fixed crash when clicking in the Screen's padding https://github.com/Textualize/textual/pull/6598
 
 ### Changed
 

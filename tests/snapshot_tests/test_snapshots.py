@@ -4936,3 +4936,61 @@ def test_text_opacity_native_ansi(snap_compare) -> None:
                 label.styles.text_opacity = f"{n * 10}%"
 
     assert snap_compare(TApp())
+
+
+def test_screen_padding_select(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6596
+
+    When a screen has padding, clicking in the padding area should not crash
+
+    You should see a sentence at the top of the screen, indented one cell in, and the first word (Click) highlighted.
+    """
+
+    class CrashApp(App):
+        # Padding on the Screen creates a 1-cell gutter at column 0 that belongs to
+        # the Screen itself — no child widget renders there.
+        CSS = "Screen { padding: 1 1 }"
+
+        def compose(self) -> ComposeResult:
+            yield Static(
+                "Click or drag-select starting at the very left edge (column 0)."
+            )
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.mouse_down(offset=(0, 1))
+        await pilot.mouse_up(offset=(6, 1))
+        await pilot.pause()
+        selected_text = pilot.app.screen.get_selected_text()
+        assert selected_text == "Click"
+
+    assert snap_compare(CrashApp(), run_before=run_before)
+
+
+def test_screen_padding_select_move_down(snap_compare) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6596
+
+    When a screen has padding, clicking in the padding area should not crash.
+
+    Check click and drag down.
+
+    You should see a selected sentence at the top of the screen.
+    """
+
+    SENTENCE = "Call me Ishmael"
+
+    class CrashApp(App):
+        # Padding on the Screen creates a 1-cell gutter at column 0 that belongs to
+        # the Screen itself — no child widget renders there.
+        CSS = "Screen { padding: 1 1 }"
+
+        def compose(self) -> ComposeResult:
+            yield Static(SENTENCE)
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.mouse_down(offset=(10, 0))
+        await pilot.mouse_up(offset=(10, 5))
+        await pilot.pause()
+        selected_text = pilot.app.screen.get_selected_text()
+        assert selected_text == SENTENCE
+
+    assert snap_compare(CrashApp(), run_before=run_before)
