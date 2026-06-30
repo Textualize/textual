@@ -94,7 +94,7 @@ The `Name` widget has a reactive `who` attribute. When the app modifies that att
 
 !!! information
 
-    Textual will check if a value has really changed, so assigning the same value wont prompt an unnecessary refresh.
+    Textual will check if a value has really changed, so assigning the same value won't prompt an unnecessary refresh.
 
 ### Disabling refresh
 
@@ -107,7 +107,7 @@ class MyWidget(Widget):
     count = var(0)  # (1)!
 ```
 
-1. Changing `self.count` wont cause a refresh or layout.
+1. Changing `self.count` won't cause a refresh or layout.
 
 ### Layout
 

@@ -164,7 +164,7 @@ class Placeholder(Static):
 
 Doing this properly required some thinking.
 Not that the current proposed solution is the best possible, but I did think of worse alternatives while I was thinking how to tackle this.
-I wasn't entirely sure how I would manage the variant-dependant rendering because I am not a fan of huge conditional statements that look like switch statements:
+I wasn't entirely sure how I would manage the variant-dependent rendering because I am not a fan of huge conditional statements that look like switch statements:
 
 ```py
 if variant == "default":

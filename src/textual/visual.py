@@ -147,7 +147,7 @@ class Visual(ABC):
     def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
         """Get optimal width of the Visual to display its content.
 
-        The exact definition of "optimal width" is dependant on the Visual, but
+        The exact definition of "optimal width" is dependent on the Visual, but
         will typically be wide enough to display output without cropping or wrapping,
         and without superfluous space.
 

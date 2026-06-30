@@ -54,7 +54,7 @@ Toast.-error {
 }
 ```
 
-You can customize just the title wih the `toast--title` class.
+You can customize just the title with the `toast--title` class.
 The following would make the title italic for an information toast:
 
 ```scss

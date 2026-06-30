@@ -230,7 +230,7 @@ When you exit a Textual app with [`App.exit()`][textual.app.App.exit], you can o
     Returns codes are a standard feature provided by your operating system.
     When any application exits it can return an integer to indicate if it was successful or not.
     A return code of `0` indicates success, any other value indicates that an error occurred.
-    The exact meaning of a non-zero return code is application-dependant.
+    The exact meaning of a non-zero return code is application-dependent.
 
 When a Textual app exits normally, the return code will be `0`. If there is an unhandled exception, Textual will set a return code of `1`.
 You may want to set a different value for the return code if there is error condition that you want to differentiate from an unhandled exception.

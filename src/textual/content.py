@@ -558,7 +558,7 @@ class Content(Visual):
     def get_optimal_width(self, rules: RulesMap, container_width: int) -> int:
         """Get optimal width of the Visual to display its content.
 
-        The exact definition of "optimal width" is dependant on the Visual, but
+        The exact definition of "optimal width" is dependent on the Visual, but
         will typically be wide enough to display output without cropping or wrapping,
         and without superfluous space.
 
@@ -1721,7 +1721,7 @@ class Content(Visual):
 class _FormattedLine:
     """A line of content with additional formatting information.
 
-    This class is used internally within Content, and you are unlikely to need it an an app.
+    This class is used internally within Content, and you are unlikely to need it in an app.
     """
 
     def __init__(
