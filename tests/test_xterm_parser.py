@@ -211,6 +211,11 @@ def test_keys(parser, sequence: str, key: str) -> None:
     assert event.key == key
 
 
+def test_malformed_sgr_mouse_report_is_ignored(parser):
+    """Malformed SGR mouse reports should not be reissued as key events."""
+    assert list(parser.feed("\x1b[<32;NaN;NaNM")) == []
+
+
 @pytest.mark.parametrize(
     "sequence,keys",
     [
