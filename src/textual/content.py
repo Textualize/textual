@@ -433,8 +433,9 @@ class Content(Visual):
             ```
 
         Args:
-            *parts: Parts to join to gether. A *part* may be a simple string, another Content
-            instance, or tuple containing text and a style.
+            *parts: Parts to join to gether.
+                A *part* may be a simple string, another Content
+                instance, or tuple containing text and a style.
             end: Optional end to the Content.
             strip_control_codes: Strip control codes that may break output.
         """
