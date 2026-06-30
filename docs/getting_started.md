@@ -46,6 +46,30 @@ If you would like to enable syntax highlighting in the [TextArea](./widgets/text
 pip install "textual[syntax]"
 ```
 
+By default this support:
+
+- python
+- markdown
+- json
+- toml
+- yaml
+- html
+- css
+- javascript
+- rust
+- go
+- regex
+- sql
+- java
+- bash
+- xml 
+
+If the built-in languages aren't enough for you, you can install the "more-syntax" extra:
+
+```
+pip install "textual[more-syntax]"
+```
+
 ### From conda-forge
 
 Textual is also available on [conda-forge](https://conda-forge.org/). The preferred package manager for conda-forge is currently [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html):

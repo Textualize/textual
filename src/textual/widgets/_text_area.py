@@ -773,11 +773,11 @@ TextArea {
         )
 
     @staticmethod
-    def _get_builtin_highlight_query(language_name: str) -> str:
-        """Get the highlight query for a builtin language.
+    def _get_highlight_query(language_name: str) -> str:
+        """Get the highlight query for a given language.
 
         Args:
-            language_name: The name of the builtin language.
+            language_name: The name of the language.
 
         Returns:
             The highlight query.
@@ -788,9 +788,19 @@ TextArea {
             )
             highlight_query = highlight_query_path.read_text()
         except OSError as error:
-            log.warning(f"Unable to load highlight query. {error}")
-            highlight_query = ""
-
+            # Only use tree_sitter_language_pack as a fallback
+            try:
+                import tree_sitter_language_pack
+            except ImportError:
+                log.warning(f"Unable to load highlight query. {error}")
+                highlight_query = ""
+            else:
+                result = tree_sitter_language_pack.get_highlights_query(language_name)
+                if result:
+                    highlight_query = result
+                else:
+                    log.warning(f"Unable to load highlight query. {error}")
+                    highlight_query = ""
         return highlight_query
 
     def notify_style_update(self) -> None:
@@ -1139,7 +1149,7 @@ TextArea {
                     document_language = get_language(language)
             else:
                 # No user-registered language, so attempt to use a built-in language.
-                highlight_query = self._get_builtin_highlight_query(language)
+                highlight_query = self._get_highlight_query(language)
                 document_language = get_language(language)
 
             # No built-in language, and no user-registered language: use plain text and warn.

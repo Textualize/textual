@@ -36,9 +36,41 @@ To enable syntax highlighting, you'll need to install the `syntax` extra depende
     poetry add "textual[syntax]"
     ```
 
-This will install `tree-sitter` and `tree-sitter-languages`.
+This will install `tree-sitter` and `tree-sitter-languages` which support:
+
+- python
+- markdown
+- json
+- toml
+- yaml
+- html
+- css
+- javascript
+- rust
+- go
+- regex
+- sql
+- java
+- bash
+- xml
+
 These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not available.
 After installing, you can set the [`language`][textual.widgets._text_area.TextArea.language] reactive attribute on the `TextArea` to enable highlighting.
+
+Alternatively if you need more languages can use the `more-syntax` extra:
+=== "pip"
+
+    ```
+    pip install "textual[more-syntax]"
+    ```
+
+=== "poetry"
+
+    ```
+    poetry add "textual[more-syntax]"
+    ```
+This use `tree-sitter-language-pack` instead of`tree-sitter-languages`
+You also can add manual support yourself, see below.
 
 ### Loading text
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added suport for tree-sitter-language-pack as an optional dependency for syntax highlighting
+
 ### Fixed
 
 - Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
