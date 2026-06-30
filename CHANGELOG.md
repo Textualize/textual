@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- shift+backspace is now an alias for backspace in Input and TextArea https://github.com/Textualize/textual/pull/PR_NUMBER
+- shift+backspace is now an alias for backspace in Input and TextArea https://github.com/Textualize/textual/pull/6611
 
 ## [8.2.8] - 2026-06-30
 
