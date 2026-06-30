@@ -217,3 +217,38 @@ async def test_markdown_quoting():
     async with app.run_test() as pilot:
         await pilot.click(Markdown, offset=(3, 0))
     assert links == ["tété"]
+
+
+async def test_link_in_markdown_table_posts_message_when_updated():
+    """A link inside a markdown table updated via update_rows should post a Markdown.LinkClicked
+    message when clicked.
+    
+    Regression test for https://github.com/Textualize/textual/issues/6597
+    """
+    
+    class MarkdownTableApp(App):
+        messages = []
+
+        def compose(self) -> ComposeResult:
+            yield Markdown()
+
+        @on(Markdown.LinkClicked)
+        def log_markdown_link_clicked(
+            self,
+            event: Markdown.LinkClicked,
+        ) -> None:
+            self.messages.append(event.__class__.__name__)
+
+    app = MarkdownTableApp()
+    async with app.run_test() as pilot:
+        md = app.query_one(Markdown)
+        
+        # update via append to trigger _update_rows
+        await md.append('| Textual Links |\n| --- |\n| [GitHub](https://github.com/textualize/textual/) |')
+        await pilot.pause()
+        
+        from textual.widgets._markdown import MarkdownTableCellContents
+        cell = list(md.query(MarkdownTableCellContents))[1] # second cell
+        await pilot.click(cell, offset=(1, 0)) # click on the text
+        
+        assert app.messages == ["LinkClicked"]
