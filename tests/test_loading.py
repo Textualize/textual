@@ -53,3 +53,25 @@ async def test_premature_loading():
     app = LoadingApp()
     async with app.run_test() as pilot:
         await pilot.pause()
+
+
+async def test_loading_set_from_worker_thread():
+    """Regression test for #5108: setting `loading` from a background
+    thread should not touch the DOM directly, and should not raise."""
+
+    class LoadingApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Label("hello")
+
+    app = LoadingApp()
+    async with app.run_test() as pilot:
+        label = app.query_one(Label)
+
+        def set_loading_from_thread() -> None:
+            label.loading = True
+
+        app.run_worker(set_loading_from_thread, thread=True)
+        await pilot.pause()
+        await pilot.pause()
+
+        assert label.loading is True

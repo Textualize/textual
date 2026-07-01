@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `loading` reactive not being thread-safe when set from a worker thread https://github.com/Textualize/textual/issues/5108
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed
