@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from rich.segment import Segment
+from rich.style import Style
+
 from textual import events
 from textual.app import App, ComposeResult
 from textual.geometry import Offset, Region, Size
 from textual.reactive import var
-from textual.strip import Strip
 from textual.scroll_view import ScrollView
-
-from rich.segment import Segment
-from rich.style import Style
+from textual.strip import Strip
 
 
 class CheckerBoard(ScrollView):

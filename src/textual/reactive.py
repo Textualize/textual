@@ -34,6 +34,7 @@ from textual._types import (
 
 if TYPE_CHECKING:
     from textual.dom import DOMNode
+    from textual.message_pump import MessagePump
 
     Reactable = DOMNode
 
@@ -176,7 +177,7 @@ class Reactive(Generic[ReactiveType]):
         yield "name", getattr(self, "name", None), None
 
     @classmethod
-    def _clear_watchers(cls, obj: Reactable) -> None:
+    def _clear_watchers(cls, obj: MessagePump) -> None:
         """Clear any watchers on a given object.
 
         Args:

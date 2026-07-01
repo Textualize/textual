@@ -308,22 +308,19 @@ class Worker(Generic[ResultType]):
             active_worker.set(self)
             return work()
 
+        loop = asyncio.get_running_loop()
         if (
             inspect.iscoroutinefunction(self._work)
             or hasattr(self._work, "func")
             and inspect.iscoroutinefunction(self._work.func)
         ):
-            runner = run_coroutine
-        elif inspect.isawaitable(self._work):
-            runner = run_awaitable
-        elif callable(self._work):
-            runner = run_callable
-        else:
-            raise WorkerError("Unsupported attempt to run a thread worker")
+            return await loop.run_in_executor(None, run_coroutine, self._work)  # type: ignore[arg-type]
+        if inspect.isawaitable(self._work):
+            return await loop.run_in_executor(None, run_awaitable, self._work)
+        if callable(self._work):
+            return await loop.run_in_executor(None, run_callable, self._work)  # type: ignore[arg-type]
 
-        loop = asyncio.get_running_loop()
-        assert loop is not None
-        return await loop.run_in_executor(None, runner, self._work)
+        raise WorkerError("Unsupported attempt to run a thread worker")
 
     async def _run_async(self) -> ResultType:
         """Run an async worker.
@@ -336,7 +333,7 @@ class Worker(Generic[ResultType]):
             or hasattr(self._work, "func")
             and inspect.iscoroutinefunction(self._work.func)
         ):
-            return await self._work()
+            return await self._work()  # type: ignore[operator]
         elif inspect.isawaitable(self._work):
             return await self._work
         elif callable(self._work):

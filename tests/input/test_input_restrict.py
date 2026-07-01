@@ -38,7 +38,6 @@ def test_input_number_type():
     assert not re.fullmatch(number, "-inf")
 
 
-
 def test_input_integer_type():
     """Test input type regex"""
     integer = _RESTRICT_TYPES["integer"]
