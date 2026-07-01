@@ -391,7 +391,11 @@ def test_datatable_change_cell_padding(snap_compare):
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
+def test_footer_margin(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/6616"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_margin.py")
 
+    
 def test_header_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "header.py")
 

@@ -154,6 +154,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         background: $footer-background;
         dock: bottom;
         height: 1;
+        width: 100%;
         scrollbar-size: 0 0;
         &.-compact {
             FooterLabel {
