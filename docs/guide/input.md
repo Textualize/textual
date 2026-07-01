@@ -80,7 +80,19 @@ Note the addition of a `key_space` method which is called in response to the spa
 
 !!! note
 
-    Consider key methods to be a convenience for experimenting with Textual features. In nearly all cases, key [bindings](#bindings) and [actions](../guide/actions.md) are preferable.
+    For most cases, key [bindings](#bindings) and [actions](../guide/actions.md) are preferable to key methods.
+
+    However, `key_*` methods have one important advantage over `on_key` handlers: they are called directly by the App's internal key dispatcher, *regardless of whether a child widget has stopped the event's bubbling*. This makes them the right choice for App-level keys that must fire even when a focused widget (such as `Input`) consumes the key event.
+
+    ```python
+    class MyApp(App):
+        # This fires even if the focused Input stopped the key event
+        def key_enter(self, event: Key) -> None:
+            if not isinstance(self.focused, Input):
+                self._handle_enter()
+    ```
+
+    By contrast, an `on_key` handler on the App will *not* receive keys that were stopped by a focused widget.
 
 ## Input focus
 
