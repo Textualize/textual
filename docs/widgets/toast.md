@@ -25,7 +25,7 @@ For example:
 
 ```scss
 ToastRack {
-        align: right top;
+    dock: top;
 }
 ```
 
