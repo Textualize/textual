@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from textual.content import Content, Span
-from textual.markup import MarkupError, to_content
+from textual.markup import MarkupError, escape, to_content
 
 
 @pytest.mark.parametrize(
@@ -165,6 +165,44 @@ def test_content_parse_fail() -> None:
         to_content("[foo]foo[/bar]")
     with pytest.raises(MarkupError):
         to_content("foo[/]")
+
+
+@pytest.mark.parametrize(
+    ["text", "expected"],
+    [
+        ("plain text", "plain text"),
+        ("[bold]hello[/]", r"\[bold]hello\[/]"),
+        ("[red]", r"\[red]"),
+        ("[RED]", r"\[RED]"),
+        ("[TV] MODEL", r"\[TV] MODEL"),
+        ("[#ff0000]text", r"\[#ff0000]text"),
+        ("[BOLD]", r"\[BOLD]"),
+        ("[Mixed]", r"\[Mixed]"),
+        (r"\[already escaped]", r"\\\[already escaped]"),
+        ("[on red]", r"\[on red]"),
+    ],
+)
+def test_escape(text: str, expected: str):
+    assert escape(text) == expected
+
+
+@pytest.mark.parametrize(
+    ["markup", "content"],
+    [
+        # Uppercase tags should work as markup (case is preserved in style)
+        (
+            "[RED]hello",
+            Content("hello", [Span(0, 5, "RED")]),
+        ),
+        (
+            "[BOLD]hello[/]",
+            Content("hello", [Span(0, 5, "BOLD")]),
+        ),
+    ],
+)
+def test_to_content_uppercase(markup: str, content: Content):
+    markup_content = to_content(markup)
+    assert markup_content.is_same(content)
 
 
 @pytest.mark.parametrize(
