@@ -441,7 +441,8 @@ class XTermParser(Parser[Message]):
             # If the sequence mapped to a tuple, then it's values from the
             # `Keys` enum. Raise key events from what we find in the tuple.
             for key in keys:
-                yield events.Key(key.value, sequence if len(sequence) == 1 else None)
+                key_name = f"alt+{key.value}" if alt else key.value
+                yield events.Key(key_name, sequence if len(sequence) == 1 else None)
             return
         # If keys is a string, the intention is that it's a mapping to a
         # character, which should really be treated as the sequence for the
