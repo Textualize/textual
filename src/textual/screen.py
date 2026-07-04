@@ -1482,6 +1482,14 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._refresh_layout(size)
             self.refresh()
 
+        # When a screen resumes, the terminal cursor may be stale
+        # (e.g., from a modal screen that showed a hand cursor on a button).
+        # Update the pointer shape and force-sync to the terminal, because
+        # the reactive watcher won't fire if the value hasn't changed on
+        # this screen instance.
+        self.update_pointer_shape()
+        self.app._set_pointer_shape(self._pointer_shape)
+
     async def _compose(self) -> None:
         await super()._compose()
         self._update_auto_focus()
