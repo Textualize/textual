@@ -213,6 +213,7 @@ class RichLog(ScrollView, can_focus=True):
             return self
 
         renderable = self._make_renderable(content)
+        is_vertical_scroll_end = self.is_vertical_scroll_end
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
         console = self.app.console
@@ -278,8 +279,14 @@ class RichLog(ScrollView, can_focus=True):
         # the new line(s), and the height will definitely have changed.
         self.virtual_size = Size(self._widest_line_width, len(self.lines))
 
-        if auto_scroll:
+        if (
+            auto_scroll
+            and not self.is_vertical_scrollbar_grabbed
+            and is_vertical_scroll_end
+        ):
             self.scroll_end(animate=animate, immediate=False, x_axis=False)
+        elif auto_scroll:
+            self.refresh()
 
         return self
 

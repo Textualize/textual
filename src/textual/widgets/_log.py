@@ -191,8 +191,14 @@ class Log(ScrollView, can_focus=True):
             self._prune_max_lines()
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
-        if auto_scroll:
+        if (
+            auto_scroll
+            and not self.is_vertical_scrollbar_grabbed
+            and is_vertical_scroll_end
+        ):
             self.scroll_end(animate=False, immediate=True, x_axis=False)
+        elif auto_scroll:
+            self.refresh()
         return self
 
     def write_line(
