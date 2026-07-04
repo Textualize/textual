@@ -4708,6 +4708,30 @@ class Widget(DOMNode):
     async def handle_key(self, event: events.Key) -> bool:
         return await dispatch_key(self, event)
 
+    async def _run_key_bindings(self, event: events.Key) -> bool:
+        """Run this widget's own bindings for a key event, without waiting for
+        the event to bubble to the app.
+
+        Widgets that handle printable keys directly in `_on_key` (such as Input
+        and TextArea) call this so that bound keys are applied in the order they
+        were typed, rather than after the event has bubbled to the app, which
+        could reorder them relative to fast typing.
+
+        Args:
+            event: A key event.
+
+        Returns:
+            True if a binding was run, otherwise False.
+        """
+        for binding in self._bindings.key_to_bindings.get(event.key, ()):
+            if not binding.priority and await self.app.run_action(
+                binding.action, self
+            ):
+                event.stop()
+                event.prevent_default()
+                return True
+        return False
+
     async def _on_compose(self, event: events.Compose) -> None:
         _rich_traceback_omit = True
         event.prevent_default()

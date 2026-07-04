@@ -1847,6 +1847,8 @@ TextArea {
             assert insert is not None
             start, end = self.selection
             self._replace_via_keyboard(insert, start, end)
+        else:
+            await self._run_key_bindings(event)
 
     def _find_columns_to_next_tab_stop(self) -> int:
         """Get the location of the next tab stop after the cursors position on the current line.

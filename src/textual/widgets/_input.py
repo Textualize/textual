@@ -752,6 +752,8 @@ class Input(ScrollView):
             else:
                 self.replace(event.character, *selection)
             event.prevent_default()
+        else:
+            await self._run_key_bindings(event)
 
     def _on_paste(self, event: events.Paste) -> None:
         if event.text:
