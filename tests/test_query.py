@@ -5,6 +5,7 @@ from textual.color import Color
 from textual.containers import Container
 from textual.css.query import (
     DeclarationError,
+    DOMQuery,
     InvalidQueryFormat,
     NoMatches,
     TooManyMatches,
@@ -402,3 +403,45 @@ async def test_query_one_optional():
         with pytest.raises(WrongType):
             # Asking for a Label, but the widget is an Input
             app.query_one_optional("#foo", Label)
+
+
+async def test_query_empty_parent_preserves_filters():
+    """Regression test for https://github.com/Textualize/textual/issues/6445.
+
+    When a DOMQuery matches no nodes, chaining .exclude() or .filter() must
+    preserve the parent query's filters — not discard them because the parent
+    evaluates as falsy.
+    """
+    class View(Widget):
+        pass
+
+    class TestApp(Widget):
+        pass
+
+    app = TestApp()
+    main_view = View(id="main")
+    app._add_child(main_view)
+    Widget(id="one")
+    Widget(id="two")
+
+    # Query for a non-existent type — result is empty
+    empty_query = app.query("Frob")
+
+    # Passing `parent` to DOMQuery directly like .exclude() / .filter() does
+    child = DOMQuery(app, exclude="#main", parent=empty_query)
+
+    # The child should have inherited the parent's filters
+    assert child._filters == empty_query._filters
+    # And the result should still be empty (Frob filter still applies)
+    assert len(child) == 0
+
+    # Same for .filter() chaining — child inherits parent's filters AND adds its own
+    child_filter = DOMQuery(app, filter="#nonexistent", parent=empty_query)
+    assert len(child_filter._filters) == 2  # parent's Frob + child's #nonexistent
+    assert child_filter._filters[0] == empty_query._filters[0]
+    assert len(child_filter) == 0
+
+    # Also verify via the public API
+    async with App().run_test() as pilot:
+        assert len(pilot.app.query("Frob").exclude("#main")) == 0
+        assert len(pilot.app.query("Frob").filter(".wat")) == 0

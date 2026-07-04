@@ -88,10 +88,10 @@ class DOMQuery(Generic[QueryType]):
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
-            parent._filters.copy() if parent else []
+            parent._filters.copy() if parent is not None else []
         )
         self._excludes: list[tuple[SelectorSet, ...]] = (
-            parent._excludes.copy() if parent else []
+            parent._excludes.copy() if parent is not None else []
         )
         self._deep = deep
         if filter is not None:
