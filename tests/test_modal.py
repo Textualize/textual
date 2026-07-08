@@ -97,3 +97,28 @@ async def test_modal_pop_screen():
         # Check activating the quit button exits the app
         await pilot.press("enter")
         assert pilot.app._exit
+
+
+async def test_modal_dismiss_via_call_after_refresh():
+    """Regression test for https://github.com/Textualize/textual/issues/6600
+
+    ModalScreen.dismiss() via call_after_refresh must not hang run_test().
+    """
+
+    class AutoDismissModal(ModalScreen):
+        def compose(self) -> ComposeResult:
+            yield Label("Modal")
+
+        def on_mount(self) -> None:
+            self.call_after_refresh(self.dismiss)
+
+    class TestApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("Main")
+
+        def on_mount(self) -> None:
+            self.push_screen(AutoDismissModal())
+
+    app = TestApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()

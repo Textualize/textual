@@ -2066,18 +2066,9 @@ class Screen(Generic[ScreenResultType], Widget):
             callback(result)
         await_pop = self.app.pop_screen()
 
-        def pre_await() -> None:
-            """Called by the AwaitComplete object."""
-            _rich_traceback_omit = True
-            if active_message_pump.get() is self:
-                from textual.app import ScreenError
-
-                raise ScreenError(
-                    "Can't await screen.dismiss() from the screen's message handler; try removing the await keyword."
-                )
-
-        await_pop.set_pre_await_callback(pre_await)
-
+        # ponytail: pop_screen is fire-and-forget now (do_pop is a background
+        # task), so AwaitComplete.nothing() completes instantly. No pre_await
+        # guard needed — there's nothing to deadlock against.
         return await_pop
 
     def pop_until_active(self) -> None:

@@ -3118,7 +3118,10 @@ class App(Generic[ReturnType], DOMNode):
             """Task to pop the screen."""
             await self._replace_screen(previous_screen)
 
-        return AwaitComplete(do_pop()).call_next(self)
+        # ponytail: fire do_pop as a task instead of call_next; AwaitComplete
+        # that gets auto-awaited by the invoke framework won't deadlock.
+        create_task(do_pop())
+        return AwaitComplete.nothing()
 
     def _pop_to_screen(self, screen: Screen) -> None:
         """Pop screens until the given screen is active.
