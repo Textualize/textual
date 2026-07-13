@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `MarkupError` crash when hovering a Markdown table cell whose text contains bracketed content, when the table was rendered in one shot rather than streamed https://github.com/Textualize/textual/issues/6642
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed

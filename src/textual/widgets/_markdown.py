@@ -676,7 +676,7 @@ class MarkdownTableContent(Widget):
                     cell,
                     classes=f"row{row_index} cell",
                     name=f"cell{row_index}.{cell_index}",
-                ).with_tooltip(cell.plain)
+                ).with_tooltip(cell)
             self.last_row = row_index
 
     def _update_content(self, headers: list[Content], rows: list[list[Content]]):
