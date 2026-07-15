@@ -225,3 +225,40 @@ async def test_select_out_of_scrollable_container_on_gap():
             assert (
                 f"item-{i:02d}" in selected_text
             ), f"item-{i:02d} missing from {selected_text!r}"
+
+
+async def test_mouse_down_on_detached_widget_does_not_crash():
+    """Selection must treat a hit on a DOM-detached widget as a miss.
+
+    The compositor can briefly return a widget that has been removed from the
+    DOM (e.g. while ``Markdown.update`` swaps children). Starting a selection
+    on it crashed with ``AttributeError: 'NoneType' object has no attribute
+    'region'`` because the detached widget's ``parent`` is ``None``.
+
+    Regression test for https://github.com/Textualize/textual/issues/6643
+    """
+    from unittest import mock
+
+    from textual import events
+
+    class TextSelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Hello")
+
+    app = TextSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        widget = app.query_one(Static)
+        await widget.remove()
+        assert widget.parent is None
+
+        screen = app.screen
+        # Simulate the compositor still mapping the detached widget.
+        with mock.patch.object(
+            screen, "get_widget_and_offset_at", return_value=(widget, Offset(0, 0))
+        ):
+            screen._forward_event(
+                events.MouseDown(None, 1, 1, 0, 0, 1, False, False, False)
+            )
+        # A selection must not have started on the detached widget.
+        assert screen._select_state is None
