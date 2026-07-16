@@ -114,6 +114,31 @@ async def test_key_movement_actions():
         assert input.cursor_position == 6
 
 
+async def test_left_word_actions_with_leading_separator():
+    """A separator at index 0 must be honored by the left-word actions.
+
+    Regression test for https://github.com/Textualize/textual/issues/6641:
+    prev_separator_position() skipped index 0, and action_cursor_left_word /
+    action_delete_left_word then treated a returned index of 0 as falsy, so
+    word navigation across a leading separator landed on the separator
+    instead of just after it.
+    """
+    app = InputApp("-NNN-NNN")
+    async with app.run_test():
+        input = app.query_one(MaskedInput)
+        input.value = "-ABC-DEF"
+        input.cursor_position = 8
+        input.action_cursor_left_word()
+        assert input.cursor_position == 5
+        input.action_cursor_left_word()
+        assert input.cursor_position == 1
+        # delete_left_word must also stop just after the leading separator.
+        input.cursor_position = 4
+        input.action_delete_left_word()
+        assert input.cursor_position == 1
+        assert input.value == "-   -DEF"
+
+
 async def test_key_modification_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
