@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `SelectStart.pointer_start_offset` applying the container scroll delta with the wrong sign, which could invert/collapse cross-widget text selections while select-auto-scroll was active https://github.com/Textualize/textual/issues/6639
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed
