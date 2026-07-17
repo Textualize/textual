@@ -253,13 +253,17 @@ class SelectCurrent(Horizontal):
         """
         self.label = label
         self.has_value = label is not Select.NULL
-        self.query_one("#label", Static).update(
-            self.placeholder if isinstance(label, NoSelection) else label
-        )
+        try:
+            self.query_one("#label", Static).update(
+                self.placeholder if isinstance(label, NoSelection) else label
+            )
+        except NoMatches:
+            pass
 
     def compose(self) -> ComposeResult:
         """Compose label and down arrow."""
-        yield NonSelectableStatic(self.placeholder, id="label")
+        label = self.placeholder if isinstance(self.label, NoSelection) else self.label
+        yield NonSelectableStatic(label, id="label")
         yield NonSelectableStatic("▼", classes="arrow down-arrow")
         yield NonSelectableStatic("▲", classes="arrow up-arrow")
 
