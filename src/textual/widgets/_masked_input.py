@@ -344,7 +344,7 @@ class _Template(Validator):
         """
         if position is None:
             position = self.input.cursor_position
-        for index in range(position - 1, 0, -1):
+        for index in range(position - 1, -1, -1):
             if _CharFlags.SEPARATOR in self.template[index].flags:
                 return index
         else:
@@ -636,9 +636,9 @@ class MaskedInput(Input, can_focus=True):
             position = self._template.prev_separator_position(self.cursor_position - 1)
         else:
             position = self._template.prev_separator_position()
-        if position:
+        if position is not None:
             position += 1
-        self.cursor_position = position or 0
+        self.cursor_position = position if position is not None else 0
 
     def action_cursor_right_word(self) -> None:
         """Move the cursor right next to the next separator. If no next
@@ -683,7 +683,7 @@ class MaskedInput(Input, can_focus=True):
             position = self._template.prev_separator_position(self.cursor_position - 1)
         else:
             position = self._template.prev_separator_position()
-        if position:
+        if position is not None:
             position += 1
         else:
             position = 0
