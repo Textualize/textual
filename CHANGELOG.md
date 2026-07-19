@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed priority binding order not being respected in the Footer when a priority binding wins a key collision with a focused widget's binding https://github.com/Textualize/textual/issues/4639
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed

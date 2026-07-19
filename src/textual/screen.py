@@ -486,6 +486,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         binding.priority
                         and not existing_key_and_binding.binding.priority
                     ):
+                        del bindings_map[key]
                         bindings_map[key] = ActiveBinding(
                             namespace, binding, enabled, binding.tooltip
                         )
