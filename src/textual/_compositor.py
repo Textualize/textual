@@ -614,6 +614,7 @@ class Compositor:
                                 - widget.scrollbar_size_horizontal
                             )
                         )
+                        new_scroll_y = max(0, new_scroll_y)
                         widget.set_reactive(Widget.scroll_y, new_scroll_y)
                         widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
                         widget.vertical_scrollbar._reactive_position = new_scroll_y
@@ -695,6 +696,7 @@ class Compositor:
                             widget.container_size.height
                             - widget.scrollbar_size_horizontal
                         )
+                        new_scroll_y = max(0, new_scroll_y)
                         widget.scroll_y = new_scroll_y
                         widget.scroll_target_y = new_scroll_y
                         widget.vertical_scrollbar.position = new_scroll_y

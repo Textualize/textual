@@ -119,3 +119,39 @@ async def test_scrollbar_zero_thickness():
     app = ScrollbarZero()
     async with app.run_test(size=(8, 6)):
         pass
+
+
+async def test_anchored_vertical_scroll_short_content_stays_clamped() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6652.
+
+    Anchored short content should not drive `scroll_y` negative.
+    """
+
+    class AnchorVoidApp(App[None]):
+        CSS = """
+        Screen {
+            layout: vertical;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with VerticalScroll(id="v"):
+                for i in range(3):
+                    yield Label(f"line {i}")
+
+        def on_mount(self) -> None:
+            self.query_one("#v", VerticalScroll).anchor()
+
+    app = AnchorVoidApp()
+    async with app.run_test(size=(80, 24)):
+        await app.wait_for_refresh()
+        scroller = app.query_one("#v", VerticalScroll)
+        assert scroller.scroll_y == 0
+        assert scroller.scroll_target_y == 0
+        assert scroller.max_scroll_y == 0
+
+        app.refresh(layout=True)
+        await app.wait_for_refresh()
+        assert scroller.scroll_y == 0
+        assert scroller.scroll_target_y == 0
+        assert scroller.max_scroll_y == 0
