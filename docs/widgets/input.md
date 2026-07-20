@@ -63,6 +63,47 @@ For instance, if you wanted to limit characters to binary you could set `restric
 You can limit the length of the input by setting `max_length` to a value greater than zero.
 This will prevent the user from typing any more characters when the maximum has been reached.
 
+### Suggestions
+
+The `Input` widget can offer autocomplete suggestions as the user types.
+Pass a *[Suggester][textual.suggester.Suggester]* via the `suggester` parameter, and the
+proposed completion is shown in a dimmed style after the cursor.
+Press ++right++ to accept the current suggestion when the cursor is at the end of the value.
+
+The quickest way to get started is [`SuggestFromList`][textual.suggester.SuggestFromList],
+which completes the value from a fixed list of options.
+Set `case_sensitive=False` if you want matching to ignore case.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/input_suggestions.py" press="P"}
+    ```
+
+=== "input_suggestions.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/input_suggestions.py"
+    ```
+
+To draw suggestions from another source (a database, a web API, fuzzy matching, and so on),
+subclass [`Suggester`][textual.suggester.Suggester] and implement the async method
+`get_suggestion`, which receives the current value and returns a completion string or `None`.
+The value is casefolded before it reaches `get_suggestion` unless you construct the suggester
+with `case_sensitive=True`.
+
+```python
+from textual.suggester import Suggester
+
+
+class SuggestBigNumbers(Suggester):
+    async def get_suggestion(self, value: str) -> str | None:
+        if value.isdigit():
+            return f"{value}000000"
+        return None
+```
+
+See [`SuggestFromList`][textual.suggester.SuggestFromList] for a complete reference implementation.
+
 ### Validating Input
 
 You can supply one or more *[validators][textual.validation.Validator]* to the `Input` widget to validate the value.
