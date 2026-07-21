@@ -797,7 +797,7 @@ class Leave(Event, bubble=True, verbose=True):
 
 
 class Focus(Event, bubble=False):
-    """Sent when a widget is focussed.
+    """Sent when a widget is focused.
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -819,7 +819,7 @@ class Focus(Event, bubble=False):
 
 
 class Blur(Event, bubble=False):
-    """Sent when a widget is blurred (un-focussed).
+    """Sent when a widget is blurred (unfocused).
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -852,7 +852,7 @@ class AppBlur(Event, bubble=False):
 
 @dataclass
 class DescendantFocus(Event, bubble=True, verbose=True):
-    """Sent when a child widget is focussed.
+    """Sent when a child widget is focused.
 
     - [X] Bubbles
     - [X] Verbose
