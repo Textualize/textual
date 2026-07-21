@@ -2084,7 +2084,7 @@ def test_app_focus_style(snap_compare):
         }
 
         App:blur {
-            .focussed {
+            .focused {
                 visibility: hidden;
             }
         }
@@ -2093,7 +2093,7 @@ def test_app_focus_style(snap_compare):
 
         def compose(self) -> ComposeResult:
             yield Label("BLURRED", classes="blurred")
-            yield Label("FOCUSED", classes="focussed")
+            yield Label("FOCUSED", classes="focused")
 
     async def run_before(pilot: Pilot) -> None:
         pilot.app.post_message(events.AppBlur())
