@@ -202,13 +202,14 @@ class LinuxInlineDriver(Driver):
             )
 
         def on_terminal_resize(signum, stack) -> None:
-            send_size_event(clear=True)
+            send_size_event(clear=False)
 
         signal.signal(signal.SIGWINCH, on_terminal_resize)
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
         self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.write("\x1b[?7l")  # Disable auto-wrap
         self.flush()
 
         self._enable_mouse_support()
@@ -312,6 +313,7 @@ class LinuxInlineDriver(Driver):
         self.disable_input()
         self.write("\x1b[<u")  # Disable kitty protocol
         self.write("\x1b[J")
+        self.write("\x1b[?7h")  # Enable auto-wrap
 
         if self.attrs_before is not None:
             try:
