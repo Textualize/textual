@@ -646,6 +646,62 @@ async def test_no_duplicate_external_watchers() -> None:
         assert counter == 2
 
 
+async def test_external_watcher_removed_with_owner() -> None:
+    """External watchers should not retain a node after it is removed."""
+
+    callback_count = 0
+
+    class Watcher(Widget):
+        def on_mount(self) -> None:
+            self.watch(self.app, "value", self.on_value)
+
+        def on_value(self) -> None:
+            nonlocal callback_count
+            callback_count += 1
+
+    class WatchApp(App[None]):
+        value = reactive(0)
+
+        def compose(self) -> ComposeResult:
+            yield Watcher()
+
+    app = WatchApp()
+    async with app.run_test():
+        watcher = app.query_one(Watcher)
+        assert callback_count == 1
+        assert getattr(app, "__watchers")["value"]
+
+        await watcher.remove()
+
+        assert not getattr(app, "__watchers").get("value")
+        assert not getattr(watcher, "__watching")
+        app.value = 1
+        assert callback_count == 1
+
+
+async def test_external_watcher_tracking_removed_with_observed_node() -> None:
+    """Removing an observed node should clear the owner's tracking entry."""
+
+    class Observed(Widget):
+        value = reactive(0)
+
+    class WatchApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Observed()
+
+        def on_mount(self) -> None:
+            self.watch(self.query_one(Observed), "value", lambda: None)
+
+    app = WatchApp()
+    async with app.run_test():
+        observed = app.query_one(Observed)
+        assert (observed, "value") in getattr(app, "__watching")
+
+        await observed.remove()
+
+        assert (observed, "value") not in getattr(app, "__watching")
+
+
 async def test_external_watch_init_does_not_propagate() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3878.
 
