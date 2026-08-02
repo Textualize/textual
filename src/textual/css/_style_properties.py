@@ -877,11 +877,12 @@ class StringEnumProperty(Generic[EnumType]):
                     parent=self._refresh_parent,
                 )
                 if self._pointer and obj.node is not None:
+                    from textual.app import ScreenStackError
                     from textual.dom import NoScreen
 
                     try:
                         obj.node.screen.update_pointer_shape()
-                    except NoScreen:
+                    except (NoScreen, ScreenStackError):
                         pass
 
 
