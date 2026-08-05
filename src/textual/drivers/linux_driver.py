@@ -431,6 +431,8 @@ class LinuxDriver(Driver):
         decode = utf8_decoder
         read = os.read
 
+        eof = False
+
         def process_selector_events(
             selector_events: list[tuple[selectors.SelectorKey, int]],
             final: bool = False,
@@ -442,11 +444,18 @@ class LinuxDriver(Driver):
                 final: True if this is the last call.
 
             """
+            nonlocal eof
             for last, (_selector_key, mask) in loop_last(selector_events):
                 if mask & EVENT_READ:
-                    unicode_data = decode(read(fileno, 1024 * 4), final=final and last)
+                    raw_data = read(fileno, 1024 * 4)
+                    if not raw_data:
+                        # EOF. A selector reports it as permanently readable, so
+                        # stop selecting or this thread would busy-loop.
+                        eof = True
+                        break
+                    unicode_data = decode(raw_data, final=final and last)
                     if not unicode_data:
-                        # This can occur if the stdin is piped
+                        # Incomplete UTF-8 sequence.
                         break
                     for event in feed(unicode_data):
                         self.process_message(event)
@@ -456,6 +465,8 @@ class LinuxDriver(Driver):
         try:
             while not self.exit_event.is_set():
                 process_selector_events(selector.select(0.1))
+                if eof:
+                    break
             selector.unregister(self.fileno)
             process_selector_events(selector.select(0.1), final=True)
 

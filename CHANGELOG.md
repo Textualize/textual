@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed the input thread busy-looping at 100% CPU when stdin reaches EOF <!-- TODO: link issue/PR when filed -->
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed
