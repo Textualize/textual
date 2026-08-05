@@ -353,7 +353,6 @@ def render_border_label(
         inner_style: The inner style (widget background).
         outer_style: The outer style (parent background).
         style: Widget style.
-        console: The console that will render the markup in the label.
         has_left_corner: Whether the border edge will have to render a left corner.
         has_right_corner: Whether the border edge will have to render a right corner.
 

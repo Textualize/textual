@@ -502,7 +502,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Args:
             size: Size of container.
-            optimal: Ignored on screen.
+            _optimal: Ignored on screen.
 
         Returns:
             Widget locations.

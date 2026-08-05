@@ -78,7 +78,7 @@ class Driver(ABC):
         """Perform additional processing on a message, prior to sending.
 
         Args:
-            event: A message to process.
+            message: A message to process.
         """
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.

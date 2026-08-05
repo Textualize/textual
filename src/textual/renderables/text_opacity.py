@@ -64,7 +64,6 @@ class TextOpacity:
             segments: Incoming segments.
             opacity: Opacity to apply.
             ansi_theme: Terminal theme.
-            background: Color of background.
             native_ansi: Allow ANSI colors.
 
         Returns:

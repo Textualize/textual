@@ -68,7 +68,8 @@ class FuzzySearch:
         """Score a search.
 
         Args:
-            search: Search object.
+            candidate: The string that was matched.
+            positions: Offsets of the matched characters within the candidate.
 
         Returns:
             Score.

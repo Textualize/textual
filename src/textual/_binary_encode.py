@@ -40,7 +40,7 @@ def dump(data: object) -> bytes:
         Encodes a None value.
 
         Args:
-            datum: Always None.
+            _datum: Always None.
 
         Returns:
             None encoded.
