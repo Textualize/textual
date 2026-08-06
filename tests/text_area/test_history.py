@@ -282,6 +282,29 @@ async def test_paste_is_an_isolated_batch():
         assert text_area.text == ""
 
 
+async def test_undo_multiline_paste_with_stale_cursor_location():
+    class MultilinePasteApp(App[None]):
+        CSS = "TextArea { height: 8; }"
+
+        def compose(self) -> ComposeResult:
+            yield TextArea("line0\nline1\n")
+
+        def on_mount(self) -> None:
+            self.copy_to_clipboard("\n".join(f"line{i}" for i in range(2, 50)))
+            self.query_one(TextArea).focus()
+
+    app = MultilinePasteApp()
+    async with app.run_test(size=(120, 40)) as pilot:
+        text_area = app.query_one(TextArea)
+
+        await pilot.press("ctrl+v")
+        assert text_area.cursor_location == (47, 6)
+
+        await pilot.press("ctrl+z")
+        assert text_area.text == "line0\nline1\n"
+        assert text_area.selection == Selection.cursor((0, 0))
+
+
 async def test_focus_creates_checkpoint():
     app = TextAreaApp()
     async with app.run_test() as pilot:

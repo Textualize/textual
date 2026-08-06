@@ -907,11 +907,10 @@ TextArea {
         self.set_class(read_only, "-read-only")
         self._set_theme(self._theme.name)
 
-    def _recompute_cursor_offset(self):
+    def _recompute_cursor_offset(self) -> None:
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
-        self._cursor_offset = self.wrapped_document.location_to_offset(
-            self.cursor_location
-        )
+        cursor_location = self.clamp_visitable(self.cursor_location)
+        self._cursor_offset = self.wrapped_document.location_to_offset(cursor_location)
 
     def find_matching_bracket(
         self, bracket: str, search_from: Location
