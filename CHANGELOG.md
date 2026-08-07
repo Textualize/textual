@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed the input thread busy-looping at 100% CPU when stdin reaches EOF <!-- TODO: link issue/PR when filed -->
+- Fixed the input thread busy-looping at 100% CPU when stdin reaches EOF https://github.com/Textualize/textual/pull/6690
 
 ## [8.2.8] - 2026-06-30
 
