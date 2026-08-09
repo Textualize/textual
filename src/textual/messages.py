@@ -138,3 +138,9 @@ class InBandWindowResize(Message):
         supported = setting_parameter not in (0, 4)
         enabled = setting_parameter in (1, 3)
         return InBandWindowResize(supported, enabled)
+
+
+@rich.repr.auto
+class LegacyMouseReport(Message):
+    """Sent when an X10 legacy mouse report is detected from stdin."""
+

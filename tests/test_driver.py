@@ -125,3 +125,25 @@ async def test_driver_mouse_down_drag_outside_widget_up_click():
         )
         await pilot.pause()
         assert len(app.messages) == 0
+
+
+async def test_driver_reasserts_mouse_on_legacy_report():
+    """Receiving a LegacyMouseReport message should trigger _enable_mouse_support on driver."""
+    from textual.messages import LegacyMouseReport
+
+    class MyApp(App):
+        pass
+
+    app = MyApp()
+    mouse_support_called = False
+
+    async with app.run_test() as pilot:
+        def mock_enable_mouse_support():
+            nonlocal mouse_support_called
+            mouse_support_called = True
+
+        app._driver._enable_mouse_support = mock_enable_mouse_support
+        app._driver.process_message(LegacyMouseReport())
+        await pilot.pause()
+        assert mouse_support_called is True
+

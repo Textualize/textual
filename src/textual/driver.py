@@ -82,6 +82,9 @@ class Driver(ABC):
         """
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.
+        if isinstance(message, messages.LegacyMouseReport):
+            self._enable_mouse_support()
+            return
         message.set_sender(self._app)
         if self.cursor_origin is None:
             offset_x = 0
@@ -141,6 +144,9 @@ class Driver(ABC):
 
     def flush(self) -> None:
         """Flush any buffered data."""
+
+    def _enable_mouse_support(self) -> None:
+        """Enable reporting of mouse events."""
 
     @abstractmethod
     def start_application_mode(self) -> None:

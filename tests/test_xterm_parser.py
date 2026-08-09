@@ -413,3 +413,13 @@ def test_terminal_mode_reporting_synchronized_output_not_supported(parser):
     sequence = "\x1b[?2026;0$y"
     events = list(parser.feed(sequence))
     assert events == []
+
+
+def test_legacy_x10_mouse_report_emits_legacy_mouse_report(parser):
+    from textual.messages import LegacyMouseReport
+
+    sequence = "\x1b[M \x80\x80"
+    events = list(parser.feed(sequence))
+    assert len(events) == 1
+    assert isinstance(events[0], LegacyMouseReport)
+
