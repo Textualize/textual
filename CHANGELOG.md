@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed link highlighting when the link spans multiple lines https://github.com/Textualize/textual/pull/6703
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed
