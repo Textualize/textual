@@ -6,6 +6,21 @@ labels: ''
 assignees: ''
 
 ---
+<!--
+
+Hi,
+
+I have maintained Rich and Textual for many years, and I will continue to do so.
+But please be aware that it takes a lot of my time to review issues and this has only increased in the AI age.
+I can't always allocate the time, so you may have to wait for a response.
+
+That said, If a fix is both A) important and B) a blocker for you, then feel free to reach out and ask for assistance.
+I will likely be happy to help for Open Source projects.
+For funded Enterprises, the best way to get a quick response it to sponsor me.
+
+- Will McGugan
+willmcgugan+textual@gmail.com
+-->
 
 Have you checked closed issues? (https://github.com/Textualize/textual/issues?q=is%3Aissue+is%3Aclosed)
 
