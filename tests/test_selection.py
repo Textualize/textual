@@ -1,7 +1,7 @@
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.containers import VerticalScroll
+from textual.containers import Vertical, VerticalScroll
 from textual.geometry import Offset
 from textual.selection import Selection
 from textual.widgets import Static
@@ -225,3 +225,109 @@ async def test_select_out_of_scrollable_container_on_gap():
             assert (
                 f"item-{i:02d}" in selected_text
             ), f"item-{i:02d} missing from {selected_text!r}"
+
+
+async def test_double_click_selects_word():
+    """Double-clicking a word should select just that word."""
+
+    class WordSelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("hello world foo bar")
+
+    app = WordSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        static = app.query_one(Static)
+        await pilot.click(static, offset=(8, 0), times=2)
+        await pilot.pause()
+        assert app.screen.get_selected_text() == "world"
+
+
+async def test_double_click_selects_url():
+    """Double-clicking inside a URL should select the whole URL."""
+
+    class UrlSelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("Visit https://example.com/path for info.")
+
+    app = UrlSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        static = app.query_one(Static)
+        await pilot.click(static, offset=(18, 0), times=2)
+        await pilot.pause()
+        assert app.screen.get_selected_text() == "https://example.com/path"
+
+
+async def test_triple_click_selects_paragraph():
+    """Triple-clicking should select the paragraph at the click location."""
+
+    class ParagraphSelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("first paragraph\n\nsecond paragraph\nmore text")
+
+    app = ParagraphSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        static = app.query_one(Static)
+        await pilot.click(static, offset=(2, 3), times=3)
+        await pilot.pause()
+        assert app.screen.get_selected_text() == "second paragraph\nmore text"
+
+
+async def test_double_click_clears_select_state():
+    """Double-clicking a word should leave the selection state consistent."""
+
+    class WordSelectApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("hello world foo bar")
+
+    app = WordSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        static = app.query_one(Static)
+        await pilot.click(static, offset=(8, 0), times=2)
+        await pilot.pause()
+        assert app.screen.get_selected_text() == "world"
+        assert app.screen._select_state is None
+
+
+async def test_triple_click_fallback_selects_container():
+    """Triple-clicking a non-text widget should select its container."""
+
+    from textual.renderables.blank import Blank
+
+    class NonTextWidget(Static):
+        def render(self) -> Blank:
+            return Blank()
+
+    class ContainerSelectApp(App):
+        def compose(self) -> ComposeResult:
+            with VerticalScroll(id="container"):
+                yield NonTextWidget()
+
+    app = ContainerSelectApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        widget = app.query_one(NonTextWidget)
+        container = widget.select_container
+        await pilot.click(widget, times=3)
+        await pilot.pause()
+        assert app.screen.selections.get(container) is not None
+
+
+async def test_get_selectable_text_shared_with_get_selection():
+    """get_selectable_text should return the text that get_selection extracts from."""
+
+    class SelectableTextApp(App):
+        def compose(self) -> ComposeResult:
+            yield Static("hello world")
+
+    app = SelectableTextApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        static = app.query_one(Static)
+        text = static.get_selectable_text()
+        selection = static.get_selection(Selection.from_offsets(Offset(6, 0), Offset(11, 0)))
+        assert text == "hello world"
+        assert selection == ("world", "\n")

@@ -56,6 +56,7 @@ from textual._dispatch_key import dispatch_key
 from textual._easing import DEFAULT_SCROLL_EASING
 from textual._extrema import Extrema
 from textual._styles_cache import StylesCache
+from textual._text_selection import get_paragraph_selection, get_word_selection
 from textual._types import AnimationLevel
 from textual.actions import SkipAction
 from textual.await_remove import AwaitRemove
@@ -4224,10 +4225,8 @@ class Widget(DOMNode):
         Returns:
             Tuple of extracted text and ending (typically "\n" or " "), or `None` if no text could be extracted.
         """
-        visual = self._render()
-        if isinstance(visual, (Text, Content)):
-            text = str(visual)
-        else:
+        text = self.get_selectable_text()
+        if text is None:
             return None
         return selection.extract(text), "\n"
 
@@ -4633,6 +4632,84 @@ class Widget(DOMNode):
         """Select the entire widget."""
         self.screen._select_all_in_widget(self)
 
+    def get_selectable_text(self) -> str | None:
+        """Get the text content of the widget, if it is text-based.
+
+        Returns:
+            The widget's text content, or `None` if it cannot be represented as text.
+        """
+        visual = self._render()
+        if isinstance(visual, (Text, Content)):
+            return str(visual)
+        return None
+
+    def get_word_selection(self, offset: Offset) -> Selection | None:
+        """Get a Selection for the word at the given offset.
+
+        Args:
+            offset: A line/character offset within the widget's text content.
+
+        Returns:
+            A Selection for the word, or `None` if no word was found.
+        """
+        text = self.get_selectable_text()
+        if text is None:
+            return None
+        return get_word_selection(text, offset)
+
+    def get_paragraph_selection(self, offset: Offset) -> Selection | None:
+        """Get a Selection for the paragraph at the given offset.
+
+        The default implementation selects the paragraph within the widget's text.
+        Widgets may override this method to define what constitutes a paragraph.
+
+        Args:
+            offset: A line/character offset within the widget's text content.
+
+        Returns:
+            A Selection for the paragraph, or `None` if no paragraph was found.
+        """
+        text = self.get_selectable_text()
+        if text is None:
+            return None
+        return get_paragraph_selection(text, offset)
+
+    def _set_selection(self, selection: Selection | None) -> None:
+        """Set the selection for this widget, clearing any stale selection state.
+
+        Args:
+            selection: The selection to apply, or ``None`` to select the entire widget.
+        """
+        if selection is None:
+            self.text_select_all()
+        else:
+            self.screen.selections = {self: selection}
+            # The selection system tracks drag state via _select_state; clear it so
+            # the new selection does not leave stale state behind.
+            self.screen._select_state = None
+
+    def text_select_word(self, offset: Offset | None = None) -> None:
+        """Select the word at the given offset.
+
+        Args:
+            offset: The offset of the word to select, or `None` to select the entire widget.
+        """
+        if offset is None:
+            self.text_select_all()
+            return
+        self._set_selection(self.get_word_selection(offset))
+
+    def text_select_paragraph(self, offset: Offset | None = None) -> None:
+        """Select the paragraph at the given offset.
+
+        Args:
+            offset: The offset of the paragraph to select, or `None` to select the entire widget.
+        """
+        if offset is None:
+            self.text_select_all()
+            return
+        self._set_selection(self.get_paragraph_selection(offset))
+
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
@@ -4696,9 +4773,27 @@ class Widget(DOMNode):
         if event.widget is self:
             if self.allow_select and self.screen.allow_select and self.app.ALLOW_SELECT:
                 if event.chain == 2:
-                    self.text_select_all()
+                    if event.screen_x is None or event.screen_y is None:
+                        self.text_select_all()
+                    else:
+                        widget, offset = self.screen.get_widget_and_offset_at(
+                            event.screen_x, event.screen_y
+                        )
+                        if widget is self and offset is not None:
+                            self.text_select_word(offset)
+                        else:
+                            self.text_select_all()
                 elif event.chain == 3 and self.parent is not None:
-                    self.select_container.text_select_all()
+                    if event.screen_x is None or event.screen_y is None:
+                        self.select_container.text_select_all()
+                    else:
+                        widget, offset = self.screen.get_widget_and_offset_at(
+                            event.screen_x, event.screen_y
+                        )
+                        if widget is self and offset is not None:
+                            self.text_select_paragraph(offset)
+                        else:
+                            self.select_container.text_select_all()
 
         await self.broker_event("click", event)
 
