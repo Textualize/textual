@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Addded a new key binding combination alt+enter as there is no possibility to use shift+enter or ctrl+enter https://github.com/Textualize/textual/discussions/4216
 - Added support for Kitty key protocol "Report all keys as escape codes" which enabled alt+backspace on Warp https://github.com/Textualize/textual/pull/6544
 - Added support for detecting separate modifier keys for terminals that support the Kitty key protocol https://github.com/Textualize/textual/pull/6544
 - Added `TEXTUAL_DISABLE_KITTY_KEY` env var to disable Kitty key protocol support (debug aid). https://github.com/Textualize/textual/pull/6544
