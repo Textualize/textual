@@ -606,6 +606,7 @@ class Compositor:
                     # Get the region that will be updated
                     sub_clip = clip.intersection(child_region)
 
+                    widget._check_anchor()
                     if widget._anchored and not widget._anchor_released:
                         new_scroll_y = (
                             arrange_result.spatial_map.total_region.bottom
@@ -690,6 +691,7 @@ class Compositor:
                             )
                         layer_order -= 1
                 else:
+                    widget._check_anchor()
                     if widget._anchored and not widget._anchor_released:
                         new_scroll_y = widget.virtual_size.height - (
                             widget.container_size.height

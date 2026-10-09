@@ -225,3 +225,47 @@ async def test_select_out_of_scrollable_container_on_gap():
             assert (
                 f"item-{i:02d}" in selected_text
             ), f"item-{i:02d} missing from {selected_text!r}"
+
+
+async def test_link_style_preserved_during_selection():
+    """Test that link style is preserved on widgets re-rendered while screen._selecting is active."""
+
+    class LinkApp(App[None]):
+        CSS = "Static { link-color: cyan; link-style: underline; }"
+
+        def compose(self) -> ComposeResult:
+            yield Static("See the [@click='app.bell()']docs[/] link.")
+
+    app = LinkApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        static_widget = app.query_one(Static)
+
+        # Before selection
+        strip_before = static_widget.render_line(0)
+        docs_seg_before = [seg for seg in strip_before if "docs" in seg.text][0]
+        assert docs_seg_before.style.underline is True
+        assert docs_seg_before.style.color.name == "#00ffff"
+
+        # Mouse down (triggers selecting state)
+        assert await pilot.mouse_down(offset=(0, 0))
+        await pilot.pause()
+
+        assert app.screen._selecting is True
+        static_widget.refresh()
+        strip_selecting = static_widget.render_line(0)
+        docs_seg_selecting = [seg for seg in strip_selecting if "docs" in seg.text][0]
+        assert docs_seg_selecting.style.underline is True
+        assert docs_seg_selecting.style.color.name == "#00ffff"
+
+        # Mouse up (selection ends at index 10, splitting 'docs' into 'doc' and 's')
+        await pilot.mouse_up(offset=(10, 0))
+        await pilot.pause()
+
+        strip_after = static_widget.render_line(0)
+        docs_segs = [seg for seg in strip_after if any(char in seg.text for char in "docs") and seg.text not in ("See the ", " link.")]
+        assert len(docs_segs) > 0
+        for seg in docs_segs:
+            assert seg.style.underline is True
+            assert seg.style.color.name == "#00ffff"
+

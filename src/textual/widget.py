@@ -825,7 +825,10 @@ class Widget(DOMNode):
         if (
             self._anchored
             and self._anchor_released
-            and self.scroll_y >= self.max_scroll_y
+            and (
+                self.scroll_y >= self.max_scroll_y
+                or self.scroll_target_y >= self.max_scroll_y
+            )
         ):
             self._anchor_released = False
 
@@ -2748,7 +2751,12 @@ class Widget(DOMNode):
         """
 
         if release_anchor:
-            self.release_anchor()
+            if y is not None and y >= self.max_scroll_y:
+                release_anchor = False
+                if self._anchored:
+                    self._anchor_released = False
+            else:
+                self.release_anchor()
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
@@ -2818,6 +2826,9 @@ class Widget(DOMNode):
             self._last_scroll_time = monotonic()
             if on_complete is not None:
                 self.call_after_refresh(on_complete)
+
+        if self._anchored and self._anchor_released:
+            self._check_anchor()
 
         return scrolled_x or scrolled_y
 
@@ -2891,7 +2902,12 @@ class Widget(DOMNode):
             The call to scroll is made after the next refresh.
         """
         if release_anchor:
-            self.release_anchor()
+            if y is not None and y >= self.max_scroll_y:
+                release_anchor = False
+                if self._anchored:
+                    self._anchor_released = False
+            else:
+                self.release_anchor()
         animator = self.app.animator
         if x is not None:
             animator.force_stop_animation(self, "scroll_x")
@@ -2908,6 +2924,7 @@ class Widget(DOMNode):
                 force=force,
                 on_complete=on_complete,
                 level=level,
+                release_anchor=release_anchor,
             )
         else:
             self.call_after_refresh(
@@ -2921,6 +2938,7 @@ class Widget(DOMNode):
                 force=force,
                 on_complete=on_complete,
                 level=level,
+                release_anchor=release_anchor,
             )
 
     def scroll_relative(
