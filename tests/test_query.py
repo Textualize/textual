@@ -331,7 +331,7 @@ async def test_query_refresh(args):
             yield MyWidget()
 
     app = MyApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         app.query(MyWidget).refresh(repaint=args[0], layout=args[1])
         assert refreshes[-1] == args
 

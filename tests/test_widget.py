@@ -626,10 +626,9 @@ def test_lazy_loading() -> None:
     """
 
     with pytest.raises(ImportError):
-        from textual.widgets import Foo  # nopycln: import
+        pass  # nopycln: import
 
     from textual import widgets
-    from textual.widgets import Label
 
     assert not hasattr(widgets, "foo")
     assert not hasattr(widgets, "bar")

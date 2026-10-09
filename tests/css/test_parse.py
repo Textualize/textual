@@ -1106,7 +1106,7 @@ class TestParseTransition:
         }
 
     def test_no_delay_specified(self):
-        css = f"#some-widget {{ transition: offset-x 1 in_out_cubic; }}"
+        css = "#some-widget { transition: offset-x 1 in_out_cubic; }"
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
 

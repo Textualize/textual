@@ -173,7 +173,6 @@ class Log(ScrollView, can_focus=True):
         Returns:
             The `Log` instance.
         """
-        is_vertical_scroll_end = self.is_vertical_scroll_end
         if data:
             if not self._lines:
                 self._lines.append("")

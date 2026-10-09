@@ -33,7 +33,7 @@ async def test_inheritance():
 
     app = InheritanceApp()
     async with app.run_test():
-        widget1 = app.query_one("#widget1", Widget1)
+        app.query_one("#widget1", Widget1)
         widget2 = app.query_one("#widget2", Widget2)
 
         assert widget2.styles.background == Color.parse("green")

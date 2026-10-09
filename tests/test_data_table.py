@@ -497,7 +497,7 @@ async def test_get_cell_coordinate_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate("INVALID_ROW", "C1")
+            table.get_cell_coordinate("INVALID_ROW", "C1")
 
 
 async def test_get_cell_coordinate_invalid_column_key():
@@ -508,7 +508,7 @@ async def test_get_cell_coordinate_invalid_column_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate("R1", "INVALID_COLUMN")
+            table.get_cell_coordinate("R1", "INVALID_COLUMN")
 
 
 async def test_get_cell_at_returns_value_at_cell():
@@ -607,7 +607,7 @@ async def test_get_row_index_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(RowDoesNotExist):
-            index = table.get_row_index("InvalidRow")
+            table.get_row_index("InvalidRow")
 
 
 async def test_get_column():
@@ -680,7 +680,7 @@ async def test_get_column_index_invalid_column_key():
         table.add_row("TargetValue1", "TargetValue2", "TargetValue3", key="R1")
 
         with pytest.raises(ColumnDoesNotExist):
-            index = table.get_column_index("InvalidCol")
+            table.get_column_index("InvalidCol")
 
 
 async def test_update_cell_cell_exists():
@@ -1397,7 +1397,7 @@ async def test_add_row_expands_column_widths():
 async def test_cell_padding_updates_virtual_size():
     app = DataTableApp()
 
-    async with app.run_test() as pilot:
+    async with app.run_test():
         table = app.query_one(DataTable)
         table.add_column("First")
         table.add_column("Second", width=10)

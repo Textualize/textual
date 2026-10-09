@@ -10,7 +10,6 @@ from rich.text import Text
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual import events
 from textual._on import on
-from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.color import Color, ColorParseError
@@ -936,7 +935,7 @@ def test_richlog_write_at_specific_width(snap_compare):
             )
             yield rich_log
             width_marker = Label(
-                f"this label is width 50 (same as min_width)", id="width-marker"
+                "this label is width 50 (same as min_width)", id="width-marker"
             )
             yield width_marker
 
@@ -3796,7 +3795,7 @@ def test_auto_in_auto(snap_compare):
             Create the user interface
             """
 
-            self.last_updated = Label(f"Last Updated: NOW", id="last_updated")
+            self.last_updated = Label("Last Updated: NOW", id="last_updated")
 
             yield Header()
             yield Vertical(

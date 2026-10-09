@@ -3,7 +3,6 @@ from textual.app import App, ComposeResult
 from textual.widgets import Label
 
 from textual.containers import VerticalGroup
-from textual.content import Content
 
 TEXT = """I must not fear.
 Fear is the mind-killer.

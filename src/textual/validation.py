@@ -361,7 +361,7 @@ class Integer(Number):
 
         # We know it's a number, but is that number an integer?
         try:
-            int_value = int(value)
+            int(value)
         except ValueError:
             return ValidationResult.failure([Integer.NotAnInteger(self, value)])
         return self.success()

@@ -297,7 +297,7 @@ async def test_premature_reactive_call():
             yield BrokenWidget()
 
     app = PrematureApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         assert watcher_called
         app.exit()
 

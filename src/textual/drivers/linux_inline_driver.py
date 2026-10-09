@@ -298,7 +298,7 @@ class LinuxInlineDriver(Driver):
                 except termios.error:
                     pass
 
-        except Exception as error:
+        except Exception:
             # TODO: log this
             pass
 

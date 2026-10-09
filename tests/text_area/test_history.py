@@ -58,7 +58,7 @@ async def text_area(pilot):
 
 async def test_simple_undo_redo():
     app = TextAreaApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         text_area = app.text_area
         text_area.insert("123", (0, 0))
 
@@ -188,7 +188,7 @@ async def test_undo_checkpoint_character_limit_reached():
 
 async def test_redo_with_no_undo_is_noop():
     app = TextAreaApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         text_area = app.text_area
         text_area.text = SIMPLE_TEXT
         text_area.redo()
@@ -197,7 +197,7 @@ async def test_redo_with_no_undo_is_noop():
 
 async def test_undo_with_empty_undo_stack_is_noop():
     app = TextAreaApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         text_area = app.text_area
         text_area.text = SIMPLE_TEXT
         text_area.undo()

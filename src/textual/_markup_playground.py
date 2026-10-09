@@ -128,7 +128,7 @@ class MarkupPlayground(App):
         variables_text_area = self.query_one("#variables", TextArea)
         try:
             variables = json.loads(variables_text_area.text)
-        except Exception as error:
+        except Exception:
             variables_text_area.add_class("-bad-json")
             self.variables = {}
         else:

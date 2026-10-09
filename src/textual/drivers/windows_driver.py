@@ -115,7 +115,7 @@ class WindowsDriver(Driver):
                     self._event_thread.join()
                     self._event_thread = None
                 self.exit_event.clear()
-        except Exception as error:
+        except Exception:
             # TODO: log this
             pass
 
