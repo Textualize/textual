@@ -78,6 +78,15 @@ class KEY_EVENT_RECORD(Structure):
     ]
 
 
+def _is_bare_modifier_key_event(key_event: KEY_EVENT_RECORD) -> bool:
+    """Check if a key event only represents modifier-key state."""
+    return (
+        bool(key_event.dwControlKeyState)
+        and key_event.wVirtualKeyCode == 0
+        and key_event.uChar.UnicodeChar in ("", "\x00")
+    )
+
+
 class MOUSE_EVENT_RECORD(Structure):
     """https://docs.microsoft.com/en-us/windows/console/mouse-event-record-str"""
 
@@ -270,10 +279,7 @@ class EventMonitor(threading.Thread):
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
                         if key_event.bKeyDown:
-                            if (
-                                key_event.dwControlKeyState
-                                and key_event.wVirtualKeyCode == 0
-                            ):
+                            if _is_bare_modifier_key_event(key_event):
                                 continue
                             append_key(key)
                     elif event_type == WINDOW_BUFFER_SIZE_EVENT:

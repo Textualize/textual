@@ -1,5 +1,6 @@
 from textual import on
 from textual.app import App
+from textual.drivers.win32 import KEY_EVENT_RECORD, _is_bare_modifier_key_event
 from textual.events import Click, MouseDown, MouseUp
 from textual.widgets import Button
 
@@ -25,6 +26,15 @@ async def test_driver_mouse_down_up_click():
         assert isinstance(app.messages[0], MouseDown)
         assert isinstance(app.messages[1], MouseUp)
         assert isinstance(app.messages[2], Click)
+
+
+def test_win32_ime_vk0_shift_character_is_not_bare_modifier():
+    key_event = KEY_EVENT_RECORD()
+    key_event.dwControlKeyState = 0x0010
+    key_event.wVirtualKeyCode = 0
+    key_event.uChar.UnicodeChar = "\uff1f"
+
+    assert not _is_bare_modifier_key_event(key_event)
 
 
 async def test_driver_mouse_down_up_click_widget():
