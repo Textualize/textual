@@ -101,7 +101,7 @@ class StylesCache:
 
         Args:
             widget: A widget.
-            region: A region of the widget to render.
+            crop: A region of the widget to render.
 
         Returns:
             Rendered lines.
@@ -185,7 +185,6 @@ class StylesCache:
             base_background: Background color beneath widget.
             background: Background color of widget.
             render_content_line: Callback to render content line.
-            console: The console in use by the app.
             border_title: Optional tuple of (title, color, background, style).
             border_subtitle: Optional tuple of (subtitle, color, background, style).
             content_size: Size of content or None to assume full size.
@@ -291,7 +290,6 @@ class StylesCache:
             base_background: Background color of widget beneath this line.
             background: Background color of widget.
             render_content_line: Callback to render a line of content.
-            console: The console in use by the app.
             border_title: Optional tuple of (title, color, background, style).
             border_subtitle: Optional tuple of (subtitle, color, background, style).
             opacity: Opacity of line.

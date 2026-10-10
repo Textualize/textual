@@ -181,7 +181,7 @@ def walk_selectable_widgets(
     Args:
         root: The root note (starting point).
         bounds: A Shape object that defines the selection bounds.
-        bounded: Container widgets that require a bounds check.
+        containers: Container widgets that require a bounds check.
 
     Returns:
         An iterable of DOMNodes.

@@ -343,7 +343,6 @@ class Stylesheet:
         Args:
             css: String with CSS source.
             read_from: The original source location of the CSS.
-            path: The path of the source if a file, or some other identifier.
             is_default_css: True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
             tie_breaker: Integer representing the priority of this source.

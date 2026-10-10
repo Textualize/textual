@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed 26 docstring `Args:` entries that named a parameter the function does not take https://github.com/Textualize/textual/pull/6685
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed

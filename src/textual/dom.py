@@ -349,11 +349,7 @@ class DOMNode(MessagePump):
         return self
 
     def _initialize_data_bind(self) -> None:
-        """initialize a data binding.
-
-        Args:
-            compose_parent: The node doing the binding.
-        """
+        """initialize a data binding."""
         if not self._reactive_connect:
             return
         for variable_name, (compose_parent, reactive) in self._reactive_connect.items():

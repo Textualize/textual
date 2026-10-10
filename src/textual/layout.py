@@ -106,7 +106,7 @@ class WidgetPlacement(NamedTuple):
 
         Args:
             placements: List of placements.
-            offset: Offset to add to placements.
+            translate_offset: Offset to add to placements.
 
         Returns:
             Placements with adjusted region, or same instance if offset is null.

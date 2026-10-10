@@ -328,7 +328,7 @@ class LinuxDriver(Driver):
         """Patch termios lflag.
 
         Args:
-            attributes: New set attributes.
+            attrs: New set attributes.
 
         Returns:
             New lflag.

@@ -216,7 +216,6 @@ def scalar_help_text(
 
     Args:
         property_name: The name of the property.
-        num_values_supplied: The number of values the user supplied (a number other than 1, 2 or 4).
         context: The context the scalar property is being used in.
 
     Returns:

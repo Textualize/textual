@@ -20,7 +20,6 @@ class Clock:
 
         Args:
             get_time: A callable to get time in seconds.
-            start: Start the clock (time is 0 unless clock has been started).
         """
         self._get_time = get_time
         self._start_time = self._get_time()

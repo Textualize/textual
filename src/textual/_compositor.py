@@ -176,7 +176,7 @@ class ChopsUpdate(CompositorUpdate):
 
         Args:
             chops: A mapping of offsets to list of segments, per line.
-            crop: Region to restrict update to.
+            spans: A list of `(y, x1, x2)` spans to update.
             chop_ends: A list of the end offsets for each line
         """
         self.chops = chops

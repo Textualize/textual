@@ -312,7 +312,7 @@ class BoxProperty:
 
         Args:
             obj: The ``Styles`` object.
-            value: A 2-tuple containing the type of box to use,
+            border: A 2-tuple containing the type of box to use,
                 e.g. "dashed", and the ``Style`` to be used. You can supply the ``Style`` directly, or pass a
                 ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
 
@@ -563,8 +563,7 @@ class SpacingProperty:
 
         Args:
             obj: The ``Styles`` object.
-            style: You can supply the ``Style`` directly, or a
-                string (e.g. ``"blue on #f0f0f0"``).
+            spacing: A single integer, or a ``tuple`` of 1, 2, or 4 integers.
 
         Raises:
             ValueError: When the value is malformed,
@@ -1164,7 +1163,7 @@ class FractionalProperty:
 
         Args:
             obj: The ``Styles`` object.
-            objtype: The ``Styles`` class.
+            type: The ``Styles`` class.
 
         Returns:
             The value of the property (in the range (0, 1)).

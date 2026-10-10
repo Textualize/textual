@@ -143,7 +143,7 @@ class SyntaxAwareDocument(Document):
         """Return the string representing the line, not including new line characters.
 
         Args:
-            line_index: The index of the line.
+            index: The index of the line.
 
         Returns:
             The string representing the line.

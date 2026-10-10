@@ -166,8 +166,6 @@ class Visual(ABC):
 
         Args:
             rules: A mapping of style rules, such as the Widgets `styles` object.
-            container_width: The width of the container, used by Rich Renderables.
-                May be ignored for Textual Visuals.
 
         Returns:
             A width in cells.
@@ -367,7 +365,7 @@ class Padding(Visual):
         """
 
         Args:
-            Visual: A Visual.
+            visual: A Visual.
             spacing: A Spacing object containing desired padding dimensions.
         """
         self._visual = visual
