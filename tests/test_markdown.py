@@ -217,3 +217,39 @@ async def test_markdown_quoting():
     async with app.run_test() as pilot:
         await pilot.click(Markdown, offset=(3, 0))
     assert links == ["tété"]
+
+
+async def test_markdown_stream_table_links():
+    """Regression test for https://github.com/Textualize/textual/issues/6597
+
+    Links in tables failed when the markdown was appended to.
+    """
+
+    MD_TABLE = """
+| Links |
+| --- |
+| first row |\n"""
+    MD_TABLE_ROW = """| [Example](https://www.example.com) |\n\n"""
+    links: list[str] = []
+
+    class CollectLinksMarkdown(Markdown):
+        def on_markdown_link_clicked(self, event: Markdown.LinkClicked):
+            event.stop()
+            event.prevent_default()
+            links.append(event.href)
+
+    class MDApp(App):
+        def compose(self) -> ComposeResult:
+            yield CollectLinksMarkdown()
+
+        async def on_mount(self) -> None:
+            await self.query_one(CollectLinksMarkdown).append(MD_TABLE)
+            await self.query_one(CollectLinksMarkdown).append(MD_TABLE_ROW)
+
+    app = MDApp()
+    async with app.run_test() as pilot:
+        await pilot.click(CollectLinksMarkdown, offset=(5, 5))
+        await pilot.pause()
+        app.save_screenshot(filename="markdowntable.svg")
+
+    assert links == ["https://www.example.com"]
