@@ -326,6 +326,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self._css_update_count = -1
         """Track updates to CSS."""
 
+        self._focus_chain_cache: list[Widget] | None = None
+        """Cached focus chain, invalidated on layout or focus change."""
+
         self._layout_widgets: dict[DOMNode, set[Widget]] = {}
         """Widgets whose layout may have changed."""
 
@@ -771,8 +774,8 @@ class Screen(Generic[ScreenResultType], Widget):
     @property
     def focus_chain(self) -> list[Widget]:
         """A list of widgets that may receive focus, in focus order."""
-        # TODO: Calculating a focus chain is moderately expensive.
-        # Suspect we can move focus without calculating the entire thing again.
+        if self._focus_chain_cache is not None:
+            return self._focus_chain_cache
 
         widgets: list[Widget] = []
         add_widget = widgets.append
@@ -823,6 +826,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 if node_is_visible and node.allow_focus():
                     add_widget(node)
 
+        self._focus_chain_cache = widgets
         return widgets
 
     def _move_focus(
@@ -1113,6 +1117,7 @@ class Screen(Generic[ScreenResultType], Widget):
             # Widget is already focused
             return
 
+        self._focus_chain_cache = None
         focused: Widget | None = None
         blurred: Widget | None = None
 
@@ -1423,6 +1428,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 break
             widget = ancestor
 
+        self._focus_chain_cache = None
         if layout_required and not self._layout_required:
             self._layout_required = True
             self.check_idle()

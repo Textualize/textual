@@ -492,6 +492,10 @@ class DOMNode(MessagePump):
             trap_focus: `True` to trap focus. `False` to restore default behavior.
         """
         self._trap_focus = trap_focus
+        try:
+            self.screen._focus_chain_cache = None
+        except Exception:
+            pass
 
     def run_worker(
         self,
@@ -1328,6 +1332,10 @@ class DOMNode(MessagePump):
             node._attach(self)
             _append(node)
             node._add_children(*node._pending_children)
+        try:
+            self.screen._focus_chain_cache = None
+        except Exception:
+            pass
 
     WalkType = TypeVar("WalkType", bound="DOMNode")
 
