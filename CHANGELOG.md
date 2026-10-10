@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed a crash when a mouse event starts a text selection on a widget that was just detached from the DOM (e.g. during `Markdown.update`) https://github.com/Textualize/textual/issues/6643
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed

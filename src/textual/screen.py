@@ -1834,6 +1834,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
+                if select_widget is not None and not select_widget.is_attached:
+                    # The compositor may briefly return a widget that has been
+                    # removed from the DOM (e.g. during Markdown.update);
+                    # treat the hit as a miss (#6643).
+                    select_widget, select_offset = None, None
                 if select_widget is not None:
                     if select_offset is not None:
                         content_widget = select_widget
@@ -1887,6 +1892,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 select_widget, select_offset = self.get_widget_and_offset_at(
                     event.x, event.y
                 )
+                if select_widget is not None and not select_widget.is_attached:
+                    # The compositor may briefly return a widget that has been
+                    # removed from the DOM (e.g. during Markdown.update);
+                    # treat the hit as a miss (#6643).
+                    select_widget, select_offset = None, None
 
                 if (
                     select_widget is not None
