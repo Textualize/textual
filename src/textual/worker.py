@@ -15,6 +15,7 @@ from threading import Event
 from time import monotonic
 from typing import (
     TYPE_CHECKING,
+    Any,
     Awaitable,
     Callable,
     Coroutine,
@@ -98,7 +99,7 @@ ResultType = TypeVar("ResultType")
 
 
 WorkType: TypeAlias = Union[
-    Callable[[], Coroutine[None, None, ResultType]],
+    Callable[[], Coroutine[Any, Any, ResultType]],
     Callable[[], ResultType],
     Awaitable[ResultType],
 ]

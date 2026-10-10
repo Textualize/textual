@@ -54,6 +54,7 @@ from textual.walk import walk_breadth_first, walk_breadth_search_id, walk_depth_
 from textual.worker_manager import WorkerManager
 
 if TYPE_CHECKING:
+    from typing import Awaitable, Coroutine
     from typing_extensions import Self, TypeAlias
     from _typeshed import SupportsRichComparison
 
@@ -493,9 +494,10 @@ class DOMNode(MessagePump):
         """
         self._trap_focus = trap_focus
 
+    @overload
     def run_worker(
         self,
-        work: WorkType[ResultType],
+        work: Callable[[], Coroutine[Any, Any, ResultType]],
         name: str | None = "",
         group: str = "default",
         description: str = "",
@@ -503,7 +505,45 @@ class DOMNode(MessagePump):
         start: bool = True,
         exclusive: bool = False,
         thread: bool = False,
-    ) -> Worker[ResultType]:
+    ) -> Worker[ResultType]: ...
+
+    @overload
+    def run_worker(
+        self,
+        work: Callable[[], ResultType],
+        name: str | None = "",
+        group: str = "default",
+        description: str = "",
+        exit_on_error: bool = True,
+        start: bool = True,
+        exclusive: bool = False,
+        thread: bool = False,
+    ) -> Worker[ResultType]: ...
+
+    @overload
+    def run_worker(
+        self,
+        work: Awaitable[ResultType],
+        name: str | None = "",
+        group: str = "default",
+        description: str = "",
+        exit_on_error: bool = True,
+        start: bool = True,
+        exclusive: bool = False,
+        thread: bool = False,
+    ) -> Worker[ResultType]: ...
+
+    def run_worker(
+        self,
+        work: WorkType[Any],
+        name: str | None = "",
+        group: str = "default",
+        description: str = "",
+        exit_on_error: bool = True,
+        start: bool = True,
+        exclusive: bool = False,
+        thread: bool = False,
+    ) -> Worker[Any]:
         """Run work in a worker.
 
         A worker runs a function, coroutine, or awaitable, in the *background* as an async task or as a thread.
@@ -525,10 +565,10 @@ class DOMNode(MessagePump):
         # If we're running a worker from inside a secondary thread,
         # do so in a thread-safe way.
         if self.app._thread_id != threading.get_ident():
-            creator = partial(self.app.call_from_thread, self.workers._new_worker)
+            creator: Any = partial(self.app.call_from_thread, self.workers._new_worker)
         else:
             creator = self.workers._new_worker
-        worker: Worker[ResultType] = creator(
+        worker: Worker[Any] = creator(
             work,
             self,
             name=name,
