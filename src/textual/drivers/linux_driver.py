@@ -427,7 +427,7 @@ class LinuxDriver(Driver):
         feed = parser.feed
         tick = parser.tick
 
-        utf8_decoder = getincrementaldecoder("utf-8")().decode
+        utf8_decoder = getincrementaldecoder("utf-8")(errors="replace").decode
         decode = utf8_decoder
         read = os.read
 
