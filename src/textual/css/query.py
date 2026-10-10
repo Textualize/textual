@@ -105,7 +105,7 @@ class DOMQuery(Generic[QueryType]):
             try:
                 self._excludes.append(parse_selectors(exclude))
             except TokenError:
-                raise InvalidQueryFormat(f"Unable to parse filter {filter!r} as query")
+                raise InvalidQueryFormat(f"Unable to parse exclude {exclude!r} as query")
 
     @property
     def node(self) -> DOMNode:
