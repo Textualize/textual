@@ -2,7 +2,7 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.widgets import TextArea
-from textual.widgets.text_area import LanguageDoesNotExist
+from textual.widgets.text_area import BUILTIN_LANGUAGES, LanguageDoesNotExist
 
 
 class TextAreaApp(App):
@@ -60,6 +60,19 @@ async def test_setting_unknown_language():
             text_area.language = "this-language-doesnt-exist"
 
 
+async def test_setting_language_to_non_builtin_supported_by_tree_sitter_language_pack():
+    class MyTextAreaApp(App):
+        def compose(self) -> ComposeResult:
+            text_area = TextArea("println('hello')")
+            text_area.language = "kotlin"
+            yield text_area
+
+    app = MyTextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        assert text_area.language == "kotlin"
+
+
 @pytest.mark.syntax
 async def test_register_language():
     app = TextAreaApp()
@@ -93,3 +106,20 @@ async def test_update_highlight_query():
 
         # We've overridden the highlight query with a blank one, so there are no highlights.
         assert text_area._highlights == {}
+
+
+@pytest.mark.syntax
+async def test_getting_highlight_query():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        # Test builtin languages
+        for language in BUILTIN_LANGUAGES:
+            assert text_area._get_highlight_query(language) != ""
+
+        # Test non-builtin supported by tree-sitter-language-pack
+        # Note: not all of them have highlight query
+        assert text_area._get_highlight_query("kotlin") != ""
+
+        # Test unknown language
+        assert text_area._get_highlight_query("this-language-doesnt-exist") == ""

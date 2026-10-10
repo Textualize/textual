@@ -1305,6 +1305,24 @@ def test_text_area_language_rendering(language, snap_compare):
         terminal_size=(80, snippet.count("\n") + 4),
     )
 
+@pytest.mark.syntax
+@pytest.mark.parametrize("language", ["kotlin", "c", "ini"])
+def test_text_area_non_builtin_language_rendering(language, snap_compare):
+    # This test will fail if we're missing a snapshot test for a tested language
+    # We should have a snapshot test for each language we test.
+
+    snippet = SNIPPETS.get(language)
+
+    def setup_language(pilot) -> None:
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(snippet)
+        text_area.language = language
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_language,
+        terminal_size=(80, snippet.count("\n") + 4),
+    )
 
 @pytest.mark.parametrize(
     "selection",
