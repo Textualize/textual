@@ -405,6 +405,25 @@ async def test_pointer_shape() -> None:
         assert app.screen._pointer_shape == "pointer"
 
 
+async def test_app_pointer_style_with_theme_before_screen_stack() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/6360."""
+
+    class PointerThemeApp(App[None]):
+        CSS = """
+        * {
+            pointer: default;
+        }
+        """
+
+        def __init__(self) -> None:
+            super().__init__()
+            self.theme = "textual-light"
+
+    app = PointerThemeApp()
+    async with app.run_test():
+        assert app.theme == "textual-light"
+
+
 async def test_get_screen_stack() -> None:
     """Test get_screen_stack"""
 
