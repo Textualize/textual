@@ -85,7 +85,11 @@ class TextAreaTheme:
             text_area: The TextArea instance to retrieve fallback styling from.
         """
         self.base_style = text_area.rich_style or Style()
-        get_style = text_area.get_component_rich_style
+        def get_style(name: str) -> Style | None:
+            try:
+                return text_area.get_component_rich_style(name)
+            except KeyError:
+                return None
 
         if self.base_style.color is None:
             self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
