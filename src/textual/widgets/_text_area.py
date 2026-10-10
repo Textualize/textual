@@ -348,7 +348,7 @@ TextArea {
         ),
         # Deletion
         Binding(
-            "backspace",
+            "backspace,shift+backspace",
             "delete_left",
             "Delete character left",
             show=False,

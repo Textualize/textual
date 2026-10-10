@@ -179,3 +179,19 @@ async def test_delete_right_all_from_end() -> None:
             input.action_delete_right_all()
             assert input.cursor_position == len(input.value)
             assert input.value == TEST_INPUTS[input.id]
+
+
+async def test_shift_backspace_deletes_left() -> None:
+    """shift+backspace should behave the same as backspace."""
+
+    class SingleInputApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Input()
+
+    async with SingleInputApp().run_test() as pilot:
+        input = pilot.app.query_one(Input)
+        await pilot.click(input)
+        await pilot.press(*"Hello")
+        await pilot.press("shift+backspace")
+        assert input.value == "Hell"
+        assert input.cursor_position == 4

@@ -113,6 +113,17 @@ async def test_delete_left_end():
         assert text_area.selection == Selection.cursor((0, 12))
 
 
+async def test_delete_left_shift_backspace_alias():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("Hello, world!")
+        text_area.move_cursor((0, 6))
+        await pilot.press("shift+backspace")
+        assert text_area.text == "Hello world!"
+        assert text_area.selection == Selection.cursor((0, 5))
+
+
 @pytest.mark.parametrize(
     "key,selection",
     [
@@ -132,14 +143,11 @@ async def test_deletion_with_non_empty_selection(key, selection):
         text_area.selection = selection
         await pilot.press(key)
         assert text_area.selection == Selection.cursor((1, 2))
-        assert (
-            text_area.text
-            == """\
+        assert text_area.text == """\
 ABCDE
 FGT
 UVWXY
 Z"""
-        )
 
 
 async def test_delete_right():

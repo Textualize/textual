@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- shift+backspace is now an alias for backspace in Input and TextArea https://github.com/Textualize/textual/pull/6611
+
 ## [8.2.8] - 2026-06-30
 
 ### Fixed
