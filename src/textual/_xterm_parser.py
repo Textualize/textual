@@ -391,8 +391,6 @@ class XTermParser(Parser[Message]):
                 if modifier_bits & 1 and (text is None or text.isspace()):
                     key_tokens.append("shift")
                 for bit, modifier in enumerate(MODIFIERS, 1):
-                    if modifier == "alt" and text is not None:
-                        continue
                     if modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
 
