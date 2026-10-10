@@ -217,3 +217,44 @@ async def test_markdown_quoting():
     async with app.run_test() as pilot:
         await pilot.click(Markdown, offset=(3, 0))
     assert links == ["tété"]
+
+
+async def test_markdown_table_cell_tooltip_with_bracketed_text_does_not_crash():
+    """A table cell whose text looks like markup (e.g. contains `[...]`)
+    should not crash when its tooltip is rendered.
+
+    The one-shot `compose()` path used to set the tooltip from `cell.plain`
+    (a plain `str`), which is markup-enabled when rendered. Cell text such as
+    `[sys:LOCK=SAFE...]` was then mis-parsed as markup and raised
+    `MarkupError`. The streaming `_update_rows()` path already used the
+    `Content` object directly (never markup-parsed), which does not crash.
+
+    Regression test for https://github.com/Textualize/textual/issues/6642
+    """
+    from textual.visual import visualize
+    from textual.widgets._markdown import MarkdownTableCellContents
+
+    markdown_table = (
+        "| session | note |\n"
+        "| --- | --- |\n"
+        "| aaa-bbb-ccc | first row padding to force truncation |\n"
+        "| 019f314b-d61d-7837-a158-8aac342ae56f "
+        "| ([sys:LOCK=SAFE…]) persona override |\n"
+    )
+
+    class MarkdownTableApp(App):
+        def compose(self) -> ComposeResult:
+            yield Markdown(markdown_table)
+
+    app = MarkdownTableApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        cell_widgets = list(app.query(MarkdownTableCellContents))
+        assert cell_widgets
+        for cell_widget in cell_widgets:
+            tooltip = cell_widget.tooltip
+            if tooltip is None:
+                continue
+            # Rendering the tooltip with markup enabled must not raise
+            # MarkupError, regardless of what characters the cell contains.
+            visualize(cell_widget, tooltip, markup=True)
