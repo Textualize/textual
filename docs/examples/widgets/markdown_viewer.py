@@ -61,7 +61,6 @@ Where the fear has gone there will be nothing. Only I will remain.
 class MarkdownExampleApp(App):
     def compose(self) -> ComposeResult:
         markdown_viewer = MarkdownViewer(EXAMPLE_MARKDOWN, show_table_of_contents=True)
-        markdown_viewer.code_indent_guides = False
         yield markdown_viewer
 
 
