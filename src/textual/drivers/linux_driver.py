@@ -291,6 +291,10 @@ class LinuxDriver(Driver):
             )
             self.write(f"\x1b[>{KITTY_PROTOCOL_FLAG}u")
 
+        # https://contour-terminal.org/vt-extensions/color-palette-update-notifications/
+        self.write("\x1b[?996n")  # Request current theme mode
+        self.write("\x1b[?2031h")  # Enable color status reports
+
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread, name="textual-input")
 
@@ -393,6 +397,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?1049l")
         self.write("\x1b[?25h")
         self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
+        self.write("\x1b[?2031l")  # Disable color status reports
         self.flush()
 
     def close(self) -> None:
