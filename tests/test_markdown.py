@@ -201,6 +201,43 @@ async def test_link_in_markdown_table_posts_message_when_clicked():
         assert app.messages == ["LinkClicked"]
 
 
+async def test_link_in_streamed_markdown_table_posts_message_when_clicked():
+    """A link inside a table row added via `Markdown.append` should post a
+    `Markdown.LinkClicked` message when clicked.
+
+    Regression test for https://github.com/Textualize/textual/issues/6597
+    """
+
+    markdown_table = """\
+| Textual Links                                     |
+| ------------------------------------------------- |
+| [GitHub](https://github.com/textualize/textual/) |
+"""
+    appended_row = "| [Documentation](https://textual.textualize.io/)  |"
+
+    class MarkdownTableApp(App):
+        messages = []
+
+        def compose(self) -> ComposeResult:
+            yield Markdown(open_links=False)
+
+        @on(Markdown.LinkClicked)
+        def log_markdown_link_clicked(
+            self,
+            event: Markdown.LinkClicked,
+        ) -> None:
+            self.messages.append(event.__class__.__name__)
+
+    app = MarkdownTableApp()
+    async with app.run_test() as pilot:
+        markdown = app.query_one(Markdown)
+        await markdown.append(markdown_table)
+        await markdown.append(appended_row)
+        await pilot.pause()
+        await pilot.click(Markdown, offset=(8, 5))
+        assert app.messages == ["LinkClicked"]
+
+
 async def test_markdown_quoting():
     # https://github.com/Textualize/textual/issues/3350
     links = []
