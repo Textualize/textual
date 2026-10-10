@@ -540,6 +540,12 @@ class Input(ScrollView):
         scroll_x, _ = self.scroll_offset
         return Offset(x + self._cursor_offset - scroll_x, y)
 
+    def validate_value(self, value: str) -> str:
+        """Truncate value to max_length when set programmatically."""
+        if self.max_length and len(value) > self.max_length:
+            return value[: self.max_length]
+        return value
+
     def _watch_value(self, value: str) -> None:
         """Update the virtual size and suggestion when the value changes."""
         self.virtual_size = Size(self.content_width, 1)
