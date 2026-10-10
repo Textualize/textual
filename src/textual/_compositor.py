@@ -606,17 +606,22 @@ class Compositor:
                     # Get the region that will be updated
                     sub_clip = clip.intersection(child_region)
 
-                    if widget._anchored and not widget._anchor_released:
-                        new_scroll_y = (
-                            arrange_result.spatial_map.total_region.bottom
-                            - (
-                                widget.container_size.height
-                                - widget.scrollbar_size_horizontal
-                            )
+                    new_scroll_y = (
+                        arrange_result.spatial_map.total_region.bottom
+                        - (
+                            widget.container_size.height
+                            - widget.scrollbar_size_horizontal
                         )
-                        widget.set_reactive(Widget.scroll_y, new_scroll_y)
-                        widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
-                        widget.vertical_scrollbar._reactive_position = new_scroll_y
+                    )
+                    if widget._anchored:
+                        if widget._anchor_released and widget.scroll_y >= max(
+                            0, new_scroll_y
+                        ):
+                            widget._anchor_released = False
+                        if not widget._anchor_released:
+                            widget.set_reactive(Widget.scroll_y, new_scroll_y)
+                            widget.set_reactive(Widget.scroll_target_y, new_scroll_y)
+                            widget.vertical_scrollbar._reactive_position = new_scroll_y
 
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
@@ -690,14 +695,18 @@ class Compositor:
                             )
                         layer_order -= 1
                 else:
-                    if widget._anchored and not widget._anchor_released:
-                        new_scroll_y = widget.virtual_size.height - (
-                            widget.container_size.height
-                            - widget.scrollbar_size_horizontal
-                        )
-                        widget.scroll_y = new_scroll_y
-                        widget.scroll_target_y = new_scroll_y
-                        widget.vertical_scrollbar.position = new_scroll_y
+                    new_scroll_y = widget.virtual_size.height - (
+                        widget.container_size.height - widget.scrollbar_size_horizontal
+                    )
+                    if widget._anchored:
+                        if widget._anchor_released and widget.scroll_y >= max(
+                            0, new_scroll_y
+                        ):
+                            widget._anchor_released = False
+                        if not widget._anchor_released:
+                            widget.scroll_y = new_scroll_y
+                            widget.scroll_target_y = new_scroll_y
+                            widget.vertical_scrollbar.position = new_scroll_y
 
                 if visible:
                     # Add any scrollbars

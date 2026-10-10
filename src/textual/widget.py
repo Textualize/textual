@@ -820,12 +820,25 @@ class Widget(DOMNode):
         self.scroll_target_y = self.scroll_y
         self._anchor_released = True
 
+    def _handle_scroll_anchor(self, x: float | None, y: float | None) -> None:
+        """Update anchor state when scrolling programmatically."""
+        if y is not None:
+            target_y = clamp(y, 0, self.max_scroll_y)
+            if self._anchored:
+                if target_y >= self.max_scroll_y:
+                    self._anchor_released = False
+                    return
+                self.release_anchor()
+                return
+        if x is not None and clamp(x, 0, self.max_scroll_x) < self.max_scroll_x:
+            self.release_anchor()
+
     def _check_anchor(self) -> None:
-        """Check if the scroll position is near enough to the bottom to restore anchor."""
+        """Check if the scroll position is at the bottom to restore anchor."""
         if (
             self._anchored
             and self._anchor_released
-            and self.scroll_y >= self.max_scroll_y
+            and self.is_vertical_scroll_end
         ):
             self._anchor_released = False
 
@@ -2741,14 +2754,14 @@ class Widget(DOMNode):
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
             level: Minimum level required for the animation to take place (inclusive).
-            release_anchor: If `True` call `release_anchor`.
+            release_anchor: If `True`, update the anchor state for this scroll.
 
         Returns:
             `True` if the scroll position changed, otherwise `False`.
         """
 
         if release_anchor:
-            self.release_anchor()
+            self._handle_scroll_anchor(x, y)
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
@@ -2885,13 +2898,13 @@ class Widget(DOMNode):
             level: Minimum level required for the animation to take place (inclusive).
             immediate: If `False` the scroll will be deferred until after a screen refresh,
                 set to `True` to scroll immediately.
-            release_anchor: If `True` call `release_anchor`.
+            release_anchor: If `True`, update the anchor state for this scroll.
 
         Note:
             The call to scroll is made after the next refresh.
         """
         if release_anchor:
-            self.release_anchor()
+            self._handle_scroll_anchor(x, y)
         animator = self.app.animator
         if x is not None:
             animator.force_stop_animation(self, "scroll_x")
