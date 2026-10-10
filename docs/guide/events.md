@@ -81,6 +81,10 @@ The App class is always the root of the DOM, so there is nowhere for the event t
 
 Event handlers may stop this bubble behavior by calling the [stop()][textual.message.Message.stop] method on the event or message. You might want to do this if a widget has responded to the event in an authoritative way. For instance when a text input widget responds to a key event it stops the bubbling so that the key doesn't also invoke a key binding.
 
+!!! tip
+
+    Because `Input` and other built-in widgets stop key events, an `on_key` handler on the `App` will not receive keys consumed by the focused widget. If you need App-level key handling that fires regardless of which widget has focus, use [`key_*` methods](../guide/input.md#key-methods) instead — they are called directly by the App's key dispatcher before event bubbling takes place.
+
 ## Custom messages
 
 You can create custom messages for your application that may be used in the same way as events (recall that events are simply messages reserved for use by Textual).
