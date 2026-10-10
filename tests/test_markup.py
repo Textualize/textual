@@ -167,6 +167,19 @@ def test_content_parse_fail() -> None:
         to_content("foo[/]")
 
 
+def test_escape_nested_brackets() -> None:
+    """escape must handle outer tags that contain nested '[' (e.g. Pydantic errors)."""
+    from textual.markup import escape
+
+    raw = "[type=x, v={'a[0]'}]"
+    escaped = escape(raw)
+    assert escaped != raw
+    assert to_content(escaped).plain == raw
+
+    # Ordinary complete tags still escape as before.
+    assert escape("[bold]hi").startswith("\\[")
+
+
 @pytest.mark.parametrize(
     ["markup", "variables", "content"],
     [
