@@ -253,9 +253,10 @@ class SelectCurrent(Horizontal):
         """
         self.label = label
         self.has_value = label is not Select.NULL
-        self.query_one("#label", Static).update(
-            self.placeholder if isinstance(label, NoSelection) else label
-        )
+        if self.is_mounted:
+            self.query_one("#label", Static).update(
+                self.placeholder if isinstance(label, NoSelection) else label
+            )
 
     def compose(self) -> ComposeResult:
         """Compose label and down arrow."""
