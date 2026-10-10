@@ -143,7 +143,7 @@ class SelectStart(NamedTuple):
         return (
             self.container.region.offset
             + self.container_pointer_delta
-            + (self.container.scroll_offset - self.container_initial_scroll_offset)
+            - (self.container.scroll_offset - self.container_initial_scroll_offset)
         )
 
 

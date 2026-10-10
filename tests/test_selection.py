@@ -201,6 +201,54 @@ async def test_select_into_scrollable_container_on_gap():
             ), f"item-{i:02d} should not be in {selected_text!r}"
 
 
+async def test_select_start_offset_tracks_container_scroll_direction():
+    """Regression test for https://github.com/Textualize/textual/issues/6639.
+
+    Select-auto-scroll advances a container's scroll position on a timer,
+    without any further mouse-move events. `SelectStart.pointer_start_offset`
+    must therefore track the scroll direction on its own: the compositor
+    places children at `placement_offset - scroll_offset`, so scrolling a
+    container down moves its content *up* on screen, and the selection
+    anchor must move the same way. Getting the sign wrong moves the anchor
+    in the opposite direction, which can push it past the (unmoved) pointer
+    and invert/collapse the selection mid-drag.
+    """
+    app = _ScrollableSelectApp()
+    async with app.run_test(size=(20, 10)) as pilot:
+        await pilot.pause()
+        scroller = app.query_one("#scroller", VerticalScroll)
+        assert scroller.scroll_y == 0
+
+        # Start the drag on item-00, the first visible row inside the scroller.
+        assert await pilot.mouse_down(offset=(0, 1))
+        await pilot.pause()
+        # Hovering (without releasing) establishes an "end" for the selection.
+        assert await pilot.hover(offset=(0, 1))
+        await pilot.pause()
+
+        select_state = app.screen._select_state
+        assert select_state is not None
+        assert select_state.ordered_offsets == (Offset(0, 1), Offset(0, 1))
+
+        # Simulate what select-auto-scroll does on each tick: advance the
+        # container's scroll position (no further mouse events) and refresh
+        # the selection highlight.
+        scroller.scroll_y += 2
+        app.screen._update_select()
+        await pilot.pause()
+
+        select_state = app.screen._select_state
+        assert select_state is not None
+        start_offset, end_offset = select_state.ordered_offsets
+
+        # The pointer hasn't moved, but the content under it scrolled up by 2
+        # rows. The anchor must track that and move to y = 1 - 2 = -1,
+        # staying *before* the (unmoved) pointer -- not jump ahead of it,
+        # which is what the sign bug caused.
+        assert start_offset == Offset(0, -1)
+        assert end_offset == Offset(0, 1)
+
+
 async def test_select_out_of_scrollable_container_on_gap():
     """Regression: when the start pointer is on a gap (margin row) inside a
     scrollable container and the user drags out below, only widgets at or
