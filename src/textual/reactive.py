@@ -177,15 +177,40 @@ class Reactive(Generic[ReactiveType]):
 
     @classmethod
     def _clear_watchers(cls, obj: Reactable) -> None:
-        """Clear any watchers on a given object.
+        """Clear any watchers created by or attached to a given object.
 
         Args:
             obj: A reactive object.
         """
-        try:
-            getattr(obj, "__watchers").clear()
-        except AttributeError:
-            pass
+        watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]]
+        watchers = getattr(obj, "__watchers", {})
+        for attribute_name, watcher_list in watchers.items():
+            for watcher, _callback in watcher_list:
+                watching: list[tuple[Reactable, str]]
+                watching = getattr(watcher, "__watching", [])
+                watching[:] = [
+                    (watched, watched_attribute)
+                    for watched, watched_attribute in watching
+                    if watched is not obj or watched_attribute != attribute_name
+                ]
+        watchers.clear()
+
+        watching = getattr(obj, "__watching", [])
+        for watched, attribute_name in watching:
+            watched_watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = (
+                getattr(watched, "__watchers", {})
+            )
+            watcher_list = watched_watchers.get(attribute_name)
+            if watcher_list is None:
+                continue
+            watcher_list[:] = [
+                (watcher, callback)
+                for watcher, callback in watcher_list
+                if watcher is not obj
+            ]
+            if not watcher_list:
+                watched_watchers.pop(attribute_name, None)
+        watching.clear()
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -239,13 +264,13 @@ class Reactive(Generic[ReactiveType]):
             reactive._initialize_reactive(obj, name)
 
     @classmethod
-    def _reset_object(cls, obj: object) -> None:
+    def _reset_object(cls, obj: Reactable) -> None:
         """Reset reactive structures on object (to avoid reference cycles).
 
         Args:
             obj: A reactive object.
         """
-        getattr(obj, "__watchers", {}).clear()
+        cls._clear_watchers(obj)
         getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
@@ -530,3 +555,13 @@ def _watch(
         current_value = getattr(obj, attribute_name, None)
         invoke_watcher(obj, callback, current_value, current_value)
     watcher_list.append((node, callback))
+    watching: list[tuple[Reactable, str]] | None
+    watching = getattr(node, "__watching", None)
+    if watching is None:
+        watching = []
+        setattr(node, "__watching", watching)
+    if not any(
+        watched is obj and watched_attribute == attribute_name
+        for watched, watched_attribute in watching
+    ):
+        watching.append((obj, attribute_name))
