@@ -5,6 +5,8 @@ This module contains the `Widget` class, the base class for all widgets.
 
 from __future__ import annotations
 
+import threading
+
 from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
@@ -1074,7 +1076,12 @@ class Widget(DOMNode):
         if not self.is_mounted:
             self.call_later(self.set_loading, loading)
         else:
-            self.set_loading(loading)
+            if threading.get_ident() == self.app._thread_id:
+                self.set_loading(loading)
+            else:
+                # Setting `loading` from a worker thread: hop over to the
+                # app's thread instead of touching the UI directly.
+                self.app.call_from_thread(self.set_loading, loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
