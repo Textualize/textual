@@ -95,7 +95,7 @@ class ScrollableContainer(Widget, can_focus=True):
             disabled: Whether the widget is disabled or not.
             can_focus: Can this container be focused?
             can_focus_children: Can this container's children be focused?
-            can_maximized: Allow this container to maximize? `None` to use default logic.,
+            can_maximize: Allow this container to maximize? `None` to use default logic.,
         """
 
         super().__init__(
