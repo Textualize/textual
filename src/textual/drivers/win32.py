@@ -125,6 +125,15 @@ class INPUT_RECORD(Structure):
     _fields_ = [("EventType", wintypes.WORD), ("Event", InputEvent)]
 
 
+def _is_bare_modifier(key_event: KEY_EVENT_RECORD) -> bool:
+    """Check if a key event only reports a modifier key."""
+    return bool(
+        key_event.dwControlKeyState
+        and key_event.wVirtualKeyCode == 0
+        and key_event.uChar.UnicodeChar == "\x00"
+    )
+
+
 def set_console_mode(file: IO, mode: int) -> bool:
     """Set the console mode for a given file (stdout or stdin).
 
@@ -270,10 +279,7 @@ class EventMonitor(threading.Thread):
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
                         if key_event.bKeyDown:
-                            if (
-                                key_event.dwControlKeyState
-                                and key_event.wVirtualKeyCode == 0
-                            ):
+                            if _is_bare_modifier(key_event):
                                 continue
                             append_key(key)
                     elif event_type == WINDOW_BUFFER_SIZE_EVENT:
