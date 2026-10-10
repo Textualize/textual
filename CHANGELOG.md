@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed parsing Kitty extended keys with multiple codepoints https://github.com/Textualize/textual/pull/6592
 - Fixed crash when clicking in the Screen's padding https://github.com/Textualize/textual/pull/6598
+- Fixed anchored scrollable containers writing negative `scroll_y` when content is shorter than the viewport https://github.com/Textualize/textual/issues/6652
 
 ### Changed
 
