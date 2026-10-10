@@ -303,6 +303,8 @@ class XTermParser(Parser[Message]):
                     mouse_match = _re_mouse_event.match(sequence)
                     if mouse_match is not None:
                         mouse_code = mouse_match.group(0)
+                        if mouse_code.startswith("\x1b[M"):
+                            on_token(messages.LegacyMouseReport())
                         mouse_event = self.parse_mouse_code(mouse_code)
                         if mouse_event is not None:
                             on_token(mouse_event)
