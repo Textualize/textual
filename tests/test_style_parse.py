@@ -54,3 +54,18 @@ def test_parse_style(markup: str, style: Style) -> None:
     print(parsed_style._meta)
     print(style._meta)
     assert parsed_style == style
+
+
+@pytest.mark.parametrize(
+    "style",
+    [
+        Style(link="https://textual.textualize.io"),
+        Style.from_meta({"@click": "app.bell"}),
+    ],
+)
+def test_rich_style_with_offset_reuses_link_id(style: Style) -> None:
+
+    assert (
+        style.rich_style_with_offset(0, 0)._link_id
+        == style.rich_style_with_offset(0, 1)._link_id
+    )

@@ -492,7 +492,7 @@ class Style:
             _meta,
         ) = _get_simple_attributes(self)
         color = None if foreground is None else background + foreground
-        return RichStyle(
+        rich_style = RichStyle(
             color=None if color is None else color.rich_color,
             bgcolor=None if background is None else background.rich_color,
             bold=bold,
@@ -506,6 +506,9 @@ class Style:
             link=link,
             meta={**self.meta, "offset": (x, y)},
         )
+        if link is not None or _meta is not None:
+            rich_style._link_id = f"L{id(self)}"
+        return rich_style
 
     @cached_property
     def without_color(self) -> Style:
