@@ -76,7 +76,7 @@ WalkMethod: TypeAlias = Literal["depth", "breadth"]
 
 
 ReactiveType = TypeVar("ReactiveType")
-
+ReactableType = TypeVar("ReactableType", bound="DOMNode")
 
 QueryOneCacheKey: TypeAlias = "tuple[int, str, Type[Widget] | None]"
 """The key used to cache query_one results."""
@@ -1255,8 +1255,8 @@ class DOMNode(MessagePump):
 
     def watch(
         self,
-        obj: DOMNode,
-        attribute_name: str,
+        obj: ReactableType,
+        attribute_name: Reactive[Any, ReactableType] | str,
         callback: WatchCallbackType,
         init: bool = True,
     ) -> None:
@@ -1277,6 +1277,9 @@ class DOMNode(MessagePump):
             callback: A callback to run when attribute changes.
             init: Check watchers on first call.
         """
+        if not isinstance(attribute_name, str):
+            attribute_name = attribute_name.name
+
         _watch(self, obj, attribute_name, callback, init=init)
 
     def get_pseudo_classes(self) -> set[str]:
