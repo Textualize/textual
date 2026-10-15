@@ -511,7 +511,7 @@ Let's add scrolling to our checkerboard example. A standard 8 x 8 board isn't su
 
 === "checker03.py"
 
-    ```python title="checker03.py" hl_lines="4 26-30 35-36 52-53"
+    ```python title="checker03.py" hl_lines="6 26-30 35-36 52-53"
     --8<-- "docs/examples/guide/widgets/checker03.py"
     ```
 
