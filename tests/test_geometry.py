@@ -383,13 +383,11 @@ def test_spacing_unpack():
     assert Spacing.unpack(1) == Spacing(1, 1, 1, 1)
     assert Spacing.unpack((1,)) == Spacing(1, 1, 1, 1)
     assert Spacing.unpack((1, 2)) == Spacing(1, 2, 1, 2)
+    assert Spacing.unpack((1, 2, 3)) == Spacing(1, 2, 3, 2)
     assert Spacing.unpack((1, 2, 3, 4)) == Spacing(1, 2, 3, 4)
 
     with pytest.raises(ValueError):
         assert Spacing.unpack(()) == Spacing(1, 2, 1, 2)
-
-    with pytest.raises(ValueError):
-        assert Spacing.unpack((1, 2, 3)) == Spacing(1, 2, 1, 2)
 
     with pytest.raises(ValueError):
         assert Spacing.unpack((1, 2, 3, 4, 5)) == Spacing(1, 2, 1, 2)
