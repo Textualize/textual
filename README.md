@@ -11,14 +11,36 @@
 
 # Textual
 
-<img align="right" width="250" alt="clock" src="https://github.com/user-attachments/assets/63e839c3-5b8e-478d-b78e-cf7647eb85e8" />
+Build cross-platform user interfaces with a simple Python API. Textual combines modern Python features with web development best practices, delivering an efficient cross-platform application development experience.
 
-Build cross-platform user interfaces with a simple Python API. Run your apps in the terminal *or* a web browser.
-
-Textual's API combines modern Python with the best of developments from the web world, for a lean app development experience.
-De-coupled components and an advanced [testing](https://textual.textualize.io/guide/testing/) framework ensure you can maintain your app for the long-term.
+## Key Features
+- 🖥️ Dual Rendering Engine - Write once, deploy to both terminal and web browsers  
+- 🧩 50+ Built-in Widgets - Buttons, tables, tree views and more out-of-the-box  
+- 🎨 Theme System - Multiple built-in UI themes with custom styling support  
+- 🛠️ Developer Tools - Real-time terminal app debugging  
+- ⚡ Async Core - Native async/await support  
 
 Want some more examples? See the [examples](https://github.com/Textualize/textual/tree/main/examples) directory.
+
+## Installing
+
+### Prerequisites:
+- Python 3.10+
+- Terminal requirements: TrueColor-supported terminal (e.g. Windows Terminal, iTerm2)
+
+Install Textual via pip:
+
+```
+pip install textual textual-dev
+```
+For development tools:
+
+```
+pip install "textual[dev]"
+```
+
+
+## Quick Start
 
 ```python
 """
@@ -54,13 +76,12 @@ if __name__ == "__main__":
     app.run()
 ```
 
+![UI Screenshots](images/screenshot1.png)
+
 > [!TIP]
 > Textual is an asynchronous framework under the hood. Which means you can integrate your apps with async libraries &mdash; if you want to.
 > If you don't want or need to use async, Textual won't force it on you. 
 
-
-
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="64"/>
 
 ## Widgets
 
@@ -76,13 +97,13 @@ Predefined themes ensure your apps will look good out of the box.
 
   <td>
     
-  ![buttons](https://github.com/user-attachments/assets/2ac26387-aaa3-41ed-bc00-7d488600343c)
+  ![buttons](images/screenshot2.gif)
     
   </td>
 
   <td>
     
-![tree](https://github.com/user-attachments/assets/61ccd6e9-97ea-4918-8eda-3ee0f0d3770e)
+![tree](images/screenshot3.gif)
     
   </td>
   
@@ -93,13 +114,13 @@ Predefined themes ensure your apps will look good out of the box.
 
   <td>
     
-  ![datatables](https://github.com/user-attachments/assets/3e1f9f7a-f965-4901-a114-3c188bd17695)
+  ![datatables](images/screenshot4.gif)
     
   </td>
 
   <td>
     
-![inputs](https://github.com/user-attachments/assets/b02aa203-7c37-42da-a1bb-2cb244b7d0d3)
+![inputs](images/screenshot5.gif)
     
   </td>
   
@@ -108,13 +129,13 @@ Predefined themes ensure your apps will look good out of the box.
 
 <td>
 
-![listview](https://github.com/user-attachments/assets/963603bc-aa07-4688-bd24-379962ece871)
+![listview](images/screenshot6.gif)
 
 </td>
 
 <td>
 
-![textarea](https://github.com/user-attachments/assets/cd4ba787-5519-40e2-8d86-8224e1b7e506)
+![textarea](images/screenshot7.gif)
   
 </td>
 
@@ -123,21 +144,6 @@ Predefined themes ensure your apps will look good out of the box.
 
 </table>
 
-
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
-
-## Installing
-
-Install Textual via pip:
-
-```
-pip install textual textual-dev
-```
-
-See [getting started](https://textual.textualize.io/getting_started/) for details.
-
-
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Demo
 
@@ -154,8 +160,6 @@ Or try the [textual demo](https://github.com/textualize/textual-demo) *without* 
 uvx --python 3.12 textual-demo
 ```
 
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
-
 ## Dev Console
 
 <img align="right" width="40%" alt="devtools" src="https://github.com/user-attachments/assets/12c60d65-e342-4b2f-9372-bae0459a7552" />
@@ -168,7 +172,6 @@ In addition to system messages and events, your logged messages and print statem
 
 See [the guide](https://textual.textualize.io/guide/devtools/) for other helpful tools provided by the `textual-dev` package.
 
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 ## Command Palette
 
@@ -181,7 +184,6 @@ It is easy to extend the command palette with [custom commands](https://textual.
 
 ![Command Palette](https://github.com/user-attachments/assets/94d8ec5d-b668-4033-a5cb-bf820e1b8d60)
 
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
 
 # Textual ❤️ Web
 
@@ -203,9 +205,7 @@ Since Textual apps have low system requirements, you can install them anywhere P
 No desktop required!
 
 
-<img src="https://img.spacergif.org/spacer.gif" width="1" height="32"/>
-
-
 ## Join us on Discord
 
 Join the Textual developers and community on our [Discord Server](https://discord.gg/Enf6Z3qhVr).
+
