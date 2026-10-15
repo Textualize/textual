@@ -12,13 +12,13 @@ from textual.document._history import EditHistory
 from textual.document._syntax_aware_document import SyntaxAwareDocument
 from textual.document._wrapped_document import WrappedDocument
 from textual.widgets._text_area import (
+    BUILTIN_LANGUAGES,
     EndColumn,
     Highlight,
     HighlightName,
     LanguageDoesNotExist,
     StartColumn,
     ThemeDoesNotExist,
-    BUILTIN_LANGUAGES,
 )
 
 __all__ = [

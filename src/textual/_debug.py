@@ -20,7 +20,7 @@ def get_caller_file_and_line() -> str | None:
 
     try:
         current_frame = inspect.currentframe()
-        caller_frame = inspect.getframeinfo(current_frame.f_back.f_back)
+        caller_frame = inspect.getframeinfo(current_frame.f_back.f_back)  # type: ignore[union-attr,arg-type]
         return f"{caller_frame.filename}:{caller_frame.lineno}"
     except Exception:
         return None

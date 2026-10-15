@@ -5,6 +5,7 @@ from textual.app import App, ComposeResult
 from textual.geometry import Offset
 from textual.widgets import SelectionList
 
+
 class SelectionListApp(App[None]):
     """Test selection list application."""
 
@@ -25,7 +26,7 @@ async def test_click_on_prompt() -> None:
     """It should be possible to toggle a selection by clicking on the prompt."""
     async with SelectionListApp().run_test() as pilot:
         assert isinstance(pilot.app, SelectionListApp)
-        await pilot.click(SelectionList, Offset(5,1))
+        await pilot.click(SelectionList, Offset(5, 1))
         await pilot.pause()
         assert pilot.app.clicks == [0]
 
@@ -34,9 +35,10 @@ async def test_click_on_checkbox() -> None:
     """It should be possible to toggle a selection by clicking on the checkbox."""
     async with SelectionListApp().run_test() as pilot:
         assert isinstance(pilot.app, SelectionListApp)
-        await pilot.click(SelectionList, Offset(3,1))
+        await pilot.click(SelectionList, Offset(3, 1))
         await pilot.pause()
         assert pilot.app.clicks == [0]
+
 
 if __name__ == "__main__":
     SelectionListApp().run()

@@ -4,6 +4,7 @@ Helper script to help document all widgets.
 This goes through the widgets listed in textual.widgets and prints the scaffolding
 for the tables that are used to document the classvars BINDINGS and COMPONENT_CLASSES.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
