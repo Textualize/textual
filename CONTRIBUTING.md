@@ -17,12 +17,13 @@ You can contribute to Textual in many ways:
 To make a code or documentation contribution you will need to set up Textual locally.
 You can follow these steps:
 
- 1. Make sure you have Poetry installed ([see instructions here](https://python-poetry.org))
+ 1. Make sure you have Poetry installed ([see instructions here](https://python-poetry.org/docs/))
  2. Clone the Textual repository
- 3. Run `poetry shell` to create a virtual environment for the dependencies
+ 3. Run `poetry env activate` to create a virtual environment for the dependencies
  4. Run `make setup` to install all dependencies
- 5. Make sure the latest version of Textual was installed by running the command `textual --version`
+ 5. Make sure the latest version of Textual was installed by running the command `poetry run textual --version`
  6. Install the pre-commit hooks with the command `pre-commit install`
+ 7. Once activating the virtual environment using poetry, excute the example python scripts via `poetry run python <SCRIPT_NAME.py>`
 
 ([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
