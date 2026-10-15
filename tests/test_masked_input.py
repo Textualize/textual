@@ -221,3 +221,16 @@ async def test_digits_required():
         await pilot.press("a", "1")
         assert input.value == "1"
         assert not input.is_valid
+
+
+async def test_cursor_left_word_leading_separator():
+    """Ctrl+Left must not ignore a separator at index 0."""
+    app = InputApp("-NNN-NNN")
+    async with app.run_test():
+        inp = app.query_one(MaskedInput)
+        inp.value = "-ABC-DEF"
+        inp.cursor_position = 8
+        inp.action_cursor_left_word()
+        assert inp.cursor_position == 5
+        inp.action_cursor_left_word()
+        assert inp.cursor_position == 1
