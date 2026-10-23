@@ -2,6 +2,7 @@ name: Test Textual module
 
 on:
   pull_request:
+    # Run tests when this workflow or the files below change.
     paths:
       - ".github/workflows/pythonpackage.yml"
       - "**.py"
