@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -45,7 +44,7 @@ exclude = ["tests/snapshot_tests/__snapshots__"]
 target-version = "py39"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 markdown-it-py = { extras = ["linkify"], version = ">=2.1.0" }
 mdit-py-plugins = "*"
 rich = ">=14.2.0"
