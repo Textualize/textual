@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from itertools import zip_longest
 from pathlib import Path
 from typing import Iterator
 
@@ -94,6 +95,88 @@ async def test_markdown_nodes(
         assert [
             node.__class__ for node in markdown_nodes(pilot.app.query_one(Markdown))
         ] == expected_nodes
+
+
+@pytest.mark.parametrize(
+    ["markdown", "expected_content"],
+    [
+        ([""], []),
+        (
+            ["One"],
+            ["One"],
+        ),
+        (
+            ["One", "Two"],
+            ["OneTwo"],
+        ),
+        # Markdown joins a single newline with a space
+        (
+            ["One\n", "Two"],
+            ["One Two"],
+        ),
+        # Two (or more) new lines should generate two paragraphs
+        (
+            ["One\n\n", "Two"],
+            ["One", "Two"],
+        ),
+        (
+            ["One\n\n\n", "Two"],
+            ["One", "Two"],
+        ),
+        (
+            ["One\n\n", "Two\n"],
+            ["One", "Two"],
+        ),
+        (
+            ["One\n\n", "Two\n\n"],
+            ["One", "Two"],
+        ),
+        (
+            ["One\n\n", "Two\n\n", "Three"],
+            ["One", "Two", "Three"],
+        ),
+        (
+            ["One\n\n", "Two\n\n", "Three\n"],
+            ["One", "Two", "Three"],
+        ),
+        (
+            ["One\n\nTwo\n\n", "Three"],
+            ["One", "Two", "Three"],
+        ),
+        (
+            ["One\n\nTwo\n\n", "Three\n"],
+            ["One", "Two", "Three"],
+        ),
+        (
+            ["One\n\nTwo\n\n", "Three\n\n"],
+            ["One", "Two", "Three"],
+        ),
+    ],
+)
+async def test_markdown_append(markdown: list[str], expected_content: list[str]):
+    """Check that sequences of appends, result in the same list of paragraphs.
+
+    Regression tests for https://github.com/Textualize/textual/issues/6752
+    """
+    document = markdown[0]
+    markdown = markdown[1:]
+
+    def markdown_nodes(root: Widget) -> Iterator[MarkdownBlock]:
+        for node in root.children:
+            if isinstance(node, MarkdownBlock):
+                yield node
+            yield from markdown_nodes(node)
+
+    async with MarkdownApp(document).run_test() as pilot:
+        markdown_widget = pilot.app.query_one(Markdown)
+        await pilot.pause()
+        for fragment in markdown:
+            await markdown_widget.append(fragment)
+        for node, expected in zip_longest(
+            markdown_nodes(markdown_widget), expected_content
+        ):
+            assert isinstance(node, MD.MarkdownParagraph)
+            assert node._content.plain == expected
 
 
 async def test_softbreak_split_links_rendered_correctly() -> None:

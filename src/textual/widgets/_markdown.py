@@ -372,7 +372,6 @@ class MarkdownHeader(MarkdownBlock):
     MarkdownHeader {
         color: $text;
         margin: 2 0 1 0;
-
     }
     """
 
@@ -1458,9 +1457,8 @@ class Markdown(Widget):
         )
 
         self._markdown = self.source + markdown
-        updated_source = "".join(
-            self._markdown.splitlines(keepends=True)[self._last_parsed_line :]
-        )
+        lines = self._markdown.splitlines(keepends=True)
+        updated_source = "".join(lines[self._last_parsed_line :])
 
         async def await_append() -> None:
             """Append new markdown widgets."""
@@ -1487,7 +1485,16 @@ class Markdown(Widget):
                     )
 
                 with self.app.batch_update():
-                    if existing_blocks and new_blocks:
+                    # if the last existing block starts at the same line as the first new block,
+                    # then it is an update
+                    if (
+                        existing_blocks
+                        and new_blocks
+                        and (
+                            existing_blocks[-1].source_range[0]
+                            == new_blocks[0].source_range[0]
+                        )
+                    ):
                         last_block = existing_blocks[-1]
                         last_block.source_range = new_blocks[0].source_range
                         try:
